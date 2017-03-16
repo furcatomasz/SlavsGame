@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+    <title>Babylon - Getting Started</title>
+    <script src="babylon.2.5.js"></script>
+    <script src="babylon.objFileLoader.min.js"></script>
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var keys = {left: 0, right: 0, forward: 0, back: 0};
+        var player = null;
+
+        function handleKeyUp(evt) {
+            if (evt.keyCode == 65) {
+                keys.left = 1;
+            }
+            if (evt.keyCode == 68) {
+                keys.right = 1;
+            }
+            if (evt.keyCode == 87) {
+                keys.forward = 1;
+            }
+            if (evt.keyCode == 83) {
+                keys.back = 1;
+            }
+        }
+
+        function handleKeyDown(evt) {
+            if (evt.keyCode == 65) {
+                keys.left = 0;
+            }
+            if (evt.keyCode == 68) {
+                keys.right = 0;
+            }
+            if (evt.keyCode == 87) {
+                keys.forward = 0;
+            }
+            if (evt.keyCode == 83) {
+                keys.back = 0;
+            }
+        }
+        if (BABYLON.Engine.isSupported()) {
+            var canvas = document.getElementById("renderCanvas");
+            var engine = new BABYLON.Engine(canvas, true);
+            BABYLON.OBJFileLoader.OPTIMIZE_WITH_UV = true;
+            BABYLON.SceneLoader.Load("", "assets/small_scene.babylon", engine, function (newScene) {
+                var assetsManager = new BABYLON.AssetsManager(newScene);
+
+                newScene.executeWhenReady(function () {
+                    newScene.debugLayer.show();
+                    newScene.activeCamera.attachControl(canvas);
+
+                    var light = new BABYLON.HemisphericLight("hemilight", new BABYLON.Vector3(0, 1, 0), newScene);
+                    light.intensity = 0.7;
+
+                    var character = assetsManager.addMeshTask("batman", "", "assets/", "character.obj");
+                    assetsManager.onTaskSuccess = function (task) {
+                        for (var i = 0; i < task.loadedMeshes.length; i++) {
+                            var mesh = task.loadedMeshes[i];
+                            mesh.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
+                            mesh.position.x = -3;
+                            mesh.rotation.y = 140;
+                            player = mesh;
+
+                        }
+                    };
+                    assetsManager.load();
+
+                    assetsManager.onFinish = function (task) {
+                        window.addEventListener("keydown", handleKeyUp, false);
+                        window.addEventListener("keyup", handleKeyDown, false);
+                    }
+
+                });
+
+                engine.runRenderLoop(function () {
+                    newScene.render();
+                    if (keys.left == 1) {
+                        player.rotate(BABYLON.Axis.Y, -0.05, BABYLON.Space.LOCAL);
+                    }
+                    if (keys.right == 1) {
+                        player.rotate(BABYLON.Axis.Y, 0.05, BABYLON.Space.LOCAL);
+                    }
+                    if (keys.back == 1) {
+                        player.translate(BABYLON.Axis.Z, -0.5, BABYLON.Space.LOCAL);
+                    }
+                    if (keys.forward == 1) {
+                        player.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
+                    }
+                });
+            });
+        }
+
+    </script>
+</body>
+</html>

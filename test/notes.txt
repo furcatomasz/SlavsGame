@@ -1,0 +1,62 @@
+End goal
+========
+
+Have a 3D character in an isometric map that can move around.
+Nice 3D-ish graphics.
+Church/Factory/Bookshelves/Pillars
+Some lighting?
+
+
+Use 3 Models?
+
+
+Think about code structure...
+=============================
+
+Classes
+
+Map
+GameLoop
+  - Takes key inputs
+  - Calls render()
+
+
+Character
+  - move()
+CollisionDetection
+  - require character and map
+
+GameClass
+  run()
+
+
+
+Map:
+====
+
+WWWWWWWWDDWWWWWWWWWW
+W__________________W
+W__________________W
+W__________________W
+W_________________BW
+W_________________BW
+W__________________W
+W__________________W
+W__________________W
+D__________________D
+D__________________D
+W__________________W
+W__________________W
+W__________________W
+W_________________BW
+W_________________BW
+W__________________W
+W__________________W
+W__________________W
+WWWWWWWWDDWWWWWWWWWW
+
+W = Wall
+P = Pillar
+D = Door
+B = Bookshelf
+_ = Floor

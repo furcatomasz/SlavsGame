@@ -62,13 +62,23 @@
             BABYLON.OBJFileLoader.OPTIMIZE_WITH_UV = true;
             BABYLON.SceneLoader.Load("", "assets/small_scene.babylon", engine, function (newScene) {
                 var assetsManager = new BABYLON.AssetsManager(newScene);
-
                 newScene.executeWhenReady(function () {
                     newScene.debugLayer.show();
                     newScene.activeCamera.attachControl(canvas);
 
-                    var light = new BABYLON.HemisphericLight("hemilight", new BABYLON.Vector3(0, 1, 0), newScene);
-                    light.intensity = 0.7;
+                    var light = newScene.lights[0];
+                    var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+                    shadowGenerator.useBlurVarianceShadowMap = true;
+
+                    for (var i = 0; i < newScene.meshes.length; i++) {
+                        var sceneMesh = newScene.meshes[i];
+                        var meshName = newScene.meshes[i]['name'];
+                        if(meshName.indexOf("road") >= 0) {
+                            sceneMesh.receiveShadows = true;
+                        } else {
+                            shadowGenerator.getShadowMap().renderList.push(sceneMesh);
+                        }
+                    }
 
                     var character = assetsManager.addMeshTask("batman", "", "assets/", "character.babylon");
                     assetsManager.onTaskSuccess = function (task) {
@@ -78,7 +88,7 @@
                             mesh.position.x = -3;
                             mesh.rotation.y = 30;
                             player = mesh;
-
+                            shadowGenerator.getShadowMap().renderList.push(mesh);
                         }
                     };
                     assetsManager.load();

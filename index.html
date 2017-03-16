@@ -70,13 +70,13 @@
                     var light = new BABYLON.HemisphericLight("hemilight", new BABYLON.Vector3(0, 1, 0), newScene);
                     light.intensity = 0.7;
 
-                    var character = assetsManager.addMeshTask("batman", "", "assets/", "character.obj");
+                    var character = assetsManager.addMeshTask("batman", "", "assets/", "character.babylon");
                     assetsManager.onTaskSuccess = function (task) {
                         for (var i = 0; i < task.loadedMeshes.length; i++) {
                             var mesh = task.loadedMeshes[i];
                             mesh.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
                             mesh.position.x = -3;
-                            mesh.rotation.y = 140;
+                            mesh.rotation.y = 30;
                             player = mesh;
 
                         }
@@ -99,10 +99,10 @@
                         player.rotate(BABYLON.Axis.Y, 0.05, BABYLON.Space.LOCAL);
                     }
                     if (keys.back == 1) {
-                        player.translate(BABYLON.Axis.Z, -0.5, BABYLON.Space.LOCAL);
+                        player.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
                     }
                     if (keys.forward == 1) {
-                        player.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
+                        player.translate(BABYLON.Axis.Z, -0.5, BABYLON.Space.LOCAL);
                     }
                 });
             });

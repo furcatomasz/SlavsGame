@@ -61,6 +61,12 @@
             var engine = new BABYLON.Engine(canvas, true);
             BABYLON.OBJFileLoader.OPTIMIZE_WITH_UV = true;
             BABYLON.SceneLoader.Load("", "assets/small_scene.babylon", engine, function (newScene) {
+                new BABYLON.Sound("Music", "assets/musicDoman.mp3", newScene, null, { loop: true, autoplay: true });
+                var myAnalyser = new BABYLON.Analyser(newScene);
+                myAnalyser.DEBUGCANVASPOS.x = 240;
+                myAnalyser.DEBUGCANVASPOS.y = 30;
+                BABYLON.Engine.audioEngine.connectToAnalyser(myAnalyser);
+                myAnalyser.drawDebugCanvas();
                 var assetsManager = new BABYLON.AssetsManager(newScene);
                 newScene.executeWhenReady(function () {
                     newScene.debugLayer.show();

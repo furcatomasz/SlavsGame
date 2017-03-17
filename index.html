@@ -2,9 +2,17 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
-    <title>Babylon - Getting Started</title>
+    <title>AOTF</title>
     <script src="babylon.2.5.js"></script>
     <script src="babylon.objFileLoader.min.js"></script>
+
+    <script src="/src/scenes/Scene.js"></script>
+    <script src="/src/scenes/Simple.js"></script>
+    <script src="/src/controllers/Controller.js"></script>
+    <script src="/src/controllers/Keyboard.js"></script>
+
+    <script src="game.js"></script>
+
     <style>
         html, body {
             overflow: hidden;
@@ -24,106 +32,13 @@
 <body>
     <canvas id="renderCanvas"></canvas>
     <script>
-        var keys = {left: 0, right: 0, forward: 0, back: 0};
-        var player = null;
-
-        function handleKeyUp(evt) {
-            if (evt.keyCode == 65) {
-                keys.left = 1;
-            }
-            if (evt.keyCode == 68) {
-                keys.right = 1;
-            }
-            if (evt.keyCode == 87) {
-                keys.forward = 1;
-            }
-            if (evt.keyCode == 83) {
-                keys.back = 1;
-            }
-        }
-
-        function handleKeyDown(evt) {
-            if (evt.keyCode == 65) {
-                keys.left = 0;
-            }
-            if (evt.keyCode == 68) {
-                keys.right = 0;
-            }
-            if (evt.keyCode == 87) {
-                keys.forward = 0;
-            }
-            if (evt.keyCode == 83) {
-                keys.back = 0;
-            }
-        }
         if (BABYLON.Engine.isSupported()) {
-            var canvas = document.getElementById("renderCanvas");
-            var engine = new BABYLON.Engine(canvas, true);
-            BABYLON.OBJFileLoader.OPTIMIZE_WITH_UV = true;
-            BABYLON.SceneLoader.Load("", "assets/small_scene.babylon", engine, function (newScene) {
-                new BABYLON.Sound("Music", "assets/musicDoman.mp3", newScene, null, { loop: true, autoplay: true });
-                var myAnalyser = new BABYLON.Analyser(newScene);
-                myAnalyser.DEBUGCANVASPOS.x = 240;
-                myAnalyser.DEBUGCANVASPOS.y = 30;
-                BABYLON.Engine.audioEngine.connectToAnalyser(myAnalyser);
-                myAnalyser.drawDebugCanvas();
-                var assetsManager = new BABYLON.AssetsManager(newScene);
-                newScene.executeWhenReady(function () {
-                    newScene.debugLayer.show();
-                    newScene.activeCamera.attachControl(canvas);
+            var htmlElement = document.getElementById('renderCanvas');
+            var game = new Game(htmlElement);
 
-                    var light = newScene.lights[0];
-                    var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
-                    shadowGenerator.useBlurVarianceShadowMap = true;
-
-                    for (var i = 0; i < newScene.meshes.length; i++) {
-                        var sceneMesh = newScene.meshes[i];
-                        var meshName = newScene.meshes[i]['name'];
-                        if(meshName.indexOf("road") >= 0) {
-                            sceneMesh.receiveShadows = true;
-                        } else {
-                            shadowGenerator.getShadowMap().renderList.push(sceneMesh);
-                        }
-                    }
-
-                    var character = assetsManager.addMeshTask("batman", "", "assets/", "character.babylon");
-                    assetsManager.onTaskSuccess = function (task) {
-                        for (var i = 0; i < task.loadedMeshes.length; i++) {
-                            var mesh = task.loadedMeshes[i];
-                            mesh.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
-                            mesh.position.x = -3;
-                            mesh.rotation.y = 30;
-                            player = mesh;
-                            shadowGenerator.getShadowMap().renderList.push(mesh);
-                        }
-                    };
-                    assetsManager.load();
-
-                    assetsManager.onFinish = function (task) {
-                        window.addEventListener("keydown", handleKeyUp, false);
-                        window.addEventListener("keyup", handleKeyDown, false);
-                    }
-
-                });
-
-                engine.runRenderLoop(function () {
-                    newScene.render();
-                    if (keys.left == 1) {
-                        player.rotate(BABYLON.Axis.Y, -0.05, BABYLON.Space.LOCAL);
-                    }
-                    if (keys.right == 1) {
-                        player.rotate(BABYLON.Axis.Y, 0.05, BABYLON.Space.LOCAL);
-                    }
-                    if (keys.back == 1) {
-                        player.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
-                    }
-                    if (keys.forward == 1) {
-                        player.translate(BABYLON.Axis.Z, -0.5, BABYLON.Space.LOCAL);
-                    }
-                });
-            });
+            game.createScene();
+            game.animate();
         }
-
     </script>
 </body>
 </html>

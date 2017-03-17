@@ -3,7 +3,7 @@
 class Keyboard extends Controller {
 
     public handleKeyUp(evt):void {
-        console.log(1);
+        console.log(this.game.skeletons);
         if (evt.keyCode == 65) {
             this.left = true;
         }
@@ -11,16 +11,16 @@ class Keyboard extends Controller {
             this.right = true;
         }
         if (evt.keyCode == 87) {
+            this.game.scene.beginAnimation(this.game.skeletons[0], 0, 100, true);
             this.forward = true;
         }
         if (evt.keyCode == 83) {
+            this.game.scene.beginAnimation(this.game.skeletons[0], 0, 100, true);
             this.back = true;
         }
     }
 
     public handleKeyDown(evt):void {
-        console.log(2);
-
         if (evt.keyCode == 65) {
             this.left = false;
         }
@@ -28,9 +28,11 @@ class Keyboard extends Controller {
             this.right = false;
         }
         if (evt.keyCode == 87) {
+            this.game.scene.stopAnimation(this.game.skeletons[0]);
             this.forward = false;
         }
         if (evt.keyCode == 83) {
+            this.game.scene.stopAnimation(this.game.skeletons[0]);
             this.back = false;
         }
     }

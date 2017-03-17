@@ -1,6 +1,6 @@
 /// <reference path="/babylon.2.5.d.ts"/>
 /// <reference path="Scene.ts"/>
-/// <reference path="/game.ts"/>
+/// <reference path="/src/game.ts"/>
 
 class Simple extends Scene {
 
@@ -29,15 +29,19 @@ class Simple extends Scene {
                     }
                 }
 
-                var character = assetsManager.addMeshTask("batman", "", "assets/", "character.babylon");
+                var character = assetsManager.addMeshTask("batman", "", "assets/animations/character/", "walk_character_test_rig.babylon");
                 assetsManager.onTaskSuccess = function (task) {
-                    for (var i = 0; i < task.loadedMeshes.length; i++) {
-                        var mesh = task.loadedMeshes[i];
-                        mesh.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
-                        mesh.position.x = -3;
-                        mesh.rotation.y = 30;
-                        game.player = mesh;
-                        shadowGenerator.getShadowMap().renderList.push(mesh);
+                    for (let i = 0; i < task.loadedMeshes.length; i++) {
+                        let mesh = task.loadedMeshes[i];
+                            mesh.isVisible = true;
+                            mesh.position.x = -1;
+                            mesh.rotation.y = 30;
+                            game.player = mesh;
+                            shadowGenerator.getShadowMap().renderList.push(mesh);
+                    }
+
+                    for (let i = 0; i < task.loadedSkeletons.length; i++) {
+                        game.skeletons = task.loadedSkeletons;
                     }
                 };
                 assetsManager.load();

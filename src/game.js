@@ -1,11 +1,11 @@
-/// <reference path="src/controllers/Keyboard.ts"/>
-/// <reference path="src/scenes/Simple.ts"/>
-/// <reference path="babylon.2.5.d.ts"/>
+/// <reference path="controllers/Keyboard.ts"/>
+/// <reference path="scenes/Simple.ts"/>
+/// <reference path="../babylon.2.5.d.ts"/>
 var Game = (function () {
     function Game(canvasElement) {
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
-        this.controller = new Keyboard();
+        this.controller = new Keyboard(this);
         // BABYLON.OBJFileLoader.OPTIMIZE_WITH_UV = true;
     }
     Game.prototype.createScene = function () {
@@ -25,5 +25,5 @@ var Game = (function () {
         });
     };
     return Game;
-}());
+})();
 //# sourceMappingURL=game.js.map

@@ -1,6 +1,6 @@
-/// <reference path="src/controllers/Keyboard.ts"/>
-/// <reference path="src/scenes/Simple.ts"/>
-/// <reference path="babylon.2.5.d.ts"/>
+/// <reference path="controllers/Keyboard.ts"/>
+/// <reference path="scenes/Simple.ts"/>
+/// <reference path="../babylon.2.5.d.ts"/>
 
 class Game {
     
@@ -9,11 +9,12 @@ class Game {
     public canvas: HTMLCanvasElement;
     public engine: BABYLON.Engine;
     public player;
+    public skeletons;
 
     constructor(canvasElement : HTMLCanvasElement) {
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
-        this.controller = new Keyboard();
+        this.controller = new Keyboard(this);
 
         // BABYLON.OBJFileLoader.OPTIMIZE_WITH_UV = true;
     }

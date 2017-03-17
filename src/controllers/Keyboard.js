@@ -10,7 +10,7 @@ var Keyboard = (function (_super) {
         _super.apply(this, arguments);
     }
     Keyboard.prototype.handleKeyUp = function (evt) {
-        console.log(1);
+        console.log(this.game.skeletons);
         if (evt.keyCode == 65) {
             this.left = true;
         }
@@ -18,14 +18,15 @@ var Keyboard = (function (_super) {
             this.right = true;
         }
         if (evt.keyCode == 87) {
+            this.game.scene.beginAnimation(this.game.skeletons[0], 0, 100, true);
             this.forward = true;
         }
         if (evt.keyCode == 83) {
+            this.game.scene.beginAnimation(this.game.skeletons[0], 0, 100, true);
             this.back = true;
         }
     };
     Keyboard.prototype.handleKeyDown = function (evt) {
-        console.log(2);
         if (evt.keyCode == 65) {
             this.left = false;
         }
@@ -33,12 +34,14 @@ var Keyboard = (function (_super) {
             this.right = false;
         }
         if (evt.keyCode == 87) {
+            this.game.scene.stopAnimation(this.game.skeletons[0]);
             this.forward = false;
         }
         if (evt.keyCode == 83) {
+            this.game.scene.stopAnimation(this.game.skeletons[0]);
             this.back = false;
         }
     };
     return Keyboard;
-}(Controller));
+})(Controller);
 //# sourceMappingURL=Keyboard.js.map

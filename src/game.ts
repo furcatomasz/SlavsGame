@@ -1,6 +1,6 @@
 /// <reference path="controllers/Keyboard.ts"/>
 /// <reference path="scenes/Simple.ts"/>
-/// <reference path="../babylon.2.5.d.ts"/>
+/// <reference path="../babylon/babylon.2.5.d.ts"/>
 
 class Game {
     

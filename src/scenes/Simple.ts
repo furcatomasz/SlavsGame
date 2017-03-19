@@ -53,6 +53,8 @@ class Simple extends Scene {
                             game.player = mesh;
                         }
                         if (task.name == 'fireplace') {
+                            var sfxFireplace = new BABYLON.Sound("Fire", "assets/fireplace/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+                            sfxFireplace.attachToMesh(mesh);
                             mesh.position.x = -0.5;
                             mesh.position.z = -0.9;
                             var plane = BABYLON.Mesh.CreatePlane("fireplane", 1.5, scene);

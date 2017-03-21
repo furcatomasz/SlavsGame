@@ -4,5 +4,5 @@ var Scene = (function () {
         this.name = name;
     }
     return Scene;
-})();
+}());
 //# sourceMappingURL=Scene.js.map

@@ -36,7 +36,7 @@ class Simple extends Scene {
                 fire.opacityTexture = new BABYLON.Texture("assets/fireplace/candleOpacity.png", scene);
                 fire.speed = 5.0;
 
-                assetsManager.addMeshTask("character", "", "assets/animations/character/", "walk_character_test_rig.babylon");
+                assetsManager.addMeshTask("character", "", "assets/animations/character/", "new_armature_walk.babylon");
                 assetsManager.addMeshTask("sword", "", "assets/", "sword.babylon");
                 assetsManager.addMeshTask("fireplace", "", "assets/fireplace/", "fireplace.babylon");
                 let sword;
@@ -48,9 +48,14 @@ class Simple extends Scene {
                     for (let i = 0; i < task.loadedMeshes.length; i++) {
                         let mesh = task.loadedMeshes[i];
                         if (task.name == 'character') {
-                            mesh.position.x = -1;
-                            mesh.rotation.y = 30;
-                            game.player = mesh;
+
+                            if(mesh.skeleton == undefined) {
+                                mesh.visibility = false;
+                            } else {
+                                mesh.position.y = 0;
+                                mesh.rotation.y = 30;
+                                game.player = mesh;
+                            }
                         }
                         if (task.name == 'fireplace') {
                             var sfxFireplace = new BABYLON.Sound("Fire", "assets/fireplace/fireplace.mp3", scene, null, { loop: true, autoplay: true });
@@ -74,7 +79,7 @@ class Simple extends Scene {
                 assetsManager.load();
 
                 assetsManager.onFinish = function () {
-                    mount(sword, game.player, game.skeletons[0], 'Hand.R', scene);
+                    mount(sword, game.player, game.skeletons[0], 'hand.R', scene);
 
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);
@@ -87,16 +92,16 @@ class Simple extends Scene {
                 game.engine.runRenderLoop(() => {
                     scene.render();
                     if (game.controller.left == true) {
-                        game.player.rotate(BABYLON.Axis.Z, -0.05, BABYLON.Space.LOCAL);
+                        game.player.rotate(BABYLON.Axis.Y, -0.05, BABYLON.Space.LOCAL);
                     }
                     if (game.controller.right == true) {
-                        game.player.rotate(BABYLON.Axis.Z, 0.05, BABYLON.Space.LOCAL);
+                        game.player.rotate(BABYLON.Axis.Y, 0.05, BABYLON.Space.LOCAL);
                     }
                     if (game.controller.back == true) {
-                        game.player.translate(BABYLON.Axis.Y, -0.01, BABYLON.Space.LOCAL);
+                        game.player.translate(BABYLON.Axis.Z, 0.01, BABYLON.Space.LOCAL);
                     }
                     if (game.controller.forward == true) {
-                        game.player.translate(BABYLON.Axis.Y, 0.01, BABYLON.Space.LOCAL);
+                        game.player.translate(BABYLON.Axis.Z, -0.01, BABYLON.Space.LOCAL);
                     }
                 });
 
@@ -113,8 +118,10 @@ function mount(obj, objTo, ske, boneName, scene) {
 
     for (var i = 0; i < ske.bones.length; i++) { if (ske.bones[i].name == boneName) { boneIndice=i; break;}}
     var bone = ske.bones[boneIndice];
+
     obj.attachToBone(bone, objTo);
     obj.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
-    obj.position = new BABYLON.Vector3(1, 0, 0);
+    obj.position = new BABYLON.Vector3(0, 0, 0);
+    obj.rotation = new BABYLON.Vector3(0, 0, 80);
 
 };

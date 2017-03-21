@@ -17,11 +17,11 @@ var Keyboard = (function (_super) {
             this.right = true;
         }
         if (evt.keyCode == 87) {
-            this.game.scene.beginAnimation(this.game.skeletons[0], 0, 20, true);
+            this.game.scene.beginAnimation(this.game.skeletons[0], 0, 60, true, 3);
             this.forward = true;
         }
         if (evt.keyCode == 83) {
-            this.game.scene.beginAnimation(this.game.skeletons[0], 0, 20, true);
+            this.game.scene.beginAnimation(this.game.skeletons[0], 0, 60, true, 3);
             this.back = true;
         }
     };
@@ -42,5 +42,5 @@ var Keyboard = (function (_super) {
         }
     };
     return Keyboard;
-})(Controller);
+}(Controller));
 //# sourceMappingURL=Keyboard.js.map

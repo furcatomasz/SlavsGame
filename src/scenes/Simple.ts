@@ -10,14 +10,12 @@ class Simple extends Scene {
         BABYLON.SceneLoader.Load("", "assets/small_scene.babylon", game.engine, function (scene) {
             game.scene = scene;
             assetsManager = new BABYLON.AssetsManager(scene);
-
             scene.executeWhenReady(function () {
                 scene.debugLayer.show();
                 scene.activeCamera.attachControl(game.canvas);
 
                 this.light = scene.lights[0];
-                var shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
-                shadowGenerator.useBlurVarianceShadowMap = true;
+                var shadowGenerator = new BABYLON.ShadowGenerator(256, this.light);
 
                 for (var i = 0; i < scene.meshes.length; i++) {
                     var sceneMesh = scene.meshes[i];

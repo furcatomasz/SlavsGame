@@ -36,16 +36,13 @@ var Simple = (function (_super) {
                 fire.distortionTexture = new BABYLON.Texture("assets/fireplace/distortion.png", scene);
                 fire.opacityTexture = new BABYLON.Texture("assets/fireplace/candleOpacity.png", scene);
                 fire.speed = 5.0;
-                assetsManager.addMeshTask("character", "", "assets/animations/character/", "new_armature_walk.babylon");
+                assetsManager.addMeshTask("character", "", "assets/animations/character/", "avatar_movements.babylon");
                 assetsManager.addMeshTask("sword", "", "assets/", "sword.babylon");
                 assetsManager.addMeshTask("fireplace", "", "assets/fireplace/", "fireplace.babylon");
                 var sword;
                 assetsManager.onTaskSuccess = function (task) {
-                    for (var i_1 = 0; i_1 < task.loadedSkeletons.length; i_1++) {
-                        game.skeletons = task.loadedSkeletons;
-                    }
-                    for (var i_2 = 0; i_2 < task.loadedMeshes.length; i_2++) {
-                        var mesh = task.loadedMeshes[i_2];
+                    for (var i_1 = 0; i_1 < task.loadedMeshes.length; i_1++) {
+                        var mesh = task.loadedMeshes[i_1];
                         if (task.name == 'character') {
                             if (mesh.skeleton == undefined) {
                                 mesh.visibility = false;
@@ -54,6 +51,7 @@ var Simple = (function (_super) {
                                 mesh.position.y = 0;
                                 mesh.rotation.y = 30;
                                 game.player = mesh;
+                                game.scene.beginAnimation(game.player.skeleton, 45, 80, true);
                             }
                         }
                         if (task.name == 'fireplace') {
@@ -76,7 +74,7 @@ var Simple = (function (_super) {
                 };
                 assetsManager.load();
                 assetsManager.onFinish = function () {
-                    mount(sword, game.player, game.skeletons[0], 'hand.R', scene);
+                    mount(sword, game.player, game.player.skeleton, 'hand.R', scene);
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);
                     });
@@ -103,7 +101,7 @@ var Simple = (function (_super) {
         });
     }
     return Simple;
-}(Scene));
+})(Scene);
 function mount(obj, objTo, ske, boneName, scene) {
     var boneIndice = -1;
     for (var i = 0; i < ske.bones.length; i++) {

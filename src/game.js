@@ -25,5 +25,5 @@ var Game = (function () {
         });
     };
     return Game;
-}());
+})();
 //# sourceMappingURL=game.js.map

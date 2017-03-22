@@ -36,15 +36,11 @@ class Simple extends Scene {
                 fire.opacityTexture = new BABYLON.Texture("assets/fireplace/candleOpacity.png", scene);
                 fire.speed = 5.0;
 
-                assetsManager.addMeshTask("character", "", "assets/animations/character/", "new_armature_walk.babylon");
+                assetsManager.addMeshTask("character", "", "assets/animations/character/", "avatar_movements.babylon");
                 assetsManager.addMeshTask("sword", "", "assets/", "sword.babylon");
                 assetsManager.addMeshTask("fireplace", "", "assets/fireplace/", "fireplace.babylon");
                 let sword;
                 assetsManager.onTaskSuccess = function (task) {
-                    for (let i = 0; i < task.loadedSkeletons.length; i++) {
-                        game.skeletons = task.loadedSkeletons;
-                    }
-
                     for (let i = 0; i < task.loadedMeshes.length; i++) {
                         let mesh = task.loadedMeshes[i];
                         if (task.name == 'character') {
@@ -55,6 +51,7 @@ class Simple extends Scene {
                                 mesh.position.y = 0;
                                 mesh.rotation.y = 30;
                                 game.player = mesh;
+                                game.scene.beginAnimation(game.player.skeleton, 45, 80, true);
                             }
                         }
                         if (task.name == 'fireplace') {
@@ -79,7 +76,7 @@ class Simple extends Scene {
                 assetsManager.load();
 
                 assetsManager.onFinish = function () {
-                    mount(sword, game.player, game.skeletons[0], 'hand.R', scene);
+                    mount(sword, game.player, game.player.skeleton, 'hand.R', scene);
 
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);

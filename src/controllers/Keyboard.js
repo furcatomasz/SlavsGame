@@ -10,21 +10,42 @@ var Keyboard = (function (_super) {
         _super.apply(this, arguments);
     }
     Keyboard.prototype.handleKeyUp = function (evt) {
+        var self = this;
         if (evt.keyCode == 65) {
+            this.characterAnimation();
             this.left = true;
         }
         if (evt.keyCode == 68) {
+            this.characterAnimation();
             this.right = true;
         }
         if (evt.keyCode == 87) {
-            this.game.scene.beginAnimation(this.game.skeletons[0], 0, 60, true, 3);
+            this.characterAnimation();
             this.forward = true;
         }
         if (evt.keyCode == 83) {
-            this.game.scene.beginAnimation(this.game.skeletons[0], 0, 60, true, 3);
+            this.characterAnimation();
             this.back = true;
         }
+        if (evt.keyCode == 32) {
+            if (!this.animation) {
+                self.animation = this.game.scene.beginAnimation(this.game.player.skeleton, 0, 30, false, 1, function () {
+                    self.game.scene.beginAnimation(self.game.player.skeleton, 40, 80, true);
+                    self.animation = false;
+                });
+            }
+        }
     };
+    Keyboard.prototype.characterAnimation = function () {
+        var self = this;
+        if (!this.animation) {
+            self.animation = this.game.scene.beginAnimation(this.game.player.skeleton, 90, 109, false, 1, function () {
+                self.game.scene.beginAnimation(self.game.player.skeleton, 45, 80, true);
+                self.animation = false;
+            });
+        }
+    };
+    ;
     Keyboard.prototype.handleKeyDown = function (evt) {
         if (evt.keyCode == 65) {
             this.left = false;
@@ -33,14 +54,12 @@ var Keyboard = (function (_super) {
             this.right = false;
         }
         if (evt.keyCode == 87) {
-            this.game.scene.stopAnimation(this.game.skeletons[0]);
             this.forward = false;
         }
         if (evt.keyCode == 83) {
-            this.game.scene.stopAnimation(this.game.skeletons[0]);
             this.back = false;
         }
     };
     return Keyboard;
-}(Controller));
+})(Controller);
 //# sourceMappingURL=Keyboard.js.map

@@ -8,8 +8,11 @@ class Game {
     public controller: Keyboard;
     public canvas: HTMLCanvasElement;
     public engine: BABYLON.Engine;
-    public player;
+    public player: Player;
+    public characterMesh: Mesh;
     public skeletons;
+    public remotePlayers;
+    protected client: SocketIOClient;
 
     constructor(canvasElement : HTMLCanvasElement) {
         this.canvas = canvasElement;
@@ -20,7 +23,6 @@ class Game {
     }
 
     createScene() : void {
-        
             new Simple(this, 'simple');
             // new BABYLON.Sound("Music", "assets/musicDoman.mp3", newScene, null, { loop: true, autoplay: true });
             // var myAnalyser = new BABYLON.Analyser(newScene);

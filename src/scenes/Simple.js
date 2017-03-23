@@ -15,7 +15,7 @@ var Simple = (function (_super) {
             game.scene = scene;
             assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
-                scene.debugLayer.show();
+                //scene.debugLayer.show();
                 scene.activeCamera.attachControl(game.canvas);
                 this.light = scene.lights[0];
                 var shadowGenerator = new BABYLON.ShadowGenerator(256, this.light);
@@ -50,7 +50,8 @@ var Simple = (function (_super) {
                                 mesh.position.y = 0;
                                 mesh.rotation.y = 30;
                                 game.player = mesh;
-                                game.scene.beginAnimation(game.player.skeleton, 45, 80, true);
+                                game.characterMesh = mesh;
+                                game.client = new SocketIOClient('127.0.0.1:3000', game);
                             }
                         }
                         if (task.name == 'fireplace') {

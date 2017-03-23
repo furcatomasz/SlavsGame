@@ -32,6 +32,11 @@ class Keyboard extends Controller {
                 });
             }
         }
+console.log(self.game.player);
+        self.game.client.socket.emit('moveTo', {
+            p: self.game.player.character.mesh.position,
+            r: self.game.player.character.mesh.rotation
+        });
 
     }
 
@@ -58,5 +63,10 @@ class Keyboard extends Controller {
         if (evt.keyCode == 83) {
             this.back = false;
         }
+
+        self.game.client.socket.emit('moveTo', {
+            p: self.game.player.position,
+            r: self.game.player.rotation
+        });
     }
 }

@@ -1,0 +1,21 @@
+{
+  "name": "phaserGame",
+  "authors": [
+    "Tomasz Furca <tomasz.furca@kinguin.net>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "babylonjs": "^2.5.0",
+    "socket.io-client": "^1.7.2"
+  }
+}

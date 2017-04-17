@@ -32,11 +32,6 @@ class Keyboard extends Controller {
                 });
             }
         }
-console.log(self.game.player);
-        self.game.client.socket.emit('moveTo', {
-            p: self.game.player.character.mesh.position,
-            r: self.game.player.character.mesh.rotation
-        });
 
     }
 
@@ -64,9 +59,5 @@ console.log(self.game.player);
             this.back = false;
         }
 
-        self.game.client.socket.emit('moveTo', {
-            p: self.game.player.position,
-            r: self.game.player.rotation
-        });
     }
 }

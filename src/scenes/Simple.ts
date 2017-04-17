@@ -99,6 +99,13 @@ class Simple extends Scene {
                     if (game.controller.forward == true) {
                         game.player.translate(BABYLON.Axis.Z, -0.01, BABYLON.Space.LOCAL);
                     }
+console.log(game);
+                    if(game.client.socket.connected) {
+                        game.client.socket.emit('moveTo', {
+                            p: game.player.character.mesh.position,
+                            r: game.player.character.mesh.rotation
+                        });
+                    }
                 });
 
             });

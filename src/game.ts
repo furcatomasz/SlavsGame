@@ -18,8 +18,6 @@ class Game {
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.controller = new Keyboard(this);
-
-        // BABYLON.OBJFileLoader.OPTIMIZE_WITH_UV = true;
     }
 
     createScene() : void {
@@ -33,8 +31,6 @@ class Game {
     }
 
     animate() : void {
-
-        // the canvas/window resize event handler
         window.addEventListener('resize', () => {
             this.engine.resize();
         });

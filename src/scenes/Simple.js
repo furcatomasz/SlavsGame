@@ -15,6 +15,7 @@ var Simple = (function (_super) {
             game.scene = scene;
             assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
+                game.client = new SocketIOClient(game);
                 //scene.debugLayer.show();
                 scene.activeCamera.attachControl(game.canvas);
                 this.light = scene.lights[0];
@@ -51,7 +52,7 @@ var Simple = (function (_super) {
                                 mesh.rotation.y = 30;
                                 game.player = mesh;
                                 game.characterMesh = mesh;
-                                game.client = new SocketIOClient('127.0.0.1:3000', game);
+                                game.client.connect('127.0.0.1:3000');
                             }
                         }
                         if (task.name == 'fireplace') {
@@ -96,19 +97,12 @@ var Simple = (function (_super) {
                     if (game.controller.forward == true) {
                         game.player.translate(BABYLON.Axis.Z, -0.01, BABYLON.Space.LOCAL);
                     }
-                    console.log(game);
-                    if (game.client.socket.connected) {
-                        game.client.socket.emit('moveTo', {
-                            p: game.player.character.mesh.position,
-                            r: game.player.character.mesh.rotation
-                        });
-                    }
                 });
             });
         });
     }
     return Simple;
-})(Scene);
+}(Scene));
 function mount(obj, objTo, ske, boneName, scene) {
     var boneIndice = -1;
     for (var i = 0; i < ske.bones.length; i++) {

@@ -12,5 +12,5 @@ var Player = (function () {
         this.character = new Character(mesh, name, game);
     }
     return Player;
-})();
+}());
 //# sourceMappingURL=player.js.map

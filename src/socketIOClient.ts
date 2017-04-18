@@ -2,12 +2,15 @@ class SocketIOClient {
     protected game:Game;
     public socket;
 
-    constructor(socketUrl:string, game:Game) {
-        var self = this;
+    constructor(game:Game) {
         this.game = game;
-        this.socket = io.connect(socketUrl, {player: game.player});
-
-        self.playerConnected();
+    }
+    
+    public connect(socketUrl: string)
+    {
+        this.socket = io.connect(socketUrl, {player: this.game.player});
+    
+        this.playerConnected();
     }
 
     /**
@@ -54,9 +57,9 @@ class SocketIOClient {
                     } else {
                         player = game.remotePlayers[remotePlayerKey];
                     }
-console.log(socketRemotePlayer);
+
                     player.character.mesh.position = new BABYLON.Vector3(socketRemotePlayer.p.x, socketRemotePlayer.p.y, socketRemotePlayer.p.z);
-                    player.character.mesh.rotation = new BABYLON.Vector3(socketRemotePlayer.r.x, socketRemotePlayer.r.y, socketRemotePlayer.r.z);
+                    player.character.mesh.rotationQuaternion = new BABYLON.Quaternion(socketRemotePlayer.r.x, socketRemotePlayer.r.y, socketRemotePlayer.r.z, socketRemotePlayer.r.w);
 
                 }
             })

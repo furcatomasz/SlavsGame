@@ -18,7 +18,6 @@ io.on('connection', function (socket) {
         socket.on('moveTo', function (data) {
             player.p = data.p;
             player.r = data.r;
-console.log(player);
             socket.broadcast.emit('updatePlayers', remotePlayers);
         });
     });

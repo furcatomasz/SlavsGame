@@ -5,5 +5,5 @@ var Character = (function () {
         game.scene.beginAnimation(mesh.skeleton, 45, 80, true);
     }
     return Character;
-})();
+}());
 //# sourceMappingURL=character.js.map

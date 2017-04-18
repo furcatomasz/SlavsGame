@@ -6,7 +6,6 @@ var Game = (function () {
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.controller = new Keyboard(this);
-        // BABYLON.OBJFileLoader.OPTIMIZE_WITH_UV = true;
     }
     Game.prototype.createScene = function () {
         new Simple(this, 'simple');
@@ -19,11 +18,10 @@ var Game = (function () {
     };
     Game.prototype.animate = function () {
         var _this = this;
-        // the canvas/window resize event handler
         window.addEventListener('resize', function () {
             _this.engine.resize();
         });
     };
     return Game;
-})();
+}());
 //# sourceMappingURL=game.js.map

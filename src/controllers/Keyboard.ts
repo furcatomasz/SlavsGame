@@ -37,10 +37,17 @@ class Keyboard extends Controller {
 
     private characterAnimation() {
         let self = this;
+        console.log(this.animation);
         if (!this.animation) {
             self.animation = this.game.scene.beginAnimation(this.game.player.skeleton, 90, 109, false, 1, function () {
                 self.game.scene.beginAnimation(self.game.player.skeleton, 45, 80, true);
                 self.animation = false;
+            });
+        }
+        if(self.game.client.socket) {
+            self.game.client.socket.emit('moveTo', {
+                p: self.game.characterMesh.position,
+                r: self.game.characterMesh.rotationQuaternion
             });
         }
     };

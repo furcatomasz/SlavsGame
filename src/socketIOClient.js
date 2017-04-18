@@ -1,10 +1,11 @@
 var SocketIOClient = (function () {
-    function SocketIOClient(socketUrl, game) {
-        var self = this;
+    function SocketIOClient(game) {
         this.game = game;
-        this.socket = io.connect(socketUrl, { player: game.player });
-        self.playerConnected();
     }
+    SocketIOClient.prototype.connect = function (socketUrl) {
+        this.socket = io.connect(socketUrl, { player: this.game.player });
+        this.playerConnected();
+    };
     /**
      *
      * @returns {SocketIOClient}
@@ -44,9 +45,8 @@ var SocketIOClient = (function () {
                     else {
                         player = game.remotePlayers[remotePlayerKey];
                     }
-                    console.log(socketRemotePlayer);
                     player.character.mesh.position = new BABYLON.Vector3(socketRemotePlayer.p.x, socketRemotePlayer.p.y, socketRemotePlayer.p.z);
-                    player.character.mesh.rotation = new BABYLON.Vector3(socketRemotePlayer.r.x, socketRemotePlayer.r.y, socketRemotePlayer.r.z);
+                    player.character.mesh.rotationQuaternion = new BABYLON.Quaternion(socketRemotePlayer.r.x, socketRemotePlayer.r.y, socketRemotePlayer.r.z, socketRemotePlayer.r.w);
                 }
             });
         });
@@ -68,5 +68,5 @@ var SocketIOClient = (function () {
         return this;
     };
     return SocketIOClient;
-})();
+}());
 //# sourceMappingURL=socketIOClient.js.map

@@ -10,14 +10,18 @@ class Game {
     public engine: BABYLON.Engine;
     public player: Player;
     public characterMesh: Mesh;
-    public skeletons;
     public remotePlayers;
-    protected client: SocketIOClient;
-
+    public client: SocketIOClient;
+    public items
+    public environment;
+    
     constructor(canvasElement : HTMLCanvasElement) {
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.controller = new Keyboard(this);
+        this.client = new SocketIOClient(this);
+        this.items = [];
+        this.environment = [];
     }
 
     createScene() : void {

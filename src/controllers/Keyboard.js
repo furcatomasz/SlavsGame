@@ -10,49 +10,31 @@ var Keyboard = (function (_super) {
         _super.apply(this, arguments);
     }
     Keyboard.prototype.handleKeyUp = function (evt) {
-        var self = this;
+        var character = this.game.player.character;
         if (evt.keyCode == 65) {
-            this.characterAnimation();
+            character.mesh.rotate(BABYLON.Axis.Y, -0.05, BABYLON.Space.LOCAL);
+            character.runAnimationWalk();
             this.left = true;
         }
         if (evt.keyCode == 68) {
-            this.characterAnimation();
+            character.mesh.rotate(BABYLON.Axis.Y, 0.05, BABYLON.Space.LOCAL);
+            character.runAnimationWalk();
             this.right = true;
         }
         if (evt.keyCode == 87) {
-            this.characterAnimation();
+            character.mesh.translate(BABYLON.Axis.Z, -0.01, BABYLON.Space.LOCAL);
+            character.runAnimationWalk();
             this.forward = true;
         }
         if (evt.keyCode == 83) {
-            this.characterAnimation();
+            character.mesh.translate(BABYLON.Axis.Z, 0.01, BABYLON.Space.LOCAL);
+            character.runAnimationWalk();
             this.back = true;
         }
-        if (evt.keyCode == 32) {
-            if (!this.animation) {
-                self.animation = this.game.scene.beginAnimation(this.game.player.skeleton, 0, 30, false, 1, function () {
-                    self.game.scene.beginAnimation(self.game.player.skeleton, 40, 80, true);
-                    self.animation = false;
-                });
-            }
+        if (evt.keyCode == 32 && !this.animation) {
+            character.runAnimationHit();
         }
     };
-    Keyboard.prototype.characterAnimation = function () {
-        var self = this;
-        console.log(this.animation);
-        if (!this.animation) {
-            self.animation = this.game.scene.beginAnimation(this.game.player.skeleton, 90, 109, false, 1, function () {
-                self.game.scene.beginAnimation(self.game.player.skeleton, 45, 80, true);
-                self.animation = false;
-            });
-        }
-        if (self.game.client.socket) {
-            self.game.client.socket.emit('moveTo', {
-                p: self.game.characterMesh.position,
-                r: self.game.characterMesh.rotationQuaternion
-            });
-        }
-    };
-    ;
     Keyboard.prototype.handleKeyDown = function (evt) {
         if (evt.keyCode == 65) {
             this.left = false;

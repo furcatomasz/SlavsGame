@@ -13,10 +13,12 @@ var SocketIOClient = (function () {
     SocketIOClient.prototype.playerConnected = function () {
         var self = this;
         var game = this.game;
+        var playerName = 'test';
         this.socket.on('clientConnected', function (data) {
-            game.player.id = data.id;
-            self.socket.emit('createPlayer', 'testTOmek');
+            //TODO: promopt player name
+            self.socket.emit('createPlayer', playerName);
             game.remotePlayers = [];
+            game.player = new Player(game, data.id, playerName);
             self.updatePlayers().removePlayer();
         });
         return this;

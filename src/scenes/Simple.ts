@@ -6,13 +6,13 @@ class Simple extends Scene {
 
     constructor(game:Game, name:string) {
         super(game, name);
-        let assetsManager = this.assetsManager;
+
         BABYLON.SceneLoader.Load("", "assets/small_scene.babylon", game.engine, function (scene) {
             game.scene = scene;
-            assetsManager = new BABYLON.AssetsManager(scene);
+            let assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
-                game.client = new SocketIOClient(game);
-                //scene.debugLayer.show();
+
+                scene.debugLayer.show();
                 scene.activeCamera.attachControl(game.canvas);
 
                 this.light = scene.lights[0];
@@ -28,59 +28,33 @@ class Simple extends Scene {
                     }
                 }
 
-                // Create fire material
-                var fire = new BABYLON.FireMaterial("fire", scene);
-                fire.diffuseTexture = new BABYLON.Texture("assets/fireplace/fire.png", scene);
-                fire.distortionTexture = new BABYLON.Texture("assets/fireplace/distortion.png", scene);
-                fire.opacityTexture = new BABYLON.Texture("assets/fireplace/candleOpacity.png", scene);
-                fire.speed = 5.0;
-
-                assetsManager.addMeshTask("character", "", "assets/animations/character/", "avatar_movements.babylon");
-                assetsManager.addMeshTask("sword", "", "assets/", "sword.babylon");
-                assetsManager.addMeshTask("fireplace", "", "assets/fireplace/", "fireplace.babylon");
-                let sword;
-                assetsManager.onTaskSuccess = function (task) {
+                character = assetsManager.addMeshTask("character", "", "assets/animations/character/", "avatar_movements.babylon");
+                character.onSuccess = function (task) {
+                    console.log(task);
                     for (let i = 0; i < task.loadedMeshes.length; i++) {
                         let mesh = task.loadedMeshes[i];
                         if (task.name == 'character') {
+                            mesh.position.y = 0;
+                            mesh.rotation.y = 30;
+                            game.characterMesh = mesh;
 
-                            if(mesh.skeleton == undefined) {
-                                mesh.visibility = false;
-                            } else {
-                                mesh.position.y = 0;
-                                mesh.rotation.y = 30;
-                                game.player = mesh;
-                                game.characterMesh = mesh;
-                                game.client.connect('127.0.0.1:3000');
-                            }
                         }
-                        if (task.name == 'fireplace') {
-                            var sfxFireplace = new BABYLON.Sound("Fire", "assets/fireplace/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-                            sfxFireplace.attachToMesh(mesh);
-                            mesh.position.x = -0.5;
-                            mesh.position.z = -0.9;
-                            var plane = BABYLON.Mesh.CreatePlane("fireplane", 1.5, scene);
-                            plane.parent = mesh;
-                            plane.scaling.x = 0.1;
-                            plane.scaling.y = 0.5;
-                            plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
-                            plane.material = fire;
-                        }
-                        if (task.name == 'sword') {
-                            sword = mesh;
-                        }
+
                         shadowGenerator.getShadowMap().renderList.push(mesh);
                     }
 
                 };
+
+                new Items(assetsManager, game);
+                // new Environment(assetsManager, game);
                 assetsManager.load();
 
                 assetsManager.onFinish = function () {
-                    mount(sword, game.player, game.player.skeleton, 'hand.R', scene);
-
+                    game.client.connect('127.0.0.1:3000');
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);
                     });
+
                     window.addEventListener("keyup", function (event) {
                         game.controller.handleKeyDown(event);
                     }, false);
@@ -88,18 +62,6 @@ class Simple extends Scene {
 
                 game.engine.runRenderLoop(() => {
                     scene.render();
-                    if (game.controller.left == true) {
-                        game.player.rotate(BABYLON.Axis.Y, -0.05, BABYLON.Space.LOCAL);
-                    }
-                    if (game.controller.right == true) {
-                        game.player.rotate(BABYLON.Axis.Y, 0.05, BABYLON.Space.LOCAL);
-                    }
-                    if (game.controller.back == true) {
-                        game.player.translate(BABYLON.Axis.Z, 0.01, BABYLON.Space.LOCAL);
-                    }
-                    if (game.controller.forward == true) {
-                        game.player.translate(BABYLON.Axis.Z, -0.01, BABYLON.Space.LOCAL);
-                    }
                 });
 
             });
@@ -109,16 +71,3 @@ class Simple extends Scene {
 
 
 }
-
-function mount(obj, objTo, ske, boneName, scene) {
-    var boneIndice = -1;
-
-    for (var i = 0; i < ske.bones.length; i++) { if (ske.bones[i].name == boneName) { boneIndice=i; break;}}
-    var bone = ske.bones[boneIndice];
-
-    obj.attachToBone(bone, objTo);
-    obj.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
-    obj.position = new BABYLON.Vector3(0, 0, 0);
-    obj.rotation = new BABYLON.Vector3(0, 0, 80);
-
-};

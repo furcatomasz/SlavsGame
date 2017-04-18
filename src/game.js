@@ -6,6 +6,9 @@ var Game = (function () {
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.controller = new Keyboard(this);
+        this.client = new SocketIOClient(this);
+        this.items = [];
+        this.environment = [];
     }
     Game.prototype.createScene = function () {
         new Simple(this, 'simple');

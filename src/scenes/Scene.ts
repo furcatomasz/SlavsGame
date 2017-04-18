@@ -2,8 +2,6 @@ import IShadowLight = BABYLON.IShadowLight;
 abstract class Scene {
 
     protected game: Game;
-    protected assetsManager: BABYLON.AssetsManager;
-    
     protected light: IShadowLight;
     protected name:string;
 

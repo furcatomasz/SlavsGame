@@ -9,6 +9,7 @@ var Game = (function () {
         this.client = new SocketIOClient(this);
         this.items = [];
         this.environment = [];
+        this.characters = [];
     }
     Game.prototype.createScene = function () {
         new Simple(this, 'simple');

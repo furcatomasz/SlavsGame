@@ -17,7 +17,11 @@ var Simple = (function (_super) {
                 scene.debugLayer.show();
                 scene.activeCamera.attachControl(game.canvas);
                 this.light = scene.lights[0];
-                var shadowGenerator = new BABYLON.ShadowGenerator(256, this.light);
+                game.shadowGenerator = new BABYLON.ShadowGenerator(256, this.light);
+                game.shadowGenerator.usePoissonSampling = true;
+                game.shadowGenerator.useExponentialShadowMap = true;
+                game.shadowGenerator.useBlurExponentialShadowMap = true;
+                var shadowGenerator = game.shadowGenerator;
                 for (var i = 0; i < scene.meshes.length; i++) {
                     var sceneMesh = scene.meshes[i];
                     var meshName = scene.meshes[i]['name'];
@@ -28,21 +32,9 @@ var Simple = (function (_super) {
                         shadowGenerator.getShadowMap().renderList.push(sceneMesh);
                     }
                 }
-                character = assetsManager.addMeshTask("character", "", "assets/animations/character/", "avatar_movements.babylon");
-                character.onSuccess = function (task) {
-                    console.log(task);
-                    for (var i_1 = 0; i_1 < task.loadedMeshes.length; i_1++) {
-                        var mesh = task.loadedMeshes[i_1];
-                        if (task.name == 'character') {
-                            mesh.position.y = 0;
-                            mesh.rotation.y = 30;
-                            game.characterMesh = mesh;
-                        }
-                        shadowGenerator.getShadowMap().renderList.push(mesh);
-                    }
-                };
                 new Items(assetsManager, game);
-                // new Environment(assetsManager, game);
+                new Characters(assetsManager, game);
+                new Environment(assetsManager, game);
                 assetsManager.load();
                 assetsManager.onFinish = function () {
                     game.client.connect('127.0.0.1:3000');

@@ -9,12 +9,13 @@ class Game {
     public canvas: HTMLCanvasElement;
     public engine: BABYLON.Engine;
     public player: Player;
-    public characterMesh: Mesh;
     public remotePlayers;
     public client: SocketIOClient;
-    public items
+    public items;
     public environment;
-    
+    public characters;
+    public shadowGenerator: BABYLON.ShadowGenerator;
+
     constructor(canvasElement : HTMLCanvasElement) {
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
@@ -22,6 +23,7 @@ class Game {
         this.client = new SocketIOClient(this);
         this.items = [];
         this.environment = [];
+        this.characters = [];
     }
 
     createScene() : void {

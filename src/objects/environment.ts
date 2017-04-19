@@ -1,17 +1,12 @@
 class Environment {
 
-    private items: Array;
-
-    constructor(scene: Scene, game:Game) {
+    constructor(assetsManager:BABYLON.AssetsManager, game:Game) {
         let self = this;
-        assetsManager = new BABYLON.AssetsManager(scene);
-        assetsManager.addMeshTask("fireplace", "", "assets/fireplace/", "fireplace.babylon");
-        assetsManager.onTaskSuccess = function (task) {
-            for (let i = 0; i < task.loadedMeshes.length; i++) {
-                let mesh = task.loadedMeshes[i];
+        let scene = game.scene;
+        let fireplace = assetsManager.addMeshTask("fireplace", "", "assets/fireplace/", "fireplace.babylon");
+        fireplace.onSuccess = function (task) {
+                let mesh = task.loadedMeshes[0];
                 
-                if (task.name == 'fireplace') {
-                    // Create fire material
                     var fire = new BABYLON.FireMaterial("fire", scene);
                     fire.diffuseTexture = new BABYLON.Texture("assets/fireplace/fire.png", scene);
                     fire.distortionTexture = new BABYLON.Texture("assets/fireplace/distortion.png", scene);
@@ -28,10 +23,8 @@ class Environment {
                     plane.scaling.y = 0.5;
                     plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
                     plane.material = fire;
-                }
 
                 game.environment[task.name] = mesh;
-            }
         };
 
         assetsManager.load();

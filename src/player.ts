@@ -12,12 +12,13 @@ class Player {
         this.id = id;
         this.name = name;
 
-        let mesh;
-        if(game.player === undefined) {
-            mesh =  game.characterMesh;
-        } else {
-            mesh = game.characterMesh.createInstance();
-        }
+        let mesh = game.characters['player'].clone();
+        let skeleton = game.characters['player'].skeleton.clone();
+        mesh.visibility = true;
+        mesh.skeleton = skeleton;
+        mesh.position = new BABYLON.Vector3(0, 0, 0);
+
+        game.shadowGenerator.getShadowMap().renderList.push(mesh);
 
         this.character = new Character(mesh, name, game);
     }

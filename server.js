@@ -1,4 +1,4 @@
-var io = require('socket.io')(3000);
+var io = require('socket.io')(3003);
 var remotePlayers = [];
 var chat = {
     messages: []

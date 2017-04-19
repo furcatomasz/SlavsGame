@@ -16,7 +16,12 @@ class Simple extends Scene {
                 scene.activeCamera.attachControl(game.canvas);
 
                 this.light = scene.lights[0];
-                var shadowGenerator = new BABYLON.ShadowGenerator(256, this.light);
+                game.shadowGenerator = new BABYLON.ShadowGenerator(256, this.light);
+                game.shadowGenerator.usePoissonSampling = true;
+                game.shadowGenerator.useExponentialShadowMap = true;
+                game.shadowGenerator.useBlurExponentialShadowMap = true;
+
+                var shadowGenerator = game.shadowGenerator;
 
                 for (var i = 0; i < scene.meshes.length; i++) {
                     var sceneMesh = scene.meshes[i];
@@ -28,25 +33,10 @@ class Simple extends Scene {
                     }
                 }
 
-                character = assetsManager.addMeshTask("character", "", "assets/animations/character/", "avatar_movements.babylon");
-                character.onSuccess = function (task) {
-                    console.log(task);
-                    for (let i = 0; i < task.loadedMeshes.length; i++) {
-                        let mesh = task.loadedMeshes[i];
-                        if (task.name == 'character') {
-                            mesh.position.y = 0;
-                            mesh.rotation.y = 30;
-                            game.characterMesh = mesh;
-
-                        }
-
-                        shadowGenerator.getShadowMap().renderList.push(mesh);
-                    }
-
-                };
-
                 new Items(assetsManager, game);
-                // new Environment(assetsManager, game);
+                new Characters(assetsManager, game);
+                new Environment(assetsManager, game);
+
                 assetsManager.load();
 
                 assetsManager.onFinish = function () {

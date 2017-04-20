@@ -86,4 +86,9 @@ class Character {
         }
 
     }
+    
+    public isAnimationEnabled()
+    {
+        return this.animation;
+    }
 }

@@ -58,8 +58,10 @@ class SocketIOClient {
                     } else {
                         player = game.remotePlayers[remotePlayerKey];
                     }
+                    if(!player.character.isAnimationEnabled()) {
+                        player.character.runAnimationWalk();
+                    }
 
-                    player.character.runAnimationWalk();
                     var characterNewPosition = new BABYLON.Vector3(socketRemotePlayer.p.x, socketRemotePlayer.p.y, socketRemotePlayer.p.z);
                     player.character.mesh.position = characterNewPosition;
                     player.character.mesh.rotationQuaternion = new BABYLON.Quaternion(socketRemotePlayer.r.x, socketRemotePlayer.r.y, socketRemotePlayer.r.z, socketRemotePlayer.r.w);

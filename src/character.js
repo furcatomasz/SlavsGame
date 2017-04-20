@@ -61,6 +61,9 @@ var Character = (function () {
             });
         }
     };
+    Character.prototype.isAnimationEnabled = function () {
+        return this.animation;
+    };
     return Character;
 }());
 //# sourceMappingURL=character.js.map

@@ -6,7 +6,7 @@ var Player = (function () {
         var skeleton = game.characters['player'].skeleton.clone();
         mesh.visibility = true;
         mesh.skeleton = skeleton;
-        mesh.position = new BABYLON.Vector3(0, 0, 0);
+        mesh.position = new BABYLON.Vector3(1, 0, 0);
         game.shadowGenerator.getShadowMap().renderList.push(mesh);
         this.character = new Character(mesh, name, game);
     }

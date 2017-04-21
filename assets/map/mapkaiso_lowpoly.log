@@ -1,0 +1,629 @@
+Exporter version: 5.2.0, Blender version: 2.77 (sub 0)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used:
+		selected layers only:  false
+		flat shading entire scene:  true
+		inline textures:  false
+		texture directory:  D:\AOTF\world\babylonJs\mapkaiso_lowpoly_babylon\
+	Python World class constructor completed
+	processing begun of mesh:  choinka.019
+		processing begun of Standard material:  Material.026
+		processing begun of Standard material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#0
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  trawka.008
+		processing begun of Standard material:  Material.005
+		num positions      :  396
+		num normals        :  396
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  trawka.007
+		registered as also a user of material:  Material.005
+		num positions      :  396
+		num normals        :  396
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  trawka.006
+		registered as also a user of material:  Material.005
+		num positions      :  396
+		num normals        :  396
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  trawka.004
+		registered as also a user of material:  Material.005
+		num positions      :  396
+		num normals        :  396
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  trawka.003
+		registered as also a user of material:  Material.005
+		num positions      :  396
+		num normals        :  396
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  trawka.002
+		registered as also a user of material:  Material.005
+		num positions      :  396
+		num normals        :  396
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  trawka.005
+		registered as also a user of material:  Material.005
+		num positions      :  396
+		num normals        :  396
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  trawka.001
+		registered as also a user of material:  Material.005
+		num positions      :  66
+		num normals        :  66
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  66
+	processing begun of mesh:  choinka.018
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#1
+		num positions      :  216
+		num normals        :  216
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  216
+	processing begun of mesh:  choinka.017
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#2
+		num positions      :  216
+		num normals        :  216
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  216
+	processing begun of mesh:  choinka.016
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#3
+		num positions      :  648
+		num normals        :  648
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  648
+	processing begun of mesh:  choinka.015
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#4
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  choinka.014
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#5
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  choinka.013
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#6
+		num positions      :  648
+		num normals        :  648
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  648
+	processing begun of mesh:  choinka.012
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#7
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  choinka.007
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#8
+		num positions      :  648
+		num normals        :  648
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  648
+	processing begun of mesh:  choinka.011
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#9
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  choinka.010
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#10
+		num positions      :  648
+		num normals        :  648
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  648
+	processing begun of mesh:  choinka.008
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#11
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  choinka.009
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#12
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  choinka.006
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#13
+		num positions      :  648
+		num normals        :  648
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  648
+	processing begun of mesh:  choinka.005
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#14
+		num positions      :  648
+		num normals        :  648
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  648
+	processing begun of mesh:  choinka.004
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#15
+		num positions      :  648
+		num normals        :  648
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  648
+	processing begun of mesh:  choinka.001
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#16
+		num positions      :  648
+		num normals        :  648
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  648
+	processing begun of mesh:  choinka.000
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#17
+		num positions      :  648
+		num normals        :  648
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  648
+	processing begun of mesh:  choinka.003
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#18
+		num positions      :  216
+		num normals        :  216
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  216
+	processing begun of mesh:  choinka.002
+		registered as also a user of material:  Material.026
+		registered as also a user of material:  Material.027
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#19
+		num positions      :  648
+		num normals        :  648
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  648
+	processing begun of mesh:  trawka.1250
+		registered as also a user of material:  Material.005
+		num positions      :  66
+		num normals        :  66
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  66
+	processing begun of mesh:  trawka.1228
+		mesh is an instance of :  trawka.1250.  Processing halted.
+	processing begun of mesh:  Cylinder.010
+		processing begun of Standard material:  Material.023
+		processing begun of Standard material:  Material.024
+		processing begun of Standard material:  Material.025
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#20
+		num positions      :  1440
+		num normals        :  1440
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1440
+		WARNING: # of 0 area faces found:  68
+	processing begun of mesh:  Cylinder.003_Cylinder.004
+		processing begun of Standard material:  Material.017
+		processing begun of Standard material:  Material.018
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#21
+		num positions      :  1740
+		num normals        :  1740
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1740
+	processing begun of mesh:  Cone.001
+		processing begun of Standard material:  Material.016
+		num positions      :  108
+		num normals        :  108
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  108
+	processing begun of mesh:  Cone
+		processing begun of Standard material:  Material.015
+		num positions      :  108
+		num normals        :  108
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  108
+	processing begun of mesh:  Cylinder.002_Cylinder.003
+		processing begun of Standard material:  Material.003
+			Diffuse texture found "Kd.006"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  1314
+		num normals        :  1314
+		num uvs            :  2628
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1314
+	processing begun of mesh:  Icosphere.019
+		processing begun of Standard material:  Material.012
+			Diffuse texture found "Kd.005"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.018
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.017
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.016
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.015
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.014
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.013
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.012
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.011
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.010
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Cylinder.009
+		processing begun of Standard material:  Material.013
+		processing begun of Standard material:  Material.014
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#22
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  Cylinder.008
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#23
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  Cylinder.007
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#24
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  Cylinder.006
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#25
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  Cylinder.005
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#26
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  Cylinder.004
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#27
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  Cylinder.003
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#28
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  Cylinder.002
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#29
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  Cylinder.000
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#30
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  Cylinder.001
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#31
+		num positions      :  432
+		num normals        :  432
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  Icosphere
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.009
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.008
+		processing begun of Standard material:  Material.011
+			WARNING: Mesh has no UV maps, material:  "Texture" ignored
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.007
+		registered as also a user of material:  Material.012
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Icosphere.000
+		processing begun of Standard material:  Material.001
+			Diffuse texture found "Kd.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.008
+			Diffuse texture found "Kd.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#32
+		num positions      :  1824
+		num normals        :  1824
+		num uvs            :  3648
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1824
+		WARNING: # of 0 area faces found:  84
+	processing begun of mesh:  Icosphere.001
+		processing begun of Standard material:  Material.006
+		processing begun of Standard material:  Material.007
+			WARNING: Mesh has no UV maps, material:  "Texture.004" ignored
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#33
+		num positions      :  1824
+		num normals        :  1824
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1824
+		WARNING: # of 0 area faces found:  84
+	processing begun of mesh:  Icosphere.003
+		registered as also a user of material:  Material.006
+		registered as also a user of material:  Material.007
+		processing begun of multimaterial:  mapkaiso_lowpoly.Multimaterial#34
+		num positions      :  1824
+		num normals        :  1824
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1824
+		WARNING: # of 0 area faces found:  84
+	processing begun of mesh:  fance.fance_Plane-tex.002
+		processing begun of Standard material:  Material.004
+			Diffuse texture found "Texture.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  540
+		num normals        :  540
+		num uvs            :  1080
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  540
+	processing begun of mesh:  fance.fance_Plane-tex.001
+		registered as also a user of material:  Material.004
+		num positions      :  540
+		num normals        :  540
+		num uvs            :  1080
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  540
+	processing begun of mesh:  fance.fance_Plane-tex
+		registered as also a user of material:  Material.004
+		num positions      :  540
+		num normals        :  540
+		num uvs            :  1080
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  540
+	processing begun of mesh:  ground_grass1
+		processing begun of Standard material:  ground_grass1
+			Diffuse texture found "ground_grass1"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  6
+		num normals        :  6
+		num uvs            :  12
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  trawka
+		mesh is an instance of :  trawka.1250.  Processing halted.
+	WARNING: The following camera not visible in scene thus ignored: Camera
+	processing begun of light (POINT):  Point.001
+	processing begun of light (POINT):  Point
+	processing begun of light (SUN):  Lamp
+========= Writing of scene file started =========
+========= Writing of scene file completed =========
+========= end of processing =========
+elapsed time:  0 min, 2.756 secs

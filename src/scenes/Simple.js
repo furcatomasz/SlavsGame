@@ -14,8 +14,17 @@ var Simple = (function (_super) {
             game.scene = scene;
             var assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
+                var hpBar = new CASTORGUI.GUIProgress("textDialog", { w: 200, h: 20, x: 10, y: 0, value: 80 }, game.gui);
+                hpBar.setVisible(true);
+                new CASTORGUI.GUIButton("gui.button.inventory", { x: 15, y: 35, value: "Inventory" }, game.gui, function () {
+                    console.log('inwentory');
+                    alert('Inwentory');
+                });
+                var dialog = new CASTORGUI.GUIPanel("Panel", { w: 400, h: 100, x: 15, y: (game.gui.getCanvasSize().height - 110) }, game.gui);
+                dialog.setVisible(true);
+                dialog.add(new CASTORGUI.GUIText("textDialog", { size: 15, text: "Chat" }, game.gui, true));
                 // scene.debugLayer.show();
-                var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 15, 1), scene);
+                var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
                 camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
                 camera.orthoTop = 15;
                 camera.orthoBottom = 0;

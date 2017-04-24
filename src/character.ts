@@ -19,9 +19,15 @@ class Character {
         this.items = [];
         this.createItems();
 
-        game.scene.beginAnimation(mesh.skeleton, 45, 80, true);
+        this.runAnimationStand();
         this.mount(this.items.weapon, 'hand.R')
     }
+
+    public runAnimationStand() :void {
+        if (!this.animation) {
+            this.game.scene.beginAnimation(this.mesh.skeleton, 215, 280, true);
+        }
+    };
 
     protected createItems()
     {
@@ -44,9 +50,6 @@ class Character {
         var bone = this.mesh.skeleton.bones[boneIndice];
 
         mesh.attachToBone(bone, this.mesh);
-        // mesh.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
-        mesh.position = new BABYLON.Vector3(0, 0, 0);
-        mesh.rotation = new BABYLON.Vector3(0, 0, 80);
 
     };
 
@@ -55,10 +58,12 @@ class Character {
      */
     public runAnimationHit():void {
         let self = this;
-        self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 0, 30, false, 1, function () {
-            self.game.scene.beginAnimation(self.mesh.skeleton, 45, 80, true);
-            self.animation = null;
-        });
+        if (!this.animation) {
+            self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 0, 15, false, 0.8, function () {
+                self.animation = null;
+                self.runAnimationStand();
+            });
+        }
     }
 
     public runAnimationWalk(emit: boolean):void {
@@ -79,12 +84,18 @@ class Character {
         }
 
         if (!this.animation) {
-            self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 90, 109, false, 1, function () {
-                self.game.scene.beginAnimation(self.mesh.skeleton, 45, 80, true);
+            self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 372, 390, false, 0.7, function () {
                 self.animation = null;
+                self.runAnimationStand();
             });
         }
 
+    }
+
+    public stopAnimation() : void {
+        if (this.isAnimationEnabled()) {
+            this.animation.stop();
+        }
     }
     
     public isAnimationEnabled()

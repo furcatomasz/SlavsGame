@@ -76,5 +76,5 @@ var Simple = (function (_super) {
         });
     }
     return Simple;
-}(Scene));
+})(Scene);
 //# sourceMappingURL=Simple.js.map

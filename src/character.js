@@ -5,9 +5,15 @@ var Character = (function () {
         this.game = game;
         this.items = [];
         this.createItems();
-        game.scene.beginAnimation(mesh.skeleton, 45, 80, true);
+        this.runAnimationStand();
         this.mount(this.items.weapon, 'hand.R');
     }
+    Character.prototype.runAnimationStand = function () {
+        if (!this.animation) {
+            this.game.scene.beginAnimation(this.mesh.skeleton, 215, 280, true);
+        }
+    };
+    ;
     Character.prototype.createItems = function () {
         var sword = this.game.items.sword.clone();
         sword.visibility = true;
@@ -24,9 +30,6 @@ var Character = (function () {
         }
         var bone = this.mesh.skeleton.bones[boneIndice];
         mesh.attachToBone(bone, this.mesh);
-        // mesh.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
-        mesh.position = new BABYLON.Vector3(0, 0, 0);
-        mesh.rotation = new BABYLON.Vector3(0, 0, 80);
     };
     ;
     /**
@@ -34,10 +37,12 @@ var Character = (function () {
      */
     Character.prototype.runAnimationHit = function () {
         var self = this;
-        self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 0, 30, false, 1, function () {
-            self.game.scene.beginAnimation(self.mesh.skeleton, 45, 80, true);
-            self.animation = null;
-        });
+        if (!this.animation) {
+            self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 0, 15, false, 0.8, function () {
+                self.animation = null;
+                self.runAnimationStand();
+            });
+        }
     };
     Character.prototype.runAnimationWalk = function (emit) {
         var self = this;
@@ -55,15 +60,20 @@ var Character = (function () {
             });
         }
         if (!this.animation) {
-            self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 90, 109, false, 1, function () {
-                self.game.scene.beginAnimation(self.mesh.skeleton, 45, 80, true);
+            self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 372, 390, false, 0.7, function () {
                 self.animation = null;
+                self.runAnimationStand();
             });
+        }
+    };
+    Character.prototype.stopAnimation = function () {
+        if (this.isAnimationEnabled()) {
+            this.animation.stop();
         }
     };
     Character.prototype.isAnimationEnabled = function () {
         return this.animation;
     };
     return Character;
-}());
+})();
 //# sourceMappingURL=character.js.map

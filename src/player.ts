@@ -14,9 +14,10 @@ class Player {
 
         let mesh = game.characters['player'].clone();
         let skeleton = game.characters['player'].skeleton.clone();
+        console.log(skeleton);
         mesh.visibility = true;
         mesh.skeleton = skeleton;
-        mesh.position = new BABYLON.Vector3(1, 0, 0);
+        mesh.position = new BABYLON.Vector3(8, 3, 0);
 
         game.shadowGenerator.getShadowMap().renderList.push(mesh);
 

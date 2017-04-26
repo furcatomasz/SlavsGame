@@ -68,9 +68,10 @@ class Simple extends Scene {
                 // new Environment(assetsManager, game);
 
                 assetsManager.load();
-
+                let enemy = null;
                 assetsManager.onFinish = function () {
                     game.client.connect('127.0.0.1:3003');
+                    enemy = new Enemy(game);
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);
                     });
@@ -82,6 +83,19 @@ class Simple extends Scene {
 
                 game.engine.runRenderLoop(() => {
                     scene.render();
+
+                    if(game.player && enemy) {
+                        enemy.character.mesh.lookAt(game.player.character.mesh.position);
+
+                        if (game.player.character.items.weapon.intersectsMesh(enemy.character.mesh, false)) {
+                            console.log('kill him');
+                        }
+
+                        if (enemy.character.items.weapon.intersectsMesh(game.player.character.mesh, false)) {
+                            console.log('kill me');
+                        }
+                    }
+                    
                 });
 
             });

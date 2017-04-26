@@ -65,5 +65,5 @@ var Character = (function () {
         return this.animation;
     };
     return Character;
-}());
+})();
 //# sourceMappingURL=character.js.map

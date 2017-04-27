@@ -25,5 +25,5 @@ var Environment = (function () {
         assetsManager.load();
     }
     return Environment;
-}());
+})();
 //# sourceMappingURL=environment.js.map

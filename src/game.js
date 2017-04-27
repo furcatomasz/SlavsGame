@@ -13,6 +13,7 @@ var Game = (function () {
         this.items = [];
         this.environment = [];
         this.characters = [];
+        this.guiElements = [];
     }
     Game.prototype.createScene = function () {
         new Simple(this, 'simple');
@@ -30,5 +31,5 @@ var Game = (function () {
         });
     };
     return Game;
-}());
+})();
 //# sourceMappingURL=game.js.map

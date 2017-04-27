@@ -15,6 +15,7 @@ class Game {
     public items;
     public environment;
     public characters;
+    public guiElements;
     public shadowGenerator: BABYLON.ShadowGenerator;
 
     constructor(canvasElement : HTMLCanvasElement) {
@@ -28,6 +29,7 @@ class Game {
         this.items = [];
         this.environment = [];
         this.characters = [];
+        this.guiElements = [];
     }
 
     createScene() : void {

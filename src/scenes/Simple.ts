@@ -60,6 +60,8 @@ class Simple extends Scene {
                 this.light = scene.lights[0];
                 this.light.intensity = 2;
                 game.shadowGenerator = new BABYLON.ShadowGenerator(2048, this.light);
+                game.shadowGenerator.bias =  0.00001;
+                game.shadowGenerator.setDarkness(0.5);
                 game.shadowGenerator.usePoissonSampling = true;
                 game.shadowGenerator.useExponentialShadowMap = true;
                 game.shadowGenerator.useBlurExponentialShadowMap = true;
@@ -112,6 +114,8 @@ class Simple extends Scene {
                     } else {
                         shadowGenerator.getShadowMap().renderList.push(sceneMesh);
                     }
+
+                    sceneMesh.receiveShadows = true;
                 }
 
                 new Items(assetsManager, game);

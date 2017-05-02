@@ -60,11 +60,15 @@ class Simple extends Scene {
                 this.light = scene.lights[0];
                 this.light.intensity = 2;
                 game.shadowGenerator = new BABYLON.ShadowGenerator(2048, this.light);
-                game.shadowGenerator.bias =  0.00001;
+                game.shadowGenerator.bias = -0.24;
                 game.shadowGenerator.setDarkness(0.5);
                 game.shadowGenerator.usePoissonSampling = true;
                 game.shadowGenerator.useExponentialShadowMap = true;
                 game.shadowGenerator.useBlurExponentialShadowMap = true;
+
+                var gravityVector = new BABYLON.Vector3(0,-9.81, 0);
+                var physicsPlugin = new BABYLON.CannonJSPlugin();
+                scene.enablePhysics(gravityVector, physicsPlugin);
 
                 var shadowGenerator = game.shadowGenerator;
 
@@ -111,7 +115,9 @@ class Simple extends Scene {
                     }
                         if (meshName.search("ground") >= 0) {
                         sceneMesh.receiveShadows = true;
-                    } else {
+                            sceneMesh.physicsImpostor = new BABYLON.PhysicsImpostor(sceneMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 }, scene);
+
+                        } else {
                         shadowGenerator.getShadowMap().renderList.push(sceneMesh);
                     }
 

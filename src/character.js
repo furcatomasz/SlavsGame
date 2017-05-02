@@ -12,6 +12,7 @@ var Character = (function () {
         var sword = this.game.items.sword.clone();
         sword.visibility = true;
         this.game.shadowGenerator.getShadowMap().renderList.push(sword);
+        sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1 }, this.game.scene);
         this.items.weapon = sword;
     };
     Character.prototype.mount = function (mesh, boneName) {

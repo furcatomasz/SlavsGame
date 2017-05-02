@@ -14,7 +14,6 @@ var Simple = (function (_super) {
             game.scene = scene;
             var assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
-                scene.debugLayer.show();
                 ///1
                 var dialogUser = new CASTORGUI.GUIPanel("Panel1", { w: 300, h: 50, x: 10, y: 20 }, game.gui);
                 dialogUser.setVisible(true);
@@ -38,7 +37,6 @@ var Simple = (function (_super) {
                 var dialog = new CASTORGUI.GUIPanel("Panel", { w: 400, h: 100, x: 15, y: (game.gui.getCanvasSize().height - 110) }, game.gui);
                 dialog.setVisible(true);
                 dialog.add(new CASTORGUI.GUIText("textDialog", { size: 15, text: "Chat" }, game.gui, true));
-                console.log(scene);
                 var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
                 camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
                 camera.orthoTop = 15;
@@ -57,11 +55,14 @@ var Simple = (function (_super) {
                 this.light = scene.lights[0];
                 this.light.intensity = 2;
                 game.shadowGenerator = new BABYLON.ShadowGenerator(2048, this.light);
-                game.shadowGenerator.bias = 0.00001;
+                game.shadowGenerator.bias = -0.24;
                 game.shadowGenerator.setDarkness(0.5);
                 game.shadowGenerator.usePoissonSampling = true;
                 game.shadowGenerator.useExponentialShadowMap = true;
                 game.shadowGenerator.useBlurExponentialShadowMap = true;
+                var gravityVector = new BABYLON.Vector3(0, -9.81, 0);
+                var physicsPlugin = new BABYLON.CannonJSPlugin();
+                scene.enablePhysics(gravityVector, physicsPlugin);
                 var shadowGenerator = game.shadowGenerator;
                 for (var i = 0; i < scene.meshes.length; i++) {
                     var sceneMesh = scene.meshes[i];
@@ -94,6 +95,7 @@ var Simple = (function (_super) {
                     }
                     if (meshName.search("ground") >= 0) {
                         sceneMesh.receiveShadows = true;
+                        sceneMesh.physicsImpostor = new BABYLON.PhysicsImpostor(sceneMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 }, scene);
                     }
                     else {
                         shadowGenerator.getShadowMap().renderList.push(sceneMesh);

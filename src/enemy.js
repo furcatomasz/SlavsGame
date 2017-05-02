@@ -6,7 +6,8 @@ var Enemy = (function () {
         mesh.visibility = true;
         mesh.skeleton = skeleton;
         mesh.material = material;
-        mesh.position = new BABYLON.Vector3(3, 0.1, -5);
+        mesh.position = new BABYLON.Vector3(3, 5.1, -5);
+        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 3, restitution: 0.2 }, game.scene);
         game.shadowGenerator.getShadowMap().renderList.push(mesh);
         this.character = new Character(mesh, name, game);
     }

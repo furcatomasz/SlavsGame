@@ -7,6 +7,7 @@ var Characters = (function () {
             mesh.rotation = new BABYLON.Vector3(0, 0, 0);
             mesh.scaling = new BABYLON.Vector3(2.5, 2.5, 2.5);
             mesh.visibility = false;
+            mesh.receiveShadows = true;
             game.characters['player'] = mesh;
         };
     }

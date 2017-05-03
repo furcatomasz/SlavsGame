@@ -115,11 +115,12 @@ class Simple extends Scene {
                     }
                         if (meshName.search("ground") >= 0) {
                         sceneMesh.receiveShadows = true;
-                            sceneMesh.physicsImpostor = new BABYLON.PhysicsImpostor(sceneMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 }, scene);
-
                         } else {
                         shadowGenerator.getShadowMap().renderList.push(sceneMesh);
-                    }
+
+
+                        }
+                    sceneMesh.physicsImpostor = new BABYLON.PhysicsImpostor(sceneMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 }, scene);
 
                     sceneMesh.receiveShadows = true;
                 }

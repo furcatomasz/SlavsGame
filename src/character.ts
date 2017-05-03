@@ -11,6 +11,7 @@ class Character {
     protected game:Game;
     protected speed:number;
     protected animation:Animatable;
+    protected smokeParticlesA: BABYLON.ParticleSystem;
 
     constructor(mesh:BABYLON.Mesh, name:string, game:Game) {
         this.mesh = mesh;
@@ -29,7 +30,41 @@ class Character {
         sword.visibility = true;
         this.game.shadowGenerator.getShadowMap().renderList.push(sword);
 
-        sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1 }, this.game.scene);
+        sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 }, this.game.scene);
+        var smokeParticlesA = new BABYLON.ParticleSystem("particles", 1000, this.game.scene);
+        smokeParticlesA.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.scene);
+        smokeParticlesA.emitter = sword;
+        smokeParticlesA.minEmitBox = new BABYLON.Vector3(0, -70, 0); // Starting all from
+        smokeParticlesA.maxEmitBox = new BABYLON.Vector3(0, -70, 0); // To...
+
+        smokeParticlesA.color1 = new BABYLON.Color4(1, 1, 1, 1);
+        smokeParticlesA.color2 = new BABYLON.Color4(1, 1, 1, 1);
+        smokeParticlesA.colorDead = new BABYLON.Color4(1, 1, 1, 0.0);
+
+        smokeParticlesA.minSize = 0.2;
+        smokeParticlesA.maxSize = 0.5;
+
+        smokeParticlesA.minLifeTime = 0.05;
+        smokeParticlesA.maxLifeTime = 0.2;
+
+        smokeParticlesA.emitRate = 800;
+
+        // Blend mode : BLENDMODE_ONEONE, or BLENDMODE_STANDARD
+        smokeParticlesA.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
+
+        smokeParticlesA.gravity = new BABYLON.Vector3(0, -9.81, 0);
+
+        smokeParticlesA.direction1 = new BABYLON.Vector3(-1.5, 8, -1.5);
+        smokeParticlesA.direction2 = new BABYLON.Vector3(1.5, 8, 1.5);
+
+        smokeParticlesA.minAngularSpeed = -10.0;
+        smokeParticlesA.maxAngularSpeed = 10.0;
+
+        smokeParticlesA.minEmitPower = 0.1;
+        smokeParticlesA.maxEmitPower = 1;
+        smokeParticlesA.updateSpeed = 0.005;
+
+        this.smokeParticlesA = smokeParticlesA;
 
         this.items.weapon = sword;
     }
@@ -57,9 +92,11 @@ class Character {
      */
     public runAnimationHit():void {
         let self = this;
+        this.smokeParticlesA.start();
         self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 0, 30, false, 1, function () {
             self.game.scene.beginAnimation(self.mesh.skeleton, 45, 80, true);
             self.animation = null;
+            self.smokeParticlesA.stop();
         });
     }
 

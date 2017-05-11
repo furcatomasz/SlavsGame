@@ -15,7 +15,7 @@ class Enemy {
         mesh.skeleton = skeleton;
         mesh.material = material;
         mesh.position = new BABYLON.Vector3(3, 5.1, -5);
-        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 3, restitution: 0.2 }, game.scene);
+        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 3, restitution: 0 }, game.scene);
 
         game.shadowGenerator.getShadowMap().renderList.push(mesh);
 

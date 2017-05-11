@@ -14,6 +14,7 @@ var Simple = (function (_super) {
             game.scene = scene;
             var assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
+                scene.debugLayer.show();
                 ///1
                 var dialogUser = new CASTORGUI.GUIPanel("Panel1", { w: 300, h: 50, x: 10, y: 20 }, game.gui);
                 dialogUser.setVisible(true);
@@ -95,16 +96,28 @@ var Simple = (function (_super) {
                     }
                     if (meshName.search("ground") >= 0) {
                         sceneMesh.receiveShadows = true;
+                        sceneMesh.physicsImpostor = new BABYLON.PhysicsImpostor(sceneMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 }, scene);
+                    }
+                    else if (meshName.search("Cylinder.004") >= 0 ||
+                        meshName.search("Cylinder.005") >= 0 ||
+                        meshName.search("Cylinder.007") >= 0 ||
+                        meshName.search("Cylinder.008") >= 0 ||
+                        meshName.search("Cylinder.010") >= 0 ||
+                        meshName.search("Cylinder.003_") >= 0 ||
+                        meshName.search("Cylinder.009") >= 0) {
+                        sceneMesh.physicsImpostor = new BABYLON.PhysicsImpostor(sceneMesh, BABYLON.PhysicsImpostor.CylinderImpostor, { mass: 0.2, restitution: 0 }, scene);
                     }
                     else {
                         shadowGenerator.getShadowMap().renderList.push(sceneMesh);
+                        sceneMesh.physicsImpostor = new BABYLON.PhysicsImpostor(sceneMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.1 }, scene);
                     }
-                    sceneMesh.physicsImpostor = new BABYLON.PhysicsImpostor(sceneMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 }, scene);
                     sceneMesh.receiveShadows = true;
                 }
                 new Items(assetsManager, game);
                 new Characters(assetsManager, game);
                 //new Environment(assetsManager, game);
+                //var ground = BABYLON.Mesh.CreateBox("ground2", 16, 16, 1, scene);
+                //ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.5 }, scene);
                 assetsManager.load();
                 var enemy = null;
                 assetsManager.onFinish = function () {

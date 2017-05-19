@@ -4,9 +4,10 @@ var Character = (function () {
         this.name = name;
         this.game = game;
         this.items = [];
-        this.createItems();
-        game.scene.beginAnimation(mesh.skeleton, 45, 80, true);
-        this.mount(this.items.weapon, 'hand.R');
+        // this.createItems();
+        // let skeleton = this.mesh.getChildMeshes()[0].skeleton;
+        // game.scene.beginAnimation(skeleton, 45, 80, true);
+        // this.mount(this.items.weapon, 'hand.R')
     }
     Character.prototype.createItems = function () {
         var sword = this.game.items.sword.clone();
@@ -41,14 +42,16 @@ var Character = (function () {
     };
     Character.prototype.mount = function (mesh, boneName) {
         var boneIndice = -1;
-        for (var i = 0; i < this.mesh.skeleton.bones.length; i++) {
-            if (this.mesh.skeleton.bones[i].name == boneName) {
+        var meshCharacter = this.mesh.getChildMeshes()[0];
+        var skeleton = meshCharacter.skeleton;
+        for (var i = 0; i < skeleton.bones.length; i++) {
+            if (skeleton.bones[i].name == boneName) {
                 boneIndice = i;
                 break;
             }
         }
-        var bone = this.mesh.skeleton.bones[boneIndice];
-        mesh.attachToBone(bone, this.mesh);
+        var bone = skeleton.bones[boneIndice];
+        mesh.attachToBone(bone, meshCharacter);
         // mesh.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
         mesh.position = new BABYLON.Vector3(0, 0, 0);
         mesh.rotation = new BABYLON.Vector3(0, 0, 80);
@@ -59,9 +62,10 @@ var Character = (function () {
      */
     Character.prototype.runAnimationHit = function () {
         var self = this;
+        var skeleton = this.mesh.getChildMeshes()[0].skeleton;
         this.smokeParticlesA.start();
-        self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 0, 30, false, 1, function () {
-            self.game.scene.beginAnimation(self.mesh.skeleton, 45, 80, true);
+        self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, 1, function () {
+            self.game.scene.beginAnimation(skeleton, 45, 80, true);
             self.animation = null;
             self.smokeParticlesA.stop();
         });
@@ -69,6 +73,7 @@ var Character = (function () {
     Character.prototype.runAnimationWalk = function (emit) {
         var self = this;
         var rotation;
+        var skeleton = this.mesh.getChildMeshes()[0].skeleton;
         if (emit && self.game.client.socket) {
             if (self.mesh.rotationQuaternion) {
                 rotation = self.mesh.rotationQuaternion;
@@ -82,8 +87,8 @@ var Character = (function () {
             });
         }
         if (!this.animation) {
-            self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 90, 109, false, 1, function () {
-                self.game.scene.beginAnimation(self.mesh.skeleton, 45, 80, true);
+            self.animation = this.game.scene.beginAnimation(skeleton, 90, 109, false, 1, function () {
+                self.game.scene.beginAnimation(skeleton, 45, 80, true);
                 self.animation = null;
             });
         }
@@ -92,5 +97,5 @@ var Character = (function () {
         return this.animation;
     };
     return Character;
-})();
+}());
 //# sourceMappingURL=character.js.map

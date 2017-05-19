@@ -132,33 +132,35 @@ var Simple = (function (_super) {
                 };
                 game.engine.runRenderLoop(function () {
                     scene.render();
-                    if (game.player && enemy) {
-                        enemy.character.mesh.lookAt(game.player.character.mesh.position);
-                        if (game.player.character.items.weapon.intersectsMesh(enemy.character.mesh, false)) {
-                            enemy.character.mesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-                            var value = game.guiElements.hpBarEnemy.getValue();
-                            game.guiElements.hpBarEnemy.updateValue(value - 1);
-                        }
-                        else {
-                            enemy.character.mesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
-                        }
-                        if (enemy.character.items.weapon.intersectsMesh(game.player.character.mesh, false)) {
-                            console.log(game.guiElements);
-                            game.player.character.mesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-                            var value = game.guiElements.hpBar.getValue();
-                            game.guiElements.hpBar.updateValue(value - 1);
-                        }
-                        else {
-                            game.player.character.mesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
-                        }
-                    }
-                    if (game.guiElements.hpBarEnemy.getValue() <= 0) {
-                        game.guiElements.hpBarEnemy.updateValue(100);
-                    }
+                    // if(game.player && enemy) {
+                    //     enemy.character.mesh.lookAt(game.player.character.mesh.position);
+                    //
+                    //     if (game.player.character.items.weapon.intersectsMesh(enemy.character.mesh, false)) {
+                    //         enemy.character.mesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
+                    //         var value = game.guiElements.hpBarEnemy.getValue();
+                    //         game.guiElements.hpBarEnemy.updateValue(value-1);
+                    //
+                    //     } else {
+                    //         enemy.character.mesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
+                    //     }
+                    //
+                    //     if (enemy.character.items.weapon.intersectsMesh(game.player.character.mesh, false)) {
+                    //         console.log(game.guiElements);
+                    //         game.player.character.mesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
+                    //         var value = game.guiElements.hpBar.getValue();
+                    //         game.guiElements.hpBar.updateValue(value-1);
+                    //     } else {
+                    //         game.player.character.mesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
+                    //     }
+                    // }
+                    //
+                    // if(game.guiElements.hpBarEnemy.getValue() <= 0) {
+                    //     game.guiElements.hpBarEnemy.updateValue(100);
+                    // }
                 });
             });
         });
     }
     return Simple;
-})(Scene);
+}(Scene));
 //# sourceMappingURL=Simple.js.map

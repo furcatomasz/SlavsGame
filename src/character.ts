@@ -18,10 +18,11 @@ class Character {
         this.name = name;
         this.game = game;
         this.items = [];
-        this.createItems();
+        // this.createItems();
 
-        game.scene.beginAnimation(mesh.skeleton, 45, 80, true);
-        this.mount(this.items.weapon, 'hand.R')
+        // let skeleton = this.mesh.getChildMeshes()[0].skeleton;
+        // game.scene.beginAnimation(skeleton, 45, 80, true);
+        // this.mount(this.items.weapon, 'hand.R')
     }
 
     protected createItems()
@@ -71,16 +72,18 @@ class Character {
 
     public mount(mesh, boneName) {
         var boneIndice = -1;
+        var meshCharacter = this.mesh.getChildMeshes()[0];
+        let skeleton = meshCharacter.skeleton;
 
-        for (var i = 0; i < this.mesh.skeleton.bones.length; i++) {
-            if (this.mesh.skeleton.bones[i].name == boneName) {
+        for (var i = 0; i < skeleton.bones.length; i++) {
+            if (skeleton.bones[i].name == boneName) {
                 boneIndice = i;
                 break;
             }
         }
-        var bone = this.mesh.skeleton.bones[boneIndice];
+        var bone = skeleton.bones[boneIndice];
 
-        mesh.attachToBone(bone, this.mesh);
+        mesh.attachToBone(bone, meshCharacter);
         // mesh.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
         mesh.position = new BABYLON.Vector3(0, 0, 0);
         mesh.rotation = new BABYLON.Vector3(0, 0, 80);
@@ -92,9 +95,11 @@ class Character {
      */
     public runAnimationHit():void {
         let self = this;
+        let skeleton = this.mesh.getChildMeshes()[0].skeleton;
+
         this.smokeParticlesA.start();
-        self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 0, 30, false, 1, function () {
-            self.game.scene.beginAnimation(self.mesh.skeleton, 45, 80, true);
+        self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, 1, function () {
+            self.game.scene.beginAnimation(skeleton, 45, 80, true);
             self.animation = null;
             self.smokeParticlesA.stop();
         });
@@ -103,6 +108,7 @@ class Character {
     public runAnimationWalk(emit: boolean):void {
         let self = this;
         let rotation;
+        let skeleton = this.mesh.getChildMeshes()[0].skeleton;
 
         if (emit && self.game.client.socket) {
             if(self.mesh.rotationQuaternion) {
@@ -118,8 +124,8 @@ class Character {
         }
 
         if (!this.animation) {
-            self.animation = this.game.scene.beginAnimation(this.mesh.skeleton, 90, 109, false, 1, function () {
-                self.game.scene.beginAnimation(self.mesh.skeleton, 45, 80, true);
+            self.animation = this.game.scene.beginAnimation(skeleton, 90, 109, false, 1, function () {
+                self.game.scene.beginAnimation(skeleton, 45, 80, true);
                 self.animation = null;
             });
         }

@@ -18,12 +18,12 @@ class Keyboard extends Controller {
             this.right = true;
         }
         if (evt.keyCode == 87) {
-            character.mesh.translate(BABYLON.Axis.Z, -0.03, BABYLON.Space.LOCAL);
+            character.mesh.translate(BABYLON.Axis.Z, -0.1, BABYLON.Space.LOCAL);
             character.runAnimationWalk(true);
             this.forward = true;
         }
         if (evt.keyCode == 83) {
-            character.mesh.translate(BABYLON.Axis.Z, 0.03, BABYLON.Space.LOCAL);
+            character.mesh.translate(BABYLON.Axis.Z, 0.1, BABYLON.Space.LOCAL);
             character.runAnimationWalk(true);
             this.back = true;
         }

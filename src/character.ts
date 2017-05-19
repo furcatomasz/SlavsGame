@@ -18,11 +18,11 @@ class Character {
         this.name = name;
         this.game = game;
         this.items = [];
-        // this.createItems();
+         this.createItems();
 
-        // let skeleton = this.mesh.getChildMeshes()[0].skeleton;
-        // game.scene.beginAnimation(skeleton, 45, 80, true);
-        // this.mount(this.items.weapon, 'hand.R')
+         let skeleton = this.mesh.getChildMeshes()[0].skeleton;
+         game.scene.beginAnimation(skeleton, 45, 80, true);
+         this.mount(this.items.weapon, 'hand.R')
     }
 
     protected createItems()

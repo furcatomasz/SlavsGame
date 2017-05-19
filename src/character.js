@@ -4,10 +4,10 @@ var Character = (function () {
         this.name = name;
         this.game = game;
         this.items = [];
-        // this.createItems();
-        // let skeleton = this.mesh.getChildMeshes()[0].skeleton;
-        // game.scene.beginAnimation(skeleton, 45, 80, true);
-        // this.mount(this.items.weapon, 'hand.R')
+        this.createItems();
+        var skeleton = this.mesh.getChildMeshes()[0].skeleton;
+        game.scene.beginAnimation(skeleton, 45, 80, true);
+        this.mount(this.items.weapon, 'hand.R');
     }
     Character.prototype.createItems = function () {
         var sword = this.game.items.sword.clone();
@@ -97,5 +97,5 @@ var Character = (function () {
         return this.animation;
     };
     return Character;
-}());
+})();
 //# sourceMappingURL=character.js.map

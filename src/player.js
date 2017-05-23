@@ -14,9 +14,9 @@ var Player = (function () {
         mainMesh.position = new BABYLON.Vector3(3, 7.1, 0);
         mainMesh.visibility = false;
         mainMesh.physicsImpostor = new BABYLON.PhysicsImpostor(mainMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, friction: 0.01, restitution: 0.2 }, game.scene);
-        game.shadowGenerator.getShadowMap().renderList.push(mesh);
+        game.sceneManager.shadowGenerator.getShadowMap().renderList.push(mesh);
         this.character = new Character(mainMesh, name, game);
     }
     return Player;
-})();
+}());
 //# sourceMappingURL=player.js.map

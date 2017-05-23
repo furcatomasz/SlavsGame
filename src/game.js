@@ -1,6 +1,8 @@
 /// <reference path="controllers/Keyboard.ts"/>
 /// <reference path="scenes/Simple.ts"/>
 /// <reference path="../babylon/babylon.2.5.d.ts"/>
+/// <reference path="player.ts"/>
+/// <reference path="socketIOClient.ts"/>
 var Game = (function () {
     function Game(canvasElement) {
         this.canvas = canvasElement;
@@ -11,18 +13,11 @@ var Game = (function () {
         this.controller = new Keyboard(this);
         this.client = new SocketIOClient(this);
         this.items = [];
-        this.environment = [];
         this.characters = [];
         this.guiElements = [];
     }
     Game.prototype.createScene = function () {
         new Simple(this, 'simple');
-        // new BABYLON.Sound("Music", "assets/musicDoman.mp3", newScene, null, { loop: true, autoplay: true });
-        // var myAnalyser = new BABYLON.Analyser(newScene);
-        // myAnalyser.DEBUGCANVASPOS.x = 240;
-        // myAnalyser.DEBUGCANVASPOS.y = 30;
-        // BABYLON.Engine.audioEngine.connectToAnalyser(myAnalyser);
-        // myAnalyser.drawDebugCanvas();
     };
     Game.prototype.animate = function () {
         var _this = this;

@@ -1,10 +1,13 @@
 /// <reference path="controllers/Keyboard.ts"/>
 /// <reference path="scenes/Simple.ts"/>
 /// <reference path="../babylon/babylon.2.5.d.ts"/>
+/// <reference path="player.ts"/>
+/// <reference path="socketIOClient.ts"/>
 
 class Game {
-    
+
     public scene: BABYLON.Scene;
+    public sceneManager: Scene;
     public controller: Keyboard;
     public canvas: HTMLCanvasElement;
     public engine: BABYLON.Engine;
@@ -13,10 +16,8 @@ class Game {
     public remotePlayers;
     public client: SocketIOClient;
     public items;
-    public environment;
     public characters;
     public guiElements;
-    public shadowGenerator: BABYLON.ShadowGenerator;
 
     constructor(canvasElement : HTMLCanvasElement) {
         this.canvas = canvasElement;
@@ -27,19 +28,12 @@ class Game {
         this.controller = new Keyboard(this);
         this.client = new SocketIOClient(this);
         this.items = [];
-        this.environment = [];
         this.characters = [];
         this.guiElements = [];
     }
 
     createScene() : void {
             new Simple(this, 'simple');
-            // new BABYLON.Sound("Music", "assets/musicDoman.mp3", newScene, null, { loop: true, autoplay: true });
-            // var myAnalyser = new BABYLON.Analyser(newScene);
-            // myAnalyser.DEBUGCANVASPOS.x = 240;
-            // myAnalyser.DEBUGCANVASPOS.y = 30;
-            // BABYLON.Engine.audioEngine.connectToAnalyser(myAnalyser);
-            // myAnalyser.drawDebugCanvas();
     }
 
     animate() : void {

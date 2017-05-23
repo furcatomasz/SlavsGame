@@ -9,5 +9,5 @@ var Items = (function () {
         };
     }
     return Items;
-})();
+}());
 //# sourceMappingURL=items.js.map

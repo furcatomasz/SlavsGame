@@ -12,7 +12,7 @@ var Character = (function () {
     Character.prototype.createItems = function () {
         var sword = this.game.items.sword.clone();
         sword.visibility = true;
-        this.game.shadowGenerator.getShadowMap().renderList.push(sword);
+        this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
         sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 }, this.game.scene);
         var smokeParticlesA = new BABYLON.ParticleSystem("particles", 1000, this.game.scene);
         smokeParticlesA.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.scene);
@@ -97,5 +97,5 @@ var Character = (function () {
         return this.animation;
     };
     return Character;
-})();
+}());
 //# sourceMappingURL=character.js.map

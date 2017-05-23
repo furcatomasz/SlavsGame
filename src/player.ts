@@ -26,7 +26,7 @@ class Player {
         mainMesh.visibility = false;
         mainMesh.physicsImpostor = new BABYLON.PhysicsImpostor(mainMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass:1, friction:0.01, restitution:0.2}, game.scene);
 
-        game.shadowGenerator.getShadowMap().renderList.push(mesh);
+        game.sceneManager.shadowGenerator.getShadowMap().renderList.push(mesh);
 
         this.character = new Character(mainMesh, name, game);
     }

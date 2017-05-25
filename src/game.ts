@@ -18,6 +18,7 @@ class Game {
     public items;
     public characters;
     public guiElements;
+    public enemies;
 
     constructor(canvasElement : HTMLCanvasElement) {
         this.canvas = canvasElement;
@@ -30,6 +31,7 @@ class Game {
         this.items = [];
         this.characters = [];
         this.guiElements = [];
+        this.enemies = [];
     }
 
     createScene() : void {

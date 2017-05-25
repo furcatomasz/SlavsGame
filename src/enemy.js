@@ -9,11 +9,12 @@ var Enemy = (function () {
         mesh.material = material;
         mesh.parent = mainMesh;
         mesh.position = new BABYLON.Vector3(0, -0.4, -0.3);
-        mainMesh.position = new BABYLON.Vector3(3, 5.1, -5);
-        mainMesh.visibility = false;
+        mainMesh.position = new BABYLON.Vector3(3, 1.1, -5);
+        mainMesh.visibility = true;
         mainMesh.physicsImpostor = new BABYLON.PhysicsImpostor(mainMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, friction: 0.01, restitution: 0.2 }, game.scene);
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(mesh);
         this.character = new Character(mainMesh, name, game);
+        game.enemies.push(this);
     }
     return Enemy;
 }());

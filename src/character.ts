@@ -5,33 +5,49 @@ class Character {
     public mesh:Mesh;
     public id:number;
     public name:string;
+
+    /** Character atuts */
     public hp:number;
+    public attackSpeed:number;
+    public damage:number;
+    public walkSpeed:number;
+    public blockChance:number;
+
     public items;
 
     protected game:Game;
     protected speed:number;
     protected animation:Animatable;
-    protected smokeParticlesA: BABYLON.ParticleSystem;
+    protected smokeParticlesA:BABYLON.ParticleSystem;
 
     constructor(mesh:BABYLON.Mesh, name:string, game:Game) {
+        this.hp = 100;
+        this.attackSpeed = 1;
+        this.walkSpeed = 1;
+        this.damage = 5;
+        this.blockChance = 50;
+
         this.mesh = mesh;
         this.name = name;
         this.game = game;
         this.items = [];
-         this.createItems();
+        this.createItems();
 
-         let skeleton = this.mesh.getChildMeshes()[0].skeleton;
-         game.scene.beginAnimation(skeleton, 45, 80, true);
-         this.mount(this.items.weapon, 'hand.R')
+        let skeleton = this.mesh.getChildMeshes()[0].skeleton;
+        game.scene.beginAnimation(skeleton, 45, 80, true);
+        this.mount(this.items.weapon, 'hand.R');
     }
 
-    protected createItems()
-    {
+    protected createItems() {
         let sword = this.game.items.sword.clone();
         sword.visibility = true;
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
 
-        sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 }, this.game.scene);
+        sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, {
+            mass: 0,
+            restitution: 0
+        }, this.game.scene);
+
         var smokeParticlesA = new BABYLON.ParticleSystem("particles", 1000, this.game.scene);
         smokeParticlesA.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.scene);
         smokeParticlesA.emitter = sword;
@@ -98,20 +114,20 @@ class Character {
         let skeleton = this.mesh.getChildMeshes()[0].skeleton;
 
         this.smokeParticlesA.start();
-        self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, 1, function () {
+        self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, this.attackSpeed, function () {
             self.game.scene.beginAnimation(skeleton, 45, 80, true);
             self.animation = null;
             self.smokeParticlesA.stop();
         });
     }
 
-    public runAnimationWalk(emit: boolean):void {
+    public runAnimationWalk(emit:boolean):void {
         let self = this;
         let rotation;
         let skeleton = this.mesh.getChildMeshes()[0].skeleton;
 
         if (emit && self.game.client.socket) {
-            if(self.mesh.rotationQuaternion) {
+            if (self.mesh.rotationQuaternion) {
                 rotation = self.mesh.rotationQuaternion;
             } else {
                 rotation = new BABYLON.Quaternion(0, 0, 0, 0);
@@ -131,9 +147,8 @@ class Character {
         }
 
     }
-    
-    public isAnimationEnabled()
-    {
+
+    public isAnimationEnabled() {
         return this.animation;
     }
 }

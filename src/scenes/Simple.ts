@@ -12,12 +12,12 @@ class Simple extends Scene {
             game.scene = scene;
             let assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
-                scene.debugLayer.show();
+                // scene.debugLayer.show();
 
                 scene.lights = scene.lights.slice(2);
                 this.light = scene.lights[0];
                 this.light.intensity = 2;
-console.log(this.light);
+
                 self.setShadowGenerator(this.light);
                 self.setCamera();
                 // self.createGameGUI();
@@ -33,8 +33,9 @@ console.log(this.light);
                 assetsManager.load();
                 let enemy = null;
                 assetsManager.onFinish = function () {
-                    game.client.connect('127.0.0.1:3003');
                     enemy = new Enemy(game);
+                    game.client.connect('127.0.0.1:3003');
+
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);
                     });
@@ -49,24 +50,6 @@ console.log(this.light);
 
                      if(game.player && enemy) {
                          enemy.character.mesh.lookAt(game.player.character.mesh.position);
-
-                         if (game.controller.left) {
-                             game.player.character.mesh.rotate(BABYLON.Axis.Y, -0.05, BABYLON.Space.LOCAL);
-                         }
-                         if (game.controller.right) {
-                             game.player.character.mesh.rotate(BABYLON.Axis.Y, 0.05, BABYLON.Space.LOCAL);
-                         }
-                         game.player.character.mesh.computeWorldMatrix(true);
-                         if (game.controller.forward) {
-                             var velocity = BABYLON.Vector3.TransformNormal(new BABYLON.Vector3(0,0,-0.041), game.player.character.mesh.computeWorldMatrix());
-                             game.player.character.mesh.moveWithCollisions(velocity);
-                             game.player.character.runAnimationWalk(true);
-                         }
-                         if (game.controller.back) {
-                             var velocity = BABYLON.Vector3.TransformNormal(new BABYLON.Vector3(0,0,0.041), game.player.character.mesh.computeWorldMatrix());
-                             game.player.character.mesh.moveWithCollisions(velocity);
-                             game.player.character.runAnimationWalk(true);
-                         }
 
                          // if (game.player.character.items.weapon.intersectsMesh(enemy.character.mesh, false)) {
                          //    enemy.character.mesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);

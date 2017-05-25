@@ -15,6 +15,7 @@ var Game = (function () {
         this.items = [];
         this.characters = [];
         this.guiElements = [];
+        this.enemies = [];
     }
     Game.prototype.createScene = function () {
         new Simple(this, 'simple');

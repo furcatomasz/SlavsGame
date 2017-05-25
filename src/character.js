@@ -1,5 +1,10 @@
 var Character = (function () {
     function Character(mesh, name, game) {
+        this.hp = 100;
+        this.attackSpeed = 1;
+        this.walkSpeed = 1;
+        this.damage = 5;
+        this.blockChance = 50;
         this.mesh = mesh;
         this.name = name;
         this.game = game;
@@ -13,7 +18,10 @@ var Character = (function () {
         var sword = this.game.items.sword.clone();
         sword.visibility = true;
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
-        sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 }, this.game.scene);
+        sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, {
+            mass: 0,
+            restitution: 0
+        }, this.game.scene);
         var smokeParticlesA = new BABYLON.ParticleSystem("particles", 1000, this.game.scene);
         smokeParticlesA.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.scene);
         smokeParticlesA.emitter = sword;
@@ -64,7 +72,7 @@ var Character = (function () {
         var self = this;
         var skeleton = this.mesh.getChildMeshes()[0].skeleton;
         this.smokeParticlesA.start();
-        self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, 1, function () {
+        self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, this.attackSpeed, function () {
             self.game.scene.beginAnimation(skeleton, 45, 80, true);
             self.animation = null;
             self.smokeParticlesA.stop();

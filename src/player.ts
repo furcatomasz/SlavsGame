@@ -43,7 +43,7 @@ class Player {
     }
 
     protected registerMoving(game:Game, character:Character) {
-        let walkSpeed = Player.WALK_SPEED * character.walkSpeed;
+        let walkSpeed = Player.WALK_SPEED * (character.walkSpeed/100);
 
         if (game.controller.left) {
             character.mesh.rotate(BABYLON.Axis.Y, -Player.ROTATION_SPEED, BABYLON.Space.LOCAL);

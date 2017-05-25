@@ -27,7 +27,7 @@ var Player = (function () {
         });
     }
     Player.prototype.registerMoving = function (game, character) {
-        var walkSpeed = Player.WALK_SPEED * character.walkSpeed;
+        var walkSpeed = Player.WALK_SPEED * (character.walkSpeed / 100);
         if (game.controller.left) {
             character.mesh.rotate(BABYLON.Axis.Y, -Player.ROTATION_SPEED, BABYLON.Space.LOCAL);
         }
@@ -61,5 +61,5 @@ var Player = (function () {
     Player.WALK_SPEED = 0.041;
     Player.ROTATION_SPEED = 0.05;
     return Player;
-}());
+})();
 //# sourceMappingURL=player.js.map

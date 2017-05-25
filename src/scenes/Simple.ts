@@ -20,7 +20,7 @@ class Simple extends Scene {
 
                 self.setShadowGenerator(this.light);
                 self.setCamera();
-                // self.createGameGUI();
+                self.createGameGUI();
 
                 var gravityVector = new BABYLON.Vector3(0,-9.81, 0);
                 var physicsPlugin = new BABYLON.CannonJSPlugin();

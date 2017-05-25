@@ -22,8 +22,8 @@ class Character {
 
     constructor(mesh:BABYLON.Mesh, name:string, game:Game) {
         this.hp = 100;
-        this.attackSpeed = 1;
-        this.walkSpeed = 1;
+        this.attackSpeed = 100;
+        this.walkSpeed = 100;
         this.damage = 5;
         this.blockChance = 50;
 
@@ -113,12 +113,14 @@ class Character {
         let self = this;
         let skeleton = this.mesh.getChildMeshes()[0].skeleton;
 
-        this.smokeParticlesA.start();
-        self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, this.attackSpeed, function () {
-            self.game.scene.beginAnimation(skeleton, 45, 80, true);
-            self.animation = null;
-            self.smokeParticlesA.stop();
-        });
+        if (!this.animation) {
+            this.smokeParticlesA.start();
+            self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, this.attackSpeed / 100, function () {
+                self.game.scene.beginAnimation(skeleton, 45, 80, true);
+                self.animation = null;
+                self.smokeParticlesA.stop();
+            });
+        }
     }
 
     public runAnimationWalk(emit:boolean):void {
@@ -140,7 +142,7 @@ class Character {
         }
 
         if (!this.animation) {
-            self.animation = this.game.scene.beginAnimation(skeleton, 90, 109, false, 1, function () {
+            self.animation = this.game.scene.beginAnimation(skeleton, 90, 109, false, this.walkSpeed/100, function () {
                 self.game.scene.beginAnimation(skeleton, 45, 80, true);
                 self.animation = null;
             });

@@ -22,7 +22,7 @@ var Simple = (function (_super) {
                 this.light.intensity = 2;
                 self.setShadowGenerator(this.light);
                 self.setCamera();
-                // self.createGameGUI();
+                self.createGameGUI();
                 var gravityVector = new BABYLON.Vector3(0, -9.81, 0);
                 var physicsPlugin = new BABYLON.CannonJSPlugin();
                 scene.enablePhysics(gravityVector, physicsPlugin);
@@ -55,5 +55,5 @@ var Simple = (function (_super) {
         });
     }
     return Simple;
-}(Scene));
+})(Scene);
 //# sourceMappingURL=Simple.js.map

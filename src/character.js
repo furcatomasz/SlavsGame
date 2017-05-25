@@ -1,8 +1,8 @@
 var Character = (function () {
     function Character(mesh, name, game) {
         this.hp = 100;
-        this.attackSpeed = 1;
-        this.walkSpeed = 1;
+        this.attackSpeed = 100;
+        this.walkSpeed = 100;
         this.damage = 5;
         this.blockChance = 50;
         this.mesh = mesh;
@@ -71,12 +71,14 @@ var Character = (function () {
     Character.prototype.runAnimationHit = function () {
         var self = this;
         var skeleton = this.mesh.getChildMeshes()[0].skeleton;
-        this.smokeParticlesA.start();
-        self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, this.attackSpeed, function () {
-            self.game.scene.beginAnimation(skeleton, 45, 80, true);
-            self.animation = null;
-            self.smokeParticlesA.stop();
-        });
+        if (!this.animation) {
+            this.smokeParticlesA.start();
+            self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, this.attackSpeed / 100, function () {
+                self.game.scene.beginAnimation(skeleton, 45, 80, true);
+                self.animation = null;
+                self.smokeParticlesA.stop();
+            });
+        }
     };
     Character.prototype.runAnimationWalk = function (emit) {
         var self = this;
@@ -95,7 +97,7 @@ var Character = (function () {
             });
         }
         if (!this.animation) {
-            self.animation = this.game.scene.beginAnimation(skeleton, 90, 109, false, 1, function () {
+            self.animation = this.game.scene.beginAnimation(skeleton, 90, 109, false, this.walkSpeed / 100, function () {
                 self.game.scene.beginAnimation(skeleton, 45, 80, true);
                 self.animation = null;
             });
@@ -105,5 +107,5 @@ var Character = (function () {
         return this.animation;
     };
     return Character;
-}());
+})();
 //# sourceMappingURL=character.js.map

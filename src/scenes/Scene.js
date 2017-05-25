@@ -28,6 +28,7 @@ var Scene = (function () {
         this.game.scene.activeCamera.attachControl(this.game.canvas);
     };
     Scene.prototype.createGameGUI = function () {
+        var self = this;
         var dialogUser = new CASTORGUI.GUIPanel("Panel1", { w: 300, h: 50, x: 10, y: 20 }, this.game.gui);
         dialogUser.setVisible(true);
         dialogUser.add(new CASTORGUI.GUIText("You", { size: 15, text: "You", x: 10 }, this.game.gui, true));
@@ -42,14 +43,22 @@ var Scene = (function () {
         hpBarEnemy.setVisible(false);
         this.game.guiElements.hpBarEnemy = hpBarEnemy;
         dialogEnemy.add(hpBarEnemy);
-        new CASTORGUI.GUIButton("gui.button.inventory", { x: 15, y: 35, value: "Inventory" }, this.game.gui, function () {
+        new CASTORGUI.GUIButton("gui.button.inventory", { x: 15, y: 155, value: "Inventory" }, this.game.gui, function () {
             console.log('inwentory');
             alert('Inwentory');
         });
+        var sliderAttack = new CASTORGUI.GUISlider("gui.slider.attack", { x: 100, y: 185, min: 0, max: 200, value: 100 }, this.game.gui, function (event) {
+            self.game.player.character.attackSpeed = event.target.value;
+        });
+        new CASTORGUI.GUIText("attack.speed", { size: 15, text: "Attack speed", x: 10, y: 190, color: "white" }, this.game.gui, true);
+        var sliderWalk = new CASTORGUI.GUISlider("gui.slider.walk", { x: 100, y: 220, min: 0, max: 200, value: 100 }, this.game.gui, function (event) {
+            self.game.player.character.walkSpeed = event.target.value;
+        });
+        new CASTORGUI.GUIText("walk.speed", { size: 15, text: "Walk speed", x: 10, y: 225, color: "white" }, this.game.gui, true);
         var dialog = new CASTORGUI.GUIPanel("Panel", { w: 400, h: 100, x: 15, y: (this.game.gui.getCanvasSize().height - 110) }, this.game.gui);
         dialog.setVisible(true);
         dialog.add(new CASTORGUI.GUIText("textDialog", { size: 15, text: "Chat" }, this.game.gui, true));
     };
     return Scene;
-}());
+})();
 //# sourceMappingURL=Scene.js.map

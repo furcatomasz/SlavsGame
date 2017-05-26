@@ -24,6 +24,7 @@ var Scene = (function () {
         camera.orthoLeft = -Math.abs(newWidth);
         camera.orthoRight = newWidth;
         camera.orthoBottom = -Math.abs(zoom);
+        camera.rotation = new BABYLON.Vector3(0.381, 0.851, 0);
         this.game.scene.activeCamera = camera;
         this.game.scene.activeCamera.attachControl(this.game.canvas);
     };
@@ -60,5 +61,5 @@ var Scene = (function () {
         dialog.add(new CASTORGUI.GUIText("textDialog", { size: 15, text: "Chat" }, this.game.gui, true));
     };
     return Scene;
-})();
+}());
 //# sourceMappingURL=Scene.js.map

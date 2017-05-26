@@ -13,7 +13,7 @@ class Simple extends Scene {
             let assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
                 // scene.debugLayer.show();
-
+                scene.collisionsEnabled = false;
                 scene.lights = scene.lights.slice(2);
                 this.light = scene.lights[0];
                 this.light.intensity = 2;
@@ -31,9 +31,8 @@ class Simple extends Scene {
                 new Environment(game);
 
                 assetsManager.load();
-                let enemy = null;
                 assetsManager.onFinish = function () {
-                    enemy = new Enemy(game);
+                    new Enemy(game);
                     game.client.connect('127.0.0.1:3003');
 
                     window.addEventListener("keydown", function (event) {
@@ -47,33 +46,6 @@ class Simple extends Scene {
 
                 game.engine.runRenderLoop(() => {
                     scene.render();
-
-                     if(game.player && enemy) {
-                         enemy.character.mesh.lookAt(game.player.character.mesh.position);
-
-                         // if (game.player.character.items.weapon.intersectsMesh(enemy.character.mesh, false)) {
-                         //    enemy.character.mesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-                         //    var value = game.guiElements.hpBarEnemy.getValue();
-                         //    game.guiElements.hpBarEnemy.updateValue(value-1);
-                         //
-                         // } else {
-                         //    enemy.character.mesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
-                         // }
-                         //
-                         // if (enemy.character.items.weapon.intersectsMesh(game.player.character.mesh, false)) {
-                         //    console.log(game.guiElements);
-                         //    game.player.character.mesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-                         //    var value = game.guiElements.hpBar.getValue();
-                         //    game.guiElements.hpBar.updateValue(value-1);
-                         // } else {
-                         //    game.player.character.mesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
-                         // }
-                     }
-                     //
-                     // if(game.guiElements.hpBarEnemy.getValue() <= 0) {
-                     //     game.guiElements.hpBarEnemy.updateValue(100);
-                     // }
-                    
                 });
 
             });

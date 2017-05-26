@@ -17,6 +17,7 @@ var Simple = (function (_super) {
             var assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
                 // scene.debugLayer.show();
+                scene.collisionsEnabled = false;
                 scene.lights = scene.lights.slice(2);
                 this.light = scene.lights[0];
                 this.light.intensity = 2;
@@ -30,9 +31,8 @@ var Simple = (function (_super) {
                 new Characters(assetsManager, game);
                 new Environment(game);
                 assetsManager.load();
-                var enemy = null;
                 assetsManager.onFinish = function () {
-                    enemy = new Enemy(game);
+                    new Enemy(game);
                     game.client.connect('127.0.0.1:3003');
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);
@@ -43,17 +43,10 @@ var Simple = (function (_super) {
                 };
                 game.engine.runRenderLoop(function () {
                     scene.render();
-                    if (game.player && enemy) {
-                        enemy.character.mesh.lookAt(game.player.character.mesh.position);
-                    }
-                    //
-                    // if(game.guiElements.hpBarEnemy.getValue() <= 0) {
-                    //     game.guiElements.hpBarEnemy.updateValue(100);
-                    // }
                 });
             });
         });
     }
     return Simple;
-})(Scene);
+}(Scene));
 //# sourceMappingURL=Simple.js.map

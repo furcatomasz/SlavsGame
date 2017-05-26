@@ -43,5 +43,10 @@ class Game {
             this.engine.resize();
         });
     }
+
+    public static randomNumber(minimum:number, maximum:number): number {
+        return Math.round( Math.random() * (maximum - minimum) + minimum);
+    }
+
 }
 

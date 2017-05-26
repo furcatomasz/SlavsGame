@@ -21,8 +21,8 @@ var Player = (function () {
         }, game.scene);
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(mesh);
         this.character = new Character(mainMesh, name, game);
-        this.weaponCollisions(game, this.character);
         game.scene.registerAfterRender(function () {
+            self.weaponCollisions(game, self.character);
             self.registerMoving(game, self.character);
         });
     }
@@ -47,19 +47,26 @@ var Player = (function () {
         }
     };
     Player.prototype.weaponCollisions = function (game, character) {
-        console.log(game.enemies);
         for (var i = 0; i < game.enemies.length; i++) {
-            var enemy = game.enemies[i];
-            console.log(character.items.weapon.physicsImpostor);
-            console.log(enemy.character.mesh.physicsImpostor);
-            character.items.weapon.physicsImpostor.registerOnPhysicsCollide(enemy.character.mesh.physicsImpostor, function (d, s) {
-                console.log(d);
-                console.log(s);
-            });
+            var characterMesh = game.enemies[i].character.mesh.getChildMeshes()[0];
+            if (character.items.weapon.intersectsMesh(characterMesh, true)) {
+                characterMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
+                var value = game.guiElements.hpBarEnemy.getValue();
+                game.guiElements.hpBarEnemy.updateValue(value - 1);
+                if (value - 1 < 0) {
+                    characterMesh.dispose(true);
+                    game.enemies = [];
+                    game.guiElements.hpBarEnemy.updateValue(100);
+                    new Enemy(game);
+                }
+            }
+            else {
+                characterMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
+            }
         }
     };
     Player.WALK_SPEED = 0.041;
     Player.ROTATION_SPEED = 0.05;
     return Player;
-})();
+}());
 //# sourceMappingURL=player.js.map

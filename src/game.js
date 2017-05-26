@@ -26,6 +26,9 @@ var Game = (function () {
             _this.engine.resize();
         });
     };
+    Game.randomNumber = function (minimum, maximum) {
+        return Math.round(Math.random() * (maximum - minimum) + minimum);
+    };
     return Game;
 }());
 //# sourceMappingURL=game.js.map

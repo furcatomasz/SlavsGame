@@ -17,8 +17,9 @@ class Enemy {
         mesh.material = material;
         mesh.parent = mainMesh;
         mesh.position = new BABYLON.Vector3(0, -0.4, -0.3);
-        mainMesh.position = new BABYLON.Vector3(3, 1.1, -5);
-        mainMesh.visibility = true;
+
+        mainMesh.position = new BABYLON.Vector3(Game.randomNumber(3,-10), 1.1, Game.randomNumber(-10,-16));
+        mainMesh.visibility = false;
         mainMesh.physicsImpostor = new BABYLON.PhysicsImpostor(mainMesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass:1, friction:0.01, restitution:0.2}, game.scene);
 
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(mesh);
@@ -26,5 +27,11 @@ class Enemy {
         this.character = new Character(mainMesh, name, game);
 
         game.enemies.push(this);
+        let self = this;
+        game.scene.registerAfterRender(function() {
+            if(game.player) {
+                self.character.mesh.lookAt(game.player.character.mesh.position);
+            }
+        });
     }
 }

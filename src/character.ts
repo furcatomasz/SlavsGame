@@ -110,44 +110,50 @@ class Character {
      * ANIMATIONS
      */
     public runAnimationHit():void {
-        let self = this;
-        let skeleton = this.mesh.getChildMeshes()[0].skeleton;
-
         if (!this.animation) {
-            this.smokeParticlesA.start();
-            self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, this.attackSpeed / 100, function () {
-                self.game.scene.beginAnimation(skeleton, 45, 80, true);
-                self.animation = null;
-                self.smokeParticlesA.stop();
-            });
+            let self = this;
+            var childMesh = this.mesh.getChildMeshes()[0];
+
+            if(childMesh) {
+                let skeleton = childMesh.skeleton;
+                this.smokeParticlesA.start();
+                self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, this.attackSpeed / 100, function () {
+                    self.game.scene.beginAnimation(skeleton, 45, 80, true);
+                    self.animation = null;
+                    self.smokeParticlesA.stop();
+                });
+            }
         }
     }
 
     public runAnimationWalk(emit:boolean):void {
         let self = this;
         let rotation;
-        let skeleton = this.mesh.getChildMeshes()[0].skeleton;
+        var childMesh = this.mesh.getChildMeshes()[0];
 
-        if (emit && self.game.client.socket) {
-            if (self.mesh.rotationQuaternion) {
-                rotation = self.mesh.rotationQuaternion;
-            } else {
-                rotation = new BABYLON.Quaternion(0, 0, 0, 0);
+        if(childMesh) {
+            let skeleton = childMesh.skeleton;
+
+            if (emit && self.game.client.socket) {
+                if (self.mesh.rotationQuaternion) {
+                    rotation = self.mesh.rotationQuaternion;
+                } else {
+                    rotation = new BABYLON.Quaternion(0, 0, 0, 0);
+                }
+
+                self.game.client.socket.emit('moveTo', {
+                    p: self.mesh.position,
+                    r: rotation
+                });
             }
 
-            self.game.client.socket.emit('moveTo', {
-                p: self.mesh.position,
-                r: rotation
-            });
+            if (!this.animation) {
+                self.animation = this.game.scene.beginAnimation(skeleton, 90, 109, false, this.walkSpeed / 100, function () {
+                    self.game.scene.beginAnimation(skeleton, 45, 80, true);
+                    self.animation = null;
+                });
+            }
         }
-
-        if (!this.animation) {
-            self.animation = this.game.scene.beginAnimation(skeleton, 90, 109, false, this.walkSpeed/100, function () {
-                self.game.scene.beginAnimation(skeleton, 45, 80, true);
-                self.animation = null;
-            });
-        }
-
     }
 
     public isAnimationEnabled() {

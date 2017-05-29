@@ -69,15 +69,22 @@ class Player {
     protected weaponCollisions(game:Game, character:Character) {
 
         for (var i = 0; i < game.enemies.length; i++) {
-            let characterMesh = game.enemies[i].character.mesh.getChildMeshes()[0];
-            if (character.items.weapon.intersectsMesh(characterMesh, true)) {
+            var enemy = game.enemies[i];
+            var characterEnemy = enemy.character;
+            let characterMesh = characterEnemy.mesh.getChildMeshes()[0];
+            if (character.items.weapon.intersectsMesh(characterMesh, false)) {
                 characterMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
 
                 var value = game.guiElements.hpBarEnemy.getValue();
                 game.guiElements.hpBarEnemy.updateValue(value-1);
 
                 if(value-1 < 0) {
-                    characterMesh.dispose(true);
+                    game.scene.unregisterAfterRender(enemy.afterRender);
+                    enemy.visibilityArea.dispose();
+                    enemy.attackArea.dispose();
+                    characterMesh.dispose();
+                    characterEnemy.items.weapon.dispose();
+                    characterEnemy.items.weapon.setEnabled(false);
                     game.enemies = [];
                     game.guiElements.hpBarEnemy.updateValue(100);
                     new Enemy(game);

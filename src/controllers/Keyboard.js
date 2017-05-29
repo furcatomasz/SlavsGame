@@ -42,5 +42,5 @@ var Keyboard = (function (_super) {
         }
     };
     return Keyboard;
-}(Controller));
+})(Controller);
 //# sourceMappingURL=Keyboard.js.map

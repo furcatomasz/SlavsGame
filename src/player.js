@@ -19,6 +19,8 @@ var Player = (function () {
             friction: 0.01,
             restitution: 0.2
         }, game.scene);
+        mainMesh.physicsImpostor.physicsBody.fixedRotation = true;
+        mainMesh.physicsImpostor.physicsBody.updateMassProperties();
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(mesh);
         this.character = new Character(mainMesh, name, game);
         game.scene.registerAfterRender(function () {

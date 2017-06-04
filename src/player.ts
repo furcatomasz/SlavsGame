@@ -26,12 +26,12 @@ class Player {
         mesh.parent = mainMesh;
         mesh.position = new BABYLON.Vector3(0, -0.4, -0.3);
 
-        mainMesh.position = new BABYLON.Vector3(3, 3.1, 0);
+        mainMesh.position = new BABYLON.Vector3(3, 0.4, 0);
         mainMesh.visibility = false;
         mainMesh.physicsImpostor = new BABYLON.PhysicsImpostor(mainMesh, BABYLON.PhysicsImpostor.BoxImpostor, {
             mass: 1,
             friction: 0.01,
-            restitution: 0.2
+            restitution: 0.0001
         }, game.scene);
 
         mainMesh.physicsImpostor.physicsBody.fixedRotation = true;
@@ -74,7 +74,7 @@ class Player {
         for (var i = 0; i < game.enemies.length; i++) {
             var enemy = game.enemies[i];
             var characterEnemy = enemy.character;
-            let characterMesh = characterEnemy.mesh.getChildMeshes()[0];
+            let characterMesh = characterEnemy.mesh;
             if (character.items.weapon.intersectsMesh(characterMesh, false)) {
                 characterMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
 
@@ -86,8 +86,8 @@ class Player {
                     enemy.visibilityArea.dispose();
                     enemy.attackArea.dispose();
                     characterMesh.dispose();
-                    characterEnemy.items.weapon.dispose();
-                    characterEnemy.items.weapon.setEnabled(false);
+                    //characterEnemy.items.weapon.dispose();
+                    //characterEnemy.items.weapon.setEnabled(false);
                     game.enemies = [];
                     game.guiElements.hpBarEnemy.updateValue(100);
                     new Enemy(game);

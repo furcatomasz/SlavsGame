@@ -1,45 +1,13 @@
 class Enemy {
 
-    public x:number;
-    public y:number;
-    public z:number;
-    public character:Character;
-    public afterRender;
-
-    protected visibilityArea: Mesh;
-    protected attackArea: Mesh;
 
     constructor(game: Game) {
-        let mesh = game.characters['worm'].clone();
-        let skeleton = game.characters['worm'].skeleton.clone();
-        let material = game.characters['worm'].material.clone();
 
-        mesh.visibility = true;
-        mesh.skeleton = skeleton;
-        mesh.material = material;
-        mesh.scaling = new BABYLON.Vector3(0.3, 0.3, 0.3);
-        mesh.position = new BABYLON.Vector3(Game.randomNumber(3,-10), 1.1, Game.randomNumber(-10,-16));
-        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass:1, friction:0.01, restitution:0.2}, game.scene);
+        
 
-        let attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', { width: 5, height: 0.1, size: 5}, game.scene);
-        attackArea.parent = mesh;
-        attackArea.visibility = false;
 
-        let visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', { width: 32, height: 0.1, size: 32}, game.scene);
-        visivilityArea.parent = mesh;
-        visivilityArea.visibility = false;
 
-        mesh.physicsImpostor.physicsBody.fixedRotation = true;
-        mesh.physicsImpostor.physicsBody.updateMassProperties();
-
-        this.visibilityArea = visivilityArea;
-        this.attackArea = attackArea;
-
-        game.sceneManager.shadowGenerator.getShadowMap().renderList.push(mesh);
-
-        this.character = new Worm(mesh, name, game);
-
-        game.enemies.push(this);
+        
         let self = this;
         this.afterRender = function() {
             if(game.player) {

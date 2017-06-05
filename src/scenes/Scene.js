@@ -61,5 +61,5 @@ var Scene = (function () {
         dialog.add(new CASTORGUI.GUIText("textDialog", { size: 15, text: "Chat" }, this.game.gui, true));
     };
     return Scene;
-})();
+}());
 //# sourceMappingURL=Scene.js.map

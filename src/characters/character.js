@@ -1,18 +1,17 @@
+var Animatable = BABYLON.Animatable;
+var Mesh = BABYLON.Mesh;
 var Character = (function () {
-    function Character(mesh, name, game) {
-        this.hp = 100;
-        this.attackSpeed = 100;
-        this.walkSpeed = 100;
-        this.damage = 5;
-        this.blockChance = 50;
-        this.mesh = mesh;
+    function Character(name, game) {
         this.name = name;
         this.game = game;
-        this.items = [];
-        this.createItems();
-        var skeleton = this.mesh.getChildMeshes()[0].skeleton;
-        game.scene.beginAnimation(skeleton, 45, 80, true);
-        this.mount(this.items.weapon, 'hand.R');
+        // this.items = [];
+        // this.createItems();
+        var skeleton = this.mesh.skeleton;
+        skeleton.beginAnimation('stand', true);
+        this.mesh.physicsImpostor.physicsBody.fixedRotation = true;
+        this.mesh.physicsImpostor.physicsBody.updateMassProperties();
+        game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
+        // this.mount(this.items.weapon, 'hand.R');
     }
     Character.prototype.createItems = function () {
         var sword = this.game.items.sword.clone();
@@ -71,14 +70,12 @@ var Character = (function () {
     Character.prototype.runAnimationHit = function () {
         if (!this.animation) {
             var self_1 = this;
-            var childMesh = this.mesh.getChildMeshes()[0];
+            var childMesh = this.mesh;
             if (childMesh) {
-                var skeleton = childMesh.skeleton;
-                this.smokeParticlesA.start();
-                self_1.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, this.attackSpeed / 100, function () {
-                    self_1.game.scene.beginAnimation(skeleton, 45, 80, true);
+                var skeleton_1 = childMesh.skeleton;
+                self_1.animation = skeleton_1.beginAnimation('atack', false, this.attackSpeed / 100, function () {
+                    skeleton_1.beginAnimation('stand', true);
                     self_1.animation = null;
-                    self_1.smokeParticlesA.stop();
                 });
             }
         }
@@ -86,9 +83,9 @@ var Character = (function () {
     Character.prototype.runAnimationWalk = function (emit) {
         var self = this;
         var rotation;
-        var childMesh = this.mesh.getChildMeshes()[0];
+        var childMesh = this.mesh;
         if (childMesh) {
-            var skeleton = childMesh.skeleton;
+            var skeleton_2 = childMesh.skeleton;
             if (emit && self.game.client.socket) {
                 if (self.mesh.rotationQuaternion) {
                     rotation = self.mesh.rotationQuaternion;
@@ -102,8 +99,8 @@ var Character = (function () {
                 });
             }
             if (!this.animation) {
-                self.animation = this.game.scene.beginAnimation(skeleton, 90, 109, false, this.walkSpeed / 100, function () {
-                    self.game.scene.beginAnimation(skeleton, 45, 80, true);
+                self.animation = skeleton_2.beginAnimation('walk', false, this.walkSpeed / 100, function () {
+                    skeleton_2.beginAnimation('stand', true);
                     self.animation = null;
                 });
             }
@@ -113,5 +110,5 @@ var Character = (function () {
         return this.animation;
     };
     return Character;
-})();
+}());
 //# sourceMappingURL=character.js.map

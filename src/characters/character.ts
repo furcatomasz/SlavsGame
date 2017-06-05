@@ -1,10 +1,15 @@
 import Animatable = BABYLON.Animatable;
 import Mesh = BABYLON.Mesh;
 
-class Character {
+
+abstract class Character {
     public mesh:Mesh;
     public id:number;
     public name:string;
+
+    public x:number;
+    public y:number;
+    public z:number;
 
     /** Character atuts */
     public hp:number;
@@ -20,25 +25,23 @@ class Character {
     protected animation:Animatable;
     protected smokeParticlesA:BABYLON.ParticleSystem;
 
-    constructor(mesh:BABYLON.Mesh, name:string, game:Game) {
-        this.hp = 100;
-        this.attackSpeed = 100;
-        this.walkSpeed = 100;
-        this.damage = 5;
-        this.blockChance = 50;
-
-        this.mesh = mesh;
+    constructor(name:string, game:Game) {
         this.name = name;
         this.game = game;
-        this.items = [];
-        this.createItems();
+        // this.items = [];
+        // this.createItems();
 
-        let skeleton = this.mesh.getChildMeshes()[0].skeleton;
-        game.scene.beginAnimation(skeleton, 45, 80, true);
-        this.mount(this.items.weapon, 'hand.R');
+        let skeleton = this.mesh.skeleton;
+        skeleton.beginAnimation('stand', true);
+
+        this.mesh.physicsImpostor.physicsBody.fixedRotation = true;
+        this.mesh.physicsImpostor.physicsBody.updateMassProperties();
+        
+        game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
+        // this.mount(this.items.weapon, 'hand.R');
     }
 
-    protected createItems() {
+    public createItems() {
         let sword = this.game.items.sword.clone();
         sword.visibility = true;
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
@@ -106,21 +109,21 @@ class Character {
 
     };
 
+
     /**
      * ANIMATIONS
      */
     public runAnimationHit():void {
         if (!this.animation) {
             let self = this;
-            var childMesh = this.mesh.getChildMeshes()[0];
+            var childMesh = this.mesh;
 
             if(childMesh) {
                 let skeleton = childMesh.skeleton;
-                this.smokeParticlesA.start();
-                self.animation = this.game.scene.beginAnimation(skeleton, 0, 30, false, this.attackSpeed / 100, function () {
-                    self.game.scene.beginAnimation(skeleton, 45, 80, true);
+
+                self.animation = skeleton.beginAnimation('atack', false, this.attackSpeed / 100, function () {
+                    skeleton.beginAnimation('stand', true);
                     self.animation = null;
-                    self.smokeParticlesA.stop();
                 });
             }
         }
@@ -129,7 +132,7 @@ class Character {
     public runAnimationWalk(emit:boolean):void {
         let self = this;
         let rotation;
-        var childMesh = this.mesh.getChildMeshes()[0];
+        var childMesh = this.mesh;
 
         if(childMesh) {
             let skeleton = childMesh.skeleton;
@@ -148,8 +151,8 @@ class Character {
             }
 
             if (!this.animation) {
-                self.animation = this.game.scene.beginAnimation(skeleton, 90, 109, false, this.walkSpeed / 100, function () {
-                    self.game.scene.beginAnimation(skeleton, 45, 80, true);
+                self.animation = skeleton.beginAnimation('walk', false, this.walkSpeed / 100, function () {
+                    skeleton.beginAnimation('stand', true);
                     self.animation = null;
                 });
             }

@@ -1,8 +1,6 @@
 var io = require('socket.io')(3003);
 var remotePlayers = [];
-var chat = {
-    messages: []
-};
+var enemies = [];
 
 io.on('connection', function (socket) {
     var player = { id: socket.id };
@@ -30,18 +28,6 @@ io.on('connection', function (socket) {
         });
         socket.broadcast.emit('removePlayer', player.id);
     });
-
-    //socket.on('newMessage', function (message) {
-    //    chat.messages.push(message);
-    //    if(chat.messages.length > 9) {
-    //        chat.messages.shift();
-    //    }
-    //
-    //    socket.emit('newMessage', message);
-    //    socket.broadcast.emit('newMessage', message);
-    //
-    //});
-    //socket.emit('emitMessages', chat.messages);
 
 });
 

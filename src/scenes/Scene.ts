@@ -1,9 +1,10 @@
-import IShadowLight = BABYLON.IShadowLight;
+/// <reference path="../game.ts"/>
+/// <reference path="../../babylon/babylon.2.5.d.ts"/>
 
 abstract class Scene {
 
     protected game:Game;
-    protected light:IShadowLight;
+    protected light:BABYLON.IShadowLight;
     protected name:string;
     public shadowGenerator: BABYLON.ShadowGenerator;
 
@@ -12,7 +13,7 @@ abstract class Scene {
         this.name = name;
     }
 
-    protected setShadowGenerator(light:IShadowLight) {
+    protected setShadowGenerator(light:BABYLON.IShadowLight) {
         this.shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
         this.shadowGenerator.bias = -0.24;
         this.shadowGenerator.setDarkness(0.5);
@@ -64,12 +65,12 @@ abstract class Scene {
         });
 
         let sliderAttack = new CASTORGUI.GUISlider("gui.slider.attack", {x:100,y:185, min: 0, max: 200, value: 100}, this.game.gui, function(event: Event) {
-            self.game.player.character.attackSpeed = event.target.value;
+            self.game.player.attackSpeed = event.target.value;
         });
         new CASTORGUI.GUIText("attack.speed", {size:15, text:"Attack speed", x: 10, y:190, color: "white"}, this.game.gui, true)
 
         let sliderWalk = new CASTORGUI.GUISlider("gui.slider.walk", {x:100,y:220, min: 0, max: 200, value: 100}, this.game.gui, function(event: Event) {
-            self.game.player.character.walkSpeed = event.target.value;
+            self.game.player.walkSpeed = event.target.value;
         });
 
         new CASTORGUI.GUIText("walk.speed", {size:15, text:"Walk speed", x: 10, y:225, color: "white"}, this.game.gui, true)

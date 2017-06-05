@@ -7,10 +7,9 @@ io.on('connection', function (socket) {
     socket.emit('clientConnected', player);
 
     socket.on('createPlayer', function (playerName) {
-        player = { id: player.id, p: 0, r: 0, name: playerName };
+        player = { id: player.id, p: {}, r: {}, attack: false, name: playerName };
         remotePlayers.push(player);
 
-        socket.emit('updatePlayers', remotePlayers);
         socket.broadcast.emit('updatePlayers', remotePlayers);
 
         socket.on('moveTo', function (data) {
@@ -18,6 +17,12 @@ io.on('connection', function (socket) {
             player.r = data.r;
             socket.broadcast.emit('updatePlayers', remotePlayers);
         });
+
+        socket.on('attack', function (data) {
+            player.attack = data.attack;
+            socket.broadcast.emit('updatePlayers', remotePlayers);
+        });
+
     });
 
     socket.on('disconnect', function () {

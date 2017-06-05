@@ -5,8 +5,7 @@ class Keyboard extends Controller {
     protected animation;
 
     public handleKeyUp(evt):void {
-        let character = this.game.player.character;
-        
+
         if (evt.keyCode == 65) {
             this.left = true;
         }
@@ -20,8 +19,8 @@ class Keyboard extends Controller {
             this.back = true;
         }
 
-        if (evt.keyCode == 32 && !this.animation) {
-            character.runAnimationHit();
+        if (evt.keyCode == 32) {
+            this.game.player.runAnimationHit();
         }
 
     }

@@ -1,6 +1,9 @@
-/// <reference path="/babylon/babylon.2.5.d.ts"/>
+/// <reference path="../../babylon/babylon.2.5.d.ts"/>
 /// <reference path="Scene.ts"/>
-/// <reference path="/src/game.ts"/>
+/// <reference path="../game.ts"/>
+/// <reference path="../objects/characters.ts"/>
+/// <reference path="../objects/items.ts"/>
+/// <reference path="../objects/environment.ts"/>
 
 class Simple extends Scene {
 
@@ -32,9 +35,25 @@ class Simple extends Scene {
 
                 assetsManager.load();
                 assetsManager.onFinish = function () {
-                    new Enemy(game);
-                    game.client.connect('127.0.0.1:3003');
-
+                    game.client.connect(serverUrl);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);
                     });

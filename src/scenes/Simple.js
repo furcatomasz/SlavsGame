@@ -1,6 +1,9 @@
-/// <reference path="/babylon/babylon.2.5.d.ts"/>
+/// <reference path="../../babylon/babylon.2.5.d.ts"/>
 /// <reference path="Scene.ts"/>
-/// <reference path="/src/game.ts"/>
+/// <reference path="../game.ts"/>
+/// <reference path="../objects/characters.ts"/>
+/// <reference path="../objects/items.ts"/>
+/// <reference path="../objects/environment.ts"/>
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -32,8 +35,26 @@ var Simple = (function (_super) {
                 new Environment(game);
                 assetsManager.load();
                 assetsManager.onFinish = function () {
-                    new Enemy(game);
-                    game.client.connect('127.0.0.1:3003');
+                    game.client.connect(serverUrl);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
+                    new Worm('worm', game);
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);
                     });
@@ -48,5 +69,5 @@ var Simple = (function (_super) {
         });
     }
     return Simple;
-}(Scene));
+})(Scene);
 //# sourceMappingURL=Simple.js.map

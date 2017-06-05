@@ -10,7 +10,6 @@ var Keyboard = (function (_super) {
         _super.apply(this, arguments);
     }
     Keyboard.prototype.handleKeyUp = function (evt) {
-        var character = this.game.player.character;
         if (evt.keyCode == 65) {
             this.left = true;
         }
@@ -23,8 +22,8 @@ var Keyboard = (function (_super) {
         if (evt.keyCode == 83) {
             this.back = true;
         }
-        if (evt.keyCode == 32 && !this.animation) {
-            character.runAnimationHit();
+        if (evt.keyCode == 32) {
+            this.game.player.runAnimationHit();
         }
     };
     Keyboard.prototype.handleKeyDown = function (evt) {
@@ -42,5 +41,5 @@ var Keyboard = (function (_super) {
         }
     };
     return Keyboard;
-}(Controller));
+})(Controller);
 //# sourceMappingURL=Keyboard.js.map

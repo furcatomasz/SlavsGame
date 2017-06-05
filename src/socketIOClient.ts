@@ -1,3 +1,5 @@
+/// <reference path="game.ts"/>
+
 class SocketIOClient {
     protected game:Game;
     public socket;
@@ -14,7 +16,6 @@ class SocketIOClient {
     }
 
     /**
-     *
      * @returns {SocketIOClient}
      */
     protected playerConnected() {
@@ -26,7 +27,7 @@ class SocketIOClient {
             //TODO: promopt player name
             self.socket.emit('createPlayer', playerName);
             game.remotePlayers = [];
-            game.player = new Player(game, data.id, playerName);
+            game.player = new Player(game, data.id, playerName, true);
             self.updatePlayers().removePlayer();
         });
 
@@ -34,7 +35,6 @@ class SocketIOClient {
     }
 
     /**
-     *
      * @returns {SocketIOClient}
      */
     protected updatePlayers() {
@@ -53,21 +53,28 @@ class SocketIOClient {
                     });
 
                     if (remotePlayerKey === null) {
-                        player = new Player(game, socketRemotePlayer.id , socketRemotePlayer.name);
+                        player = new Player(game, socketRemotePlayer.id , socketRemotePlayer.name, false);
                         game.remotePlayers.push(player);
-                    } else {
+                    } else if (remotePlayerKey != null) {
                         player = game.remotePlayers[remotePlayerKey];
                     }
-                    if(!player.character.isAnimationEnabled()) {
-                        player.character.runAnimationWalk();
+
+                    if(player) {
+                        if (!player.isAnimationEnabled() && !socketRemotePlayer.attack) {
+                            player.runAnimationWalk();
+                        } else if (socketRemotePlayer.attack == true) {
+                            player.runAnimationHit();
+                        }
+
+                        player.mesh.position = new BABYLON.Vector3(socketRemotePlayer.p.x, socketRemotePlayer.p.y, socketRemotePlayer.p.z);
+                        ;
+                        player.mesh.rotationQuaternion = new BABYLON.Quaternion(socketRemotePlayer.r.x, socketRemotePlayer.r.y, socketRemotePlayer.r.z, socketRemotePlayer.r.w);
                     }
-
-                    var characterNewPosition = new BABYLON.Vector3(socketRemotePlayer.p.x, socketRemotePlayer.p.y, socketRemotePlayer.p.z);
-                    player.character.mesh.position = characterNewPosition;
-                    player.character.mesh.rotationQuaternion = new BABYLON.Quaternion(socketRemotePlayer.r.x, socketRemotePlayer.r.y, socketRemotePlayer.r.z, socketRemotePlayer.r.w);
-
                 }
             })
+
+            console.log(data);
+            console.log(game.remotePlayers);
         });
 
         return this;

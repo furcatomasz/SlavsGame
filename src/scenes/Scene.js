@@ -1,3 +1,5 @@
+/// <reference path="../game.ts"/>
+/// <reference path="../../babylon/babylon.2.5.d.ts"/>
 var Scene = (function () {
     function Scene(game, name) {
         this.game = game;
@@ -49,11 +51,11 @@ var Scene = (function () {
             alert('Inwentory');
         });
         var sliderAttack = new CASTORGUI.GUISlider("gui.slider.attack", { x: 100, y: 185, min: 0, max: 200, value: 100 }, this.game.gui, function (event) {
-            self.game.player.character.attackSpeed = event.target.value;
+            self.game.player.attackSpeed = event.target.value;
         });
         new CASTORGUI.GUIText("attack.speed", { size: 15, text: "Attack speed", x: 10, y: 190, color: "white" }, this.game.gui, true);
         var sliderWalk = new CASTORGUI.GUISlider("gui.slider.walk", { x: 100, y: 220, min: 0, max: 200, value: 100 }, this.game.gui, function (event) {
-            self.game.player.character.walkSpeed = event.target.value;
+            self.game.player.walkSpeed = event.target.value;
         });
         new CASTORGUI.GUIText("walk.speed", { size: 15, text: "Walk speed", x: 10, y: 225, color: "white" }, this.game.gui, true);
         var dialog = new CASTORGUI.GUIPanel("Panel", { w: 400, h: 100, x: 15, y: (this.game.gui.getCanvasSize().height - 110) }, this.game.gui);
@@ -61,5 +63,5 @@ var Scene = (function () {
         dialog.add(new CASTORGUI.GUIText("textDialog", { size: 15, text: "Chat" }, this.game.gui, true));
     };
     return Scene;
-}());
+})();
 //# sourceMappingURL=Scene.js.map

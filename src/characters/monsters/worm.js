@@ -29,42 +29,11 @@ var Worm = (function (_super) {
         this.blockChance = 50;
         this.id = serverKey;
         this.mesh = mesh;
-        this.name = name;
-        this.game = game;
+        this.visibilityAreaSize = 40;
+        this.attackAreaSize = 5;
         skeleton.beginAnimation('stand', true);
         _super.call(this, name, game);
     }
-    Worm.prototype.registerFunctionAfterRender = function () {
-        var self = this;
-        this.afterRender = function () {
-            if (self.game.player) {
-                var walkSpeed = Character.WALK_SPEED * (self.walkSpeed / 100);
-                var playerMesh = self.game.player.mesh;
-                if (self.visibilityArea.intersectsMesh(playerMesh, true)) {
-                    self.mesh.lookAt(playerMesh.position);
-                    if (self.attackArea.intersectsMesh(playerMesh, true)) {
-                        self.runAnimationHit();
-                        if (self.mesh.intersectsMesh(self.game.player.mesh, true)) {
-                            playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-                            var value = self.game.guiElements.hpBar.getValue();
-                            self.game.guiElements.hpBar.updateValue(value - 0.2);
-                            if (value - 0.1 < 0) {
-                                alert('Padłeś');
-                                window.location.reload();
-                            }
-                        }
-                        else {
-                            playerMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
-                        }
-                    }
-                    else {
-                        self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
-                        self.runAnimationWalk(true);
-                    }
-                }
-            }
-        };
-    };
     return Worm;
 }(Monster));
 //# sourceMappingURL=worm.js.map

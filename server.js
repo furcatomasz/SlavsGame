@@ -4,12 +4,26 @@ var enemies = [];
 createEnemies();
 
 io.on('connection', function (socket) {
-    var player = { id: socket.id };
+    var player = {id: socket.id};
     socket.emit('clientConnected', player);
 
     ///Player
     socket.on('createPlayer', function (playerName) {
-        player = { id: player.id, p: {}, r: {}, attack: false, name: playerName };
+        player = {
+            id: player.id,
+            p: {
+                x: randomNumber(3, -10),
+                y: 0.3,
+                z: randomNumber(-10, -16)
+            }, r: {
+                x: 0,
+                y: 0,
+                z: 0,
+                w: 0
+            },
+            attack: false,
+            name: playerName
+        };
         remotePlayers.push(player);
 
         socket.broadcast.emit('updatePlayers', remotePlayers);
@@ -28,10 +42,10 @@ io.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function () {
-        remotePlayers.forEach(function(remotePlayer, key) {
-           if(remotePlayer.id == player.id || remotePlayer == null) {
-               remotePlayers.splice(key, 1);
-           }
+        remotePlayers.forEach(function (remotePlayer, key) {
+            if (remotePlayer.id == player.id || remotePlayer == null) {
+                remotePlayers.splice(key, 1);
+            }
         });
         socket.broadcast.emit('removePlayer', player.id);
     });
@@ -60,6 +74,7 @@ function createEnemies() {
                 z: 0,
                 w: 0
             },
+            attack: false,
             hp: 100,
             type: 'worm'
         };

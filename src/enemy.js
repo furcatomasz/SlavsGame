@@ -8,5 +8,5 @@ var Enemy = (function () {
         //
     }
     return Enemy;
-}());
+})();
 //# sourceMappingURL=enemy.js.map

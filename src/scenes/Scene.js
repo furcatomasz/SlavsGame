@@ -16,7 +16,7 @@ var Scene = (function () {
     Scene.prototype.setCamera = function () {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), this.game.scene);
         camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        camera.orthoTop = 15;
+        camera.orthoTop = 10;
         camera.orthoBottom = 0;
         camera.orthoLeft = -15;
         camera.orthoRight = 15;
@@ -63,5 +63,5 @@ var Scene = (function () {
         dialog.add(new CASTORGUI.GUIText("textDialog", { size: 15, text: "Chat" }, this.game.gui, true));
     };
     return Scene;
-}());
+})();
 //# sourceMappingURL=Scene.js.map

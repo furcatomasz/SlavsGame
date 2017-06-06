@@ -39,6 +39,7 @@ class Player extends Character {
             self.weaponCollisions(game, self);
             if(registerMoving) {
                 self.registerMoving();
+                self.game.scene.activeCamera.position = self.mesh.position;
             }
         });
     }

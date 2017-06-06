@@ -36,6 +36,7 @@ var Player = (function (_super) {
             self.weaponCollisions(game, self);
             if (registerMoving) {
                 self.registerMoving();
+                self.game.scene.activeCamera.position = self.mesh.position;
             }
         });
     }
@@ -82,5 +83,5 @@ var Player = (function (_super) {
         }
     };
     return Player;
-}(Character));
+})(Character);
 //# sourceMappingURL=player.js.map

@@ -82,5 +82,5 @@ var Player = (function (_super) {
         }
     };
     return Player;
-})(Character);
+}(Character));
 //# sourceMappingURL=player.js.map

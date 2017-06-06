@@ -1,4 +1,5 @@
 /// <reference path="game.ts"/>
+/// <reference path="characters/monsters/monster.ts"/>
 var SocketIOClient = (function () {
     function SocketIOClient(game) {
         this.game = game;
@@ -6,6 +7,7 @@ var SocketIOClient = (function () {
     SocketIOClient.prototype.connect = function (socketUrl) {
         this.socket = io.connect(socketUrl, { player: this.game.player });
         this.playerConnected();
+        this.showEnemies();
     };
     /**
      * @returns {SocketIOClient}
@@ -20,6 +22,30 @@ var SocketIOClient = (function () {
             game.remotePlayers = [];
             game.player = new Player(game, data.id, playerName, true);
             self.updatePlayers().removePlayer();
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
+    SocketIOClient.prototype.showEnemies = function () {
+        var game = this.game;
+        this.socket.on('showEnemies', function (data) {
+            data.forEach(function (enemyData, key) {
+                var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
+                var rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
+                var enemy = game.enemies[key];
+                if (enemy) {
+                    enemy.mesh.position = position;
+                    enemy.mesh.rotationQuaternion = rotationQuaternion;
+                    enemy.mesh.runAnimationWalk(false);
+                }
+                else {
+                    if (enemyData.type == 'worm') {
+                        new Worm(key, data.id, game, position, rotationQuaternion);
+                    }
+                }
+            });
         });
         return this;
     };
@@ -54,13 +80,10 @@ var SocketIOClient = (function () {
                             player.runAnimationHit();
                         }
                         player.mesh.position = new BABYLON.Vector3(socketRemotePlayer.p.x, socketRemotePlayer.p.y, socketRemotePlayer.p.z);
-                        ;
                         player.mesh.rotationQuaternion = new BABYLON.Quaternion(socketRemotePlayer.r.x, socketRemotePlayer.r.y, socketRemotePlayer.r.z, socketRemotePlayer.r.w);
                     }
                 }
             });
-            console.log(data);
-            console.log(game.remotePlayers);
         });
         return this;
     };
@@ -80,5 +103,5 @@ var SocketIOClient = (function () {
         return this;
     };
     return SocketIOClient;
-})();
+}());
 //# sourceMappingURL=socketIOClient.js.map

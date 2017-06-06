@@ -36,25 +36,6 @@ var Simple = (function (_super) {
                 assetsManager.load();
                 assetsManager.onFinish = function () {
                     game.client.connect(serverUrl);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);
                     });
@@ -69,5 +50,5 @@ var Simple = (function (_super) {
         });
     }
     return Simple;
-})(Scene);
+}(Scene));
 //# sourceMappingURL=Simple.js.map

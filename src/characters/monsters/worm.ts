@@ -3,7 +3,7 @@
 
 class Worm extends Monster {
 
-    constructor(name:string, game:Game) {
+    constructor(serverKey: number, name:string, game:Game, position: BABYLON.Vector3, rotationQuaternion: BABYLON.Quaternion) {
         let mesh = game.characters['worm'].clone();
         let skeleton = game.characters['worm'].skeleton.clone();
         let material = game.characters['worm'].material.clone();
@@ -12,7 +12,8 @@ class Worm extends Monster {
         mesh.skeleton = skeleton;
         mesh.material = material;
         mesh.scaling = new BABYLON.Vector3(0.3, 0.3, 0.3);
-        mesh.position = new BABYLON.Vector3(Game.randomNumber(3, -10), 1.1, Game.randomNumber(-10, -16));
+        mesh.position = position;
+        mesh.rotation = rotationQuaternion;
         mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {
             mass: 20,
             friction: 1,
@@ -21,10 +22,10 @@ class Worm extends Monster {
 
         this.hp = 100;
         this.attackSpeed = 100;
-        this.walkSpeed = 100;
+        this.walkSpeed = 200;
         this.damage = 5;
         this.blockChance = 50;
-
+        this.id = serverKey;
         this.mesh = mesh;
         this.name = name;
         this.game = game;
@@ -63,7 +64,7 @@ class Worm extends Monster {
 
                     } else {
                         self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
-                        self.runAnimationWalk();
+                        self.runAnimationWalk(true);
                     }
                 }
             }

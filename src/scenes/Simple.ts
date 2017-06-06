@@ -36,24 +36,6 @@ class Simple extends Scene {
                 assetsManager.load();
                 assetsManager.onFinish = function () {
                     game.client.connect(serverUrl);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
-                    new Worm('worm', game);
                     window.addEventListener("keydown", function (event) {
                         game.controller.handleKeyUp(event);
                     });

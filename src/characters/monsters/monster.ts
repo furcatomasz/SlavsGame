@@ -4,9 +4,11 @@ abstract class Monster extends Character {
 
     protected visibilityArea: BABYLON.Mesh;
     protected attackArea: BABYLON.Mesh;
+    protected target;
 
     public character:Character;
     public afterRender;
+
 
     constructor(name:string, game:Game) {
 
@@ -20,12 +22,22 @@ abstract class Monster extends Character {
         visivilityArea.visibility = 0;
         this.visibilityArea = visivilityArea;
 
-        game.enemies.push(this);
+        game.enemies[this.id] = this;
 
         this.registerFunctionAfterRender();
         game.scene.registerAfterRender(this.afterRender);
 
         super(name, game);
+    }
+
+    public emitPosition() {
+        if (this.game.client.socket) {
+            this.game.client.socket.emit('updateEnemy', {
+                enemyKey: this.id,
+                position: this.mesh.position,
+                rotation: this.mesh.rotationQuaternion
+            });
+        }
     }
 
     abstract registerFunctionAfterRender();

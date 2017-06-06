@@ -4,5 +4,5 @@ var Controller = (function () {
         this.game = game;
     }
     return Controller;
-})();
+}());
 //# sourceMappingURL=Controller.js.map

@@ -96,6 +96,8 @@ var SocketIOClient = (function () {
         this.socket.on('removePlayer', function (id) {
             app.remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == id) {
+                    player = app.remotePlayers[key];
+                    player.removeFromWorld();
                     app.remotePlayers.splice(key, 1);
                 }
             });
@@ -103,5 +105,5 @@ var SocketIOClient = (function () {
         return this;
     };
     return SocketIOClient;
-})();
+}());
 //# sourceMappingURL=socketIOClient.js.map

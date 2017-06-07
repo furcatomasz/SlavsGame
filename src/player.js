@@ -15,10 +15,10 @@ var Player = (function (_super) {
         this.walkSpeed = 100;
         this.damage = 5;
         this.blockChance = 50;
+        this.isControllable = registerMoving;
         var mesh = game.characters['player'].clone();
         var skeleton = game.characters['player'].skeleton.clone();
         var material = game.characters['player'].material.clone();
-        var self = this;
         mesh.visibility = true;
         mesh.skeleton = skeleton;
         mesh.material = material;
@@ -29,16 +29,10 @@ var Player = (function (_super) {
             restitution: 0.0001
         }, game.scene);
         this.mesh = mesh;
-        _super.call(this, name, game);
+        this.game = game;
         this.createItems();
         this.mount(this.items.weapon, 'hand.R');
-        game.scene.registerAfterRender(function () {
-            self.weaponCollisions(game, self);
-            if (registerMoving) {
-                self.registerMoving();
-                self.game.scene.activeCamera.position = self.mesh.position;
-            }
-        });
+        _super.call(this, name, game);
     }
     Player.prototype.registerMoving = function () {
         var walkSpeed = Character.WALK_SPEED * (this.walkSpeed / 100);
@@ -72,9 +66,7 @@ var Player = (function (_super) {
                 game.guiElements.hpBarEnemy.updateValue(value - 1);
                 if (value - 1 < 0) {
                     game.scene.unregisterAfterRender(enemy.afterRender);
-                    enemy.visibilityArea.dispose();
-                    enemy.attackArea.dispose();
-                    enemyMesh.dispose();
+                    enemy.removeFromWorld();
                 }
             }
             else {
@@ -82,6 +74,22 @@ var Player = (function (_super) {
             }
         }
     };
+    Player.prototype.removeFromWorld = function () {
+        this.game.scene.unregisterAfterRender(this.afterRender);
+        this.mesh.dispose();
+        this.items.weapon.dispose();
+        this.items.weapon.setEnabled(false);
+    };
+    Player.prototype.registerFunctionAfterRender = function () {
+        var self = this;
+        this.afterRender = function () {
+            self.weaponCollisions();
+            if (self.isControllable) {
+                self.registerMoving();
+                self.game.scene.activeCamera.position = self.mesh.position;
+            }
+        };
+    };
     return Player;
-})(Character);
+}(Character));
 //# sourceMappingURL=player.js.map

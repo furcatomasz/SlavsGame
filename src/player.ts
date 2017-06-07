@@ -11,11 +11,11 @@ class Player extends Character {
         this.walkSpeed = 100;
         this.damage = 5;
         this.blockChance = 50;
+        this.isControllable = registerMoving;
 
         let mesh = game.characters['player'].clone();
         let skeleton = game.characters['player'].skeleton.clone();
         let material = game.characters['player'].material.clone();
-        let self = this;
 
         mesh.visibility = true;
         mesh.skeleton = skeleton;
@@ -29,19 +29,11 @@ class Player extends Character {
         }, game.scene);
 
         this.mesh = mesh;
-
-        super(name, game);
-
+        this.game = game;
         this.createItems();
         this.mount(this.items.weapon, 'hand.R');
 
-        game.scene.registerAfterRender(function () {
-            self.weaponCollisions(game, self);
-            if(registerMoving) {
-                self.registerMoving();
-                self.game.scene.activeCamera.position = self.mesh.position;
-            }
-        });
+        super(name, game);
     }
 
     protected registerMoving() {
@@ -83,14 +75,7 @@ class Player extends Character {
 
                  if(value-1 < 0) {
                      game.scene.unregisterAfterRender(enemy.afterRender);
-                     enemy.visibilityArea.dispose();
-                     enemy.attackArea.dispose();
-                     enemyMesh.dispose();
-                     //characterEnemy.items.weapon.dispose();
-                     //characterEnemy.items.weapon.setEnabled(false);
-                     //game.enemies = [];
-                     //game.guiElements.hpBarEnemy.updateValue(100);
-                     //new Enemy(game);
+                     enemy.removeFromWorld();
                  }
 
              } else {
@@ -99,4 +84,23 @@ class Player extends Character {
 
          }
      }
+
+    public removeFromWorld() {
+        this.game.scene.unregisterAfterRender(this.afterRender);
+        this.mesh.dispose();
+        this.items.weapon.dispose();
+        this.items.weapon.setEnabled(false);
+    }
+
+
+    protected registerFunctionAfterRender() {
+        let self = this;
+        this.afterRender = function() {
+            self.weaponCollisions();
+            if (self.isControllable) {
+                self.registerMoving();
+                self.game.scene.activeCamera.position = self.mesh.position;
+            }
+        }
+    }
 }

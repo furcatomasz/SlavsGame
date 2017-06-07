@@ -8,9 +8,6 @@ abstract class Monster extends Character {
     protected visibilityAreaSize: number;
     protected attackAreaSize: number;
 
-    public character:Character;
-    public afterRender;
-
 
     constructor(name:string, game:Game) {
         let attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', { width: this.attackAreaSize, height: 0.1, size: this.attackAreaSize}, game.scene);
@@ -25,9 +22,6 @@ abstract class Monster extends Character {
 
         game.enemies[this.id] = this;
 
-        this.registerFunctionAfterRender();
-        game.scene.registerAfterRender(this.afterRender);
-
         super(name, game);
     }
 
@@ -41,13 +35,22 @@ abstract class Monster extends Character {
         }
     }
 
+    public removeFromWorld() {
+        this.game.scene.unregisterAfterRender(this.afterRender);
+        this.visibilityArea.dispose();
+        this.attackArea.dispose();
+        this.mesh.dispose();
+        this.game.guiElements.hpBarEnemy.updateValue(100);
+
+    }
+
     protected registerFunctionAfterRender() {
         let self = this;
+        let walkSpeed = Character.WALK_SPEED * (self.walkSpeed / 100);
+        let playerMesh = self.game.player.mesh;
+
         this.afterRender = function() {
             if (self.game.player) {
-                let walkSpeed = Character.WALK_SPEED * (self.walkSpeed / 100);
-                let playerMesh = self.game.player.mesh;
-
                 if (self.visibilityArea.intersectsMesh(playerMesh, true)) {
                     self.mesh.lookAt(playerMesh.position);
 

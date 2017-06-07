@@ -1,7 +1,8 @@
 var io = require('socket.io')(3003);
 var remotePlayers = [];
 var enemies = [];
-createEnemies();
+createEnemies(3, {min: -5, max: -10}, {min: -10, max: -12});
+createEnemies(3, {min: 7, max: 8}, {min: -10, max: -12});
 
 io.on('connection', function (socket) {
     var player = {id: socket.id};
@@ -59,14 +60,14 @@ io.on('connection', function (socket) {
     });
 });
 
-function createEnemies() {
+function createEnemies(count, positionX, positionZ) {
     var enemy;
-    for (var i = 0, len = 10; i < len; i++) {
+    for (var i = 0, len = count; i < len; i++) {
         enemy = {
             position: {
-                x: randomNumber(3, -10),
+                x: randomNumber(positionX.min, positionX.max),
                 y: 0.3,
-                z: randomNumber(-10, -16)
+                z: randomNumber(positionZ.min, positionZ.max)
             },
             rotation: {
                 x: 0,

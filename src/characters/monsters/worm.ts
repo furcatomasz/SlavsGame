@@ -27,8 +27,8 @@ class Worm extends Monster {
         this.blockChance = 50;
         this.id = serverKey;
         this.mesh = mesh;
-        this.visibilityAreaSize = 40;
-        this.attackAreaSize = 5;
+        this.visibilityAreaSize = 30;
+        this.attackAreaSize = 6;
 
         skeleton.beginAnimation('stand', true);
 

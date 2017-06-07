@@ -27,11 +27,12 @@ abstract class Character {
     protected speed:number;
     protected animation:BABYLON.Animatable;
     protected weaponPS:BABYLON.ParticleSystem;
+    protected afterRender;
+    protected isControllable: boolean;
 
     constructor(name:string, game:Game) {
         this.name = name;
         this.game = game;
-        this.items = [];
 
         let skeleton = this.mesh.skeleton;
         skeleton.beginAnimation('stand', true);
@@ -40,9 +41,14 @@ abstract class Character {
         this.mesh.physicsImpostor.physicsBody.updateMassProperties();
 
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
+
+        this.registerFunctionAfterRender();
+        game.scene.registerAfterRender(this.afterRender);
     }
 
     public createItems() {
+        this.items = [];
+        console.log(this);
         let sword = this.game.items.sword.clone();
         sword.visibility = true;
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
@@ -177,4 +183,8 @@ abstract class Character {
     public isAnimationEnabled() {
         return this.animation;
     }
+    
+    abstract removeFromWorld();
+    
+    abstract registerFunctionAfterRender();
 }

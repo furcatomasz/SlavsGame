@@ -53,5 +53,5 @@ var Environment = (function () {
         }
     }
     return Environment;
-})();
+}());
 //# sourceMappingURL=environment.js.map

@@ -35,5 +35,5 @@ var Worm = (function (_super) {
         _super.call(this, name, game);
     }
     return Worm;
-}(Monster));
+})(Monster);
 //# sourceMappingURL=worm.js.map

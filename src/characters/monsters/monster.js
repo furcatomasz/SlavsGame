@@ -66,5 +66,5 @@ var Monster = (function (_super) {
         };
     };
     return Monster;
-}(Character));
+})(Character);
 //# sourceMappingURL=monster.js.map

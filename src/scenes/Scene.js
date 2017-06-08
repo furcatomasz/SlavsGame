@@ -6,8 +6,9 @@ var Scene = (function () {
         this.name = name;
     }
     Scene.prototype.setShadowGenerator = function (light) {
-        this.shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
-        this.shadowGenerator.bias = -0.24;
+        console.log(light);
+        this.shadowGenerator = new BABYLON.ShadowGenerator(4096, light);
+        this.shadowGenerator.bias = -0.0000001;
         this.shadowGenerator.setDarkness(0.5);
         this.shadowGenerator.usePoissonSampling = true;
         this.shadowGenerator.useExponentialShadowMap = true;
@@ -63,5 +64,5 @@ var Scene = (function () {
         dialog.add(new CASTORGUI.GUIText("textDialog", { size: 15, text: "Chat" }, this.game.gui, true));
     };
     return Scene;
-}());
+})();
 //# sourceMappingURL=Scene.js.map

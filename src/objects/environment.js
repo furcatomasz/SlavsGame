@@ -5,7 +5,9 @@ var Environment = (function () {
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
-            if (meshName.search("ground") >= 0) {
+            if (meshName.search("Plane") >= 0) {
+                //ground
+                sceneMesh.receiveShadows = true;
             }
             else {
                 game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
@@ -14,7 +16,6 @@ var Environment = (function () {
                 mass: 0,
                 restitution: 0.1
             }, scene);
-            sceneMesh.receiveShadows = true;
         }
         var cone = scene.getMeshByName("Cone");
         if (cone) {

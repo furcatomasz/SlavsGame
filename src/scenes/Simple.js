@@ -16,15 +16,32 @@ var Simple = (function (_super) {
         var self = this;
         game.sceneManager = this;
         var scene = new BABYLON.Scene(game.engine);
+        var assetsManager = new BABYLON.AssetsManager(scene);
         map01.initScene(scene);
+        //scene.debugLayer.show();
         game.scene = scene;
         self.setCamera();
-        console.log(scene);
         self.setShadowGenerator(scene.lights[0]);
+        self.createGameGUI();
+        var gravityVector = new BABYLON.Vector3(0, -9.81, 0);
+        var physicsPlugin = new BABYLON.CannonJSPlugin();
+        scene.enablePhysics(gravityVector, physicsPlugin);
         new Environment(game);
-        game.engine.runRenderLoop(function () {
-            scene.render();
-        });
+        new Characters(assetsManager, game);
+        new Items(assetsManager, game);
+        assetsManager.load();
+        assetsManager.onFinish = function () {
+            game.client.connect(serverUrl);
+            window.addEventListener("keydown", function (event) {
+                game.controller.handleKeyUp(event);
+            });
+            window.addEventListener("keyup", function (event) {
+                game.controller.handleKeyDown(event);
+            }, false);
+            game.engine.runRenderLoop(function () {
+                scene.render();
+            });
+        };
         //BABYLON.SceneLoader.Load("", "assets/map/mapkaiso_lowpoly.babylon", game.engine, function (scene) {
         //    game.scene = scene;
         //    let assetsManager = new BABYLON.AssetsManager(scene);

@@ -16,7 +16,7 @@ class Player extends Character {
         let mesh = game.characters['player'].clone();
         let skeleton = game.characters['player'].skeleton.clone();
         let material = game.characters['player'].material.clone();
-
+console.log(game.scene.lights);
         mesh.visibility = true;
         mesh.skeleton = skeleton;
         mesh.material = material;
@@ -100,6 +100,11 @@ class Player extends Character {
             if (self.isControllable) {
                 self.registerMoving();
                 self.game.scene.activeCamera.position = self.mesh.position;
+                self.game.scene.lights[0].position.x = self.mesh.position.x;
+                self.game.scene.lights[0].position.y = self.mesh.position.y+8;
+                self.game.scene.lights[0].position.z = self.mesh.position.z;
+
+
             }
         }
     }

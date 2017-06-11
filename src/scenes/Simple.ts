@@ -13,17 +13,41 @@ class Simple extends Scene {
         game.sceneManager = this;
 
         let scene = new BABYLON.Scene(game.engine);
+            let assetsManager = new BABYLON.AssetsManager(scene);
         map01.initScene(scene);
+                 //scene.debugLayer.show();
 
         game.scene = scene;
         self.setCamera();
-        console.log(scene);
         self.setShadowGenerator(scene.lights[0]);
-                new Environment(game);
+        self.createGameGUI();
 
-        game.engine.runRenderLoop(() => {
-            scene.render();
-        });
+
+        var gravityVector = new BABYLON.Vector3(0,-9.81, 0);
+        var physicsPlugin = new BABYLON.CannonJSPlugin();
+        scene.enablePhysics(gravityVector, physicsPlugin);
+
+        new Environment(game);
+        new Characters(assetsManager, game);
+        new Items(assetsManager, game);
+
+        assetsManager.load();
+        assetsManager.onFinish = function () {
+            game.client.connect(serverUrl);
+            window.addEventListener("keydown", function (event) {
+                game.controller.handleKeyUp(event);
+            });
+
+            window.addEventListener("keyup", function (event) {
+                game.controller.handleKeyDown(event);
+            }, false);
+
+            game.engine.runRenderLoop(() => {
+                scene.render();
+            });
+        };
+
+
         //BABYLON.SceneLoader.Load("", "assets/map/mapkaiso_lowpoly.babylon", game.engine, function (scene) {
         //    game.scene = scene;
         //    let assetsManager = new BABYLON.AssetsManager(scene);

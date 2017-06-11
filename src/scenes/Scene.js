@@ -6,7 +6,6 @@ var Scene = (function () {
         this.name = name;
     }
     Scene.prototype.setShadowGenerator = function (light) {
-        console.log(light);
         this.shadowGenerator = new BABYLON.ShadowGenerator(4096, light);
         this.shadowGenerator.bias = -0.0000001;
         this.shadowGenerator.setDarkness(0.5);

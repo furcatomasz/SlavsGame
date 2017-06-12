@@ -25,7 +25,7 @@ abstract class Scene {
     protected setCamera() {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), this.game.scene);
         camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        camera.orthoTop = 10;
+        camera.orthoTop = 18;
         camera.orthoBottom = 0;
         camera.orthoLeft = -15;
         camera.orthoRight = 15;
@@ -35,7 +35,7 @@ abstract class Scene {
         camera.orthoLeft = -Math.abs(newWidth);
         camera.orthoRight = newWidth;
         camera.orthoBottom = -Math.abs(zoom);
-        camera.rotation = new BABYLON.Vector3(0.381, 0.851, 0);
+        camera.rotation = new BABYLON.Vector3(0.4, -0.98, 0);
         this.game.scene.activeCamera = camera;
         this.game.scene.activeCamera.attachControl(this.game.canvas);
     }

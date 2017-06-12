@@ -18,8 +18,15 @@ var Simple = (function (_super) {
         var scene = new BABYLON.Scene(game.engine);
         var assetsManager = new BABYLON.AssetsManager(scene);
         map01.initScene(scene);
-        //scene.debugLayer.show();
+        scene.debugLayer.show();
         game.scene = scene;
+        //light0 = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 0, 0), scene);
+        //light0.diffuse = new BABYLON.Color3(1, 1, 1);
+        //light0.specular = new BABYLON.Color3(0, 0, 0);
+        //light0.specular = new BABYLON.Color3(0, 0, 0);
+        //light0.intensity = 0.7;
+        //console.log(light0);
+        //scene.lights[0] = light0;
         self.setCamera();
         self.setShadowGenerator(scene.lights[0]);
         self.createGameGUI();

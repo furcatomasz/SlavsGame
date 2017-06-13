@@ -29,7 +29,7 @@ var Simple = (function (_super) {
         //scene.lights[0] = light0;
         self.setCamera();
         self.setShadowGenerator(scene.lights[0]);
-        self.createGameGUI();
+        //self.createGameGUI();
         var gravityVector = new BABYLON.Vector3(0, -9.81, 0);
         var physicsPlugin = new BABYLON.CannonJSPlugin();
         scene.enablePhysics(gravityVector, physicsPlugin);

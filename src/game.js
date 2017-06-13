@@ -6,19 +6,15 @@
 var Game = (function () {
     function Game(canvasElement) {
         this.canvas = canvasElement;
-        var css = "button{cursor:pointer;} #textDialog{margin:6px;}";
-        var options = { themeRoot: "../gui/", themeGUI: "default" };
-        this.gui = new CASTORGUI.GUIManager(this.canvas, css, options);
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.controller = new Keyboard(this);
         this.client = new SocketIOClient(this);
         this.items = [];
         this.characters = [];
-        this.guiElements = [];
         this.enemies = [];
     }
     Game.prototype.createScene = function () {
-        new Simple(this, 'simple');
+        new MainMenu(this, 'mainMenu');
     };
     Game.prototype.animate = function () {
         var _this = this;

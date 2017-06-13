@@ -22,6 +22,7 @@ class Environment {
                 restitution: 0.1
             }, scene);
             //sceneMesh.receiveShadows = true;
+            sceneMesh.freezeWorldMatrix();
         }
 
         let cone = scene.getMeshByName("Fireplace");
@@ -113,6 +114,13 @@ class Environment {
             // Start the particle system
             fireSystem.start();
 
+
+            light0 = new BABYLON.PointLight("Omni0", cone.position, scene);
+            light0.diffuse = new BABYLON.Color3(1, 1, 1);
+            light0.specular = new BABYLON.Color3(1, 1, 1);
+            light0.intensity = 1;
+            light0.position.y = 1;
+            game.fireLight = light0;
 
             // var fire = new BABYLON.FireMaterial("fire", scene);
         // fire.diffuseTexture = new BABYLON.Texture("assets/fireplace/fire.png", scene);

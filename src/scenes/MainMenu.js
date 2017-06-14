@@ -1,4 +1,5 @@
-/// <reference path="../../babylon/babylon.2.5.d.ts"/>
+/// <reference path="../../babylon/babylon.d.ts"/>
+/// <reference path="../../babylon/ts/babylon.gui.d.ts"/>
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../objects/characters.ts"/>
@@ -16,53 +17,113 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var MainMenu = (function (_super) {
     __extends(MainMenu, _super);
-    function MainMenu(game, name) {
-        var _this = _super.call(this, game, name) || this;
+    function MainMenu(game) {
+        var _this = _super.call(this, game) || this;
         var scene = new BABYLON.Scene(game.engine);
         scene.clearColor = new BABYLON.Color3(0, 0, 0);
-        var camera = new BABYLON.ArcRotateCamera("Camera", -1, 0.8, 100, new BABYLON.Vector3.Zero(), scene);
+        var camera = new BABYLON.ArcRotateCamera("Camera", -1, 0.8, 100, BABYLON.Vector3.Zero(), scene);
         var background = new BABYLON.Layer("back", "assets/logo.png", scene);
         background.isBackground = true;
         background.texture.level = 0;
         background.texture.wAng = 0;
         var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Start game");
-        button1.width = "250px";
-        button1.height = "40px";
-        button1.color = "white";
-        button1.cornerRadius = 20;
-        button1.top = 150;
-        button1.background = "orange";
-        button1.onPointerUpObservable.add(function () {
-            alert("you did it!");
+        var buttonStart = BABYLON.GUI.Button.CreateSimpleButton("buttonStart", "Start game");
+        buttonStart.width = "250px";
+        buttonStart.height = "40px";
+        buttonStart.color = "white";
+        buttonStart.cornerRadius = 20;
+        buttonStart.top = 150;
+        buttonStart.background = "orange";
+        buttonStart.zIndex = 1;
+        buttonStart.onPointerUpObservable.add(function () {
+            new Simple(game);
+            game.activeScene = 1;
         });
-        advancedTexture.addControl(button1);
-        var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Options");
-        button1.width = "250px";
-        button1.height = "40px";
-        button1.color = "white";
-        button1.cornerRadius = 20;
-        button1.top = 200;
-        button1.background = "orange";
-        button1.onPointerUpObservable.add(function () {
-            alert("you did it!");
+        advancedTexture.addControl(buttonStart);
+        var buttonOptions = BABYLON.GUI.Button.CreateSimpleButton("buttonOptions", "Options");
+        buttonOptions.width = "250px";
+        buttonOptions.height = "40px";
+        buttonOptions.color = "white";
+        buttonOptions.cornerRadius = 20;
+        buttonOptions.top = 200;
+        buttonOptions.background = "orange";
+        buttonOptions.zIndex = 1;
+        buttonOptions.onPointerUpObservable.add(function () {
+            var optionsPanel = new BABYLON.GUI.StackPanel();
+            optionsPanel.alpha = 0.8;
+            optionsPanel.width = "220px";
+            optionsPanel.background = "#edecd7";
+            optionsPanel.zIndex = 2;
+            advancedTexture.addControl(optionsPanel);
+            var header = new BABYLON.GUI.TextBlock();
+            header.text = "Shadows quality: 1024";
+            header.height = "30px";
+            header.color = "white";
+            var slider = new BABYLON.GUI.Slider();
+            slider.minimum = 1024;
+            slider.maximum = 4096;
+            slider.value = 0;
+            slider.height = "20px";
+            slider.width = "200px";
+            slider.onValueChangedObservable.add(function (value) {
+                header.text = "Shadows quality: " + value + "";
+            });
+            var optionsButtonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
+            optionsButtonClose.width = "150px";
+            optionsButtonClose.height = "40px";
+            optionsButtonClose.color = "white";
+            optionsButtonClose.cornerRadius = 20;
+            optionsButtonClose.top = 50;
+            optionsButtonClose.background = "orange";
+            optionsButtonClose.zIndex = 3;
+            optionsButtonClose.onPointerUpObservable.add(function () {
+                advancedTexture.removeControl(optionsPanel);
+            });
+            optionsPanel
+                .addControl(header)
+                .addControl(slider)
+                .addControl(optionsButtonClose);
         });
-        advancedTexture.addControl(button1);
-        var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "About us");
-        button1.width = "250px";
-        button1.height = "40px";
-        button1.color = "white";
-        button1.cornerRadius = 20;
-        button1.top = 250;
-        button1.background = "orange";
-        button1.onPointerUpObservable.add(function () {
-            alert("you did it!");
+        advancedTexture.addControl(buttonOptions);
+        var buttonAboutUs = BABYLON.GUI.Button.CreateSimpleButton("buttonAboutUs", "About us");
+        buttonAboutUs.width = "250px";
+        buttonAboutUs.height = "40px";
+        buttonAboutUs.color = "white";
+        buttonAboutUs.cornerRadius = 20;
+        buttonAboutUs.top = 250;
+        buttonAboutUs.background = "orange";
+        buttonAboutUs.zIndex = 1;
+        buttonAboutUs.onPointerUpObservable.add(function () {
+            var aboutUsBackground = new BABYLON.GUI.Rectangle();
+            aboutUsBackground.alpha = 0.8;
+            aboutUsBackground.width = 0.5;
+            aboutUsBackground.height = "180px";
+            aboutUsBackground.cornerRadius = 20;
+            aboutUsBackground.color = "Orange";
+            aboutUsBackground.thickness = 1;
+            aboutUsBackground.background = "#edecd7";
+            aboutUsBackground.zIndex = 2;
+            advancedTexture.addControl(aboutUsBackground);
+            var aboutUsText = new BABYLON.GUI.TextBlock();
+            aboutUsText.text = "Tomasz Furca & Artur Owsianowski";
+            aboutUsText.color = "black";
+            aboutUsText.fontSize = 20;
+            aboutUsText.zIndex = 2;
+            var aboutUsButtonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
+            aboutUsButtonClose.width = "150px";
+            aboutUsButtonClose.height = "40px";
+            aboutUsButtonClose.color = "white";
+            aboutUsButtonClose.cornerRadius = 20;
+            aboutUsButtonClose.top = 50;
+            aboutUsButtonClose.background = "orange";
+            aboutUsButtonClose.zIndex = 3;
+            aboutUsButtonClose.onPointerUpObservable.add(function () {
+                advancedTexture.removeControl(aboutUsBackground);
+            });
+            aboutUsBackground.addControl(aboutUsButtonClose).addControl(aboutUsText);
         });
-        advancedTexture.addControl(button1);
-        game.scene = scene;
-        game.engine.runRenderLoop(function () {
-            scene.render();
-        });
+        advancedTexture.addControl(buttonAboutUs);
+        game.scenes.push(scene);
         return _this;
     }
     return MainMenu;

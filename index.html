@@ -3,14 +3,11 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
     <title>AOTF</title>
-    <script src="http://preview.babylonjs.com/babylon.max.js"></script>
-    <script src="babylon/materials/babylon.fireMaterial.js"></script>
-    <script src="babylon/babylon.objFileLoader.min.js"></script>
+    <script src="/babylon/babylon.max.js"></script>
     <script src="/babylon/TOB-runtime.1.1.min.js"></script>
     <script src="/babylon/QueuedInterpolation.1.1.min.js"></script>
     <script src="/babylon/babylon.gui.min.js"></script>
     <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
-    <script src="/bower_components/babylonjs/dist/babylon.2.5.canvas2d.js"></script>
     <script src="/bower_components/CannonJS/build/cannon.min.js"></script>
 
     <script src="/map01.js"></script>
@@ -57,9 +54,6 @@
             var serverUrl = 'http://babylon.dev:3003';
             var htmlElement = document.getElementById('renderCanvas');
             var game = new Game(htmlElement);
-
-            game.createScene();
-            game.animate();
         }
     </script>
 </body>

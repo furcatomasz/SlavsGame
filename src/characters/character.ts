@@ -1,4 +1,4 @@
-/// <reference path="../../babylon/babylon.2.5.d.ts"/>
+/// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 
 abstract class Character {

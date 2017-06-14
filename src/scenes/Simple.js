@@ -1,9 +1,10 @@
-/// <reference path="../../babylon/babylon.2.5.d.ts"/>
+/// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
+/// <reference path="../../map01.d.ts"/>
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16,15 +17,15 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var Simple = (function (_super) {
     __extends(Simple, _super);
-    function Simple(game, name) {
-        var _this = _super.call(this, game, name) || this;
+    function Simple(game) {
+        var _this = _super.call(this, game) || this;
         var self = _this;
         game.sceneManager = _this;
         var scene = new BABYLON.Scene(game.engine);
         var assetsManager = new BABYLON.AssetsManager(scene);
         map01.initScene(scene);
         scene.debugLayer.show();
-        game.scene = scene;
+        game.scenes.push(scene);
         //light0 = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 0, 0), scene);
         //light0.diffuse = new BABYLON.Color3(1, 1, 1);
         //light0.specular = new BABYLON.Color3(0, 0, 0);
@@ -32,27 +33,27 @@ var Simple = (function (_super) {
         //light0.intensity = 0.7;
         //console.log(light0);
         //scene.lights[0] = light0;
-        self.setCamera();
+        self.setCamera(scene);
         self.setShadowGenerator(scene.lights[0]);
         //self.createGameGUI();
         var gravityVector = new BABYLON.Vector3(0, -9.81, 0);
         var physicsPlugin = new BABYLON.CannonJSPlugin();
         scene.enablePhysics(gravityVector, physicsPlugin);
-        new Environment(game);
-        new Characters(assetsManager, game);
-        new Items(assetsManager, game);
+        new Environment(game, scene);
+        // new Characters(assetsManager, game);
+        // new Items(assetsManager, game);
         assetsManager.load();
         assetsManager.onFinish = function () {
-            game.client.connect(serverUrl);
+            // game.client.connect(serverUrl);
             window.addEventListener("keydown", function (event) {
                 game.controller.handleKeyUp(event);
             });
             window.addEventListener("keyup", function (event) {
                 game.controller.handleKeyDown(event);
             }, false);
-            game.engine.runRenderLoop(function () {
-                scene.render();
-            });
+            // game.engine.runRenderLoop(() => {
+            //     scene.render();
+            // });
         };
         return _this;
         //BABYLON.SceneLoader.Load("", "assets/map/mapkaiso_lowpoly.babylon", game.engine, function (scene) {

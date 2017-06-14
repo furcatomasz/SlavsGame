@@ -1,24 +1,23 @@
-/// <reference path="../../babylon/babylon.2.5.d.ts"/>
+/// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
+/// <reference path="../../map01.d.ts"/>
 
 class Simple extends Scene {
 
-    constructor(game:Game, name:string) {
-        super(game, name);
+    constructor(game:Game) {
+        super(game);
         let self = this;
         game.sceneManager = this;
 
         let scene = new BABYLON.Scene(game.engine);
-            let assetsManager = new BABYLON.AssetsManager(scene);
+        let assetsManager = new BABYLON.AssetsManager(scene);
         map01.initScene(scene);
-                 scene.debugLayer.show();
-
-        game.scene = scene;
-
+        scene.debugLayer.show();
+        game.scenes.push(scene);
 
         //light0 = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 0, 0), scene);
         //light0.diffuse = new BABYLON.Color3(1, 1, 1);
@@ -29,7 +28,7 @@ class Simple extends Scene {
         //console.log(light0);
         //scene.lights[0] = light0;
 
-        self.setCamera();
+        self.setCamera(scene);
         self.setShadowGenerator(scene.lights[0]);
         //self.createGameGUI();
 
@@ -37,13 +36,13 @@ class Simple extends Scene {
         var physicsPlugin = new BABYLON.CannonJSPlugin();
         scene.enablePhysics(gravityVector, physicsPlugin);
 
-        new Environment(game);
-        new Characters(assetsManager, game);
-        new Items(assetsManager, game);
+        new Environment(game, scene);
+        // new Characters(assetsManager, game);
+        // new Items(assetsManager, game);
 
         assetsManager.load();
         assetsManager.onFinish = function () {
-            game.client.connect(serverUrl);
+            // game.client.connect(serverUrl);
             window.addEventListener("keydown", function (event) {
                 game.controller.handleKeyUp(event);
             });
@@ -52,9 +51,9 @@ class Simple extends Scene {
                 game.controller.handleKeyDown(event);
             }, false);
 
-            game.engine.runRenderLoop(() => {
-                scene.render();
-            });
+            // game.engine.runRenderLoop(() => {
+            //     scene.render();
+            // });
         };
 
 

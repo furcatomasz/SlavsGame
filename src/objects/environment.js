@@ -97,8 +97,12 @@ var Environment = (function () {
             var sfxFireplace = new BABYLON.Sound("Fire", "assets/fireplace/fireplace.mp3", scene, null, { loop: true, autoplay: true });
             sfxFireplace.attachToMesh(cone);
             new BABYLON.Sound("Music", "assets/musicDoman.mp3", scene, null, { loop: true, autoplay: true });
+            // var plane = BABYLON.MeshBuilder.CreatePlane("fireplane", { size: 10, width: 10, height: 10 }, scene);
+            // plane.parent = sceneMesh;
+            // plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+            // plane.material = fire;
         }
     }
     return Environment;
-})();
+}());
 //# sourceMappingURL=environment.js.map

@@ -4,17 +4,22 @@
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Simple = (function (_super) {
     __extends(Simple, _super);
     function Simple(game, name) {
-        _super.call(this, game, name);
-        var self = this;
-        game.sceneManager = this;
+        var _this = _super.call(this, game, name) || this;
+        var self = _this;
+        game.sceneManager = _this;
         var scene = new BABYLON.Scene(game.engine);
         var assetsManager = new BABYLON.AssetsManager(scene);
         map01.initScene(scene);
@@ -49,6 +54,7 @@ var Simple = (function (_super) {
                 scene.render();
             });
         };
+        return _this;
         //BABYLON.SceneLoader.Load("", "assets/map/mapkaiso_lowpoly.babylon", game.engine, function (scene) {
         //    game.scene = scene;
         //    let assetsManager = new BABYLON.AssetsManager(scene);
@@ -91,5 +97,5 @@ var Simple = (function (_super) {
         //});
     }
     return Simple;
-})(Scene);
+}(Scene));
 //# sourceMappingURL=Simple.js.map

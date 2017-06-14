@@ -1,22 +1,29 @@
 /// <reference path="../character.ts"/>
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Monster = (function (_super) {
     __extends(Monster, _super);
     function Monster(name, game) {
-        var attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', { width: this.attackAreaSize, height: 0.1, size: this.attackAreaSize }, game.scene);
-        attackArea.parent = this.mesh;
+        var _this = this;
+        var attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', { width: _this.attackAreaSize, height: 0.1, size: _this.attackAreaSize }, game.scene);
+        attackArea.parent = _this.mesh;
         attackArea.visibility = 0;
-        this.attackArea = attackArea;
-        var visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', { width: this.visibilityAreaSize, height: 0.1, size: this.visibilityAreaSize }, game.scene);
-        visivilityArea.parent = this.mesh;
+        _this.attackArea = attackArea;
+        var visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', { width: _this.visibilityAreaSize, height: 0.1, size: _this.visibilityAreaSize }, game.scene);
+        visivilityArea.parent = _this.mesh;
         visivilityArea.visibility = 0;
-        this.visibilityArea = visivilityArea;
-        game.enemies[this.id] = this;
-        _super.call(this, name, game);
+        _this.visibilityArea = visivilityArea;
+        game.enemies[_this.id] = _this;
+        _this = _super.call(this, name, game) || this;
+        return _this;
     }
     Monster.prototype.emitPosition = function () {
         if (this.game.client.socket) {
@@ -66,5 +73,5 @@ var Monster = (function (_super) {
         };
     };
     return Monster;
-})(Character);
+}(Character));
 //# sourceMappingURL=monster.js.map

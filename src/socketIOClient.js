@@ -105,5 +105,5 @@ var SocketIOClient = (function () {
         return this;
     };
     return SocketIOClient;
-})();
+}());
 //# sourceMappingURL=socketIOClient.js.map

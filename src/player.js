@@ -1,21 +1,27 @@
 /// <reference path="characters/character.ts"/>
 /// <reference path="game.ts"/>
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Player = (function (_super) {
     __extends(Player, _super);
     function Player(game, id, name, registerMoving) {
-        this.id = id;
-        this.name = name;
-        this.hp = 100;
-        this.attackSpeed = 100;
-        this.walkSpeed = 100;
-        this.damage = 5;
-        this.blockChance = 50;
-        this.isControllable = registerMoving;
+        var _this = this;
+        _this.id = id;
+        _this.name = name;
+        _this.hp = 100;
+        _this.attackSpeed = 100;
+        _this.walkSpeed = 100;
+        _this.damage = 5;
+        _this.blockChance = 50;
+        _this.isControllable = registerMoving;
         var mesh = game.characters['player'].clone();
         var skeleton = game.characters['player'].skeleton.clone();
         var material = game.characters['player'].material.clone();
@@ -29,11 +35,12 @@ var Player = (function (_super) {
             friction: 1,
             restitution: 0.0001
         }, game.scene);
-        this.mesh = mesh;
-        this.game = game;
-        this.createItems();
-        this.mount(this.items.weapon, 'hand.R');
-        _super.call(this, name, game);
+        _this.mesh = mesh;
+        _this.game = game;
+        _this.createItems();
+        _this.mount(_this.items.weapon, 'hand.R');
+        _this = _super.call(this, name, game) || this;
+        return _this;
     }
     Player.prototype.registerMoving = function () {
         var walkSpeed = Character.WALK_SPEED * (this.walkSpeed / 100);
@@ -88,9 +95,12 @@ var Player = (function (_super) {
             if (self.isControllable) {
                 self.registerMoving();
                 self.game.scene.activeCamera.position = self.mesh.position;
+                //self.game.scene.lights[0].position.x = self.mesh.position.x;
+                //self.game.scene.lights[0].position.y = self.mesh.position.y+8;
+                //self.game.scene.lights[0].position.z = self.mesh.position.z-2;
             }
         };
     };
     return Player;
-})(Character);
+}(Character));
 //# sourceMappingURL=player.js.map

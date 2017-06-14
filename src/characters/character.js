@@ -72,12 +72,12 @@ var Character = (function () {
             var self_1 = this;
             var childMesh = this.mesh;
             if (childMesh) {
-                var skeleton = childMesh.skeleton;
+                var skeleton_1 = childMesh.skeleton;
                 this.game.client.socket.emit('attack', {
                     attack: true
                 });
-                self_1.animation = skeleton.beginAnimation('atack', false, this.attackSpeed / 100, function () {
-                    skeleton.beginAnimation('stand', true);
+                self_1.animation = skeleton_1.beginAnimation('atack', false, this.attackSpeed / 100, function () {
+                    skeleton_1.beginAnimation('stand', true);
                     self_1.animation = null;
                     self_1.game.client.socket.emit('attack', {
                         attack: false
@@ -105,13 +105,13 @@ var Character = (function () {
         var self = this;
         var childMesh = this.mesh;
         if (childMesh) {
-            var skeleton = childMesh.skeleton;
+            var skeleton_2 = childMesh.skeleton;
             if (emit) {
                 this.emitPosition();
             }
             if (!this.animation) {
-                self.animation = skeleton.beginAnimation('walk', false, this.walkSpeed / 100, function () {
-                    skeleton.beginAnimation('stand', true);
+                self.animation = skeleton_2.beginAnimation('walk', false, this.walkSpeed / 100, function () {
+                    skeleton_2.beginAnimation('stand', true);
                     self.animation = null;
                 });
             }
@@ -120,8 +120,8 @@ var Character = (function () {
     Character.prototype.isAnimationEnabled = function () {
         return this.animation;
     };
-    Character.WALK_SPEED = 0.021;
-    Character.ROTATION_SPEED = 0.05;
     return Character;
-})();
+}());
+Character.WALK_SPEED = 0.021;
+Character.ROTATION_SPEED = 0.05;
 //# sourceMappingURL=character.js.map

@@ -3,8 +3,13 @@
 
 abstract class Character {
 
-    public static WALK_SPEED:number = 0.021;
+    public static WALK_SPEED:number = 0.1;
     public static ROTATION_SPEED:number = 0.05;
+
+    public static ANIMATION_WALK:string = 'Stand_with_weapon';
+    public static ANIMATION_STAND:string = 'stand';
+    public static ANIMATION_STAND_WEAPON:string = 'Stand_with_weapon';
+    public static ANIMATION_ATTACK:string = 'atack';
 
     public mesh:BABYLON.Mesh;
     public id:number;
@@ -28,14 +33,14 @@ abstract class Character {
     protected animation:BABYLON.Animatable;
     protected weaponPS:BABYLON.ParticleSystem;
     protected afterRender;
-    protected isControllable: boolean;
+    protected isControllable:boolean;
 
     constructor(name:string, game:Game) {
         this.name = name;
         this.game = game;
 
         let skeleton = this.mesh.skeleton;
-        skeleton.beginAnimation('stand', true);
+        skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
 
         this.mesh.physicsImpostor.physicsBody.fixedRotation = true;
         this.mesh.physicsImpostor.physicsBody.updateMassProperties();
@@ -48,12 +53,18 @@ abstract class Character {
 
     public createItems() {
         this.items = [];
+        let sword = this.game.items.sword.instance('Sword', false);
+        let shield = this.game.items.shield.instance('Shield', false);
 
-        let sword = this.game.items.sword.clone();
-        sword.visibility = true;
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
+        this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(shield);
 
         sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, {
+            mass: 0,
+            restitution: 0
+        }, this.game.scene);
+
+        shield.physicsImpostor = new BABYLON.PhysicsImpostor(shield, BABYLON.PhysicsImpostor.BoxImpostor, {
             mass: 0,
             restitution: 0
         }, this.game.scene);
@@ -93,6 +104,7 @@ abstract class Character {
         this.weaponPS = particleSystem;
 
         this.items.weapon = sword;
+        this.items.shield = shield;
     }
 
     public mount(mesh, boneName) {
@@ -109,9 +121,11 @@ abstract class Character {
         var bone = skeleton.bones[boneIndice];
 
         mesh.attachToBone(bone, meshCharacter);
-        // mesh.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
         mesh.position = new BABYLON.Vector3(0, 0, 0);
-        mesh.rotation = new BABYLON.Vector3(0, 0, 80);
+
+        bone.getRotationToRef(BABYLON.Space.WORLD, meshCharacter, mesh.rotation);
+        mesh.rotation = mesh.rotation.negate();
+        mesh.rotation.z = -mesh.rotation.z;
 
     };
 
@@ -131,8 +145,8 @@ abstract class Character {
                     attack: true
                 });
 
-                self.animation = skeleton.beginAnimation('atack', false, this.attackSpeed / 100, function () {
-                    skeleton.beginAnimation('stand', true);
+                self.animation = skeleton.beginAnimation(Character.ANIMATION_ATTACK, false, this.attackSpeed / 100, function () {
+                    skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
 
                     self.game.client.socket.emit('attack', {
@@ -167,13 +181,13 @@ abstract class Character {
         if (childMesh) {
             let skeleton = childMesh.skeleton;
 
-            if(emit) {
+            if (emit) {
                 this.emitPosition();
             }
 
             if (!this.animation) {
-                self.animation = skeleton.beginAnimation('walk', false, this.walkSpeed / 100, function () {
-                    skeleton.beginAnimation('stand', true);
+                self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, false, this.walkSpeed / 100, function () {
+                    skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });
             }
@@ -183,8 +197,8 @@ abstract class Character {
     public isAnimationEnabled() {
         return this.animation;
     }
-    
+
     abstract removeFromWorld();
-    
+
     abstract registerFunctionAfterRender();
 }

@@ -13,13 +13,8 @@ class Player extends Character {
         this.blockChance = 50;
         this.isControllable = registerMoving;
 
-        let mesh = game.characters['player'].clone();
-        let skeleton = game.characters['player'].skeleton.clone();
-        let material = game.characters['player'].material.clone();
+        let mesh = game.characters['player'].instance('Warrior', true);
 
-        mesh.visibility = true;
-        mesh.skeleton = skeleton;
-        mesh.material = material;
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
 
         mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {
@@ -30,8 +25,10 @@ class Player extends Character {
 
         this.mesh = mesh;
         this.game = game;
+
         this.createItems();
-        this.mount(this.items.weapon, 'hand.R');
+        this.mount(this.items.weapon, 'weapon.bone');
+        this.mount(this.items.shield, 'shield.bone');
 
         super(name, game);
     }
@@ -100,9 +97,9 @@ class Player extends Character {
             if (self.isControllable) {
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
-                //self.game.scene.lights[0].position.x = self.mesh.position.x;
-                //self.game.scene.lights[0].position.y = self.mesh.position.y+8;
-                //self.game.scene.lights[0].position.z = self.mesh.position.z-2;
+                self.game.getScene().lights[0].position.x = self.mesh.position.x;
+                self.game.getScene().lights[0].position.y = self.mesh.position.y+8;
+                self.game.getScene().lights[0].position.z = self.mesh.position.z;
 
 
             }

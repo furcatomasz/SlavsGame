@@ -5,7 +5,7 @@ var Character = (function () {
         this.name = name;
         this.game = game;
         var skeleton = this.mesh.skeleton;
-        skeleton.beginAnimation('stand', true);
+        skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
         this.mesh.physicsImpostor.physicsBody.fixedRotation = true;
         this.mesh.physicsImpostor.physicsBody.updateMassProperties();
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
@@ -14,10 +14,15 @@ var Character = (function () {
     }
     Character.prototype.createItems = function () {
         this.items = [];
-        var sword = this.game.items.sword.clone();
-        sword.visibility = true;
+        var sword = this.game.items.sword.instance('Sword', false);
+        var shield = this.game.items.shield.instance('Shield', false);
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
+        this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(shield);
         sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, {
+            mass: 0,
+            restitution: 0
+        }, this.game.scene);
+        shield.physicsImpostor = new BABYLON.PhysicsImpostor(shield, BABYLON.PhysicsImpostor.BoxImpostor, {
             mass: 0,
             restitution: 0
         }, this.game.scene);
@@ -45,6 +50,7 @@ var Character = (function () {
         particleSystem.updateSpeed = 0.005;
         this.weaponPS = particleSystem;
         this.items.weapon = sword;
+        this.items.shield = shield;
     };
     Character.prototype.mount = function (mesh, boneName) {
         var boneIndice = -1;
@@ -58,9 +64,10 @@ var Character = (function () {
         }
         var bone = skeleton.bones[boneIndice];
         mesh.attachToBone(bone, meshCharacter);
-        // mesh.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
         mesh.position = new BABYLON.Vector3(0, 0, 0);
-        mesh.rotation = new BABYLON.Vector3(0, 0, 80);
+        bone.getRotationToRef(BABYLON.Space.WORLD, meshCharacter, mesh.rotation);
+        mesh.rotation = mesh.rotation.negate();
+        mesh.rotation.z = -mesh.rotation.z;
     };
     ;
     /**
@@ -75,8 +82,8 @@ var Character = (function () {
                 this.game.client.socket.emit('attack', {
                     attack: true
                 });
-                self_1.animation = skeleton.beginAnimation('atack', false, this.attackSpeed / 100, function () {
-                    skeleton.beginAnimation('stand', true);
+                self_1.animation = skeleton.beginAnimation(Character.ANIMATION_ATTACK, false, this.attackSpeed / 100, function () {
+                    skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self_1.animation = null;
                     self_1.game.client.socket.emit('attack', {
                         attack: false
@@ -109,8 +116,8 @@ var Character = (function () {
                 this.emitPosition();
             }
             if (!this.animation) {
-                self.animation = skeleton.beginAnimation('walk', false, this.walkSpeed / 100, function () {
-                    skeleton.beginAnimation('stand', true);
+                self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, false, this.walkSpeed / 100, function () {
+                    skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });
             }
@@ -119,8 +126,12 @@ var Character = (function () {
     Character.prototype.isAnimationEnabled = function () {
         return this.animation;
     };
-    Character.WALK_SPEED = 0.021;
+    Character.WALK_SPEED = 0.1;
     Character.ROTATION_SPEED = 0.05;
+    Character.ANIMATION_WALK = 'Stand_with_weapon';
+    Character.ANIMATION_STAND = 'stand';
+    Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+    Character.ANIMATION_ATTACK = 'atack';
     return Character;
 })();
 //# sourceMappingURL=character.js.map

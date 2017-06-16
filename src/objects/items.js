@@ -1,13 +1,13 @@
+/// <reference path="../../babel/Items/Sword/Sword.d.ts"/>
+/// <reference path="../../babel/Items/Shield/Shield.d.ts"/>
+/// <reference path="../game.ts"/>
 var Items = (function () {
-    function Items(assetsManager, game) {
-        var sword = assetsManager.addMeshTask("sword", "", "assets/", "sword.babylon");
-        sword.onSuccess = function (task) {
-            var mesh = task.loadedMeshes[0];
-            mesh.position = new BABYLON.Vector3(0, 0, 10);
-            mesh.visibility = false;
-            game.items[task.name] = mesh;
-        };
+    function Items(game, scene) {
+        var swordFactory = new Sword.MeshFactory(scene);
+        game.items['sword'] = swordFactory;
+        var shieldFactory = new Shield.MeshFactory(scene);
+        game.items['shield'] = shieldFactory;
     }
     return Items;
-}());
+})();
 //# sourceMappingURL=items.js.map

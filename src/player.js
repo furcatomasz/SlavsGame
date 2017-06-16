@@ -16,12 +16,7 @@ var Player = (function (_super) {
         this.damage = 5;
         this.blockChance = 50;
         this.isControllable = registerMoving;
-        var mesh = game.characters['player'].clone();
-        var skeleton = game.characters['player'].skeleton.clone();
-        var material = game.characters['player'].material.clone();
-        mesh.visibility = true;
-        mesh.skeleton = skeleton;
-        mesh.material = material;
+        var mesh = game.characters['player'].instance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
         mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {
             mass: 80,
@@ -31,7 +26,8 @@ var Player = (function (_super) {
         this.mesh = mesh;
         this.game = game;
         this.createItems();
-        this.mount(this.items.weapon, 'hand.R');
+        this.mount(this.items.weapon, 'weapon.bone');
+        this.mount(this.items.shield, 'shield.bone');
         _super.call(this, name, game);
     }
     Player.prototype.registerMoving = function () {
@@ -87,6 +83,9 @@ var Player = (function (_super) {
             if (self.isControllable) {
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
+                self.game.getScene().lights[0].position.x = self.mesh.position.x;
+                self.game.getScene().lights[0].position.y = self.mesh.position.y + 8;
+                self.game.getScene().lights[0].position.z = self.mesh.position.z;
             }
         };
     };

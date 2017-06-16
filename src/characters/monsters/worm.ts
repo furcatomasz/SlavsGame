@@ -18,7 +18,7 @@ class Worm extends Monster {
             mass: 20,
             friction: 1,
             restitution: 0.2
-        }, game.scene);
+        }, game.getScene());
 
         this.hp = 100;
         this.attackSpeed = 100;

@@ -10,12 +10,12 @@ abstract class Monster extends Character {
 
 
     constructor(name:string, game:Game) {
-        let attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', { width: this.attackAreaSize, height: 0.1, size: this.attackAreaSize}, game.scene);
+        let attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', { width: this.attackAreaSize, height: 0.1, size: this.attackAreaSize}, game.getScene());
         attackArea.parent = this.mesh;
         attackArea.visibility = 0;
         this.attackArea = attackArea;
 
-        let visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', { width: this.visibilityAreaSize, height: 0.1, size: this.visibilityAreaSize}, game.scene);
+        let visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', { width: this.visibilityAreaSize, height: 0.1, size: this.visibilityAreaSize}, game.getScene());
         visivilityArea.parent = this.mesh;
         visivilityArea.visibility = 0;
         this.visibilityArea = visivilityArea;
@@ -36,7 +36,7 @@ abstract class Monster extends Character {
     }
 
     public removeFromWorld() {
-        this.game.scene.unregisterAfterRender(this.afterRender);
+        this.game.getScene().unregisterAfterRender(this.afterRender);
         this.visibilityArea.dispose();
         this.attackArea.dispose();
         this.mesh.dispose();

@@ -37,12 +37,12 @@ class Simple extends Scene {
         scene.enablePhysics(gravityVector, physicsPlugin);
 
         new Environment(game, scene);
-        // new Characters(assetsManager, game);
-        // new Items(assetsManager, game);
+         new Characters(assetsManager, game);
+         new Items(assetsManager, game);
 
         assetsManager.load();
         assetsManager.onFinish = function () {
-            // game.client.connect(serverUrl);
+             game.client.connect(serverUrl);
             window.addEventListener("keydown", function (event) {
                 game.controller.handleKeyUp(event);
             });

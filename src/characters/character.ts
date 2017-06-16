@@ -43,12 +43,12 @@ abstract class Character {
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
 
         this.registerFunctionAfterRender();
-        game.scene.registerAfterRender(this.afterRender);
+        game.getScene().registerAfterRender(this.afterRender);
     }
 
     public createItems() {
         this.items = [];
-        console.log(this);
+
         let sword = this.game.items.sword.clone();
         sword.visibility = true;
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
@@ -58,8 +58,8 @@ abstract class Character {
             restitution: 0
         }, this.game.scene);
 
-        var particleSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.scene);
-        particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.scene);
+        var particleSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
+        particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
         particleSystem.emitter = sword;
         particleSystem.minEmitBox = new BABYLON.Vector3(0, -70, 0); // Starting all from
         particleSystem.maxEmitBox = new BABYLON.Vector3(0, -70, 0); // To...

@@ -29,7 +29,7 @@ class Game {
     /**
      * States
      */
-    public activeScene: number|null;
+    public activeScene: number;
 
     constructor(canvasElement: HTMLCanvasElement) {
         this.canvas = canvasElement;
@@ -50,7 +50,7 @@ class Game {
     }
 
     createScene(): Game {
-        new MainMenu(this);
+        new Simple(this);
         this.activeScene = 0;
 
         return this;

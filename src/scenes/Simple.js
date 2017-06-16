@@ -17,8 +17,7 @@ var Simple = (function (_super) {
         var self = this;
         game.sceneManager = this;
         var scene = new BABYLON.Scene(game.engine);
-        var assetsManager = new BABYLON.AssetsManager(scene);
-        map01.initScene(scene);
+        map01a.initScene(scene, 'assets/scenes/map01a');
         //scene.debugLayer.show();
         game.scenes.push(scene);
         light0 = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 0, 0), scene);
@@ -26,7 +25,6 @@ var Simple = (function (_super) {
         light0.specular = new BABYLON.Color3(0, 0, 0);
         light0.specular = new BABYLON.Color3(0, 0, 0);
         light0.intensity = 0.7;
-        console.log(light0);
         scene.lights[0] = light0;
         self.setCamera(scene);
         self.setShadowGenerator(scene.lights[0]);

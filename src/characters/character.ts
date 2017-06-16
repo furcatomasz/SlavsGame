@@ -35,6 +35,8 @@ abstract class Character {
     protected afterRender;
     protected isControllable:boolean;
 
+    protected sfxWalk: BABYLON.Sound;
+
     constructor(name:string, game:Game) {
         this.name = name;
         this.game = game;
@@ -46,6 +48,10 @@ abstract class Character {
         this.mesh.physicsImpostor.physicsBody.updateMassProperties();
 
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
+
+        this.sfxWalk = new BABYLON.Sound("Fire", "assets/sounds/character/walk/1.wav", this.game.getScene(), null, { loop: false, autoplay: false });
+        this.sfxWalk.attachToMesh(this.mesh);
+        this.sfxWalk.setVolume(8);
 
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
@@ -186,11 +192,15 @@ abstract class Character {
             }
 
             if (!this.animation) {
+                //self.sfxWalk.play(1);
                 self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, false, this.walkSpeed / 100, function () {
                     skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });
+
+
             }
+
         }
     }
 

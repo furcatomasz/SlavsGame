@@ -9,6 +9,9 @@ var Character = (function () {
         this.mesh.physicsImpostor.physicsBody.fixedRotation = true;
         this.mesh.physicsImpostor.physicsBody.updateMassProperties();
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
+        this.sfxWalk = new BABYLON.Sound("Fire", "assets/sounds/character/walk/1.wav", this.game.getScene(), null, { loop: false, autoplay: false });
+        this.sfxWalk.attachToMesh(this.mesh);
+        this.sfxWalk.setVolume(8);
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
     }
@@ -116,6 +119,7 @@ var Character = (function () {
                 this.emitPosition();
             }
             if (!this.animation) {
+                //self.sfxWalk.play(1);
                 self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, false, this.walkSpeed / 100, function () {
                     skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;

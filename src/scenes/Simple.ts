@@ -14,8 +14,7 @@ class Simple extends Scene {
         game.sceneManager = this;
 
         let scene = new BABYLON.Scene(game.engine);
-        let assetsManager = new BABYLON.AssetsManager(scene);
-        map01.initScene(scene);
+        map01a.initScene(scene, 'assets/scenes/map01a');
         //scene.debugLayer.show();
         game.scenes.push(scene);
 
@@ -24,8 +23,6 @@ class Simple extends Scene {
         light0.specular = new BABYLON.Color3(0, 0, 0);
         light0.specular = new BABYLON.Color3(0, 0, 0);
         light0.intensity = 0.7;
-
-        console.log(light0);
         scene.lights[0] = light0;
 
         self.setCamera(scene);

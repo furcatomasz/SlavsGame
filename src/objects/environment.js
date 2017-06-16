@@ -1,12 +1,17 @@
 /// <reference path="../game.ts"/>
 var Environment = (function () {
     function Environment(game, scene) {
+        var ground = null;
+        var water = null;
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
             if (meshName.search("Forest_ground") >= 0) {
                 //ground
                 sceneMesh.receiveShadows = true;
+                ground = sceneMesh;
+            }
+            else if (meshName.search("Water") >= 0) {
             }
             else {
                 game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
@@ -17,6 +22,20 @@ var Environment = (function () {
             }, scene);
             //sceneMesh.receiveShadows = true;
             sceneMesh.freezeWorldMatrix();
+        }
+        if (water) {
+            var waterMaterial = new BABYLON.WaterMaterial("water", scene, new BABYLON.Vector2(512, 512));
+            waterMaterial.backFaceCulling = true;
+            waterMaterial.bumpTexture = new BABYLON.Texture("assets/waterbump.png", scene);
+            waterMaterial.windForce = -5;
+            waterMaterial.waveHeight = 1.3;
+            waterMaterial.bumpHeight = 0.15;
+            waterMaterial.windDirection = new BABYLON.Vector2(1, 1);
+            waterMaterial.waterColor = new BABYLON.Color3(0, 0.1, 0);
+            waterMaterial.colorBlendFactor = 0.8;
+            console.log(ground);
+            waterMaterial.addToRenderList(ground);
+            water.material = waterMaterial;
         }
         var cone = scene.getMeshByName("Fireplace");
         if (cone) {
@@ -81,6 +100,15 @@ var Environment = (function () {
             fireSystem.updateSpeed = 0.004;
             // Start the particle system
             fireSystem.start();
+            // var fire = new BABYLON.FireMaterial("fire", scene);
+            // fire.diffuseTexture = new BABYLON.Texture("assets/fireplace/fire.png", scene);
+            // fire.distortionTexture = new BABYLON.Texture("assets/fireplace/distortion.png", scene);
+            // fire.opacityTexture = new BABYLON.Texture("assets/fireplace/candleOpacity.png", scene);
+            // fire.speed = 2.0;
+            //
+            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            //sfxFireplace.attachToMesh(cone);
+            new BABYLON.Sound("Music", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
         }
     }
     return Environment;

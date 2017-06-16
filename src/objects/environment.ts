@@ -3,6 +3,8 @@
 class Environment {
 
     constructor(game:Game, scene: BABYLON.Scene) {
+        var ground = null
+        var water = null;
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
@@ -10,7 +12,9 @@ class Environment {
             if (meshName.search("Forest_ground") >= 0) {
                 //ground
                 sceneMesh.receiveShadows = true;
-
+                ground = sceneMesh;
+            } else if (meshName.search("Water") >= 0) {
+                //water = sceneMesh;
             } else {
                 game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
             }
@@ -23,6 +27,23 @@ class Environment {
             sceneMesh.freezeWorldMatrix();
         }
 
+
+        if(water) {
+            var waterMaterial = new BABYLON.WaterMaterial("water", scene, new BABYLON.Vector2(512, 512));
+            waterMaterial.backFaceCulling = true;
+            waterMaterial.bumpTexture = new BABYLON.Texture("assets/waterbump.png", scene);
+            waterMaterial.windForce = -5;
+            waterMaterial.waveHeight = 1.3;
+            waterMaterial.bumpHeight = 0.15;
+            waterMaterial.windDirection = new BABYLON.Vector2(1, 1);
+            waterMaterial.waterColor = new BABYLON.Color3(0, 0.1, 0);
+            waterMaterial.colorBlendFactor = 0.8;
+            console.log(ground);
+            waterMaterial.addToRenderList(ground);
+            water.material = waterMaterial;
+        }
+        
+        
         let cone = scene.getMeshByName("Fireplace");
         if (cone) {
             //Smoke
@@ -118,10 +139,10 @@ class Environment {
         // fire.opacityTexture = new BABYLON.Texture("assets/fireplace/candleOpacity.png", scene);
         // fire.speed = 2.0;
         //
-        //var sfxFireplace = new BABYLON.Sound("Fire", "assets/fireplace/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+        var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
         //sfxFireplace.attachToMesh(cone);
 
-        //new BABYLON.Sound("Music", "assets/musicDoman.mp3", scene, null, { loop: true, autoplay: true });
+        new BABYLON.Sound("Music", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
         // var plane = BABYLON.MeshBuilder.CreatePlane("fireplane", { size: 10, width: 10, height: 10 }, scene);
         // plane.parent = sceneMesh;
         // plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;

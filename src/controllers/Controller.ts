@@ -1,4 +1,4 @@
-/// <reference path="/src/game.ts"/>
+/// <reference path="../game.ts"/>
 
 abstract class Controller {
     protected game:Game;

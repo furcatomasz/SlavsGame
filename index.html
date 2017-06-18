@@ -3,23 +3,34 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
     <title>AOTF</title>
-    <script src="babylon/babylon.2.5.js"></script>
-    <script src="babylon/materials/babylon.fireMaterial.js"></script>
-    <script src="babylon/babylon.objFileLoader.min.js"></script>
+    <script src="/babylon/babylon.2.5.js"></script>
+    <script src="/babylon/TOB-runtime.1.1.min.js"></script>
+    <script src="/babylon/QueuedInterpolation.1.1.min.js"></script>
+<!--    <script src="/babylon/babylon.gui.min.js"></script>-->
     <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
-    <script src="/bower_components/babylonjs/dist/babylon.2.5.canvas2d.js"></script>
-    <script src="/bower_components/CastorGUI/dist/castorGUI.min.js"></script>
+    <script src="/bower_components/CannonJS/build/cannon.min.js"></script>
+
+    <script src="/map01.js"></script>
+    <script src="/assets/scenes/map01a/map01a.js"></script>
+    <script src="/babel/Characters/Warrior/Warrior.js"></script>
+    <script src="/babel/Items/Sword/Sword.js"></script>
+    <script src="/babel/Items/Shield/Shield.js"></script>
 
     <script src="/src/scenes/Scene.js"></script>
     <script src="/src/scenes/Simple.js"></script>
+    <script src="/src/scenes/MainMenu.js"></script>
     <script src="/src/controllers/Controller.js"></script>
     <script src="/src/controllers/Keyboard.js"></script>
     <script src="/src/socketIOClient.js"></script>
+    <script src="/src/characters/character.js"></script>
     <script src="/src/player.js"></script>
-    <script src="/src/character.js"></script>
+    <script src="/src/enemy.js"></script>
     <script src="/src/objects/items.js"></script>
     <script src="/src/objects/environment.js"></script>
     <script src="/src/objects/characters.js"></script>
+
+    <script src="/src/characters/monsters/monster.js"></script>
+    <script src="/src/characters/monsters/worm.js"></script>
 
     <script src="/src/game.js"></script>
 
@@ -43,11 +54,9 @@
     <canvas id="renderCanvas"></canvas>
     <script>
         if (BABYLON.Engine.isSupported()) {
+            var serverUrl = 'http://babylon.dev:3003';
             var htmlElement = document.getElementById('renderCanvas');
             var game = new Game(htmlElement);
-
-            game.createScene();
-            game.animate();
         }
     </script>
 </body>

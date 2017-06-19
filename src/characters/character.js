@@ -8,6 +8,7 @@ var Character = (function () {
         skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
         this.mesh.physicsImpostor.physicsBody.fixedRotation = true;
         this.mesh.physicsImpostor.physicsBody.updateMassProperties();
+        this.mesh.receiveShadows = true;
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
         this.sfxWalk = new BABYLON.Sound("Fire", "assets/sounds/character/walk/1.wav", this.game.getScene(), null, { loop: false, autoplay: false });
         this.sfxWalk.attachToMesh(this.mesh);
@@ -130,12 +131,12 @@ var Character = (function () {
     Character.prototype.isAnimationEnabled = function () {
         return this.animation;
     };
-    Character.WALK_SPEED = 0.1;
+    Character.WALK_SPEED = 0.15;
     Character.ROTATION_SPEED = 0.05;
-    Character.ANIMATION_WALK = 'Stand_with_weapon';
+    Character.ANIMATION_WALK = 'Run';
     Character.ANIMATION_STAND = 'stand';
     Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    Character.ANIMATION_ATTACK = 'atack';
+    Character.ANIMATION_ATTACK = 'Attack';
     return Character;
 })();
 //# sourceMappingURL=character.js.map

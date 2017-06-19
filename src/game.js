@@ -20,7 +20,7 @@ var Game = (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new Simple(this);
+        new MainMenu(this);
         this.activeScene = 0;
         return this;
     };

@@ -3,10 +3,11 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
     <title>AOTF</title>
-    <script src="/babylon/babylon.2.5.js"></script>
+    <script src="/babylon/babylon.max.js"></script>
+    <script src="/babylon/babylon.max.js"></script>
     <script src="/babylon/TOB-runtime.1.1.min.js"></script>
     <script src="/babylon/QueuedInterpolation.1.1.min.js"></script>
-<!--    <script src="/babylon/babylon.gui.min.js"></script>-->
+    <script src="/babylon/babylon.gui.min.js"></script>
     <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
     <script src="/bower_components/CannonJS/build/cannon.min.js"></script>
 
@@ -53,6 +54,8 @@
 <body>
     <canvas id="renderCanvas"></canvas>
     <script>
+        BABYLON.DebugLayer.InspectorURL = 'https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js';
+
         if (BABYLON.Engine.isSupported()) {
             var serverUrl = 'http://babylon.dev:3003';
             var htmlElement = document.getElementById('renderCanvas');

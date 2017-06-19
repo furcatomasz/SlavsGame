@@ -3,13 +3,13 @@
 
 abstract class Character {
 
-    public static WALK_SPEED:number = 0.1;
+    public static WALK_SPEED:number = 0.15;
     public static ROTATION_SPEED:number = 0.05;
 
-    public static ANIMATION_WALK:string = 'Stand_with_weapon';
+    public static ANIMATION_WALK:string = 'Run';
     public static ANIMATION_STAND:string = 'stand';
     public static ANIMATION_STAND_WEAPON:string = 'Stand_with_weapon';
-    public static ANIMATION_ATTACK:string = 'atack';
+    public static ANIMATION_ATTACK:string = 'Attack';
 
     public mesh:BABYLON.Mesh;
     public id:number;
@@ -46,13 +46,13 @@ abstract class Character {
 
         this.mesh.physicsImpostor.physicsBody.fixedRotation = true;
         this.mesh.physicsImpostor.physicsBody.updateMassProperties();
+        this.mesh.receiveShadows = true;
 
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
 
         this.sfxWalk = new BABYLON.Sound("Fire", "assets/sounds/character/walk/1.wav", this.game.getScene(), null, { loop: false, autoplay: false });
         this.sfxWalk.attachToMesh(this.mesh);
         this.sfxWalk.setVolume(8);
-
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
     }

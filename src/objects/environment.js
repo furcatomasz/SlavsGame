@@ -100,15 +100,6 @@ var Environment = (function () {
             fireSystem.updateSpeed = 0.004;
             // Start the particle system
             fireSystem.start();
-            // var fire = new BABYLON.FireMaterial("fire", scene);
-            // fire.diffuseTexture = new BABYLON.Texture("assets/fireplace/fire.png", scene);
-            // fire.distortionTexture = new BABYLON.Texture("assets/fireplace/distortion.png", scene);
-            // fire.opacityTexture = new BABYLON.Texture("assets/fireplace/candleOpacity.png", scene);
-            // fire.speed = 2.0;
-            //
-            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-            //sfxFireplace.attachToMesh(cone);
-            new BABYLON.Sound("Music", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
         }
     }
     return Environment;

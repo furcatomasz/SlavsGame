@@ -5,7 +5,7 @@ var Scene = (function () {
         this.game = game;
     }
     Scene.prototype.setShadowGenerator = function (light) {
-        this.shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+        this.shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
         this.shadowGenerator.bias = -0.0000001;
         this.shadowGenerator.setDarkness(0.5);
         //this.shadowGenerator.usePoissonSampling = true;
@@ -19,6 +19,8 @@ var Scene = (function () {
         camera.orthoBottom = 0;
         camera.orthoLeft = -15;
         camera.orthoRight = 15;
+        camera.maxZ = 80;
+        camera.minZ = -80;
         var ratio = window.innerWidth / window.innerHeight;
         var zoom = camera.orthoTop;
         var newWidth = zoom * ratio;

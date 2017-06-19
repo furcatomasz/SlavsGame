@@ -83,9 +83,9 @@ var Player = (function (_super) {
             if (self.isControllable) {
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
-                self.game.getScene().lights[0].position.x = self.mesh.position.x;
-                self.game.getScene().lights[0].position.y = self.mesh.position.y + 8;
-                self.game.getScene().lights[0].position.z = self.mesh.position.z;
+                self.game.getScene().lights[1].position.x = self.mesh.position.x;
+                self.game.getScene().lights[1].position.y = self.mesh.position.y + 8;
+                self.game.getScene().lights[1].position.z = self.mesh.position.z;
             }
         };
     };

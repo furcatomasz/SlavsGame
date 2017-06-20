@@ -17,8 +17,8 @@ var Simple = (function (_super) {
         var self = this;
         game.sceneManager = this;
         var scene = new BABYLON.Scene(game.engine);
-        map01a.initScene(scene, 'assets/scenes/map01a');
-        //scene.debugLayer.show();
+        map01.initScene(scene, 'assets/scenes/map01a');
+        scene.debugLayer.show();
         game.scenes.push(scene);
         scene.lights[0].intensity = 0.3;
         light0 = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 8, 0), scene);

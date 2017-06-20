@@ -14,14 +14,7 @@ class Player extends Character {
         this.isControllable = registerMoving;
 
         let mesh = game.characters['player'].instance('Warrior', true);
-
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-
-        //mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {
-        //    mass: 80,
-        //    friction: 1,
-        //    restitution: 0.0001
-        //}, game.scene);
 
         this.mesh = mesh;
         this.game = game;

@@ -14,8 +14,8 @@ class Simple extends Scene {
         game.sceneManager = this;
 
         let scene = new BABYLON.Scene(game.engine);
-        map01a.initScene(scene, 'assets/scenes/map01a');
-        //scene.debugLayer.show();
+        map01.initScene(scene, 'assets/scenes/map01a');
+        scene.debugLayer.show();
         game.scenes.push(scene);
         scene.lights[0].intensity = 0.3;
 
@@ -29,7 +29,6 @@ class Simple extends Scene {
         self.setCamera(scene);
         self.setShadowGenerator(scene.lights[0]);
         //self.createGameGUI();
-
 
         new Environment(game, scene);
         new Characters(game, scene);

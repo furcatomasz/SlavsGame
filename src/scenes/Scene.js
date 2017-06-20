@@ -29,7 +29,6 @@ var Scene = (function () {
         camera.orthoBottom = -Math.abs(zoom);
         camera.rotation = new BABYLON.Vector3(0.681115, -0.11885, 0);
         scene.activeCamera = camera;
-        scene.activeCamera.attachControl(this.game.canvas);
     };
     Scene.prototype.createGameGUI = function () {
         var self = this;

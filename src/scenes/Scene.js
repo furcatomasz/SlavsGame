@@ -5,7 +5,7 @@ var Scene = (function () {
         this.game = game;
     }
     Scene.prototype.setShadowGenerator = function (light) {
-        this.shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
+        this.shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         this.shadowGenerator.bias = -0.0000001;
         this.shadowGenerator.setDarkness(0.5);
         //this.shadowGenerator.usePoissonSampling = true;

@@ -50,7 +50,7 @@ class Game {
     }
 
     createScene(): Game {
-        new MainMenu(this);
+        new Simple(this);
         this.activeScene = 0;
 
         return this;

@@ -6,6 +6,11 @@ var Environment = (function () {
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
+            sceneMesh.material.freeze();
+            sceneMesh.freezeWorldMatrix();
+            if (meshName.search("Grass") >= 0) {
+                continue;
+            }
             if (meshName.search("Forest_ground") >= 0) {
                 //ground
                 sceneMesh.receiveShadows = true;
@@ -16,12 +21,6 @@ var Environment = (function () {
             else {
                 game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
             }
-            sceneMesh.physicsImpostor = new BABYLON.PhysicsImpostor(sceneMesh, BABYLON.PhysicsImpostor.BoxImpostor, {
-                mass: 0,
-                restitution: 0.1
-            }, scene);
-            //sceneMesh.receiveShadows = true;
-            sceneMesh.freezeWorldMatrix();
         }
         if (water) {
             var waterMaterial = new BABYLON.WaterMaterial("water", scene, new BABYLON.Vector2(512, 512));

@@ -17,11 +17,11 @@ class Player extends Character {
 
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
 
-        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {
-            mass: 80,
-            friction: 1,
-            restitution: 0.0001
-        }, game.scene);
+        //mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {
+        //    mass: 80,
+        //    friction: 1,
+        //    restitution: 0.0001
+        //}, game.scene);
 
         this.mesh = mesh;
         this.game = game;
@@ -59,28 +59,47 @@ class Player extends Character {
     }
 
 
-     protected weaponCollisions() {
+    protected weaponCollisions() {
         let game = this.game;
-         for (var i = 0; i < game.enemies.length; i++) {
-             var enemy = game.enemies[i];
-             let enemyMesh = enemy.mesh;
-             if (this.items.weapon.intersectsMesh(enemyMesh, true)) {
-                 enemyMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
+        for (var i = 0; i < game.enemies.length; i++) {
+            var enemy = game.enemies[i];
+            let enemyMesh = enemy.mesh;
+            if (this.items.weapon.intersectsMesh(enemyMesh, true)) {
+                enemyMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
 
-                 var value = game.guiElements.hpBarEnemy.getValue();
-                 game.guiElements.hpBarEnemy.updateValue(value-1);
+                var value = game.guiElements.hpBarEnemy.getValue();
+                game.guiElements.hpBarEnemy.updateValue(value-1);
 
-                 if(value-1 < 0) {
-                     game.scene.unregisterAfterRender(enemy.afterRender);
-                     enemy.removeFromWorld();
-                 }
+                if(value-1 < 0) {
+                    game.scene.unregisterAfterRender(enemy.afterRender);
+                    enemy.removeFromWorld();
+                }
 
-             } else {
-                 enemyMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
-             }
+            } else {
+                enemyMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
+            }
 
-         }
-     }
+        }
+
+        return this;
+    }
+
+    protected envCollisions() {
+        let game = this.game;
+            for (var i = 0; i < game.getScene().meshes.length; i++) {
+                var sceneMesh = game.getScene().meshes[i];
+                var meshName = game.getScene().meshes[i]['name'];
+
+                if (meshName.search("choinka") >= 0 || meshName.search("Fireplace") >= 0 || meshName.search("Log") >= 0) {
+                    if (this.mesh.intersectsMesh(sceneMesh, true)) {
+                        game.controller.forward = false;
+                        game.controller.back = false;
+                    }
+                }
+        }
+
+        return this;
+    }
 
     public removeFromWorld() {
         this.game.scene.unregisterAfterRender(this.afterRender);
@@ -93,7 +112,7 @@ class Player extends Character {
     protected registerFunctionAfterRender() {
         let self = this;
         this.afterRender = function() {
-            self.weaponCollisions();
+            self.weaponCollisions().envCollisions();
             if (self.isControllable) {
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;

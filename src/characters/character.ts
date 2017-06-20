@@ -44,8 +44,6 @@ abstract class Character {
         let skeleton = this.mesh.skeleton;
         skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
 
-        this.mesh.physicsImpostor.physicsBody.fixedRotation = true;
-        this.mesh.physicsImpostor.physicsBody.updateMassProperties();
         this.mesh.receiveShadows = true;
 
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
@@ -64,16 +62,6 @@ abstract class Character {
 
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(shield);
-
-        sword.physicsImpostor = new BABYLON.PhysicsImpostor(sword, BABYLON.PhysicsImpostor.BoxImpostor, {
-            mass: 0,
-            restitution: 0
-        }, this.game.scene);
-
-        shield.physicsImpostor = new BABYLON.PhysicsImpostor(shield, BABYLON.PhysicsImpostor.BoxImpostor, {
-            mass: 0,
-            restitution: 0
-        }, this.game.scene);
 
         var particleSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
         particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());

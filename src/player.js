@@ -18,11 +18,11 @@ var Player = (function (_super) {
         this.isControllable = registerMoving;
         var mesh = game.characters['player'].instance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {
-            mass: 80,
-            friction: 1,
-            restitution: 0.0001
-        }, game.scene);
+        //mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {
+        //    mass: 80,
+        //    friction: 1,
+        //    restitution: 0.0001
+        //}, game.scene);
         this.mesh = mesh;
         this.game = game;
         this.createItems();
@@ -69,6 +69,21 @@ var Player = (function (_super) {
                 enemyMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
             }
         }
+        return this;
+    };
+    Player.prototype.envCollisions = function () {
+        var game = this.game;
+        for (var i = 0; i < game.getScene().meshes.length; i++) {
+            var sceneMesh = game.getScene().meshes[i];
+            var meshName = game.getScene().meshes[i]['name'];
+            if (meshName.search("choinka") >= 0 || meshName.search("Fireplace") >= 0 || meshName.search("Log") >= 0) {
+                if (this.mesh.intersectsMesh(sceneMesh, true)) {
+                    game.controller.forward = false;
+                    game.controller.back = false;
+                }
+            }
+        }
+        return this;
     };
     Player.prototype.removeFromWorld = function () {
         this.game.scene.unregisterAfterRender(this.afterRender);
@@ -79,7 +94,7 @@ var Player = (function (_super) {
     Player.prototype.registerFunctionAfterRender = function () {
         var self = this;
         this.afterRender = function () {
-            self.weaponCollisions();
+            self.weaponCollisions().envCollisions();
             if (self.isControllable) {
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;

@@ -11,7 +11,7 @@ var Scene = (function () {
         //this.shadowGenerator.forceBackFacesOnly = true;
         //this.shadowGenerator.usePoissonSampling = true;
         //this.shadowGenerator.useExponentialShadowMap = true;
-        this.shadowGenerator.useBlurExponentialShadowMap = true;
+        //this.shadowGenerator.useBlurExponentialShadowMap = true;
     };
     Scene.prototype.setCamera = function (scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);

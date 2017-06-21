@@ -30,6 +30,7 @@ declare module BABYLON.GUI {
         removeControl(control: Control): AdvancedDynamicTexture;
         dispose(): void;
         private _onResize();
+        _getGlobalViewport(scene: Scene): Viewport;
         private _checkUpdate(camera);
         private _render();
         private _doPicking(x, y, type);
@@ -155,6 +156,7 @@ declare module BABYLON.GUI {
         isPointerBlocker: boolean;
         protected _linkOffsetX: ValueAndUnit;
         protected _linkOffsetY: ValueAndUnit;
+        readonly typeName: string;
         /**
          * An event triggered when the pointer move over the control.
          * @type {BABYLON.Observable}
@@ -212,6 +214,10 @@ declare module BABYLON.GUI {
         readonly centerX: number;
         readonly centerY: number;
         constructor(name?: string);
+        protected _getTypeName(): string;
+        getLocalCoordinates(globalCoordinates: Vector2): Vector2;
+        getLocalCoordinatesToRef(globalCoordinates: Vector2, result: Vector2): Control;
+        moveToVector3(position: Vector3, scene: Scene): void;
         linkWithMesh(mesh: AbstractMesh): void;
         _moveToProjectedPosition(projectedPosition: Vector3): void;
         _markMatrixAsDirty(): void;
@@ -259,6 +265,7 @@ declare module BABYLON.GUI {
             isHorizontal: boolean;
             controlFirst: boolean;
         }): StackPanel;
+        protected static drawEllipse(x: number, y: number, width: number, height: number, context: CanvasRenderingContext2D): void;
     }
 }
 
@@ -272,7 +279,9 @@ declare module BABYLON.GUI {
         background: string;
         readonly children: Control[];
         constructor(name?: string);
+        protected _getTypeName(): string;
         getChildByName(name: string): Control;
+        getChildByType(name: string, type: string): Control;
         containsControl(control: Control): boolean;
         addControl(control: Control): Container;
         removeControl(control: Control): Container;
@@ -296,6 +305,7 @@ declare module BABYLON.GUI {
         private _tempMeasureStore;
         isVertical: boolean;
         constructor(name?: string);
+        protected _getTypeName(): string;
         protected _preMeasure(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
     }
 }
@@ -309,6 +319,7 @@ declare module BABYLON.GUI {
         thickness: number;
         cornerRadius: number;
         constructor(name?: string);
+        protected _getTypeName(): string;
         protected _localDraw(context: CanvasRenderingContext2D): void;
         protected _additionalProcessing(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
         private _drawRoundedRect(context, offset?);
@@ -323,6 +334,7 @@ declare module BABYLON.GUI {
         private _thickness;
         thickness: number;
         constructor(name?: string);
+        protected _getTypeName(): string;
         protected _localDraw(context: CanvasRenderingContext2D): void;
         protected _additionalProcessing(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
         protected _clipForChildren(context: CanvasRenderingContext2D): void;
@@ -355,6 +367,7 @@ declare module BABYLON.GUI {
         private readonly _effectiveX2;
         private readonly _effectiveY2;
         constructor(name?: string);
+        protected _getTypeName(): string;
         _draw(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
         _measure(): void;
         protected _computeAlignment(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
@@ -383,6 +396,7 @@ declare module BABYLON.GUI {
         maximum: number;
         value: number;
         constructor(name?: string);
+        protected _getTypeName(): string;
         _draw(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
         private _pointerIsDown;
         private _updateValueFromPointer(x);
@@ -407,6 +421,7 @@ declare module BABYLON.GUI {
         background: string;
         isChecked: boolean;
         constructor(name?: string);
+        protected _getTypeName(): string;
         _draw(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
         protected _onPointerDown(coordinates: Vector2): boolean;
     }
@@ -428,6 +443,7 @@ declare module BABYLON.GUI {
         background: string;
         isChecked: boolean;
         constructor(name?: string);
+        protected _getTypeName(): string;
         _draw(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
         protected _onPointerDown(coordinates: Vector2): boolean;
     }
@@ -449,6 +465,7 @@ declare module BABYLON.GUI {
         textHorizontalAlignment: number;
         textVerticalAlignment: number;
         constructor(name?: string, text?: string);
+        protected _getTypeName(): string;
         private _drawText(text, textWidth, y, context);
         _draw(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
         protected _additionalProcessing(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
@@ -474,6 +491,7 @@ declare module BABYLON.GUI {
         private _onImageLoaded();
         source: string;
         constructor(name?: string, url?: string);
+        protected _getTypeName(): string;
         synchronizeSizeWithContent(): void;
         _draw(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
         private static _STRETCH_NONE;
@@ -496,6 +514,7 @@ declare module BABYLON.GUI {
         pointerDownAnimation: () => void;
         pointerUpAnimation: () => void;
         constructor(name?: string);
+        protected _getTypeName(): string;
         _processPicking(x: number, y: number, type: number): boolean;
         protected _onPointerEnter(): boolean;
         protected _onPointerOut(): void;
@@ -504,5 +523,45 @@ declare module BABYLON.GUI {
         static CreateImageButton(name: string, text: string, imageUrl: string): Button;
         static CreateImageOnlyButton(name: string, imageUrl: string): Button;
         static CreateSimpleButton(name: string, text: string): Button;
+    }
+}
+
+
+declare var DOMImage: new (width?: number, height?: number) => HTMLImageElement;
+declare module BABYLON.GUI {
+    class ColorPicker extends Control {
+        name: string;
+        private _colorWheelCanvas;
+        private _value;
+        private _tmpColor;
+        private _pointerStartedOnSquare;
+        private _pointerStartedOnWheel;
+        private _squareLeft;
+        private _squareTop;
+        private _squareSize;
+        private _h;
+        private _s;
+        private _v;
+        onValueChangedObservable: Observable<Color3>;
+        value: Color3;
+        width: string | number;
+        height: string | number;
+        size: string | number;
+        constructor(name?: string);
+        protected _getTypeName(): string;
+        private _updateSquareProps();
+        private _drawGradientSquare(hueValue, left, top, width, height, context);
+        private _drawCircle(centerX, centerY, radius, context);
+        private _createColorWheelCanvas(radius, thickness);
+        private _RGBtoHSV(color, result);
+        private _HSVtoRGB(hue, saturation, value, result);
+        _draw(parentMeasure: Measure, context: CanvasRenderingContext2D): void;
+        private _pointerIsDown;
+        private _updateValueFromPointer(x, y);
+        private _isPointOnSquare(coordinates);
+        private _isPointOnWheel(coordinates);
+        protected _onPointerDown(coordinates: Vector2): boolean;
+        protected _onPointerMove(coordinates: Vector2): void;
+        protected _onPointerUp(coordinates: Vector2): void;
     }
 }

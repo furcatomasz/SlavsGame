@@ -181,7 +181,7 @@ abstract class Character {
 
             if (!this.animation) {
                 //self.sfxWalk.play(1);
-                self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, false, this.walkSpeed / 100, function () {
+                self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, true, this.walkSpeed / 100, function () {
                     skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });

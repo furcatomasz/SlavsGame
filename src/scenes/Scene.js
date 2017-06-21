@@ -5,12 +5,13 @@ var Scene = (function () {
         this.game = game;
     }
     Scene.prototype.setShadowGenerator = function (light) {
-        this.shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+        this.shadowGenerator = new BABYLON.ShadowGenerator(4096, light);
         this.shadowGenerator.bias = -0.0000001;
         this.shadowGenerator.setDarkness(0.5);
+        //this.shadowGenerator.forceBackFacesOnly = true;
         //this.shadowGenerator.usePoissonSampling = true;
         //this.shadowGenerator.useExponentialShadowMap = true;
-        //this.shadowGenerator.useBlurExponentialShadowMap = true;
+        this.shadowGenerator.useBlurExponentialShadowMap = true;
     };
     Scene.prototype.setCamera = function (scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
@@ -29,6 +30,7 @@ var Scene = (function () {
         camera.orthoBottom = -Math.abs(zoom);
         camera.rotation = new BABYLON.Vector3(0.681115, -0.11885, 0);
         scene.activeCamera = camera;
+        scene.activeCamera.attachControl(this.game.canvas);
     };
     Scene.prototype.createGameGUI = function () {
         var self = this;

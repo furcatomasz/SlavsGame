@@ -40,10 +40,15 @@ var Player = (function (_super) {
         if (game.controller.forward) {
             mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
             this.runAnimationWalk(true);
+            return;
         }
         if (game.controller.back) {
             mesh.translate(BABYLON.Axis.Z, walkSpeed, BABYLON.Space.LOCAL);
             this.runAnimationWalk(true);
+            return;
+        }
+        if (this.animation) {
+            this.animation.stop();
         }
     };
     Player.prototype.weaponCollisions = function () {
@@ -94,7 +99,7 @@ var Player = (function (_super) {
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
                 self.game.getScene().lights[1].position.x = self.mesh.position.x;
-                self.game.getScene().lights[1].position.y = self.mesh.position.y + 8;
+                self.game.getScene().lights[1].position.y = self.mesh.position.y + 44;
                 self.game.getScene().lights[1].position.z = self.mesh.position.z;
             }
         };

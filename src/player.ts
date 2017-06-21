@@ -117,9 +117,9 @@ class Player extends Character {
             if (self.isControllable) {
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
-                //self.game.getScene().lights[1].position.x = self.mesh.position.x;
-                //self.game.getScene().lights[1].position.y = self.mesh.position.y+44;
-                //self.game.getScene().lights[1].position.z = self.mesh.position.z;
+                self.game.getScene().lights[1].position.x = self.mesh.position.x;
+                self.game.getScene().lights[1].position.y = self.mesh.position.y+44;
+                self.game.getScene().lights[1].position.z = self.mesh.position.z;
 
 
             }

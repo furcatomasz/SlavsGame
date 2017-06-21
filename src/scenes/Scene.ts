@@ -12,7 +12,7 @@ abstract class Scene {
     }
 
     protected setShadowGenerator(light:BABYLON.IShadowLight) {
-        this.shadowGenerator = new BABYLON.ShadowGenerator(4096, light);
+        this.shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         this.shadowGenerator.bias = -0.0000001;
         this.shadowGenerator.setDarkness(0.5);
         //this.shadowGenerator.forceBackFacesOnly = true;

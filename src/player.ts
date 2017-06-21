@@ -23,6 +23,13 @@ class Player extends Character {
         this.mount(this.items.weapon, 'weapon.bone');
         this.mount(this.items.shield, 'shield.bone');
 
+        if(this.isControllable) {
+            let playerLight = new BABYLON.SpotLight("playerLight", new BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 24, game.getScene());
+            playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
+            playerLight.specular = new BABYLON.Color3(1, 1, 1);
+            game.getScene().lights.push(playerLight);
+        }
+
         super(name, game);
     }
 
@@ -54,7 +61,7 @@ class Player extends Character {
             return;
         }
 
-        if(this.animation) {
+        if(this.animation && !this.attackAnimation) {
             this.animation.stop();
         }
     }

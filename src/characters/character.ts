@@ -34,6 +34,7 @@ abstract class Character {
     protected weaponPS:BABYLON.ParticleSystem;
     protected afterRender;
     protected isControllable:boolean;
+    protected attackAnimation: boolean;
 
     protected sfxWalk: BABYLON.Sound;
 
@@ -53,6 +54,28 @@ abstract class Character {
         this.sfxWalk.setVolume(8);
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
+
+        var label = new BABYLON.GUI.TextBlock();
+        label.text = this.name;
+        label.paddingTop = -85;
+        game.sceneManager.guiTexture.addControl(label);
+
+        var slider = new BABYLON.GUI.Slider();
+        slider.minimum = 0;
+        slider.maximum = 100;
+        slider.value = 75;
+        slider.width = "100px";
+        slider.height = "10px";
+        slider.thumbWidth = 1;
+        slider.barOffset = 1;
+        slider.top = -71;
+        slider.background = 'black';
+        slider.color = "green"
+
+        game.sceneManager.guiTexture.addControl(slider);
+
+        label.linkWithMesh(this.mesh);
+        slider.linkWithMesh(this.mesh);
     }
 
     public createItems() {
@@ -63,7 +86,7 @@ abstract class Character {
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
         this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(shield);
 
-        var particleSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
+        var particleSystem = new BABYLON.ParticleSystem("particle1s", 1000, this.game.getScene());
         particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
         particleSystem.emitter = sword;
         particleSystem.minEmitBox = new BABYLON.Vector3(0, -70, 0); // Starting all from
@@ -139,9 +162,11 @@ abstract class Character {
                     attack: true
                 });
 
+                self.attackAnimation = true;
                 self.animation = skeleton.beginAnimation(Character.ANIMATION_ATTACK, false, this.attackSpeed / 100, function () {
                     skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
+                    self.attackAnimation = false;
 
                     self.game.client.socket.emit('attack', {
                         attack: false
@@ -171,6 +196,7 @@ abstract class Character {
     public runAnimationWalk(emit:boolean):void {
         let self = this;
         var childMesh = this.mesh;
+        let loopAnimation = this.isControllable;
 
         if (childMesh) {
             let skeleton = childMesh.skeleton;
@@ -181,7 +207,7 @@ abstract class Character {
 
             if (!this.animation) {
                 //self.sfxWalk.play(1);
-                self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, true, this.walkSpeed / 100, function () {
+                self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, loopAnimation, this.walkSpeed / 100, function () {
                     skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });

@@ -6,9 +6,12 @@ abstract class Scene {
     protected game:Game;
     protected light:BABYLON.IShadowLight;
     public shadowGenerator: BABYLON.ShadowGenerator;
+    public guiTexture: AdvancedDynamicTexture;
 
     constructor(game:Game) {
         this.game = game;
+
+        this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     }
 
     protected setShadowGenerator(light:BABYLON.IShadowLight) {

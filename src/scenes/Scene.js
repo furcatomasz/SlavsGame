@@ -3,6 +3,7 @@
 var Scene = (function () {
     function Scene(game) {
         this.game = game;
+        this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     }
     Scene.prototype.setShadowGenerator = function (light) {
         this.shadowGenerator = new BABYLON.ShadowGenerator(1024, light);

@@ -72,10 +72,12 @@ class SocketIOClient {
         this.socket.on('updatePlayers', function (data) {
             var remotePlayerKey = null;
             var player;
+            console.log(data);
             data.forEach(function (socketRemotePlayer) {
                 if (socketRemotePlayer.id !== game.player.id) {
                     game.remotePlayers.forEach(function (remotePlayer, key) {
                         if (remotePlayer.id == socketRemotePlayer.id) {
+                            console.log(key);
                             remotePlayerKey = key;
                             return;
                         }

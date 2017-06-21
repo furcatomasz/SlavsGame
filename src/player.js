@@ -23,6 +23,12 @@ var Player = (function (_super) {
         this.createItems();
         this.mount(this.items.weapon, 'weapon.bone');
         this.mount(this.items.shield, 'shield.bone');
+        if (this.isControllable) {
+            var playerLight = new BABYLON.SpotLight("playerLight", new BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 24, game.getScene());
+            playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
+            playerLight.specular = new BABYLON.Color3(1, 1, 1);
+            game.getScene().lights.push(playerLight);
+        }
         _super.call(this, name, game);
     }
     Player.prototype.registerMoving = function () {
@@ -47,7 +53,7 @@ var Player = (function (_super) {
             this.runAnimationWalk(true);
             return;
         }
-        if (this.animation) {
+        if (this.animation && !this.attackAnimation) {
             this.animation.stop();
         }
     };

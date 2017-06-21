@@ -18,7 +18,7 @@ abstract class Scene {
         //this.shadowGenerator.forceBackFacesOnly = true;
         //this.shadowGenerator.usePoissonSampling = true;
         //this.shadowGenerator.useExponentialShadowMap = true;
-        this.shadowGenerator.useBlurExponentialShadowMap = true;
+        //this.shadowGenerator.useBlurExponentialShadowMap = true;
     }
 
     protected setCamera(scene: BABYLON.Scene) {

@@ -41,5 +41,5 @@ var Game = (function () {
         return Math.round(Math.random() * (maximum - minimum) + minimum);
     };
     return Game;
-})();
+}());
 //# sourceMappingURL=game.js.map

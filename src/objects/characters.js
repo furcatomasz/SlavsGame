@@ -29,5 +29,5 @@ var Characters = (function () {
         //};
     }
     return Characters;
-})();
+}());
 //# sourceMappingURL=characters.js.map

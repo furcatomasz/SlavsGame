@@ -5,15 +5,20 @@
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var MainMenu = (function (_super) {
     __extends(MainMenu, _super);
     function MainMenu(game) {
-        _super.call(this, game);
+        var _this = _super.call(this, game) || this;
         var scene = new BABYLON.Scene(game.engine);
         scene.clearColor = new BABYLON.Color3(0, 0, 0);
         var camera = new BABYLON.ArcRotateCamera("Camera", -1, 0.8, 100, BABYLON.Vector3.Zero(), scene);
@@ -119,7 +124,8 @@ var MainMenu = (function (_super) {
         });
         advancedTexture.addControl(buttonAboutUs);
         game.scenes.push(scene);
+        return _this;
     }
     return MainMenu;
-})(Scene);
+}(Scene));
 //# sourceMappingURL=MainMenu.js.map

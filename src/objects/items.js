@@ -9,5 +9,5 @@ var Items = (function () {
         game.items['shield'] = shieldFactory;
     }
     return Items;
-})();
+}());
 //# sourceMappingURL=items.js.map

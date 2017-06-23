@@ -24,7 +24,7 @@ class Player extends Character {
         this.mount(this.items.shield, 'shield.bone');
 
         if(this.isControllable) {
-            let playerLight = new BABYLON.SpotLight("playerLight", new BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 24, game.getScene());
+            let playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 24, game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             playerLight.specular = new BABYLON.Color3(1, 1, 1);
             game.getScene().lights.push(playerLight);
@@ -110,10 +110,12 @@ class Player extends Character {
     }
 
     public removeFromWorld() {
-        this.game.scene.unregisterAfterRender(this.afterRender);
+        this.game.getScene().unregisterAfterRender(this.afterRender);
         this.mesh.dispose();
         this.items.weapon.dispose();
-        this.items.weapon.setEnabled(false);
+        this.items.shield.dispose();
+        this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
+
     }
 
 
@@ -127,8 +129,6 @@ class Player extends Character {
                 self.game.getScene().lights[1].position.x = self.mesh.position.x;
                 self.game.getScene().lights[1].position.y = self.mesh.position.y+44;
                 self.game.getScene().lights[1].position.z = self.mesh.position.z;
-
-
             }
         }
     }

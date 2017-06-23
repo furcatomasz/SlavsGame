@@ -1,35 +1,42 @@
 /// <reference path="characters/character.ts"/>
 /// <reference path="game.ts"/>
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Player = (function (_super) {
     __extends(Player, _super);
     function Player(game, id, name, registerMoving) {
-        this.id = id;
-        this.name = name;
-        this.hp = 100;
-        this.attackSpeed = 100;
-        this.walkSpeed = 100;
-        this.damage = 5;
-        this.blockChance = 50;
-        this.isControllable = registerMoving;
+        var _this = this;
+        _this.id = id;
+        _this.name = name;
+        _this.hp = 100;
+        _this.attackSpeed = 100;
+        _this.walkSpeed = 100;
+        _this.damage = 5;
+        _this.blockChance = 50;
+        _this.isControllable = registerMoving;
         var mesh = game.characters['player'].instance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-        this.mesh = mesh;
-        this.game = game;
-        this.createItems();
-        this.mount(this.items.weapon, 'weapon.bone');
-        this.mount(this.items.shield, 'shield.bone');
-        if (this.isControllable) {
-            var playerLight = new BABYLON.SpotLight("playerLight", new BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 24, game.getScene());
+        _this.mesh = mesh;
+        _this.game = game;
+        _this.createItems();
+        _this.mount(_this.items.weapon, 'weapon.bone');
+        _this.mount(_this.items.shield, 'shield.bone');
+        if (_this.isControllable) {
+            var playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 24, game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             playerLight.specular = new BABYLON.Color3(1, 1, 1);
             game.getScene().lights.push(playerLight);
         }
-        _super.call(this, name, game);
+        _this = _super.call(this, name, game) || this;
+        return _this;
     }
     Player.prototype.registerMoving = function () {
         var walkSpeed = Character.WALK_SPEED * (this.walkSpeed / 100);
@@ -92,10 +99,11 @@ var Player = (function (_super) {
         return this;
     };
     Player.prototype.removeFromWorld = function () {
-        this.game.scene.unregisterAfterRender(this.afterRender);
+        this.game.getScene().unregisterAfterRender(this.afterRender);
         this.mesh.dispose();
         this.items.weapon.dispose();
-        this.items.weapon.setEnabled(false);
+        this.items.shield.dispose();
+        this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
     };
     Player.prototype.registerFunctionAfterRender = function () {
         var self = this;
@@ -111,5 +119,5 @@ var Player = (function (_super) {
         };
     };
     return Player;
-})(Character);
+}(Character));
 //# sourceMappingURL=player.js.map

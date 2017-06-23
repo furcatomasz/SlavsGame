@@ -36,6 +36,7 @@ abstract class Character {
     protected isControllable:boolean;
     protected attackAnimation: boolean;
 
+    protected guiCharacterName: BABYLON.GUI.TextBlock;
     protected sfxWalk: BABYLON.Sound;
 
     constructor(name:string, game:Game) {
@@ -55,27 +56,12 @@ abstract class Character {
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
 
-        var label = new BABYLON.GUI.TextBlock();
-        label.text = this.name;
-        label.paddingTop = -85;
-        game.sceneManager.guiTexture.addControl(label);
+        this.guiCharacterName = new BABYLON.GUI.TextBlock();
+        this.guiCharacterName.text = this.name;
+        this.guiCharacterName.paddingTop = -85;
+        game.sceneManager.guiTexture.addControl(this.guiCharacterName);
+        this.guiCharacterName.linkWithMesh(this.mesh);
 
-        var slider = new BABYLON.GUI.Slider();
-        slider.minimum = 0;
-        slider.maximum = 100;
-        slider.value = 75;
-        slider.width = "100px";
-        slider.height = "10px";
-        slider.thumbWidth = 1;
-        slider.barOffset = 1;
-        slider.top = -71;
-        slider.background = 'black';
-        slider.color = "green"
-
-        game.sceneManager.guiTexture.addControl(slider);
-
-        label.linkWithMesh(this.mesh);
-        slider.linkWithMesh(this.mesh);
     }
 
     public createItems() {

@@ -23,14 +23,13 @@ class SocketIOClient {
     protected playerConnected() {
         var self = this;
         var game = this.game;
-        var playerName = 'test';
+        var playerName = Game.randomNumber(1,100);
 
         this.socket.on('clientConnected', function (data) {
-            //TODO: promopt player name
-            self.socket.emit('createPlayer', playerName);
             game.remotePlayers = [];
+            self.socket.emit('createPlayer', playerName);
             game.player = new Player(game, data.id, playerName, true);
-            self.updatePlayers().removePlayer();
+            self.updatePlayers().removePlayer().connectPlayer();
         });
 
         return this;
@@ -63,45 +62,62 @@ class SocketIOClient {
         return this;
     }
 
+    protected connectPlayer() {
+        let game = this.game;
+
+        this.socket.on('newPlayerConnected', function (data) {
+            data.forEach(function (socketRemotePlayer) {
+                let remotePlayerKey = null;
+
+                if (socketRemotePlayer.id !== game.player.id) {
+                    game.remotePlayers.forEach(function (remotePlayer, key) {
+                        if (remotePlayer.id == socketRemotePlayer.id) {
+                            remotePlayerKey = key;
+                            
+                            return;
+                        }
+                    });
+
+                    if(remotePlayerKey === null) {
+                        let player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
+                        game.remotePlayers.push(player);
+                    }
+                }
+            });
+
+        });
+
+        return this;
+    }
+
     /**
      * @returns {SocketIOClient}
      */
     protected updatePlayers() {
         var game = this.game;
 
-        this.socket.on('updatePlayers', function (data) {
-            var remotePlayerKey = null;
-            var player;
-            console.log(data);
-            data.forEach(function (socketRemotePlayer) {
-                if (socketRemotePlayer.id !== game.player.id) {
-                    game.remotePlayers.forEach(function (remotePlayer, key) {
-                        if (remotePlayer.id == socketRemotePlayer.id) {
-                            console.log(key);
-                            remotePlayerKey = key;
-                            return;
-                        }
-                    });
-
-                    if (remotePlayerKey === null) {
-                        player = new Player(game, socketRemotePlayer.id , socketRemotePlayer.name, false);
-                        game.remotePlayers.push(player);
-                    } else if (remotePlayerKey != null) {
-                        player = game.remotePlayers[remotePlayerKey];
-                    }
-
-                    if(player) {
-                        if (!player.isAnimationEnabled() && !socketRemotePlayer.attack) {
-                            player.runAnimationWalk();
-                        } else if (socketRemotePlayer.attack == true) {
-                            player.runAnimationHit();
-                        }
-
-                        player.mesh.position = new BABYLON.Vector3(socketRemotePlayer.p.x, socketRemotePlayer.p.y, socketRemotePlayer.p.z);
-                        player.mesh.rotationQuaternion = new BABYLON.Quaternion(socketRemotePlayer.r.x, socketRemotePlayer.r.y, socketRemotePlayer.r.z, socketRemotePlayer.r.w);
-                    }
+        this.socket.on('updatePlayer', function (updatedPlayer) {
+            let remotePlayerKey = null;
+            game.remotePlayers.forEach(function (remotePlayer, key) {
+                if (remotePlayer.id == updatedPlayer.id) {
+                    remotePlayerKey = key;
+                    return;
                 }
-            })
+            });
+
+            if (remotePlayerKey != null) {
+                let player = game.remotePlayers[remotePlayerKey];
+
+                if (!player.isAnimationEnabled() && !updatedPlayer.attack) {
+                    player.runAnimationWalk(false);
+                } else if (updatedPlayer.attack == true) {
+                    player.runAnimationHit();
+                }
+
+                player.mesh.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
+                player.mesh.rotationQuaternion = new BABYLON.Quaternion(updatedPlayer.r.x, updatedPlayer.r.y, updatedPlayer.r.z, updatedPlayer.r.w);
+            }
+
         });
 
         return this;
@@ -117,7 +133,7 @@ class SocketIOClient {
         this.socket.on('removePlayer', function (id) {
             app.remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == id) {
-                    player = app.remotePlayers[key];
+                    let player = app.remotePlayers[key];
                     player.removeFromWorld();
                     app.remotePlayers.splice(key, 1);
                 }

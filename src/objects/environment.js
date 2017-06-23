@@ -17,6 +17,7 @@ var Environment = (function () {
                 ground = sceneMesh;
             }
             else if (meshName.search("Water") >= 0) {
+                //water = sceneMesh;
             }
             else {
                 game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
@@ -99,8 +100,21 @@ var Environment = (function () {
             fireSystem.updateSpeed = 0.004;
             // Start the particle system
             fireSystem.start();
+            // var fire = new BABYLON.FireMaterial("fire", scene);
+            // fire.diffuseTexture = new BABYLON.Texture("assets/fireplace/fire.png", scene);
+            // fire.distortionTexture = new BABYLON.Texture("assets/fireplace/distortion.png", scene);
+            // fire.opacityTexture = new BABYLON.Texture("assets/fireplace/candleOpacity.png", scene);
+            // fire.speed = 2.0;
+            //
+            //var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            //sfxFireplace.attachToMesh(cone);
+            //new BABYLON.Sound("Music", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
+            // var plane = BABYLON.MeshBuilder.CreatePlane("fireplane", { size: 10, width: 10, height: 10 }, scene);
+            // plane.parent = sceneMesh;
+            // plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+            // plane.material = fire;
         }
     }
     return Environment;
-})();
+}());
 //# sourceMappingURL=environment.js.map

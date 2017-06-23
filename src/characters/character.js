@@ -13,24 +13,11 @@ var Character = (function () {
         this.sfxWalk.setVolume(8);
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
-        var label = new BABYLON.GUI.TextBlock();
-        label.text = this.name;
-        label.paddingTop = -85;
-        game.sceneManager.guiTexture.addControl(label);
-        var slider = new BABYLON.GUI.Slider();
-        slider.minimum = 0;
-        slider.maximum = 100;
-        slider.value = 75;
-        slider.width = "100px";
-        slider.height = "10px";
-        slider.thumbWidth = 1;
-        slider.barOffset = 1;
-        slider.top = -71;
-        slider.background = 'black';
-        slider.color = "green";
-        game.sceneManager.guiTexture.addControl(slider);
-        label.linkWithMesh(this.mesh);
-        slider.linkWithMesh(this.mesh);
+        this.guiCharacterName = new BABYLON.GUI.TextBlock();
+        this.guiCharacterName.text = this.name;
+        this.guiCharacterName.paddingTop = -85;
+        game.sceneManager.guiTexture.addControl(this.guiCharacterName);
+        this.guiCharacterName.linkWithMesh(this.mesh);
     }
     Character.prototype.createItems = function () {
         this.items = [];
@@ -90,13 +77,13 @@ var Character = (function () {
             var self_1 = this;
             var childMesh = this.mesh;
             if (childMesh) {
-                var skeleton = childMesh.skeleton;
+                var skeleton_1 = childMesh.skeleton;
                 this.game.client.socket.emit('attack', {
                     attack: true
                 });
                 self_1.attackAnimation = true;
-                self_1.animation = skeleton.beginAnimation(Character.ANIMATION_ATTACK, false, this.attackSpeed / 100, function () {
-                    skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                self_1.animation = skeleton_1.beginAnimation(Character.ANIMATION_ATTACK, false, this.attackSpeed / 100, function () {
+                    skeleton_1.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self_1.animation = null;
                     self_1.attackAnimation = false;
                     self_1.game.client.socket.emit('attack', {
@@ -126,14 +113,14 @@ var Character = (function () {
         var childMesh = this.mesh;
         var loopAnimation = this.isControllable;
         if (childMesh) {
-            var skeleton = childMesh.skeleton;
+            var skeleton_2 = childMesh.skeleton;
             if (emit) {
                 this.emitPosition();
             }
             if (!this.animation) {
                 //self.sfxWalk.play(1);
-                self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, loopAnimation, this.walkSpeed / 100, function () {
-                    skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                self.animation = skeleton_2.beginAnimation(Character.ANIMATION_WALK, loopAnimation, this.walkSpeed / 100, function () {
+                    skeleton_2.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });
             }
@@ -142,12 +129,12 @@ var Character = (function () {
     Character.prototype.isAnimationEnabled = function () {
         return this.animation;
     };
-    Character.WALK_SPEED = 0.15;
-    Character.ROTATION_SPEED = 0.05;
-    Character.ANIMATION_WALK = 'Run';
-    Character.ANIMATION_STAND = 'stand';
-    Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    Character.ANIMATION_ATTACK = 'Attack';
     return Character;
-})();
+}());
+Character.WALK_SPEED = 0.15;
+Character.ROTATION_SPEED = 0.05;
+Character.ANIMATION_WALK = 'Run';
+Character.ANIMATION_STAND = 'stand';
+Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+Character.ANIMATION_ATTACK = 'Attack';
 //# sourceMappingURL=character.js.map

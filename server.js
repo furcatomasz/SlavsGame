@@ -7,7 +7,6 @@ createEnemies(3, {min: 7, max: 8}, {min: -10, max: -12});
 io.on('connection', function (socket) {
     var player = {id: socket.id};
     socket.emit('clientConnected', player);
-
     ///Player
     socket.on('createPlayer', function (playerName) {
         player = {
@@ -27,17 +26,18 @@ io.on('connection', function (socket) {
         };
         remotePlayers.push(player);
 
-        socket.broadcast.emit('updatePlayers', remotePlayers);
+        socket.emit('newPlayerConnected', remotePlayers);
+        socket.broadcast.emit('newPlayerConnected', remotePlayers);
 
         socket.on('moveTo', function (data) {
             player.p = data.p;
             player.r = data.r;
-            socket.broadcast.emit('updatePlayers', remotePlayers);
+            socket.broadcast.emit('updatePlayer', player);
         });
 
         socket.on('attack', function (data) {
             player.attack = data.attack;
-            socket.broadcast.emit('updatePlayers', remotePlayers);
+            socket.broadcast.emit('updatePlayer', player);
         });
 
     });

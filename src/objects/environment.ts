@@ -137,11 +137,11 @@ class Environment {
         // fire.distortionTexture = new BABYLON.Texture("assets/fireplace/distortion.png", scene);
         // fire.opacityTexture = new BABYLON.Texture("assets/fireplace/candleOpacity.png", scene);
         // fire.speed = 2.0;
-        //
-        //var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-        //sfxFireplace.attachToMesh(cone);
 
-        //new BABYLON.Sound("Music", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
+        var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+        sfxFireplace.attachToMesh(cone);
+
+        new BABYLON.Sound("Music", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
         // var plane = BABYLON.MeshBuilder.CreatePlane("fireplane", { size: 10, width: 10, height: 10 }, scene);
         // plane.parent = sceneMesh;
         // plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;

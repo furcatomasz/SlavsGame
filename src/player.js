@@ -19,7 +19,7 @@ var Player = (function (_super) {
         _this.hp = 100;
         _this.attackSpeed = 100;
         _this.walkSpeed = 100;
-        _this.damage = 5;
+        _this.damage = 1;
         _this.blockChance = 50;
         _this.isControllable = registerMoving;
         var mesh = game.characters['player'].instance('Warrior', true);
@@ -29,11 +29,47 @@ var Player = (function (_super) {
         _this.createItems();
         _this.mount(_this.items.weapon, 'weapon.bone');
         _this.mount(_this.items.shield, 'shield.bone');
+        _this.guiCharacterName = new BABYLON.GUI.TextBlock();
+        _this.guiCharacterName.text = _this.name;
+        _this.guiCharacterName.paddingTop = -85;
+        game.sceneManager.guiTexture.addControl(_this.guiCharacterName);
+        _this.guiCharacterName.linkWithMesh(_this.mesh);
         if (_this.isControllable) {
             var playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 24, game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             playerLight.specular = new BABYLON.Color3(1, 1, 1);
             game.getScene().lights.push(playerLight);
+            var characterBottomPanel = new BABYLON.GUI.StackPanel();
+            characterBottomPanel.width = "50%";
+            characterBottomPanel.top = -10;
+            characterBottomPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            game.sceneManager.guiTexture.addControl(characterBottomPanel);
+            _this.guiPanel = characterBottomPanel;
+            var hpSlider = new BABYLON.GUI.Slider();
+            hpSlider.minimum = 0;
+            hpSlider.maximum = 100;
+            hpSlider.value = 90;
+            hpSlider.width = "100%";
+            hpSlider.height = "10px";
+            hpSlider.thumbWidth = 0;
+            hpSlider.barOffset = 0;
+            hpSlider.background = 'black';
+            hpSlider.color = "red";
+            hpSlider.borderColor = 'black';
+            _this.guiHp = hpSlider;
+            var expSlider = new BABYLON.GUI.Slider();
+            expSlider.minimum = 0;
+            expSlider.maximum = 100;
+            expSlider.value = 5;
+            expSlider.width = "100%";
+            expSlider.height = "10px";
+            expSlider.thumbWidth = 0;
+            expSlider.barOffset = 0;
+            expSlider.background = 'black';
+            expSlider.color = "blue";
+            expSlider.borderColor = 'black';
+            characterBottomPanel.addControl(hpSlider);
+            characterBottomPanel.addControl(expSlider);
         }
         _this = _super.call(this, name, game) || this;
         return _this;
@@ -71,15 +107,16 @@ var Player = (function (_super) {
             var enemyMesh = enemy.mesh;
             if (this.items.weapon.intersectsMesh(enemyMesh, true)) {
                 enemyMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-                var value = game.guiElements.hpBarEnemy.getValue();
-                game.guiElements.hpBarEnemy.updateValue(value - 1);
-                if (value - 1 < 0) {
-                    game.scene.unregisterAfterRender(enemy.afterRender);
+                enemy.createGUI();
+                var newValue = enemy.hp - this.damage;
+                enemy.hp = (newValue);
+                enemy.guiHp.value = newValue;
+                if (newValue < 0) {
                     enemy.removeFromWorld();
                 }
             }
             else {
-                enemyMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
+                enemyMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 1);
             }
         }
         return this;

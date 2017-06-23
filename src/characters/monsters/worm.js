@@ -14,33 +14,41 @@ var Worm = (function (_super) {
     __extends(Worm, _super);
     function Worm(serverKey, name, game, position, rotationQuaternion) {
         var _this = this;
-        var mesh = game.characters['worm'].clone();
-        var skeleton = game.characters['worm'].skeleton.clone();
-        var material = game.characters['worm'].material.clone();
+        var mesh = game.characters['worm'].instance('Worm', true);
         mesh.visibility = true;
-        mesh.skeleton = skeleton;
-        mesh.material = material;
-        mesh.scaling = new BABYLON.Vector3(0.3, 0.3, 0.3);
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
-        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {
-            mass: 20,
-            friction: 1,
-            restitution: 0.2
-        }, game.getScene());
         _this.hp = 100;
+        _this.hpMax = 100;
         _this.attackSpeed = 100;
-        _this.walkSpeed = 200;
-        _this.damage = 5;
+        _this.walkSpeed = 50;
+        _this.damage = 0.2;
         _this.blockChance = 50;
         _this.id = serverKey;
         _this.mesh = mesh;
         _this.visibilityAreaSize = 30;
         _this.attackAreaSize = 6;
-        skeleton.beginAnimation('stand', true);
         _this = _super.call(this, name, game) || this;
         return _this;
     }
+    Worm.prototype.runAnimationWalk = function (emit) {
+        var self = this;
+        var childMesh = this.mesh;
+        var loopAnimation = this.isControllable;
+        if (childMesh) {
+            var skeleton_1 = childMesh.skeleton;
+            if (emit) {
+                this.emitPosition();
+            }
+            if (!this.animation) {
+                //self.sfxWalk.play(1);
+                self.animation = skeleton_1.beginAnimation('Walk', loopAnimation, this.walkSpeed / 50, function () {
+                    skeleton_1.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                    self.animation = null;
+                });
+            }
+        }
+    };
     return Worm;
 }(Monster));
 //# sourceMappingURL=worm.js.map

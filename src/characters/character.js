@@ -13,11 +13,6 @@ var Character = (function () {
         this.sfxWalk.setVolume(8);
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
-        this.guiCharacterName = new BABYLON.GUI.TextBlock();
-        this.guiCharacterName.text = this.name;
-        this.guiCharacterName.paddingTop = -85;
-        game.sceneManager.guiTexture.addControl(this.guiCharacterName);
-        this.guiCharacterName.linkWithMesh(this.mesh);
     }
     Character.prototype.createItems = function () {
         this.items = [];

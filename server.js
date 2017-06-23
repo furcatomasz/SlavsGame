@@ -1,8 +1,8 @@
 var io = require('socket.io')(3003);
 var remotePlayers = [];
 var enemies = [];
-createEnemies(3, {min: -5, max: -10}, {min: -10, max: -12});
-createEnemies(3, {min: 7, max: 8}, {min: -10, max: -12});
+// createEnemies(3, {min: 9, max: 5}, {min: 6, max: 6});
+createEnemies(1, {min: 3, max: 15}, {min: -15, max: -25});
 
 io.on('connection', function (socket) {
     var player = {id: socket.id};

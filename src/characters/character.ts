@@ -21,6 +21,7 @@ abstract class Character {
 
     /** Character atuts */
     public hp:number;
+    public hpMax:number;
     public attackSpeed:number;
     public damage:number;
     public walkSpeed:number;
@@ -36,8 +37,12 @@ abstract class Character {
     protected isControllable:boolean;
     protected attackAnimation: boolean;
 
-    protected guiCharacterName: BABYLON.GUI.TextBlock;
     protected sfxWalk: BABYLON.Sound;
+
+    /** GUI */
+    public guiCharacterName: BABYLON.GUI.TextBlock;
+    public guiPanel: BABYLON.GUI.Slider;
+    public guiHp: BABYLON.GUI.Slider;
 
     constructor(name:string, game:Game) {
         this.name = name;
@@ -55,12 +60,6 @@ abstract class Character {
         this.sfxWalk.setVolume(8);
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
-
-        this.guiCharacterName = new BABYLON.GUI.TextBlock();
-        this.guiCharacterName.text = this.name;
-        this.guiCharacterName.paddingTop = -85;
-        game.sceneManager.guiTexture.addControl(this.guiCharacterName);
-        this.guiCharacterName.linkWithMesh(this.mesh);
 
     }
 
@@ -211,4 +210,6 @@ abstract class Character {
     abstract removeFromWorld();
 
     abstract registerFunctionAfterRender();
+
+    abstract createGUI();
 }

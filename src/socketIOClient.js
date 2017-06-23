@@ -29,23 +29,23 @@ var SocketIOClient = (function () {
      */
     SocketIOClient.prototype.showEnemies = function () {
         var game = this.game;
-        //this.socket.on('showEnemies', function (data) {
-        //    data.forEach(function (enemyData, key) {
-        //        let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
-        //        let rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
-        //        let enemy = game.enemies[key];
-        //
-        //        if (enemy) {
-        //            enemy.mesh.position = position;
-        //            enemy.mesh.rotationQuaternion = rotationQuaternion;
-        //            enemy.mesh.runAnimationWalk(false);
-        //        } else {
-        //            if (enemyData.type == 'worm') {
-        //                new Worm(key, data.id, game, position, rotationQuaternion);
-        //            }
-        //        }
-        //    });
-        //});
+        this.socket.on('showEnemies', function (data) {
+            data.forEach(function (enemyData, key) {
+                var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
+                var rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
+                var enemy = game.enemies[key];
+                if (enemy) {
+                    enemy.mesh.position = position;
+                    enemy.mesh.rotationQuaternion = rotationQuaternion;
+                    enemy.mesh.runAnimationWalk(false);
+                }
+                else {
+                    if (enemyData.type == 'worm') {
+                        new Worm(key, data.id, game, position, rotationQuaternion);
+                    }
+                }
+            });
+        });
         return this;
     };
     SocketIOClient.prototype.connectPlayer = function () {

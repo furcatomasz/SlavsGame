@@ -22,7 +22,37 @@ abstract class Monster extends Character {
 
         game.enemies[this.id] = this;
 
+        this.mesh.skeleton.beginAnimation(Character.ANIMATION_STAND, true);
+
         super(name, game);
+    }
+
+    public createGUI() {
+        if(this.guiPanel) {
+            this.game.sceneManager.guiTexture.removeControl(this.guiPanel);
+        }
+
+        let monsterPanel = new BABYLON.GUI.StackPanel();
+        monsterPanel.width = "25%";
+        monsterPanel.top = 10;
+        monsterPanel.verticalAlignment = 	BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        this.guiPanel = monsterPanel;
+        this.game.sceneManager.guiTexture.addControl(monsterPanel);
+
+        let hpSlider = new BABYLON.GUI.Slider();
+        hpSlider.minimum = 0;
+        hpSlider.maximum = this.hpMax;
+        hpSlider.value = this.hp;
+        hpSlider.width = "100%";
+        hpSlider.height = "10px";
+        hpSlider.thumbWidth = 0;
+        hpSlider.barOffset = 0;
+        hpSlider.background = 'black';
+        hpSlider.color = "red";
+        hpSlider.borderColor = 'black';
+        this.guiHp = hpSlider;
+
+        monsterPanel.addControl(hpSlider);
     }
 
     public emitPosition() {
@@ -37,11 +67,10 @@ abstract class Monster extends Character {
 
     public removeFromWorld() {
         this.game.getScene().unregisterAfterRender(this.afterRender);
-        this.visibilityArea.dispose();
-        this.attackArea.dispose();
-        this.mesh.dispose();
-        this.game.guiElements.hpBarEnemy.updateValue(100);
-
+        let self = this;
+        self.visibilityArea.dispose();
+        self.attackArea.dispose();
+        self.mesh.dispose();
     }
 
     protected registerFunctionAfterRender() {
@@ -51,24 +80,24 @@ abstract class Monster extends Character {
 
         this.afterRender = function() {
             if (self.game.player) {
-                if (self.visibilityArea.intersectsMesh(playerMesh, true)) {
+                if (self.visibilityArea.intersectsMesh(playerMesh, false)) {
                     self.mesh.lookAt(playerMesh.position);
 
-                    if (self.attackArea.intersectsMesh(playerMesh, true)) {
+                    if (self.attackArea.intersectsMesh(playerMesh, false)) {
                         self.runAnimationHit();
 
-                        if (self.mesh.intersectsMesh(self.game.player.mesh, true)) {
+                        if (self.mesh.intersectsMesh(self.game.player.mesh, false)) {
                             playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
 
-                            var value = self.game.guiElements.hpBar.getValue();
-                            self.game.guiElements.hpBar.updateValue(value - 0.2);
+                            let value = self.game.player.guiHp.value;
+                            self.game.player.guiHp.value = (value - self.damage);
 
-                            if(value-0.1 < 0) {
+                            if(self.game.player.guiHp.value-self.damage < 0) {
                                 alert('Padłeś');
                                 window.location.reload();
                             }
                         } else {
-                            playerMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
+                            playerMesh.material.emissiveColor = new BABYLON.Color4(0.89, 0.89, 0.89, 0);
                         }
 
                     } else {

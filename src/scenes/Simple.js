@@ -25,7 +25,7 @@ var Simple = (function (_super) {
         _this = _super.call(this, game) || this;
         //scene.debugLayer.show();
         game.scenes.push(scene);
-        scene.lights[0].intensity = 0.4;
+        scene.lights[0].intensity = 0.25;
         _this.setCamera(scene);
         _this.setShadowGenerator(scene.lights[0]);
         //this.createGameGUI();

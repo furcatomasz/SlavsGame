@@ -26,18 +26,19 @@ abstract class Character {
     public damage:number;
     public walkSpeed:number;
     public blockChance:number;
+    public hitChange:number;
 
     public items;
 
     protected game:Game;
     protected speed:number;
     protected animation:BABYLON.Animatable;
-    protected weaponPS:BABYLON.ParticleSystem;
     protected afterRender;
     protected isControllable:boolean;
     protected attackAnimation: boolean;
 
     protected sfxWalk: BABYLON.Sound;
+    protected sfxHit: BABYLON.Sound;
 
     /** GUI */
     public guiCharacterName: BABYLON.GUI.TextBlock;
@@ -55,9 +56,6 @@ abstract class Character {
 
         game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
 
-        this.sfxWalk = new BABYLON.Sound("Fire", "assets/sounds/character/walk/1.wav", this.game.getScene(), null, { loop: false, autoplay: false });
-        this.sfxWalk.attachToMesh(this.mesh);
-        this.sfxWalk.setVolume(8);
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
 
@@ -65,48 +63,10 @@ abstract class Character {
 
     public createItems() {
         this.items = [];
-        let sword = this.game.items.sword.instance('Sword', false);
-        let shield = this.game.items.shield.instance('Shield', false);
-
-        this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sword);
-        this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(shield);
-
-        var particleSystem = new BABYLON.ParticleSystem("particle1s", 1000, this.game.getScene());
-        particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
-        particleSystem.emitter = sword;
-        particleSystem.minEmitBox = new BABYLON.Vector3(0, -70, 0); // Starting all from
-        particleSystem.maxEmitBox = new BABYLON.Vector3(0, -70, 0); // To...
-
-        particleSystem.color1 = new BABYLON.Color4(1, 1, 1, 1);
-        particleSystem.color2 = new BABYLON.Color4(1, 1, 1, 1);
-        particleSystem.colorDead = new BABYLON.Color4(1, 1, 1, 0.0);
-
-        particleSystem.minSize = 0.2;
-        particleSystem.maxSize = 0.5;
-
-        particleSystem.minLifeTime = 0.05;
-        particleSystem.maxLifeTime = 0.2;
-
-        particleSystem.emitRate = 800;
-
-        particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
-
-        particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
-
-        particleSystem.direction1 = new BABYLON.Vector3(-1.5, 8, -1.5);
-        particleSystem.direction2 = new BABYLON.Vector3(1.5, 8, 1.5);
-
-        particleSystem.minAngularSpeed = -10.0;
-        particleSystem.maxAngularSpeed = 10.0;
-
-        particleSystem.minEmitPower = 0.1;
-        particleSystem.maxEmitPower = 1;
-        particleSystem.updateSpeed = 0.005;
-
-        this.weaponPS = particleSystem;
+        let sword = new Items.Sword(this.game);
 
         this.items.weapon = sword;
-        this.items.shield = shield;
+        this.mount(sword.mesh, 'weapon.bone');
     }
 
     public mount(mesh, boneName) {
@@ -148,10 +108,12 @@ abstract class Character {
                 });
 
                 self.attackAnimation = true;
+                self.onHitStart();
                 self.animation = skeleton.beginAnimation(Character.ANIMATION_ATTACK, false, this.attackSpeed / 100, function () {
                     skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.attackAnimation = false;
+                    self.onHitEnd();
 
                     self.game.client.socket.emit('attack', {
                         attack: false
@@ -191,10 +153,11 @@ abstract class Character {
             }
 
             if (!this.animation) {
-                //self.sfxWalk.play(1);
+                self.sfxWalk.play();
                 self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, loopAnimation, this.walkSpeed / 100, function () {
                     skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
+                    self.sfxWalk.stop();
                 });
 
 
@@ -212,4 +175,8 @@ abstract class Character {
     abstract registerFunctionAfterRender();
 
     abstract createGUI();
+
+    /** Events */
+    protected onHitStart() {};
+    protected onHitEnd() {};
 }

@@ -13,7 +13,7 @@ class Simple extends Scene {
         game.sceneManager = this;
         map01.initScene(scene, 'assets/scenes/map01a');
         super(game);
-
+        scene.collisionsEnabled = true;
 
         //scene.debugLayer.show();
         game.scenes.push(scene);

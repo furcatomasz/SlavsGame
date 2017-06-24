@@ -86,20 +86,6 @@ abstract class Monster extends Character {
                     if (self.attackArea.intersectsMesh(playerMesh, false)) {
                         self.runAnimationHit();
 
-                        if (self.mesh.intersectsMesh(self.game.player.mesh, false)) {
-                            playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-
-                            let value = self.game.player.guiHp.value;
-                            self.game.player.guiHp.value = (value - self.damage);
-
-                            if(self.game.player.guiHp.value-self.damage < 0) {
-                                alert('Padłeś');
-                                window.location.reload();
-                            }
-                        } else {
-                            playerMesh.material.emissiveColor = new BABYLON.Color4(0.89, 0.89, 0.89, 0);
-                        }
-
                     } else {
                         self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
                         self.runAnimationWalk(true);
@@ -109,40 +95,27 @@ abstract class Monster extends Character {
         }
     }
 
-    //let self = this;
-    //this.afterRender = function() {
-    //    if(game.player) {
-    //        if (self.visibilityArea.intersectsMesh(game.player.character.mesh, false)) {
-    //            self.character.mesh.lookAt(game.player.character.mesh.position);
-    //
-    //            var playerMesh = game.player.character.mesh.getChildMeshes()[0];
-    //            if(self.attackArea.intersectsMesh(playerMesh, false)) {
-    //                self.character.runAnimationHit();
-    //
-    //                //if (self.character.items.weapon.intersectsMesh(game.player.character.mesh, false)) {
-    //                //    playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-    //                //
-    //                //    var value = game.guiElements.hpBar.getValue();
-    //                //
-    //                //    game.guiElements.hpBar.updateValue(value - 0.2);
-    //                //
-    //                //    if(value-0.1 < 0) {
-    //                //        alert('Padłeś');
-    //                //        window.location.reload();
-    //                //    }
-    //                //} else {
-    //                //    playerMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 0);
-    //                //}
-    //
-    //            } else {
-    //                var velocity = BABYLON.Vector3.TransformNormal(new BABYLON.Vector3(0, 0, -0.041), self.character.mesh.computeWorldMatrix());
-    //                self.character.mesh.moveWithCollisions(velocity);
-    //                self.character.runAnimationWalk();
-    //
-    //            }
-    //        }
-    //    }
-    //};
-    //game.scene.registerAfterRender(this.afterRender);
+    protected onHitEnd() {
+        let playerMesh = this.game.player.mesh;
+
+        if(Game.randomNumber(1,100) <= this.hitChange) {
+            playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
+
+            if(!this.game.player.sfxHit.isPlaying) {
+                this.game.player.sfxHit.setVolume(2);
+                this.game.player.sfxHit.play();
+            }
+
+            let value = this.game.player.guiHp.value;
+            this.game.player.guiHp.value = (value - this.damage);
+
+            if(this.game.player.guiHp.value-this.damage < 0) {
+                alert('Padłeś');
+                window.location.reload();
+            }
+        } else {
+            playerMesh.material.emissiveColor = new BABYLON.Color4(0.89, 0.89, 0.89, 0);
+        }
+    }
 
 }

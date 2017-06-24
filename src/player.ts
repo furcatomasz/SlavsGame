@@ -15,6 +15,9 @@ class Player extends Character {
         this.blockChance = 50;
         this.isControllable = registerMoving;
 
+        this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "/babel/Characters/Warrior/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
+
         let mesh = game.characters['player'].instance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
 
@@ -22,9 +25,7 @@ class Player extends Character {
         this.game = game;
 
         this.createItems();
-        this.mount(this.items.weapon, 'weapon.bone');
-        this.mount(this.items.shield, 'shield.bone');
-
+        //this.mount(this.items.shield, 'shield.bone');
 
         this.guiCharacterName = new BABYLON.GUI.TextBlock();
         this.guiCharacterName.text = this.name;
@@ -116,9 +117,12 @@ class Player extends Character {
         for (var i = 0; i < game.enemies.length; i++) {
             var enemy = game.enemies[i];
             let enemyMesh = enemy.mesh;
-            if (this.items.weapon.intersectsMesh(enemyMesh, true)) {
+            if (this.items.weapon.mesh.intersectsMesh(enemyMesh, true)) {
                 enemyMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-
+                if(!enemy.sfxHit.isPlaying) {
+                    enemy.sfxHit.setVolume(2);
+                    enemy.sfxHit.play();
+                }
                 enemy.createGUI();
 
                 let newValue = enemy.hp  - this.damage;
@@ -158,12 +162,12 @@ class Player extends Character {
     public removeFromWorld() {
         this.game.getScene().unregisterAfterRender(this.afterRender);
         this.mesh.dispose();
-        this.items.weapon.dispose();
-        this.items.shield.dispose();
+        this.items.weapon.mesh.dispose();
+        //this.items.shield.mesh.dispose();
         this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
 
     }
-
+w
 
     protected registerFunctionAfterRender() {
         let self = this;
@@ -178,4 +182,9 @@ class Player extends Character {
             }
         }
     }
+
+    protected onHitStart() {
+        this.items.weapon.sfxHit.play(0.3);
+    };
+
 }

@@ -17,10 +17,10 @@ class Simple extends Scene {
 
         //scene.debugLayer.show();
         game.scenes.push(scene);
-        scene.lights[0].intensity = 0.25;
+        scene.lights[0].intensity = 0;
 
         this.setCamera(scene);
-        this.setShadowGenerator(scene.lights[0]);
+        //this.setShadowGenerator(scene.lights[0]);
         //this.createGameGUI();
 
         new Environment(game, scene);

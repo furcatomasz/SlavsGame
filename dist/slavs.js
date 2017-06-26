@@ -186,7 +186,7 @@ var Environment = (function () {
                 //water = sceneMesh;
             }
             else {
-                game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
+                //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
             }
         }
         if (water) {
@@ -300,9 +300,9 @@ var Simple = (function (_super) {
         scene.collisionsEnabled = true;
         //scene.debugLayer.show();
         game.scenes.push(scene);
-        scene.lights[0].intensity = 0.25;
+        scene.lights[0].intensity = 0;
         _this.setCamera(scene);
-        _this.setShadowGenerator(scene.lights[0]);
+        //this.setShadowGenerator(scene.lights[0]);
         //this.createGameGUI();
         new Environment(game, scene);
         new Characters(game, scene);
@@ -327,9 +327,10 @@ var Character = (function () {
         var skeleton = this.mesh.skeleton;
         skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
         this.mesh.receiveShadows = true;
-        game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
+        //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
+        this.createBloodParticlesSystem();
     }
     Character.prototype.createItems = function () {
         this.items = [];
@@ -418,6 +419,32 @@ var Character = (function () {
     Character.prototype.isAnimationEnabled = function () {
         return this.animation;
     };
+    Character.prototype.createBloodParticlesSystem = function () {
+        var particleSystem = new BABYLON.ParticleSystem("particle1s", 1000, this.game.getScene());
+        particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
+        particleSystem.emitter = this.mesh;
+        particleSystem.minEmitBox = new BABYLON.Vector3(0, this.mesh.geometry.extend.maximum.y, 0); // Starting all from
+        particleSystem.maxEmitBox = new BABYLON.Vector3(0, this.mesh.geometry.extend.maximum.y, 0); // To...
+        particleSystem.color1 = new BABYLON.Color4(1, 0, 0, 1);
+        particleSystem.color2 = new BABYLON.Color4(1, 0, 0, 1);
+        particleSystem.colorDead = new BABYLON.Color4(1, 0, 0, 0.0);
+        particleSystem.minSize = 0.2;
+        particleSystem.maxSize = 0.5;
+        particleSystem.minLifeTime = 0.05;
+        particleSystem.maxLifeTime = 0.7;
+        particleSystem.emitRate = 50;
+        //particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
+        particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+        particleSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+        particleSystem.direction2 = new BABYLON.Vector3(0, 5, 4);
+        particleSystem.targetStopDuration = 0.6;
+        particleSystem.minAngularSpeed = -10.0;
+        particleSystem.maxAngularSpeed = 10.0;
+        particleSystem.minEmitPower = 1;
+        particleSystem.maxEmitPower = 2;
+        particleSystem.updateSpeed = 0.02;
+        this.bloodParticles = particleSystem;
+    };
     /** Events */
     Character.prototype.onHitStart = function () { };
     ;
@@ -459,7 +486,7 @@ var Player = (function (_super) {
         game.sceneManager.guiTexture.addControl(_this.guiCharacterName);
         _this.guiCharacterName.linkWithMesh(_this.mesh);
         if (_this.isControllable) {
-            var playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 24, game.getScene());
+            var playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             playerLight.specular = new BABYLON.Color3(1, 1, 1);
             game.getScene().lights.push(playerLight);
@@ -536,6 +563,8 @@ var Player = (function (_super) {
                     enemy.sfxHit.play();
                 }
                 enemy.createGUI();
+                enemy.bloodParticles.start();
+                //enemy.bloodParticles.stop();
                 var newValue = enemy.hp - this.damage;
                 enemy.hp = (newValue);
                 enemy.guiHp.value = newValue;
@@ -578,13 +607,18 @@ var Player = (function (_super) {
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
                 self.game.getScene().lights[1].position.x = self.mesh.position.x;
-                self.game.getScene().lights[1].position.y = self.mesh.position.y + 44;
+                self.game.getScene().lights[1].position.y = self.mesh.position.y + 64;
                 self.game.getScene().lights[1].position.z = self.mesh.position.z;
             }
         };
     };
     Player.prototype.onHitStart = function () {
         this.items.weapon.sfxHit.play(0.3);
+        //this.items.weapon.particles.start();
+    };
+    ;
+    Player.prototype.onHitEnd = function () {
+        //this.items.weapon.particles.stop();
     };
     ;
     return Player;
@@ -669,11 +703,12 @@ var Monster = (function (_super) {
     Monster.prototype.onHitEnd = function () {
         var playerMesh = this.game.player.mesh;
         if (Game.randomNumber(1, 100) <= this.hitChange) {
-            playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
+            //playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
             if (!this.game.player.sfxHit.isPlaying) {
                 this.game.player.sfxHit.setVolume(2);
                 this.game.player.sfxHit.play();
             }
+            this.game.player.bloodParticles.start();
             var value = this.game.player.guiHp.value;
             this.game.player.guiHp.value = (value - this.damage);
             if (this.game.player.guiHp.value - this.damage < 0) {
@@ -682,7 +717,7 @@ var Monster = (function (_super) {
             }
         }
         else {
-            playerMesh.material.emissiveColor = new BABYLON.Color4(0.89, 0.89, 0.89, 0);
+            //playerMesh.material.emissiveColor = new BABYLON.Color4(0.89, 0.89, 0.89, 0);
         }
     };
     return Monster;
@@ -869,7 +904,7 @@ var Items;
             var _this = _super.call(this, game) || this;
             _this.name = 'Sword';
             _this.mesh = _this.game.items.sword.instance('Sword', false);
-            _this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(_this.mesh);
+            //this.game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
             _this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", _this.game.getScene(), null, {
                 loop: false,
                 autoplay: false
@@ -877,20 +912,20 @@ var Items;
             var particleSystem = new BABYLON.ParticleSystem("particle1s", 1000, _this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", _this.game.getScene());
             particleSystem.emitter = _this.mesh;
-            particleSystem.minEmitBox = new BABYLON.Vector3(0, -70, 0); // Starting all from
-            particleSystem.maxEmitBox = new BABYLON.Vector3(0, -70, 0); // To...
-            particleSystem.color1 = new BABYLON.Color4(1, 1, 1, 1);
-            particleSystem.color2 = new BABYLON.Color4(1, 1, 1, 1);
-            particleSystem.colorDead = new BABYLON.Color4(1, 1, 1, 0.0);
+            particleSystem.minEmitBox = new BABYLON.Vector3(0, 5, 0); // Starting all from
+            particleSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0); // To...
+            particleSystem.color1 = new BABYLON.Color4(1, 0, 0, 1);
+            particleSystem.color2 = new BABYLON.Color4(1, 0, 0, 1);
+            particleSystem.colorDead = new BABYLON.Color4(1, 0, 0, 0.0);
             particleSystem.minSize = 0.2;
             particleSystem.maxSize = 0.5;
             particleSystem.minLifeTime = 0.05;
             particleSystem.maxLifeTime = 0.2;
             particleSystem.emitRate = 800;
-            particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
+            //particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
             particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
-            particleSystem.direction1 = new BABYLON.Vector3(-1.5, 8, -1.5);
-            particleSystem.direction2 = new BABYLON.Vector3(1.5, 8, 1.5);
+            particleSystem.direction1 = new BABYLON.Vector3(-1, 0, 0);
+            particleSystem.direction2 = new BABYLON.Vector3(-3, 0, 0);
             particleSystem.minAngularSpeed = -10.0;
             particleSystem.maxAngularSpeed = 10.0;
             particleSystem.minEmitPower = 0.1;

@@ -34,7 +34,7 @@ class Player extends Character {
         this.guiCharacterName.linkWithMesh(this.mesh);
 
         if(this.isControllable) {
-            let playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 24, game.getScene());
+            let playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             playerLight.specular = new BABYLON.Color3(1, 1, 1);
             game.getScene().lights.push(playerLight);
@@ -125,6 +125,10 @@ class Player extends Character {
                 }
                 enemy.createGUI();
 
+                enemy.bloodParticles.start();
+
+                //enemy.bloodParticles.stop();
+
                 let newValue = enemy.hp  - this.damage;
                 enemy.hp = (newValue);
                 enemy.guiHp.value = newValue;
@@ -177,7 +181,7 @@ w
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
                 self.game.getScene().lights[1].position.x = self.mesh.position.x;
-                self.game.getScene().lights[1].position.y = self.mesh.position.y+44;
+                self.game.getScene().lights[1].position.y = self.mesh.position.y+64;
                 self.game.getScene().lights[1].position.z = self.mesh.position.z;
             }
         }
@@ -185,6 +189,11 @@ w
 
     protected onHitStart() {
         this.items.weapon.sfxHit.play(0.3);
+        //this.items.weapon.particles.start();
+    };
+
+    protected onHitEnd() {
+        //this.items.weapon.particles.stop();
     };
 
 }

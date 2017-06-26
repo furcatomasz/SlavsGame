@@ -99,13 +99,14 @@ abstract class Monster extends Character {
         let playerMesh = this.game.player.mesh;
 
         if(Game.randomNumber(1,100) <= this.hitChange) {
-            playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
+            //playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
 
             if(!this.game.player.sfxHit.isPlaying) {
                 this.game.player.sfxHit.setVolume(2);
                 this.game.player.sfxHit.play();
             }
 
+            this.game.player.bloodParticles.start();
             let value = this.game.player.guiHp.value;
             this.game.player.guiHp.value = (value - this.damage);
 
@@ -114,7 +115,7 @@ abstract class Monster extends Character {
                 window.location.reload();
             }
         } else {
-            playerMesh.material.emissiveColor = new BABYLON.Color4(0.89, 0.89, 0.89, 0);
+            //playerMesh.material.emissiveColor = new BABYLON.Color4(0.89, 0.89, 0.89, 0);
         }
     }
 

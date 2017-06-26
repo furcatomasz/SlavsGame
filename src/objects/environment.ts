@@ -23,7 +23,7 @@ class Environment {
             } else if (meshName.search("Water") >= 0) {
                 //water = sceneMesh;
             } else {
-                game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
+                //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
             }
 
         }

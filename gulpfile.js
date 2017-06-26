@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var ts = require('gulp-typescript');
+var exec = require('child_process').exec;
 var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
 
@@ -14,6 +15,8 @@ gulp.task('default', function () {
                 }))
                 .pipe(gulp.dest('dist'));
         });
+
+    exec('node server.js');
 
     browserSync.init({
         server: {

@@ -4,23 +4,25 @@
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
-/// <reference path="../../map01.d.ts"/>
+/// <reference path="../../babel/Scenes/map01/map01.d.ts"/>
 
 class Simple extends Scene {
 
     constructor(game:Game) {
         let scene = new BABYLON.Scene(game.engine);
         game.sceneManager = this;
-        map01.initScene(scene, 'assets/scenes/map01a');
+        map01.initScene(scene, '/babel/Scenes/map01');
         super(game);
         scene.collisionsEnabled = true;
 
-        //scene.debugLayer.show();
+        scene.debugLayer.show({
+            popup:true,
+        });
         game.scenes.push(scene);
         scene.lights[0].intensity = 0;
 
         this.setCamera(scene);
-        //this.setShadowGenerator(scene.lights[0]);
+        // this.setShadowGenerator(scene.lights[0]);
         //this.createGameGUI();
 
         new Environment(game, scene);

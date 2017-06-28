@@ -3,7 +3,6 @@ var remotePlayers = [];
 var enemies = [];
 // createEnemies(3, {min: 9, max: 5}, {min: 6, max: 6});
 createEnemies(1, {min: 3, max: 15}, {min: -15, max: -25});
-createEnemies(40, {min: 30, max: 60}, {min: -80, max: -100});
 io.on('connection', function (socket) {
     var player = {id: socket.id};
     socket.emit('clientConnected', player);

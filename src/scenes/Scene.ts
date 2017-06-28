@@ -7,6 +7,7 @@ abstract class Scene {
     protected light:BABYLON.IShadowLight;
     public shadowGenerator: BABYLON.ShadowGenerator;
     public guiTexture: AdvancedDynamicTexture;
+    public environment: Environment;
 
     constructor(game:Game) {
         this.game = game;

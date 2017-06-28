@@ -15,9 +15,9 @@ class Simple extends Scene {
         super(game);
         scene.collisionsEnabled = true;
 
-        scene.debugLayer.show({
-            popup:true,
-        });
+        //scene.debugLayer.show({
+        //    popup:true,
+        //});
         game.scenes.push(scene);
         scene.lights[0].intensity = 0;
 
@@ -25,7 +25,7 @@ class Simple extends Scene {
         // this.setShadowGenerator(scene.lights[0]);
         //this.createGameGUI();
 
-        new Environment(game, scene);
+        this.environment = new Environment(game, scene);
         new Characters(game, scene);
         new Items(game, scene);
 

@@ -148,17 +148,24 @@ class Player extends Character {
 
     protected envCollisions() {
         let game = this.game;
-            for (var i = 0; i < game.getScene().meshes.length; i++) {
-                var sceneMesh = game.getScene().meshes[i];
-                var meshName = game.getScene().meshes[i]['name'];
-
-                if (meshName.search("choinka") >= 0 || meshName.search("Fireplace") >= 0 || meshName.search("Log") >= 0) {
-                    if (this.mesh.intersectsMesh(sceneMesh, true)) {
-                        game.controller.forward = false;
-                        game.controller.back = false;
-                    }
-                }
+        for (var i = 0; i < game.sceneManager.environment.trees.length; i++) {
+            var sceneMesh = game.sceneManager.environment.trees[i];
+            if (this.mesh.intersectsMesh(sceneMesh, true)) {
+                game.controller.forward = false;
+                game.controller.back = false;
+            }
         }
+        //    for (var i = 0; i < game.getScene().meshes.length; i++) {
+        //        var sceneMesh = game.getScene().meshes[i];
+        //        var meshName = game.getScene().meshes[i]['name'];
+        //
+        //        if (meshName.search("choinka") >= 0 || meshName.search("Fireplace") >= 0 || meshName.search("Log") >= 0) {
+        //            if (this.mesh.intersectsMesh(sceneMesh, true)) {
+        //                game.controller.forward = false;
+        //                game.controller.back = false;
+        //            }
+        //        }
+        //}
 
         return this;
     }

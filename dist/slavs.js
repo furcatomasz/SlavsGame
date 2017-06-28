@@ -167,30 +167,62 @@ var Items = (function () {
 /// <reference path="../game.ts"/>
 var Environment = (function () {
     function Environment(game, scene) {
-        console.log(scene);
-        var ground = null;
-        var water = null;
+        this.trees = [];
+        this.bushes = [];
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
             sceneMesh.material.freeze();
             sceneMesh.freezeWorldMatrix();
-            if (meshName.search("Grass") >= 0) {
-                continue;
+            if (meshName.search("Bush") >= 0) {
+                this.bushes.push(sceneMesh);
+                if (!this.bush) {
+                    this.bush = sceneMesh;
+                }
             }
-            if (meshName.search("Forest_ground") >= 0) {
-                //ground
+            else if (meshName.search("Forest_ground") >= 0) {
                 sceneMesh.receiveShadows = true;
-                ground = sceneMesh;
             }
             else if (meshName.search("choinka") >= 0) {
-                console.log(sceneMesh);
-                //water = sceneMesh;
+                this.trees.push(sceneMesh);
+                if (!this.tree) {
+                    this.tree = sceneMesh;
+                }
             }
             else {
                 //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
             }
         }
+        for (var i = 0; i < this.trees.length; i++) {
+            var meshTree = this.trees[i];
+            if (meshTree == this.tree) {
+                continue;
+            }
+            if (i > 0) {
+                var tree = this.tree.createInstance('instanceTree_' + i);
+                tree.position = meshTree.position;
+                tree.rotation = meshTree.rotation;
+                tree.scaling = meshTree.scaling;
+                meshTree.dispose();
+            }
+        }
+        //for (var i = 0; i < this.bushes.length; i++) {
+        //    var meshBush = this.bushes[i];
+        //
+        //    if(meshBush == this.bush) {
+        //        continue;
+        //    }
+        //
+        //    if(i > 0) {
+        //        meshBush.dispose();
+        //
+        //        let bush = this.bush.createInstance('instanceBush_' + i);
+        //        bush.position = meshBush.position;
+        //        bush.rotation = meshBush.rotation;
+        //        bush.scaling = meshBush.scaling;
+        //
+        //    }
+        //}
         var cone = scene.getMeshByName("Fireplace");
         if (cone) {
             var smokeSystem = new BABYLON.ParticleSystem("particles", 1000, scene);
@@ -261,15 +293,15 @@ var Simple = (function (_super) {
         map01.initScene(scene, '/babel/Scenes/map01');
         _this = _super.call(this, game) || this;
         scene.collisionsEnabled = true;
-        scene.debugLayer.show({
-            popup: true
-        });
+        //scene.debugLayer.show({
+        //    popup:true,
+        //});
         game.scenes.push(scene);
         scene.lights[0].intensity = 0;
         _this.setCamera(scene);
         // this.setShadowGenerator(scene.lights[0]);
         //this.createGameGUI();
-        new Environment(game, scene);
+        _this.environment = new Environment(game, scene);
         new Characters(game, scene);
         new Items(game, scene);
         game.client.connect(serverUrl);
@@ -545,16 +577,24 @@ var Player = (function (_super) {
     };
     Player.prototype.envCollisions = function () {
         var game = this.game;
-        for (var i = 0; i < game.getScene().meshes.length; i++) {
-            var sceneMesh = game.getScene().meshes[i];
-            var meshName = game.getScene().meshes[i]['name'];
-            if (meshName.search("choinka") >= 0 || meshName.search("Fireplace") >= 0 || meshName.search("Log") >= 0) {
-                if (this.mesh.intersectsMesh(sceneMesh, true)) {
-                    game.controller.forward = false;
-                    game.controller.back = false;
-                }
+        for (var i = 0; i < game.sceneManager.environment.trees.length; i++) {
+            var sceneMesh = game.sceneManager.environment.trees[i];
+            if (this.mesh.intersectsMesh(sceneMesh, true)) {
+                game.controller.forward = false;
+                game.controller.back = false;
             }
         }
+        //    for (var i = 0; i < game.getScene().meshes.length; i++) {
+        //        var sceneMesh = game.getScene().meshes[i];
+        //        var meshName = game.getScene().meshes[i]['name'];
+        //
+        //        if (meshName.search("choinka") >= 0 || meshName.search("Fireplace") >= 0 || meshName.search("Log") >= 0) {
+        //            if (this.mesh.intersectsMesh(sceneMesh, true)) {
+        //                game.controller.forward = false;
+        //                game.controller.back = false;
+        //            }
+        //        }
+        //}
         return this;
     };
     Player.prototype.removeFromWorld = function () {

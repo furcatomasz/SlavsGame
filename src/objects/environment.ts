@@ -2,11 +2,16 @@
 
 class Environment {
 
-    constructor(game:Game, scene: BABYLON.Scene) {
-        console.log(scene);
+    tree: BABYLON.AbstractMesh;
+    trees: Array<BABYLON.AbstractMesh>;
 
-        var ground = null
-        var water = null;
+    bush: BABYLON.AbstractMesh;
+    bushes: Array<BABYLON.AbstractMesh>;
+
+    constructor(game:Game, scene: BABYLON.Scene) {
+        this.trees = [];
+        this.bushes = [];
+
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
@@ -14,22 +19,58 @@ class Environment {
             sceneMesh.material.freeze();
             sceneMesh.freezeWorldMatrix();
 
-            if (meshName.search("Grass") >= 0) {
-                continue;
-            }
+            if (meshName.search("Bush") >= 0) {
+                this.bushes.push(sceneMesh);
+                if(!this.bush) {
+                    this.bush = sceneMesh;
+                }
 
-            if (meshName.search("Forest_ground") >= 0) {
-                //ground
+            } else if (meshName.search("Forest_ground") >= 0) {
                 sceneMesh.receiveShadows = true;
-                ground = sceneMesh;
             } else if (meshName.search("choinka") >= 0) {
-                console.log(sceneMesh);
-                //water = sceneMesh;
+                this.trees.push(sceneMesh);
+                if(!this.tree) {
+                    this.tree = sceneMesh;
+                }
             } else {
                 //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
             }
 
         }
+
+        for (var i = 0; i < this.trees.length; i++) {
+            var meshTree = this.trees[i];
+            if(meshTree == this.tree) {
+                continue;
+            }
+
+            if(i > 0) {
+                let tree = this.tree.createInstance('instanceTree_' + i);
+                tree.position = meshTree.position;
+                tree.rotation = meshTree.rotation;
+                tree.scaling = meshTree.scaling;
+
+                meshTree.dispose();
+            }
+        }
+
+        //for (var i = 0; i < this.bushes.length; i++) {
+        //    var meshBush = this.bushes[i];
+        //
+        //    if(meshBush == this.bush) {
+        //        continue;
+        //    }
+        //
+        //    if(i > 0) {
+        //        meshBush.dispose();
+        //
+        //        let bush = this.bush.createInstance('instanceBush_' + i);
+        //        bush.position = meshBush.position;
+        //        bush.rotation = meshBush.rotation;
+        //        bush.scaling = meshBush.scaling;
+        //
+        //    }
+        //}
 
         let cone = scene.getMeshByName("Fireplace");
         if (cone) {

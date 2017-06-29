@@ -2,16 +2,12 @@
 
 class Environment {
 
-    tree: BABYLON.AbstractMesh;
     trees: Array<BABYLON.AbstractMesh>;
-
-    bush: BABYLON.AbstractMesh;
     bushes: Array<BABYLON.AbstractMesh>;
 
     constructor(game:Game, scene: BABYLON.Scene) {
         this.trees = [];
         this.bushes = [];
-
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
@@ -20,18 +16,11 @@ class Environment {
             sceneMesh.freezeWorldMatrix();
 
             if (meshName.search("Bush") >= 0) {
-                this.bushes.push(sceneMesh);
-                if(!this.bush) {
-                    this.bush = sceneMesh;
-                }
-
+                // this.bushes.push(sceneMesh);
             } else if (meshName.search("Forest_ground") >= 0) {
-                sceneMesh.receiveShadows = true;
-            } else if (meshName.search("choinka") >= 0) {
+                // sceneMesh.receiveShadows = true;
+            } else if (meshName.search("Choinka") >= 0) {
                 this.trees.push(sceneMesh);
-                if(!this.tree) {
-                    this.tree = sceneMesh;
-                }
             } else {
                 //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
             }

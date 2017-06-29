@@ -177,19 +177,13 @@ var Environment = (function () {
             // sceneMesh.material.freeze();
             sceneMesh.freezeWorldMatrix();
             if (meshName.search("Bush") >= 0) {
-                this.bushes.push(sceneMesh);
-                if (!this.bush) {
-                    this.bush = sceneMesh;
-                }
+                // this.bushes.push(sceneMesh);
             }
             else if (meshName.search("Forest_ground") >= 0) {
-                sceneMesh.receiveShadows = true;
+                // sceneMesh.receiveShadows = true;
             }
-            else if (meshName.search("choinka") >= 0) {
+            else if (meshName.search("Choinka") >= 0) {
                 this.trees.push(sceneMesh);
-                if (!this.tree) {
-                    this.tree = sceneMesh;
-                }
             }
             else {
                 //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);

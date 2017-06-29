@@ -16,7 +16,7 @@ class Environment {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
 
-            sceneMesh.material.freeze();
+            // sceneMesh.material.freeze();
             sceneMesh.freezeWorldMatrix();
 
             if (meshName.search("Bush") >= 0) {
@@ -38,21 +38,21 @@ class Environment {
 
         }
 
-        for (var i = 0; i < this.trees.length; i++) {
-            var meshTree = this.trees[i];
-            if(meshTree == this.tree) {
-                continue;
-            }
-
-            if(i > 0) {
-                let tree = this.tree.createInstance('instanceTree_' + i);
-                tree.position = meshTree.position;
-                tree.rotation = meshTree.rotation;
-                tree.scaling = meshTree.scaling;
-
-                meshTree.dispose();
-            }
-        }
+        // for (var i = 0; i < this.trees.length; i++) {
+        //     var meshTree = this.trees[i];
+        //     if(meshTree == this.tree) {
+        //         continue;
+        //     }
+        //
+        //     if(i > 0) {
+        //         let tree = this.tree.createInstance('instanceTree_' + i);
+        //         tree.position = meshTree.position;
+        //         tree.rotation = meshTree.rotation;
+        //         tree.scaling = meshTree.scaling;
+        //
+        //         meshTree.dispose();
+        //     }
+        // }
 
         //for (var i = 0; i < this.bushes.length; i++) {
         //    var meshBush = this.bushes[i];

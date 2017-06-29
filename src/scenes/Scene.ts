@@ -6,12 +6,11 @@ abstract class Scene {
     protected game:Game;
     protected light:BABYLON.IShadowLight;
     public shadowGenerator: BABYLON.ShadowGenerator;
-    public guiTexture: AdvancedDynamicTexture;
+    public guiTexture: BABYLON.GUI.AdvancedDynamicTexture;
     public environment: Environment;
 
-    constructor(game:Game) {
+    protected setDefaults(game:Game) {
         this.game = game;
-
         this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     }
 

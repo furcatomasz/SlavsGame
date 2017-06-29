@@ -68,10 +68,12 @@ var Keyboard = (function (_super) {
 /// <reference path="../game.ts"/>
 /// <reference path="../../babylon/babylon.d.ts"/>
 var Scene = (function () {
-    function Scene(game) {
+    function Scene() {
+    }
+    Scene.prototype.setDefaults = function (game) {
         this.game = game;
         this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    }
+    };
     Scene.prototype.setShadowGenerator = function (light) {
         this.shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         this.shadowGenerator.bias = -0.0000001;
@@ -172,7 +174,7 @@ var Environment = (function () {
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
-            sceneMesh.material.freeze();
+            // sceneMesh.material.freeze();
             sceneMesh.freezeWorldMatrix();
             if (meshName.search("Bush") >= 0) {
                 this.bushes.push(sceneMesh);
@@ -193,19 +195,21 @@ var Environment = (function () {
                 //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
             }
         }
-        for (var i = 0; i < this.trees.length; i++) {
-            var meshTree = this.trees[i];
-            if (meshTree == this.tree) {
-                continue;
-            }
-            if (i > 0) {
-                var tree = this.tree.createInstance('instanceTree_' + i);
-                tree.position = meshTree.position;
-                tree.rotation = meshTree.rotation;
-                tree.scaling = meshTree.scaling;
-                meshTree.dispose();
-            }
-        }
+        // for (var i = 0; i < this.trees.length; i++) {
+        //     var meshTree = this.trees[i];
+        //     if(meshTree == this.tree) {
+        //         continue;
+        //     }
+        //
+        //     if(i > 0) {
+        //         let tree = this.tree.createInstance('instanceTree_' + i);
+        //         tree.position = meshTree.position;
+        //         tree.rotation = meshTree.rotation;
+        //         tree.scaling = meshTree.scaling;
+        //
+        //         meshTree.dispose();
+        //     }
+        // }
         //for (var i = 0; i < this.bushes.length; i++) {
         //    var meshBush = this.bushes[i];
         //
@@ -283,36 +287,40 @@ var Environment = (function () {
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
-/// <reference path="../../babel/Scenes/map01/map01.d.ts"/>
 var Simple = (function (_super) {
     __extends(Simple, _super);
-    function Simple(game) {
-        var _this = this;
-        var scene = new BABYLON.Scene(game.engine);
-        game.sceneManager = _this;
-        map01.initScene(scene, '/babel/Scenes/map01');
-        _this = _super.call(this, game) || this;
-        scene.collisionsEnabled = true;
-        //scene.debugLayer.show({
-        //    popup:true,
-        //});
-        game.scenes.push(scene);
-        scene.lights[0].intensity = 0;
-        _this.setCamera(scene);
-        // this.setShadowGenerator(scene.lights[0]);
-        //this.createGameGUI();
-        _this.environment = new Environment(game, scene);
-        new Characters(game, scene);
-        new Items(game, scene);
-        game.client.connect(serverUrl);
-        window.addEventListener("keydown", function (event) {
-            game.controller.handleKeyUp(event);
-        });
-        window.addEventListener("keyup", function (event) {
-            game.controller.handleKeyDown(event);
-        }, false);
-        return _this;
+    function Simple() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
+    Simple.prototype.initScene = function (game) {
+        var self = this;
+        BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
+            game.sceneManager = self;
+            self.setDefaults(game);
+            scene.collisionsEnabled = true;
+            self.setCamera(scene);
+            scene.debugLayer.show({
+                popup: true
+            });
+            var sceneIndex = game.scenes.push(scene);
+            game.activeScene = sceneIndex - 1;
+            scene.executeWhenReady(function () {
+                scene.lights[0].intensity = 0;
+                // this.setShadowGenerator(scene.lights[0]);
+                //this.createGameGUI();
+                self.environment = new Environment(game, scene);
+                new Characters(game, scene);
+                new Items(game, scene);
+                game.client.connect(serverUrl);
+                window.addEventListener("keydown", function (event) {
+                    game.controller.handleKeyUp(event);
+                });
+                window.addEventListener("keyup", function (event) {
+                    game.controller.handleKeyDown(event);
+                }, false);
+            });
+        });
+    };
     return Simple;
 }(Scene));
 /// <reference path="../../babylon/babylon.d.ts"/>
@@ -866,8 +874,7 @@ var Game = (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new Simple(this);
-        this.activeScene = 0;
+        new Simple().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {

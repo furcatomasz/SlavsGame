@@ -4,40 +4,44 @@
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
-/// <reference path="../../babel/Scenes/map01/map01.d.ts"/>
 
 class Simple extends Scene {
 
-    constructor(game:Game) {
-        let scene = new BABYLON.Scene(game.engine);
-        game.sceneManager = this;
-        map01.initScene(scene, '/babel/Scenes/map01');
-        super(game);
-        scene.collisionsEnabled = true;
+    initScene(game:Game) {
+        let self = this;
 
-        //scene.debugLayer.show({
-        //    popup:true,
-        //});
-        game.scenes.push(scene);
-        scene.lights[0].intensity = 0;
+        BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
+            game.sceneManager = self;
+            self.setDefaults(game);
+            scene.collisionsEnabled = true;
+            self.setCamera(scene);
 
-        this.setCamera(scene);
-        // this.setShadowGenerator(scene.lights[0]);
-        //this.createGameGUI();
+            scene.debugLayer.show({
+               popup:true,
+            });
+            let sceneIndex = game.scenes.push(scene);
+            game.activeScene = sceneIndex-1;
 
-        this.environment = new Environment(game, scene);
-        new Characters(game, scene);
-        new Items(game, scene);
+            scene.executeWhenReady(function() {
+                scene.lights[0].intensity = 0;
+                // this.setShadowGenerator(scene.lights[0]);
+                //this.createGameGUI();
 
-        game.client.connect(serverUrl);
-        window.addEventListener("keydown", function (event) {
-            game.controller.handleKeyUp(event);
-        });
+                self.environment = new Environment(game, scene);
+                new Characters(game, scene);
+                new Items(game, scene);
 
-        window.addEventListener("keyup", function (event) {
-            game.controller.handleKeyDown(event);
-        }, false);
+                game.client.connect(serverUrl);
+                window.addEventListener("keydown", function (event) {
+                    game.controller.handleKeyUp(event);
+                });
 
+                window.addEventListener("keyup", function (event) {
+                    game.controller.handleKeyDown(event);
+                }, false);
+            });
+
+        }
     }
 
 

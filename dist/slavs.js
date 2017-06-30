@@ -185,18 +185,13 @@ var Environment = (function () {
             var meshName = scene.meshes[i]['name'];
             // sceneMesh.material.freeze();
             sceneMesh.freezeWorldMatrix();
-            if (meshName.search("Bush") >= 0) {
-                // this.bushes.push(sceneMesh);
-            }
-            else if (meshName.search("Forest_ground") >= 0) {
-                // sceneMesh.receiveShadows = true;
+            if (meshName.search("Forest_ground") >= 0) {
+                sceneMesh.receiveShadows = true;
             }
             else if (meshName.search("Spruce") >= 0) {
                 this.trees.push(sceneMesh);
             }
-            else {
-                //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
-            }
+            //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
         // for (var i = 0; i < this.trees.length; i++) {
         //     var meshTree = this.trees[i];
@@ -231,6 +226,7 @@ var Environment = (function () {
         //    }
         //}
         var cone = scene.getMeshByName("Fireplace");
+        console.log(cone);
         if (cone) {
             var smokeSystem = new BABYLON.ParticleSystem("particles", 1000, scene);
             smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", scene);
@@ -281,6 +277,35 @@ var Environment = (function () {
             var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
             sfxFireplace.attachToMesh(cone);
         }
+        var plane = scene.getMeshByName("Plane");
+        console.log(plane);
+        if (plane) {
+            plane.visibility = 0;
+            var smokeSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
+            smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", scene);
+            smokeSystem.emitter = plane; // the starting object, the emitter
+            smokeSystem.minEmitBox = new BABYLON.Vector3(-0.8, 0, -0.7); // Starting all from
+            smokeSystem.maxEmitBox = new BABYLON.Vector3(-0.8, 2, 0.7); // To...
+            smokeSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
+            smokeSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+            smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+            smokeSystem.minSize = 0.1;
+            smokeSystem.maxSize = 0.5;
+            smokeSystem.minLifeTime = 0.3;
+            smokeSystem.maxLifeTime = 1.5;
+            smokeSystem.emitRate = 2000;
+            smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            smokeSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+            smokeSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+            smokeSystem.direction2 = new BABYLON.Vector3(0, 0.25, 0);
+            smokeSystem.minAngularSpeed = 0;
+            smokeSystem.maxAngularSpeed = Math.PI;
+            smokeSystem.minEmitPower = 0.5;
+            smokeSystem.maxEmitPower = 1.5;
+            smokeSystem.updateSpeed = 0.004;
+            smokeSystem.start();
+        }
     }
     return Environment;
 }());
@@ -309,7 +334,7 @@ var Simple = (function (_super) {
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
-                scene.lights[0].intensity = 0.25;
+                scene.lights[0].intensity = 0.2;
                 self.environment = new Environment(game, scene);
                 new Characters(game, scene);
                 new Items(game, scene);
@@ -410,10 +435,12 @@ var Character = (function () {
             }
             if (!this.animation) {
                 self.sfxWalk.play();
+                self.onWalkStart();
                 self.animation = skeleton_2.beginAnimation(Character.ANIMATION_WALK, loopAnimation, this.walkSpeed / 100, function () {
                     skeleton_2.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();
+                    self.onWalkEnd();
                 });
             }
         }
@@ -451,6 +478,10 @@ var Character = (function () {
     Character.prototype.onHitStart = function () { };
     ;
     Character.prototype.onHitEnd = function () { };
+    ;
+    Character.prototype.onWalkStart = function () { };
+    ;
+    Character.prototype.onWalkEnd = function () { };
     ;
     return Character;
 }());
@@ -524,6 +555,29 @@ var Player = (function (_super) {
             characterBottomPanel.addControl(hpSlider);
             characterBottomPanel.addControl(expSlider);
         }
+        var smokeSystem = new BABYLON.ParticleSystem("particles", 50, game.getScene());
+        smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", game.getScene());
+        smokeSystem.emitter = _this.mesh; // the starting object, the emitter
+        smokeSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0.8); // Starting all from
+        smokeSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0.8); // To...
+        smokeSystem.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
+        smokeSystem.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
+        smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+        smokeSystem.minSize = 0.3;
+        smokeSystem.maxSize = 2;
+        smokeSystem.minLifeTime = 0.1;
+        smokeSystem.maxLifeTime = 0.2;
+        smokeSystem.emitRate = 30;
+        smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+        smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+        smokeSystem.direction1 = new BABYLON.Vector3(0, 8, 0);
+        smokeSystem.direction2 = new BABYLON.Vector3(0, 8, 0);
+        smokeSystem.minAngularSpeed = 0;
+        smokeSystem.maxAngularSpeed = Math.PI;
+        smokeSystem.minEmitPower = 1;
+        smokeSystem.maxEmitPower = 1;
+        smokeSystem.updateSpeed = 0.004;
+        _this.walkSmoke = smokeSystem;
         _this = _super.call(this, name, game) || this;
         return _this;
     }
@@ -631,6 +685,12 @@ var Player = (function (_super) {
         //this.items.weapon.particles.stop();
     };
     ;
+    Player.prototype.onWalkStart = function () {
+        this.walkSmoke.start();
+    };
+    Player.prototype.onWalkEnd = function () {
+        this.walkSmoke.stop();
+    };
     return Player;
 }(Character));
 /// <reference path="../character.ts"/>
@@ -910,6 +970,9 @@ var Mouse = (function (_super) {
                 targetPoint.y = 0;
                 ball.position = targetPoint.clone();
                 self.game.player.mesh.lookAt(ball.position);
+            }
+            if (self.game.player && pickResult.pickedMesh.name == 'Worm') {
+                self.game.player.runAnimationHit();
             }
         };
         scene.registerBeforeRender(function () {

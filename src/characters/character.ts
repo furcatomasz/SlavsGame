@@ -156,10 +156,12 @@ abstract class Character {
 
             if (!this.animation) {
                 self.sfxWalk.play();
+                self.onWalkStart();
                 self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, loopAnimation, this.walkSpeed / 100, function () {
                     skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();
+                    self.onWalkEnd();
                 });
 
 
@@ -218,4 +220,7 @@ abstract class Character {
     /** Events */
     protected onHitStart() {};
     protected onHitEnd() {};
+
+    protected onWalkStart() {};
+    protected onWalkEnd() {};
 }

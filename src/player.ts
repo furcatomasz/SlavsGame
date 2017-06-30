@@ -4,6 +4,7 @@
 class Player extends Character {
 
     public guiExp: BABYLON.GUI.Slider;
+    public walkSmoke: BABYLON.ParticleSystem;
 
     public constructor(game:Game, id, name, registerMoving: boolean) {
         this.id = id;
@@ -74,6 +75,42 @@ class Player extends Character {
             characterBottomPanel.addControl(hpSlider);
             characterBottomPanel.addControl(expSlider);
         }
+
+
+
+        var smokeSystem = new BABYLON.ParticleSystem("particles", 50, game.getScene());
+        smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", game.getScene());
+        smokeSystem.emitter = this.mesh; // the starting object, the emitter
+        smokeSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0.8); // Starting all from
+        smokeSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0.8); // To...
+
+        smokeSystem.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
+        smokeSystem.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
+        smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+
+        smokeSystem.minSize = 0.3;
+        smokeSystem.maxSize = 2;
+
+        smokeSystem.minLifeTime = 0.1;
+        smokeSystem.maxLifeTime = 0.2;
+
+        smokeSystem.emitRate = 30;
+
+        smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+
+        smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+
+        smokeSystem.direction1 = new BABYLON.Vector3(0, 8, 0);
+        smokeSystem.direction2 = new BABYLON.Vector3(0, 8, 0);
+
+        smokeSystem.minAngularSpeed = 0;
+        smokeSystem.maxAngularSpeed = Math.PI;
+
+        smokeSystem.minEmitPower = 1;
+        smokeSystem.maxEmitPower = 1;
+        smokeSystem.updateSpeed = 0.004;
+
+        this.walkSmoke = smokeSystem;
 
         super(name, game);
     }
@@ -202,5 +239,13 @@ w
     protected onHitEnd() {
         //this.items.weapon.particles.stop();
     };
+
+    protected onWalkStart() {
+        this.walkSmoke.start();
+    }
+
+    protected onWalkEnd() {
+        this.walkSmoke.stop();
+    }
 
 }

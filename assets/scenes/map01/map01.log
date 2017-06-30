@@ -4,8 +4,16 @@ Exporter version: 5.3.0, Blender version: 2.78 (sub 0)
 		selected layers only:  false
 		flat shading entire scene:  false
 		inline textures:  false
-		texture directory:  D:\Mietas\Slavs\Babylon\Maps\spotkanie\
+		texture directory:  /home/shares/allusers/spotkanie/
 	Python World class constructor completed
+	processing begun of mesh:  Plane
+		WARNING: No materials have been assigned: 
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
 	processing begun of mesh:  Bush_group.046
 		processing begun of Standard material:  Bush1.001
 			Diffuse texture found "Bush1.001"
@@ -391,4 +399,4 @@ Exporter version: 5.3.0, Blender version: 2.78 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.9 secs
+elapsed time:  0 min, 0.2013 secs

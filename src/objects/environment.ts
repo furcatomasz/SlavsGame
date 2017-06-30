@@ -19,7 +19,7 @@ class Environment {
                 // this.bushes.push(sceneMesh);
             } else if (meshName.search("Forest_ground") >= 0) {
                 // sceneMesh.receiveShadows = true;
-            } else if (meshName.search("Choinka") >= 0) {
+            } else if (meshName.search("Spruce") >= 0) {
                 this.trees.push(sceneMesh);
             } else {
                 //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);

@@ -182,7 +182,7 @@ var Environment = (function () {
             else if (meshName.search("Forest_ground") >= 0) {
                 // sceneMesh.receiveShadows = true;
             }
-            else if (meshName.search("Choinka") >= 0) {
+            else if (meshName.search("Spruce") >= 0) {
                 this.trees.push(sceneMesh);
             }
             else {
@@ -293,13 +293,13 @@ var Simple = (function (_super) {
             self.setDefaults(game);
             scene.collisionsEnabled = true;
             self.setCamera(scene);
-            scene.debugLayer.show({
-                popup: true
-            });
+            //scene.debugLayer.show({
+            //   popup:true,
+            //});
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
-                scene.lights[0].intensity = 0;
+                scene.lights[0].intensity = 1.25;
                 // this.setShadowGenerator(scene.lights[0]);
                 //this.createGameGUI();
                 self.environment = new Environment(game, scene);

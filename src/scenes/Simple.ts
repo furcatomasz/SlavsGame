@@ -16,14 +16,14 @@ class Simple extends Scene {
             scene.collisionsEnabled = true;
             self.setCamera(scene);
 
-            scene.debugLayer.show({
-               popup:true,
-            });
+            //scene.debugLayer.show({
+            //   popup:true,
+            //});
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex-1;
 
             scene.executeWhenReady(function() {
-                scene.lights[0].intensity = 0;
+                scene.lights[0].intensity = 1.25;
                 // this.setShadowGenerator(scene.lights[0]);
                 //this.createGameGUI();
 

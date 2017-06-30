@@ -339,9 +339,9 @@ var Simple = (function (_super) {
             self.setDefaults(game);
             scene.collisionsEnabled = true;
             self.setCamera(scene);
-            scene.debugLayer.show({
-                popup: true
-            });
+            //scene.debugLayer.show({
+            //   popup:true,
+            //});
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
@@ -975,13 +975,15 @@ var Mouse = (function (_super) {
     }
     Mouse.prototype.registerControls = function (scene) {
         var self = this;
-        var ball = BABYLON.Mesh.CreateSphere("sphere", 2, 0.25, scene);
+        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
         ball.isPickable = false;
+        ball.visibility = 0;
         scene.onPointerDown = function (evt, pickResult) {
             if (self.game.player && pickResult.pickedMesh.name == 'Forest_ground') {
                 targetPoint = pickResult.pickedPoint;
                 targetPoint.y = 0;
                 ball.position = targetPoint.clone();
+                ball.visibility = 1;
                 self.game.player.mesh.lookAt(ball.position);
             }
             if (self.game.player && pickResult.pickedMesh.name.search('Worm') >= 0) {
@@ -997,6 +999,7 @@ var Mouse = (function (_super) {
                 else {
                     self.game.controller.forward = false;
                     targetPoint = null;
+                    ball.visibility = 0;
                 }
             }
         });

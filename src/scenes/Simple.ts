@@ -4,6 +4,7 @@
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
+let targetPoint = null;
 
 class Simple extends Scene {
 
@@ -20,29 +21,20 @@ class Simple extends Scene {
             //   popup:true,
             //});
             let sceneIndex = game.scenes.push(scene);
-            game.activeScene = sceneIndex-1;
+            game.activeScene = sceneIndex - 1;
 
-            scene.executeWhenReady(function() {
-                scene.lights[0].intensity = 1.25;
-                // this.setShadowGenerator(scene.lights[0]);
-                //this.createGameGUI();
+            scene.executeWhenReady(function () {
+                scene.lights[0].intensity = 0.25;
 
                 self.environment = new Environment(game, scene);
                 new Characters(game, scene);
                 new Items(game, scene);
-
+                game.controller.registerControls(scene);
                 game.client.connect(serverUrl);
-                window.addEventListener("keydown", function (event) {
-                    game.controller.handleKeyUp(event);
-                });
 
-                window.addEventListener("keyup", function (event) {
-                    game.controller.handleKeyDown(event);
-                }, false);
-            });
+            };
+        });
 
-        }
     }
-
 
 }

@@ -40,4 +40,16 @@ class Keyboard extends Controller {
         }
 
     }
+
+    public registerControls(scene: BABYLON.Scene) {
+        let self = this;
+
+        window.addEventListener("keydown", function (event) {
+            self.game.controller.handleKeyUp(event);
+        });
+
+        window.addEventListener("keyup", function (event) {
+            self.game.controller.handleKeyDown(event);
+        });
+    }
 }

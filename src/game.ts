@@ -7,7 +7,7 @@
 class Game {
 
     public sceneManager: Scene;
-    public controller: Keyboard;
+    public controller: Controller;
     public canvas: HTMLCanvasElement;
     public engine: BABYLON.Engine;
     public player: Player;
@@ -34,7 +34,7 @@ class Game {
     constructor(canvasElement: HTMLCanvasElement) {
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, false);
-        this.controller = new Keyboard(this);
+        this.controller = new Mouse(this);
         this.client = new SocketIOClient(this);
         this.items = [];
         this.characters = [];

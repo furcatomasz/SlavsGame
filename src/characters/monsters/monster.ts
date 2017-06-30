@@ -13,11 +13,15 @@ abstract class Monster extends Character {
         let attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', { width: this.attackAreaSize, height: 0.1, size: this.attackAreaSize}, game.getScene());
         attackArea.parent = this.mesh;
         attackArea.visibility = 0;
+        attackArea.isPickable = false;
+
         this.attackArea = attackArea;
 
         let visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', { width: this.visibilityAreaSize, height: 0.1, size: this.visibilityAreaSize}, game.getScene());
         visivilityArea.parent = this.mesh;
         visivilityArea.visibility = 0;
+        visivilityArea.isPickable = false;
+
         this.visibilityArea = visivilityArea;
 
         game.enemies[this.id] = this;

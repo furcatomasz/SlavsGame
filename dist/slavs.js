@@ -63,6 +63,15 @@ var Keyboard = (function (_super) {
             this.back = false;
         }
     };
+    Keyboard.prototype.registerControls = function (scene) {
+        var self = this;
+        window.addEventListener("keydown", function (event) {
+            self.game.controller.handleKeyUp(event);
+        });
+        window.addEventListener("keyup", function (event) {
+            self.game.controller.handleKeyDown(event);
+        });
+    };
     return Keyboard;
 }(Controller));
 /// <reference path="../game.ts"/>
@@ -281,6 +290,7 @@ var Environment = (function () {
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
+var targetPoint = null;
 var Simple = (function (_super) {
     __extends(Simple, _super);
     function Simple() {
@@ -299,19 +309,12 @@ var Simple = (function (_super) {
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
-                scene.lights[0].intensity = 1.25;
-                // this.setShadowGenerator(scene.lights[0]);
-                //this.createGameGUI();
+                scene.lights[0].intensity = 0.25;
                 self.environment = new Environment(game, scene);
                 new Characters(game, scene);
                 new Items(game, scene);
+                game.controller.registerControls(scene);
                 game.client.connect(serverUrl);
-                window.addEventListener("keydown", function (event) {
-                    game.controller.handleKeyUp(event);
-                });
-                window.addEventListener("keyup", function (event) {
-                    game.controller.handleKeyDown(event);
-                }, false);
             });
         });
     };
@@ -638,10 +641,12 @@ var Monster = (function (_super) {
         var attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', { width: _this.attackAreaSize, height: 0.1, size: _this.attackAreaSize }, game.getScene());
         attackArea.parent = _this.mesh;
         attackArea.visibility = 0;
+        attackArea.isPickable = false;
         _this.attackArea = attackArea;
         var visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', { width: _this.visibilityAreaSize, height: 0.1, size: _this.visibilityAreaSize }, game.getScene());
         visivilityArea.parent = _this.mesh;
         visivilityArea.visibility = 0;
+        visivilityArea.isPickable = false;
         _this.visibilityArea = visivilityArea;
         game.enemies[_this.id] = _this;
         _this.mesh.skeleton.beginAnimation(Character.ANIMATION_STAND, true);
@@ -855,7 +860,7 @@ var Game = (function () {
     function Game(canvasElement) {
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, false);
-        this.controller = new Keyboard(this);
+        this.controller = new Mouse(this);
         this.client = new SocketIOClient(this);
         this.items = [];
         this.characters = [];
@@ -889,6 +894,38 @@ var Game = (function () {
     };
     return Game;
 }());
+/// <reference path="Controller.ts"/>
+var Mouse = (function (_super) {
+    __extends(Mouse, _super);
+    function Mouse() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Mouse.prototype.registerControls = function (scene) {
+        var self = this;
+        var ball = BABYLON.Mesh.CreateSphere("sphere", 2, 0.25, scene);
+        ball.isPickable = false;
+        scene.onPointerDown = function (evt, pickResult) {
+            if (self.game.player && pickResult.pickedMesh.name == 'Forest_ground') {
+                targetPoint = pickResult.pickedPoint;
+                targetPoint.y = 0;
+                ball.position = targetPoint.clone();
+                self.game.player.mesh.lookAt(ball.position);
+            }
+        };
+        scene.registerBeforeRender(function () {
+            if (self.game.player && targetPoint) {
+                if (!self.game.player.mesh.intersectsPoint(targetPoint)) {
+                    self.game.controller.forward = true;
+                }
+                else {
+                    self.game.controller.forward = false;
+                    targetPoint = null;
+                }
+            }
+        });
+    };
+    return Mouse;
+}(Controller));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var Items;

@@ -11,4 +11,6 @@ abstract class Controller {
     constructor(game:Game) {
         this.game = game;
     }
+
+    abstract registerControls(scene);
 }

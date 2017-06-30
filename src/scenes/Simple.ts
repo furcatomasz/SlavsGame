@@ -17,9 +17,9 @@ class Simple extends Scene {
             scene.collisionsEnabled = true;
             self.setCamera(scene);
 
-            //scene.debugLayer.show({
-            //   popup:true,
-            //});
+            scene.debugLayer.show({
+               popup:true,
+            });
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
 

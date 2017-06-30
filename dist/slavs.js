@@ -107,9 +107,9 @@ var Scene = (function () {
         camera.orthoLeft = -Math.abs(newWidth);
         camera.orthoRight = newWidth;
         camera.orthoBottom = -Math.abs(zoom);
-        camera.rotation = new BABYLON.Vector3(0.681115, -0.11885, 0);
+        camera.rotation = new BABYLON.Vector3(0.751115, -0.21885, 0);
         scene.activeCamera = camera;
-        scene.activeCamera.attachControl(this.game.canvas);
+        //scene.activeCamera.attachControl(this.game.canvas);
     };
     Scene.prototype.createGameGUI = function () {
         var self = this;
@@ -178,6 +178,7 @@ var Items = (function () {
 /// <reference path="../game.ts"/>
 var Environment = (function () {
     function Environment(game, scene) {
+        var self = this;
         this.trees = [];
         this.bushes = [];
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -189,6 +190,7 @@ var Environment = (function () {
                 sceneMesh.receiveShadows = true;
             }
             else if (meshName.search("Spruce") >= 0) {
+                sceneMesh.isPickable = false;
                 this.trees.push(sceneMesh);
             }
             //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
@@ -278,9 +280,9 @@ var Environment = (function () {
             sfxFireplace.attachToMesh(cone);
         }
         var plane = scene.getMeshByName("Plane");
-        console.log(plane);
         if (plane) {
             plane.visibility = 0;
+            plane.isPickable = 0;
             var smokeSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
             smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", scene);
             smokeSystem.emitter = plane; // the starting object, the emitter
@@ -305,7 +307,16 @@ var Environment = (function () {
             smokeSystem.maxEmitPower = 1.5;
             smokeSystem.updateSpeed = 0.004;
             smokeSystem.start();
+            game.getScene().registerAfterRender(function () {
+                if (game.player && self.entrace) {
+                    if (game.player.mesh.intersectsMesh(self.entrace, true)) {
+                        game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+                        //game.enemies.push(new Worm('Worm', 'Worm', game, new BABYLON.Vector3(3, 0.1, 0), new BABYLON.Quaternion(3, 0.1, 0, 0)));
+                    }
+                }
+            });
         }
+        this.entrace = plane;
     }
     return Environment;
 }());
@@ -328,9 +339,9 @@ var Simple = (function (_super) {
             self.setDefaults(game);
             scene.collisionsEnabled = true;
             self.setCamera(scene);
-            //scene.debugLayer.show({
-            //   popup:true,
-            //});
+            scene.debugLayer.show({
+                popup: true
+            });
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
@@ -449,23 +460,23 @@ var Character = (function () {
         return this.animation;
     };
     Character.prototype.createBloodParticlesSystem = function () {
-        var particleSystem = new BABYLON.ParticleSystem("particle1s", 1000, this.game.getScene());
+        var particleSystem = new BABYLON.ParticleSystem("particle1s", 500, this.game.getScene());
         particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
         particleSystem.emitter = this.mesh;
-        particleSystem.minEmitBox = new BABYLON.Vector3(0, this.mesh.geometry.extend.maximum.y, 0); // Starting all from
-        particleSystem.maxEmitBox = new BABYLON.Vector3(0, this.mesh.geometry.extend.maximum.y, 0); // To...
+        particleSystem.minEmitBox = new BABYLON.Vector3(0, this.mesh.geometry.extend.maximum.y * 0.7, 0); // Starting all from
+        particleSystem.maxEmitBox = new BABYLON.Vector3(0, this.mesh.geometry.extend.maximum.y * 0.7, 0); // To...
         particleSystem.color1 = new BABYLON.Color4(1, 0, 0, 1);
         particleSystem.color2 = new BABYLON.Color4(1, 0, 0, 1);
         particleSystem.colorDead = new BABYLON.Color4(1, 0, 0, 0.0);
-        particleSystem.minSize = 0.2;
-        particleSystem.maxSize = 0.5;
+        particleSystem.minSize = 0.1;
+        particleSystem.maxSize = 0.2;
         particleSystem.minLifeTime = 0.05;
         particleSystem.maxLifeTime = 0.7;
-        particleSystem.emitRate = 50;
+        particleSystem.emitRate = 500;
         //particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
         particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
         particleSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
-        particleSystem.direction2 = new BABYLON.Vector3(0, 5, 4);
+        particleSystem.direction2 = new BABYLON.Vector3(0, 5, -4);
         particleSystem.targetStopDuration = 0.6;
         particleSystem.minAngularSpeed = -10.0;
         particleSystem.maxAngularSpeed = 10.0;
@@ -506,7 +517,8 @@ var Player = (function (_super) {
         _this.blockChance = 50;
         _this.isControllable = registerMoving;
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/babel/Characters/Warrior/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
+        //this.sfxHit = new BABYLON.Sound("CharacterHit", "/babel/Characters/Warrior/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
+        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
         var mesh = game.characters['player'].instance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
         _this.mesh = mesh;
@@ -519,6 +531,7 @@ var Player = (function (_super) {
         game.sceneManager.guiTexture.addControl(_this.guiCharacterName);
         _this.guiCharacterName.linkWithMesh(_this.mesh);
         if (_this.isControllable) {
+            _this.mesh.isPickable = false;
             var playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             playerLight.specular = new BABYLON.Color3(1, 1, 1);
@@ -919,7 +932,7 @@ var SocketIOClient = (function () {
 var Game = (function () {
     function Game(canvasElement) {
         this.canvas = canvasElement;
-        this.engine = new BABYLON.Engine(this.canvas, false);
+        this.engine = new BABYLON.Engine(this.canvas, true);
         this.controller = new Mouse(this);
         this.client = new SocketIOClient(this);
         this.items = [];
@@ -971,7 +984,8 @@ var Mouse = (function (_super) {
                 ball.position = targetPoint.clone();
                 self.game.player.mesh.lookAt(ball.position);
             }
-            if (self.game.player && pickResult.pickedMesh.name == 'Worm') {
+            if (self.game.player && pickResult.pickedMesh.name.search('Worm') >= 0) {
+                self.game.player.mesh.lookAt(pickResult.pickedMesh.position);
                 self.game.player.runAnimationHit();
             }
         };

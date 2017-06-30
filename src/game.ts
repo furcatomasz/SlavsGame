@@ -33,7 +33,7 @@ class Game {
 
     constructor(canvasElement: HTMLCanvasElement) {
         this.canvas = canvasElement;
-        this.engine = new BABYLON.Engine(this.canvas, false);
+        this.engine = new BABYLON.Engine(this.canvas, true);
         this.controller = new Mouse(this);
         this.client = new SocketIOClient(this);
         this.items = [];

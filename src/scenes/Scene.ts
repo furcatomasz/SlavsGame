@@ -39,9 +39,9 @@ abstract class Scene {
         camera.orthoLeft = -Math.abs(newWidth);
         camera.orthoRight = newWidth;
         camera.orthoBottom = -Math.abs(zoom);
-        camera.rotation = new BABYLON.Vector3(0.681115, -0.11885, 0);
+        camera.rotation = new BABYLON.Vector3(0.751115, -0.21885, 0);
         scene.activeCamera = camera;
-        scene.activeCamera.attachControl(this.game.canvas);
+        //scene.activeCamera.attachControl(this.game.canvas);
     }
     
     protected createGameGUI() {

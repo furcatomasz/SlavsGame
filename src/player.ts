@@ -17,7 +17,8 @@ class Player extends Character {
         this.isControllable = registerMoving;
 
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        this.sfxHit = new BABYLON.Sound("CharacterHit", "/babel/Characters/Warrior/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
+        //this.sfxHit = new BABYLON.Sound("CharacterHit", "/babel/Characters/Warrior/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
 
         let mesh = game.characters['player'].instance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
@@ -35,6 +36,7 @@ class Player extends Character {
         this.guiCharacterName.linkWithMesh(this.mesh);
 
         if(this.isControllable) {
+            this.mesh.isPickable = false;
             let playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             playerLight.specular = new BABYLON.Color3(1, 1, 1);

@@ -14,7 +14,9 @@ class Mouse extends Controller {
                 ball.position = targetPoint.clone();
                 self.game.player.mesh.lookAt(ball.position);
             }
-            if (self.game.player && pickResult.pickedMesh.name == 'Worm') {
+            if (self.game.player && pickResult.pickedMesh.name.search('Worm') >= 0) {
+                self.game.player.mesh.lookAt(pickResult.pickedMesh.position);
+
                 self.game.player.runAnimationHit()
             }
 

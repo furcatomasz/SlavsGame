@@ -5,7 +5,10 @@ class Environment {
     trees: Array<BABYLON.AbstractMesh>;
     bushes: Array<BABYLON.AbstractMesh>;
 
+    entrace: BABYLON.AbstractMesh;
+
     constructor(game:Game, scene: BABYLON.Scene) {
+        let self = this;
         this.trees = [];
         this.bushes = [];
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -18,6 +21,7 @@ class Environment {
             if (meshName.search("Forest_ground") >= 0) {
                  sceneMesh.receiveShadows = true;
             } else if (meshName.search("Spruce") >= 0) {
+                sceneMesh.isPickable = false;
                 this.trees.push(sceneMesh);
             }
 
@@ -138,9 +142,9 @@ class Environment {
         }
 
         let plane = scene.getMeshByName("Plane");
-        console.log(plane);
         if (plane) {
             plane.visibility = 0;
+            plane.isPickable = 0;
             var smokeSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
             smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", scene);
             smokeSystem.emitter = plane; // the starting object, the emitter
@@ -176,7 +180,17 @@ class Environment {
 
             smokeSystem.start();
 
+            game.getScene().registerAfterRender(function() {
+                if(game.player && self.entrace) {
+                    if (game.player.mesh.intersectsMesh(self.entrace, true)) {
+                        game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+                        //game.enemies.push(new Worm('Worm', 'Worm', game, new BABYLON.Vector3(3, 0.1, 0), new BABYLON.Quaternion(3, 0.1, 0, 0)));
+                    }
+                }
+            });
         }
+        this.entrace = plane;
+
 
     }
 }

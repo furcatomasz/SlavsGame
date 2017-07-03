@@ -275,9 +275,9 @@ var Simple = (function (_super) {
             scene.fogEnabled = false;
             scene.shadowsEnabled = false;
             self.setCamera(scene);
-            scene.debugLayer.show({
-                popup: true
-            });
+            //scene.debugLayer.show({
+            //   popup:true,
+            //});
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {

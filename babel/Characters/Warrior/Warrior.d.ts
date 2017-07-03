@@ -15,5 +15,7 @@ declare module Warrior{
         constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Warrior);
     }
 
+    export function defineLights(scene : BABYLON.Scene, positionOffset? : BABYLON.Vector3) : void;
+
     export function freshenShadowRenderLists(scene : BABYLON.Scene) : void;
 }

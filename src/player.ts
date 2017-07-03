@@ -40,6 +40,8 @@ class Player extends Character {
             let playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             playerLight.specular = new BABYLON.Color3(1, 1, 1);
+            playerLight.position.y = 64;
+
             game.getScene().lights.push(playerLight);
 
             let characterBottomPanel = new BABYLON.GUI.StackPanel();
@@ -78,41 +80,7 @@ class Player extends Character {
             characterBottomPanel.addControl(expSlider);
         }
 
-
-
-        var smokeSystem = new BABYLON.ParticleSystem("particles", 50, game.getScene());
-        smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", game.getScene());
-        smokeSystem.emitter = this.mesh; // the starting object, the emitter
-        smokeSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0.8); // Starting all from
-        smokeSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0.8); // To...
-
-        smokeSystem.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
-        smokeSystem.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
-        smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-
-        smokeSystem.minSize = 0.3;
-        smokeSystem.maxSize = 2;
-
-        smokeSystem.minLifeTime = 0.1;
-        smokeSystem.maxLifeTime = 0.2;
-
-        smokeSystem.emitRate = 30;
-
-        smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-
-        smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-
-        smokeSystem.direction1 = new BABYLON.Vector3(0, 8, 0);
-        smokeSystem.direction2 = new BABYLON.Vector3(0, 8, 0);
-
-        smokeSystem.minAngularSpeed = 0;
-        smokeSystem.maxAngularSpeed = Math.PI;
-
-        smokeSystem.minEmitPower = 1;
-        smokeSystem.maxEmitPower = 1;
-        smokeSystem.updateSpeed = 0.004;
-
-        this.walkSmoke = smokeSystem;
+        this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
 
         super(name, game);
     }
@@ -227,7 +195,6 @@ w
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
                 self.game.getScene().lights[1].position.x = self.mesh.position.x;
-                self.game.getScene().lights[1].position.y = self.mesh.position.y+64;
                 self.game.getScene().lights[1].position.z = self.mesh.position.z;
             }
         }

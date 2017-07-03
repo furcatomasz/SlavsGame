@@ -228,53 +228,10 @@ var Environment = (function () {
         //    }
         //}
         var cone = scene.getMeshByName("Fireplace");
-        console.log(cone);
         if (cone) {
-            var smokeSystem = new BABYLON.ParticleSystem("particles", 1000, scene);
-            smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", scene);
-            smokeSystem.emitter = cone; // the starting object, the emitter
-            smokeSystem.minEmitBox = new BABYLON.Vector3(0.5, 0, 0.5); // Starting all from
-            smokeSystem.maxEmitBox = new BABYLON.Vector3(1.5, 0, 1.5); // To...
-            smokeSystem.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
-            smokeSystem.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
-            smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-            smokeSystem.minSize = 0.3;
-            smokeSystem.maxSize = 1;
-            smokeSystem.minLifeTime = 0.3;
-            smokeSystem.maxLifeTime = 1.5;
-            smokeSystem.emitRate = 350;
-            smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-            smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            smokeSystem.direction1 = new BABYLON.Vector3(-1.5, 8, -1.5);
-            smokeSystem.direction2 = new BABYLON.Vector3(1.5, 8, 1.5);
-            smokeSystem.minAngularSpeed = 0;
-            smokeSystem.maxAngularSpeed = Math.PI;
-            smokeSystem.minEmitPower = 0.5;
-            smokeSystem.maxEmitPower = 1.5;
-            smokeSystem.updateSpeed = 0.004;
+            var smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
             smokeSystem.start();
-            var fireSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", scene);
-            fireSystem.emitter = cone; // the starting object, the emitter
-            fireSystem.minEmitBox = new BABYLON.Vector3(0.5, 0, 0.5); // Starting all from
-            fireSystem.maxEmitBox = new BABYLON.Vector3(1.5, 0, 1.5); // To...
-            fireSystem.color1 = new BABYLON.Color4(1, 0.5, 0, 1.0);
-            fireSystem.color2 = new BABYLON.Color4(1, 0.5, 0, 1.0);
-            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-            fireSystem.minSize = 0.2;
-            fireSystem.maxSize = 0.7;
-            fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 0.4;
-            fireSystem.emitRate = 300;
-            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
-            fireSystem.direction2 = new BABYLON.Vector3(0, 2, 0);
-            fireSystem.minAngularSpeed = -10;
-            fireSystem.maxAngularSpeed = Math.PI;
-            fireSystem.minEmitPower = 1;
-            fireSystem.maxEmitPower = 3;
-            fireSystem.updateSpeed = 0.004;
+            var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
             var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
             sfxFireplace.attachToMesh(cone);
@@ -283,29 +240,7 @@ var Environment = (function () {
         if (plane) {
             plane.visibility = 0;
             plane.isPickable = 0;
-            var smokeSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
-            smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", scene);
-            smokeSystem.emitter = plane; // the starting object, the emitter
-            smokeSystem.minEmitBox = new BABYLON.Vector3(-0.8, 0, -0.7); // Starting all from
-            smokeSystem.maxEmitBox = new BABYLON.Vector3(-0.8, 2, 0.7); // To...
-            smokeSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
-            smokeSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
-            smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
-            smokeSystem.minSize = 0.1;
-            smokeSystem.maxSize = 0.5;
-            smokeSystem.minLifeTime = 0.3;
-            smokeSystem.maxLifeTime = 1.5;
-            smokeSystem.emitRate = 2000;
-            smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-            smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            smokeSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
-            smokeSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
-            smokeSystem.direction2 = new BABYLON.Vector3(0, 0.25, 0);
-            smokeSystem.minAngularSpeed = 0;
-            smokeSystem.maxAngularSpeed = Math.PI;
-            smokeSystem.minEmitPower = 0.5;
-            smokeSystem.maxEmitPower = 1.5;
-            smokeSystem.updateSpeed = 0.004;
+            var smokeSystem = new Particles.Entrace(game, plane).particleSystem;
             smokeSystem.start();
             game.getScene().registerAfterRender(function () {
                 if (game.player && self.entrace) {
@@ -368,7 +303,7 @@ var Character = (function () {
         //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
-        this.createBloodParticlesSystem();
+        this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
     }
     Character.prototype.createItems = function () {
         this.items = [];
@@ -459,32 +394,6 @@ var Character = (function () {
     Character.prototype.isAnimationEnabled = function () {
         return this.animation;
     };
-    Character.prototype.createBloodParticlesSystem = function () {
-        var particleSystem = new BABYLON.ParticleSystem("particle1s", 500, this.game.getScene());
-        particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
-        particleSystem.emitter = this.mesh;
-        particleSystem.minEmitBox = new BABYLON.Vector3(0, this.mesh.geometry.extend.maximum.y * 0.7, 0); // Starting all from
-        particleSystem.maxEmitBox = new BABYLON.Vector3(0, this.mesh.geometry.extend.maximum.y * 0.7, 0); // To...
-        particleSystem.color1 = new BABYLON.Color4(1, 0, 0, 1);
-        particleSystem.color2 = new BABYLON.Color4(1, 0, 0, 0.1);
-        particleSystem.colorDead = new BABYLON.Color4(0, 0, 0, 1);
-        particleSystem.minSize = 0.3;
-        particleSystem.maxSize = 0.5;
-        particleSystem.minLifeTime = 0.05;
-        particleSystem.maxLifeTime = 0.7;
-        particleSystem.emitRate = 500;
-        particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
-        particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
-        particleSystem.direction1 = new BABYLON.Vector3(-2, 2, -2);
-        particleSystem.direction2 = new BABYLON.Vector3(2, 2, 2);
-        particleSystem.targetStopDuration = 0.6;
-        particleSystem.minAngularSpeed = -10.0;
-        particleSystem.maxAngularSpeed = 10.0;
-        particleSystem.minEmitPower = 1;
-        particleSystem.maxEmitPower = 2;
-        particleSystem.updateSpeed = 0.02;
-        this.bloodParticles = particleSystem;
-    };
     /** Events */
     Character.prototype.onHitStart = function () { };
     ;
@@ -535,6 +444,7 @@ var Player = (function (_super) {
             var playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             playerLight.specular = new BABYLON.Color3(1, 1, 1);
+            playerLight.position.y = 64;
             game.getScene().lights.push(playerLight);
             var characterBottomPanel = new BABYLON.GUI.StackPanel();
             characterBottomPanel.width = "50%";
@@ -568,29 +478,7 @@ var Player = (function (_super) {
             characterBottomPanel.addControl(hpSlider);
             characterBottomPanel.addControl(expSlider);
         }
-        var smokeSystem = new BABYLON.ParticleSystem("particles", 50, game.getScene());
-        smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", game.getScene());
-        smokeSystem.emitter = _this.mesh; // the starting object, the emitter
-        smokeSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0.8); // Starting all from
-        smokeSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0.8); // To...
-        smokeSystem.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
-        smokeSystem.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
-        smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-        smokeSystem.minSize = 0.3;
-        smokeSystem.maxSize = 2;
-        smokeSystem.minLifeTime = 0.1;
-        smokeSystem.maxLifeTime = 0.2;
-        smokeSystem.emitRate = 30;
-        smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-        smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-        smokeSystem.direction1 = new BABYLON.Vector3(0, 8, 0);
-        smokeSystem.direction2 = new BABYLON.Vector3(0, 8, 0);
-        smokeSystem.minAngularSpeed = 0;
-        smokeSystem.maxAngularSpeed = Math.PI;
-        smokeSystem.minEmitPower = 1;
-        smokeSystem.maxEmitPower = 1;
-        smokeSystem.updateSpeed = 0.004;
-        _this.walkSmoke = smokeSystem;
+        _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
         return _this;
     }
@@ -684,7 +572,6 @@ var Player = (function (_super) {
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
                 self.game.getScene().lights[1].position.x = self.mesh.position.x;
-                self.game.getScene().lights[1].position.y = self.mesh.position.y + 64;
                 self.game.getScene().lights[1].position.z = self.mesh.position.z;
             }
         };
@@ -1061,6 +948,207 @@ var Items;
     }(Items.Item));
     Items.Sword = Sword;
 })(Items || (Items = {}));
+/// <reference path="../../babylon/babylon.d.ts"/>
+/// <reference path="../game.ts"/>
+var Particles;
+(function (Particles) {
+    var AbstractParticle = (function () {
+        function AbstractParticle(game, emitter) {
+            this.game = game;
+            this.emitter = emitter;
+            this.initParticleSystem();
+        }
+        return AbstractParticle;
+    }());
+    Particles.AbstractParticle = AbstractParticle;
+})(Particles || (Particles = {}));
+/// <reference path="AbstractParticle.ts"/>
+var Particles;
+(function (Particles) {
+    var Blood = (function (_super) {
+        __extends(Blood, _super);
+        function Blood() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Blood.prototype.initParticleSystem = function () {
+            var particleSystem = new BABYLON.ParticleSystem("particle1s", 500, this.game.getScene());
+            particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
+            particleSystem.emitter = this.emitter;
+            particleSystem.minEmitBox = new BABYLON.Vector3(0, this.emitter.geometry.extend.maximum.y * 0.7, 0); // Starting all from
+            particleSystem.maxEmitBox = new BABYLON.Vector3(0, this.emitter.geometry.extend.maximum.y * 0.7, 0); // To...
+            particleSystem.color1 = new BABYLON.Color4(1, 0, 0, 1);
+            particleSystem.color2 = new BABYLON.Color4(1, 0, 0, 0.1);
+            particleSystem.colorDead = new BABYLON.Color4(0, 0, 0, 1);
+            particleSystem.minSize = 0.3;
+            particleSystem.maxSize = 0.5;
+            particleSystem.minLifeTime = 0.05;
+            particleSystem.maxLifeTime = 0.7;
+            particleSystem.emitRate = 500;
+            particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
+            particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+            particleSystem.direction1 = new BABYLON.Vector3(-2, 2, -2);
+            particleSystem.direction2 = new BABYLON.Vector3(2, 2, 2);
+            particleSystem.targetStopDuration = 0.6;
+            particleSystem.minAngularSpeed = -10.0;
+            particleSystem.maxAngularSpeed = 10.0;
+            particleSystem.minEmitPower = 1;
+            particleSystem.maxEmitPower = 2;
+            particleSystem.updateSpeed = 0.02;
+            this.particleSystem = particleSystem;
+        };
+        return Blood;
+    }(Particles.AbstractParticle));
+    Particles.Blood = Blood;
+})(Particles || (Particles = {}));
+/// <reference path="AbstractParticle.ts"/>
+var Particles;
+(function (Particles) {
+    var Entrace = (function (_super) {
+        __extends(Entrace, _super);
+        function Entrace() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Entrace.prototype.initParticleSystem = function () {
+            var particleSystem = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
+            particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            particleSystem.emitter = this.emitter; // the starting object, the emitter
+            particleSystem.minEmitBox = new BABYLON.Vector3(-0.8, 0, -0.7); // Starting all from
+            particleSystem.maxEmitBox = new BABYLON.Vector3(-0.8, 2, 0.7); // To...
+            particleSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
+            particleSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+            particleSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+            particleSystem.minSize = 0.1;
+            particleSystem.maxSize = 0.5;
+            particleSystem.minLifeTime = 0.3;
+            particleSystem.maxLifeTime = 1.5;
+            particleSystem.emitRate = 2000;
+            particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            particleSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+            particleSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+            particleSystem.direction2 = new BABYLON.Vector3(0, 0.25, 0);
+            particleSystem.minAngularSpeed = 0;
+            particleSystem.maxAngularSpeed = Math.PI;
+            particleSystem.minEmitPower = 0.5;
+            particleSystem.maxEmitPower = 1.5;
+            particleSystem.updateSpeed = 0.004;
+            this.particleSystem = particleSystem;
+        };
+        return Entrace;
+    }(Particles.AbstractParticle));
+    Particles.Entrace = Entrace;
+})(Particles || (Particles = {}));
+/// <reference path="AbstractParticle.ts"/>
+var Particles;
+(function (Particles) {
+    var FireplaceFire = (function (_super) {
+        __extends(FireplaceFire, _super);
+        function FireplaceFire() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        FireplaceFire.prototype.initParticleSystem = function () {
+            var fireSystem = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.emitter = this.emitter; // the starting object, the emitter
+            fireSystem.minEmitBox = new BABYLON.Vector3(0.5, 0, 0.5); // Starting all from
+            fireSystem.maxEmitBox = new BABYLON.Vector3(1.5, 0, 1.5); // To...
+            fireSystem.color1 = new BABYLON.Color4(1, 0.5, 0, 1.0);
+            fireSystem.color2 = new BABYLON.Color4(1, 0.5, 0, 1.0);
+            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            fireSystem.minSize = 0.2;
+            fireSystem.maxSize = 0.7;
+            fireSystem.minLifeTime = 0.2;
+            fireSystem.maxLifeTime = 0.4;
+            fireSystem.emitRate = 300;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 2, 0);
+            fireSystem.minAngularSpeed = -10;
+            fireSystem.maxAngularSpeed = Math.PI;
+            fireSystem.minEmitPower = 1;
+            fireSystem.maxEmitPower = 3;
+            fireSystem.updateSpeed = 0.004;
+            this.particleSystem = fireSystem;
+        };
+        return FireplaceFire;
+    }(Particles.AbstractParticle));
+    Particles.FireplaceFire = FireplaceFire;
+})(Particles || (Particles = {}));
+/// <reference path="AbstractParticle.ts"/>
+var Particles;
+(function (Particles) {
+    var FireplaceSmoke = (function (_super) {
+        __extends(FireplaceSmoke, _super);
+        function FireplaceSmoke() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        FireplaceSmoke.prototype.initParticleSystem = function () {
+            var smokeSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
+            smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            smokeSystem.emitter = this.emitter; // the starting object, the emitter
+            smokeSystem.minEmitBox = new BABYLON.Vector3(0.5, 0, 0.5); // Starting all from
+            smokeSystem.maxEmitBox = new BABYLON.Vector3(1.5, 0, 1.5); // To...
+            smokeSystem.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
+            smokeSystem.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
+            smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            smokeSystem.minSize = 0.3;
+            smokeSystem.maxSize = 1;
+            smokeSystem.minLifeTime = 0.3;
+            smokeSystem.maxLifeTime = 1.5;
+            smokeSystem.emitRate = 350;
+            smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            smokeSystem.direction1 = new BABYLON.Vector3(-1.5, 8, -1.5);
+            smokeSystem.direction2 = new BABYLON.Vector3(1.5, 8, 1.5);
+            smokeSystem.minAngularSpeed = 0;
+            smokeSystem.maxAngularSpeed = Math.PI;
+            smokeSystem.minEmitPower = 0.5;
+            smokeSystem.maxEmitPower = 1.5;
+            smokeSystem.updateSpeed = 0.004;
+            this.particleSystem = smokeSystem;
+        };
+        return FireplaceSmoke;
+    }(Particles.AbstractParticle));
+    Particles.FireplaceSmoke = FireplaceSmoke;
+})(Particles || (Particles = {}));
+/// <reference path="AbstractParticle.ts"/>
+var Particles;
+(function (Particles) {
+    var WalkSmoke = (function (_super) {
+        __extends(WalkSmoke, _super);
+        function WalkSmoke() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        WalkSmoke.prototype.initParticleSystem = function () {
+            var smokeSystem = new BABYLON.ParticleSystem("particles", 50, this.game.getScene());
+            smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            smokeSystem.emitter = this.emitter;
+            smokeSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0.8);
+            smokeSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0.8);
+            smokeSystem.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
+            smokeSystem.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
+            smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            smokeSystem.minSize = 0.3;
+            smokeSystem.maxSize = 2;
+            smokeSystem.minLifeTime = 0.1;
+            smokeSystem.maxLifeTime = 0.2;
+            smokeSystem.emitRate = 30;
+            smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            smokeSystem.direction1 = new BABYLON.Vector3(0, 8, 0);
+            smokeSystem.direction2 = new BABYLON.Vector3(0, 8, 0);
+            smokeSystem.minAngularSpeed = 0;
+            smokeSystem.maxAngularSpeed = Math.PI;
+            smokeSystem.minEmitPower = 1;
+            smokeSystem.maxEmitPower = 1;
+            smokeSystem.updateSpeed = 0.004;
+            this.particleSystem = smokeSystem;
+        };
+        return WalkSmoke;
+    }(Particles.AbstractParticle));
+    Particles.WalkSmoke = WalkSmoke;
+})(Particles || (Particles = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../../babylon/ts/babylon.gui.d.ts"/>
 /// <reference path="Scene.ts"/>

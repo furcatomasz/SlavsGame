@@ -15,7 +15,7 @@ namespace Items {
         public sfxPunch:BABYLON.Sound;
 
         /** Particles */
-        public particles;
+        public particles: BABYLON.ParticleSystem;
 
         constructor(game:Game) {
             this.game = game;

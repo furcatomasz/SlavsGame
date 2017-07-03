@@ -99,8 +99,8 @@ var Scene = (function () {
         camera.orthoBottom = 0;
         camera.orthoLeft = -15;
         camera.orthoRight = 15;
-        camera.maxZ = 80;
-        camera.minZ = -80;
+        camera.maxZ = 20;
+        camera.minZ = -70;
         var ratio = window.innerWidth / window.innerHeight;
         var zoom = camera.orthoTop;
         var newWidth = zoom * ratio;
@@ -109,7 +109,6 @@ var Scene = (function () {
         camera.orthoBottom = -Math.abs(zoom);
         camera.rotation = new BABYLON.Vector3(0.751115, -0.21885, 0);
         scene.activeCamera = camera;
-        //scene.activeCamera.attachControl(this.game.canvas);
     };
     Scene.prototype.createGameGUI = function () {
         var self = this;
@@ -521,7 +520,6 @@ var Player = (function (_super) {
                 }
                 enemy.createGUI();
                 enemy.bloodParticles.start();
-                //enemy.bloodParticles.stop();
                 var newValue = enemy.hp - this.damage;
                 enemy.hp = (newValue);
                 enemy.guiHp.value = newValue;
@@ -544,17 +542,6 @@ var Player = (function (_super) {
                 game.controller.back = false;
             }
         }
-        //    for (var i = 0; i < game.getScene().meshes.length; i++) {
-        //        var sceneMesh = game.getScene().meshes[i];
-        //        var meshName = game.getScene().meshes[i]['name'];
-        //
-        //        if (meshName.search("choinka") >= 0 || meshName.search("Fireplace") >= 0 || meshName.search("Log") >= 0) {
-        //            if (this.mesh.intersectsMesh(sceneMesh, true)) {
-        //                game.controller.forward = false;
-        //                game.controller.back = false;
-        //            }
-        //        }
-        //}
         return this;
     };
     Player.prototype.removeFromWorld = function () {
@@ -578,11 +565,9 @@ var Player = (function (_super) {
     };
     Player.prototype.onHitStart = function () {
         this.items.weapon.sfxHit.play(0.3);
-        //this.items.weapon.particles.start();
     };
     ;
     Player.prototype.onHitEnd = function () {
-        //this.items.weapon.particles.stop();
     };
     ;
     Player.prototype.onWalkStart = function () {
@@ -919,29 +904,6 @@ var Items;
                 loop: false,
                 autoplay: false
             });
-            var particleSystem = new BABYLON.ParticleSystem("particle1s", 1000, _this.game.getScene());
-            particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", _this.game.getScene());
-            particleSystem.emitter = _this.mesh;
-            particleSystem.minEmitBox = new BABYLON.Vector3(0, 5, 0); // Starting all from
-            particleSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0); // To...
-            particleSystem.color1 = new BABYLON.Color4(1, 0, 0, 1);
-            particleSystem.color2 = new BABYLON.Color4(1, 0, 0, 1);
-            particleSystem.colorDead = new BABYLON.Color4(1, 0, 0, 0.0);
-            particleSystem.minSize = 0.2;
-            particleSystem.maxSize = 0.5;
-            particleSystem.minLifeTime = 0.05;
-            particleSystem.maxLifeTime = 0.2;
-            particleSystem.emitRate = 800;
-            //particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
-            particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
-            particleSystem.direction1 = new BABYLON.Vector3(-1, 0, 0);
-            particleSystem.direction2 = new BABYLON.Vector3(-3, 0, 0);
-            particleSystem.minAngularSpeed = -10.0;
-            particleSystem.maxAngularSpeed = 10.0;
-            particleSystem.minEmitPower = 0.1;
-            particleSystem.maxEmitPower = 1;
-            particleSystem.updateSpeed = 0.005;
-            _this.particles = particleSystem;
             return _this;
         }
         return Sword;

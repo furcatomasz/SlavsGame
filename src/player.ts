@@ -131,10 +131,7 @@ class Player extends Character {
                     enemy.sfxHit.play();
                 }
                 enemy.createGUI();
-
                 enemy.bloodParticles.start();
-
-                //enemy.bloodParticles.stop();
 
                 let newValue = enemy.hp  - this.damage;
                 enemy.hp = (newValue);
@@ -162,17 +159,6 @@ class Player extends Character {
                 game.controller.back = false;
             }
         }
-        //    for (var i = 0; i < game.getScene().meshes.length; i++) {
-        //        var sceneMesh = game.getScene().meshes[i];
-        //        var meshName = game.getScene().meshes[i]['name'];
-        //
-        //        if (meshName.search("choinka") >= 0 || meshName.search("Fireplace") >= 0 || meshName.search("Log") >= 0) {
-        //            if (this.mesh.intersectsMesh(sceneMesh, true)) {
-        //                game.controller.forward = false;
-        //                game.controller.back = false;
-        //            }
-        //        }
-        //}
 
         return this;
     }
@@ -185,7 +171,7 @@ class Player extends Character {
         this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
 
     }
-w
+
 
     protected registerFunctionAfterRender() {
         let self = this;
@@ -202,11 +188,9 @@ w
 
     protected onHitStart() {
         this.items.weapon.sfxHit.play(0.3);
-        //this.items.weapon.particles.start();
     };
 
     protected onHitEnd() {
-        //this.items.weapon.particles.stop();
     };
 
     protected onWalkStart() {

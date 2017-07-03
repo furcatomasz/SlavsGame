@@ -31,8 +31,8 @@ abstract class Scene {
         camera.orthoBottom = 0;
         camera.orthoLeft = -15;
         camera.orthoRight = 15;
-        camera.maxZ = 80;
-        camera.minZ = -80;
+        camera.maxZ = 20;
+        camera.minZ = -70;
         var ratio = window.innerWidth / window.innerHeight ;
         var zoom = camera.orthoTop;
         var newWidth = zoom * ratio;
@@ -41,7 +41,6 @@ abstract class Scene {
         camera.orthoBottom = -Math.abs(zoom);
         camera.rotation = new BABYLON.Vector3(0.751115, -0.21885, 0);
         scene.activeCamera = camera;
-        //scene.activeCamera.attachControl(this.game.canvas);
     }
     
     protected createGameGUI() {

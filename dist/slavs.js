@@ -183,10 +183,8 @@ var Environment = (function () {
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
-            // sceneMesh.material.freeze();
-            sceneMesh.freezeWorldMatrix();
             if (meshName.search("Forest_ground") >= 0) {
-                sceneMesh.receiveShadows = true;
+                //sceneMesh.receiveShadows = true;
             }
             else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;
@@ -194,38 +192,16 @@ var Environment = (function () {
             }
             //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
-        // for (var i = 0; i < this.trees.length; i++) {
-        //     var meshTree = this.trees[i];
-        //     if(meshTree == this.tree) {
-        //         continue;
-        //     }
-        //
-        //     if(i > 0) {
-        //         let tree = this.tree.createInstance('instanceTree_' + i);
-        //         tree.position = meshTree.position;
-        //         tree.rotation = meshTree.rotation;
-        //         tree.scaling = meshTree.scaling;
-        //
-        //         meshTree.dispose();
-        //     }
-        // }
-        //for (var i = 0; i < this.bushes.length; i++) {
-        //    var meshBush = this.bushes[i];
-        //
-        //    if(meshBush == this.bush) {
-        //        continue;
-        //    }
-        //
-        //    if(i > 0) {
-        //        meshBush.dispose();
-        //
-        //        let bush = this.bush.createInstance('instanceBush_' + i);
-        //        bush.position = meshBush.position;
-        //        bush.rotation = meshBush.rotation;
-        //        bush.scaling = meshBush.scaling;
-        //
-        //    }
-        //}
+        for (var i = 0; i < this.trees.length; i++) {
+            var meshTree = this.trees[i];
+            var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
+            var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
+            var scaling = BABYLON.Matrix.Scaling(0.4, 0.4, 0.4);
+            minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
+            maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
+            meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);
+            meshTree.computeWorldMatrix(true);
+        }
         var cone = scene.getMeshByName("Fireplace");
         if (cone) {
             var smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
@@ -251,6 +227,11 @@ var Environment = (function () {
             });
         }
         this.entrace = plane;
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh = scene.meshes[i];
+            // sceneMesh.material.freeze();
+            sceneMesh.freezeWorldMatrix();
+        }
     }
     return Environment;
 }());

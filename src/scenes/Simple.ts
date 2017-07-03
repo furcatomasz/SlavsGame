@@ -14,12 +14,14 @@ class Simple extends Scene {
         BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
             game.sceneManager = self;
             self.setDefaults(game);
-            scene.collisionsEnabled = true;
+            scene.collisionsEnabled = false;
+            scene.fogEnabled = false;
+            scene.shadowsEnabled = false;
             self.setCamera(scene);
 
-            //scene.debugLayer.show({
-            //   popup:true,
-            //});
+            scene.debugLayer.show({
+               popup:true,
+            });
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
 

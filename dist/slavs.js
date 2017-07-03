@@ -271,11 +271,13 @@ var Simple = (function (_super) {
         BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
             game.sceneManager = self;
             self.setDefaults(game);
-            scene.collisionsEnabled = true;
+            scene.collisionsEnabled = false;
+            scene.fogEnabled = false;
+            scene.shadowsEnabled = false;
             self.setCamera(scene);
-            //scene.debugLayer.show({
-            //   popup:true,
-            //});
+            scene.debugLayer.show({
+                popup: true
+            });
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {

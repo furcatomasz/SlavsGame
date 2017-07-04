@@ -12,7 +12,7 @@ class Player extends Character {
         this.hp = 100;
         this.attackSpeed = 100;
         this.walkSpeed = 100;
-        this.damage = 1;
+        this.damage = 10;
         this.blockChance = 50;
         this.isControllable = registerMoving;
 
@@ -78,6 +78,17 @@ class Player extends Character {
 
             characterBottomPanel.addControl(hpSlider);
             characterBottomPanel.addControl(expSlider);
+
+            let attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
+                width: 4,
+                height: 0.1,
+                size: 4
+            }, game.getScene());
+            attackArea.parent = this.mesh;
+            attackArea.visibility = 0;
+            attackArea.isPickable = false;
+
+            this.attackArea = attackArea;
         }
 
         this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
@@ -85,6 +96,9 @@ class Player extends Character {
         super(name, game);
     }
 
+    /**
+     * Moving events
+     */
     protected registerMoving() {
         let walkSpeed = Character.WALK_SPEED * (this.walkSpeed / 100);
         let game = this.game;
@@ -113,38 +127,45 @@ class Player extends Character {
             return;
         }
 
+        ///stop move and start attack animation
         if(this.animation && !this.attackAnimation) {
             this.animation.stop();
         }
     }
 
-
+    /**
+     * Attack Collisions
+     * 
+     * @returns {Player}
+     */
     protected weaponCollisions() {
         let game = this.game;
-        for (var i = 0; i < game.enemies.length; i++) {
-            var enemy = game.enemies[i];
-            let enemyMesh = enemy.mesh;
-            if (this.items.weapon.mesh.intersectsMesh(enemyMesh, true)) {
-                enemyMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-                if(!enemy.sfxHit.isPlaying) {
-                    enemy.sfxHit.setVolume(2);
-                    enemy.sfxHit.play();
+        let self = this;
+
+        if(this.attackAnimation && !this.attackHit) {
+            this.attackHit = true;
+            for (var i = 0; i < game.enemies.length; i++) {
+                var enemy = game.enemies[i];
+                let enemyMesh = enemy.mesh;
+                if (this.attackArea.intersectsMesh(enemyMesh, false)) {
+                    setTimeout(function () {
+                        if (!enemy.sfxHit.isPlaying) {
+                            enemy.sfxHit.setVolume(2);
+                            enemy.sfxHit.play();
+                        }
+
+                        enemy.createGUI();
+                        enemy.bloodParticles.start();
+                        let newValue = enemy.hp - self.damage;
+                        enemy.hp = (newValue);
+                        enemy.guiHp.value = newValue;
+
+                        if (newValue <= 0) {
+                            enemy.removeFromWorld();
+                        }
+                    }, 300);
                 }
-                enemy.createGUI();
-                enemy.bloodParticles.start();
-
-                let newValue = enemy.hp  - this.damage;
-                enemy.hp = (newValue);
-                enemy.guiHp.value = newValue;
-
-                if(newValue < 0) {
-                    enemy.removeFromWorld();
-                }
-
-            } else {
-                enemyMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 1);
             }
-
         }
 
         return this;
@@ -191,6 +212,7 @@ class Player extends Character {
     };
 
     protected onHitEnd() {
+        this.attackHit = false;
     };
 
     protected onWalkStart() {

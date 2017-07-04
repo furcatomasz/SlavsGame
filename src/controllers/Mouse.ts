@@ -4,6 +4,7 @@ class Mouse extends Controller {
 
     public registerControls(scene: BABYLON.Scene) {
         let self = this;
+        let targetPoint = null;
         var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
         ball.isPickable = false;
         ball.visibility = 0;
@@ -12,13 +13,17 @@ class Mouse extends Controller {
             if (self.game.player && pickResult.pickedMesh.name == 'Forest_ground') {
                 targetPoint = pickResult.pickedPoint;
                 targetPoint.y = 0;
-                ball.position = targetPoint.clone();
+                ball.position = targetPoint;
                 ball.visibility = 1;
                 self.game.player.mesh.lookAt(ball.position);
+                self.game.player.emitPosition();
             }
-            if (self.game.player && pickResult.pickedMesh.name.search('Worm') >= 0) {
-                self.game.player.mesh.lookAt(pickResult.pickedMesh.position);
 
+            if (self.game.player && pickResult.pickedMesh.name.search('enemy_attackArea') >= 0) {
+                self.game.player.mesh.lookAt(pickResult.pickedPoint);
+                self.game.controller.forward = false;
+                targetPoint = null;
+                ball.visibility = 0;
                 self.game.player.runAnimationHit()
             }
 

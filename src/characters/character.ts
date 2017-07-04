@@ -36,6 +36,8 @@ abstract class Character {
     protected afterRender;
     protected isControllable:boolean;
     protected attackAnimation: boolean;
+    protected attackHit: boolean;
+    protected attackArea:BABYLON.Mesh;
 
     protected sfxWalk: BABYLON.Sound;
     protected sfxHit: BABYLON.Sound;

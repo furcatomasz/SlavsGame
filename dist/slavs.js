@@ -404,7 +404,7 @@ var Player = (function (_super) {
         _this.hp = 100;
         _this.attackSpeed = 100;
         _this.walkSpeed = 100;
-        _this.damage = 1;
+        _this.damage = 10;
         _this.blockChance = 50;
         _this.isControllable = registerMoving;
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
@@ -459,11 +459,23 @@ var Player = (function (_super) {
             expSlider.borderColor = 'black';
             characterBottomPanel.addControl(hpSlider);
             characterBottomPanel.addControl(expSlider);
+            var attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
+                width: 4,
+                height: 0.1,
+                size: 4
+            }, game.getScene());
+            attackArea.parent = _this.mesh;
+            attackArea.visibility = 0;
+            attackArea.isPickable = false;
+            _this.attackArea = attackArea;
         }
         _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
         return _this;
     }
+    /**
+     * Moving events
+     */
     Player.prototype.registerMoving = function () {
         var walkSpeed = Character.WALK_SPEED * (this.walkSpeed / 100);
         var game = this.game;
@@ -486,32 +498,40 @@ var Player = (function (_super) {
             this.runAnimationWalk(true);
             return;
         }
+        ///stop move and start attack animation
         if (this.animation && !this.attackAnimation) {
             this.animation.stop();
         }
     };
+    /**
+     * Attack Collisions
+     *
+     * @returns {Player}
+     */
     Player.prototype.weaponCollisions = function () {
         var game = this.game;
-        for (var i = 0; i < game.enemies.length; i++) {
-            var enemy = game.enemies[i];
-            var enemyMesh = enemy.mesh;
-            if (this.items.weapon.mesh.intersectsMesh(enemyMesh, true)) {
-                enemyMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
-                if (!enemy.sfxHit.isPlaying) {
-                    enemy.sfxHit.setVolume(2);
-                    enemy.sfxHit.play();
+        var self = this;
+        if (this.attackAnimation && !this.attackHit) {
+            this.attackHit = true;
+            for (var i = 0; i < game.enemies.length; i++) {
+                var enemy = game.enemies[i];
+                var enemyMesh = enemy.mesh;
+                if (this.attackArea.intersectsMesh(enemyMesh, false)) {
+                    setTimeout(function () {
+                        if (!enemy.sfxHit.isPlaying) {
+                            enemy.sfxHit.setVolume(2);
+                            enemy.sfxHit.play();
+                        }
+                        enemy.createGUI();
+                        enemy.bloodParticles.start();
+                        var newValue = enemy.hp - self.damage;
+                        enemy.hp = (newValue);
+                        enemy.guiHp.value = newValue;
+                        if (newValue <= 0) {
+                            enemy.removeFromWorld();
+                        }
+                    }, 300);
                 }
-                enemy.createGUI();
-                enemy.bloodParticles.start();
-                var newValue = enemy.hp - this.damage;
-                enemy.hp = (newValue);
-                enemy.guiHp.value = newValue;
-                if (newValue < 0) {
-                    enemy.removeFromWorld();
-                }
-            }
-            else {
-                enemyMesh.material.emissiveColor = new BABYLON.Color4(0, 0, 0, 1);
             }
         }
         return this;
@@ -551,6 +571,7 @@ var Player = (function (_super) {
     };
     ;
     Player.prototype.onHitEnd = function () {
+        this.attackHit = false;
     };
     ;
     Player.prototype.onWalkStart = function () {
@@ -573,7 +594,6 @@ var Monster = (function (_super) {
         }, game.getScene());
         attackArea.parent = _this.mesh;
         attackArea.visibility = 0;
-        attackArea.isPickable = false;
         _this.attackArea = attackArea;
         var visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
             width: _this.visibilityAreaSize,
@@ -586,6 +606,7 @@ var Monster = (function (_super) {
         _this.visibilityArea = visivilityArea;
         game.enemies[_this.id] = _this;
         _this.mesh.skeleton.beginAnimation(Character.ANIMATION_STAND, true);
+        _this.mesh.isPickable = false;
         _this = _super.call(this, name, game) || this;
         return _this;
     }
@@ -657,9 +678,7 @@ var Monster = (function (_super) {
         };
     };
     Monster.prototype.onHitEnd = function () {
-        var playerMesh = this.game.player.mesh;
         if (Game.randomNumber(1, 100) <= this.hitChange) {
-            //playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
             if (!this.game.player.sfxHit.isPlaying) {
                 this.game.player.sfxHit.setVolume(2);
                 this.game.player.sfxHit.play();
@@ -671,9 +690,6 @@ var Monster = (function (_super) {
                 alert('Padłeś');
                 window.location.reload();
             }
-        }
-        else {
-            //playerMesh.material.emissiveColor = new BABYLON.Color4(0.89, 0.89, 0.89, 0);
         }
     };
     return Monster;
@@ -847,6 +863,7 @@ var Mouse = (function (_super) {
     }
     Mouse.prototype.registerControls = function (scene) {
         var self = this;
+        var targetPoint = null;
         var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
         ball.isPickable = false;
         ball.visibility = 0;
@@ -854,12 +871,16 @@ var Mouse = (function (_super) {
             if (self.game.player && pickResult.pickedMesh.name == 'Forest_ground') {
                 targetPoint = pickResult.pickedPoint;
                 targetPoint.y = 0;
-                ball.position = targetPoint.clone();
+                ball.position = targetPoint;
                 ball.visibility = 1;
                 self.game.player.mesh.lookAt(ball.position);
+                self.game.player.emitPosition();
             }
-            if (self.game.player && pickResult.pickedMesh.name.search('Worm') >= 0) {
-                self.game.player.mesh.lookAt(pickResult.pickedMesh.position);
+            if (self.game.player && pickResult.pickedMesh.name.search('enemy_attackArea') >= 0) {
+                self.game.player.mesh.lookAt(pickResult.pickedPoint);
+                self.game.controller.forward = false;
+                targetPoint = null;
+                ball.visibility = 0;
                 self.game.player.runAnimationHit();
             }
         };

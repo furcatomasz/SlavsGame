@@ -3,7 +3,6 @@
 abstract class Monster extends Character {
 
     protected visibilityArea:BABYLON.Mesh;
-    protected attackArea:BABYLON.Mesh;
     protected target:string;
     protected visibilityAreaSize:number;
     protected attackAreaSize:number;
@@ -17,8 +16,6 @@ abstract class Monster extends Character {
         }, game.getScene());
         attackArea.parent = this.mesh;
         attackArea.visibility = 0;
-        attackArea.isPickable = false;
-
         this.attackArea = attackArea;
 
         let visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
@@ -35,6 +32,7 @@ abstract class Monster extends Character {
         game.enemies[this.id] = this;
 
         this.mesh.skeleton.beginAnimation(Character.ANIMATION_STAND, true);
+        this.mesh.isPickable = false;
 
         super(name, game);
     }
@@ -115,10 +113,7 @@ abstract class Monster extends Character {
     }
 
     protected onHitEnd() {
-        let playerMesh = this.game.player.mesh;
-
         if (Game.randomNumber(1, 100) <= this.hitChange) {
-            //playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
 
             if (!this.game.player.sfxHit.isPlaying) {
                 this.game.player.sfxHit.setVolume(2);
@@ -133,9 +128,6 @@ abstract class Monster extends Character {
                 alert('Padłeś');
                 window.location.reload();
             }
-        } else {
-            //playerMesh.material.emissiveColor = new BABYLON.Color4(0.89, 0.89, 0.89, 0);
-        }
     }
 
 }

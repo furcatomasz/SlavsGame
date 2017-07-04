@@ -31,7 +31,7 @@ class Environment {
 
              var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
              var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
-             var scaling = BABYLON.Matrix.Scaling(0.4, 0.4, 0.4);
+             var scaling = BABYLON.Matrix.Scaling(0.5, 0.5, 0.5);
 
              minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
              maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);

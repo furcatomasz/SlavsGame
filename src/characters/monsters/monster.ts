@@ -2,22 +2,30 @@
 
 abstract class Monster extends Character {
 
-    protected visibilityArea: BABYLON.Mesh;
-    protected attackArea: BABYLON.Mesh;
-    protected haveTarget: boolean;
-    protected visibilityAreaSize: number;
-    protected attackAreaSize: number;
+    protected visibilityArea:BABYLON.Mesh;
+    protected attackArea:BABYLON.Mesh;
+    protected target:string;
+    protected visibilityAreaSize:number;
+    protected attackAreaSize:number;
 
 
     constructor(name:string, game:Game) {
-        let attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', { width: this.attackAreaSize, height: 0.1, size: this.attackAreaSize}, game.getScene());
+        let attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', {
+            width: this.attackAreaSize,
+            height: 0.1,
+            size: this.attackAreaSize
+        }, game.getScene());
         attackArea.parent = this.mesh;
         attackArea.visibility = 0;
         attackArea.isPickable = false;
 
         this.attackArea = attackArea;
 
-        let visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', { width: this.visibilityAreaSize, height: 0.1, size: this.visibilityAreaSize}, game.getScene());
+        let visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
+            width: this.visibilityAreaSize,
+            height: 0.1,
+            size: this.visibilityAreaSize
+        }, game.getScene());
         visivilityArea.parent = this.mesh;
         visivilityArea.visibility = 0;
         visivilityArea.isPickable = false;
@@ -32,14 +40,14 @@ abstract class Monster extends Character {
     }
 
     public createGUI() {
-        if(this.guiPanel) {
+        if (this.guiPanel) {
             this.game.sceneManager.guiTexture.removeControl(this.guiPanel);
         }
 
         let monsterPanel = new BABYLON.GUI.StackPanel();
         monsterPanel.width = "25%";
         monsterPanel.top = 10;
-        monsterPanel.verticalAlignment = 	BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        monsterPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         this.guiPanel = monsterPanel;
         this.game.sceneManager.guiTexture.addControl(monsterPanel);
 
@@ -64,7 +72,8 @@ abstract class Monster extends Character {
             this.game.client.socket.emit('updateEnemy', {
                 enemyKey: this.id,
                 position: this.mesh.position,
-                rotation: this.mesh.rotationQuaternion
+                rotation: this.mesh.rotationQuaternion,
+                target: this.target
             });
         }
     }
@@ -82,16 +91,22 @@ abstract class Monster extends Character {
         let walkSpeed = Character.WALK_SPEED * (self.walkSpeed / 100);
         let playerMesh = self.game.player.mesh;
 
-        this.afterRender = function() {
-            if (self.game.player) {
+        this.afterRender = function () {
+            if (self.game.player && (!self.target || self.target == self.game.player.id)) {
                 if (self.visibilityArea.intersectsMesh(playerMesh, false)) {
                     self.mesh.lookAt(playerMesh.position);
+                    self.target = self.game.player.id;
 
                     if (self.attackArea.intersectsMesh(playerMesh, false)) {
                         self.runAnimationHit();
 
                     } else {
                         self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+                        self.runAnimationWalk(true);
+                    }
+                } else {
+                    if (self.target) {
+                        self.target = null;
                         self.runAnimationWalk(true);
                     }
                 }
@@ -102,10 +117,10 @@ abstract class Monster extends Character {
     protected onHitEnd() {
         let playerMesh = this.game.player.mesh;
 
-        if(Game.randomNumber(1,100) <= this.hitChange) {
+        if (Game.randomNumber(1, 100) <= this.hitChange) {
             //playerMesh.material.emissiveColor = new BABYLON.Color4(1, 0, 0, 1);
 
-            if(!this.game.player.sfxHit.isPlaying) {
+            if (!this.game.player.sfxHit.isPlaying) {
                 this.game.player.sfxHit.setVolume(2);
                 this.game.player.sfxHit.play();
             }
@@ -114,7 +129,7 @@ abstract class Monster extends Character {
             let value = this.game.player.guiHp.value;
             this.game.player.guiHp.value = (value - this.damage);
 
-            if(this.game.player.guiHp.value-this.damage < 0) {
+            if (this.game.player.guiHp.value - this.damage < 0) {
                 alert('Padłeś');
                 window.location.reload();
             }

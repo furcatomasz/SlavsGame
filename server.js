@@ -55,6 +55,7 @@ io.on('connection', function (socket) {
     socket.on('updateEnemy', function (enemyData) {
         enemies[enemyData.enemyKey].position = enemyData.position;
         enemies[enemyData.enemyKey].rotation = enemyData.rotation;
+        enemies[enemyData.enemyKey].target = enemyData.target;
         socket.broadcast.emit('showEnemies', enemies);
     });
 });
@@ -76,7 +77,8 @@ function createEnemies(count, positionX, positionZ) {
             },
             attack: false,
             hp: 100,
-            type: 'worm'
+            type: 'worm',
+            target: false
         };
         enemies.push(enemy);
     }

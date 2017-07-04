@@ -12,7 +12,7 @@ abstract class Character {
     public static ANIMATION_ATTACK:string = 'Attack';
 
     public mesh:BABYLON.Mesh;
-    public id:number;
+    public id:string;
     public name:string;
 
     public x:number;

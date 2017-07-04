@@ -48,9 +48,10 @@ class SocketIOClient {
                let enemy = game.enemies[key];
 
                if (enemy) {
+                   enemy.target = enemyData.target;
                    enemy.mesh.position = position;
                    enemy.mesh.rotationQuaternion = rotationQuaternion;
-                   enemy.mesh.runAnimationWalk(false);
+                   enemy.runAnimationWalk(false);
                } else {
                    if (enemyData.type == 'worm') {
                        new Worm(key, data.id, game, position, rotationQuaternion);

@@ -196,7 +196,7 @@ var Environment = (function () {
             var meshTree = this.trees[i];
             var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
             var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
-            var scaling = BABYLON.Matrix.Scaling(0.4, 0.4, 0.4);
+            var scaling = BABYLON.Matrix.Scaling(0.5, 0.5, 0.5);
             minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
             maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
             meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);
@@ -566,12 +566,20 @@ var Monster = (function (_super) {
     __extends(Monster, _super);
     function Monster(name, game) {
         var _this = this;
-        var attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', { width: _this.attackAreaSize, height: 0.1, size: _this.attackAreaSize }, game.getScene());
+        var attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', {
+            width: _this.attackAreaSize,
+            height: 0.1,
+            size: _this.attackAreaSize
+        }, game.getScene());
         attackArea.parent = _this.mesh;
         attackArea.visibility = 0;
         attackArea.isPickable = false;
         _this.attackArea = attackArea;
-        var visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', { width: _this.visibilityAreaSize, height: 0.1, size: _this.visibilityAreaSize }, game.getScene());
+        var visivilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
+            width: _this.visibilityAreaSize,
+            height: 0.1,
+            size: _this.visibilityAreaSize
+        }, game.getScene());
         visivilityArea.parent = _this.mesh;
         visivilityArea.visibility = 0;
         visivilityArea.isPickable = false;
@@ -610,7 +618,8 @@ var Monster = (function (_super) {
             this.game.client.socket.emit('updateEnemy', {
                 enemyKey: this.id,
                 position: this.mesh.position,
-                rotation: this.mesh.rotationQuaternion
+                rotation: this.mesh.rotationQuaternion,
+                target: this.target
             });
         }
     };
@@ -626,14 +635,21 @@ var Monster = (function (_super) {
         var walkSpeed = Character.WALK_SPEED * (self.walkSpeed / 100);
         var playerMesh = self.game.player.mesh;
         this.afterRender = function () {
-            if (self.game.player) {
+            if (self.game.player && (!self.target || self.target == self.game.player.id)) {
                 if (self.visibilityArea.intersectsMesh(playerMesh, false)) {
                     self.mesh.lookAt(playerMesh.position);
+                    self.target = self.game.player.id;
                     if (self.attackArea.intersectsMesh(playerMesh, false)) {
                         self.runAnimationHit();
                     }
                     else {
                         self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+                        self.runAnimationWalk(true);
+                    }
+                }
+                else {
+                    if (self.target) {
+                        self.target = null;
                         self.runAnimationWalk(true);
                     }
                 }
@@ -699,9 +715,10 @@ var SocketIOClient = (function () {
                 var rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
                 var enemy = game.enemies[key];
                 if (enemy) {
+                    enemy.target = enemyData.target;
                     enemy.mesh.position = position;
                     enemy.mesh.rotationQuaternion = rotationQuaternion;
-                    enemy.mesh.runAnimationWalk(false);
+                    enemy.runAnimationWalk(false);
                 }
                 else {
                     if (enemyData.type == 'worm') {

@@ -142,7 +142,7 @@ class Player extends Character {
         let game = this.game;
         let self = this;
 
-        if(this.attackAnimation && !this.attackHit) {
+        if(this.attackArea && this.attackAnimation && !this.attackHit) {
             this.attackHit = true;
             for (var i = 0; i < game.enemies.length; i++) {
                 var enemy = game.enemies[i];

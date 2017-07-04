@@ -283,8 +283,10 @@ var Character = (function () {
         skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
         this.mesh.receiveShadows = true;
         //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
-        this.registerFunctionAfterRender();
-        game.getScene().registerAfterRender(this.afterRender);
+        if (this.isControllable) {
+            this.registerFunctionAfterRender();
+            game.getScene().registerAfterRender(this.afterRender);
+        }
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
     }
     Character.prototype.createItems = function () {
@@ -511,7 +513,7 @@ var Player = (function (_super) {
     Player.prototype.weaponCollisions = function () {
         var game = this.game;
         var self = this;
-        if (this.attackAnimation && !this.attackHit) {
+        if (this.attackArea && this.attackAnimation && !this.attackHit) {
             this.attackHit = true;
             for (var i = 0; i < game.enemies.length; i++) {
                 var enemy = game.enemies[i];

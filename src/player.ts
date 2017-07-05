@@ -148,20 +148,23 @@ class Player extends Character {
                 var enemy = game.enemies[i];
                 let enemyMesh = enemy.mesh;
                 if (this.attackArea.intersectsMesh(enemyMesh, false)) {
+                    console.log(enemy);
+
+                    let animationEnemty = enemy;
                     setTimeout(function () {
-                        if (!enemy.sfxHit.isPlaying) {
-                            enemy.sfxHit.setVolume(2);
-                            enemy.sfxHit.play();
+                        if (!animationEnemty.sfxHit.isPlaying) {
+                            animationEnemty.sfxHit.setVolume(2);
+                            animationEnemty.sfxHit.play();
                         }
 
-                        enemy.createGUI();
-                        enemy.bloodParticles.start();
-                        let newValue = enemy.hp - self.damage;
-                        enemy.hp = (newValue);
-                        enemy.guiHp.value = newValue;
+                        animationEnemty.createGUI();
+                        animationEnemty.bloodParticles.start();
+                        let newValue = animationEnemty.hp - self.damage;
+                        animationEnemty.hp = (newValue);
+                        animationEnemty.guiHp.value = newValue;
 
                         if (newValue <= 0) {
-                            enemy.removeFromWorld();
+                            animationEnemty.removeFromWorld();
                         }
                     }, 300);
                 }

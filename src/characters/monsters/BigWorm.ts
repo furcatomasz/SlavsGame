@@ -1,7 +1,7 @@
 /// <reference path="../../game.ts"/>
 /// <reference path="monster.ts"/>
 
-class Worm extends Monster {
+class BigWorm extends Monster {
 
     constructor(serverKey: number, name:string, game:Game, position: BABYLON.Vector3, rotationQuaternion: BABYLON.Quaternion) {
 
@@ -10,17 +10,17 @@ class Worm extends Monster {
         mesh.visibility = true;
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
-
-        this.hp = 50;
-        this.hpMax = 50;
+        mesh.scaling = new BABYLON.Vector3(2,2,2);
+        this.hp = 125;
+        this.hpMax = 125;
         this.attackSpeed = 100;
-        this.walkSpeed = 30;
-        this.damage = 3;
+        this.walkSpeed = 50;
+        this.damage = 5;
         this.blockChance = 50;
         this.id = serverKey;
         this.mesh = mesh;
-        this.visibilityAreaSize = 30;
-        this.attackAreaSize = 6;
+        this.visibilityAreaSize = 10;
+        this.attackAreaSize = 4;
         this.hitChange = 100;
 
         //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });

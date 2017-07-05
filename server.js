@@ -2,7 +2,10 @@ var io = require('socket.io')(3003);
 var remotePlayers = [];
 var enemies = [];
 // createEnemies(3, {min: 9, max: 5}, {min: 6, max: 6});
-createEnemies(1, {min: 3, max: 15}, {min: -15, max: -25});
+createEnemies(1, {min: -2, max: -2}, {min: -30, max: -30}, 'worm');
+createEnemies(1, {min: -2, max: -2}, {min: -64, max: -64}, 'worm');
+createEnemies(1, {min: -8, max: -8}, {min: -72, max: -72}, 'worm');
+createEnemies(1, {min: 65, max: 65}, {min: -151, max: -151}, 'bigWorm');
 io.on('connection', function (socket) {
     var player = {id: socket.id};
     socket.emit('clientConnected', player);
@@ -60,7 +63,7 @@ io.on('connection', function (socket) {
     });
 });
 
-function createEnemies(count, positionX, positionZ) {
+function createEnemies(count, positionX, positionZ, type) {
     var enemy;
     for (var i = 0, len = count; i < len; i++) {
         enemy = {
@@ -77,7 +80,7 @@ function createEnemies(count, positionX, positionZ) {
             },
             attack: false,
             hp: 100,
-            type: 'worm',
+            type: type,
             target: false
         };
         enemies.push(enemy);

@@ -513,25 +513,31 @@ var Player = (function (_super) {
         var self = this;
         if (this.attackArea && this.attackAnimation && !this.attackHit) {
             this.attackHit = true;
-            for (var i = 0; i < game.enemies.length; i++) {
-                var enemy = game.enemies[i];
+            var _loop_1 = function () {
+                enemy = game.enemies[i];
                 var enemyMesh = enemy.mesh;
-                if (this.attackArea.intersectsMesh(enemyMesh, false)) {
+                if (this_1.attackArea.intersectsMesh(enemyMesh, false)) {
+                    console.log(enemy);
+                    var animationEnemty_1 = enemy;
                     setTimeout(function () {
-                        if (!enemy.sfxHit.isPlaying) {
-                            enemy.sfxHit.setVolume(2);
-                            enemy.sfxHit.play();
+                        if (!animationEnemty_1.sfxHit.isPlaying) {
+                            animationEnemty_1.sfxHit.setVolume(2);
+                            animationEnemty_1.sfxHit.play();
                         }
-                        enemy.createGUI();
-                        enemy.bloodParticles.start();
-                        var newValue = enemy.hp - self.damage;
-                        enemy.hp = (newValue);
-                        enemy.guiHp.value = newValue;
+                        animationEnemty_1.createGUI();
+                        animationEnemty_1.bloodParticles.start();
+                        var newValue = animationEnemty_1.hp - self.damage;
+                        animationEnemty_1.hp = (newValue);
+                        animationEnemty_1.guiHp.value = newValue;
                         if (newValue <= 0) {
-                            enemy.removeFromWorld();
+                            animationEnemty_1.removeFromWorld();
                         }
                     }, 300);
                 }
+            };
+            var this_1 = this, enemy;
+            for (var i = 0; i < game.enemies.length; i++) {
+                _loop_1();
             }
         }
         return this;
@@ -740,6 +746,9 @@ var SocketIOClient = (function () {
                     if (enemyData.type == 'worm') {
                         new Worm(key, data.id, game, position, rotationQuaternion);
                     }
+                    else if (enemyData.type == 'bigWorm') {
+                        new BigWorm(key, data.id, game, position, rotationQuaternion);
+                    }
                 }
             });
         });
@@ -876,6 +885,7 @@ var Mouse = (function (_super) {
                 self.game.player.mesh.lookAt(ball.position);
                 self.game.player.emitPosition();
             }
+            console.log(pickResult.pickedPoint);
             if (self.game.player && pickResult.pickedMesh.name.search('enemy_attackArea') >= 0) {
                 self.game.player.mesh.lookAt(pickResult.pickedPoint);
                 self.game.controller.forward = false;
@@ -1254,31 +1264,32 @@ var MainMenu = (function (_super) {
 }(Scene));
 /// <reference path="../../game.ts"/>
 /// <reference path="monster.ts"/>
-var Worm = (function (_super) {
-    __extends(Worm, _super);
-    function Worm(serverKey, name, game, position, rotationQuaternion) {
+var BigWorm = (function (_super) {
+    __extends(BigWorm, _super);
+    function BigWorm(serverKey, name, game, position, rotationQuaternion) {
         var _this = this;
         var mesh = game.characters['worm'].instance('Worm', true);
         mesh.visibility = true;
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
-        _this.hp = 100;
-        _this.hpMax = 100;
+        mesh.scaling = new BABYLON.Vector3(2, 2, 2);
+        _this.hp = 125;
+        _this.hpMax = 125;
         _this.attackSpeed = 100;
-        _this.walkSpeed = 30;
-        _this.damage = 1;
+        _this.walkSpeed = 50;
+        _this.damage = 5;
         _this.blockChance = 50;
         _this.id = serverKey;
         _this.mesh = mesh;
-        _this.visibilityAreaSize = 30;
-        _this.attackAreaSize = 6;
-        _this.hitChange = 50;
+        _this.visibilityAreaSize = 10;
+        _this.attackAreaSize = 4;
+        _this.hitChange = 100;
         //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
         _this.sfxHit = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
         _this = _super.call(this, name, game) || this;
         return _this;
     }
-    Worm.prototype.runAnimationWalk = function (emit) {
+    BigWorm.prototype.runAnimationWalk = function (emit) {
         var self = this;
         var childMesh = this.mesh;
         var loopAnimation = this.isControllable;
@@ -1290,6 +1301,51 @@ var Worm = (function (_super) {
             if (!this.animation) {
                 self.animation = skeleton_3.beginAnimation('Walk', loopAnimation, 1, function () {
                     skeleton_3.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                    self.animation = null;
+                });
+            }
+        }
+    };
+    return BigWorm;
+}(Monster));
+/// <reference path="../../game.ts"/>
+/// <reference path="monster.ts"/>
+var Worm = (function (_super) {
+    __extends(Worm, _super);
+    function Worm(serverKey, name, game, position, rotationQuaternion) {
+        var _this = this;
+        var mesh = game.characters['worm'].instance('Worm', true);
+        mesh.visibility = true;
+        mesh.position = position;
+        mesh.rotation = rotationQuaternion;
+        _this.hp = 50;
+        _this.hpMax = 50;
+        _this.attackSpeed = 100;
+        _this.walkSpeed = 30;
+        _this.damage = 3;
+        _this.blockChance = 50;
+        _this.id = serverKey;
+        _this.mesh = mesh;
+        _this.visibilityAreaSize = 30;
+        _this.attackAreaSize = 6;
+        _this.hitChange = 100;
+        //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
+        _this.sfxHit = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
+        _this = _super.call(this, name, game) || this;
+        return _this;
+    }
+    Worm.prototype.runAnimationWalk = function (emit) {
+        var self = this;
+        var childMesh = this.mesh;
+        var loopAnimation = this.isControllable;
+        if (childMesh) {
+            var skeleton_4 = childMesh.skeleton;
+            if (emit) {
+                this.emitPosition();
+            }
+            if (!this.animation) {
+                self.animation = skeleton_4.beginAnimation('Walk', loopAnimation, 1, function () {
+                    skeleton_4.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });
             }

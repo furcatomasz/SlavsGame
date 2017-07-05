@@ -255,10 +255,14 @@ var Simple = (function (_super) {
             scene.collisionsEnabled = false;
             scene.fogEnabled = false;
             scene.shadowsEnabled = false;
+            scene.lensFlaresEnabled = false;
+            scene.probesEnabled = false;
+            scene.postProcessesEnabled = false;
+            scene.spritesEnabled = false;
             self.setCamera(scene);
-            //scene.debugLayer.show({
-            //   popup:true,
-            //});
+            scene.debugLayer.show({
+                popup: true
+            });
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
@@ -411,7 +415,7 @@ var Player = (function (_super) {
         //this.sfxHit = new BABYLON.Sound("CharacterHit", "/babel/Characters/Warrior/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
         var mesh = game.characters['player'].instance('Warrior', true);
-        mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+        mesh.position = new BABYLON.Vector3(65, 0.1, -152);
         _this.mesh = mesh;
         _this.game = game;
         _this.createItems();
@@ -517,7 +521,6 @@ var Player = (function (_super) {
                 enemy = game.enemies[i];
                 var enemyMesh = enemy.mesh;
                 if (this_1.attackArea.intersectsMesh(enemyMesh, false)) {
-                    console.log(enemy);
                     var animationEnemty_1 = enemy;
                     setTimeout(function () {
                         if (!animationEnemty_1.sfxHit.isPlaying) {
@@ -1002,7 +1005,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         Entrace.prototype.initParticleSystem = function () {
-            var particleSystem = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
+            var particleSystem = new BABYLON.ParticleSystem("particles", 1600, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-0.8, 0, -0.7); // Starting all from
@@ -1014,9 +1017,8 @@ var Particles;
             particleSystem.maxSize = 0.5;
             particleSystem.minLifeTime = 0.3;
             particleSystem.maxLifeTime = 1.5;
-            particleSystem.emitRate = 2000;
+            particleSystem.emitRate = 1500;
             particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-            particleSystem.gravity = new BABYLON.Vector3(0, 0, 0);
             particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
             particleSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
             particleSystem.direction2 = new BABYLON.Vector3(0, 0.25, 0);
@@ -1040,7 +1042,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         FireplaceFire.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
+            var fireSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter; // the starting object, the emitter
             fireSystem.minEmitBox = new BABYLON.Vector3(0.5, 0, 0.5); // Starting all from
@@ -1052,7 +1054,7 @@ var Particles;
             fireSystem.maxSize = 0.7;
             fireSystem.minLifeTime = 0.2;
             fireSystem.maxLifeTime = 0.4;
-            fireSystem.emitRate = 300;
+            fireSystem.emitRate = 100;
             fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
             fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
             fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
@@ -1061,7 +1063,7 @@ var Particles;
             fireSystem.maxAngularSpeed = Math.PI;
             fireSystem.minEmitPower = 1;
             fireSystem.maxEmitPower = 3;
-            fireSystem.updateSpeed = 0.004;
+            fireSystem.updateSpeed = 0.007;
             this.particleSystem = fireSystem;
         };
         return FireplaceFire;
@@ -1077,7 +1079,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         FireplaceSmoke.prototype.initParticleSystem = function () {
-            var smokeSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
+            var smokeSystem = new BABYLON.ParticleSystem("particles", 250, this.game.getScene());
             smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             smokeSystem.emitter = this.emitter; // the starting object, the emitter
             smokeSystem.minEmitBox = new BABYLON.Vector3(0.5, 0, 0.5); // Starting all from
@@ -1088,17 +1090,17 @@ var Particles;
             smokeSystem.minSize = 0.3;
             smokeSystem.maxSize = 1;
             smokeSystem.minLifeTime = 0.3;
-            smokeSystem.maxLifeTime = 1.5;
-            smokeSystem.emitRate = 350;
+            smokeSystem.maxLifeTime = 1.2;
+            smokeSystem.emitRate = 250;
             smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
             smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
             smokeSystem.direction1 = new BABYLON.Vector3(-1.5, 8, -1.5);
             smokeSystem.direction2 = new BABYLON.Vector3(1.5, 8, 1.5);
-            smokeSystem.minAngularSpeed = 0;
+            smokeSystem.minAngularSpeed = 50;
             smokeSystem.maxAngularSpeed = Math.PI;
             smokeSystem.minEmitPower = 0.5;
             smokeSystem.maxEmitPower = 1.5;
-            smokeSystem.updateSpeed = 0.004;
+            smokeSystem.updateSpeed = 0.005;
             this.particleSystem = smokeSystem;
         };
         return FireplaceSmoke;

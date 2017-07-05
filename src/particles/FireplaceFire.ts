@@ -4,7 +4,7 @@ namespace Particles {
     export class FireplaceFire extends AbstractParticle {
 
         protected initParticleSystem() {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
+            var fireSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
 
             fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
 
@@ -22,7 +22,7 @@ namespace Particles {
             fireSystem.minLifeTime = 0.2;
             fireSystem.maxLifeTime = 0.4;
 
-            fireSystem.emitRate = 300;
+            fireSystem.emitRate = 100;
 
             fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
 
@@ -36,7 +36,7 @@ namespace Particles {
 
             fireSystem.minEmitPower = 1;
             fireSystem.maxEmitPower = 3;
-            fireSystem.updateSpeed = 0.004;
+            fireSystem.updateSpeed = 0.007;
 
             this.particleSystem = fireSystem;
         }

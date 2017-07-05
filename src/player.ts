@@ -21,7 +21,7 @@ class Player extends Character {
         this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
 
         let mesh = game.characters['player'].instance('Warrior', true);
-        mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+        mesh.position = new BABYLON.Vector3(65, 0.1, -152);
 
         this.mesh = mesh;
         this.game = game;
@@ -148,8 +148,6 @@ class Player extends Character {
                 var enemy = game.enemies[i];
                 let enemyMesh = enemy.mesh;
                 if (this.attackArea.intersectsMesh(enemyMesh, false)) {
-                    console.log(enemy);
-
                     let animationEnemty = enemy;
                     setTimeout(function () {
                         if (!animationEnemty.sfxHit.isPlaying) {

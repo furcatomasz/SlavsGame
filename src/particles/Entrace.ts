@@ -4,7 +4,7 @@ namespace Particles {
     export class Entrace extends AbstractParticle {
 
         protected initParticleSystem() {
-            var particleSystem = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
+            var particleSystem = new BABYLON.ParticleSystem("particles", 1600, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-0.8, 0, -0.7); // Starting all from
@@ -20,11 +20,10 @@ namespace Particles {
             particleSystem.minLifeTime = 0.3;
             particleSystem.maxLifeTime = 1.5;
 
-            particleSystem.emitRate = 2000;
+            particleSystem.emitRate = 1500;
 
             particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
 
-            particleSystem.gravity = new BABYLON.Vector3(0, 0, 0);
             particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
 
             particleSystem.direction1 = new BABYLON.Vector3(0, 0, 0);

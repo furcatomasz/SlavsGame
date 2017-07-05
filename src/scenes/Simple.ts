@@ -17,6 +17,10 @@ class Simple extends Scene {
             scene.collisionsEnabled = false;
             scene.fogEnabled = false;
             scene.shadowsEnabled = false;
+            scene.lensFlaresEnabled = false;
+            scene.probesEnabled = false;
+            scene.postProcessesEnabled = false;
+            scene.spritesEnabled = false;
             self.setCamera(scene);
 
             //scene.debugLayer.show({

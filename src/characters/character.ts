@@ -60,10 +60,9 @@ abstract class Character {
 
         //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
 
-        if (this.isControllable) {
-            this.registerFunctionAfterRender();
-            game.getScene().registerAfterRender(this.afterRender);
-        }
+        this.registerFunctionAfterRender();
+        game.getScene().registerAfterRender(this.afterRender);
+
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
     }
 

@@ -197,8 +197,8 @@ class Player extends Character {
     protected registerFunctionAfterRender() {
         let self = this;
         this.afterRender = function() {
-            self.weaponCollisions().envCollisions();
             if (self.isControllable) {
+                self.weaponCollisions().envCollisions();
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
                 self.game.getScene().lights[1].position.x = self.mesh.position.x;

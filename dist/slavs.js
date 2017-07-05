@@ -283,10 +283,8 @@ var Character = (function () {
         skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
         this.mesh.receiveShadows = true;
         //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
-        if (this.isControllable) {
-            this.registerFunctionAfterRender();
-            game.getScene().registerAfterRender(this.afterRender);
-        }
+        this.registerFunctionAfterRender();
+        game.getScene().registerAfterRender(this.afterRender);
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
     }
     Character.prototype.createItems = function () {
@@ -559,8 +557,8 @@ var Player = (function (_super) {
     Player.prototype.registerFunctionAfterRender = function () {
         var self = this;
         this.afterRender = function () {
-            self.weaponCollisions().envCollisions();
             if (self.isControllable) {
+                self.weaponCollisions().envCollisions();
                 self.registerMoving();
                 self.game.getScene().activeCamera.position = self.mesh.position;
                 self.game.getScene().lights[1].position.x = self.mesh.position.x;

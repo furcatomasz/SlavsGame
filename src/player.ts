@@ -21,7 +21,7 @@ class Player extends Character {
         this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
 
         let mesh = game.characters['player'].instance('Warrior', true);
-        mesh.position = new BABYLON.Vector3(65, 0.1, -152);
+        mesh.position = new BABYLON.Vector3(3, 0.1, 0);
 
         this.mesh = mesh;
         this.game = game;

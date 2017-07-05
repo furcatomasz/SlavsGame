@@ -260,9 +260,9 @@ var Simple = (function (_super) {
             scene.postProcessesEnabled = false;
             scene.spritesEnabled = false;
             self.setCamera(scene);
-            scene.debugLayer.show({
-                popup: true
-            });
+            //scene.debugLayer.show({
+            //   popup:true,
+            //});
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
@@ -415,7 +415,7 @@ var Player = (function (_super) {
         //this.sfxHit = new BABYLON.Sound("CharacterHit", "/babel/Characters/Warrior/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
         var mesh = game.characters['player'].instance('Warrior', true);
-        mesh.position = new BABYLON.Vector3(65, 0.1, -152);
+        mesh.position = new BABYLON.Vector3(3, 0.1, 0);
         _this.mesh = mesh;
         _this.game = game;
         _this.createItems();

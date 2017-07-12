@@ -90,14 +90,14 @@ abstract class Monster extends Character {
         let playerMesh = self.game.player.mesh;
 
         this.afterRender = function () {
-            if (self.game.player && (!self.target || self.target == self.game.player.id)) {
+            if (self.game.player && self.game.getScene().isActiveMesh(self.mesh) && (!self.target || self.target == self.game.player.id)) {
+
                 if (self.visibilityArea.intersectsMesh(playerMesh, false)) {
                     self.mesh.lookAt(playerMesh.position);
                     self.target = self.game.player.id;
 
                     if (self.attackArea.intersectsMesh(playerMesh, false)) {
                         self.runAnimationHit();
-
                     } else {
                         self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
                         self.runAnimationWalk(true);

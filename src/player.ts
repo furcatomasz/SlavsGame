@@ -174,11 +174,15 @@ class Player extends Character {
 
     protected envCollisions() {
         let game = this.game;
-        for (var i = 0; i < game.sceneManager.environment.trees.length; i++) {
-            var sceneMesh = game.sceneManager.environment.trees[i];
-            if (this.mesh.intersectsMesh(sceneMesh, true)) {
-                game.controller.forward = false;
-                game.controller.back = false;
+        if(game.controller.forward) {
+            for (var i = 0; i < game.sceneManager.environment.trees.length; i++) {
+                var sceneMesh = game.sceneManager.environment.trees[i];
+                if(game.getScene().isActiveMesh(sceneMesh)) {
+                    if (this.mesh.intersectsMesh(sceneMesh, true)) {
+                        game.controller.forward = false;
+                        game.controller.back = false;
+                    }
+                }
             }
         }
 
@@ -201,9 +205,11 @@ class Player extends Character {
             if (self.isControllable) {
                 self.weaponCollisions().envCollisions();
                 self.registerMoving();
-                self.game.getScene().activeCamera.position = self.mesh.position;
-                self.game.getScene().lights[1].position.x = self.mesh.position.x;
-                self.game.getScene().lights[1].position.z = self.mesh.position.z;
+                if(self.game.controller.forward) {
+                    self.game.getScene().activeCamera.position = self.mesh.position;
+                    self.game.getScene().lights[1].position.x = self.mesh.position.x;
+                    self.game.getScene().lights[1].position.z = self.mesh.position.z;
+                }
             }
         }
     }

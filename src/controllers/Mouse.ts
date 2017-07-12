@@ -19,8 +19,6 @@ class Mouse extends Controller {
                 self.game.player.emitPosition();
             }
 
-            console.log(pickResult.pickedPoint);
-            
             if (self.game.player && pickResult.pickedMesh.name.search('enemy_attackArea') >= 0) {
                 self.game.player.mesh.lookAt(pickResult.pickedPoint);
                 self.game.controller.forward = false;

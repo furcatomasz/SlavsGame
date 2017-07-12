@@ -11,7 +11,7 @@ abstract class Scene {
 
     protected setDefaults(game:Game) {
         this.game = game;
-        this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
     }
 
     protected setShadowGenerator(light:BABYLON.IShadowLight) {

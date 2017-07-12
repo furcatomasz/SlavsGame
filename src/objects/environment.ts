@@ -77,5 +77,7 @@ class Environment {
             sceneMesh.freezeWorldMatrix();
         }
 
+        var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
+
     }
 }

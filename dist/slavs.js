@@ -81,7 +81,7 @@ var Scene = (function () {
     }
     Scene.prototype.setDefaults = function (game) {
         this.game = game;
-        this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
     };
     Scene.prototype.setShadowGenerator = function (light) {
         this.shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
@@ -232,6 +232,7 @@ var Environment = (function () {
             // sceneMesh.material.freeze();
             sceneMesh.freezeWorldMatrix();
         }
+        var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
     }
     return Environment;
 }());
@@ -547,11 +548,15 @@ var Player = (function (_super) {
     };
     Player.prototype.envCollisions = function () {
         var game = this.game;
-        for (var i = 0; i < game.sceneManager.environment.trees.length; i++) {
-            var sceneMesh = game.sceneManager.environment.trees[i];
-            if (this.mesh.intersectsMesh(sceneMesh, true)) {
-                game.controller.forward = false;
-                game.controller.back = false;
+        if (game.controller.forward) {
+            for (var i = 0; i < game.sceneManager.environment.trees.length; i++) {
+                var sceneMesh = game.sceneManager.environment.trees[i];
+                if (game.getScene().isActiveMesh(sceneMesh)) {
+                    if (this.mesh.intersectsMesh(sceneMesh, true)) {
+                        game.controller.forward = false;
+                        game.controller.back = false;
+                    }
+                }
             }
         }
         return this;
@@ -569,9 +574,11 @@ var Player = (function (_super) {
             if (self.isControllable) {
                 self.weaponCollisions().envCollisions();
                 self.registerMoving();
-                self.game.getScene().activeCamera.position = self.mesh.position;
-                self.game.getScene().lights[1].position.x = self.mesh.position.x;
-                self.game.getScene().lights[1].position.z = self.mesh.position.z;
+                if (self.game.controller.forward) {
+                    self.game.getScene().activeCamera.position = self.mesh.position;
+                    self.game.getScene().lights[1].position.x = self.mesh.position.x;
+                    self.game.getScene().lights[1].position.z = self.mesh.position.z;
+                }
             }
         };
     };
@@ -665,7 +672,7 @@ var Monster = (function (_super) {
         var walkSpeed = Character.WALK_SPEED * (self.walkSpeed / 100);
         var playerMesh = self.game.player.mesh;
         this.afterRender = function () {
-            if (self.game.player && (!self.target || self.target == self.game.player.id)) {
+            if (self.game.player && self.game.getScene().isActiveMesh(self.mesh) && (!self.target || self.target == self.game.player.id)) {
                 if (self.visibilityArea.intersectsMesh(playerMesh, false)) {
                     self.mesh.lookAt(playerMesh.position);
                     self.target = self.game.player.id;
@@ -888,7 +895,6 @@ var Mouse = (function (_super) {
                 self.game.player.mesh.lookAt(ball.position);
                 self.game.player.emitPosition();
             }
-            console.log(pickResult.pickedPoint);
             if (self.game.player && pickResult.pickedMesh.name.search('enemy_attackArea') >= 0) {
                 self.game.player.mesh.lookAt(pickResult.pickedPoint);
                 self.game.controller.forward = false;

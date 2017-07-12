@@ -1,7 +1,7 @@
 {
-  "name": "phaserGame",
+  "name": "Slavs",
   "authors": [
-    "Tomasz Furca <tomasz.furca@kinguin.net>"
+    "Tomasz Furca <furcatomasz@gmail.com>"
   ],
   "description": "",
   "main": "",
@@ -15,11 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "babylonjs": "^2.5.0",
-    "socket.io-client": "^1.7.2",
-    "CastorGUI": "https://github.com/dad72/CastorGUI.git",
-    "CannonJS": "https://github.com/schteppe/cannon.js.git"
-
-
+    "babylonjs": "^3.0.0",
+    "socket.io-client": "^2"
   }
 }

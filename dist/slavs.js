@@ -236,13 +236,11 @@ var Environment = (function () {
     }
     return Environment;
 }());
-/// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
-var targetPoint = null;
 var Simple = (function (_super) {
     __extends(Simple, _super);
     function Simple() {
@@ -250,6 +248,7 @@ var Simple = (function (_super) {
     }
     Simple.prototype.initScene = function (game) {
         var self = this;
+        var serverUrl = window.location.hostname + ':3003';
         BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
             game.sceneManager = self;
             self.setDefaults(game);
@@ -261,9 +260,10 @@ var Simple = (function (_super) {
             scene.postProcessesEnabled = false;
             scene.spritesEnabled = false;
             self.setCamera(scene);
-            //scene.debugLayer.show({
-            //   popup:true,
-            //});
+            //
+            // scene.debugLayer.show({
+            //
+            // });
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
@@ -390,14 +390,14 @@ var Character = (function () {
     ;
     Character.prototype.onWalkEnd = function () { };
     ;
+    Character.WALK_SPEED = 0.15;
+    Character.ROTATION_SPEED = 0.05;
+    Character.ANIMATION_WALK = 'Run';
+    Character.ANIMATION_STAND = 'stand';
+    Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+    Character.ANIMATION_ATTACK = 'Attack';
     return Character;
 }());
-Character.WALK_SPEED = 0.15;
-Character.ROTATION_SPEED = 0.05;
-Character.ANIMATION_WALK = 'Run';
-Character.ANIMATION_STAND = 'stand';
-Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-Character.ANIMATION_ATTACK = 'Attack';
 /// <reference path="characters/character.ts"/>
 /// <reference path="game.ts"/>
 var Player = (function (_super) {
@@ -417,15 +417,16 @@ var Player = (function (_super) {
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
         var mesh = game.characters['player'].instance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+        game.getScene().activeCamera.position = mesh.position;
         _this.mesh = mesh;
         _this.game = game;
         _this.createItems();
         //this.mount(this.items.shield, 'shield.bone');
-        _this.guiCharacterName = new BABYLON.GUI.TextBlock();
-        _this.guiCharacterName.text = _this.name;
-        _this.guiCharacterName.paddingTop = -85;
-        game.sceneManager.guiTexture.addControl(_this.guiCharacterName);
-        _this.guiCharacterName.linkWithMesh(_this.mesh);
+        // this.guiCharacterName = new BABYLON.GUI.TextBlock();
+        // this.guiCharacterName.text = this.name;
+        // this.guiCharacterName.paddingTop = -85;
+        // game.sceneManager.guiTexture.addControl(this.guiCharacterName);
+        // this.guiCharacterName.linkWithMesh(this.mesh);
         if (_this.isControllable) {
             _this.mesh.isPickable = false;
             var playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
@@ -831,9 +832,9 @@ var SocketIOClient = (function () {
     };
     return SocketIOClient;
 }());
+/// <reference path="../bower_components/babylonjs/dist/babylon.d.ts"/>
 /// <reference path="controllers/Keyboard.ts"/>
 /// <reference path="scenes/Simple.ts"/>
-/// <reference path="../babylon/babylon.2.5.d.ts"/>
 /// <reference path="player.ts"/>
 /// <reference path="socketIOClient.ts"/>
 var Game = (function () {

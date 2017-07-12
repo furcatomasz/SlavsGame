@@ -22,6 +22,7 @@ class Player extends Character {
 
         let mesh = game.characters['player'].instance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+        game.getScene().activeCamera.position = mesh.position;
 
         this.mesh = mesh;
         this.game = game;
@@ -29,11 +30,11 @@ class Player extends Character {
         this.createItems();
         //this.mount(this.items.shield, 'shield.bone');
 
-        this.guiCharacterName = new BABYLON.GUI.TextBlock();
-        this.guiCharacterName.text = this.name;
-        this.guiCharacterName.paddingTop = -85;
-        game.sceneManager.guiTexture.addControl(this.guiCharacterName);
-        this.guiCharacterName.linkWithMesh(this.mesh);
+        // this.guiCharacterName = new BABYLON.GUI.TextBlock();
+        // this.guiCharacterName.text = this.name;
+        // this.guiCharacterName.paddingTop = -85;
+        // game.sceneManager.guiTexture.addControl(this.guiCharacterName);
+        // this.guiCharacterName.linkWithMesh(this.mesh);
 
         if(this.isControllable) {
             this.mesh.isPickable = false;

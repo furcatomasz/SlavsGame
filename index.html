@@ -3,10 +3,11 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
     <title>Slavs</title>
-    <script src="/babylon/babylon.js"></script>
+    <script src="/bower_components/babylonjs/dist/babylon.js"></script>
+    <script src="/bower_components/babylonjs/dist/inspector/babylon.inspector.bundle.js"></script>
+    <script src="/bower_components/babylonjs/dist/gui/babylon.gui.min.js"></script>
     <script src="/babylon/TOB-runtime.1.1.min.js"></script>
     <script src="/babylon/QueuedInterpolation.1.1.min.js"></script>
-    <script src="/babylon/babylon.gui.min.js"></script>
     <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
 
     <script src="/babel/Characters/Warrior/Warrior.js"></script>
@@ -35,10 +36,7 @@
 <body>
     <canvas id="renderCanvas"></canvas>
     <script>
-//        BABYLON.DebugLayer.InspectorURL = '/babylon/babylon.inspector.min.js';
-
         if (BABYLON.Engine.isSupported()) {
-            var serverUrl = 'http://babylon.dev:3003';
             var htmlElement = document.getElementById('renderCanvas');
             var game = new Game(htmlElement);
         }

@@ -12,6 +12,7 @@ class Game {
     public engine: BABYLON.Engine;
     public player: Player;
     public client: SocketIOClient;
+    public gui: GUI.Main;
 
     /**
      * Invisible meshes

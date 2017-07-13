@@ -80,6 +80,8 @@ class Player extends Character {
             characterBottomPanel.addControl(hpSlider);
             characterBottomPanel.addControl(expSlider);
 
+            game.gui = new GUI.Main(game);
+
             let attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
                 width: 4,
                 height: 0.1,

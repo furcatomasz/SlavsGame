@@ -75,13 +75,15 @@ var Keyboard = (function (_super) {
     return Keyboard;
 }(Controller));
 /// <reference path="../game.ts"/>
-/// <reference path="../../babylon/babylon.d.ts"/>
+/// <reference path="../../bower_components/babylonjs/dist/babylon.d.ts"/>
+/// <reference path="../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
 var Scene = (function () {
     function Scene() {
     }
     Scene.prototype.setDefaults = function (game) {
         this.game = game;
         this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
+        return this;
     };
     Scene.prototype.setShadowGenerator = function (light) {
         this.shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
@@ -109,6 +111,17 @@ var Scene = (function () {
         camera.orthoBottom = -Math.abs(zoom);
         camera.rotation = new BABYLON.Vector3(0.751115, -0.21885, 0);
         scene.activeCamera = camera;
+        return this;
+    };
+    Scene.prototype.optimizeScene = function (scene) {
+        scene.collisionsEnabled = false;
+        scene.fogEnabled = false;
+        scene.shadowsEnabled = false;
+        scene.lensFlaresEnabled = false;
+        scene.probesEnabled = false;
+        scene.postProcessesEnabled = false;
+        scene.spritesEnabled = false;
+        return this;
     };
     Scene.prototype.createGameGUI = function () {
         var self = this;
@@ -251,16 +264,10 @@ var Simple = (function (_super) {
         var serverUrl = window.location.hostname + ':3003';
         BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
             game.sceneManager = self;
-            self.setDefaults(game);
-            scene.collisionsEnabled = false;
-            scene.fogEnabled = false;
-            scene.shadowsEnabled = false;
-            scene.lensFlaresEnabled = false;
-            scene.probesEnabled = false;
-            scene.postProcessesEnabled = false;
-            scene.spritesEnabled = false;
-            self.setCamera(scene);
-            //
+            self
+                .setDefaults(game)
+                .optimizeScene(scene)
+                .setCamera(scene);
             // scene.debugLayer.show({
             //
             // });
@@ -465,6 +472,7 @@ var Player = (function (_super) {
             expSlider.borderColor = 'black';
             characterBottomPanel.addControl(hpSlider);
             characterBottomPanel.addControl(expSlider);
+            game.gui = new GUI.Main(game);
             var attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
                 width: 4,
                 height: 0.1,
@@ -888,6 +896,7 @@ var Mouse = (function (_super) {
         ball.isPickable = false;
         ball.visibility = 0;
         scene.onPointerDown = function (evt, pickResult) {
+            console.log(pickResult);
             if (self.game.player && pickResult.pickedMesh.name == 'Forest_ground') {
                 targetPoint = pickResult.pickedPoint;
                 targetPoint.y = 0;
@@ -919,6 +928,58 @@ var Mouse = (function (_super) {
     };
     return Mouse;
 }(Controller));
+/// <reference path="../../babylon/babylon.d.ts"/>
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var Main = (function () {
+        function Main(game) {
+            this.game = game;
+            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
+            this.initInventory().initAttributes();
+        }
+        Main.prototype.initInventory = function () {
+            var self = this;
+            this.inventory = new GUI.Inventory(this);
+            var buttonPanel = new BABYLON.GUI.StackPanel();
+            buttonPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            buttonPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            buttonPanel.width = 0.2;
+            buttonPanel.isPointerBlocker = true;
+            buttonPanel.isHitTestVisible = true;
+            this.buttonpanel = buttonPanel;
+            this.texture.addControl(buttonPanel);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.inventory", "Inventory");
+            button.width = 1;
+            button.height = "40px";
+            button.color = "white";
+            button.background = "black";
+            button.isHitTestVisible = true;
+            buttonPanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                self.inventory.open();
+            });
+            return this;
+        };
+        Main.prototype.initAttributes = function () {
+            var self = this;
+            this.attributes = new GUI.Attributes(this);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Attributes");
+            button.width = 1;
+            button.height = "40px";
+            button.color = "white";
+            button.background = "black";
+            button.isHitTestVisible = true;
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                self.attributes.open();
+            });
+            return this;
+        };
+        return Main;
+    }());
+    GUI.Main = Main;
+})(GUI || (GUI = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var Items;
@@ -1362,3 +1423,100 @@ var Worm = (function (_super) {
     };
     return Worm;
 }(Monster));
+/// <reference path="../Main.ts"/>
+/// <reference path="../../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
+var GUI;
+(function (GUI) {
+    var Popup = (function () {
+        function Popup(guiMain) {
+            this.guiMain = guiMain;
+        }
+        Popup.prototype.initTexture = function () {
+            this.guiTexture = this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
+            var image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, this.imageUrl);
+            image.horizontalAlignment = this.position;
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            image.width = 0.33;
+            image.height = 1;
+            this.container = image;
+        };
+        return Popup;
+    }());
+    GUI.Popup = Popup;
+})(GUI || (GUI = {}));
+/// <reference path="Popup.ts"/>
+var GUI;
+(function (GUI) {
+    var Attributes = (function (_super) {
+        __extends(Attributes, _super);
+        function Attributes(guiMain) {
+            var _this = _super.call(this, guiMain) || this;
+            _this.name = 'Inventory';
+            _this.imageUrl = "assets/gui/attrs.png";
+            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            _this.initTexture();
+            return _this;
+        }
+        Attributes.prototype.open = function () {
+            var self = this;
+            this.guiTexture.addControl(this.container);
+            var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
+            buttonClose.color = "white";
+            buttonClose.background = "black";
+            buttonClose.width = "70px;";
+            buttonClose.height = "40px";
+            buttonClose.horizontalAlignment = this.position;
+            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonClose.onPointerUpObservable.add(function () {
+                self.close();
+                self.guiTexture.removeControl(buttonClose);
+            });
+            this.guiTexture.addControl(buttonClose);
+        };
+        Attributes.prototype.close = function () {
+            this.guiTexture.removeControl(this.container);
+        };
+        Attributes.prototype.initData = function () {
+        };
+        return Attributes;
+    }(GUI.Popup));
+    GUI.Attributes = Attributes;
+})(GUI || (GUI = {}));
+/// <reference path="Popup.ts"/>
+var GUI;
+(function (GUI) {
+    var Inventory = (function (_super) {
+        __extends(Inventory, _super);
+        function Inventory(guiMain) {
+            var _this = _super.call(this, guiMain) || this;
+            _this.name = 'Inventory';
+            _this.imageUrl = "assets/gui/inventory.png";
+            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            _this.initTexture();
+            return _this;
+        }
+        Inventory.prototype.open = function () {
+            var self = this;
+            this.guiTexture.addControl(this.container);
+            var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
+            buttonClose.color = "white";
+            buttonClose.background = "black";
+            buttonClose.width = "70px;";
+            buttonClose.height = "40px";
+            buttonClose.horizontalAlignment = this.position;
+            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonClose.onPointerUpObservable.add(function () {
+                self.close();
+                self.guiTexture.removeControl(buttonClose);
+            });
+            this.guiTexture.addControl(buttonClose);
+        };
+        Inventory.prototype.close = function () {
+            this.guiTexture.removeControl(this.container);
+        };
+        Inventory.prototype.initData = function () {
+        };
+        return Inventory;
+    }(GUI.Popup));
+    GUI.Inventory = Inventory;
+})(GUI || (GUI = {}));

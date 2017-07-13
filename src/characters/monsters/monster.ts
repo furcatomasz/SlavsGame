@@ -2,13 +2,13 @@
 
 abstract class Monster extends Character {
 
-    protected visibilityArea:BABYLON.Mesh;
-    protected target:string;
-    protected visibilityAreaSize:number;
-    protected attackAreaSize:number;
+    protected visibilityArea: BABYLON.Mesh;
+    protected target: string;
+    protected visibilityAreaSize: number;
+    protected attackAreaSize: number;
 
 
-    constructor(name:string, game:Game) {
+    constructor(name: string, game: Game) {
         let attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', {
             width: this.attackAreaSize,
             height: 0.1,
@@ -128,6 +128,8 @@ abstract class Monster extends Character {
                 alert('Padłeś');
                 window.location.reload();
             }
+        }
+
     }
 
 }

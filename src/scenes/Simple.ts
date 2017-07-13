@@ -6,22 +6,17 @@
 
 class Simple extends Scene {
 
-    initScene(game:Game) {
+    initScene(game: Game) {
         let self = this;
-        let serverUrl = window.location.hostname+':3003';
+        let serverUrl = window.location.hostname + ':3003';
 
         BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
             game.sceneManager = self;
-            self.setDefaults(game);
-            scene.collisionsEnabled = false;
-            scene.fogEnabled = false;
-            scene.shadowsEnabled = false;
-            scene.lensFlaresEnabled = false;
-            scene.probesEnabled = false;
-            scene.postProcessesEnabled = false;
-            scene.spritesEnabled = false;
-            self.setCamera(scene);
-            //
+            self
+                .setDefaults(game)
+                .optimizeScene(scene)
+                .setCamera(scene);
+
             // scene.debugLayer.show({
             //
             // });

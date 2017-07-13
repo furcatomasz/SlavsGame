@@ -10,6 +10,8 @@ class Mouse extends Controller {
         ball.visibility = 0;
 
         scene.onPointerDown = function (evt, pickResult) {
+
+            console.log(pickResult);
             if (self.game.player && pickResult.pickedMesh.name == 'Forest_ground') {
                 targetPoint = pickResult.pickedPoint;
                 targetPoint.y = 0;

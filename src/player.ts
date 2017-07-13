@@ -11,7 +11,7 @@ class Player extends Character {
         this.name = name;
         this.hp = 100;
         this.attackSpeed = 100;
-        this.walkSpeed = 100;
+        this.walkSpeed = 125;
         this.damage = 10;
         this.blockChance = 50;
         this.isControllable = registerMoving;

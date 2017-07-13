@@ -1,0 +1,69 @@
+Exporter version: 5.3-beta, Blender version: 2.78 (sub 0)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used:
+		selected layers only:  false
+		flat shading entire scene:  false
+		inline textures:  false
+		texture directory:  F:\xampp\htdocs\babel\Characters\Warrior\
+	Python World class constructor completed
+	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
+	processing begun of skeleton:  metarig, id:  0
+		processing begun of bone:  root, index:  0
+		processing begun of bone:  heel.L, index:  1
+		processing begun of bone:  foot.L, index:  2
+		processing begun of bone:  heel.R, index:  3
+		processing begun of bone:  foot.R, index:  4
+		processing begun of bone:  hips, index:  5
+		processing begun of bone:  spine, index:  6
+		processing begun of bone:  chest, index:  7
+		processing begun of bone:  neck, index:  8
+		processing begun of bone:  head, index:  9
+		processing begun of bone:  shoulder.L, index:  10
+		processing begun of bone:  upper_arm.L, index:  11
+		processing begun of bone:  forearm.L, index:  12
+		processing begun of bone:  hand.L, index:  13
+		processing begun of bone:  Finger_Bone1.L, index:  14
+		processing begun of bone:  Finger_Bone2.L, index:  15
+		processing begun of bone:  Finger_Bone3.L, index:  16
+		processing begun of bone:  Finger_Bone4.L, index:  17
+		processing begun of bone:  shield.bone, index:  18
+		processing begun of bone:  shoulder.R, index:  19
+		processing begun of bone:  upper_arm.R, index:  20
+		processing begun of bone:  forearm.R, index:  21
+		processing begun of bone:  hand.R, index:  22
+		processing begun of bone:  Finger_Bone1.R, index:  23
+		processing begun of bone:  Finger_Bone2.R, index:  24
+		processing begun of bone:  weapon.bone, index:  25
+		processing begun of bone:  Finger_Bone3.R, index:  26
+		processing begun of bone:  Finger_Bone4.R, index:  27
+		processing begun of bone:  thigh.L, index:  28
+		processing begun of bone:  shin.L, index:  29
+		processing begun of bone:  thigh.R, index:  30
+		processing begun of bone:  shin.R, index:  31
+		processing action Attack:  in[0 - 16], out[0 - 16]
+		processing action Run:  in[0 - 20], out[30 - 50]
+		processing action Run2:  in[0 - 1], out[60 - 61]
+		processing action stand:  in[0 - 60], out[70 - 130]
+		processing action Stand_with_weapon:  in[0 - 62], out[140 - 202]
+	processing begun of mesh:  Warrior
+		processing begun of Standard material:  texture
+			Diffuse texture found "Texture.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material
+		processing begun of multimaterial:  Warrior.Multimaterial#0
+		num positions      :  1853
+		num normals        :  1853
+		num uvs            :  3706
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  4044
+		Skeleton stats:  
+			Total Influencers:  4667
+			Avg # of influencers per vertex:  2.5186
+			Highest # of influencers observed:  7, num vertices with this:  4
+			exported as 7 influencers
+			num skeletonWeights and skeletonIndices:  14824
+========= Writing of files started =========
+========= Writing of files completed =========
+========= end of processing =========
+elapsed time:  0 min, 12.389 secs

@@ -109,7 +109,7 @@ var Scene = (function () {
         camera.orthoLeft = -Math.abs(newWidth);
         camera.orthoRight = newWidth;
         camera.orthoBottom = -Math.abs(zoom);
-        camera.rotation = new BABYLON.Vector3(0.751115, -0.21885, 0);
+        camera.rotation = new BABYLON.Vector3(0.751115, 0, 0);
         scene.activeCamera = camera;
         return this;
     };
@@ -397,14 +397,14 @@ var Character = (function () {
     ;
     Character.prototype.onWalkEnd = function () { };
     ;
-    Character.WALK_SPEED = 0.15;
-    Character.ROTATION_SPEED = 0.05;
-    Character.ANIMATION_WALK = 'Run';
-    Character.ANIMATION_STAND = 'stand';
-    Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    Character.ANIMATION_ATTACK = 'Attack';
     return Character;
 }());
+Character.WALK_SPEED = 0.25;
+Character.ROTATION_SPEED = 0.05;
+Character.ANIMATION_WALK = 'Run';
+Character.ANIMATION_STAND = 'stand';
+Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+Character.ANIMATION_ATTACK = 'Attack';
 /// <reference path="characters/character.ts"/>
 /// <reference path="game.ts"/>
 var Player = (function (_super) {
@@ -415,7 +415,7 @@ var Player = (function (_super) {
         _this.name = name;
         _this.hp = 100;
         _this.attackSpeed = 100;
-        _this.walkSpeed = 100;
+        _this.walkSpeed = 125;
         _this.damage = 10;
         _this.blockChance = 50;
         _this.isControllable = registerMoving;
@@ -945,8 +945,6 @@ var GUI;
             buttonPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             buttonPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             buttonPanel.width = 0.2;
-            buttonPanel.isPointerBlocker = true;
-            buttonPanel.isHitTestVisible = true;
             this.buttonpanel = buttonPanel;
             this.texture.addControl(buttonPanel);
             var button = BABYLON.GUI.Button.CreateSimpleButton("button.inventory", "Inventory");
@@ -954,7 +952,6 @@ var GUI;
             button.height = "40px";
             button.color = "white";
             button.background = "black";
-            button.isHitTestVisible = true;
             buttonPanel.addControl(button);
             button.onPointerUpObservable.add(function () {
                 self.inventory.open();
@@ -969,7 +966,6 @@ var GUI;
             button.height = "40px";
             button.color = "white";
             button.background = "black";
-            button.isHitTestVisible = true;
             this.buttonpanel.addControl(button);
             button.onPointerUpObservable.add(function () {
                 self.attributes.open();

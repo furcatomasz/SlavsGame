@@ -42,7 +42,7 @@ abstract class Scene {
         camera.orthoLeft = -Math.abs(newWidth);
         camera.orthoRight = newWidth;
         camera.orthoBottom = -Math.abs(zoom);
-        camera.rotation = new BABYLON.Vector3(0.751115, -0.21885, 0);
+        camera.rotation = new BABYLON.Vector3(0.751115, 0, 0);
         scene.activeCamera = camera;
 
         return this;

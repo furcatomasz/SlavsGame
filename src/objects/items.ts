@@ -4,10 +4,10 @@
 
 class Items {
     constructor(game:Game, scene:BABYLON.Scene) {
-        let swordFactory = new Sword.MeshFactory(scene);
+        let swordFactory = new Sword.MeshFactory(scene, 'babel/Items/Sword');
         game.items['sword'] = swordFactory;
 
-        let shieldFactory = new Shield.MeshFactory(scene);
+        let shieldFactory = new Shield.MeshFactory(scene, 'babel/Items/Shield');
         game.items['shield'] = shieldFactory;
     }
 

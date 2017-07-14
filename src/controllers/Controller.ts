@@ -3,6 +3,9 @@
 abstract class Controller {
     protected game:Game;
 
+    public targetPoint;
+    public ball: BABYLON.Mesh;
+
     public forward:boolean;
     public back:boolean;
     public left:boolean;

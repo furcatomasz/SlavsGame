@@ -27,7 +27,7 @@ abstract class Scene {
         //this.shadowGenerator.useBlurExponentialShadowMap = true;
     }
 
-    protected setCamera(scene: BABYLON.Scene) {
+    public setCamera(scene: BABYLON.Scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
         camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
         camera.orthoTop = 18;
@@ -48,7 +48,7 @@ abstract class Scene {
         return this;
     }
 
-    protected optimizeScene(scene: BABYLON.Scene) {
+    public optimizeScene(scene: BABYLON.Scene) {
         scene.collisionsEnabled = false;
         scene.fogEnabled = false;
         scene.shadowsEnabled = false;

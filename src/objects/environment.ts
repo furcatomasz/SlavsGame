@@ -4,6 +4,7 @@ class Environment {
 
     trees: Array<BABYLON.AbstractMesh>;
     bushes: Array<BABYLON.AbstractMesh>;
+    colliders: Array<BABYLON.AbstractMesh>;
 
     entrace: BABYLON.AbstractMesh;
 
@@ -11,6 +12,8 @@ class Environment {
         let self = this;
         this.trees = [];
         this.bushes = [];
+        this.colliders = [];
+
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
@@ -20,6 +23,9 @@ class Environment {
             } else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;
                 this.trees.push(sceneMesh);
+                this.colliders.push(sceneMesh);
+            } else if (meshName.search("Fance") >= 0) {
+                this.colliders.push(sceneMesh);
             }
 
             //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);

@@ -28,8 +28,6 @@ abstract class Character {
     public blockChance:number;
     public hitChange:number;
 
-    public items;
-
     protected game:Game;
     protected speed:number;
     protected animation:BABYLON.Animatable;
@@ -56,22 +54,10 @@ abstract class Character {
         let skeleton = this.mesh.skeleton;
         skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
 
-        this.mesh.receiveShadows = true;
-
-        //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(this.mesh);
-
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
 
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
-    }
-
-    public createItems() {
-        this.items = [];
-        let sword = new Items.Sword(this.game);
-
-        this.items.weapon = sword;
-        this.mount(sword.mesh, 'weapon.bone');
     }
 
     public mount(mesh, boneName) {

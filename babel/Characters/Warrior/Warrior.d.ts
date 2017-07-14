@@ -11,8 +11,28 @@ declare module Warrior{
     export function matReadAhead(materialsRootDir) : void;
     export function defineMaterials(scene : BABYLON.Scene, materialsRootDir : string = "./") : void;
 
+    class Boots extends QI.Mesh {
+        constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Boots);
+    }
+
+    class Gloves extends QI.Mesh {
+        constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Gloves);
+    }
+
     class Warrior extends QI.Mesh {
         constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Warrior);
+    }
+
+    class Armor extends QI.Mesh {
+        constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Armor);
+    }
+
+    class Hair extends QI.Mesh {
+        constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Hair);
+    }
+
+    class Helm extends QI.Mesh {
+        constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Helm);
     }
 
     export function freshenShadowRenderLists(scene : BABYLON.Scene) : void;

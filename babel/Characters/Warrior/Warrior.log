@@ -4,7 +4,7 @@ Exporter version: 5.3-beta, Blender version: 2.78 (sub 0)
 		selected layers only:  false
 		flat shading entire scene:  false
 		inline textures:  false
-		texture directory:  F:\xampp\htdocs\babel\Characters\Warrior\
+		texture directory:  D:\Mietas\Slavs\Babylon\Characters\Warrior\
 	Python World class constructor completed
 	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
 	processing begun of skeleton:  metarig, id:  0
@@ -42,28 +42,107 @@ Exporter version: 5.3-beta, Blender version: 2.78 (sub 0)
 		processing begun of bone:  shin.R, index:  31
 		processing action Attack:  in[0 - 16], out[0 - 16]
 		processing action Run:  in[0 - 20], out[30 - 50]
-		processing action Run2:  in[0 - 1], out[60 - 61]
+		processing action Run3:  in[0 - 1], out[60 - 61]
 		processing action stand:  in[0 - 60], out[70 - 130]
 		processing action Stand_with_weapon:  in[0 - 62], out[140 - 202]
+	processing begun of mesh:  Boots
+		processing begun of Standard material:  Gloves
+		num positions      :  120
+		num normals        :  120
+		num uvs            :  240
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  240
+		Skeleton stats:  
+			Total Influencers:  259
+			Avg # of influencers per vertex:  2.1583
+			Highest # of influencers observed:  3, num vertices with this:  45
+			exported as 3 influencers
+			num skeletonWeights and skeletonIndices:  480
+	processing begun of mesh:  Gloves
+		registered as also a user of material:  Gloves
+		num positions      :  109
+		num normals        :  109
+		num uvs            :  218
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  216
+		Skeleton stats:  
+			Total Influencers:  231
+			Avg # of influencers per vertex:  2.1193
+			Highest # of influencers observed:  3, num vertices with this:  36
+			exported as 3 influencers
+			num skeletonWeights and skeletonIndices:  436
 	processing begun of mesh:  Warrior
 		processing begun of Standard material:  texture
 			Diffuse texture found "Texture.002"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of Standard material:  Material
-		processing begun of multimaterial:  Warrior.Multimaterial#0
-		num positions      :  1853
-		num normals        :  1853
-		num uvs            :  3706
+		num positions      :  1526
+		num normals        :  1526
+		num uvs            :  3052
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  4044
+		num indices        :  3258
 		Skeleton stats:  
-			Total Influencers:  4667
-			Avg # of influencers per vertex:  2.5186
+			WARNING: Maximum # of influencers exceeded for 1196 vertices, extras ignored
+			Total Influencers:  3684
+			Avg # of influencers per vertex:  2.4142
 			Highest # of influencers observed:  7, num vertices with this:  4
-			exported as 7 influencers
-			num skeletonWeights and skeletonIndices:  14824
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  6104
+	processing begun of mesh:  Armor
+		processing begun of Standard material:  Material.002
+			Diffuse texture found "Texture.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  373
+		num normals        :  373
+		num uvs            :  746
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  690
+		Skeleton stats:  
+			WARNING: Maximum # of influencers exceeded for 373 vertices, extras ignored
+			Total Influencers:  11936
+			Avg # of influencers per vertex:  32
+			Highest # of influencers observed:  32, num vertices with this:  373
+			exported as 8 influencers
+			num skeletonWeights and skeletonIndices:  2984
+	processing begun of mesh:  Hair
+		processing begun of Standard material:  Hair
+			Diffuse texture found "Texture.004"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.001
+		processing begun of multimaterial:  Warrior.Multimaterial#0
+		num positions      :  485
+		num normals        :  485
+		num uvs            :  970
+		num uvs2           :  0
+		num colors         :  1940
+		num indices        :  1032
+		Skeleton stats:  
+			Total Influencers:  485
+			Avg # of influencers per vertex:  1
+			Highest # of influencers observed:  1, num vertices with this:  485
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  1940
+	processing begun of mesh:  Helm
+		registered as also a user of material:  Hair
+		registered as also a user of material:  Gloves
+		processing begun of multimaterial:  Warrior.Multimaterial#1
+		num positions      :  491
+		num normals        :  491
+		num uvs            :  982
+		num uvs2           :  0
+		num colors         :  1964
+		num indices        :  1056
+		Skeleton stats:  
+			Total Influencers:  491
+			Avg # of influencers per vertex:  1
+			Highest # of influencers observed:  1, num vertices with this:  491
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  1964
+	WARNING: The following lamp not visible in scene thus ignored: Hemi
 ========= Writing of files started =========
 ========= Writing of files completed =========
 ========= end of processing =========
-elapsed time:  0 min, 12.389 secs
+elapsed time:  0 min, 5.87 secs

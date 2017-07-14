@@ -5,6 +5,7 @@ class Player extends Character {
 
     public guiExp: BABYLON.GUI.Slider;
     public walkSmoke: BABYLON.ParticleSystem;
+    protected inventory: Character.Inventory;
 
     public constructor(game:Game, id, name, registerMoving: boolean) {
         this.id = id;
@@ -178,12 +179,17 @@ class Player extends Character {
     protected envCollisions() {
         let game = this.game;
         if(game.controller.forward) {
-            for (var i = 0; i < game.sceneManager.environment.trees.length; i++) {
-                var sceneMesh = game.sceneManager.environment.trees[i];
+            for (var i = 0; i < game.sceneManager.environment.colliders.length; i++) {
+                var sceneMesh = game.sceneManager.environment.colliders[i];
                 if(game.getScene().isActiveMesh(sceneMesh)) {
-                    if (this.mesh.intersectsMesh(sceneMesh, true)) {
+                    if (this.mesh.intersectsMesh(sceneMesh, false)) {
+                        game.controller.targetPoint = null;
+                        game.controller.ball.visibility = 0;
                         game.controller.forward = false;
-                        game.controller.back = false;
+                        this.mesh.translate(BABYLON.Axis.Z, 1.5, BABYLON.Space.LOCAL);
+                        game.getScene().activeCamera.position = this.mesh.position;
+                        game.getScene().lights[1].position.x = this.mesh.position.x;
+                        game.getScene().lights[1].position.z = this.mesh.position.z;
                     }
                 }
             }
@@ -195,7 +201,7 @@ class Player extends Character {
     public removeFromWorld() {
         this.game.getScene().unregisterAfterRender(this.afterRender);
         this.mesh.dispose();
-        this.items.weapon.mesh.dispose();
+        //this.items.weapon.mesh.dispose();
         //this.items.shield.mesh.dispose();
         this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
 
@@ -217,8 +223,12 @@ class Player extends Character {
         }
     }
 
+    public createItems() {
+        this.inventory = new Character.Inventory(this.game, this);
+    }
+
     protected onHitStart() {
-        this.items.weapon.sfxHit.play(0.3);
+        //this.items.weapon.sfxHit.play(0.3);
     };
 
     protected onHitEnd() {

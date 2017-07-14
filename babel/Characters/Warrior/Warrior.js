@@ -1,4 +1,4 @@
-// File generated with Tower of Babel version: 5.3-beta on 07/08/17
+// File generated with Tower of Babel version: 5.3-beta on 07/14/17
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -60,15 +60,35 @@ var Warrior;
         var mesh;
         if (typeof (TOWER_OF_BABEL) !== 'undefined'){
             TOWER_OF_BABEL.MeshFactory.MODULES.push(new MeshFactory(scene));
+            mesh = TOWER_OF_BABEL.MeshFactory.instance("Warrior", "Boots", true);
+            if (positionOffset) MOVE(mesh, positionOffset);
+            mesh = TOWER_OF_BABEL.MeshFactory.instance("Warrior", "Gloves", true);
+            if (positionOffset) MOVE(mesh, positionOffset);
             mesh = TOWER_OF_BABEL.MeshFactory.instance("Warrior", "Warrior", true);
             if (positionOffset) MOVE(mesh, positionOffset);
+            mesh = TOWER_OF_BABEL.MeshFactory.instance("Warrior", "Armor", true);
+            if (positionOffset) MOVE(mesh, positionOffset);
+            mesh = TOWER_OF_BABEL.MeshFactory.instance("Warrior", "Hair", true);
+            if (positionOffset) MOVE(mesh, positionOffset);
+            mesh = TOWER_OF_BABEL.MeshFactory.instance("Warrior", "Helm", true);
+            if (positionOffset) MOVE(mesh, positionOffset);
         } else {
+            mesh = new Boots("Boots", scene);
+            if (positionOffset) MOVE(mesh, positionOffset);
+            mesh = new Gloves("Gloves", scene);
+            if (positionOffset) MOVE(mesh, positionOffset);
             mesh = new Warrior("Warrior", scene);
+            if (positionOffset) MOVE(mesh, positionOffset);
+            mesh = new Armor("Armor", scene);
+            if (positionOffset) MOVE(mesh, positionOffset);
+            mesh = new Hair("Hair", scene);
+            if (positionOffset) MOVE(mesh, positionOffset);
+            mesh = new Helm("Helm", scene);
             if (positionOffset) MOVE(mesh, positionOffset);
         }
     }
     Warrior.initScene = initScene;
-    var meshLib = new Array(1);
+    var meshLib = new Array(6);
     var cloneCount = 1;
 
     var originalVerts = 0;
@@ -86,14 +106,69 @@ var Warrior;
             var ret = null;
             var src;
             switch (meshName){
-                case "Warrior":
+                case "Boots":
                     src = getViable(0);
                     if (src === null){
-                        ret = new Warrior("Warrior", this._scene);
+                        ret = new Boots("Boots", this._scene);
                         originalVerts += ret.getTotalVertices();
                         meshLib[0].push(ret);
                     }else{
+                        ret = new Boots("Boots" + "_" + cloneCount++, this._scene, null, src);
+                        clonedVerts += ret.getTotalVertices();
+                    }
+                    break;
+                case "Gloves":
+                    src = getViable(1);
+                    if (src === null){
+                        ret = new Gloves("Gloves", this._scene);
+                        originalVerts += ret.getTotalVertices();
+                        meshLib[1].push(ret);
+                    }else{
+                        ret = new Gloves("Gloves" + "_" + cloneCount++, this._scene, null, src);
+                        clonedVerts += ret.getTotalVertices();
+                    }
+                    break;
+                case "Warrior":
+                    src = getViable(2);
+                    if (src === null){
+                        ret = new Warrior("Warrior", this._scene);
+                        originalVerts += ret.getTotalVertices();
+                        meshLib[2].push(ret);
+                    }else{
                         ret = new Warrior("Warrior" + "_" + cloneCount++, this._scene, null, src);
+                        clonedVerts += ret.getTotalVertices();
+                    }
+                    break;
+                case "Armor":
+                    src = getViable(3);
+                    if (src === null){
+                        ret = new Armor("Armor", this._scene);
+                        originalVerts += ret.getTotalVertices();
+                        meshLib[3].push(ret);
+                    }else{
+                        ret = new Armor("Armor" + "_" + cloneCount++, this._scene, null, src);
+                        clonedVerts += ret.getTotalVertices();
+                    }
+                    break;
+                case "Hair":
+                    src = getViable(4);
+                    if (src === null){
+                        ret = new Hair("Hair", this._scene);
+                        originalVerts += ret.getTotalVertices();
+                        meshLib[4].push(ret);
+                    }else{
+                        ret = new Hair("Hair" + "_" + cloneCount++, this._scene, null, src);
+                        clonedVerts += ret.getTotalVertices();
+                    }
+                    break;
+                case "Helm":
+                    src = getViable(5);
+                    if (src === null){
+                        ret = new Helm("Helm", this._scene);
+                        originalVerts += ret.getTotalVertices();
+                        meshLib[5].push(ret);
+                    }else{
+                        ret = new Helm("Helm" + "_" + cloneCount++, this._scene, null, src);
                         clonedVerts += ret.getTotalVertices();
                     }
                     break;
@@ -170,7 +245,47 @@ var Warrior;
         var txBuffer;
         var fName;
 
-        fName = "Character_texture.png";
+        fName = "Character_texture_complete.png";
+        if (!TOWER_OF_BABEL.Preloader.findTextureBuffer(fName)) {
+            txtBuffer = new TOWER_OF_BABEL.TextureBuffer(materialsRootDir, fName);
+            txtBuffer.hasAlpha = true;
+            txtBuffer.level = 1;
+            txtBuffer.coordinatesIndex = 0;
+            txtBuffer.coordinatesMode = 0;
+            txtBuffer.uOffset = 0;
+            txtBuffer.vOffset = 0;
+            txtBuffer.uScale = 1;
+            txtBuffer.vScale = 1;
+            txtBuffer.uAng = 0;
+            txtBuffer.vAng = 0;
+            txtBuffer.wAng = 0;
+            txtBuffer.wrapU = 1;
+            txtBuffer.wrapV = 1;
+            pendingTextures++;
+            TOWER_OF_BABEL.Preloader.addtextureBuffer(txtBuffer);
+        }
+
+        fName = "Skirt.png";
+        if (!TOWER_OF_BABEL.Preloader.findTextureBuffer(fName)) {
+            txtBuffer = new TOWER_OF_BABEL.TextureBuffer(materialsRootDir, fName);
+            txtBuffer.hasAlpha = true;
+            txtBuffer.level = 1;
+            txtBuffer.coordinatesIndex = 0;
+            txtBuffer.coordinatesMode = 0;
+            txtBuffer.uOffset = 0;
+            txtBuffer.vOffset = 0;
+            txtBuffer.uScale = 1;
+            txtBuffer.vScale = 1;
+            txtBuffer.uAng = 0;
+            txtBuffer.vAng = 0;
+            txtBuffer.wAng = 0;
+            txtBuffer.wrapU = 1;
+            txtBuffer.wrapV = 1;
+            pendingTextures++;
+            TOWER_OF_BABEL.Preloader.addtextureBuffer(txtBuffer);
+        }
+
+        fName = "Hair.png";
         if (!TOWER_OF_BABEL.Preloader.findTextureBuffer(fName)) {
             txtBuffer = new TOWER_OF_BABEL.TextureBuffer(materialsRootDir, fName);
             txtBuffer.hasAlpha = true;
@@ -198,34 +313,80 @@ var Warrior;
     function defineMaterials(scene, materialsRootDir) {
         if (!materialsRootDir) { materialsRootDir = "./"; }
         if (materialsRootDir.lastIndexOf("/") + 1  !== materialsRootDir.length) { materialsRootDir  += "/"; }
-        if (QI) QI.TimelineControl.initialize(scene);
-        TOWER_OF_BABEL.Preloader.SCENE = scene;
+        if (typeof(QI) !== "undefined") QI.TimelineControl.initialize(scene);
+        if (typeof(TOWER_OF_BABEL) !== "undefined") TOWER_OF_BABEL.Preloader.SCENE = scene;
         matReadAhead(materialsRootDir);
         var material;
         var texture;
         var txBuffer;
 
-        material = scene.getMaterialByID("Warrior.texture");
+        material = scene.getMaterialByID("Warrior.Gloves");
         if (!material){
-            material = new _B.StandardMaterial("Warrior.texture", scene);
-            material.ambientColor  = new _B.Color3(1,1,1);
-            material.diffuseColor  = new _B.Color3(1,1,1);
-            material.emissiveColor = new _B.Color3(.4,.4,.4);
+            material = new _B.StandardMaterial("Warrior.Gloves", scene);
+            material.ambientColor  = new _B.Color3(.0607,.0386,.0189);
+            material.diffuseColor  = new _B.Color3(.0486,.0309,.0151);
+            material.emissiveColor = new _B.Color3(.0261,.0166,.0081);
             material.specularColor = new _B.Color3(0,0,0);
             material.specularPower = 50;
             material.alpha =  1;
             material.backFaceCulling = true;
             material.checkReadyOnlyOnce = false;
             material.maxSimultaneousLights = 4;
-        txtBuffer = TOWER_OF_BABEL.Preloader.findTextureBuffer("Character_texture.png");
+        } else material.markDirty();
+
+        material = scene.getMaterialByID("Warrior.texture");
+        if (!material){
+            material = new _B.StandardMaterial("Warrior.texture", scene);
+            material.ambientColor  = new _B.Color3(1,1,1);
+            material.diffuseColor  = new _B.Color3(1,1,1);
+            material.emissiveColor = new _B.Color3(.43,.43,.43);
+            material.specularColor = new _B.Color3(0,0,0);
+            material.specularPower = 50;
+            material.alpha =  1;
+            material.backFaceCulling = true;
+            material.checkReadyOnlyOnce = false;
+            material.maxSimultaneousLights = 4;
+        txtBuffer = TOWER_OF_BABEL.Preloader.findTextureBuffer("Character_texture_complete.png");
         txtBuffer.applyWhenReady(material, TOWER_OF_BABEL.TextureBuffer.DIFFUSE_TEX, onTexturesLoaded);
         } else material.markDirty();
 
-        material = scene.getMaterialByID("Warrior.Material");
+        material = scene.getMaterialByID("Warrior.Material.002");
         if (!material){
-            material = new _B.StandardMaterial("Warrior.Material", scene);
-            material.ambientColor  = new _B.Color3(.022,.022,.022);
-            material.diffuseColor  = new _B.Color3(.0176,.0176,.0176);
+            material = new _B.StandardMaterial("Warrior.Material.002", scene);
+            material.ambientColor  = new _B.Color3(.8,.8,.8);
+            material.diffuseColor  = new _B.Color3(.64,.64,.64);
+            material.emissiveColor = new _B.Color3(.336,.336,.336);
+            material.specularColor = new _B.Color3(0,0,0);
+            material.specularPower = 50;
+            material.alpha =  1;
+            material.backFaceCulling = true;
+            material.checkReadyOnlyOnce = false;
+            material.maxSimultaneousLights = 4;
+        txtBuffer = TOWER_OF_BABEL.Preloader.findTextureBuffer("Skirt.png");
+        txtBuffer.applyWhenReady(material, TOWER_OF_BABEL.TextureBuffer.DIFFUSE_TEX, onTexturesLoaded);
+        } else material.markDirty();
+
+        material = scene.getMaterialByID("Warrior.Hair");
+        if (!material){
+            material = new _B.StandardMaterial("Warrior.Hair", scene);
+            material.ambientColor  = new _B.Color3(.8,.8,.8);
+            material.diffuseColor  = new _B.Color3(.64,.64,.64);
+            material.emissiveColor = new _B.Color3(.336,.336,.336);
+            material.specularColor = new _B.Color3(0,0,0);
+            material.specularPower = 50;
+            material.alpha =  1;
+            material.backFaceCulling = true;
+            material.checkReadyOnlyOnce = false;
+            material.maxSimultaneousLights = 4;
+        txtBuffer = TOWER_OF_BABEL.Preloader.findTextureBuffer("Hair.png");
+        txtBuffer.applyWhenReady(material, TOWER_OF_BABEL.TextureBuffer.DIFFUSE_TEX, onTexturesLoaded);
+        } else material.markDirty();
+
+        material = scene.getMaterialByID("Warrior.Material.001");
+        if (!material){
+            material = new _B.StandardMaterial("Warrior.Material.001", scene);
+            material.ambientColor  = new _B.Color3(.477,.001,0);
+            material.diffuseColor  = new _B.Color3(.3816,.0008,0);
             material.emissiveColor = new _B.Color3(0,0,0);
             material.specularColor = new _B.Color3(0,0,0);
             material.specularPower = 50;
@@ -236,8 +397,11 @@ var Warrior;
         } else material.markDirty();
         var multiMaterial;
         multiMaterial = new _B.MultiMaterial("Warrior.Multimaterial#0", scene);
-        multiMaterial.subMaterials.push(scene.getMaterialByID("Warrior.texture"));
-        multiMaterial.subMaterials.push(scene.getMaterialByID("Warrior.Material"));
+        multiMaterial.subMaterials.push(scene.getMaterialByID("Warrior.Hair"));
+        multiMaterial.subMaterials.push(scene.getMaterialByID("Warrior.Material.001"));
+        multiMaterial = new _B.MultiMaterial("Warrior.Multimaterial#1", scene);
+        multiMaterial.subMaterials.push(scene.getMaterialByID("Warrior.Hair"));
+        multiMaterial.subMaterials.push(scene.getMaterialByID("Warrior.Gloves"));
 
         if (pendingTextures === 0) {
             matLoaded = true; 
@@ -293,18 +457,18 @@ var Warrior;
         {frame: 30, value: _M(-1,0,0,0,0,-.9103,-.4139,0,0,-.4139,.9103,0,.2699,-1.0515,-1.3797,1)},
         {frame: 31, value: _M(-1,0,0,0,0,-.8579,-.5137,0,0,-.5137,.8579,0,.2699,-.8492,-1.3884,1)},
         {frame: 32, value: _M(-1,0,0,0,0,-.7941,-.6077,0,0,-.6077,.7941,0,.2699,-.4581,-1.3411,1)},
-        {frame: 33, value: _M(-1,0,0,0,0,-.8234,-.5674,0,0,-.5674,.8234,0,.2676,-.1887,-1.2132,1)},
-        {frame: 34, value: _M(-1,0,0,0,0,-.9155,-.4024,0,0,-.4024,.9155,0,.2592,.0929,-1.0252,1)},
+        {frame: 33, value: _M(-1,0,0,0,0,-.8404,-.542,0,0,-.542,.8404,0,.2664,-.1346,-1.2006,1)},
+        {frame: 34, value: _M(-1,0,0,0,0,-.9403,-.3402,0,0,-.3402,.9403,0,.2566,.2079,-.9985,1)},
         {frame: 35, value: _M(-1,0,0,0,0,-.9952,-.0981,0,0,-.0981,.9952,0,.2462,.587,-.826,1)},
-        {frame: 36, value: _M(-1,0,0,0,0,-.9047,.4261,0,0,.4261,.9047,0,.2262,1.472,-.6204,1)},
-        {frame: 37, value: _M(-1,0,0,0,0,-.9145,.4047,0,0,.4047,.9145,0,.2138,1.6222,-.5794,1)},
-        {frame: 38, value: _M(-1,0,0,0,0,-.9432,.3323,0,0,.3323,.9432,0,.2054,1.6795,-.5763,1)},
+        {frame: 36, value: _M(-1,0,0,0,0,-.9722,.2341,0,0,.2341,.9722,0,.2373,1.0638,-.7045,1)},
+        {frame: 37, value: _M(-1,0,0,0,0,-.9047,.4261,0,0,.4261,.9047,0,.2262,1.472,-.6204,1)},
+        {frame: 38, value: _M(-1,0,0,0,0,-.9229,.385,0,0,.385,.9229,0,.2132,1.6539,-.5975,1)},
         {frame: 39, value: _M(-1,0,0,0,0,-.9737,.2279,0,0,.2279,.9737,0,.196,1.7001,-.5325,1)},
-        {frame: 40, value: _M(-1,0,0,0,0,-.9991,.0433,0,0,.0433,.9991,0,.1805,1.5876,-.3508,1)},
-        {frame: 41, value: _M(-1,0,0,0,0,-.9969,-.0783,0,0,-.0783,.9969,0,.1715,1.2165,-.1367,1)},
+        {frame: 40, value: _M(-1,0,0,0,0,-.9969,-.0783,0,0,-.0783,.9969,0,.1715,1.2165,-.1367,1)},
+        {frame: 41, value: _M(-1,0,0,0,0,-.9992,-.04,0,0,-.04,.9992,0,.1779,.8935,-.0759,1)},
         {frame: 42, value: _M(-1,0,0,0,0,-1,-.0017,0,0,-.0017,1,0,.1915,.613,-.1065,1)},
-        {frame: 43, value: _M(-1,0,0,0,0,-.9986,-.0532,0,0,-.0532,.9986,0,.2073,.1442,-.1258,1)},
-        {frame: 44, value: _M(-1,0,0,0,0,-.9866,-.1631,0,0,-.1631,.9866,0,.2209,-.2409,-.1784,1)},
+        {frame: 43, value: _M(-1,0,0,0,0,-.9986,-.0532,0,0,-.0532,.9986,0,.2047,.2226,-.1297,1)},
+        {frame: 44, value: _M(-1,0,0,0,0,-.9866,-.1631,0,0,-.1631,.9866,0,.2196,-.204,-.1803,1)},
         {frame: 45, value: _M(-1,0,0,0,0,-.9769,-.2138,0,0,-.2138,.9769,0,.2355,-.5396,-.2838,1)},
         {frame: 46, value: _M(-1,0,0,0,0,-.9993,.0379,0,0,.0379,.9993,0,.2545,-.7366,-.4554,1)},
         {frame: 47, value: _M(-1,0,0,0,0,-.9579,.2871,0,0,.2871,.9579,0,.2699,-.8562,-.6738,1)},
@@ -329,18 +493,18 @@ var Warrior;
         {frame: 30, value: _M(-1,0,0,0,0,.0671,.9977,0,0,.9977,-.0671,0,0,.1648,-.0002,1)},
         {frame: 31, value: _M(-1,0,0,0,0,.0209,.9998,0,0,.9998,-.0209,0,0,.1648,-.0002,1)},
         {frame: 32, value: _M(-1,0,0,0,0,-.0977,.9952,0,0,.9952,.0977,0,0,.1648,-.0002,1)},
-        {frame: 33, value: _M(-1,0,0,0,0,-.2088,.978,0,0,.978,.2088,0,0,.1648,-.0002,1)},
-        {frame: 34, value: _M(-1,0,0,0,0,-.3484,.9373,0,0,.9373,.3484,0,0,.1648,-.0002,1)},
+        {frame: 33, value: _M(-1,0,0,0,0,-.2333,.9724,0,0,.9724,.2333,0,0,.1648,-.0002,1)},
+        {frame: 34, value: _M(-1,0,0,0,0,-.3998,.9166,0,0,.9166,.3998,0,0,.1648,-.0002,1)},
         {frame: 35, value: _M(-1,0,0,0,0,-.5765,.8171,0,0,.8171,.5765,0,0,.1648,-.0002,1)},
-        {frame: 36, value: _M(-1,0,0,0,0,-.8681,.4964,0,0,.4964,.8681,0,0,.1648,-.0002,1)},
-        {frame: 37, value: _M(-1,0,0,0,0,-.9481,.318,0,0,.318,.9481,0,0,.1648,-.0002,1)},
-        {frame: 38, value: _M(-1,0,0,0,0,-.9719,.2355,0,0,.2355,.9719,0,0,.1648,-.0002,1)},
+        {frame: 36, value: _M(-1,0,0,0,0,-.7465,.6654,0,0,.6654,.7465,0,0,.1648,-.0002,1)},
+        {frame: 37, value: _M(-1,0,0,0,0,-.8681,.4964,0,0,.4964,.8681,0,0,.1648,-.0002,1)},
+        {frame: 38, value: _M(-1,0,0,0,0,-.9453,.3262,0,0,.3262,.9453,0,0,.1648,-.0002,1)},
         {frame: 39, value: _M(-1,0,0,0,0,-.9844,.1758,0,0,.1758,.9844,0,0,.1648,-.0002,1)},
-        {frame: 40, value: _M(-1,0,0,0,0,-.9934,.1143,0,0,.1143,.9934,0,0,.1648,-.0002,1)},
-        {frame: 41, value: _M(-1,0,0,0,0,-.9952,.098,0,0,.098,.9952,0,0,.1648,-.0002,1)},
+        {frame: 40, value: _M(-1,0,0,0,0,-.9952,.098,0,0,.098,.9952,0,0,.1648,-.0002,1)},
+        {frame: 41, value: _M(-1,0,0,0,0,-.995,.0995,0,0,.0995,.995,0,0,.1648,-.0002,1)},
         {frame: 42, value: _M(-1,0,0,0,0,-.9941,.1089,0,0,.1089,.9941,0,0,.1648,-.0002,1)},
-        {frame: 43, value: _M(-1,0,0,0,0,-.9915,.1305,0,0,.1305,.9915,0,0,.1648,-.0002,1)},
-        {frame: 44, value: _M(-1,0,0,0,0,-.9841,.1776,0,0,.1776,.9841,0,0,.1648,-.0002,1)},
+        {frame: 43, value: _M(-1,0,0,0,0,-.9924,.1233,0,0,.1233,.9924,0,0,.1648,-.0002,1)},
+        {frame: 44, value: _M(-1,0,0,0,0,-.9847,.1743,0,0,.1743,.9847,0,0,.1648,-.0002,1)},
         {frame: 45, value: _M(-1,0,0,0,0,-.9544,.2987,0,0,.2987,.9544,0,0,.1648,-.0002,1)},
         {frame: 46, value: _M(-1,0,0,0,0,-.8496,.5274,0,0,.5274,.8496,0,0,.1648,-.0002,1)},
         {frame: 47, value: _M(-1,0,0,0,0,-.6369,.771,0,0,.771,.6369,0,0,.1648,-.0002,1)},
@@ -371,18 +535,18 @@ var Warrior;
         {frame: 30, value: _M(-1,0,0,0,0,-.9969,-.0783,0,0,-.0783,.9969,0,-.1715,1.2165,-.1367,1)},
         {frame: 31, value: _M(-1,0,0,0,0,-.9992,-.0397,0,0,-.0397,.9992,0,-.1779,1.0152,-.1152,1)},
         {frame: 32, value: _M(-1,0,0,0,0,-1,-.0017,0,0,-.0017,1,0,-.1915,.613,-.1065,1)},
-        {frame: 33, value: _M(-1,0,0,0,0,-.9985,-.0542,0,0,-.0542,.9985,0,-.2026,.242,-.1058,1)},
-        {frame: 34, value: _M(-1,0,0,0,0,-.9865,-.1636,0,0,-.1636,.9865,0,-.2152,-.1628,-.1296,1)},
+        {frame: 33, value: _M(-1,0,0,0,0,-.9985,-.0542,0,0,-.0542,.9985,0,-.2047,.2226,-.1297,1)},
+        {frame: 34, value: _M(-1,0,0,0,0,-.9865,-.1636,0,0,-.1636,.9865,0,-.2196,-.204,-.1803,1)},
         {frame: 35, value: _M(-1,0,0,0,0,-.9769,-.2138,0,0,-.2138,.9769,0,-.2355,-.5396,-.2838,1)},
-        {frame: 36, value: _M(-1,0,0,0,0,-.9579,.2871,0,0,.2871,.9579,0,-.2699,-.8562,-.6738,1)},
-        {frame: 37, value: _M(-1,0,0,0,0,-.9776,.2104,0,0,.2104,.9776,0,-.2752,-.9932,-.8897,1)},
-        {frame: 38, value: _M(-1,0,0,0,0,-1,.0044,0,0,.0044,1,0,-.2774,-1.0572,-1.0024,1)},
+        {frame: 36, value: _M(-1,0,0,0,0,-.9992,.04,0,0,.04,.9992,0,-.2545,-.7366,-.4554,1)},
+        {frame: 37, value: _M(-1,0,0,0,0,-.9579,.2871,0,0,.2871,.9579,0,-.2699,-.8562,-.6738,1)},
+        {frame: 38, value: _M(-1,0,0,0,0,-.9921,.1253,0,0,.1253,.9921,0,-.2767,-.9946,-.8849,1)},
         {frame: 39, value: _M(-1,0,0,0,0,-.9828,-.1844,0,0,-.1844,.9828,0,-.2776,-1.0954,-1.1108,1)},
-        {frame: 40, value: _M(-1,0,0,0,0,-.9561,-.2931,0,0,-.2931,.9561,0,-.2776,-1.1305,-1.2706,1)},
-        {frame: 41, value: _M(-1,0,0,0,0,-.9103,-.4139,0,0,-.4139,.9103,0,-.2776,-1.0515,-1.3797,1)},
+        {frame: 40, value: _M(-1,0,0,0,0,-.9103,-.4139,0,0,-.4139,.9103,0,-.2776,-1.0515,-1.3797,1)},
+        {frame: 41, value: _M(-1,0,0,0,0,-.8306,-.5568,0,0,-.5568,.8306,0,-.2755,-.7934,-1.4064,1)},
         {frame: 42, value: _M(-1,0,0,0,0,-.7941,-.6077,0,0,-.6077,.7941,0,-.2699,-.4581,-1.3411,1)},
-        {frame: 43, value: _M(-1,0,0,0,0,-.8402,-.5423,0,0,-.5423,.8402,0,-.2623,-.0575,-1.1956,1)},
-        {frame: 44, value: _M(-1,0,0,0,0,-.9401,-.3409,0,0,-.3409,.9401,0,-.2547,.2442,-.9961,1)},
+        {frame: 43, value: _M(-1,0,0,0,0,-.8402,-.5423,0,0,-.5423,.8402,0,-.2633,-.1346,-1.2006,1)},
+        {frame: 44, value: _M(-1,0,0,0,0,-.9401,-.3409,0,0,-.3409,.9401,0,-.2551,.2079,-.9985,1)},
         {frame: 45, value: _M(-1,0,0,0,0,-.9952,-.0981,0,0,-.0981,.9952,0,-.2462,.587,-.826,1)},
         {frame: 46, value: _M(-1,0,0,0,0,-.9722,.2343,0,0,.2343,.9722,0,-.2373,1.0638,-.7045,1)},
         {frame: 47, value: _M(-1,0,0,0,0,-.9047,.4261,0,0,.4261,.9047,0,-.2262,1.472,-.6204,1)},
@@ -416,15 +580,15 @@ var Warrior;
         {frame: 33, value: _M(-1,0,0,0,0,-.9927,.1204,0,0,.1204,.9927,0,0,.1648,-.0002,1)},
         {frame: 34, value: _M(-1,0,0,0,0,-.9863,.1652,0,0,.1652,.9863,0,0,.1648,-.0002,1)},
         {frame: 35, value: _M(-1,0,0,0,0,-.9544,.2987,0,0,.2987,.9544,0,0,.1648,-.0002,1)},
-        {frame: 36, value: _M(-1,0,0,0,0,-.6369,.771,0,0,.771,.6369,0,0,.1648,-.0002,1)},
-        {frame: 37, value: _M(-1,0,0,0,0,-.3871,.922,0,0,.922,.3871,0,0,.1648,-.0002,1)},
-        {frame: 38, value: _M(-1,0,0,0,0,-.2159,.9764,0,0,.9764,.2159,0,0,.1648,-.0002,1)},
+        {frame: 36, value: _M(-1,0,0,0,0,-.8415,.5403,0,0,.5403,.8415,0,0,.1648,-.0002,1)},
+        {frame: 37, value: _M(-1,0,0,0,0,-.6369,.771,0,0,.771,.6369,0,0,.1648,-.0002,1)},
+        {frame: 38, value: _M(-1,0,0,0,0,-.372,.9282,0,0,.9282,.372,0,0,.1648,-.0002,1)},
         {frame: 39, value: _M(-1,0,0,0,0,-.0839,.9965,0,0,.9965,.0839,0,0,.1648,-.0002,1)},
-        {frame: 40, value: _M(-1,0,0,0,0,.0294,.9996,0,0,.9996,-.0294,0,0,.1648,-.0002,1)},
-        {frame: 41, value: _M(-1,0,0,0,0,.0671,.9977,0,0,.9977,-.0671,0,0,.1648,-.0002,1)},
+        {frame: 40, value: _M(-1,0,0,0,0,.0671,.9977,0,0,.9977,-.0671,0,0,.1648,-.0002,1)},
+        {frame: 41, value: _M(-1,0,0,0,0,.0214,.9998,0,0,.9998,-.0214,0,0,.1648,-.0002,1)},
         {frame: 42, value: _M(-1,0,0,0,0,-.0977,.9952,0,0,.9952,.0977,0,0,.1648,-.0002,1)},
-        {frame: 43, value: _M(-1,0,0,0,0,-.2599,.9656,0,0,.9656,.2599,0,0,.1648,-.0002,1)},
-        {frame: 44, value: _M(-1,0,0,0,0,-.4172,.9088,0,0,.9088,.4172,0,0,.1648,-.0002,1)},
+        {frame: 43, value: _M(-1,0,0,0,0,-.2393,.971,0,0,.971,.2393,0,0,.1648,-.0002,1)},
+        {frame: 44, value: _M(-1,0,0,0,0,-.4082,.9129,0,0,.9129,.4082,0,0,.1648,-.0002,1)},
         {frame: 45, value: _M(-1,0,0,0,0,-.5765,.8171,0,0,.8171,.5765,0,0,.1648,-.0002,1)},
         {frame: 46, value: _M(-1,0,0,0,0,-.74,.6726,0,0,.6726,.74,0,0,.1648,-.0002,1)},
         {frame: 47, value: _M(-1,0,0,0,0,-.8681,.4964,0,0,.4964,.8681,0,0,.1648,-.0002,1)},
@@ -440,7 +604,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("hips", skeleton,skeleton.bones[0], _M(.972,.2349,0,0,-.024,.0992,-.9948,0,-.2337,.9669,.102,0,0,.2173,-2.3228,1), _M(1,0,0,0,0,.102,-.9948,0,0,.9948,.102,0,0,.2173,-2.5278,1));
+        bone = new QI.Bone("hips", skeleton,skeleton.bones[0], _M(.972,.2349,0,0,-.024,.0992,-.9948,0,-.2337,.9669,.102,0,0,.2173,-2.3232,1), _M(1,0,0,0,0,.102,-.9948,0,0,.9948,.102,0,0,.2173,-2.5278,1));
         bone.length = .4281;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -465,19 +629,19 @@ var Warrior;
         {frame: 31, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5496,-2.2359,1)},
         {frame: 32, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5767,-2.0957,1)},
         {frame: 33, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5503,-2.0342,1)},
-        {frame: 34, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.516,-2.1169,1)},
+        {frame: 34, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5177,-2.1339,1)},
         {frame: 35, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5152,-2.3037,1)},
-        {frame: 36, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5392,-2.5352,1)},
-        {frame: 37, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5435,-2.5995,1)},
-        {frame: 38, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5412,-2.6264,1)},
+        {frame: 36, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5285,-2.4318,1)},
+        {frame: 37, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5392,-2.5352,1)},
+        {frame: 38, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5416,-2.6062,1)},
         {frame: 39, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5392,-2.6297,1)},
-        {frame: 40, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5275,-2.5037,1)},
-        {frame: 41, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5152,-2.3037,1)},
-        {frame: 42, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5839,-2.1667,1)},
-        {frame: 43, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5537,-2.0672,1)},
-        {frame: 44, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.508,-2.0385,1)},
+        {frame: 40, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5152,-2.3037,1)},
+        {frame: 41, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5456,-2.1279,1)},
+        {frame: 42, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5715,-2.0453,1)},
+        {frame: 43, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5503,-2.0342,1)},
+        {frame: 44, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5177,-2.1339,1)},
         {frame: 45, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5152,-2.3037,1)},
-        {frame: 46, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5304,-2.4511,1)},
+        {frame: 46, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5285,-2.4318,1)},
         {frame: 47, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5392,-2.5352,1)},
         {frame: 48, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5416,-2.6062,1)},
         {frame: 49, value: _M(1,0,0,0,0,.321,-.9471,0,0,.9471,.321,0,0,.5392,-2.6297,1)},
@@ -608,7 +772,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("spine", skeleton,skeleton.bones[5], _M(1,0,0,0,0,.9946,-.1037,0,0,.1037,.9946,0,0,.4281,0,1), _M(1,0,0,0,0,.9946,-.1037,0,0,.1037,.9946,0,0,.4281,0,1));
+        bone = new QI.Bone("spine", skeleton,skeleton.bones[5], _M(1,.0001,0,0,-.0001,.9946,-.1042,0,0,.1042,.9946,0,0,.4281,0,1), _M(1,0,0,0,0,.9946,-.1037,0,0,.1037,.9946,0,0,.4281,0,1));
         bone.length = .3874;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -624,18 +788,18 @@ var Warrior;
         {frame: 30, value: _M(.9563,.0687,.2842,0,-.0388,.9932,-.1093,0,-.2898,.0935,.9525,0,0,.4281,0,1)},
         {frame: 31, value: _M(.9618,.0643,.2662,0,-.0364,.9934,-.1086,0,-.2715,.0948,.9578,0,0,.4281,0,1)},
         {frame: 32, value: _M(.9739,.0534,.2208,0,-.0302,.9938,-.1071,0,-.2252,.0976,.9694,0,0,.4281,0,1)},
-        {frame: 33, value: _M(.9831,.043,.1778,0,-.0243,.9941,-.1059,0,-.1813,.0998,.9784,0,0,.4281,0,1)},
-        {frame: 34, value: _M(.9919,.0299,.1237,0,-.0169,.9944,-.1047,0,-.1261,.1018,.9868,0,0,.4281,0,1)},
+        {frame: 33, value: _M(.9849,.0407,.1683,0,-.023,.9941,-.1056,0,-.1716,.1002,.9801,0,0,.4281,0,1)},
+        {frame: 34, value: _M(.9943,.0249,.1032,0,-.0141,.9944,-.1044,0,-.1052,.1024,.9892,0,0,.4281,0,1)},
         {frame: 35, value: _M(.9995,.0077,.0317,0,-.0043,.9946,-.1038,0,-.0323,.1036,.9941,0,0,.4281,0,1)},
-        {frame: 36, value: _M(.9916,-.0304,-.1258,0,.0172,.9943,-.1048,0,.1282,.1017,.9865,0,0,.4281,0,1)},
-        {frame: 37, value: _M(.9784,-.0485,-.2008,0,.0274,.9939,-.1065,0,.2048,.0987,.9738,0,0,.4281,0,1)},
-        {frame: 38, value: _M(.9711,-.056,-.2319,0,.0317,.9937,-.1074,0,.2365,.097,.9668,0,0,.4281,0,1)},
+        {frame: 36, value: _M(.9988,-.0115,-.0474,0,.0065,.9946,-.1038,0,.0484,.1034,.9935,0,0,.4281,0,1)},
+        {frame: 37, value: _M(.9916,-.0304,-.1258,0,.0172,.9943,-.1048,0,.1282,.1017,.9865,0,0,.4281,0,1)},
+        {frame: 38, value: _M(.9793,-.0475,-.1968,0,.0269,.994,-.1064,0,.2006,.0989,.9747,0,0,.4281,0,1)},
         {frame: 39, value: _M(.9653,-.0613,-.2537,0,.0347,.9935,-.1082,0,.2587,.0956,.9612,0,0,.4281,0,1)},
-        {frame: 40, value: _M(.9585,-.067,-.2772,0,.0379,.9933,-.109,0,.2827,.094,.9546,0,0,.4281,0,1)},
-        {frame: 41, value: _M(.9563,-.0687,-.2842,0,.0388,.9932,-.1093,0,.2898,.0935,.9525,0,0,.4281,0,1)},
+        {frame: 40, value: _M(.9563,-.0687,-.2842,0,.0388,.9932,-.1093,0,.2898,.0935,.9525,0,0,.4281,0,1)},
+        {frame: 41, value: _M(.9618,-.0643,-.2662,0,.0364,.9934,-.1086,0,.2715,.0948,.9578,0,0,.4281,0,1)},
         {frame: 42, value: _M(.9739,-.0534,-.2208,0,.0302,.9938,-.1071,0,.2252,.0976,.9694,0,0,.4281,0,1)},
-        {frame: 43, value: _M(.9864,-.0386,-.1597,0,.0218,.9942,-.1054,0,.1628,.1005,.9815,0,0,.4281,0,1)},
-        {frame: 44, value: _M(.9948,-.0239,-.0989,0,.0135,.9944,-.1044,0,.1008,.1025,.9896,0,0,.4281,0,1)},
+        {frame: 43, value: _M(.9849,-.0406,-.1681,0,.023,.9941,-.1056,0,.1714,.1002,.9801,0,0,.4281,0,1)},
+        {frame: 44, value: _M(.9944,-.0248,-.1028,0,.014,.9944,-.1044,0,.1049,.1024,.9892,0,0,.4281,0,1)},
         {frame: 45, value: _M(.9995,-.0077,-.0317,0,.0043,.9946,-.1038,0,.0323,.1036,.9941,0,0,.4281,0,1)},
         {frame: 46, value: _M(.9988,.0113,.047,0,-.0064,.9946,-.1038,0,-.0479,.1034,.9935,0,0,.4281,0,1)},
         {frame: 47, value: _M(.9916,.0304,.1258,0,-.0172,.9943,-.1048,0,-.1282,.1017,.9865,0,0,.4281,0,1)},
@@ -711,7 +875,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("chest", skeleton,skeleton.bones[6], _M(.9922,-.0002,.1246,0,.0158,.9921,-.1244,0,-.1236,.1254,.9844,0,0,.3874,0,1), _M(1,0,0,0,0,.9921,-.1254,0,0,.1254,.9921,0,0,.3874,0,1));
+        bone = new QI.Bone("chest", skeleton,skeleton.bones[6], _M(.9922,.0001,.1246,0,.0156,.992,-.1252,0,-.1236,.1261,.9843,0,0,.3874,0,1), _M(1,0,0,0,0,.9921,-.1254,0,0,.1254,.9921,0,0,.3874,0,1));
         bone.length = .7816;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -847,7 +1011,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("neck", skeleton,skeleton.bones[7], _M(.9465,.041,-.3202,0,.0908,.918,.3861,0,.3098,-.3945,.8651,0,0,.7808,.0062,1), _M(1,0,0,0,0,.9161,.401,0,0,-.401,.9161,0,0,.7808,.0062,1));
+        bone = new QI.Bone("neck", skeleton,skeleton.bones[7], _M(.9465,.0409,-.3202,0,.0923,.9163,.3898,0,.3094,-.3985,.8634,0,0,.7808,.0062,1), _M(1,0,0,0,0,.9161,.401,0,0,-.401,.9161,0,0,.7808,.0062,1));
         bone.length = .3144;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -865,22 +1029,22 @@ var Warrior;
         {frame: 15, value: _M(.9465,.041,-.3202,0,.0908,.918,.3861,0,.3098,-.3945,.8651,0,0,.7809,.0062,1)},
         {frame: 16, value: _M(.9465,.041,-.3202,0,.0908,.918,.3861,0,.3098,-.3945,.8651,0,0,.7808,.0062,1)},
         {frame: 30, value: _M(.9594,-.0021,-.2822,0,.0834,.9575,.2763,0,.2696,-.2886,.9187,0,0,.7808,.0062,1)},
-        {frame: 31, value: _M(.9667,.0027,-.256,0,.0856,.939,.333,0,.2413,-.3438,.9075,0,0,.7808,.0062,1)},
-        {frame: 32, value: _M(.9795,.0041,-.2012,0,.0764,.9172,.391,0,.1862,-.3984,.8981,0,0,.7808,.0062,1)},
-        {frame: 33, value: _M(.9869,.003,-.1612,0,.0615,.9172,.3937,0,.1491,-.3984,.905,0,0,.7808,.0062,1)},
-        {frame: 34, value: _M(.9932,.0037,-.1164,0,.0429,.9176,.3952,0,.1083,-.3975,.9112,0,0,.7809,.0062,1)},
+        {frame: 31, value: _M(.9667,-.0012,-.2559,0,.0818,.9489,.3048,0,.2424,-.3156,.9174,0,0,.7808,.0062,1)},
+        {frame: 32, value: _M(.9795,.0013,-.2012,0,.0738,.9281,.3651,0,.1872,-.3724,.909,0,0,.7808,.0062,1)},
+        {frame: 33, value: _M(.9884,.0025,-.1518,0,.0582,.9171,.3943,0,.1402,-.3986,.9064,0,0,.7808,.0062,1)},
+        {frame: 34, value: _M(.9954,.0027,-.096,0,.0358,.9173,.3966,0,.0892,-.3982,.9129,0,0,.7808,.0062,1)},
         {frame: 35, value: _M(.9995,.0016,-.0314,0,.011,.9186,.3951,0,.0295,-.3953,.9181,0,0,.7809,.0062,1)},
-        {frame: 36, value: _M(.9922,-.0019,.1249,0,-.0396,.9437,.3285,0,-.1184,-.3309,.9362,0,0,.7808,.0062,1)},
-        {frame: 37, value: _M(.9799,0,.1994,0,-.0603,.9532,.2961,0,-.19,-.3022,.9341,0,0,.7808,.0062,1)},
-        {frame: 38, value: _M(.9731,.0015,.2302,0,-.0682,.957,.2819,0,-.2199,-.29,.9314,0,0,.7809,.0062,1)},
+        {frame: 36, value: _M(.9989,-.0013,.0462,0,-.0158,.9292,.3693,0,-.0434,-.3696,.9282,0,0,.7809,.0062,1)},
+        {frame: 37, value: _M(.9922,-.0019,.1249,0,-.0396,.9437,.3285,0,-.1184,-.3309,.9362,0,0,.7808,.0062,1)},
+        {frame: 38, value: _M(.9807,.0001,.1953,0,-.059,.9533,.2961,0,-.1862,-.3019,.935,0,0,.7809,.0062,1)},
         {frame: 39, value: _M(.9678,.0019,.2518,0,-.0744,.9575,.2787,0,-.2406,-.2885,.9268,0,0,.7809,.0062,1)},
-        {frame: 40, value: _M(.9614,.0021,.2752,0,-.0813,.9575,.2769,0,-.263,-.2885,.9206,0,0,.7808,.0062,1)},
-        {frame: 41, value: _M(.9594,.0021,.2822,0,-.0834,.9575,.2763,0,-.2696,-.2886,.9187,0,0,.7808,.0062,1)},
-        {frame: 42, value: _M(.9796,.0017,.2012,0,-.071,.9386,.3377,0,-.1882,-.3451,.9195,0,0,.7808,.0062,1)},
-        {frame: 43, value: _M(.99,-.0013,.1409,0,-.0552,.9166,.3959,0,-.1296,-.3997,.9074,0,0,.7808,.0062,1)},
-        {frame: 44, value: _M(.9959,-.0021,.0907,0,-.0342,.917,.3973,0,-.084,-.3988,.9132,0,0,.7809,.0062,1)},
+        {frame: 40, value: _M(.9594,.0021,.2822,0,-.0834,.9575,.2763,0,-.2696,-.2886,.9187,0,0,.7808,.0062,1)},
+        {frame: 41, value: _M(.9667,.0012,.2559,0,-.0819,.9488,.3052,0,-.2424,-.316,.9173,0,0,.7809,.0062,1)},
+        {frame: 42, value: _M(.9795,-.0014,.2012,0,-.0739,.9277,.366,0,-.1872,-.3733,.9086,0,0,.7808,.0062,1)},
+        {frame: 43, value: _M(.9884,-.0026,.1515,0,-.0582,.9167,.3954,0,-.14,-.3996,.9059,0,0,.7809,.0062,1)},
+        {frame: 44, value: _M(.9954,-.0028,.0957,0,-.0357,.9171,.3972,0,-.0889,-.3988,.9127,0,0,.7809,.0062,1)},
         {frame: 45, value: _M(.9995,-.0015,.0314,0,-.011,.9198,.3922,0,-.0295,-.3924,.9193,0,0,.7809,.0062,1)},
-        {frame: 46, value: _M(.999,.0013,-.0457,0,.0156,.9304,.3663,0,.043,-.3666,.9294,0,0,.7809,.0062,1)},
+        {frame: 46, value: _M(.999,.0013,-.0457,0,.0156,.9304,.3663,0,.043,-.3666,.9294,0,0,.7808,.0062,1)},
         {frame: 47, value: _M(.9922,.0019,-.1249,0,.0396,.9437,.3285,0,.1184,-.3309,.9362,0,0,.7808,.0062,1)},
         {frame: 48, value: _M(.9807,0,-.1954,0,.0591,.9533,.2963,0,.1863,-.3021,.9349,0,0,.7809,.0062,1)},
         {frame: 49, value: _M(.9678,-.0019,-.2518,0,.0744,.9575,.2787,0,.2406,-.2885,.9268,0,0,.7808,.0062,1)},
@@ -1022,15 +1186,15 @@ var Warrior;
         {frame: 30, value: _M(-.1055,-.101,.9893,0,.9849,-.1478,.0899,0,.1372,.9838,.1151,0,.0448,.6372,.1036,1)},
         {frame: 31, value: _M(-.1351,-.0959,.9862,0,.9717,-.2073,.1129,0,.1936,.9736,.1212,0,.0448,.6372,.1036,1)},
         {frame: 32, value: _M(-.1645,-.0907,.9822,0,.9544,-.266,.1353,0,.249,.9597,.1303,0,.0448,.6372,.1036,1)},
-        {frame: 33, value: _M(-.1345,-.096,.9862,0,.9645,-.241,.1081,0,.2273,.9658,.125,0,.0448,.6372,.1036,1)},
-        {frame: 34, value: _M(-.0502,-.1103,.9926,0,.9824,-.1844,.0292,0,.1798,.9766,.1176,0,.0448,.6372,.1036,1)},
+        {frame: 33, value: _M(-.129,-.097,.9869,0,.9652,-.2405,.1026,0,.2274,.9658,.1246,0,.0448,.6372,.1036,1)},
+        {frame: 34, value: _M(-.0384,-.1122,.9929,0,.9829,-.1831,.0173,0,.1799,.9767,.1174,0,.0448,.6372,.1036,1)},
         {frame: 35, value: _M(.0412,-.1248,.9913,0,.9867,-.151,-.06,0,.1572,.9806,.117,0,.0448,.6372,.1036,1)},
-        {frame: 36, value: _M(.1319,-.1383,.9816,0,.9785,-.1401,-.1512,0,.1584,.9804,.1168,0,.0448,.6372,.1036,1)},
-        {frame: 37, value: _M(.1691,-.1435,.9751,0,.9726,-.1358,-.1886,0,.1594,.9803,.1166,0,.0448,.6372,.1036,1)},
-        {frame: 38, value: _M(.1812,-.1451,.9727,0,.9702,-.1352,-.201,0,.1607,.9801,.1163,0,.0448,.6372,.1036,1)},
+        {frame: 36, value: _M(.0922,-.1325,.9869,0,.9832,-.1445,-.1113,0,.1574,.9806,.117,0,.0448,.6372,.1036,1)},
+        {frame: 37, value: _M(.1319,-.1383,.9816,0,.9785,-.1401,-.1512,0,.1584,.9804,.1168,0,.0448,.6372,.1036,1)},
+        {frame: 38, value: _M(.1643,-.1428,.976,0,.9734,-.1366,-.1839,0,.1596,.9803,.1166,0,.0448,.6372,.1036,1)},
         {frame: 39, value: _M(.1923,-.1466,.9703,0,.9675,-.1372,-.2125,0,.1643,.9796,.1155,0,.0448,.6372,.1036,1)},
-        {frame: 40, value: _M(.2056,-.1484,.9673,0,.9641,-.1388,-.2262,0,.1679,.9791,.1145,0,.0448,.6372,.1036,1)},
-        {frame: 41, value: _M(.2221,-.1506,.9633,0,.958,-.1503,-.2444,0,.1816,.9771,.1109,0,.0448,.6372,.1036,1)},
+        {frame: 40, value: _M(.2221,-.1506,.9633,0,.958,-.1503,-.2444,0,.1816,.9771,.1109,0,.0448,.6372,.1036,1)},
+        {frame: 41, value: _M(.2443,-.1535,.9575,0,.9354,-.2231,-.2744,0,.2557,.9626,.089,0,.0448,.6372,.1036,1)},
         {frame: 42, value: _M(.2533,-.1546,.955,0,.918,-.2732,-.2877,0,.3053,.9495,.0727,0,.0448,.6372,.1036,1)},
         {frame: 43, value: _M(.2235,-.1508,.963,0,.9343,-.2483,-.2557,0,.2777,.9569,.0854,0,.0448,.6372,.1036,1)},
         {frame: 44, value: _M(.1466,-.1403,.9792,0,.9666,-.19,-.172,0,.2102,.9717,.1078,0,.0448,.6372,.1036,1)},
@@ -1073,18 +1237,18 @@ var Warrior;
         {frame: 30, value: _M(.1627,-.8637,-.4771,0,-.0041,.4829,-.8757,0,.9867,.1444,.0751,0,-.0268,.5347,-.0473,1)},
         {frame: 31, value: _M(.164,-.8608,-.4819,0,-.0208,.4854,-.8741,0,.9862,.1533,.0617,0,-.0268,.5347,-.0473,1)},
         {frame: 32, value: _M(.1643,-.8537,-.4942,0,-.0391,.4949,-.868,0,.9856,.1619,.0479,0,-.0268,.5347,-.0473,1)},
-        {frame: 33, value: _M(.1628,-.8471,-.5058,0,-.0403,.5065,-.8613,0,.9858,.1606,.0484,0,-.0268,.5347,-.0473,1)},
-        {frame: 34, value: _M(.1609,-.8388,-.5201,0,-.0405,.5209,-.8526,0,.9861,.1583,.0498,0,-.0268,.5347,-.0473,1)},
+        {frame: 33, value: _M(.1626,-.8457,-.5083,0,-.0408,.509,-.8598,0,.9859,.1605,.0482,0,-.0268,.5347,-.0473,1)},
+        {frame: 34, value: _M(.1603,-.8356,-.5254,0,-.0416,.5261,-.8494,0,.9862,.158,.0496,0,-.0268,.5347,-.0473,1)},
         {frame: 35, value: _M(.1579,-.8243,-.5437,0,-.0441,.5441,-.8378,0,.9865,.1563,.0496,0,-.0268,.5347,-.0473,1)},
-        {frame: 36, value: _M(.1535,-.798,-.5828,0,-.0683,.5798,-.8119,0,.9858,.1645,.0345,0,-.0268,.5347,-.0473,1)},
-        {frame: 37, value: _M(.1509,-.7846,-.6013,0,-.08,.5966,-.7985,0,.9853,.1687,.0272,0,-.0268,.5347,-.0473,1)},
-        {frame: 38, value: _M(.1498,-.7789,-.609,0,-.0849,.6035,-.7928,0,.9851,.1705,.0243,0,-.0268,.5347,-.0473,1)},
+        {frame: 36, value: _M(.1557,-.8114,-.5634,0,-.0541,.5625,-.8251,0,.9863,.159,.0437,0,-.0268,.5347,-.0473,1)},
+        {frame: 37, value: _M(.1535,-.798,-.5828,0,-.0683,.5798,-.8119,0,.9858,.1645,.0345,0,-.0268,.5347,-.0473,1)},
+        {frame: 38, value: _M(.1511,-.7853,-.6003,0,-.0794,.5957,-.7993,0,.9853,.1684,.0276,0,-.0268,.5347,-.0473,1)},
         {frame: 39, value: _M(.149,-.7748,-.6144,0,-.0884,.6084,-.7887,0,.9849,.1718,.0222,0,-.0268,.5347,-.0473,1)},
-        {frame: 40, value: _M(.148,-.7703,-.6203,0,-.0921,.6137,-.7841,0,.9847,.1732,.0199,0,-.0268,.5347,-.0473,1)},
-        {frame: 41, value: _M(.1477,-.7689,-.622,0,-.0932,.6153,-.7828,0,.9846,.1736,.0192,0,-.0268,.5347,-.0473,1)},
+        {frame: 40, value: _M(.1477,-.7689,-.622,0,-.0932,.6153,-.7828,0,.9846,.1736,.0192,0,-.0268,.5347,-.0473,1)},
+        {frame: 41, value: _M(.1484,-.7724,-.6175,0,-.0904,.6113,-.7863,0,.9848,.1725,.0209,0,-.0268,.5347,-.0473,1)},
         {frame: 42, value: _M(.1502,-.781,-.6063,0,-.0832,.6011,-.7949,0,.9851,.1698,.0253,0,-.0268,.5347,-.0473,1)},
-        {frame: 43, value: _M(.1524,-.792,-.5912,0,-.0736,.5874,-.8059,0,.9856,.1663,.0312,0,-.0268,.5347,-.0473,1)},
-        {frame: 44, value: _M(.1543,-.8026,-.5762,0,-.0642,.5738,-.8165,0,.9859,.163,.037,0,-.0268,.5347,-.0473,1)},
+        {frame: 43, value: _M(.1521,-.7905,-.5933,0,-.0749,.5893,-.8044,0,.9855,.1668,.0304,0,-.0268,.5347,-.0473,1)},
+        {frame: 44, value: _M(.1542,-.8019,-.5772,0,-.0648,.5747,-.8158,0,.9859,.1632,.0366,0,-.0268,.5347,-.0473,1)},
         {frame: 45, value: _M(.1563,-.8139,-.5595,0,-.0539,.5586,-.8277,0,.9862,.1595,.0435,0,-.0268,.5347,-.0473,1)},
         {frame: 46, value: _M(.1583,-.8268,-.5398,0,-.0418,.5406,-.8402,0,.9865,.1556,.0511,0,-.0268,.5347,-.0473,1)},
         {frame: 47, value: _M(.16,-.8392,-.5197,0,-.0295,.5221,-.8523,0,.9867,.1517,.0588,0,-.0268,.5347,-.0473,1)},
@@ -1181,20 +1345,20 @@ var Warrior;
         {frame: 15, value: _M(.9418,-.1501,-.3007,0,.2647,.8825,.3886,0,.207,-.4456,.871,0,0,.7926,0,1)},
         {frame: 16, value: _M(.9402,-.1534,-.304,0,.266,.8882,.3747,0,.2125,-.4332,.8759,0,0,.7926,0,1)},
         {frame: 30, value: _M(.9551,.1167,-.2723,0,.2739,.0025,.9618,0,.1129,-.9932,-.0295,0,0,.7926,0,1)},
-        {frame: 31, value: _M(.9321,.1804,-.3141,0,.322,-.0158,.9466,0,.1658,-.9835,-.0728,0,0,.7926,0,1)},
-        {frame: 32, value: _M(.8968,.2459,-.3679,0,.3814,-.0081,.9244,0,.2243,-.9693,-.101,0,0,.7926,0,1)},
-        {frame: 33, value: _M(.9072,.2023,-.3689,0,.3691,.0382,.9286,0,.2019,-.9786,-.04,0,0,.7926,0,1)},
-        {frame: 34, value: _M(.9365,.0977,-.3367,0,.3243,.124,.9378,0,.1334,-.9875,.0844,0,0,.7926,0,1)},
+        {frame: 31, value: _M(.9333,.1787,-.3114,0,.322,-.0331,.9462,0,.1588,-.9834,-.0884,0,0,.7926,0,1)},
+        {frame: 32, value: _M(.901,.2422,-.3598,0,.3817,-.0489,.923,0,.206,-.969,-.1365,0,0,.7926,0,1)},
+        {frame: 33, value: _M(.9108,.1929,-.365,0,.3687,.0177,.9294,0,.1858,-.9811,-.055,0,0,.7926,0,1)},
+        {frame: 34, value: _M(.9389,.0821,-.3342,0,.3239,.1174,.9388,0,.1163,-.9897,.0836,0,0,.7926,0,1)},
         {frame: 35, value: _M(.9513,-.0033,-.3083,0,.298,.2657,.9168,0,.0789,-.9641,.2537,0,0,.7926,0,1)},
-        {frame: 36, value: _M(.9487,-.0923,-.3023,0,.272,.7253,.6324,0,.1609,-.6822,.7133,0,0,.7926,0,1)},
-        {frame: 37, value: _M(.9462,-.1215,-.3,0,.2714,.8027,.5311,0,.1763,-.5839,.7924,0,0,.7926,0,1)},
-        {frame: 38, value: _M(.9446,-.1349,-.2991,0,.2743,.8248,.4945,0,.18,-.5491,.8161,0,0,.7926,0,1)},
+        {frame: 36, value: _M(.9511,-.0544,-.3041,0,.2874,.5166,.8065,0,.1132,-.8545,.507,0,0,.7926,0,1)},
+        {frame: 37, value: _M(.9487,-.0923,-.3023,0,.272,.7253,.6324,0,.1609,-.6822,.7133,0,0,.7926,0,1)},
+        {frame: 38, value: _M(.9466,-.1226,-.2983,0,.2712,.8032,.5305,0,.1745,-.583,.7935,0,0,.7926,0,1)},
         {frame: 39, value: _M(.9428,-.1431,-.301,0,.2753,.8434,.4614,0,.1879,-.5179,.8346,0,0,.7926,0,1)},
-        {frame: 40, value: _M(.9409,-.151,-.3032,0,.2702,.8744,.403,0,.2043,-.4611,.8635,0,0,.7926,0,1)},
-        {frame: 41, value: _M(.9402,-.1534,-.304,0,.266,.8882,.3747,0,.2125,-.4332,.8759,0,0,.7926,0,1)},
-        {frame: 42, value: _M(.9348,-.0571,-.3505,0,.2672,.7632,.5883,0,.234,-.6436,.7287,0,0,.7926,0,1)},
-        {frame: 43, value: _M(.9387,-.0431,-.3421,0,.271,.7055,.6548,0,.2132,-.7074,.674,0,0,.7926,0,1)},
-        {frame: 44, value: _M(.9405,-.039,-.3376,0,.2784,.6583,.6993,0,.195,-.7517,.63,0,0,.7926,0,1)},
+        {frame: 40, value: _M(.9402,-.1534,-.304,0,.266,.8882,.3747,0,.2125,-.4332,.8759,0,0,.7926,0,1)},
+        {frame: 41, value: _M(.9365,-.1123,-.3322,0,.2643,.8488,.458,0,.2305,-.5167,.8245,0,0,.7926,0,1)},
+        {frame: 42, value: _M(.9337,-.0582,-.3533,0,.2552,.8003,.5426,0,.2512,-.5968,.7621,0,0,.7926,0,1)},
+        {frame: 43, value: _M(.9373,-.0447,-.3456,0,.2625,.743,.6157,0,.2292,-.6678,.7081,0,0,.7926,0,1)},
+        {frame: 44, value: _M(.94,-.0396,-.3389,0,.2761,.6719,.6872,0,.2005,-.7396,.6425,0,0,.7926,0,1)},
         {frame: 45, value: _M(.9438,-.0296,-.3292,0,.2838,.5828,.7615,0,.1693,-.8121,.5584,0,0,.7926,0,1)},
         {frame: 46, value: _M(.9505,-.0128,-.3106,0,.2812,.4614,.8415,0,.1326,-.8871,.4421,0,0,.7926,0,1)},
         {frame: 47, value: _M(.9568,.0084,-.2906,0,.2718,.3294,.9042,0,.1033,-.9442,.3129,0,0,.7926,0,1)},
@@ -1219,18 +1383,18 @@ var Warrior;
         {frame: 30, value: _M(.2154,-.0796,-.9733,0,.0307,.9967,-.0747,0,.9761,-.0138,.2171,0,0,.6211,0,1)},
         {frame: 31, value: _M(.2216,-.0752,-.9722,0,.0375,.9969,-.0685,0,.9744,-.0213,.2237,0,0,.6211,0,1)},
         {frame: 32, value: _M(.2373,-.0644,-.9693,0,.0544,.9971,-.0529,0,.9699,-.0401,.2401,0,0,.6211,0,1)},
-        {frame: 33, value: _M(.252,-.0546,-.9662,0,.0699,.9968,-.0381,0,.9652,-.0579,.255,0,0,.6211,0,1)},
-        {frame: 34, value: _M(.2705,-.0428,-.9618,0,.0888,.9959,-.0193,0,.9586,-.0802,.2732,0,0,.6211,0,1)},
+        {frame: 33, value: _M(.2553,-.0525,-.9654,0,.0732,.9967,-.0348,0,.9641,-.0618,.2583,0,0,.6211,0,1)},
+        {frame: 34, value: _M(.2774,-.0384,-.96,0,.0958,.9953,-.0122,0,.956,-.0886,.2798,0,0,.6211,0,1)},
         {frame: 35, value: _M(.3017,-.0239,-.9531,0,.1196,.9927,.013,0,.9459,-.118,.3024,0,0,.6211,0,1)},
-        {frame: 36, value: _M(.3556,.0055,-.9346,0,.1695,.983,.0702,0,.9191,-.1834,.3486,0,0,.6211,0,1)},
-        {frame: 37, value: _M(.3819,.0183,-.924,0,.1922,.9764,.0988,0,.904,-.2154,.3693,0,0,.6211,0,1)},
-        {frame: 38, value: _M(.3929,.0234,-.9193,0,.2014,.9732,.1109,0,.8973,-.2288,.3776,0,0,.6211,0,1)},
+        {frame: 36, value: _M(.3285,-.0088,-.9444,0,.145,.9886,.0413,0,.9333,-.1505,.3261,0,0,.6211,0,1)},
+        {frame: 37, value: _M(.3556,.0055,-.9346,0,.1695,.983,.0702,0,.9191,-.1834,.3486,0,0,.6211,0,1)},
+        {frame: 38, value: _M(.3804,.0176,-.9246,0,.191,.9768,.0972,0,.9049,-.2136,.3682,0,0,.6211,0,1)},
         {frame: 39, value: _M(.4007,.0269,-.9158,0,.2079,.9708,.1195,0,.8923,-.2383,.3834,0,0,.6211,0,1)},
-        {frame: 40, value: _M(.4092,.0307,-.9119,0,.2148,.9681,.129,0,.8868,-.2487,.3895,0,0,.6211,0,1)},
-        {frame: 41, value: _M(.4117,.0318,-.9108,0,.2169,.9673,.1318,0,.8851,-.2518,.3913,0,0,.6211,0,1)},
+        {frame: 40, value: _M(.4117,.0318,-.9108,0,.2169,.9673,.1318,0,.8851,-.2518,.3913,0,0,.6211,0,1)},
+        {frame: 41, value: _M(.4052,.0289,-.9138,0,.2116,.9694,.1245,0,.8894,-.2438,.3867,0,0,.6211,0,1)},
         {frame: 42, value: _M(.3889,.0216,-.921,0,.1982,.9744,.1065,0,.8997,-.224,.3747,0,0,.6211,0,1)},
-        {frame: 43, value: _M(.3674,.0114,-.93,0,.1798,.9802,.083,0,.9125,-.1977,.3581,0,0,.6211,0,1)},
-        {frame: 44, value: _M(.3463,.0007,-.9381,0,.1612,.9851,.0603,0,.9242,-.1721,.3411,0,0,.6211,0,1)},
+        {frame: 43, value: _M(.3704,.0128,-.9288,0,.1824,.9794,.0862,0,.9108,-.2013,.3604,0,0,.6211,0,1)},
+        {frame: 44, value: _M(.3477,.0014,-.9376,0,.1625,.9848,.0618,0,.9234,-.1738,.3422,0,0,.6211,0,1)},
         {frame: 45, value: _M(.3233,-.0117,-.9462,0,.1401,.9895,.0357,0,.9359,-.1441,.3215,0,0,.6211,0,1)},
         {frame: 46, value: _M(.2965,-.0269,-.9547,0,.1146,.9934,.0076,0,.9481,-.1117,.2976,0,0,.6211,0,1)},
         {frame: 47, value: _M(.2697,-.0432,-.962,0,.0881,.9959,-.02,0,.9589,-.0793,.2725,0,0,.6211,0,1)},
@@ -1255,18 +1419,18 @@ var Warrior;
         {frame: 30, value: _M(-.0162,.6906,-.723,0,-.0973,.7186,.6886,0,.9951,.0815,.0556,0,0,.2494,0,1)},
         {frame: 31, value: _M(-.0156,.6839,-.7294,0,-.0923,.7254,.6821,0,.9956,.078,.0518,0,0,.2494,0,1)},
         {frame: 32, value: _M(-.0144,.6668,-.7451,0,-.0797,.742,.6656,0,.9967,.069,.0425,0,0,.2494,0,1)},
-        {frame: 33, value: _M(-.0135,.6505,-.7594,0,-.068,.7571,.6498,0,.9976,.0604,.034,0,0,.2494,0,1)},
-        {frame: 34, value: _M(-.0128,.6298,-.7766,0,-.0533,.7752,.6295,0,.9985,.0494,.0236,0,0,.2494,0,1)},
+        {frame: 33, value: _M(-.0134,.6469,-.7625,0,-.0654,.7603,.6462,0,.9978,.0585,.0321,0,0,.2494,0,1)},
+        {frame: 34, value: _M(-.0126,.6219,-.783,0,-.0478,.7818,.6218,0,.9988,.0453,.0199,0,0,.2494,0,1)},
         {frame: 35, value: _M(-.0125,.5941,-.8043,0,-.0287,.8038,.5942,0,.9995,.0305,.007,0,0,.2494,0,1)},
-        {frame: 36, value: _M(-.0145,.5302,-.8477,0,.0134,.8478,.5301,0,.9998,-.0037,-.0194,0,0,.2494,0,1)},
-        {frame: 37, value: _M(-.0165,.4984,-.8668,0,.0338,.8667,.4977,0,.9993,-.0211,-.0312,0,0,.2494,0,1)},
-        {frame: 38, value: _M(-.0177,.4846,-.8746,0,.0423,.8743,.4836,0,.999,-.0284,-.0359,0,0,.2494,0,1)},
+        {frame: 36, value: _M(-.013,.5626,-.8266,0,-.0076,.8266,.5627,0,.9999,.0137,-.0065,0,0,.2494,0,1)},
+        {frame: 37, value: _M(-.0145,.5302,-.8477,0,.0134,.8478,.5301,0,.9998,-.0037,-.0194,0,0,.2494,0,1)},
+        {frame: 38, value: _M(-.0165,.4999,-.8659,0,.0327,.8659,.4992,0,.9993,-.0201,-.0306,0,0,.2494,0,1)},
         {frame: 39, value: _M(-.0186,.4747,-.8799,0,.0483,.8795,.4735,0,.9987,-.0337,-.0393,0,0,.2494,0,1)},
-        {frame: 40, value: _M(-.0196,.464,-.8856,0,.0548,.885,.4624,0,.9983,-.0395,-.0428,0,0,.2494,0,1)},
-        {frame: 41, value: _M(-.0199,.4608,-.8873,0,.0567,.8865,.4592,0,.9982,-.0412,-.0438,0,0,.2494,0,1)},
+        {frame: 40, value: _M(-.0199,.4608,-.8873,0,.0567,.8865,.4592,0,.9982,-.0412,-.0438,0,0,.2494,0,1)},
+        {frame: 41, value: _M(-.0191,.469,-.883,0,.0517,.8824,.4676,0,.9985,-.0367,-.0411,0,0,.2494,0,1)},
         {frame: 42, value: _M(-.0173,.4894,-.8719,0,.0392,.8717,.4885,0,.9991,-.0257,-.0343,0,0,.2494,0,1)},
-        {frame: 43, value: _M(-.0153,.5159,-.8565,0,.0226,.8566,.5155,0,.9996,-.0115,-.0248,0,0,.2494,0,1)},
-        {frame: 44, value: _M(-.0139,.5414,-.8407,0,.0062,.8408,.5414,0,.9999,.0023,-.0151,0,0,.2494,0,1)},
+        {frame: 43, value: _M(-.0156,.5122,-.8587,0,.0249,.8587,.5118,0,.9996,-.0134,-.0261,0,0,.2494,0,1)},
+        {frame: 44, value: _M(-.014,.5397,-.8417,0,.0073,.8418,.5397,0,.9999,.0014,-.0157,0,0,.2494,0,1)},
         {frame: 45, value: _M(-.0129,.5689,-.8223,0,-.0118,.8223,.569,0,.9998,.017,-.0039,0,0,.2494,0,1)},
         {frame: 46, value: _M(-.0124,.6001,-.7998,0,-.0328,.7992,.6002,0,.9994,.0337,.0097,0,0,.2494,0,1)},
         {frame: 47, value: _M(-.0128,.6307,-.776,0,-.0539,.7745,.6303,0,.9985,.0499,.0241,0,0,.2494,0,1)},
@@ -1291,18 +1455,18 @@ var Warrior;
         {frame: 30, value: _M(.3336,.9422,-.0303,0,-.9274,.3222,-.1902,0,-.1695,.0916,.9813,0,0,.1634,0,1)},
         {frame: 31, value: _M(.3242,.9458,-.0197,0,-.9314,.3155,-.1818,0,-.1657,.0772,.9831,0,0,.1634,0,1)},
         {frame: 32, value: _M(.3008,.9537,.0073,0,-.9409,.298,-.1608,0,-.1556,.0415,.987,0,0,.1634,0,1)},
-        {frame: 33, value: _M(.279,.9597,.0329,0,-.9492,.2809,-.1417,0,-.1453,.0083,.9894,0,0,.1634,0,1)},
-        {frame: 34, value: _M(.2521,.9655,.0655,0,-.9587,.2584,-.1185,0,-.1314,-.0329,.9908,0,0,.1634,0,1)},
+        {frame: 33, value: _M(.2742,.9609,.0387,0,-.951,.277,-.1376,0,-.1429,.001,.9897,0,0,.1634,0,1)},
+        {frame: 34, value: _M(.2421,.9671,.0779,0,-.9621,.2496,-.11,0,-.1258,-.0484,.9909,0,0,.1634,0,1)},
         {frame: 35, value: _M(.2075,.9706,.1216,0,-.9726,.2181,-.0811,0,-.1052,-.1014,.9893,0,0,.1634,0,1)},
-        {frame: 36, value: _M(.1343,.9663,.2198,0,-.9895,.1427,-.0228,0,-.0534,-.2144,.9753,0,0,.1634,0,1)},
-        {frame: 37, value: _M(.1021,.958,.2678,0,-.9944,.1052,.0027,0,-.0255,-.2666,.9635,0,0,.1634,0,1)},
-        {frame: 38, value: _M(.0876,.9536,.288,0,-.9961,.0877,.0127,0,-.0132,-.2879,.9576,0,0,.1634,0,1)},
+        {frame: 36, value: _M(.1703,.9705,.1704,0,-.9821,.1813,-.051,0,-.0804,-.1587,.9841,0,0,.1634,0,1)},
+        {frame: 37, value: _M(.1343,.9663,.2198,0,-.9895,.1427,-.0228,0,-.0534,-.2144,.9753,0,0,.1634,0,1)},
+        {frame: 38, value: _M(.1024,.9587,.2652,0,-.9944,.1059,.0012,0,-.0269,-.2638,.9642,0,0,.1634,0,1)},
         {frame: 39, value: _M(.0773,.9501,.3023,0,-.997,.0749,.0195,0,-.0041,-.3029,.953,0,0,.1634,0,1)},
-        {frame: 40, value: _M(.067,.9458,.3179,0,-.9977,.0616,.0268,0,.0058,-.319,.9477,0,0,.1634,0,1)},
-        {frame: 41, value: _M(.064,.9444,.3225,0,-.9979,.0577,.0289,0,.0087,-.3236,.9461,0,0,.1634,0,1)},
+        {frame: 40, value: _M(.064,.9444,.3225,0,-.9979,.0577,.0289,0,.0087,-.3236,.9461,0,0,.1634,0,1)},
+        {frame: 41, value: _M(.0718,.9478,.3106,0,-.9974,.0679,.0234,0,.0011,-.3115,.9503,0,0,.1634,0,1)},
         {frame: 42, value: _M(.0917,.9554,.2808,0,-.9956,.0929,.0091,0,-.0174,-.2804,.9597,0,0,.1634,0,1)},
-        {frame: 43, value: _M(.119,.9631,.2414,0,-.9921,.1253,-.0111,0,-.041,-.2382,.9704,0,0,.1634,0,1)},
-        {frame: 44, value: _M(.1465,.9682,.2028,0,-.9872,.1561,-.0322,0,-.0629,-.1955,.9787,0,0,.1634,0,1)},
+        {frame: 43, value: _M(.1152,.9622,.2468,0,-.9926,.1209,-.0083,0,-.0378,-.244,.969,0,0,.1634,0,1)},
+        {frame: 44, value: _M(.1447,.9679,.2053,0,-.9876,.1542,-.0308,0,-.0615,-.1983,.9782,0,0,.1634,0,1)},
         {frame: 45, value: _M(.1776,.9709,.1607,0,-.9804,.1887,-.0568,0,-.0855,-.1475,.9854,0,0,.1634,0,1)},
         {frame: 46, value: _M(.2148,.9702,.1122,0,-.9705,.2249,-.0871,0,-.1098,-.0902,.9899,0,0,.1634,0,1)},
         {frame: 47, value: _M(.2531,.9653,.0643,0,-.9584,.2592,-.1194,0,-.1319,-.0314,.9908,0,0,.1634,0,1)},
@@ -1327,18 +1491,18 @@ var Warrior;
         {frame: 30, value: _M(.3815,-.0164,-.9242,0,.5627,.7973,.2181,0,.7333,-.6033,.3134,0,.1467,.7467,.1148,1)},
         {frame: 31, value: _M(.3885,-.0118,-.9214,0,.5668,.7914,.2288,0,.7265,-.6111,.3142,0,.1466,.7459,.1156,1)},
         {frame: 32, value: _M(.4061,-.0006,-.9138,0,.5763,.7762,.2556,0,.7092,-.6304,.3156,0,.1461,.7438,.1176,1)},
-        {frame: 33, value: _M(.4225,.0094,-.9063,0,.5845,.7614,.2804,0,.6927,-.6482,.3162,0,.1458,.7419,.1195,1)},
-        {frame: 34, value: _M(.443,.0213,-.8963,0,.5937,.7421,.3111,0,.6718,-.6699,.3161,0,.1453,.7395,.1218,1)},
+        {frame: 33, value: _M(.4261,.0116,-.9046,0,.5862,.7581,.2858,0,.6891,-.6521,.3162,0,.1457,.7415,.1199,1)},
+        {frame: 34, value: _M(.4507,.0257,-.8923,0,.5969,.7346,.3226,0,.6638,-.678,.3158,0,.1451,.7387,.1227,1)},
         {frame: 35, value: _M(.4774,.0398,-.8778,0,.6067,.7077,.3621,0,.6356,-.7054,.3137,0,.1445,.7356,.1257,1)},
-        {frame: 36, value: _M(.536,.0667,-.8416,0,.6216,.6434,.4469,0,.5713,-.7626,.3034,0,.1431,.7288,.1323,1)},
-        {frame: 37, value: _M(.5639,.0775,-.8222,0,.6254,.6101,.4865,0,.5393,-.7886,.2955,0,.1424,.7255,.1356,1)},
-        {frame: 38, value: _M(.5756,.0817,-.8136,0,.6263,.5956,.5029,0,.5257,-.7991,.2917,0,.1421,.7241,.1369,1)},
+        {frame: 36, value: _M(.5068,.0541,-.8604,0,.6153,.6764,.4049,0,.6038,-.7346,.3095,0,.1438,.7322,.129,1)},
+        {frame: 37, value: _M(.536,.0667,-.8416,0,.6216,.6434,.4469,0,.5713,-.7626,.3034,0,.1431,.7288,.1323,1)},
+        {frame: 38, value: _M(.5624,.077,-.8233,0,.6253,.6119,.4844,0,.541,-.7872,.296,0,.1425,.7257,.1354,1)},
         {frame: 39, value: _M(.5838,.0845,-.8075,0,.6268,.5853,.5144,0,.516,-.8064,.2888,0,.142,.7232,.1379,1)},
-        {frame: 40, value: _M(.5927,.0873,-.8007,0,.627,.5739,.5268,0,.5055,-.8143,.2854,0,.1417,.7221,.1389,1)},
-        {frame: 41, value: _M(.5954,.0881,-.7986,0,.6271,.5705,.5305,0,.5023,-.8166,.2844,0,.1417,.7218,.1392,1)},
-        {frame: 42, value: _M(.5715,.0803,-.8167,0,.626,.6008,.4971,0,.5306,-.7954,.2931,0,.1422,.7246,.1364,1)},
-        {frame: 43, value: _M(.5486,.0718,-.833,0,.6236,.6285,.4649,0,.5569,-.7745,.3001,0,.1428,.7273,.1338,1)},
-        {frame: 44, value: _M(.526,.0625,-.8482,0,.6197,.6549,.4326,0,.5825,-.7532,.3057,0,.1433,.73,.1312,1)},
+        {frame: 40, value: _M(.5954,.0881,-.7986,0,.6271,.5705,.5305,0,.5023,-.8166,.2844,0,.1417,.7218,.1392,1)},
+        {frame: 41, value: _M(.5886,.086,-.8039,0,.6269,.5792,.521,0,.5104,-.8106,.287,0,.1418,.7226,.1384,1)},
+        {frame: 42, value: _M(.5715,.0803,-.8167,0,.626,.6008,.4971,0,.5306,-.7954,.2931,0,.1423,.7246,.1364,1)},
+        {frame: 43, value: _M(.5518,.073,-.8308,0,.624,.6248,.4693,0,.5533,-.7774,.2992,0,.1427,.727,.1342,1)},
+        {frame: 44, value: _M(.5275,.0632,-.8472,0,.62,.6532,.4347,0,.5808,-.7546,.3054,0,.1433,.7298,.1314,1)},
         {frame: 45, value: _M(.501,.0513,-.8639,0,.6138,.6827,.3965,0,.6101,-.7289,.3105,0,.1439,.7329,.1284,1)},
         {frame: 46, value: _M(.4717,.0369,-.881,0,.6048,.7135,.3537,0,.6417,-.6996,.3143,0,.1446,.7363,.1251,1)},
         {frame: 47, value: _M(.4422,.021,-.8967,0,.5933,.7429,.31,0,.6726,-.6691,.3161,0,.1453,.7397,.1217,1)},
@@ -1363,18 +1527,18 @@ var Warrior;
         {frame: 30, value: _M(-.2529,-.5411,-.802,0,.0101,.8274,-.5615,0,.9674,-.1501,-.2038,0,0,.1072,0,1)},
         {frame: 31, value: _M(-.2527,-.5406,-.8024,0,.0081,.8281,-.5605,0,.9675,-.1482,-.2049,0,0,.1072,0,1)},
         {frame: 32, value: _M(-.2523,-.5393,-.8034,0,.0032,.8298,-.558,0,.9676,-.1433,-.2077,0,0,.1072,0,1)},
-        {frame: 33, value: _M(-.252,-.538,-.8044,0,-.0015,.8314,-.5557,0,.9677,-.1388,-.2103,0,0,.1072,0,1)},
-        {frame: 34, value: _M(-.2515,-.5365,-.8056,0,-.0072,.8333,-.5527,0,.9678,-.1332,-.2134,0,0,.1072,0,1)},
+        {frame: 33, value: _M(-.2519,-.5378,-.8046,0,-.0025,.8317,-.5552,0,.9678,-.1379,-.2108,0,0,.1072,0,1)},
+        {frame: 34, value: _M(-.2513,-.5359,-.806,0,-.0093,.834,-.5516,0,.9679,-.1311,-.2146,0,0,.1072,0,1)},
         {frame: 35, value: _M(-.2508,-.5339,-.8075,0,-.0168,.8364,-.5478,0,.9679,-.1238,-.2187,0,0,.1072,0,1)},
-        {frame: 36, value: _M(-.2496,-.5294,-.8108,0,-.0332,.8415,-.5392,0,.9678,-.1077,-.2276,0,0,.1072,0,1)},
-        {frame: 37, value: _M(-.249,-.5272,-.8124,0,-.0412,.8439,-.535,0,.9676,-.0998,-.2318,0,0,.1072,0,1)},
-        {frame: 38, value: _M(-.2488,-.5263,-.8131,0,-.0445,.8448,-.5332,0,.9675,-.0965,-.2336,0,0,.1072,0,1)},
+        {frame: 36, value: _M(-.2502,-.5317,-.8092,0,-.0249,.839,-.5436,0,.9679,-.1158,-.2231,0,0,.1072,0,1)},
+        {frame: 37, value: _M(-.2496,-.5294,-.8108,0,-.0332,.8415,-.5392,0,.9678,-.1077,-.2276,0,0,.1072,0,1)},
+        {frame: 38, value: _M(-.2491,-.5273,-.8124,0,-.0407,.8437,-.5352,0,.9676,-.1002,-.2316,0,0,.1072,0,1)},
         {frame: 39, value: _M(-.2486,-.5256,-.8136,0,-.0468,.8455,-.5319,0,.9675,-.0941,-.2348,0,0,.1072,0,1)},
-        {frame: 40, value: _M(-.2485,-.5249,-.8141,0,-.0494,.8462,-.5305,0,.9674,-.0916,-.2362,0,0,.1072,0,1)},
-        {frame: 41, value: _M(-.2484,-.5247,-.8142,0,-.0502,.8464,-.5301,0,.9673,-.0908,-.2366,0,0,.1072,0,1)},
+        {frame: 40, value: _M(-.2484,-.5247,-.8142,0,-.0502,.8464,-.5301,0,.9673,-.0908,-.2366,0,0,.1072,0,1)},
+        {frame: 41, value: _M(-.2486,-.5252,-.8139,0,-.0482,.8459,-.5312,0,.9674,-.0928,-.2356,0,0,.1072,0,1)},
         {frame: 42, value: _M(-.2489,-.5266,-.8129,0,-.0433,.8445,-.5338,0,.9676,-.0977,-.233,0,0,.1072,0,1)},
-        {frame: 43, value: _M(-.2493,-.5284,-.8116,0,-.0367,.8426,-.5373,0,.9677,-.1041,-.2295,0,0,.1072,0,1)},
-        {frame: 44, value: _M(-.2498,-.5302,-.8103,0,-.0303,.8407,-.5407,0,.9678,-.1105,-.2261,0,0,.1072,0,1)},
+        {frame: 43, value: _M(-.2493,-.5282,-.8117,0,-.0376,.8428,-.5368,0,.9677,-.1033,-.23,0,0,.1072,0,1)},
+        {frame: 44, value: _M(-.2497,-.5301,-.8104,0,-.0308,.8408,-.5405,0,.9678,-.11,-.2263,0,0,.1072,0,1)},
         {frame: 45, value: _M(-.2503,-.5321,-.8088,0,-.0233,.8385,-.5444,0,.9679,-.1174,-.2223,0,0,.1072,0,1)},
         {frame: 46, value: _M(-.2509,-.5343,-.8072,0,-.0152,.8359,-.5486,0,.9679,-.1254,-.2178,0,0,.1072,0,1)},
         {frame: 47, value: _M(-.2515,-.5366,-.8055,0,-.0069,.8332,-.5529,0,.9678,-.1335,-.2133,0,0,.1072,0,1)},
@@ -1424,15 +1588,15 @@ var Warrior;
         {frame: 30, value: _M(.2221,.1506,-.9633,0,-.958,-.1503,-.2444,0,-.1816,.9771,.1109,0,-.0448,.6372,.1036,1)},
         {frame: 31, value: _M(.2377,.1526,-.9593,0,-.9436,-.1982,-.2654,0,-.2307,.9682,.0969,0,-.0448,.6372,.1036,1)},
         {frame: 32, value: _M(.2533,.1546,-.955,0,-.918,-.2732,-.2877,0,-.3053,.9495,.0727,0,-.0448,.6372,.1036,1)},
-        {frame: 33, value: _M(.2287,.1514,-.9616,0,-.9078,-.3234,-.2668,0,-.3514,.934,.0635,0,-.0448,.6372,.1036,1)},
-        {frame: 34, value: _M(.1577,.1419,-.9772,0,-.908,-.3681,-.2,0,-.3881,.9189,.0708,0,-.0448,.6372,.1036,1)},
+        {frame: 33, value: _M(.2235,.1508,-.963,0,-.909,-.3242,-.2618,0,-.3517,.9339,.0646,0,-.0448,.6372,.1036,1)},
+        {frame: 34, value: _M(.1466,.1403,-.9792,0,-.9097,-.3697,-.1892,0,-.3885,.9185,.0735,0,-.0448,.6372,.1036,1)},
         {frame: 35, value: _M(.0771,.1303,-.9885,0,-.9128,-.3895,-.1225,0,-.401,.9118,.0889,0,-.0448,.6372,.1036,1)},
-        {frame: 36, value: _M(-.0094,.1169,-.9931,0,-.9575,-.2874,-.0247,0,-.2884,.9506,.1147,0,-.0448,.6372,.1036,1)},
-        {frame: 37, value: _M(-.047,.1108,-.9927,0,-.9741,-.2253,.021,0,-.2213,.968,.1186,0,-.0448,.6372,.1036,1)},
-        {frame: 38, value: _M(-.0592,.1088,-.9923,0,-.9815,-.1877,.0379,0,-.1821,.9762,.1179,0,-.0448,.6372,.1036,1)},
+        {frame: 36, value: _M(.0296,.1231,-.992,0,-.9312,-.3574,-.0722,0,-.3634,.9258,.104,0,-.0448,.6372,.1036,1)},
+        {frame: 37, value: _M(-.0094,.1169,-.9931,0,-.9575,-.2874,-.0247,0,-.2884,.9506,.1147,0,-.0448,.6372,.1036,1)},
+        {frame: 38, value: _M(-.0415,.1117,-.9929,0,-.9752,-.2208,.0159,0,-.2174,.9689,.1181,0,-.0448,.6372,.1036,1)},
         {frame: 39, value: _M(-.071,.1069,-.9917,0,-.9857,-.1599,.0533,0,-.1529,.9813,.1167,0,-.0448,.6372,.1036,1)},
-        {frame: 40, value: _M(-.0825,.1049,-.991,0,-.9885,-.1348,.0681,0,-.1265,.9853,.1149,0,-.0448,.6372,.1036,1)},
-        {frame: 41, value: _M(-.1055,.101,-.9893,0,-.9873,-.1293,.0921,0,-.1186,.9865,.1134,0,-.0448,.6372,.1036,1)},
+        {frame: 40, value: _M(-.1055,.101,-.9893,0,-.9873,-.1293,.0921,0,-.1186,.9865,.1134,0,-.0448,.6372,.1036,1)},
+        {frame: 41, value: _M(-.1444,.0943,-.985,0,-.9799,-.1522,.1291,0,-.1377,.9838,.1143,0,-.0448,.6372,.1036,1)},
         {frame: 42, value: _M(-.1645,.0907,-.9822,0,-.9727,-.1801,.1463,0,-.1637,.9794,.1179,0,-.0448,.6372,.1036,1)},
         {frame: 43, value: _M(-.129,.097,-.9869,0,-.9765,-.1856,.1094,0,-.1726,.9778,.1186,0,-.0448,.6372,.1036,1)},
         {frame: 44, value: _M(-.0384,.1122,-.9929,0,-.9837,-.1791,.0178,0,-.1758,.9774,.1173,0,-.0448,.6372,.1036,1)},
@@ -1474,18 +1638,18 @@ var Warrior;
         {frame: 30, value: _M(.1477,.7689,.622,0,.0932,.6153,-.7828,0,-.9846,.1736,.0192,0,.0268,.5347,-.0473,1)},
         {frame: 31, value: _M(.1496,.7726,.6171,0,.13,.6033,-.7868,0,-.9802,.1979,-.0102,0,.0268,.5347,-.0473,1)},
         {frame: 32, value: _M(.1532,.7811,.6054,0,.1651,.5837,-.795,0,-.9743,.2217,-.0395,0,.0268,.5347,-.0473,1)},
-        {frame: 33, value: _M(.1547,.7888,.5948,0,.1446,.5775,-.8035,0,-.9773,.2103,-.0247,0,.0268,.5347,-.0473,1)},
-        {frame: 34, value: _M(.155,.7984,.5819,0,.0962,.574,-.8132,0,-.9832,.1821,.0122,0,.0268,.5347,-.0473,1)},
+        {frame: 33, value: _M(.1551,.7905,.5925,0,.143,.5755,-.8052,0,-.9775,.2097,-.0238,0,.0268,.5347,-.0473,1)},
+        {frame: 34, value: _M(.1557,.8019,.5769,0,.0929,.5695,-.8167,0,-.9834,.1808,.0142,0,.0268,.5347,-.0473,1)},
         {frame: 35, value: _M(.1563,.8139,.5595,0,.0539,.5586,-.8277,0,-.9862,.1595,.0435,0,.0268,.5347,-.0473,1)},
-        {frame: 36, value: _M(.16,.8392,.5197,0,.0295,.5221,-.8523,0,-.9867,.1517,.0588,0,.0268,.5347,-.0473,1)},
-        {frame: 37, value: _M(.1614,.8509,.4999,0,.0176,.5039,-.8636,0,-.9867,.1482,.0664,0,.0268,.5347,-.0473,1)},
-        {frame: 38, value: _M(.1619,.8557,.4915,0,.0126,.4963,-.8681,0,-.9867,.1468,.0696,0,.0268,.5347,-.0473,1)},
+        {frame: 36, value: _M(.158,.8268,.5399,0,.0379,.5413,-.84,0,-.9867,.1532,.0542,0,.0268,.5347,-.0473,1)},
+        {frame: 37, value: _M(.16,.8392,.5197,0,.0295,.5221,-.8523,0,-.9867,.1517,.0588,0,.0268,.5347,-.0473,1)},
+        {frame: 38, value: _M(.1614,.8503,.5009,0,.0183,.5049,-.863,0,-.9867,.1484,.066,0,.0268,.5347,-.0473,1)},
         {frame: 39, value: _M(.1623,.859,.4856,0,.0091,.4908,-.8712,0,-.9867,.1458,.0718,0,.0268,.5347,-.0473,1)},
-        {frame: 40, value: _M(.1626,.8626,.479,0,.0052,.4847,-.8747,0,-.9867,.1447,.0743,0,.0268,.5347,-.0473,1)},
-        {frame: 41, value: _M(.1627,.8637,.4771,0,.0041,.4829,-.8757,0,-.9867,.1444,.0751,0,.0268,.5347,-.0473,1)},
+        {frame: 40, value: _M(.1627,.8637,.4771,0,.0041,.4829,-.8757,0,-.9867,.1444,.0751,0,.0268,.5347,-.0473,1)},
+        {frame: 41, value: _M(.1641,.8607,.4819,0,.0221,.4852,-.8742,0,-.9862,.1541,.0606,0,.0268,.5347,-.0473,1)},
         {frame: 42, value: _M(.1646,.8537,.4941,0,.0416,.4945,-.8682,0,-.9855,.1634,.0459,0,.0268,.5347,-.0473,1)},
-        {frame: 43, value: _M(.1625,.8444,.5105,0,.0431,.5108,-.8586,0,-.9858,.1615,.0466,0,.0268,.5347,-.0473,1)},
-        {frame: 44, value: _M(.1602,.835,.5264,0,.0424,.527,-.8488,0,-.9862,.1583,.049,0,.0268,.5347,-.0473,1)},
+        {frame: 43, value: _M(.1627,.8457,.5083,0,.0426,.5086,-.8599,0,-.9857,.1616,.0467,0,.0268,.5347,-.0473,1)},
+        {frame: 44, value: _M(.1603,.8356,.5254,0,.0422,.526,-.8494,0,-.9862,.1584,.0491,0,.0268,.5347,-.0473,1)},
         {frame: 45, value: _M(.1579,.8243,.5437,0,.0441,.5441,-.8378,0,-.9865,.1563,.0496,0,.0268,.5347,-.0473,1)},
         {frame: 46, value: _M(.1557,.8114,.5633,0,.0541,.5624,-.8251,0,-.9863,.159,.0437,0,.0268,.5347,-.0473,1)},
         {frame: 47, value: _M(.1535,.798,.5828,0,.0683,.5798,-.8119,0,-.9858,.1645,.0345,0,.0268,.5347,-.0473,1)},
@@ -1560,7 +1724,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("forearm.R", skeleton,skeleton.bones[20], _M(.9561,.1495,.252,0,-.251,.8616,.4413,0,-.1512,-.4852,.8613,0,0,.7926,0,1), _M(.9402,.1534,.304,0,-.266,.8882,.3747,0,-.2125,-.4332,.8759,0,0,.7926,0,1));
+        bone = new QI.Bone("forearm.R", skeleton,skeleton.bones[20], _M(.9561,.1499,.2518,0,-.2514,.861,.4421,0,-.1505,-.486,.8609,0,0,.7926,0,1), _M(.9402,.1534,.304,0,-.266,.8882,.3747,0,-.2125,-.4332,.8759,0,0,.7926,0,1));
         bone.length = .6211;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -1582,21 +1746,21 @@ var Warrior;
         {frame: 16, value: _M(.9561,.1495,.252,0,-.251,.8616,.4413,0,-.1512,-.4852,.8613,0,0,.7926,0,1)},
         {frame: 30, value: _M(.8333,-.0102,.5528,0,-.2446,.8899,.3851,0,-.4959,-.4561,.739,0,0,.7926,0,1)},
         {frame: 31, value: _M(.838,-.0123,.5455,0,-.2469,.883,.3991,0,-.4866,-.4692,.737,0,0,.7926,0,1)},
-        {frame: 32, value: _M(.8442,-.0156,.5357,0,-.249,.8737,.4179,0,-.4746,-.4862,.7337,0,0,.7926,0,1)},
-        {frame: 33, value: _M(.8462,-.0195,.5324,0,-.2524,.8654,.4329,0,-.4692,-.5008,.7274,0,0,.7926,0,1)},
-        {frame: 34, value: _M(.8488,-.0273,.528,0,-.2645,.8428,.4688,0,-.4578,-.5376,.7081,0,0,.7926,0,1)},
+        {frame: 32, value: _M(.8446,-.0165,.5352,0,-.2515,.8702,.4237,0,-.4727,-.4924,.7308,0,0,.7926,0,1)},
+        {frame: 33, value: _M(.8472,-.0222,.5308,0,-.2597,.8543,.4502,0,-.4635,-.5193,.718,0,0,.7926,0,1)},
+        {frame: 34, value: _M(.8499,-.0303,.5261,0,-.2723,.8296,.4875,0,-.4512,-.5576,.6968,0,0,.7926,0,1)},
         {frame: 35, value: _M(.8534,-.0391,.5198,0,-.2904,.7924,.5365,0,-.4329,-.6088,.6648,0,0,.7926,0,1)},
-        {frame: 36, value: _M(.8672,-.0573,.4947,0,-.3394,.659,.6712,0,-.3645,-.75,.552,0,0,.7926,0,1)},
-        {frame: 37, value: _M(.8712,-.0645,.4866,0,-.3541,.6039,.7141,0,-.34,-.7944,.5033,0,0,.7926,0,1)},
-        {frame: 38, value: _M(.8722,-.0688,.4843,0,-.3583,.5844,.7281,0,-.3331,-.8085,.4851,0,0,.7926,0,1)},
+        {frame: 36, value: _M(.8602,-.0487,.5077,0,-.3159,.7306,.6053,0,-.4004,-.681,.6131,0,0,.7926,0,1)},
+        {frame: 37, value: _M(.8672,-.0573,.4947,0,-.3394,.659,.6712,0,-.3645,-.75,.552,0,0,.7926,0,1)},
+        {frame: 38, value: _M(.8705,-.0643,.488,0,-.351,.6139,.707,0,-.345,-.7867,.5119,0,0,.7926,0,1)},
         {frame: 39, value: _M(.8738,-.0735,.4807,0,-.3652,.5535,.7485,0,-.321,-.8296,.4568,0,0,.7926,0,1)},
-        {frame: 40, value: _M(.8787,-.0789,.4708,0,-.3788,.4848,.7884,0,-.2905,-.8711,.3961,0,0,.7926,0,1)},
-        {frame: 41, value: _M(.8818,-.085,.4639,0,-.3885,.4268,.8167,0,-.2674,-.9003,.3433,0,0,.7926,0,1)},
-        {frame: 42, value: _M(.8804,-.096,.4644,0,-.3972,.3857,.8327,0,-.2591,-.9176,.3014,0,0,.7926,0,1)},
-        {frame: 43, value: _M(.8821,-.089,.4626,0,-.3954,.394,.8297,0,-.2561,-.9148,.3123,0,0,.7926,0,1)},
-        {frame: 44, value: _M(.8849,-.0735,.46,0,-.3893,.4255,.8169,0,-.2558,-.902,.3479,0,0,.7926,0,1)},
+        {frame: 40, value: _M(.8818,-.085,.4639,0,-.3885,.4268,.8167,0,-.2674,-.9003,.3433,0,0,.7926,0,1)},
+        {frame: 41, value: _M(.8814,-.0925,.4633,0,-.3943,.3959,.8293,0,-.2601,-.9136,.3124,0,0,.7926,0,1)},
+        {frame: 42, value: _M(.8808,-.0963,.4635,0,-.398,.3797,.8351,0,-.2564,-.9201,.2961,0,0,.7926,0,1)},
+        {frame: 43, value: _M(.8821,-.089,.4625,0,-.3955,.3933,.83,0,-.2558,-.9151,.3117,0,0,.7926,0,1)},
+        {frame: 44, value: _M(.8821,-.0714,.4656,0,-.3834,.4656,.7977,0,-.2738,-.8821,.3833,0,0,.7926,0,1)},
         {frame: 45, value: _M(.878,-.054,.4756,0,-.3614,.5767,.7326,0,-.3139,-.8152,.4868,0,0,.7926,0,1)},
-        {frame: 46, value: _M(.8694,-.0383,.4926,0,-.3285,.6999,.6342,0,-.3691,-.7132,.5959,0,0,.7926,0,1)},
+        {frame: 46, value: _M(.87,-.0393,.4915,0,-.3312,.6918,.6417,0,-.3652,-.7211,.5888,0,0,.7926,0,1)},
         {frame: 47, value: _M(.861,-.0256,.5079,0,-.2961,.7868,.5415,0,-.4135,-.6166,.6699,0,0,.7926,0,1)},
         {frame: 48, value: _M(.8559,-.0169,.5168,0,-.2745,.8322,.4818,0,-.4382,-.5543,.7076,0,0,.7926,0,1)},
         {frame: 49, value: _M(.8497,-.0121,.5271,0,-.2598,.8604,.4385,0,-.4588,-.5095,.7279,0,0,.7926,0,1)},
@@ -1670,7 +1834,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("hand.R", skeleton,skeleton.bones[21], _M(.3351,.1288,.9333,0,-.1596,.9841,-.0785,0,-.9286,-.1227,.3503,0,0,.6211,0,1), _M(.1677,.2219,.9605,0,-.123,.9714,-.2029,0,-.9781,-.0841,.1902,0,0,.6211,0,1));
+        bone = new QI.Bone("hand.R", skeleton,skeleton.bones[21], _M(.3341,.1315,.9333,0,-.1588,.9839,-.0818,0,-.9291,-.1209,.3496,0,0,.6211,0,1), _M(.1677,.2219,.9605,0,-.123,.9714,-.2029,0,-.9781,-.0841,.1902,0,0,.6211,0,1));
         bone.length = .2494;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -1693,18 +1857,18 @@ var Warrior;
         {frame: 30, value: _M(.4117,-.0318,.9108,0,-.2169,.9673,.1318,0,-.8851,-.2518,.3913,0,0,.6211,0,1)},
         {frame: 31, value: _M(.4052,-.0289,.9138,0,-.2116,.9694,.1245,0,-.8894,-.2438,.3866,0,0,.6211,0,1)},
         {frame: 32, value: _M(.3889,-.0216,.921,0,-.1982,.9744,.1065,0,-.8997,-.224,.3747,0,0,.6211,0,1)},
-        {frame: 33, value: _M(.3737,-.0144,.9274,0,-.1853,.9786,.0899,0,-.9088,-.2054,.363,0,0,.6211,0,1)},
-        {frame: 34, value: _M(.3548,-.0051,.9349,0,-.1688,.9832,.0694,0,-.9196,-.1825,.348,0,0,.6211,0,1)},
+        {frame: 33, value: _M(.3704,-.0128,.9288,0,-.1824,.9794,.0863,0,-.9108,-.2014,.3604,0,0,.6211,0,1)},
+        {frame: 34, value: _M(.3478,-.0015,.9376,0,-.1625,.9848,.0618,0,-.9234,-.1739,.3422,0,0,.6211,0,1)},
         {frame: 35, value: _M(.3233,.0117,.9462,0,-.1401,.9895,.0357,0,-.9359,-.1441,.3215,0,0,.6211,0,1)},
-        {frame: 36, value: _M(.2697,.0432,.962,0,-.0881,.9959,-.02,0,-.9589,-.0793,.2725,0,0,.6211,0,1)},
-        {frame: 37, value: _M(.2442,.0595,.9679,0,-.0615,.9971,-.0458,0,-.9678,-.0483,.2472,0,0,.6211,0,1)},
-        {frame: 38, value: _M(.2335,.0668,.97,0,-.0503,.9971,-.0566,0,-.971,-.0355,.2362,0,0,.6211,0,1)},
+        {frame: 36, value: _M(.2964,.027,.9547,0,-.1146,.9934,.0075,0,-.9482,-.1116,.2976,0,0,.6211,0,1)},
+        {frame: 37, value: _M(.2697,.0432,.962,0,-.0881,.9959,-.02,0,-.9589,-.0793,.2725,0,0,.6211,0,1)},
+        {frame: 38, value: _M(.2455,.0588,.9676,0,-.063,.997,-.0446,0,-.9673,-.05,.2485,0,0,.6211,0,1)},
         {frame: 39, value: _M(.226,.0721,.9715,0,-.0422,.997,-.0642,0,-.9732,-.0265,.2283,0,0,.6211,0,1)},
-        {frame: 40, value: _M(.2178,.0779,.9729,0,-.0333,.9968,-.0723,0,-.9754,-.0167,.2197,0,0,.6211,0,1)},
-        {frame: 41, value: _M(.2154,.0796,.9733,0,-.0307,.9967,-.0747,0,-.9761,-.0138,.2171,0,0,.6211,0,1)},
+        {frame: 40, value: _M(.2154,.0796,.9733,0,-.0307,.9967,-.0747,0,-.9761,-.0138,.2171,0,0,.6211,0,1)},
+        {frame: 41, value: _M(.2216,.0752,.9722,0,-.0375,.9969,-.0685,0,-.9744,-.0213,.2237,0,0,.6211,0,1)},
         {frame: 42, value: _M(.2373,.0644,.9693,0,-.0544,.9971,-.0529,0,-.9699,-.0401,.2401,0,0,.6211,0,1)},
-        {frame: 43, value: _M(.2582,.0506,.9648,0,-.0763,.9966,-.0318,0,-.9631,-.0654,.2612,0,0,.6211,0,1)},
-        {frame: 44, value: _M(.2789,.0376,.9596,0,-.0972,.9952,-.0107,0,-.9554,-.0903,.2812,0,0,.6211,0,1)},
+        {frame: 43, value: _M(.2553,.0524,.9654,0,-.0733,.9967,-.0348,0,-.9641,-.0619,.2583,0,0,.6211,0,1)},
+        {frame: 44, value: _M(.2775,.0384,.96,0,-.0959,.9953,-.0121,0,-.9559,-.0887,.2799,0,0,.6211,0,1)},
         {frame: 45, value: _M(.3017,.0239,.9531,0,-.1196,.9927,.013,0,-.9459,-.118,.3024,0,0,.6211,0,1)},
         {frame: 46, value: _M(.3285,.0088,.9445,0,-.145,.9886,.0412,0,-.9333,-.1504,.326,0,0,.6211,0,1)},
         {frame: 47, value: _M(.3556,-.0055,.9346,0,-.1695,.983,.0702,0,-.9191,-.1834,.3486,0,0,.6211,0,1)},
@@ -1783,18 +1947,18 @@ var Warrior;
         {frame: 30, value: _M(-.0199,-.4608,.8873,0,-.0567,.8865,.4592,0,-.9982,-.0412,-.0438,0,0,.2494,0,1)},
         {frame: 31, value: _M(-.0191,-.469,.883,0,-.0517,.8824,.4676,0,-.9985,-.0367,-.0411,0,0,.2494,0,1)},
         {frame: 32, value: _M(-.0173,-.4894,.8719,0,-.0392,.8717,.4885,0,-.9991,-.0257,-.0343,0,0,.2494,0,1)},
-        {frame: 33, value: _M(-.0159,-.5081,.8611,0,-.0275,.8611,.5076,0,-.9995,-.0156,-.0276,0,0,.2494,0,1)},
-        {frame: 34, value: _M(-.0144,-.5312,.8472,0,-.0128,.8473,.531,0,-.9998,-.0032,-.019,0,0,.2494,0,1)},
+        {frame: 33, value: _M(-.0156,-.5122,.8587,0,-.0249,.8588,.5118,0,-.9996,-.0134,-.0261,0,0,.2494,0,1)},
+        {frame: 34, value: _M(-.014,-.5397,.8418,0,-.0074,.8419,.5396,0,-.9999,.0013,-.0157,0,0,.2494,0,1)},
         {frame: 35, value: _M(-.0129,-.5689,.8223,0,.0118,.8223,.569,0,-.9998,.017,-.0039,0,0,.2494,0,1)},
-        {frame: 36, value: _M(-.0128,-.6307,.776,0,.0539,.7745,.6303,0,-.9985,.0499,.0241,0,0,.2494,0,1)},
-        {frame: 37, value: _M(-.014,-.6593,.7518,0,.0743,.7491,.6583,0,-.9971,.065,.0385,0,0,.2494,0,1)},
-        {frame: 38, value: _M(-.0147,-.671,.7414,0,.0828,.7381,.6696,0,-.9965,.0712,.0447,0,0,.2494,0,1)},
+        {frame: 36, value: _M(-.0124,-.6002,.7998,0,.0328,.7992,.6002,0,-.9994,.0337,.0097,0,0,.2494,0,1)},
+        {frame: 37, value: _M(-.0128,-.6307,.776,0,.0539,.7745,.6303,0,-.9985,.0499,.0241,0,0,.2494,0,1)},
+        {frame: 38, value: _M(-.0139,-.6578,.7531,0,.0732,.7505,.6568,0,-.9972,.0642,.0377,0,0,.2494,0,1)},
         {frame: 39, value: _M(-.0153,-.6792,.7338,0,.0888,.7301,.6776,0,-.9959,.0755,.0492,0,0,.2494,0,1)},
-        {frame: 40, value: _M(-.016,-.688,.7255,0,.0954,.7212,.6861,0,-.9953,.0801,.0541,0,0,.2494,0,1)},
-        {frame: 41, value: _M(-.0162,-.6906,.723,0,.0973,.7186,.6886,0,-.9951,.0815,.0556,0,0,.2494,0,1)},
+        {frame: 40, value: _M(-.0162,-.6906,.723,0,.0973,.7186,.6886,0,-.9951,.0815,.0556,0,0,.2494,0,1)},
+        {frame: 41, value: _M(-.0156,-.6839,.7294,0,.0923,.7254,.6821,0,-.9956,.078,.0518,0,0,.2494,0,1)},
         {frame: 42, value: _M(-.0144,-.6668,.7451,0,.0797,.742,.6656,0,-.9967,.069,.0425,0,0,.2494,0,1)},
-        {frame: 43, value: _M(-.0132,-.6436,.7652,0,.0631,.7632,.6431,0,-.9979,.0568,.0305,0,0,.2494,0,1)},
-        {frame: 44, value: _M(-.0126,-.6203,.7842,0,.0467,.7831,.6202,0,-.9988,.0444,.0191,0,0,.2494,0,1)},
+        {frame: 43, value: _M(-.0134,-.6469,.7625,0,.0654,.7604,.6462,0,-.9978,.0585,.0321,0,0,.2494,0,1)},
+        {frame: 44, value: _M(-.0126,-.6219,.783,0,.0478,.7818,.6217,0,-.9988,.0452,.0198,0,0,.2494,0,1)},
         {frame: 45, value: _M(-.0125,-.5941,.8043,0,.0287,.8038,.5942,0,-.9995,.0305,.007,0,0,.2494,0,1)},
         {frame: 46, value: _M(-.013,-.5627,.8266,0,.0077,.8266,.5628,0,-.9999,.0137,-.0065,0,0,.2494,0,1)},
         {frame: 47, value: _M(-.0145,-.5302,.8477,0,-.0134,.8478,.5301,0,-.9998,-.0037,-.0194,0,0,.2494,0,1)},
@@ -1819,18 +1983,18 @@ var Warrior;
         {frame: 30, value: _M(.064,-.9444,-.3225,0,.9979,.0577,.0289,0,-.0087,-.3236,.9461,0,0,.1634,0,1)},
         {frame: 31, value: _M(.0718,-.9478,-.3106,0,.9974,.0679,.0234,0,-.0011,-.3115,.9503,0,0,.1634,0,1)},
         {frame: 32, value: _M(.0917,-.9554,-.2808,0,.9956,.0929,.0091,0,.0174,-.2804,.9597,0,0,.1634,0,1)},
-        {frame: 33, value: _M(.1108,-.9611,-.2531,0,.9933,.1158,-.005,0,.0341,-.2508,.9674,0,0,.1634,0,1)},
-        {frame: 34, value: _M(.1352,-.9664,-.2185,0,.9893,.1437,-.0235,0,.0541,-.213,.9755,0,0,.1634,0,1)},
+        {frame: 33, value: _M(.1151,-.9622,-.2469,0,.9926,.1208,-.0082,0,.0377,-.2442,.969,0,0,.1634,0,1)},
+        {frame: 34, value: _M(.1445,-.9679,-.2055,0,.9876,.154,-.0307,0,.0613,-.1985,.9782,0,0,.1634,0,1)},
         {frame: 35, value: _M(.1776,-.9709,-.1607,0,.9804,.1887,-.0568,0,.0855,-.1475,.9854,0,0,.1634,0,1)},
-        {frame: 36, value: _M(.2531,-.9653,-.0643,0,.9584,.2592,-.1194,0,.1319,-.0314,.9908,0,0,.1634,0,1)},
-        {frame: 37, value: _M(.2881,-.9574,-.0191,0,.9456,.2875,-.1522,0,.1512,.0258,.9882,0,0,.1634,0,1)},
-        {frame: 38, value: _M(.3052,-.9523,-.0007,0,.939,.3011,-.166,0,.1583,.05,.9861,0,0,.1634,0,1)},
+        {frame: 36, value: _M(.215,-.9702,-.112,0,.9704,.2251,-.0873,0,.1099,-.0899,.9899,0,0,.1634,0,1)},
+        {frame: 37, value: _M(.2531,-.9653,-.0643,0,.9584,.2592,-.1194,0,.1319,-.0314,.9908,0,0,.1634,0,1)},
+        {frame: 38, value: _M(.2885,-.9572,-.0217,0,.9457,.2884,-.15,0,.1499,.0228,.9884,0,0,.1634,0,1)},
         {frame: 39, value: _M(.3177,-.9481,.0122,0,.9341,.3107,-.1759,0,.163,.0673,.9843,0,0,.1634,0,1)},
-        {frame: 40, value: _M(.33,-.9436,.0262,0,.9289,.3197,-.187,0,.1681,.0861,.982,0,0,.1634,0,1)},
-        {frame: 41, value: _M(.3336,-.9422,.0303,0,.9274,.3222,-.1902,0,.1695,.0916,.9813,0,0,.1634,0,1)},
+        {frame: 40, value: _M(.3336,-.9422,.0303,0,.9274,.3222,-.1902,0,.1695,.0916,.9813,0,0,.1634,0,1)},
+        {frame: 41, value: _M(.3242,-.9458,.0197,0,.9314,.3155,-.1818,0,.1657,.0773,.9831,0,0,.1634,0,1)},
         {frame: 42, value: _M(.3008,-.9537,-.0073,0,.9409,.298,-.1608,0,.1556,.0415,.987,0,0,.1634,0,1)},
-        {frame: 43, value: _M(.2699,-.9619,-.0439,0,.9525,.2734,-.1338,0,.1407,-.0057,.99,0,0,.1634,0,1)},
-        {frame: 44, value: _M(.2399,-.9674,-.0806,0,.9628,.2478,-.1082,0,.1246,-.0516,.9909,0,0,.1634,0,1)},
+        {frame: 43, value: _M(.2741,-.9609,-.0388,0,.951,.2769,-.1375,0,.1428,.0008,.9897,0,0,.1634,0,1)},
+        {frame: 44, value: _M(.2419,-.9672,-.0781,0,.9621,.2495,-.1098,0,.1257,-.0486,.9909,0,0,.1634,0,1)},
         {frame: 45, value: _M(.2075,-.9706,-.1216,0,.9726,.2181,-.0811,0,.1052,-.1014,.9893,0,0,.1634,0,1)},
         {frame: 46, value: _M(.1705,-.9705,-.1702,0,.9821,.1815,-.0511,0,.0805,-.1585,.9841,0,0,.1634,0,1)},
         {frame: 47, value: _M(.1343,-.9663,-.2198,0,.9895,.1427,-.0228,0,.0534,-.2144,.9753,0,0,.1634,0,1)},
@@ -1863,7 +2027,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("Finger_Bone3.R", skeleton,skeleton.bones[21], _M(.5228,.0418,.8514,0,-.6264,.6963,.3505,0,-.5782,-.7166,.3902,0,-.1446,.7399,.1231,1), _M(.3721,.1776,.911,0,-.7296,.6627,.1688,0,-.5738,-.7275,.3762,0,-.1549,.7468,.1043,1));
+        bone = new QI.Bone("Finger_Bone3.R", skeleton,skeleton.bones[21], _M(.5218,.0441,.8519,0,-.6263,.6979,.3475,0,-.5792,-.7149,.3917,0,-.1446,.7402,.1228,1), _M(.3721,.1776,.911,0,-.7296,.6627,.1688,0,-.5738,-.7275,.3762,0,-.1549,.7468,.1043,1));
         bone.length = .1072;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -1886,18 +2050,18 @@ var Warrior;
         {frame: 30, value: _M(.5954,-.0881,.7986,0,-.6271,.5705,.5305,0,-.5023,-.8166,.2844,0,-.1417,.7218,.1392,1)},
         {frame: 31, value: _M(.5886,-.086,.8039,0,-.6269,.5792,.521,0,-.5104,-.8106,.287,0,-.1418,.7226,.1384,1)},
         {frame: 32, value: _M(.5715,-.0803,.8167,0,-.626,.6008,.4971,0,-.5306,-.7954,.2931,0,-.1423,.7246,.1364,1)},
-        {frame: 33, value: _M(.5553,-.0743,.8283,0,-.6245,.6205,.4744,0,-.5492,-.7807,.2982,0,-.1426,.7266,.1346,1)},
-        {frame: 34, value: _M(.5351,-.0663,.8422,0,-.6215,.6443,.4456,0,-.5722,-.7619,.3036,0,-.1431,.7289,.1322,1)},
+        {frame: 33, value: _M(.5518,-.073,.8308,0,-.624,.6247,.4694,0,-.5533,-.7774,.2992,0,-.1427,.727,.1342,1)},
+        {frame: 34, value: _M(.5276,-.0632,.8472,0,-.62,.6531,.4348,0,-.5807,-.7547,.3054,0,-.1433,.7298,.1314,1)},
         {frame: 35, value: _M(.501,-.0513,.8639,0,-.6138,.6827,.3965,0,-.6101,-.7289,.3105,0,-.1439,.7329,.1284,1)},
-        {frame: 36, value: _M(.4422,-.021,.8967,0,-.5933,.7429,.31,0,-.6726,-.6691,.3161,0,-.1453,.7397,.1217,1)},
-        {frame: 37, value: _M(.4138,-.0046,.9104,0,-.5799,.7696,.2674,0,-.7018,-.6385,.3158,0,-.146,.743,.1185,1)},
-        {frame: 38, value: _M(.4019,.003,.9157,0,-.5739,.7801,.2493,0,-.7136,-.6257,.3152,0,-.1463,.7443,.1171,1)},
+        {frame: 36, value: _M(.4716,-.0368,.881,0,-.6048,.7136,.3535,0,-.6417,-.6996,.3143,0,-.1446,.7363,.1251,1)},
+        {frame: 37, value: _M(.4422,-.021,.8967,0,-.5933,.7429,.31,0,-.6726,-.6691,.3161,0,-.1453,.7397,.1217,1)},
+        {frame: 38, value: _M(.4153,-.0052,.9097,0,-.5808,.7681,.2696,0,-.7001,-.6403,.3159,0,-.1459,.7428,.1187,1)},
         {frame: 39, value: _M(.3934,.0086,.9193,0,-.5694,.7874,.2363,0,-.7218,-.6164,.3146,0,-.1464,.7453,.1162,1)},
-        {frame: 40, value: _M(.3842,.0146,.9231,0,-.5642,.7951,.2223,0,-.7308,-.6062,.3137,0,-.1467,.7464,.1151,1)},
-        {frame: 41, value: _M(.3815,.0164,.9242,0,-.5627,.7973,.2181,0,-.7333,-.6033,.3134,0,-.1467,.7467,.1148,1)},
+        {frame: 40, value: _M(.3815,.0164,.9242,0,-.5627,.7973,.2181,0,-.7333,-.6033,.3134,0,-.1467,.7467,.1148,1)},
+        {frame: 41, value: _M(.3885,.0119,.9214,0,-.5668,.7914,.2288,0,-.7265,-.6111,.3142,0,-.1466,.7459,.1156,1)},
         {frame: 42, value: _M(.4061,.0006,.9138,0,-.5763,.7762,.2556,0,-.7092,-.6304,.3156,0,-.1461,.7438,.1176,1)},
-        {frame: 43, value: _M(.4294,-.0135,.903,0,-.5877,.755,.2908,0,-.6858,-.6555,.3162,0,-.1456,.7411,.1203,1)},
-        {frame: 44, value: _M(.4523,-.0266,.8915,0,-.5975,.7331,.325,0,-.6621,-.6796,.3157,0,-.1451,.7385,.1229,1)},
+        {frame: 43, value: _M(.4262,-.0116,.9046,0,-.5862,.758,.2859,0,-.689,-.6521,.3162,0,-.1457,.7415,.1199,1)},
+        {frame: 44, value: _M(.4508,-.0257,.8923,0,-.5969,.7345,.3227,0,-.6637,-.6781,.3158,0,-.1451,.7387,.1227,1)},
         {frame: 45, value: _M(.4774,-.0398,.8778,0,-.6067,.7077,.3621,0,-.6356,-.7054,.3137,0,-.1445,.7356,.1257,1)},
         {frame: 46, value: _M(.5067,-.0539,.8604,0,-.6153,.6765,.4047,0,-.6039,-.7345,.3096,0,-.1438,.7322,.129,1)},
         {frame: 47, value: _M(.536,-.0667,.8416,0,-.6216,.6434,.4469,0,-.5713,-.7626,.3034,0,-.1431,.7288,.1323,1)},
@@ -1979,18 +2143,18 @@ var Warrior;
         {frame: 30, value: _M(-.2484,.5247,.8142,0,.0502,.8464,-.5301,0,-.9673,-.0908,-.2366,0,0,.1072,0,1)},
         {frame: 31, value: _M(-.2486,.5252,.8139,0,.0482,.8459,-.5312,0,-.9674,-.0928,-.2356,0,0,.1072,0,1)},
         {frame: 32, value: _M(-.2489,.5266,.8129,0,.0433,.8445,-.5338,0,-.9676,-.0977,-.233,0,0,.1072,0,1)},
-        {frame: 33, value: _M(-.2492,.5279,.8119,0,.0386,.8431,-.5363,0,-.9677,-.1023,-.2305,0,0,.1072,0,1)},
-        {frame: 34, value: _M(-.2496,.5295,.8108,0,.0329,.8414,-.5394,0,-.9678,-.1079,-.2274,0,0,.1072,0,1)},
+        {frame: 33, value: _M(-.2493,.5282,.8117,0,.0376,.8428,-.5368,0,-.9677,-.1033,-.23,0,0,.1072,0,1)},
+        {frame: 34, value: _M(-.2497,.5301,.8104,0,.0308,.8408,-.5405,0,-.9678,-.11,-.2263,0,0,.1072,0,1)},
         {frame: 35, value: _M(-.2503,.5321,.8088,0,.0233,.8385,-.5444,0,-.9679,-.1174,-.2223,0,0,.1072,0,1)},
-        {frame: 36, value: _M(-.2515,.5366,.8055,0,.0069,.8332,-.5529,0,-.9678,-.1335,-.2133,0,0,.1072,0,1)},
-        {frame: 37, value: _M(-.2522,.5387,.8039,0,-.001,.8306,-.5569,0,-.9677,-.1413,-.2089,0,0,.1072,0,1)},
-        {frame: 38, value: _M(-.2524,.5396,.8032,0,-.0044,.8294,-.5586,0,-.9676,-.1445,-.207,0,0,.1072,0,1)},
+        {frame: 36, value: _M(-.2509,.5343,.8072,0,.0152,.8359,-.5486,0,-.9679,-.1254,-.2178,0,0,.1072,0,1)},
+        {frame: 37, value: _M(-.2515,.5366,.8055,0,.0069,.8332,-.5529,0,-.9678,-.1335,-.2133,0,0,.1072,0,1)},
+        {frame: 38, value: _M(-.2521,.5386,.804,0,-.0006,.8307,-.5567,0,-.9677,-.1408,-.2091,0,0,.1072,0,1)},
         {frame: 39, value: _M(-.2526,.5402,.8027,0,-.0067,.8286,-.5598,0,-.9675,-.1468,-.2057,0,0,.1072,0,1)},
-        {frame: 40, value: _M(-.2529,.5409,.8022,0,-.0093,.8277,-.5611,0,-.9675,-.1494,-.2042,0,0,.1072,0,1)},
-        {frame: 41, value: _M(-.2529,.5411,.802,0,-.0101,.8274,-.5615,0,-.9674,-.1501,-.2038,0,0,.1072,0,1)},
+        {frame: 40, value: _M(-.2529,.5411,.802,0,-.0101,.8274,-.5615,0,-.9674,-.1501,-.2038,0,0,.1072,0,1)},
+        {frame: 41, value: _M(-.2527,.5406,.8024,0,-.0081,.8281,-.5605,0,-.9675,-.1482,-.2049,0,0,.1072,0,1)},
         {frame: 42, value: _M(-.2523,.5393,.8034,0,-.0032,.8298,-.558,0,-.9676,-.1433,-.2077,0,0,.1072,0,1)},
-        {frame: 43, value: _M(-.2518,.5375,.8048,0,.0034,.832,-.5547,0,-.9678,-.137,-.2113,0,0,.1072,0,1)},
-        {frame: 44, value: _M(-.2513,.5358,.8061,0,.0097,.8342,-.5514,0,-.9679,-.1307,-.2148,0,0,.1072,0,1)},
+        {frame: 43, value: _M(-.2519,.5378,.8046,0,.0025,.8317,-.5552,0,-.9678,-.1379,-.2108,0,0,.1072,0,1)},
+        {frame: 44, value: _M(-.2513,.5359,.806,0,.0093,.834,-.5516,0,-.9679,-.1311,-.2146,0,0,.1072,0,1)},
         {frame: 45, value: _M(-.2508,.5339,.8075,0,.0168,.8364,-.5478,0,-.9679,-.1238,-.2187,0,0,.1072,0,1)},
         {frame: 46, value: _M(-.2502,.5317,.8092,0,.0249,.839,-.5436,0,-.9679,-.1158,-.2231,0,0,.1072,0,1)},
         {frame: 47, value: _M(-.2496,.5294,.8108,0,.0332,.8415,-.5392,0,-.9678,-.1077,-.2276,0,0,.1072,0,1)},
@@ -2006,7 +2170,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("thigh.L", skeleton,skeleton.bones[5], _M(.9316,.3558,-.0739,0,.3523,-.8346,.4234,0,.089,-.4205,-.9029,0,.2401,.1528,-.0013,1), _M(.9969,.0775,-.0101,0,.0781,-.9839,.1607,0,.0025,-.161,-.9869,0,.2401,.1528,-.0013,1));
+        bone = new QI.Bone("thigh.L", skeleton,skeleton.bones[5], _M(.9316,.3558,-.0738,0,.3524,-.8349,.4228,0,.0888,-.4199,-.9032,0,.2401,.1528,-.0013,1), _M(.9969,.0775,-.0101,0,.0781,-.9839,.1607,0,.0025,-.161,-.9869,0,.2401,.1528,-.0013,1));
         bone.length = 1.3168;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -2030,20 +2194,20 @@ var Warrior;
         {frame: 30, value: _M(.9978,.0653,-.0106,0,.0655,-.9976,.0221,0,-.0091,-.0228,-.9997,0,.2401,.1528,-.0013,1)},
         {frame: 31, value: _M(.998,.0603,-.0186,0,.0623,-.9888,.1358,0,-.0102,-.1367,-.9906,0,.2401,.1528,-.0013,1)},
         {frame: 32, value: _M(.9985,.0419,-.0345,0,.0519,-.9241,.3786,0,-.016,-.3798,-.9249,0,.2401,.1528,-.0013,1)},
-        {frame: 33, value: _M(.999,.0197,-.0408,0,.0403,-.7964,.6034,0,-.0206,-.6044,-.7964,0,.2401,.1528,-.0013,1)},
-        {frame: 34, value: _M(.9994,.0051,-.0357,0,.0318,-.5919,.8054,0,-.017,-.806,-.5916,0,.2401,.1528,-.0013,1)},
+        {frame: 33, value: _M(.999,.0148,-.0411,0,.0378,-.7655,.6424,0,-.0219,-.6433,-.7653,0,.2401,.1528,-.0013,1)},
+        {frame: 34, value: _M(.9994,.0005,-.0337,0,.0291,-.518,.8549,0,-.017,-.8554,-.5177,0,.2401,.1528,-.0013,1)},
         {frame: 35, value: _M(.9995,.0056,-.0316,0,.0314,-.3761,.926,0,-.0066,-.9266,-.3761,0,.2401,.1528,-.0013,1)},
-        {frame: 36, value: _M(.9993,.0184,-.0333,0,.0376,-.351,.9356,0,.0055,-.9362,-.3514,0,.2401,.1528,-.0013,1)},
-        {frame: 37, value: _M(.9994,.0203,-.0296,0,.0355,-.448,.8933,0,.0049,-.8938,-.4484,0,.2401,.1528,-.0013,1)},
-        {frame: 38, value: _M(.9995,.0195,-.0266,0,.0328,-.4912,.8704,0,.0039,-.8708,-.4916,0,.2401,.1528,-.0013,1)},
+        {frame: 36, value: _M(.9994,.0121,-.033,0,.0351,-.3017,.9528,0,.0015,-.9533,-.3019,0,.2401,.1528,-.0013,1)},
+        {frame: 37, value: _M(.9993,.0184,-.0333,0,.0376,-.351,.9356,0,.0055,-.9362,-.3514,0,.2401,.1528,-.0013,1)},
+        {frame: 38, value: _M(.9994,.02,-.0295,0,.0353,-.4393,.8976,0,.005,-.8981,-.4397,0,.2401,.1528,-.0013,1)},
         {frame: 39, value: _M(.9996,.019,-.0222,0,.029,-.5642,.8252,0,.0032,-.8255,-.5645,0,.2401,.1528,-.0013,1)},
-        {frame: 40, value: _M(.9997,.0142,-.0182,0,.0231,-.6149,.7883,0,0,-.7885,-.6151,0,.2401,.1528,-.0013,1)},
-        {frame: 41, value: _M(.9998,.007,-.021,0,.021,-.5973,.8017,0,-.0069,-.802,-.5973,0,.2401,.1528,-.0013,1)},
-        {frame: 42, value: _M(.9996,.0113,-.0261,0,.0268,-.6784,.7342,0,-.0094,-.7346,-.6784,0,.2401,.1528,-.0013,1)},
-        {frame: 43, value: _M(.9994,.0202,-.0266,0,.0324,-.7849,.6188,0,-.0084,-.6193,-.7851,0,.2401,.1528,-.0013,1)},
-        {frame: 44, value: _M(.9992,.0315,-.0237,0,.039,-.8815,.4706,0,-.006,-.4711,-.882,0,.2401,.1528,-.0013,1)},
+        {frame: 40, value: _M(.9998,.007,-.021,0,.021,-.5973,.8017,0,-.0069,-.802,-.5973,0,.2401,.1528,-.0013,1)},
+        {frame: 41, value: _M(.9997,.0025,-.0248,0,.0218,-.5737,.8188,0,-.0122,-.8191,-.5736,0,.2401,.1528,-.0013,1)},
+        {frame: 42, value: _M(.9996,.0046,-.0275,0,.0246,-.6097,.7923,0,-.0131,-.7927,-.6095,0,.2401,.1528,-.0013,1)},
+        {frame: 43, value: _M(.9995,.0155,-.0279,0,.0302,-.7401,.6718,0,-.0102,-.6723,-.7402,0,.2401,.1528,-.0013,1)},
+        {frame: 44, value: _M(.9992,.0333,-.0218,0,.0395,-.8956,.4431,0,-.0048,-.4436,-.8962,0,.2401,.1528,-.0013,1)},
         {frame: 45, value: _M(.9989,.0466,-.0099,0,.0476,-.9872,.1525,0,-.0027,-.1528,-.9883,0,.2401,.1528,-.0013,1)},
-        {frame: 46, value: _M(.9986,.0538,-.0011,0,.0537,-.9968,-.0588,0,-.0043,.0586,-.9983,0,.2401,.1528,-.0013,1)},
+        {frame: 46, value: _M(.9985,.0545,-.0025,0,.0544,-.9982,-.0271,0,-.004,.0269,-.9996,0,.2401,.1528,-.0013,1)},
         {frame: 47, value: _M(.9981,.062,-.0013,0,.0618,-.9964,-.0576,0,-.0049,.0574,-.9983,0,.2401,.1528,-.0013,1)},
         {frame: 48, value: _M(.9978,.0661,.0006,0,.0658,-.9925,-.1035,0,-.0062,.1033,-.9946,0,.2401,.1528,-.0013,1)},
         {frame: 49, value: _M(.9976,.0686,-.0001,0,.0683,-.9931,-.0957,0,-.0066,.0954,-.9954,0,.2401,.1528,-.0013,1)},
@@ -2176,7 +2340,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("shin.L", skeleton,skeleton.bones[28], _M(.9955,.0885,.0336,0,-.0946,.9165,.3887,0,.0036,-.3901,.9208,0,0,1.3168,0,1), _M(.9955,.0885,.0336,0,-.092,.9877,.1265,0,-.022,-.129,.9914,0,0,1.3168,0,1));
+        bone = new QI.Bone("shin.L", skeleton,skeleton.bones[28], _M(.9955,.0885,.0336,0,-.0946,.9171,.3873,0,.0035,-.3887,.9213,0,0,1.3168,0,1), _M(.9955,.0885,.0336,0,-.092,.9877,.1265,0,-.022,-.129,.9914,0,0,1.3168,0,1));
         bone.length = 1.2357;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -2200,20 +2364,20 @@ var Warrior;
         {frame: 30, value: _M(.9955,.0885,.0336,0,-.0467,.1506,.9875,0,.0823,-.9846,.1541,0,0,1.3168,0,1)},
         {frame: 31, value: _M(.9955,.0885,.0336,0,-.0287,-.0558,.998,0,.0902,-.9945,-.053,0,0,1.3168,0,1)},
         {frame: 32, value: _M(.9955,.0885,.0336,0,.0039,-.3928,.9196,0,.0945,-.9154,-.3914,0,0,1.3168,0,1)},
-        {frame: 33, value: _M(.9955,.0885,.0336,0,.0179,-.5246,.8511,0,.0929,-.8467,-.5239,0,0,1.3168,0,1)},
-        {frame: 34, value: _M(.9955,.0885,.0336,0,.0113,-.4636,.886,0,.0939,-.8816,-.4625,0,0,1.3168,0,1)},
+        {frame: 33, value: _M(.9955,.0885,.0336,0,.0199,-.5424,.8399,0,.0925,-.8355,-.5417,0,0,1.3168,0,1)},
+        {frame: 34, value: _M(.9955,.0885,.0336,0,.0108,-.4587,.8885,0,.094,-.8842,-.4576,0,0,1.3168,0,1)},
         {frame: 35, value: _M(.9955,.0885,.0336,0,-.016,-.1925,.9812,0,.0933,-.9773,-.1903,0,0,1.3168,0,1)},
-        {frame: 36, value: _M(.9955,.0885,.0336,0,-.0764,.5427,.8364,0,.0558,-.8352,.5471,0,0,1.3168,0,1)},
-        {frame: 37, value: _M(.9955,.0885,.0336,0,-.0895,.7655,.6372,0,.0307,-.6374,.7699,0,0,1.3168,0,1)},
-        {frame: 38, value: _M(.9955,.0885,.0336,0,-.0928,.8446,.5272,0,.0183,-.528,.8491,0,0,1.3168,0,1)},
+        {frame: 36, value: _M(.9955,.0885,.0336,0,-.0465,.1485,.9878,0,.0824,-.9849,.152,0,0,1.3168,0,1)},
+        {frame: 37, value: _M(.9955,.0885,.0336,0,-.0764,.5427,.8364,0,.0558,-.8352,.5471,0,0,1.3168,0,1)},
+        {frame: 38, value: _M(.9955,.0885,.0336,0,-.0898,.7719,.6294,0,.0298,-.6296,.7764,0,0,1.3168,0,1)},
         {frame: 39, value: _M(.9955,.0885,.0336,0,-.0946,.9244,.3694,0,.0016,-.3709,.9287,0,0,1.3168,0,1)},
-        {frame: 40, value: _M(.9955,.0885,.0336,0,-.0946,.9368,.3369,0,-.0016,-.3385,.941,0,0,1.3168,0,1)},
-        {frame: 41, value: _M(.9955,.0885,.0336,0,-.0899,.7735,.6274,0,.0295,-.6276,.7779,0,0,1.3168,0,1)},
-        {frame: 42, value: _M(.9955,.0885,.0336,0,-.0731,.4933,.8668,0,.0601,-.8653,.4976,0,0,1.3168,0,1)},
-        {frame: 43, value: _M(.9955,.0885,.0336,0,-.0664,.4005,.9139,0,.0674,-.912,.4046,0,0,1.3168,0,1)},
-        {frame: 44, value: _M(.9955,.0885,.0336,0,-.0685,.4288,.9008,0,.0653,-.8991,.4329,0,0,1.3168,0,1)},
+        {frame: 40, value: _M(.9955,.0885,.0336,0,-.0899,.7735,.6274,0,.0295,-.6276,.7779,0,0,1.3168,0,1)},
+        {frame: 41, value: _M(.9955,.0885,.0336,0,-.0742,.5103,.8568,0,.0587,-.8554,.5146,0,0,1.3168,0,1)},
+        {frame: 42, value: _M(.9955,.0885,.0336,0,-.0613,.3333,.9408,0,.072,-.9387,.3372,0,0,1.3168,0,1)},
+        {frame: 43, value: _M(.9955,.0885,.0336,0,-.0613,.3328,.941,0,.0721,-.9388,.3367,0,0,1.3168,0,1)},
+        {frame: 44, value: _M(.9955,.0885,.0336,0,-.0758,.5337,.8422,0,.0566,-.841,.538,0,0,1.3168,0,1)},
         {frame: 45, value: _M(.9955,.0885,.0336,0,-.0916,.8119,.5766,0,.0238,-.5771,.8164,0,0,1.3168,0,1)},
-        {frame: 46, value: _M(.9955,.0885,.0336,0,-.0946,.9376,.3345,0,-.0019,-.3362,.9418,0,0,1.3168,0,1)},
+        {frame: 46, value: _M(.9955,.0885,.0336,0,-.0945,.9108,.4019,0,.005,-.4032,.9151,0,0,1.3168,0,1)},
         {frame: 47, value: _M(.9955,.0885,.0336,0,-.0938,.8755,.474,0,.0125,-.475,.8799,0,0,1.3168,0,1)},
         {frame: 48, value: _M(.9955,.0885,.0336,0,-.0927,.8399,.5348,0,.0191,-.5355,.8443,0,0,1.3168,0,1)},
         {frame: 49, value: _M(.9955,.0885,.0336,0,-.0871,.719,.6895,0,.0369,-.6894,.7235,0,0,1.3168,0,1)},
@@ -2346,7 +2510,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("thigh.R", skeleton,skeleton.bones[5], _M(.9292,-.3693,.0136,0,-.3691,-.9258,.0816,0,-.0175,-.0808,-.9966,0,-.2401,.1528,-.0013,1), _M(.9969,-.0775,.0101,0,-.0781,-.9839,.1607,0,-.0025,-.161,-.9869,0,-.2401,.1528,-.0013,1));
+        bone = new QI.Bone("thigh.R", skeleton,skeleton.bones[5], _M(.9293,-.3692,.0136,0,-.369,-.9259,.0807,0,-.0173,-.08,-.9966,0,-.2401,.1528,-.0013,1), _M(.9969,-.0775,.0101,0,-.0781,-.9839,.1607,0,-.0025,-.161,-.9869,0,-.2401,.1528,-.0013,1));
         bone.length = 1.3168;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -2370,20 +2534,20 @@ var Warrior;
         {frame: 30, value: _M(.9998,-.007,.021,0,-.021,-.5973,.8017,0,.0069,-.802,-.5973,0,-.2401,.1528,-.0013,1)},
         {frame: 31, value: _M(.9997,-.0062,.0238,0,-.0228,-.5934,.8046,0,.0091,-.8049,-.5933,0,-.2401,.1528,-.0013,1)},
         {frame: 32, value: _M(.9996,-.0074,.0271,0,-.0256,-.6378,.7698,0,.0115,-.7702,-.6378,0,-.2401,.1528,-.0013,1)},
-        {frame: 33, value: _M(.9995,-.0152,.0275,0,-.0297,-.7415,.6702,0,.0102,-.6707,-.7416,0,-.2401,.1528,-.0013,1)},
-        {frame: 34, value: _M(.9993,-.0314,.0216,0,-.0378,-.8916,.4512,0,.0051,-.4517,-.8922,0,-.2401,.1528,-.0013,1)},
+        {frame: 33, value: _M(.9995,-.0155,.0279,0,-.0302,-.7401,.6718,0,.0102,-.6723,-.7402,0,-.2401,.1528,-.0013,1)},
+        {frame: 34, value: _M(.9992,-.0333,.0218,0,-.0395,-.8956,.4431,0,.0048,-.4436,-.8962,0,-.2401,.1528,-.0013,1)},
         {frame: 35, value: _M(.9989,-.0466,.0099,0,-.0476,-.9872,.1525,0,.0027,-.1528,-.9883,0,-.2401,.1528,-.0013,1)},
-        {frame: 36, value: _M(.9981,-.062,.0013,0,-.0618,-.9964,-.0576,0,.0049,.0574,-.9983,0,-.2401,.1528,-.0013,1)},
-        {frame: 37, value: _M(.9978,-.0657,-.0002,0,-.0654,-.9933,-.0954,0,.0061,.0952,-.9954,0,-.2401,.1528,-.0013,1)},
-        {frame: 38, value: _M(.9977,-.0674,-.0008,0,-.0671,-.9917,-.1093,0,.0066,.1091,-.994,0,-.2401,.1528,-.0013,1)},
+        {frame: 36, value: _M(.9985,-.0545,.0025,0,-.0544,-.9981,-.0271,0,.004,.0269,-.9996,0,-.2401,.1528,-.0013,1)},
+        {frame: 37, value: _M(.9981,-.062,.0013,0,-.0618,-.9964,-.0576,0,.0049,.0574,-.9983,0,-.2401,.1528,-.0013,1)},
+        {frame: 38, value: _M(.9978,-.0661,-.0006,0,-.0658,-.9925,-.1035,0,.0062,.1033,-.9946,0,-.2401,.1528,-.0013,1)},
         {frame: 39, value: _M(.9976,-.0686,.0001,0,-.0683,-.9931,-.0957,0,.0066,.0954,-.9954,0,-.2401,.1528,-.0013,1)},
-        {frame: 40, value: _M(.9975,-.0703,.0034,0,-.07,-.9964,-.0481,0,.0067,.0478,-.9988,0,-.2401,.1528,-.0013,1)},
-        {frame: 41, value: _M(.9975,-.0695,.0095,0,-.0697,-.9973,.0222,0,.0079,-.0228,-.9997,0,-.2401,.1528,-.0013,1)},
-        {frame: 42, value: _M(.9985,-.043,.0332,0,-.0525,-.9195,.3897,0,.0137,-.3908,-.9204,0,-.2401,.1528,-.0013,1)},
-        {frame: 43, value: _M(.9992,-.0072,.0405,0,-.0334,-.7175,.6957,0,.024,-.6965,-.7172,0,-.2401,.1528,-.0013,1)},
-        {frame: 44, value: _M(.9994,.01,.0322,0,-.0237,-.4693,.8827,0,.024,-.883,-.4688,0,-.2401,.1528,-.0013,1)},
+        {frame: 40, value: _M(.9975,-.0695,.0095,0,-.0697,-.9973,.0222,0,.0079,-.0228,-.9997,0,-.2401,.1528,-.0013,1)},
+        {frame: 41, value: _M(.9979,-.0617,.0209,0,-.0642,-.9864,.1511,0,.0113,-.1521,-.9883,0,-.2401,.1528,-.0013,1)},
+        {frame: 42, value: _M(.9985,-.0413,.0355,0,-.0515,-.9282,.3685,0,.0177,-.3698,-.929,0,-.2401,.1528,-.0013,1)},
+        {frame: 43, value: _M(.9991,-.0123,.0414,0,-.036,-.7655,.6424,0,.0238,-.6433,-.7653,0,-.2401,.1528,-.0013,1)},
+        {frame: 44, value: _M(.9994,.0006,.0336,0,-.0285,-.518,.8549,0,.0179,-.8554,-.5177,0,-.2401,.1528,-.0013,1)},
         {frame: 45, value: _M(.9995,-.0056,.0316,0,-.0314,-.3761,.926,0,.0066,-.9266,-.3761,0,-.2401,.1528,-.0013,1)},
-        {frame: 46, value: _M(.9994,-.0131,.0332,0,-.0356,-.3148,.9485,0,-.0019,-.9491,-.3151,0,-.2401,.1528,-.0013,1)},
+        {frame: 46, value: _M(.9994,-.0121,.033,0,-.0351,-.3017,.9528,0,-.0015,-.9533,-.3019,0,-.2401,.1528,-.0013,1)},
         {frame: 47, value: _M(.9993,-.0184,.0333,0,-.0376,-.351,.9356,0,-.0055,-.9362,-.3514,0,-.2401,.1528,-.0013,1)},
         {frame: 48, value: _M(.9994,-.02,.0295,0,-.0353,-.4393,.8976,0,-.005,-.8981,-.4397,0,-.2401,.1528,-.0013,1)},
         {frame: 49, value: _M(.9996,-.019,.0222,0,-.029,-.5642,.8252,0,-.0032,-.8255,-.5645,0,-.2401,.1528,-.0013,1)},
@@ -2514,7 +2678,7 @@ var Warrior;
         ]);
         bone.animations.push(animation);
 
-        bone = new QI.Bone("shin.R", skeleton,skeleton.bones[30], _M(.9955,-.0885,-.0336,0,.0946,.9405,.3263,0,.0027,-.328,.9447,0,0,1.3168,0,1), _M(.9955,-.0885,-.0336,0,.092,.9877,.1265,0,.022,-.129,.9914,0,0,1.3168,0,1));
+        bone = new QI.Bone("shin.R", skeleton,skeleton.bones[30], _M(.9955,-.0885,-.0336,0,.0946,.9411,.3246,0,.0029,-.3263,.9453,0,0,1.3168,0,1), _M(.9955,-.0885,-.0336,0,.092,.9877,.1265,0,.022,-.129,.9914,0,0,1.3168,0,1));
         bone.length = 1.2357;
         animation = new _B.Animation("anim", "_matrix", 24, 3, 1);
         animation.setKeys([
@@ -2538,20 +2702,20 @@ var Warrior;
         {frame: 30, value: _M(.9955,-.0885,-.0336,0,.0899,.7735,.6274,0,-.0295,-.6276,.7779,0,0,1.3168,0,1)},
         {frame: 31, value: _M(.9955,-.0885,-.0336,0,.0821,.6306,.7718,0,-.0471,-.7711,.635,0,0,1.3168,0,1)},
         {frame: 32, value: _M(.9955,-.0885,-.0336,0,.0663,.3987,.9147,0,-.0675,-.9128,.4028,0,0,1.3168,0,1)},
-        {frame: 33, value: _M(.9955,-.0885,-.0336,0,.0633,.3587,.9313,0,-.0703,-.9293,.3627,0,0,1.3168,0,1)},
-        {frame: 34, value: _M(.9955,-.0885,-.0336,0,.0774,.5579,.8263,0,-.0544,-.8252,.5623,0,0,1.3168,0,1)},
+        {frame: 33, value: _M(.9955,-.0885,-.0336,0,.0613,.3328,.941,0,-.0721,-.9388,.3367,0,0,1.3168,0,1)},
+        {frame: 34, value: _M(.9955,-.0885,-.0336,0,.0758,.5337,.8422,0,-.0566,-.841,.538,0,0,1.3168,0,1)},
         {frame: 35, value: _M(.9955,-.0885,-.0336,0,.0916,.8119,.5766,0,-.0238,-.5771,.8164,0,0,1.3168,0,1)},
-        {frame: 36, value: _M(.9955,-.0885,-.0336,0,.0938,.8755,.474,0,-.0125,-.475,.8799,0,0,1.3168,0,1)},
-        {frame: 37, value: _M(.9955,-.0885,-.0336,0,.0922,.8271,.5544,0,-.0213,-.555,.8316,0,0,1.3168,0,1)},
-        {frame: 38, value: _M(.9955,-.0885,-.0336,0,.0908,.7929,.6025,0,-.0267,-.6029,.7974,0,0,1.3168,0,1)},
+        {frame: 36, value: _M(.9955,-.0885,-.0336,0,.0945,.9108,.4019,0,-.005,-.4032,.9151,0,0,1.3168,0,1)},
+        {frame: 37, value: _M(.9955,-.0885,-.0336,0,.0938,.8755,.474,0,-.0125,-.475,.8799,0,0,1.3168,0,1)},
+        {frame: 38, value: _M(.9955,-.0885,-.0336,0,.0927,.8399,.5348,0,-.0191,-.5355,.8443,0,0,1.3168,0,1)},
         {frame: 39, value: _M(.9955,-.0885,-.0336,0,.0871,.719,.6895,0,-.0369,-.6894,.7235,0,0,1.3168,0,1)},
-        {frame: 40, value: _M(.9955,-.0885,-.0336,0,.0719,.4763,.8764,0,-.0615,-.8748,.4805,0,0,1.3168,0,1)},
-        {frame: 41, value: _M(.9955,-.0885,-.0336,0,.0467,.1508,.9875,0,-.0823,-.9846,.1543,0,0,1.3168,0,1)},
-        {frame: 42, value: _M(.9955,-.0885,-.0336,0,.0008,-.3472,.9378,0,-.0946,-.9336,-.3455,0,0,1.3168,0,1)},
-        {frame: 43, value: _M(.9955,-.0885,-.0336,0,-.0208,-.5507,.8344,0,-.0923,-.83,-.5501,0,0,1.3168,0,1)},
-        {frame: 44, value: _M(.9955,-.0885,-.0336,0,-.0195,-.5387,.8423,0,-.0926,-.8379,-.538,0,0,1.3168,0,1)},
+        {frame: 40, value: _M(.9955,-.0885,-.0336,0,.0467,.1508,.9875,0,-.0823,-.9846,.1543,0,0,1.3168,0,1)},
+        {frame: 41, value: _M(.9955,-.0885,-.0336,0,.0172,-.1797,.9836,0,-.093,-.9797,-.1773,0,0,1.3168,0,1)},
+        {frame: 42, value: _M(.9955,-.0885,-.0336,0,-.0071,-.4234,.9059,0,-.0944,-.9016,-.4221,0,0,1.3168,0,1)},
+        {frame: 43, value: _M(.9955,-.0885,-.0336,0,-.0199,-.5424,.8399,0,-.0925,-.8354,-.5417,0,0,1.3168,0,1)},
+        {frame: 44, value: _M(.9955,-.0885,-.0336,0,-.0108,-.4587,.8885,0,-.094,-.8842,-.4576,0,0,1.3168,0,1)},
         {frame: 45, value: _M(.9955,-.0885,-.0336,0,.016,-.1925,.9812,0,-.0933,-.9773,-.1903,0,0,1.3168,0,1)},
-        {frame: 46, value: _M(.9955,-.0885,-.0336,0,.0483,.1702,.9842,0,-.0814,-.9814,.1737,0,0,1.3168,0,1)},
+        {frame: 46, value: _M(.9955,-.0885,-.0336,0,.0465,.1485,.9878,0,-.0824,-.9849,.152,0,0,1.3168,0,1)},
         {frame: 47, value: _M(.9955,-.0885,-.0336,0,.0764,.5427,.8364,0,-.0558,-.8352,.5471,0,0,1.3168,0,1)},
         {frame: 48, value: _M(.9955,-.0885,-.0336,0,.0898,.7719,.6294,0,-.0298,-.6296,.7764,0,0,1.3168,0,1)},
         {frame: 49, value: _M(.9955,-.0885,-.0336,0,.0946,.9244,.3694,0,-.0016,-.3709,.9287,0,0,1.3168,0,1)},
@@ -2680,11 +2844,233 @@ var Warrior;
 
         skeleton.createAnimationRange("Attack", 0, 16);
         skeleton.createAnimationRange("Run", 30, 50);
-        skeleton.createAnimationRange("Run2", 60, 61);
+        skeleton.createAnimationRange("Run3", 60, 61);
         skeleton.createAnimationRange("stand", 70, 130);
         skeleton.createAnimationRange("Stand_with_weapon", 140, 202);
         return skeleton;
     }
+
+    var Boots = (function (_super) {
+        __extends(Boots, _super);
+        function Boots(name, scene, materialsRootDir, source) {
+            _super.call(this, name, scene, null, source, true);
+
+            if (!materialsRootDir) { materialsRootDir = "./"; }
+            defineMaterials(scene, materialsRootDir); //embedded version check
+            var cloning = source && source !== null;
+            this.position.x  = 0;
+            this.position.y  = 0;
+            this.position.z  = 0;
+            this.rotation.x  = 0;
+            this.rotation.y  = 0;
+            this.rotation.z  = 0;
+            this.scaling.x   = 1;
+            this.scaling.y   = 1;
+            this.scaling.z   = 1;
+            this.skeleton = skel_metarig(name, scene);
+            this.numBoneInfluencers = 3;
+
+
+            this.id = this.name;
+            this.billboardMode  = 0;
+            this.isVisible  = false; //always false; evaluated again at bottom
+            this.setEnabled(true);
+            this.checkCollisions = false;
+            this.receiveShadows  = false;
+            this.castShadows  = false;
+            if (!cloning){
+                this.setVerticesData(_B.VertexBuffer.PositionKind, new Float32Array([
+                    .9229,.0569,-.2816,1.0366,-.0245,-.3138,.9237,-.0248,-.2665,.9275,-.03,-.4911,.7954,-.0236,-1.0024,.7826,-.026,-.4787,.9092,.0619,-1.0158,.7954,-.0236,-1.0024,.9085,-.0222,-1.065,1.0908,.065,-.9096,1.0791,-.0253,-.5015,1.0796,.0598,-.498,.8157,.0554,-.3072,.7826,-.026,-.4787,.786,.0529,-.481,.8178,.0597,-.9544,.7826,-.026,-.4787
+                    ,.7954,-.0236,-1.0024,1.0377,.0564,-.3218,1.0791,-.0253,-.5015,.9275,-.03,-.4911,.8193,-.0247,-.2913,.9237,-.0248,-.2665,1.027,.1396,-.3948,1.0796,.0598,-.498,.8408,.1974,-.6057,.786,.0529,-.481,.8299,.1356,-.3352,.7988,.132,-.4958,.9469,.2211,-.5895,1.0655,.1464,-.4796,.8886,.2109,-.6239,.9232,.1387,-.3195,1.0366,-.0245,-.3138
+                    ,.9275,-.03,-.4911,.9237,-.0248,-.2665,1.1289,-.0218,-.9556,1.1289,-.0218,-.9556,1.0791,-.0253,-.5015,.8193,-.0247,-.2913,-.9268,.0569,1.0005,-1.0164,-.0293,1.0032,-1.0244,.0515,.9956,-.987,-.0324,.809,-1.0978,-.0253,.2926,-1.2267,-.0319,.2872,-1.2107,.0527,.3328,-1.0978,-.0253,.2926,-1.1004,.0545,.3475,-1.1235,-.0361,.86,-1.3216,.0395,.5104
+                    ,-1.1171,.0517,.8541,-.8459,-.0199,.7606,-.8215,.0565,.9678,-.8436,.0584,.7655,-.8459,-.0199,.7606,-.8436,.0584,.7655,-1.1235,-.0361,.86,-1.1171,.0517,.8541,-.8224,-.0234,.9818,-.987,-.0324,.809,-.9238,-.0246,1.0149,-1.0321,.1405,.9024,-1.1171,.0517,.8541,-1.0773,.1466,.8322,-.9087,.1691,.6434,-.8436,.0584,.7655,-.8186,.1334,.7736
+                    ,-.8347,.1386,.939,-.8186,.1334,.7736,-1.0773,.1466,.8322,-.9943,.2005,.6975,-.9628,.1792,.646,-.9192,.1387,.9631,-1.0164,-.0293,1.0032,-.987,-.0324,.809,-1.1235,-.0361,.86,-1.3739,-.045,.4841,-1.3739,-.045,.4841,-1.1235,-.0361,.86,-.8224,-.0234,.9818,.9085,-.0222,-1.065,.7954,-.0236,-1.0024,.8193,-.0247,-.2913,.7826,-.026,-.4787
+                    ,.786,.0529,-.481,.7826,-.026,-.4787,1.0796,.0598,-.498,1.0791,-.0253,-.5015,.9275,-.03,-.4911,.7826,-.026,-.4787,1.0655,.1464,-.4796,1.0796,.0598,-.498,.7988,.132,-.4958,.786,.0529,-.481,1.0366,-.0245,-.3138,1.0791,-.0253,-.5015,.9275,-.03,-.4911,1.1289,-.0218,-.9556,.9085,-.0222,-1.065,.8193,-.0247,-.2913,-.9238,-.0246,1.0149
+                    ,-.8459,-.0199,.7606,-1.2267,-.0319,.2872,-1.0978,-.0253,.2926,-.8224,-.0234,.9818,-1.0978,-.0253,.2926,-.8459,-.0199,.7606,-1.1235,-.0361,.86,-.8459,-.0199,.7606,-.987,-.0324,.809,-1.1171,.0517,.8541,-.8436,.0584,.7655,-1.0773,.1466,.8322,-1.0164,-.0293,1.0032,-.987,-.0324,.809,-1.2267,-.0319,.2872,-1.3739,-.045,.4841,-.8224,-.0234,.9818
+                    ,-.9238,-.0246,1.0149
+                ]),
+                false);
+
+                var _i;//indices & affected indices for shapekeys
+                _i = new Uint32Array(240);
+                CONTIG(_i, 0, 0, 19);
+                _i.set([1,20,21,22,23,24,18,25,26,15,27,14,28,29,11,30,31,15,6,32,18,0,27,0,12,31,9,29,33,34,35,6,36,9,37,3,38,0,39,12], 20);
+                CONTIG(_i, 60, 40, 54);
+                _i.set([48,55,56,42], 75);
+                CONTIG(_i, 79, 57, 67);
+                _i.set([54,68,69,70,50,71,72,48,65,73,42,62,53,73,68,50,72,71,74,75,76,77,46,50,43,78,79,80,40,53,0,18,1,3,81,4,6,15,82,9,36,10,12,83,84,15,85,86,18,87
+                ,88,89,90,21,23,91,92,25,93,94,27,12,14,29,9,11,31,25,15,32,23,18,27,32,0,31,6,9,95,96,97,6,8,36,98,99,3,0,2,100,40,101,41,43,102,44,46,103,104,49
+                ,77,50,52,105,53,48,106,107,42,41,108,59,109,110,62,42,111,65,48,112,54,53,68,113,51,50,72,46,48,73,40,42,53,40,73,50,46,72,114,61,115,77,116,46,43,45,117,118,119,40
+                ], 90);
+                this.setIndices(_i);
+
+                this.setVerticesData(_B.VertexBuffer.NormalKind, new Float32Array([
+                    .0632,.2833,.9569,.6004,-.5806,.5499,.0667,-.5664,.8214,.0018,-1,.0043,-.744,-.4254,-.5151,-.7527,-.6567,.0454,-.0285,.7238,-.6894,-.744,-.4254,-.5151,-.0179,-.4057,-.9138,.6559,.6893,-.3075,.7282,-.6786,.0953,.9783,.1969,.0645,-.7225,.218,.6561,-.7527,-.6567,.0454,-.9908,.1296,.0396,-.6952,.6261,-.353,-.7527,-.6567,.0454
+                    ,-.744,-.4254,-.5151,.7186,.2635,.6436,.7282,-.6786,.0953,.0018,-1,.0043,-.5675,-.5523,.6106,.0667,-.5664,.8214,.8057,.3995,.4372,.9783,.1969,.0645,-.7996,.5655,-.2019,-.9908,.1296,.0396,-.7032,.3517,.6178,-.9832,.1369,-.1206,.5183,.8106,-.2723,.9685,.1917,-.1588,-.1136,.922,-.3702,.1316,.4836,.8653,.6004,-.5806,.5499
+                    ,.0018,-1,.0043,.0667,-.5664,.8214,.7927,-.3764,-.4795,.7927,-.3764,-.4795,.7282,-.6786,.0953,-.5675,-.5523,.6106,.0969,.2821,.9545,-.3435,-.6086,.7152,-.4891,.2911,.8222,.054,-.9985,-.0057,.4602,-.3818,-.8015,-.3677,-.416,-.8317,-.3254,.7388,-.5902,.4602,-.3818,-.8015,.423,.6669,-.6135,-.6103,-.6755,.4138,-.7297,.6811,.0599
+                    ,-.8171,.2719,.5082,.7319,-.6317,-.2555,.8219,.1959,.5348,.9438,-.0953,-.3164,.7319,-.6317,-.2555,.9438,-.0953,-.3164,-.6103,-.6755,.4138,-.8171,.2719,.5082,.6794,-.54,.4968,.054,-.9985,-.0057,.0932,-.5769,.8115,-.6295,.5293,.5688,-.8171,.2719,.5082,-.7039,.6066,.3694,.7548,.2452,-.6084,.9438,-.0953,-.3164,.9273,-.2815,-.2465
+                    ,.8386,.228,.4947,.9273,-.2815,-.2465,-.7039,.6066,.3694,-.33,.9194,-.2139,-.0343,.9094,-.4145,.0226,.4884,.8723,-.3435,-.6086,.7152,.054,-.9985,-.0057,-.6103,-.6755,.4138,-.9055,-.4187,-.0683,-.9055,-.4187,-.0683,-.6103,-.6755,.4138,.6794,-.54,.4968,-.0179,-.4057,-.9138,-.744,-.4254,-.5151,-.5675,-.5523,.6106,-.7527,-.6567,.0454
+                    ,-.9908,.1296,.0396,-.7527,-.6567,.0454,.9783,.1969,.0645,.7282,-.6786,.0953,.0018,-1,.0043,-.7527,-.6567,.0454,.9685,.1917,-.1588,.9783,.1969,.0645,-.9832,.1369,-.1206,-.9908,.1296,.0396,.6004,-.5806,.5499,.7282,-.6786,.0953,.0018,-1,.0043,.7927,-.3764,-.4795,-.0179,-.4057,-.9138,-.5675,-.5523,.6106,.0932,-.5769,.8115
+                    ,.7319,-.6317,-.2555,-.3677,-.416,-.8317,.4602,-.3818,-.8015,.6794,-.54,.4968,.4602,-.3818,-.8015,.7319,-.6317,-.2555,-.6103,-.6755,.4138,.7319,-.6317,-.2555,.054,-.9985,-.0057,-.8171,.2719,.5082,.9438,-.0953,-.3164,-.7039,.6066,.3694,-.3435,-.6086,.7152,.054,-.9985,-.0057,-.3677,-.416,-.8317,-.9055,-.4187,-.0683,.6794,-.54,.4968
+                    ,.0932,-.5769,.8115
+                ]),
+                false);
+
+                this.setVerticesData(_B.VertexBuffer.UVKind, new Float32Array([
+                    .6958,.2479,.7194,.2529,.6992,.2607,.903,.9482,.812,.9147,.9081,.9233,.2478,.6563,.2309,.6733,.234,.6489,.2767,.6368,.3519,.6419,.3497,.6557,.678,.2505,.6459,.2608,.6466,.2471,.2481,.6734,.2912,.75,.2309,.6733,.7143,.2409,.7483,.2322,.4786,.9175,.4568,.8833,.4745,.8777,.7125,.2218,.7389,.2217
+                    ,.31,.6984,.3016,.7409,.6758,.2349,.6459,.2314,.3248,.6851,.3519,.6725,.3125,.6897,.6921,.2315,.4949,.8843,.4786,.9175,.4745,.8777,.2693,.6207,.8141,.9744,.8979,.9744,.6806,.2638,.5485,.2525,.5268,.2628,.5289,.2499,.2253,.9741,.1316,.9993,.1205,.9801,.8142,.8305,.8139,.8066,.8263,.8185,.8789,.9134
+                    ,.8214,.8647,.8869,.9019,.6002,.2533,.5665,.2509,.5962,.2402,.9106,.7935,.9117,.8072,.4939,.2495,.5005,.2371,.5018,.9246,.4799,.9587,.4841,.9189,.5262,.231,.5005,.2371,.511,.2247,.8882,.8436,.9117,.8072,.9117,.8237,.565,.2351,.5933,.2247,.9002,.8914,.8896,.8635,.8839,.8516,.5484,.2357,.4637,.9254
+                    ,.4799,.9587,.4532,.9586,.8049,.871,.139,.9401,.2225,.9476,.5671,.2644,.7991,.9329,.2309,.6733,.6806,.2638,.6459,.2608,.3016,.7409,.2912,.75,.7389,.2217,.7483,.2322,.4786,.9175,.4532,.9174,.7258,.2121,.7389,.2217,.313,.7291,.3016,.7409,.4949,.8843,.5053,.9175,.4786,.9175,.8141,.9744,.7991,.9329
+                    ,.6806,.2638,.5483,.2658,.2281,.9993,.7991,.8262,.8139,.8066,.5671,.2644,.8139,.8066,.9106,.7935,.4939,.2495,.5053,.9587,.4799,.9587,.5005,.2371,.9117,.8072,.9002,.8914,.4637,.9254,.4799,.9587,.7991,.8262,.139,.9401,.5671,.2644,.5483,.2658
+                ]),
+                false);
+
+                _i = new Float32Array(480);
+                _i.set([.1104,.8865,0,0,.7157,.2754,0,0,.1612,.8364,0,0,.9715,0,0,0,.9895,0,0,0,.8731,.1033,0,0,.9957,0,0,0,.9895,0,0,0,.9966,0,0,0,.9291,.0707,0,0,.8876,.0038,.0855,0,.7202,.0706,.2092,0,.151,.8362
+                ,0,0,.8731,.1033,0,0,.7451,.0641,.1908,0,.9607,.0208,0,0,.8731,.1033,0,0,.9895,0,0,0,.6813,.3003,0,0,.8876,.0038,.0855,0,.9715,0,0,0,.1837,.8099,0,0,.1612,.8364,0,0,.2182,.072,.7098,0,.7202,.0706,.2092,0
+                ,.0792,.8381,.0827,0,.7451,.0641,.1908,0,.163,.04,.7919,0,.1625,.1407,.6968,0,.0269,.9044,.0571,0,.2099,.2063,.5837,0,.0811,.8719,.0441,0,.8311,.1482,0,0,.7157,.2754,0,0,.9715,0,0,0,.1612,.8364,0,0,.9708,.0137,0,0,.9708,.0137
+                ,0,0,.8876,.0038,.0855,0,.1837,.8099,0,0,.1104,.8865,0,0,.7157,.2754,0,0,.6813,.3003,0,0,.9715,0,0,0,.9895,0,0,0,.9966,0,0,0,.9957,0,0,0,.9895,0,0,0,.9607,.0208,0,0,.8876,.0038,.0855,0
+                ,.9291,.0707,0,0,.7202,.0706,.2092,0,.8731,.1033,0,0,.151,.8362,0,0,.7451,.0641,.1908,0,.8731,.1033,0,0,.7451,.0641,.1908,0,.8876,.0038,.0855,0,.7202,.0706,.2092,0,.1837,.8099,0,0,.9715,0,0,0,.1612,.8364,0,0,.2182,.072
+                ,.7098,0,.7202,.0706,.2092,0,.2099,.2063,.5837,0,.0792,.8381,.0827,0,.7451,.0641,.1908,0,.1625,.1407,.6968,0,.163,.04,.7919,0,.1625,.1407,.6968,0,.2099,.2063,.5837,0,.0269,.9044,.0571,0,.0811,.8719,.0441,0,.8311,.1482,0,0,.7157,.2754,0,0
+                ,.9715,0,0,0,.8876,.0038,.0855,0,.9708,.0137,0,0,.9708,.0137,0,0,.8876,.0038,.0855,0,.1837,.8099,0,0,.9966,0,0,0,.9895,0,0,0,.1837,.8099,0,0,.8731,.1033,0,0,.7451,.0641,.1908,0,.8731,.1033,0,0,.7202,.0706
+                ,.2092,0,.8876,.0038,.0855,0,.9715,0,0,0,.8731,.1033,0,0,.2099,.2063,.5837,0,.7202,.0706,.2092,0,.1625,.1407,.6968,0,.7451,.0641,.1908,0,.7157,.2754,0,0,.8876,.0038,.0855,0,.9715,0,0,0,.9708,.0137,0,0,.9966,0,0,0
+                ,.1837,.8099,0,0,.1612,.8364,0,0,.8731,.1033,0,0,.9966,0,0,0,.9895,0,0,0,.1837,.8099,0,0,.9895,0,0,0,.8731,.1033,0,0,.8876,.0038,.0855,0,.8731,.1033,0,0,.9715,0,0,0,.7202,.0706,.2092,0,.7451,.0641
+                ,.1908,0,.2099,.2063,.5837,0,.7157,.2754,0,0,.9715,0,0,0,.9966,0,0,0,.9708,.0137,0,0,.1837,.8099,0,0,.1612,.8364]);
+                this.setVerticesData(_B.VertexBuffer.MatricesWeightsKind, _i, false);
+
+                _i = new Uint32Array(120);
+                _i.set([258,258,258,2,2,258,2,2,2,7426,72962,72962,258,258,72962,7426,258,2,258,72962,2,258,258]);
+                REPEAT(_i, 23, 9, 72962);
+                _i.set([258,258,2,258,7426,7426,72962,258,772,772,772,4,4,4,4,4,7940,204548,7940,204548,772,772,204548,772,204548,204548,204548,772,4,772], 32);
+                REPEAT(_i, 62, 11, 204548);
+                _i.set([772,772,4,204548,7940,7940,204548,772,2,2,258,258,72962,258,72962,72962,2,258,72962,72962,72962,72962,258,72962,2,7426,2,258,772,772,4,4,772,4,772,204548,772,4,204548,204548,204548,772,4,4,7940], 73);
+                REPEAT(_i, 118, 2, 772);
+                this.setVerticesData(_B.VertexBuffer.MatricesIndicesKind, UNPACK(_i), false);
+
+                this.setMaterialByID("Warrior.Gloves");
+                this.subMeshes = [];
+                new _B.SubMesh(0, 0, 120, 0, 240, this);
+                if (scene._selectionOctree) {
+                    scene.createOrUpdateSelectionOctree();
+                }
+            }
+            if (this.postConstruction) this.postConstruction();
+        }
+
+        Boots.prototype.dispose = function (doNotRecurse) {
+            _super.prototype.dispose.call(this, doNotRecurse);
+            if (this.skeleton) this.skeleton.dispose();
+            clean(0);
+        };
+        return Boots;
+    })(QI.Mesh);
+    Warrior.Boots = Boots;
+
+    var Gloves = (function (_super) {
+        __extends(Gloves, _super);
+        function Gloves(name, scene, materialsRootDir, source) {
+            _super.call(this, name, scene, null, source, true);
+
+            if (!materialsRootDir) { materialsRootDir = "./"; }
+            defineMaterials(scene, materialsRootDir); //embedded version check
+            var cloning = source && source !== null;
+            this.position.x  = 0;
+            this.position.y  = 0;
+            this.position.z  = 0;
+            this.rotation.x  = 0;
+            this.rotation.y  = 0;
+            this.rotation.z  = 0;
+            this.scaling.x   = 1;
+            this.scaling.y   = 1;
+            this.scaling.z   = 1;
+            this.skeleton = skel_metarig(name, scene);
+            this.numBoneInfluencers = 3;
+
+
+            this.id = this.name;
+            this.billboardMode  = 0;
+            this.isVisible  = false; //always false; evaluated again at bottom
+            this.setEnabled(true);
+            this.checkCollisions = false;
+            this.receiveShadows  = false;
+            this.castShadows  = false;
+            if (!cloning){
+                this.setVerticesData(_B.VertexBuffer.PositionKind, new Float32Array([
+                    .9573,2.6114,-.5451,1.0377,2.4344,-.4596,1.0785,2.5989,-.3938,.8624,2.387,-.2544,.76,2.3866,-.3815,.8024,2.4269,-.3862,.8038,2.5699,-.4877,.9377,2.4528,-.5828,.8019,2.5308,-.3116,.8624,2.387,-.2544,.8024,2.4269,-.3862,.889,2.4877,-.1556,1.0386,2.4089,-.3051,.8624,2.387,-.2544,1.0386,2.4089,-.3051,.8929,2.338,-.2487,.9377,2.4528,-.5828
+                    ,1.0327,2.3944,-.4666,1.0377,2.4344,-.4596,.8047,2.4489,-.5303,.9226,2.4201,-.6128,.9377,2.4528,-.5828,1.0386,2.4089,-.3051,1.0327,2.3944,-.4666,1.0611,2.3656,-.2964,.8024,2.4269,-.3862,.8047,2.4489,-.5303,.8024,2.4269,-.3862,.7391,2.4182,-.5347,1.0785,2.5989,-.3938,1.0841,2.5547,-.2095,1.0807,2.7302,-.3559,1.0877,2.6796,-.1421,.7323,2.6964,-.4694
+                    ,.8019,2.5308,-.3116,.8672,2.6006,-.0827,.7261,2.6463,-.2508,.9411,2.7458,-.5316,1.0807,2.7302,-.3559,-1.0912,2.4303,.4986,-1.0979,2.6038,.3701,-1.0814,2.6011,.5607,-.8372,2.3851,.362,-.8228,2.3932,.5234,-.8552,2.4264,.3793,-.9753,2.4529,.2779,-.9408,2.5638,.2925,-.8064,2.5293,.4263,-.8228,2.3932,.5234,-.7779,2.5003,.6098,-.9829,2.4109,.6077
+                    ,-.9586,2.5677,.7003,-.8382,2.3434,.5472,-.9829,2.4109,.6077,-1.0889,2.3864,.4978,-1.1121,2.4495,.3482,-1.0912,2.4303,.4986,-1.1271,2.4213,.3228,-.9753,2.4529,.2779,-.9829,2.4109,.6077,-1.0889,2.3864,.4978,-1.0912,2.4303,.4986,-.8552,2.4264,.3793,-.8064,2.5293,.4263,-.941,2.4237,.2487,-.8552,2.4264,.3793,-.9753,2.4529,.2779,-1.0814,2.6011,.5607
+                    ,-1.0606,2.7347,.5821,-.918,2.6968,.7462,-.8832,2.6881,.2631,-.8064,2.5293,.4263,-.728,2.6502,.4206,-.7149,2.6166,.642,-.728,2.6502,.4206,-1.0792,2.7378,.3579,-1.0606,2.7347,.5821,.8047,2.4489,-.5303,.8624,2.387,-.2544,1.0386,2.4089,-.3051,.9377,2.4528,-.5828,1.0386,2.4089,-.3051,1.0377,2.4344,-.4596,1.0327,2.3944,-.4666,.8019,2.5308,-.3116
+                    ,.8024,2.4269,-.3862,.8024,2.4269,-.3862,1.0785,2.5989,-.3938,1.0377,2.4344,-.4596,1.0785,2.5989,-.3938,.7261,2.6463,-.2508,.8019,2.5308,-.3116,-1.1121,2.4495,.3482,-1.1121,2.4495,.3482,-.8552,2.4264,.3793,-.8228,2.3932,.5234,-.8228,2.3932,.5234,-.9822,2.3574,.6286,-.9829,2.4109,.6077,-.9753,2.4529,.2779,-.9829,2.4109,.6077,-1.0889,2.3864,.4978
+                    ,-.8552,2.4264,.3793,-.8552,2.4264,.3793,-1.0912,2.4303,.4986,-1.0814,2.6011,.5607,-1.0814,2.6011,.5607,-.8064,2.5293,.4263,-.728,2.6502,.4206
+                ]),
+                false);
+
+                var _i;//indices & affected indices for shapekeys
+                _i = new Uint32Array([0,1,2,3,4,5,6,7,0,8,9,10,11,12,13,14,15,3,16,17,18,19,20,21,22,23,24,6,25,26,27,28,19,29,12,30,31,30,32,33,34,6,35,30,11,36,11,8,37,6
+                ,0,37,2,38,39,40,41,42,43,44,40,45,46,47,48,49,49,50,51,52,53,43,54,55,56,57,58,55,59,60,61,46,62,63,64,65,66,50,67,51,51,68,69,70,71,72,73,51,69,74
+                ,49,73,75,46,70,41,75,76,0,7,1,3,15,4,6,77,7,8,11,78,11,30,12,79,24,15,80,20,17,19,28,20,81,82,83,6,84,85,86,4,28,87,88,12,31,89,30,33,90,91
+                ,35,32,30,36,35,11,37,33,6,37,0,2,39,92,40,42,52,43,40,93,45,47,94,95,49,96,50,52,97,98,54,57,55,57,64,99,100,97,101,46,45,102,64,42,103,50,104,105,51,106
+                ,68,70,46,107,73,49,51,108,47,49,75,40,46,41,40,75]);
+                this.setIndices(_i);
+
+                this.setVerticesData(_B.VertexBuffer.NormalKind, new Float32Array([
+                    .2989,.1507,-.9423,.9268,-.0624,-.3703,.9414,-.0125,-.337,-.5229,-.3209,.7896,-.673,.6307,.3864,-.8931,.365,.2627,-.7802,-.0531,-.6232,.3533,.3604,-.8633,-.9155,-.376,.1427,-.5229,-.3209,.7896,-.8931,.365,.2627,-.2119,-.6203,.7552,.8668,-.0586,.4951,-.5229,-.3209,.7896,.8668,-.0586,.4951,-.0781,.0738,.9942,.3533,.3604,-.8633
+                    ,.9348,.0096,-.3551,.9268,-.0624,-.3703,-.5795,.6364,-.5091,.1422,.631,-.7626,.3533,.3604,-.8633,.8668,-.0586,.4951,.9348,.0096,-.3551,.6703,.4659,.5776,-.8931,.365,.2627,-.5795,.6364,-.5091,-.8931,.365,.2627,-.4641,.8813,-.0892,.9414,-.0125,-.337,.8318,-.3625,.4204,.9459,.0745,-.3157,.8276,-.2851,.4834,-.7227,-.3279,-.6084
+                    ,-.9155,-.376,.1427,-.1916,-.5583,.8072,-.8305,-.5447,.1166,.2808,.109,-.9536,.9459,.0745,-.3157,-.9161,-.0616,.3962,-.8885,.1065,-.4462,-.9151,-.015,.4028,.8595,.4169,-.2957,.9123,-.3163,.26,.862,.21,-.4612,-.0168,.4422,-.8968,.1154,-.0806,-.99,.8107,-.3561,-.4646,.9123,-.3163,.26,.6842,-.5656,.4604,-.2916,-.1015,.9511
+                    ,-.3129,-.3215,.8937,.7518,.0931,.6528,-.2916,-.1015,.9511,-.8791,.0003,.4766,-.8822,.3724,-.2881,-.9161,-.0616,.3962,-.7014,.6274,-.3382,-.0168,.4422,-.8968,-.2916,-.1015,.9511,-.8791,.0003,.4766,-.9161,-.0616,.3962,.862,.21,-.4612,.8107,-.3561,-.4646,.304,.7841,-.541,.862,.21,-.4612,-.0168,.4422,-.8968,-.9151,-.015,.4028
+                    ,-.908,.0737,.4123,-.2666,-.2469,.9316,.1411,-.2844,-.9482,.8107,-.3561,-.4646,.7558,-.4821,-.4431,.7047,-.5166,.4863,.7558,-.4821,-.4431,-.8638,.0764,-.498,-.908,.0737,.4123,-.5795,.6364,-.5091,-.5229,-.3209,.7896,.8668,-.0586,.4951,.3533,.3604,-.8633,.8668,-.0586,.4951,.9268,-.0624,-.3703,.9348,.0096,-.3551,-.9155,-.376,.1427
+                    ,-.8931,.365,.2627,-.8931,.365,.2627,.9414,-.0125,-.337,.9268,-.0624,-.3703,.9414,-.0125,-.337,-.8305,-.5447,.1166,-.9155,-.376,.1427,-.8822,.3724,-.2881,-.8822,.3724,-.2881,.862,.21,-.4612,.9123,-.3163,.26,.9123,-.3163,.26,-.0394,.3639,.9306,-.2916,-.1015,.9511,-.0168,.4422,-.8968,-.2916,-.1015,.9511,-.8791,.0003,.4766
+                    ,.862,.21,-.4612,.862,.21,-.4612,-.9161,-.0616,.3962,-.9151,-.015,.4028,-.9151,-.015,.4028,.8107,-.3561,-.4646,.7558,-.4821,-.4431
+                ]),
+                false);
+
+                this.setVerticesData(_B.VertexBuffer.UVKind, new Float32Array([
+                    .8558,.1637,.8807,.1315,.8922,.1678,.6728,.5458,.6791,.5771,.6691,.5761,.8213,.1635,.85,.1315,.3413,.7942,.3147,.7716,.3441,.7683,.3079,.7985,.2811,.7671,.3147,.7716,.6753,.5133,.6839,.542,.6825,.6421,.6877,.6744,.6783,.6742,.6772,.6115,.6916,.6388,.6825,.6421,.6753,.5133,.6812,.4809,.6863,.5136
+                    ,.7918,.1444,.8204,.1375,.6684,.5795,.6866,.6077,.2433,.7869,.2734,.8012,.2309,.844,.2689,.8491,.8237,.2118,.7856,.1694,.3046,.8462,.3441,.8515,.8553,.2124,.8902,.2267,.6707,.8872,.7037,.8635,.7066,.9,.4974,.3856,.5117,.357,.5074,.3872,.6787,.8272,.7047,.829,.7991,.0266,.8295,.0094,.8311,.0371
+                    ,.8634,.0113,.8645,.0463,.502,.3504,.5178,.325,.4637,.4772,.4772,.4474,.4728,.4795,.4692,.4418,.4903,.4193,.5178,.325,.5206,.2921,.5293,.2957,.6866,.7988,.7118,.7935,.4822,.4132,.5071,.3906,.4903,.4193,.8967,.0379,.8981,.0964,.8598,.0942,.7528,.833,.7118,.7935,.7676,.7993,.8253,.0846,.7856,.0823
+                    ,.7524,.8646,.7655,.9,.8204,.1375,.3147,.7716,.6753,.5133,.6825,.6421,.6753,.5133,.6719,.482,.6812,.4809,.7856,.1694,.7918,.1444,.6684,.5795,.2433,.7869,.2559,.7514,.2433,.7869,.7895,.2253,.7856,.1694,.6717,.8566,.6717,.8566,.8012,.0007,.8295,.0094,.8295,.0094,.5071,.3224,.5178,.325,.4903,.4193
+                    ,.5178,.325,.5206,.2921,.6866,.7988,.5071,.3906,.891,.0007,.8967,.0379,.8967,.0379,.7118,.7935,.7856,.0823
+                ]),
+                false);
+
+                _i = new Float32Array(436);
+                _i.set([.9088,.0761,0,0,.7144,.2808,0,0,.9646,.0151,0,0,.8944,.0752,0,0,.733,.0466,.2095,0,.8568,.0103,.1082,0,.9149,.0124,.0496,0,.4763,.4772,.0277,0,.9709,0,0,0,.8944,.0752,0,0,.8568,.0103,.1082,0,.9707,0,0,0,.7739,.2167
+                ,0,0,.8944,.0752,0,0,.7739,.2167,0,0,.7672,.1875,.005,0,.4763,.4772,.0277,0,.1813,.8114,0,0,.7144,.2808,0,0,.6017,.1156,.275,0,.2312,.6709,.0773,0,.4763,.4772,.0277,0,.7739,.2167,0,0,.1813,.8114,0,0,.379,.6008,0,0
+                ,.8568,.0103,.1082,0,.6017,.1156,.275,0,.8568,.0103,.1082,0,.3127,.1031,.5713,0,.9646,.0151,0,0,.9649,.0005,0,0,.98,0,0,0,.0692,.9272,0,0,.9662,0,0,0,.9709,0,0,0,.0023,.9701,0,0,.9807,0,0,0,.9669,0
+                ,0,0,.98,0,0,0,.7144,.2808,0,0,.9088,.0761,0,0,.9646,.0151,0,0,.733,.0466,.2095,0,.8944,.0752,0,0,.8568,.0103,.1082,0,.6017,.1156,.275,0,.9149,.0124,.0496,0,.9709,0,0,0,.8944,.0752,0,0,.9707,0,0,0
+                ,.7739,.2167,0,0,.9649,.0005,0,0,.7672,.1875,.005,0,.7739,.2167,0,0,.1813,.8114,0,0,.4763,.4772,.0277,0,.7144,.2808,0,0,.2312,.6709,.0773,0,.6017,.1156,.275,0,.7739,.2167,0,0,.1813,.8114,0,0,.7144,.2808,0,0,.8568,.0103
+                ,.1082,0,.9709,0,0,0,.3127,.1031,.5713,0,.8568,.0103,.1082,0,.6017,.1156,.275,0,.9646,.0151,0,0,.98,0,0,0,.0692,.9272,0,0,.9662,0,0,0,.9709,0,0,0,.9807,0,0,0,.0023,.9701,0,0,.9807,0,0,0
+                ,.9669,0,0,0,.98,0,0,0,.6017,.1156,.275,0,.8944,.0752,0,0,.7739,.2167,0,0,.4763,.4772,.0277,0,.7739,.2167,0,0,.7144,.2808,0,0,.1813,.8114,0,0,.9709,0,0,0,.8568,.0103,.1082,0,.8568,.0103,.1082,0,.9646,.0151
+                ,0,0,.7144,.2808,0,0,.9646,.0151,0,0,.9807,0,0,0,.9709,0,0,0,.4763,.4772,.0277,0,.4763,.4772,.0277,0,.8568,.0103,.1082,0,.8944,.0752,0,0,.8944,.0752,0,0,.379,.6008,0,0,.7739,.2167,0,0,.6017,.1156,.275,0
+                ,.7739,.2167,0,0,.1813,.8114,0,0,.8568,.0103,.1082,0,.8568,.0103,.1082,0,.7144,.2808,0,0,.9646,.0151,0,0,.9646,.0151,0,0,.9709,0,0,0,.9807]);
+                this.setVerticesData(_B.VertexBuffer.MatricesWeightsKind, _i, false);
+
+                _i = new Uint32Array(109);
+                _i.set([3340,3340,3340,3340,1051916,1051916,1051916,1051916,12,3340,1051916,12,3340,3340,3340,1051916,1051916,3340,3340,1051916,1051916,1051916,3340,3340,3340,1051916,1051916,1051916,1051916,3340,3340,12,3083,12,12,3083,12,12,12,5653,5653,5653,1709589,5653,1709589,1709589,1709589,21,5653,21
+                ,5653,5653,1709589,5653,5653,1709589,5653,1709589,1709589,5653,5653,5653,1709589,21,1709589,1709589,1709589,5653,21,5396,21,21,21,5396,21,21,21,1051916,3340,3340,1051916,3340,3340,3340,12,1051916,1051916,3340,3340,3340,12,12,1709589,1709589,1709589,5653,5653,5653,5653,1709589
+                ,5653,5653,1709589,1709589,5653,5653,5653]);
+                REPEAT(_i, 107, 2, 21);
+                this.setVerticesData(_B.VertexBuffer.MatricesIndicesKind, UNPACK(_i), false);
+
+                this.setMaterialByID("Warrior.Gloves");
+                this.subMeshes = [];
+                new _B.SubMesh(0, 0, 109, 0, 216, this);
+                if (scene._selectionOctree) {
+                    scene.createOrUpdateSelectionOctree();
+                }
+            }
+            if (this.postConstruction) this.postConstruction();
+        }
+
+        Gloves.prototype.dispose = function (doNotRecurse) {
+            _super.prototype.dispose.call(this, doNotRecurse);
+            if (this.skeleton) this.skeleton.dispose();
+            clean(1);
+        };
+        return Gloves;
+    })(QI.Mesh);
+    Warrior.Gloves = Gloves;
 
     var Warrior = (function (_super) {
         __extends(Warrior, _super);
@@ -2704,7 +3090,7 @@ var Warrior;
             this.scaling.y   = 1;
             this.scaling.z   = 1;
             this.skeleton = skel_metarig(name, scene);
-            this.numBoneInfluencers = 7;
+            this.numBoneInfluencers = 1;
 
 
             this.id = this.name;
@@ -2716,121 +3102,101 @@ var Warrior;
             this.castShadows  = false;
             if (!cloning){
                 this.setVerticesData(_B.VertexBuffer.PositionKind, new Float32Array([
-                    .1392,3.9957,-.152,.2227,4.0711,-.048,.1302,4.0625,-.1359,.2607,3.3502,.338,.1157,3.7647,.3994,.3772,3.746,.3019,.4261,3.3587,-.138,.1825,3.097,-.3239,.3114,3.0953,-.1306,.8987,3.2721,-.2393,.8614,2.9964,-.3304,.9671,2.9912,-.21,.0213,3.9196,-.2064,.1392,3.9957,-.152,.0381,3.9957,-.1704,.7415,3.7136,.0409,.6066,3.3807,.0416
-                    ,.5621,3.3657,.165,.2279,2.8524,.2653,.0903,3.0905,.3503,.2264,3.0902,.2849,.0197,3.435,-.394,-.1151,3.0903,-.3084,.0417,3.0925,-.3444,.499,3.7464,-.3912,.5204,3.4149,-.3172,.6979,3.4151,-.3017,.3251,2.8771,-.0768,.2041,2.7313,-.2139,.3403,2.7256,-.056,.6877,3.744,-.1778,.7832,3.4273,-.2149,.861,2.869,-.0429,.7305,2.7932,-.1966
-                    ,.7548,2.9006,-.1567,.6372,3.1489,-.3765,.7794,3.2465,-.3671,.7577,3.126,.0309,.9651,2.9578,-.0583,.861,2.869,-.0429,.7548,2.9006,-.1567,.6091,3.1337,-.1653,.9525,2.6069,-.5307,1.0237,2.4326,-.4532,1.0642,2.5976,-.3882,1.0656,2.8251,-.092,.8612,2.7501,-.0377,.8614,2.9964,-.3304,1.0569,2.8702,-.2937,.9671,2.9912,-.21,.7686,2.9342,-.3125
-                    ,.927,2.8835,-.4601,.8614,2.9964,-.3304,.8697,2.3897,-.2664,.7729,2.3805,-.3867,.7806,2.4278,-.3773,.7821,2.571,-.4789,.9324,2.4469,-.5687,.7802,2.5323,-.3027,.8697,2.3897,-.2664,.7806,2.4278,-.3773,.8924,2.4954,-.1671,1.0256,2.4102,-.3118,.8697,2.3897,-.2664,.9519,2.173,-.3322,.8407,2.0702,-.4917,.8878,2.1855,-.5031,1.0256,2.4102,-.3118
-                    ,.8951,2.3348,-.2627,.9324,2.4469,-.5687,1.0187,2.3908,-.4606,1.0237,2.4326,-.4532,.7829,2.4491,-.5214,.9202,2.4114,-.5991,.9324,2.4469,-.5687,1.0151,2.1756,-.4892,.8359,2.1992,-.646,.9274,2.1877,-.6485,.3317,3.9467,-.0555,.499,3.7464,-.3912,.6877,3.744,-.1778,-.0809,3.9186,-.1942,.0266,3.7795,-.3529,.1157,3.7647,.3994,.1772,3.8932,.2877
-                    ,.3772,3.746,.3019,.3093,3.4533,-.3848,.0266,3.7795,-.3529,.0585,3.9957,.275,.1596,3.9957,.2305,.3317,3.9467,-.0555,.2829,3.9972,.1235,.2562,4.0083,-.0377,-.0984,2.6615,-.2775,.0774,2.561,-.2753,.0594,2.6907,-.3005,-.102,2.8565,-.2878,.0594,2.6907,-.3005,.049,2.8698,-.316,.3639,2.6618,.1891,.2268,2.6461,.2677,-.0969,2.3477,-.2532
-                    ,.1394,2.4313,-.3022,.3403,2.7256,-.056,.2269,2.6646,-.227,.3716,2.653,-.0527,.2268,2.6461,.2677,.3929,2.5767,.1866,.2848,2.4763,.2711,.3374,1.8974,-.5452,.346,1.5356,-.6013,.4406,1.5725,-.6206,.2874,2.5304,-.2824,.4377,2.5069,-.1163,.4604,2.421,.1296,.337,2.3489,.2313,.4359,1.4252,-.2484,.3562,1.3686,-.5043,.3296,1.4844,-.4733
-                    ,.6163,1.9185,-.394,.5353,1.5978,-.6087,.6615,1.5891,-.5076,.2287,1.7643,-.2896,.4359,1.4252,-.2484,.3296,1.4844,-.4733,.5184,1.7728,-.0979,.6695,1.534,-.3541,.5718,1.475,-.2771,.4741,1.453,-.6659,.5305,1.0053,-.6525,.6131,1.03,-.6705,.5718,1.475,-.2771,.7058,1.4133,-.3981,.5897,1.3574,-.317,.4406,1.5725,-.6206,.3806,1.4233,-.6449
-                    ,.6615,1.5891,-.5076,.5783,1.4682,-.6378,.7168,1.4669,-.5427,.7793,.3807,-.3279,.8103,.1283,-.4961,.7268,.378,-.4845,.7175,1.0573,-.6463,.8362,1.0841,-.5654,.4571,1.3169,-.2874,.448,.9691,-.5161,.8204,1.0673,-.4166,.7107,1.0177,-.238,.9219,.0528,-.2929,1.0293,-.0176,-.3205,.923,-.0179,-.2765,.8831,.409,-.3169,1.0176,.135,-.4007
-                    ,.9216,.1328,-.33,.8234,.4172,-.6221,.851,.191,-.605,.8898,.2023,-.6256,.981,.4538,-.5179,.9418,.2105,-.5866,1.0547,.1411,-.4808,.9275,-.0179,-.4911,.8043,-.0182,-.9962,.7919,-.0182,-.4794,.9094,.0528,-1.0078,.8043,-.0182,-.9962,.9089,-.0179,-1.0536,1.0825,.0572,-.9056,1.07,-.0174,-.5029,1.0681,.0563,-.4995,.8243,.0525,-.3152
-                    ,.7919,-.0182,-.4794,.7978,.0505,-.4818,.8049,2.0903,-.6458,.7093,2.0397,-.5656,.8698,2.0451,-.6533,1.0497,2.3607,-.3047,.929,2.0125,-.4942,.7514,1.9804,-.3525,.9743,1.9964,-.3307,.8261,.0522,-.9499,.7919,-.0182,-.4794,.8043,-.0182,-.9962,1.029,.0531,-.3296,1.07,-.0174,-.5029,.9275,-.0179,-.4911,.8262,-.0182,-.2987,.923,-.0179,-.2765
-                    ,.959,.44,-.426,1.0547,.1411,-.4808,.3562,1.3686,-.5043,.8362,1.0841,-.5654,.7268,.378,-.4845,.7719,.4013,-.6102,.6695,1.534,-.3541,.7168,1.4669,-.5427,.2134,1.8465,-.5207,.3296,1.4844,-.4733,.6163,1.9185,-.394,.625,1.8406,-.1787,.3296,1.4844,-.4733,.346,1.5356,-.6013,.3716,2.653,-.0527,.3639,2.6618,.1891,.3716,2.653,-.0527
-                    ,.236,3.9046,-.2389,.2562,4.0083,-.0377,.1392,3.9957,-.152,.4159,3.9057,.119,.6877,3.744,-.1778,.7415,3.7136,.0409,.7911,2.2137,-.5083,1.0187,2.3908,-.4606,1.0473,2.1745,-.3159,1.0256,2.4102,-.3118,1.0187,2.3908,-.4606,.7806,2.4278,-.3773,.7829,2.4491,-.5214,.7502,2.4072,-.531,.9671,2.9912,-.21,.9651,2.9578,-.0583,1.0642,2.5976,-.3882
-                    ,1.0715,2.559,-.2157,.6091,3.1337,-.1653,.7686,2.9342,-.3125,.7305,2.7932,-.1966,.7352,2.8386,-.403,.6877,3.744,-.1778,.8067,3.4248,-.034,.3732,2.8574,.1699,.3403,2.7256,-.056,.9102,3.2638,-.0407,.9671,2.9912,-.21,.4239,3.0896,.137,.4261,3.3587,-.138,.3114,3.0953,-.1306,.2562,4.0083,-.0377,.2202,4.0595,.1056,.2227,4.0711,-.048
-                    ,.0441,4.0625,-.1713,.0381,3.9957,-.1704,.0585,3.9957,.275,.1306,4.0581,.1976,.1596,3.9957,.2305,1.0176,.135,-.4007,1.0681,.0563,-.4995,.851,.191,-.605,.7978,.0505,-.4818,.8385,.1316,-.3427,.8103,.1283,-.4961,.9418,.2105,-.5866,1.0547,.1411,-.4808,.8898,.2023,-.6256,.9216,.1328,-.33,.7832,3.4273,-.2149,.8067,3.4248,-.034
-                    ,.8067,3.4248,-.034,.6066,3.3807,.0416,.6979,3.4151,-.3017,.7832,3.4273,-.2149,1.0569,2.8702,-.2937,.7802,2.5323,-.3027,.3251,2.8771,-.0768,.1153,3.3512,.3999,.193,2.8787,-.2226,.6066,3.3807,.0416,.5325,3.3019,-.1562,.4261,3.3587,-.138,.3093,3.4533,-.3848,.5325,3.3019,-.1562,.5204,3.4149,-.3172,.4261,3.3587,-.138,.5325,3.3019,-.1562
-                    ,.5621,3.3657,.165,.8898,.2023,-.6256,.9418,.2105,-.5866,.1596,3.9957,.2305,.2829,3.9972,.1235,.0381,3.9957,-.1704,-.0196,4.0625,-.1819,-.0389,3.9957,-.174,1.0293,-.0176,-.3205,.9275,-.0179,-.4911,.923,-.0179,-.2765,1.1197,-.0166,-.9497,1.1197,-.0166,-.9497,1.07,-.0174,-.5029,.8833,.4327,-.5987,.8385,.1316,-.3427,.8262,-.0182,-.2987
-                    ,.5033,.9625,-.2928,.5353,1.5978,-.6087,.4359,1.4252,-.2484,.3205,1.6997,-.0535,.1263,2.238,.302,.0599,2.372,.3471,.4603,1.9342,-.5322,.0527,2.6574,.3169,.0527,2.6574,.3169,.052,2.8607,.3018,.2041,2.7313,-.2139,-.1452,3.7773,-.2957,-.1577,3.433,-.3427,.3772,3.746,.3019,.7415,3.7136,.0409,.499,3.7464,-.3912,-.0389,3.9957,-.174
-                    ,.5621,3.3657,.165,.7415,3.7136,.0409,.1394,2.4313,-.3022,.2874,2.5304,-.2824,.337,2.3489,.2313,.1263,2.238,.302,.4377,2.5069,-.1163,.4604,2.421,.1296,-.0058,2.2974,-.2825,.2287,1.7643,-.2896,.4604,2.421,.1296,.337,2.3489,.2313,.0299,2.1757,-.0614,.2874,2.5304,-.2824,.4377,2.5069,-.1163,.1394,2.4313,-.3022,.448,.9691,-.5161
-                    ,.981,.4538,-.5179,-.0297,2.2737,-.0056,-.0297,2.2737,-.0056,-.0058,2.2974,-.2825,.2268,2.6461,.2677,.1176,4.4725,.1568,.2016,4.5544,.0606,.2092,4.4723,.0626,.1049,4.1964,.1388,.1723,4.3337,.0136,.1758,4.1602,.0498,.2269,4.5511,-.1069,.2375,4.4703,-.1068,.202,4.2821,-.0901,.2009,4.152,-.0782,.2269,4.5511,-.1069,.2106,4.472,-.259
-                    ,.2375,4.4703,-.1068,.202,4.2821,-.0901,.1211,4.1259,-.1773,.2009,4.152,-.0782,.0568,4.2965,-.3487,.0059,4.2791,-.3534,.0783,4.1085,-.3383,.1345,4.4718,-.3674,.0052,4.5476,-.3752,.0044,4.4712,-.3971,.1281,4.5481,-.3533,.0064,4.6289,-.3396,.0052,4.5476,-.3752,.2269,4.5511,-.1069,.176,4.6287,-.2118,.2009,4.5483,-.2591,.2016,4.5544,.0606
-                    ,.1955,4.6312,-.1052,.2269,4.5511,-.1069,.1138,4.5547,.1538,.1633,4.6343,.0439,.2016,4.5544,.0606,.1297,4.3733,-.346,.0568,4.2965,-.3487,.1179,4.2791,-.3444,.202,4.2821,-.0901,.2176,4.4435,-.259,.1858,4.2791,-.2743,.1723,4.3337,.0136,.2371,4.4424,-.1064,.202,4.2821,-.0901,.0988,4.334,.121,.2045,4.4399,.0459,.1723,4.3337,.0136
-                    ,.0044,4.4712,-.3971,.0044,4.4433,-.3977,.0518,4.4434,-.386,.2375,4.4703,-.1068,.2176,4.4435,-.259,.2371,4.4424,-.1064,.2045,4.4399,.0459,.2375,4.4703,-.1068,.2371,4.4424,-.1064,.115,4.4401,.1414,.2092,4.4723,.0626,.2045,4.4399,.0459,.094,4.6348,.1262,.0192,4.7023,.0459,.0572,4.702,.031,.1955,4.6312,-.1052,.1082,4.6981,-.1525
-                    ,.0933,4.7016,-.0423,.106,4.6997,-.1015,.0639,4.6982,-.2401,.1109,4.6288,-.3095,.0933,4.7016,-.0423,.0192,4.7023,.0459,.0095,4.6983,-.2462,.0234,4.4404,.1697,.1176,4.4725,.1568,.0234,4.4404,.1697,.0224,4.3344,.1423,.0238,4.5549,.1823,.0224,4.3344,.1423,.0229,4.1966,.1573,.0238,4.4728,.1837,.1138,4.5547,.1538,.0095,4.6983,-.2462
-                    ,.2106,4.472,-.259,.1397,4.4435,-.3601,.2176,4.4435,-.259,.1281,4.5481,-.3533,.1858,4.2791,-.2743,.0241,4.0659,-.2906,.1109,4.0881,-.1651,.1088,4.1127,.1704,.0249,4.1153,.1936,-.0072,4.1085,-.3482,-.0121,4.0659,-.3036,.2009,4.152,-.0782,.2078,4.1057,-.063,.2078,4.1057,-.063,.1903,4.1085,.0729,.0298,4.0581,.2248,.2227,4.0711,-.048
-                    ,.1858,4.2791,-.2743,.1179,4.2791,-.3444,.0059,4.2791,-.3534,.0431,4.2918,-.3552,.0061,4.2918,-.3473,.0061,4.2918,-.3473,.0235,4.291,-.4039,.0038,4.291,-.4164,.0379,4.3711,-.3681,.0431,4.2918,-.3552,.0043,4.3758,-.4006,.0568,4.2965,-.3487,.0403,4.3724,-.3497,.0404,4.4262,-.3786,.0355,4.3758,-.3935,.0391,4.4044,-.3733,.0467,4.4163,-.3482
-                    ,.0355,4.3758,-.3935,.1397,4.4435,-.3601,.0518,4.4434,-.386,.0047,4.4378,-.39,.7085,2.0616,-.4601,.7257,2.015,-.4592,.7257,2.015,-.4592,.7292,2.0321,-.3552,.9002,2.0391,-.3339,.8407,2.0702,-.4917,.6906,2.0964,-.5666,.7085,2.0616,-.4601,.929,2.0125,-.4942,.6899,2.1626,-.4793,.7212,2.2973,-.4503,.7191,2.3101,-.5273,.7596,2.2163,-.587
-                    ,.7308,2.1415,-.5658,.6978,2.0855,-.5376,.7251,2.0673,-.562,.7491,2.1423,-.5191,.6844,2.1755,-.5235,.7356,2.0679,-.5351,.7012,2.0782,-.5122,1.0151,2.1756,-.4892,.929,2.0125,-.4942,.0913,3.7591,-.3591,.0056,4.1184,-.3629,.0053,3.7102,-.3713,.1635,4.1291,-.3103,.1074,4.135,-.3659,.0059,4.2791,-.3534,.056,4.2788,-.3691,.0568,4.2965,-.3487
-                    ,.1179,4.2791,-.3444,.0568,4.2965,-.3487,.1179,4.2791,-.3444,.1858,4.2505,-.2946,.1858,4.2791,-.2743,.1858,4.2791,-.2743,.21,4.2568,-.1434,.202,4.2821,-.0901,.257,4.0096,-.1952,.1109,4.2027,-.348,.0065,4.1948,-.3364,.1175,4.2614,-.3648,-.222,3.9957,-.0634,-.2266,4.0711,.0178,-.2751,4.0082,.1015,-.0333,3.3563,.4534,.1157,3.7647,.3994
-                    ,.1153,3.3512,.3999,-.3878,3.0923,.1012,-.544,3.4426,-.0618,-.467,3.3555,.213,-.8707,3.2723,.4896,-.8896,2.9972,.4358,-.864,3.2263,.3195,-.1718,3.9196,-.1493,-.222,3.9957,-.0634,-.3915,3.9035,-.0162,-.4748,3.4039,.4878,-.5948,3.7366,.5372,-.362,3.3959,.5459,-.0567,3.0921,.3854,.052,2.8607,.3018,-.1191,2.8626,.3432,-.2772,3.0873,-.2608
-                    ,-.1577,3.433,-.3427,-.3281,3.4313,-.266,-.696,3.7376,.059,-.6492,3.3914,.1576,-.544,3.4426,-.0618,-.3962,2.702,.0647,-.342,2.8594,-.1153,-.3829,2.8702,.0762,-.6999,3.7394,.3357,-.7705,3.3971,.2901,-.698,2.8007,.4554,-.69,2.8885,.6529,-.6907,2.9105,.4956,-.7584,3.1235,.2305,-.5788,3.1569,.6141,-.7809,2.9817,.7064,-.7485,3.2901,.6445
-                    ,-.6907,2.9105,.4956,-.5971,3.1335,.3696,-1.0773,2.43,.494,-1.0847,2.6009,.378,-1.0675,2.601,.5556,-.8719,2.8459,.7592,-.7809,2.9817,.7064,-1.0044,2.8786,.6037,-.8896,2.9972,.4358,-.8847,3.0021,.5959,-1.0236,2.8799,.393,-.8079,2.9344,.3894,-.8896,2.9972,.4358,-.8504,2.3793,.3684,-.837,2.3963,.5205,-.8498,2.4266,.3796,-.9575,2.4473,.2838
-                    ,-.9245,2.5648,.3005,-.8005,2.5353,.4265,-.837,2.3963,.5205,-.7888,2.5084,.604,-.9789,2.4131,.5946,-.9542,2.5727,.6875,-.986,2.0454,.3253,-.9263,2.1706,.5038,-1.015,2.1902,.3444,-.8501,2.3405,.5399,-.9789,2.4131,.5946,-1.0757,2.3849,.4919,-1.0986,2.445,.3547,-1.0773,2.43,.494,-1.1155,2.4139,.3304,-.9575,2.4473,.2838,-1.0873,2.1716,.4504
-                    ,-1.0907,2.2113,.2155,-.9458,2.4126,.2595,-.3505,3.9463,.1817,-.696,3.7376,.059,-.1452,3.7773,-.2957,-.0809,3.9186,-.1942,-.0139,3.8932,.355,.1157,3.7647,.3994,-.1461,3.754,.4968,-.3126,3.7795,-.2261,.0585,3.9957,.275,.1018,3.8658,.3732,-.3505,3.9463,.1817,-.2141,3.9981,.2656,-.3062,3.9098,.3701,-.2653,2.4982,-.2097,-.0984,2.6615,-.2775
-                    ,-.2587,2.653,-.2474,-.2552,2.8538,-.2573,-.0984,2.6615,-.2775,-.102,2.8565,-.2878,-.2861,2.7022,.3014,-.2911,2.8739,.3247,-.3292,2.3324,-.1643,-.0969,2.3477,-.2532,-.3962,2.702,.0647,-.3809,2.5871,-.123,-.3558,2.6703,-.1298,-.1246,2.6721,.3347,-.3109,2.6285,.3228,-.2861,2.7022,.3014,-.5731,1.7498,-.0656,-.5767,1.3926,.0153,-.4498,1.698,-.0916
-                    ,-.4194,2.6285,.0919,-.4533,2.4289,-.0953,-.1682,2.5396,.3728,-.3842,2.4748,.3573,-.5213,1.2697,.1539,-.4653,1.4152,.3785,-.4932,1.3855,.126,-.7377,1.8474,.1884,-.7484,1.4673,.0841,-.6752,1.8008,-.0055,-.3386,1.6991,.1276,-.4653,1.4152,.3785,-.2931,1.7248,.3803,-.4908,1.7994,.4235,-.7288,1.5052,.3758,-.6291,1.8467,.3903,-.7116,1.3074,.0561
-                    ,-.7182,.8992,.2241,-.6181,1.2774,.0357,-.6008,1.4658,.4075,-.7715,1.3807,.3999,-.7288,1.5052,.3758,-.6709,1.4302,.0353,-.5767,1.3926,.0153,-.8046,1.5052,.2312,-.7882,1.341,.1262,-.7484,1.4673,.0841,-.8298,.1295,.7751,-.7312,.4097,.7904,-.7622,.3605,.6325,-.8588,1.3846,.2723,-.8806,.9663,.3064,-.5765,.8955,.3059,-.4936,1.3021,.3952
-                    ,-.6259,1.3435,.4247,-.8564,1.0475,.544,-.9263,.0529,.9892,-1.0121,-.0221,.9947,-1.0187,.0485,.9857,-.9214,.1328,.9528,-.9385,.4548,.7782,-.8171,.4485,.8399,-.9168,.3682,.5559,-.917,.1637,.6501,-.8651,.352,.5448,-1.004,.4447,.7095,-.9878,.1906,.7003,-.9581,.3943,.6005,-.9877,-.0204,.8092,-1.1033,-.0204,.3022,-1.2223,-.0275,.2975
-                    ,-1.2067,.0437,.3398,-1.1033,-.0204,.3022,-1.1054,.0465,.3551,-1.1163,-.0278,.8551,-1.312,.0323,.5104,-1.1069,.0488,.8488,-.8549,-.0127,.7638,-.8305,.0535,.9605,-.8545,.0555,.769,-.9182,1.9905,.2039,-1.0721,2.0572,.1856,-1.1238,2.0237,.2379,-.9753,2.165,.5869,-.9812,2.3541,.6154,-.8427,1.993,.4115,-1.0519,2.0081,.3988,-.9579,2.0009,.5372
-                    ,-.8549,-.0127,.7638,-.8545,.0555,.769,-1.1163,-.0278,.8551,-1.1069,.0488,.8488,-.8299,-.017,.9751,-.9877,-.0204,.8092,-.9239,-.0177,1.0051,-1.067,.1413,.8294,-1.004,.4447,.7095,-.5213,1.2697,.1539,-.9451,1.0239,.4245,-.8588,1.3846,.2723,-.7622,.3605,.6325,-.7288,1.5052,.3758,-.8588,1.3846,.2723,-.8046,1.5052,.2312,-.4932,1.3855,.126
-                    ,-.3386,1.6991,.1276,-.7377,1.8474,.1884,-.4932,1.3855,.126,-.5767,1.3926,.0153,-.4194,2.6285,.0919,-.2861,2.7022,.3014,-.4194,2.6285,.0919,-.3962,2.702,.0647,-.2751,4.0082,.1015,-.6999,3.7394,.3357,-.3505,3.9463,.1817,-.9929,2.2332,.2071,-1.0757,2.3849,.4919,-.9789,2.4131,.5946,-1.0757,2.3849,.4919,-1.0773,2.43,.494,-.8498,2.4266,.3796
-                    ,-.8005,2.5353,.4265,-.9575,2.4473,.2838,-.8498,2.4266,.3796,-.8847,3.0021,.5959,-.7809,2.9817,.7064,-1.0675,2.601,.5556,-.8079,2.9344,.3894,-.5971,3.1335,.3696,-.698,2.8007,.4554,-.6907,2.9105,.4956,-.6767,3.4467,.5596,-.6999,3.7394,.3357,-.3829,2.8702,.0762,-.8847,3.0021,.5959,-.8707,3.2723,.4896,-.3047,3.1,.3926,-.467,3.3555,.213
-                    ,-.362,3.3959,.5459,-.2751,4.0082,.1015,-.18,4.0595,.1659,-.2141,3.9981,.2656,-.1108,3.9957,-.142,-.1588,4.0625,-.0962,-.0518,3.9957,.2919,.0298,4.0581,.2248,.0585,3.9957,.275,-1.0237,.1359,.8955,-1.1069,.0488,.8488,-1.067,.1413,.8294,-.917,.1637,.6501,-.8545,.0555,.769,-.8298,.1295,.7751,-.8437,.1344,.9324,-.8298,.1295,.7751
-                    ,-.9878,.1906,.7003,-1.067,.1413,.8294,-.9641,.1705,.6472,-.917,.1637,.6501,-.9214,.1328,.9528,-.6767,3.4467,.5596,-.8707,3.2723,.4896,-.778,3.4239,.4096,-.6767,3.4467,.5596,-.4748,3.4039,.4878,-.7705,3.3971,.2901,-.6492,3.3914,.1576,-.778,3.4239,.4096,-.7705,3.3971,.2901,-1.0044,2.8786,.6037,-.8436,2.8344,.306,-.8005,2.5353,.4265
-                    ,-.698,2.8007,.4554,-.6837,2.7693,.6628,-.3878,3.0923,.1012,-.1151,3.0903,-.3084,.0903,3.0905,.3503,-.4009,3.0883,-.1412,-.4748,3.4039,.4878,-.467,3.3555,.213,-.5455,3.298,.2998,-.5455,3.298,.2998,-.6492,3.3914,.1576,-.467,3.3555,.213,-.5455,3.298,.2998,-.362,3.3959,.5459,-.9214,.1328,.9528,-.9878,.1906,.7003,-.2141,3.9981,.2656
-                    ,-.0705,4.0581,.2233,-.0389,3.9957,-.174,-.0808,4.0625,-.1551,-1.0121,-.0221,.9947,-.9877,-.0204,.8092,-1.1163,-.0278,.8551,-1.3634,-.0392,.4854,-1.3634,-.0392,.4854,-1.1163,-.0278,.8551,-.9641,.1705,.6472,-.8437,.1344,.9324,-.8299,-.017,.9751,-.6691,1.0408,.6513,-.7484,1.4673,.0841,-.8004,.9248,.2429,-.4653,1.4152,.3785,.0599,2.372,.3471
-                    ,-.2233,2.4164,.3993,.0527,2.6574,.3169,.0599,2.372,.3471,.052,2.8607,.3018,-.1246,2.6721,.3347,-.3558,2.6703,-.1298,-.1452,3.7773,-.2957,-.1577,3.433,-.3427,-.5948,3.7366,.5372,-.3126,3.7795,-.2261,-.0809,3.9186,-.1942,-.1108,3.9957,-.142,-.362,3.3959,.5459,-.1461,3.754,.4968,-.3292,2.3324,-.1643,-.4533,2.4289,-.0953,-.0147,2.2574,.3584
-                    ,-.2233,2.4164,.3993,-.4962,2.474,.1223,-.3842,2.4748,.3573,-.0963,2.1483,.0388,-.1863,2.221,-.1974,-.3842,2.4748,.3573,-.2233,2.4164,.3993,-.0963,2.1483,.0388,-.4533,2.4289,-.0953,-.4962,2.474,.1223,-.3292,2.3324,-.1643,-.513,.9558,.5191,-.5765,.8955,.3059,-1.004,.4447,.7095,-.9451,1.0239,.4245,-.0147,2.2574,.3584,-.0297,2.2737,-.0056
-                    ,-.0963,2.1483,.0388,-.0297,2.2737,-.0056,-.1863,2.221,-.1974,-.0963,2.1483,.0388,.0527,2.6574,.3169,-.0715,4.4725,.1631,-.1618,4.5544,.0728,-.0679,4.5547,.1599,-.06,4.1964,.1443,-.1356,4.3337,.0239,-.0552,4.334,.1261,-.1692,4.4723,.0752,-.1982,4.5511,-.0927,-.1411,4.1602,.0682,-.1767,4.2821,-.0738,-.192,4.472,-.2455,-.1982,4.5511,-.0927
-                    ,-.2087,4.4703,-.0919,-.1286,4.1259,-.1566,-.1767,4.2821,-.0738,-.1888,4.152,-.0481,-.0072,4.1085,-.3482,-.0445,4.2965,-.3453,-.1063,4.2791,-.3366,-.1233,4.4718,-.3588,.0052,4.5476,-.3752,-.116,4.5481,-.3452,-.116,4.5481,-.3452,.0064,4.6289,-.3396,-.0959,4.6288,-.3026,-.1982,4.5511,-.0927,-.1544,4.6287,-.2008,-.1667,4.6312,-.0932,-.1618,4.5544,.0728
-                    ,-.1667,4.6312,-.0932,-.1247,4.6343,.0535,-.0679,4.5547,.1599,-.05,4.6348,.131,-.0445,4.2965,-.3453,-.1172,4.3733,-.3378,-.1063,4.2791,-.3366,-.1767,4.2821,-.0738,-.199,4.4435,-.2451,-.2083,4.4424,-.0915,-.1356,4.3337,.0239,-.2083,4.4424,-.0915,-.1656,4.4399,.0582,-.0552,4.334,.1261,-.07,4.4401,.1476,-.0421,4.4434,-.3828,.0044,4.4712,-.3971
-                    ,-.1233,4.4718,-.3588,-.199,4.4435,-.2451,-.2087,4.4703,-.0919,-.2083,4.4424,-.0915,-.1656,4.4399,.0582,-.2087,4.4703,-.0919,-.1692,4.4723,.0752,-.07,4.4401,.1476,-.1692,4.4723,.0752,-.0715,4.4725,.1631,.0192,4.7023,.0459,.0226,4.6352,.1456,-.0827,4.6981,-.1461,-.1667,4.6312,-.0932,-.0606,4.7016,-.0372,-.0444,4.6982,-.2365,.0095,4.6983,-.2462
-                    ,.0192,4.7023,.0459,-.0606,4.7016,-.0372,-.0197,4.702,.0336,.0234,4.4404,.1697,-.0715,4.4725,.1631,.0238,4.4728,.1837,-.0552,4.334,.1261,.0234,4.4404,.1697,.0224,4.3344,.1423,.0238,4.5549,.1823,.0224,4.3344,.1423,.0229,4.1966,.1573,.0238,4.4728,.1837,.0238,4.5549,.1823,.0064,4.6289,-.3396,-.1281,4.4435,-.3512,-.192,4.472,-.2455
-                    ,-.199,4.4435,-.2451,-.1739,4.2791,-.2599,-.1824,4.5483,-.2463,-.1824,4.5483,-.2463,-.092,4.1085,-.328,-.1739,4.2791,-.2599,-.0495,4.0659,-.2847,-.1311,4.0881,-.1391,-.0604,4.1127,.1813,.0229,4.1966,.1573,.0249,4.1153,.1936,-.0072,4.1085,-.3482,-.2046,4.1057,-.0181,-.2046,4.1057,-.0181,-.1567,4.1085,.1052,.0298,4.0581,.2248,.0249,4.1153,.1936
-                    ,-.2266,4.0711,.0178,-.0196,4.0625,-.1819,-.1739,4.2791,-.2599,.0059,4.2791,-.3534,-.0314,4.2918,-.3528,-.0445,4.2965,-.3453,.0061,4.2918,-.3473,-.0151,4.291,-.4026,-.0314,4.2918,-.3528,-.027,4.3711,-.3659,-.0314,4.2918,-.3528,.0043,4.3758,-.4006,-.0263,4.3758,-.3915,-.0445,4.2965,-.3453,-.0314,4.2918,-.3528,.0043,4.3758,-.4006,-.0302,4.4262,-.3762
-                    ,-.0282,4.3724,-.3475,-.0282,4.4044,-.3577,-.0345,4.4163,-.3455,-.0263,4.3758,-.3915,-.1281,4.4435,-.3512,-.122,4.4167,-.3248,.0047,4.4378,-.39,-.8735,2.0364,.2771,-.8709,2.0023,.3121,-.8332,2.0346,.3774,-.8709,2.0023,.3121,-.9112,2.0319,.4735,-.9134,2.0413,.1746,-.986,2.0454,.3253,-1.0519,2.0081,.3988,-.8619,2.1813,.2128,-.9508,2.2184,.2803
-                    ,-.8633,2.3049,.2802,-.9541,2.1633,.1846,-.9099,2.1123,.1636,-.8931,2.1997,.1839,-.9296,2.1543,.2274,-.9226,2.3243,.2312,-.9315,2.0871,.189,-.8922,2.101,.1803,-1.0873,2.1716,.4504,-1.0519,2.0081,.3988,-1.153,2.1953,.2822,-.0797,3.7591,-.3534,-.0962,4.135,-.3591,-.1498,4.1291,-.2994,.0059,4.2791,-.3534,-.0451,4.2788,-.3658,.0052,4.2614,-.3739
-                    ,-.1063,4.2791,-.3366,-.0445,4.2965,-.3453,-.1063,4.2791,-.3366,-.1739,4.2505,-.2808,-.1067,4.2614,-.3572,-.1739,4.2791,-.2599,-.1886,4.2568,-.1267,-.236,4.0096,-.1774,-.0987,4.2027,-.3409,.0404,4.4262,-.3786,.0518,4.4434,-.386,-.0302,4.4262,-.3762,-.0421,4.4434,-.3828,.2562,4.0083,-.0377,.1392,3.9957,-.152,.3093,3.4533,-.3848,.7686,2.9342,-.3125
-                    ,.861,2.869,-.0429,.7548,2.9006,-.1567,.9651,2.9578,-.0583,.8614,2.9964,-.3304,.7829,2.4491,-.5214,.8697,2.3897,-.2664,1.0256,2.4102,-.3118,.9324,2.4469,-.5687,.499,3.7464,-.3912,-.1452,3.7773,-.2957,.1157,3.7647,.3994,.1018,3.8658,.3732,.499,3.7464,-.3912,.0266,3.7795,-.3529,.1018,3.8658,.3732,.3317,3.9467,-.0555,-.0984,2.6615,-.2775
-                    ,.0594,2.6907,-.3005,-.0058,2.2974,-.2825,.3403,2.7256,-.056,.2041,2.7313,-.2139,.2268,2.6461,.2677,.3639,2.6618,.1891,.4359,1.4252,-.2484,.5718,1.475,-.2771,.6695,1.534,-.3541,.4406,1.5725,-.6206,.346,1.5356,-.6013,.6615,1.5891,-.5076,.5353,1.5978,-.6087,.8385,.1316,-.3427,.9089,-.0179,-1.0536,.8043,-.0182,-.9962,.8262,-.0182,-.2987
-                    ,.7919,-.0182,-.4794,.7257,2.015,-.4592,.7978,.0505,-.4818,.7919,-.0182,-.4794,1.0681,.0563,-.4995,1.07,-.0174,-.5029,.9275,-.0179,-.4911,.7919,-.0182,-.4794,.981,.4538,-.5179,1.0547,.1411,-.4808,.3562,1.3686,-.5043,.448,.9691,-.5161,.7168,1.4669,-.5427,.8362,1.0841,-.5654,.7268,.378,-.4845,.8103,.1283,-.4961,.6695,1.534,-.3541
-                    ,.6615,1.5891,-.5076,.7168,1.4669,-.5427,.2287,1.7643,-.2896,.3296,1.4844,-.4733,.6163,1.9185,-.394,.6615,1.5891,-.5076,.3296,1.4844,-.4733,.3562,1.3686,-.5043,.3716,2.653,-.0527,.4377,2.5069,-.1163,.3639,2.6618,.1891,.3403,2.7256,-.056,.3716,2.653,-.0527,.2562,4.0083,-.0377,.3317,3.9467,-.0555,.6877,3.744,-.1778,1.0187,2.3908,-.4606
-                    ,1.0151,2.1756,-.4892,1.0256,2.4102,-.3118,1.0237,2.4326,-.4532,1.0187,2.3908,-.4606,.8407,2.0702,-.4917,.7802,2.5323,-.3027,.7806,2.4278,-.3773,.7806,2.4278,-.3773,.9671,2.9912,-.21,1.0569,2.8702,-.2937,1.0642,2.5976,-.3882,1.0237,2.4326,-.4532,.6091,3.1337,-.1653,.7548,2.9006,-.1567,.7686,2.9342,-.3125,.7548,2.9006,-.1567,.7305,2.7932,-.1966
-                    ,.6877,3.744,-.1778,.7832,3.4273,-.2149,.3251,2.8771,-.0768,.3403,2.7256,-.056,.8987,3.2721,-.2393,.9671,2.9912,-.21,.5621,3.3657,.165,.4261,3.3587,-.138,.2562,4.0083,-.0377,.2829,3.9972,.1235,.0585,3.9957,.275,1.0176,.135,-.4007,1.0547,.1411,-.4808,1.0681,.0563,-.4995,.851,.191,-.605,.8103,.1283,-.4961,.7978,.0505,-.4818
-                    ,.9418,.2105,-.5866,.8898,.2023,-.6256,.851,.191,-.605,.9216,.1328,-.33,1.0176,.135,-.4007,.7832,3.4273,-.2149,.8987,3.2721,-.2393,.8067,3.4248,-.034,.6979,3.4151,-.3017,.5204,3.4149,-.3172,.7832,3.4273,-.2149,.6979,3.4151,-.3017,1.0569,2.8702,-.2937,1.0642,2.5976,-.3882,.7305,2.7932,-.1966,.7802,2.5323,-.3027,.3114,3.0953,-.1306
-                    ,.3251,2.8771,-.0768,.6066,3.3807,.0416,.4261,3.3587,-.138,.5325,3.3019,-.1562,.5325,3.3019,-.1562,.6091,3.1337,-.1653,.4261,3.3587,-.138,.9216,.1328,-.33,.8898,.2023,-.6256,.1596,3.9957,.2305,.0381,3.9957,-.1704,1.0293,-.0176,-.3205,1.07,-.0174,-.5029,.9275,-.0179,-.4911,1.1197,-.0166,-.9497,.9089,-.0179,-1.0536,.8385,.1316,-.3427
-                    ,.8262,-.0182,-.2987,.5353,1.5978,-.6087,.4406,1.5725,-.6206,.5718,1.475,-.2771,.4359,1.4252,-.2484,.0527,2.6574,.3169,.0594,2.6907,-.3005,.0266,3.7795,-.3529,.3772,3.746,.3019,-.0389,3.9957,-.174,.5621,3.3657,.165,.1394,2.4313,-.3022,.337,2.3489,.2313,.4377,2.5069,-.1163,.6163,1.9185,-.394,.0299,2.1757,-.0614,.2287,1.7643,-.2896
-                    ,.4604,2.421,.1296,.1263,2.238,.302,.2874,2.5304,-.2824,.448,.9691,-.5161,.7268,.378,-.4845,.8362,1.0841,-.5654,.981,.4538,-.5179,.0299,2.1757,-.0614,-.0297,2.2737,-.0056,.0299,2.1757,-.0614,-.0058,2.2974,-.2825,.1138,4.5547,.1538,.0988,4.334,.121,.2269,4.5511,-.1069,.2009,4.5483,-.2591,.202,4.2821,-.0901,.1858,4.2791,-.2743
-                    ,.1179,4.2791,-.3444,.1281,4.5481,-.3533,.2269,4.5511,-.1069,.1955,4.6312,-.1052,.2016,4.5544,.0606,.0568,4.2965,-.3487,.202,4.2821,-.0901,.2371,4.4424,-.1064,.1723,4.3337,.0136,.115,4.4401,.1414,.1345,4.4718,-.3674,.1345,4.4718,-.3674,.0044,4.4712,-.3971,.2375,4.4703,-.1068,.2106,4.472,-.259,.2176,4.4435,-.259,.2045,4.4399,.0459
-                    ,.2092,4.4723,.0626,.2375,4.4703,-.1068,.1176,4.4725,.1568,.2092,4.4723,.0626,.0226,4.6352,.1456,.1955,4.6312,-.1052,.106,4.6997,-.1015,.0639,4.6982,-.2401,.1082,4.6981,-.1525,.106,4.6997,-.1015,.0933,4.7016,-.0423,.0572,4.702,.031,.0192,4.7023,.0459,.0933,4.7016,-.0423,.1082,4.6981,-.1525,.106,4.6997,-.1015,.0238,4.4728,.1837
-                    ,.1176,4.4725,.1568,.0234,4.4404,.1697,.115,4.4401,.1414,.0226,4.6352,.1456,.0224,4.3344,.1423,.0988,4.334,.121,.0238,4.5549,.1823,.1138,4.5547,.1538,.2106,4.472,-.259,.1345,4.4718,-.3674,.1397,4.4435,-.3601,.1354,4.4167,-.3334,.2009,4.5483,-.2591,.1281,4.5481,-.3533,.2009,4.152,-.0782,.2078,4.1057,-.063,.2078,4.1057,-.063
-                    ,.2227,4.0711,-.048,.0059,4.2791,-.3534,.0568,4.2965,-.3487,.0061,4.2918,-.3473,.0431,4.2918,-.3552,.0355,4.3758,-.3935,.0431,4.2918,-.3552,.0568,4.2965,-.3487,.0404,4.4262,-.3786,.0355,4.3758,-.3935,.1397,4.4435,-.3601,.7257,2.015,-.4592,.7085,2.0616,-.4601,.8407,2.0702,-.4917,.929,2.0125,-.4942,1.0151,2.1756,-.4892,.929,2.0125,-.4942
-                    ,.0059,4.2791,-.3534,.1179,4.2791,-.3444,.1179,4.2791,-.3444,.1858,4.2791,-.2743,-.1461,3.754,.4968,.1157,3.7647,.3994,-.8847,3.0021,.5959,-.1108,3.9957,-.142,-.222,3.9957,-.0634,.0903,3.0905,.3503,.052,2.8607,.3018,-.1151,3.0903,-.3084,-.1577,3.433,-.3427,-.3558,2.6703,-.1298,-.778,3.4239,.4096,-.8079,2.9344,.3894,-.69,2.8885,.6529
-                    ,-.6907,2.9105,.4956,-.69,2.8885,.6529,-1.0986,2.445,.3547,-.8896,2.9972,.4358,-1.0986,2.445,.3547,-.8498,2.4266,.3796,-.837,2.3963,.5205,-.837,2.3963,.5205,-.9789,2.4131,.5946,-.9575,2.4473,.2838,-.6999,3.7394,.3357,-.696,3.7376,.059,-.3126,3.7795,-.2261,-.1452,3.7773,-.2957,.1157,3.7647,.3994,-.696,3.7376,.059,-.0518,3.9957,.2919
-                    ,.0585,3.9957,.275,-.3505,3.9463,.1817,-.2751,4.0082,.1015,-.0969,2.3477,-.2532,-.0984,2.6615,-.2775,-.2587,2.653,-.2474,-.0984,2.6615,-.2775,-.1246,2.6721,.3347,-.1863,2.221,-.1974,-.0969,2.3477,-.2532,-.3962,2.702,.0647,-.6709,1.4302,.0353,-.4962,2.474,.1223,-.8046,1.5052,.2312,-.4932,1.3855,.126,-.4653,1.4152,.3785,-.6008,1.4658,.4075
-                    ,-.8437,.1344,.9324,-.9451,1.0239,.4245,-.9239,-.0177,1.0051,-1.0237,.1359,.8955,-.9641,.1705,.6472,-1.067,.1413,.8294,-.8549,-.0127,.7638,-1.2223,-.0275,.2975,-1.1033,-.0204,.3022,-.8299,-.017,.9751,-.8709,2.0023,.3121,-1.1033,-.0204,.3022,-.8549,-.0127,.7638,-1.1163,-.0278,.8551,-.8549,-.0127,.7638,-.9877,-.0204,.8092,-1.0237,.1359,.8955
-                    ,-.5765,.8955,.3059,-.5213,1.2697,.1539,-.8298,.1295,.7751,-.7622,.3605,.6325,-.7288,1.5052,.3758,-.8588,1.3846,.2723,-.4932,1.3855,.126,-.8046,1.5052,.2312,-.7377,1.8474,.1884,-.5213,1.2697,.1539,-.4932,1.3855,.126,-.4962,2.474,.1223,-.4194,2.6285,.0919,-.2861,2.7022,.3014,-.4194,2.6285,.0919,-.222,3.9957,-.0634,-.2751,4.0082,.1015
-                    ,-.5948,3.7366,.5372,-.6999,3.7394,.3357,-1.0873,2.1716,.4504,-1.0757,2.3849,.4919,-.9789,2.4131,.5946,-1.0757,2.3849,.4919,-.986,2.0454,.3253,-.8498,2.4266,.3796,-.9575,2.4473,.2838,-1.0044,2.8786,.6037,-.8847,3.0021,.5959,-1.0773,2.43,.494,-1.0675,2.601,.5556,-.8079,2.9344,.3894,-.6907,2.9105,.4956,-.5971,3.1335,.3696,-.698,2.8007,.4554
-                    ,-.778,3.4239,.4096,-.6999,3.7394,.3357,-.3962,2.702,.0647,-.3829,2.8702,.0762,-.8847,3.0021,.5959,-.3878,3.0923,.1012,-.467,3.3555,.213,-.2751,4.0082,.1015,-.2266,4.0711,.0178,.0298,4.0581,.2248,-1.1069,.0488,.8488,-.917,.1637,.6501,-.8545,.0555,.769,-.9878,.1906,.7003,-.9214,.1328,.9528,-.6767,3.4467,.5596,-.8707,3.2723,.4896
-                    ,-.6767,3.4467,.5596,-.7705,3.3971,.2901,-.778,3.4239,.4096,-1.0675,2.601,.5556,-1.0044,2.8786,.6037,-.8005,2.5353,.4265,-.3829,2.8702,.0762,-.3878,3.0923,.1012,-.102,2.8565,-.2878,-.1151,3.0903,-.3084,.1153,3.3512,.3999,.0903,3.0905,.3503,-.4748,3.4039,.4878,-.5455,3.298,.2998,-.467,3.3555,.213,-.544,3.4426,-.0618,-.5971,3.1335,.3696
-                    ,-.5455,3.298,.2998,-.467,3.3555,.213,-.9214,.1328,.9528,-.2141,3.9981,.2656,-.0389,3.9957,-.174,-.0196,4.0625,-.1819,-1.0121,-.0221,.9947,-.9877,-.0204,.8092,-1.2223,-.0275,.2975,-1.3634,-.0392,.4854,-.9641,.1705,.6472,-.8437,.1344,.9324,-.8299,-.017,.9751,-.9239,-.0177,1.0051,-.7484,1.4673,.0841,-.4653,1.4152,.3785,-.6008,1.4658,.4075
-                    ,.0599,2.372,.3471,-.0147,2.2574,.3584,-.6709,1.4302,.0353,.052,2.8607,.3018,.0527,2.6574,.3169,-.1246,2.6721,.3347,-.3558,2.6703,-.1298,-.2587,2.653,-.2474,-.0518,3.9957,.2919,-.1452,3.7773,-.2957,-.696,3.7376,.059,-.3126,3.7795,-.2261,-.0809,3.9186,-.1942,-.0389,3.9957,-.174,-.1108,3.9957,-.142,-.362,3.3959,.5459,-.5948,3.7366,.5372
-                    ,-.1461,3.754,.4968,-.3292,2.3324,-.1643,-.7377,1.8474,.1884,-.3386,1.6991,.1276,-.3842,2.4748,.3573,-.0963,2.1483,.0388,-.4533,2.4289,-.0953,-.7622,.3605,.6325,-.5765,.8955,.3059,-1.004,.4447,.7095,-.9451,1.0239,.4245,-.0147,2.2574,.3584,.0599,2.372,.3471,-.0297,2.2737,-.0056,-.0297,2.2737,-.0056,-.0969,2.3477,-.2532,-.1863,2.221,-.1974
-                    ,-.2087,4.4703,-.0919,-.1888,4.152,-.0481,-.1824,4.5483,-.2463,-.1982,4.5511,-.0927,-.1739,4.2791,-.2599,-.1767,4.2821,-.0738,-.0072,4.1085,-.3482,-.0072,4.1085,-.3482,.0059,4.2791,-.3534,.0044,4.4712,-.3971,.0052,4.5476,-.3752,-.116,4.5481,-.3452,.0052,4.5476,-.3752,.0064,4.6289,-.3396,-.1982,4.5511,-.0927,-.1618,4.5544,.0728,-.1982,4.5511,-.0927
-                    ,-.1667,4.6312,-.0932,-.0679,4.5547,.1599,-.1618,4.5544,.0728,-.0445,4.2965,-.3453,-.1767,4.2821,-.0738,-.1356,4.3337,.0239,-.1767,4.2821,-.0738,-.2083,4.4424,-.0915,-.0552,4.334,.1261,-.1356,4.3337,.0239,-.1233,4.4718,-.3588,.0044,4.4433,-.3977,.0044,4.4712,-.3971,-.199,4.4435,-.2451,-.192,4.472,-.2455,-.2087,4.4703,-.0919,-.1656,4.4399,.0582
-                    ,-.2083,4.4424,-.0915,-.2087,4.4703,-.0919,-.07,4.4401,.1476,-.1656,4.4399,.0582,-.1692,4.4723,.0752,.0192,4.7023,.0459,-.0772,4.6997,-.0954,-.1667,4.6312,-.0932,-.0772,4.6997,-.0954,-.0772,4.6997,-.0954,-.0827,4.6981,-.1461,.0095,4.6983,-.2462,-.0444,4.6982,-.2365,.0095,4.6983,-.2462,-.0827,4.6981,-.1461,.0192,4.7023,.0459,-.0197,4.702,.0336
-                    ,-.0606,4.7016,-.0372,-.0606,4.7016,-.0372,-.0772,4.6997,-.0954,.0095,4.6983,-.2462,.0234,4.4404,.1697,-.07,4.4401,.1476,-.0715,4.4725,.1631,-.0552,4.334,.1261,.0234,4.4404,.1697,.0238,4.5549,.1823,-.0679,4.5547,.1599,.0224,4.3344,.1423,.0238,4.4728,.1837,.0064,4.6289,-.3396,.0095,4.6983,-.2462,-.1233,4.4718,-.3588,-.192,4.472,-.2455
-                    ,-.1063,4.2791,-.3366,-.1281,4.4435,-.3512,-.116,4.5481,-.3452,.0229,4.1966,.1573,-.0121,4.0659,-.3036,-.0072,4.1085,-.3482,-.2046,4.1057,-.0181,-.1888,4.152,-.0481,.0298,4.0581,.2248,-.2266,4.0711,.0178,-.2046,4.1057,-.0181,-.0196,4.0625,-.1819,-.0121,4.0659,-.3036,.0059,4.2791,-.3534,.0061,4.2918,-.3473,.0061,4.2918,-.3473,.0038,4.291,-.4164
-                    ,-.0263,4.3758,-.3915,.0038,4.291,-.4164,.0043,4.3758,-.4006,-.0445,4.2965,-.3453,.0043,4.3758,-.4006,.0047,4.4378,-.39,-.0263,4.3758,-.3915,-.0302,4.4262,-.3762,-.0421,4.4434,-.3828,-.1281,4.4435,-.3512,.0047,4.4378,-.39,.0044,4.4433,-.3977,-.8735,2.0364,.2771,-.8709,2.0023,.3121,-.986,2.0454,.3253,-.8735,2.0364,.2771,-1.0519,2.0081,.3988
-                    ,-.9456,2.0923,.1644,-1.0873,2.1716,.4504,-1.0519,2.0081,.3988,.0059,4.2791,-.3534,-.0445,4.2965,-.3453,-.1063,4.2791,-.3366,-.1063,4.2791,-.3366,-.1739,4.2791,-.2599,-.1739,4.2791,-.2599,-.1767,4.2821,-.0738,.0404,4.4262,-.3786,-.0302,4.4262,-.3762,-.118,2.8618,.3582,.0611,2.8657,.3359,-.1244,2.8683,.3808,-.1021,2.662,-.2919,.0598,2.5635,-.3198
-                    ,.0596,2.6936,-.315,-.1072,2.6565,-.3118,-.3679,2.6751,-.1372,-.2829,2.6492,-.2772,-.3928,2.6727,-.1452,-.1093,2.3623,-.2996,.1155,2.4403,-.3507,.3523,2.7332,-.0602,.2287,2.6752,-.2625,.3881,2.6723,-.0638,.2331,2.6486,.281,.4053,2.5882,.2049,.2811,2.4803,.3101,.3267,1.9174,-.62,.3195,1.555,-.6925,.4317,1.5958,-.7142,.2891,2.5463,-.3206
-                    ,.4644,2.5234,-.1272,.4871,2.4201,.1527,.3454,2.3314,.2776,.4873,1.9628,-.5998,.6915,1.8279,-.4625,.6573,1.9342,-.4151,.5604,1.7466,-.0374,.7541,1.5337,-.307,.6209,1.4481,-.1981,.6209,1.4481,-.1981,.7781,1.4114,-.334,.6339,1.3403,-.2328,.4317,1.5958,-.7142,.353,1.4464,-.7345,.467,1.4794,-.7586,.5694,1.6283,-.6941,.726,1.7099,-.4829
-                    ,.6915,1.8279,-.4625,.7541,1.5337,-.307,.726,1.7099,-.4829,.6969,1.8388,-.1481,.6915,1.8279,-.4625,.4644,2.5234,-.1272,.3762,2.6664,.1962,.3881,2.6723,-.0638,-.3977,2.8706,.0775,-.3778,2.8659,-.1295,-.3556,2.8589,-.1216,.6079,1.4988,-.7246,.4662,1.3914,-.1629,.4845,1.2944,-.1976,.4662,1.3914,-.1629,.3475,1.6662,.0117,.1365,2.2346,.3514
-                    ,.071,2.3738,.3915,.5694,1.6283,-.6941,.0563,2.6607,.331,.0501,2.8691,-.3308,.217,2.8869,-.2517,.2016,2.8789,-.2346,.0614,2.6544,.3514,.2508,2.6423,.2963,.2111,2.7382,-.2249,.1155,2.4403,-.3507,.2891,2.5463,-.3206,.3454,2.3314,.2776,.1365,2.2346,.3514,.4644,2.5234,-.1272,.4871,2.4201,.1527,.4871,2.4201,.1527,.3454,2.3314,.2776
-                    ,.2891,2.5463,-.3206,.4644,2.5234,-.1272,-.0266,2.3115,-.3318,.1155,2.4403,-.3507,-.2935,2.7092,.3123,-.1315,2.6722,.3716,-.1236,2.6763,.3491,-.2724,2.4921,-.2567,-.1021,2.662,-.2919,-.2661,2.6544,-.2603,.3869,2.8565,.1759,.2515,2.8567,.2952,.2344,2.851,.2787,-.4374,2.7097,.0703,-.3139,2.7094,.3333,-.3337,2.3258,-.2184,-.1093,2.3623,-.2996
-                    ,-.4408,2.6448,.0851,-.4093,2.7092,.065,-.3132,2.6459,.3405,-.6036,1.7427,-.1372,-.6019,1.378,-.0771,-.47,1.6865,-.1662,-.4754,2.4317,-.1303,-.4011,2.5879,-.1546,-.1458,2.5532,.4027,-.3954,2.4839,.3896,-.8293,1.7472,.2023,-.7351,1.8078,-.0553,-.7849,1.8592,.1871,-.4938,1.799,.5016,-.7776,1.5289,.456,-.6751,1.8623,.4515,-.6005,1.4716,.5042
-                    ,-.801,1.407,.4882,-.7776,1.5289,.456,-.7127,1.4201,-.0515,-.6418,1.267,-.0575,-.6019,1.378,-.0771,-.8577,1.6335,.2441,-.8235,1.4709,.0232,-.8293,1.7472,.2023,-.7776,1.5289,.456,-.8577,1.6335,.2441,-.8293,1.7472,.2023,-.0266,2.3115,-.3318,-.1093,2.3623,-.2996,-.1941,2.2234,-.2521,-.8293,1.7472,.2023,-.7849,1.8592,.1871,.1919,1.8625,-.5941
-                    ,-.1941,2.2234,-.2521,-.5261,2.4885,.1216,-.4408,2.6448,.0851,-.4408,2.6448,.0851,-.4093,2.7092,.065,-.1072,2.6565,-.3118,-.7548,1.3012,-.0302,-.445,1.4149,.4731,-.6197,1.3594,.5199,-.445,1.4149,.4731,-.2803,1.7173,.4571,.071,2.3738,.3915,-.206,2.4132,.4466,-.8235,1.4709,.0232,.0563,2.6607,.331,.071,2.3738,.3915,.2286,2.739,-.244
-                    ,-.2634,2.8525,-.2697,-.2793,2.8587,-.2874,-.3337,2.3258,-.2184,-.4754,2.4317,-.1303,-.0001,2.2584,.4073,-.206,2.4132,.4466,-.5261,2.4885,.1216,-.3954,2.4839,.3896,.071,2.3738,.3915,-.0001,2.2584,.4073,-.3954,2.4839,.3896,-.206,2.4132,.4466,-.445,1.4149,.4731,.4662,1.3914,-.1629,-.4754,2.4317,-.1303,-.5261,2.4885,.1216,-.1941,2.2234,-.2521
-                    ,-.3337,2.3258,-.2184,-.4697,1.313,.4882,.4662,1.3914,-.1629,.0563,2.6607,.331,-.3642,2.9197,-.1457,.0559,2.8598,.3163,.2389,2.9133,.2866,.3939,2.9182,.1834,-.1073,2.9185,-.3083,-.1058,2.8555,-.3022,-.4057,2.9317,.0622,.1982,2.9411,-.2549,.0507,2.9313,-.3356,-.3977,2.8706,.0775,-.3032,2.9365,.3418,-.2998,2.8738,.3368,.0588,2.9224,.3272
-                    ,.0559,2.8598,.3163,-.1184,2.9246,.3648,.3391,2.9398,-.0943,.3385,2.8778,-.083,.3391,2.9398,-.0943,-.1058,2.8555,-.3022,-.2669,2.9146,-.2764,.3631,2.8858,-.0907,.2286,2.739,-.244,.3793,2.7342,-.0695,-.111,2.8617,-.3225,.066,2.6905,-.3378,.0554,2.8762,-.3535,.4045,2.6629,.2037,.2508,2.6423,.2963,.4145,2.8629,.1851,.3793,2.7342,-.0695
-                    ,.0614,2.6544,.3514,.0611,2.8657,.3359,.2286,2.739,-.244,-.4374,2.7097,.0703,-.423,2.8786,.0824,-.1072,2.6565,-.3118,-.111,2.8617,-.3225,-.3139,2.7094,.3333,-.3187,2.8816,.3582,-.3139,2.7094,.3333,-.423,2.8786,.0824,-.1315,2.6722,.3716,-.3928,2.6727,-.1452,.4045,2.6629,.2037,.3385,2.8778,-.083,-.111,2.8617,-.3225,-.1058,2.8555,-.3022
-                    ,.066,2.6905,-.3378,.0611,2.8657,.3359,.3631,2.8858,-.0907,.3793,2.7342,-.0695,.3523,2.7332,-.0602,-.4374,2.7097,.0703,.0614,2.6544,.3514,.0563,2.6607,.331,-.423,2.8786,.0824,-.3977,2.8706,.0775,-.1507,3.1416,-.3817,-.1507,2.8403,-.3325,-.1507,2.8403,-.3817,-.093,2.898,-.3325,-.093,3.0839,-.3817,-.093,2.898,-.3817,.1507,3.1416,-.3325
-                    ,.1507,2.8403,-.3817,.1507,2.8403,-.3325,.093,2.898,-.3817,.093,2.898,-.3325,-.1507,3.1416,-.3325,.1507,3.1416,-.3817,-.093,3.0839,-.3325,.093,3.0839,-.3325,.093,3.0839,-.3817,.0559,2.8598,.3163,.066,2.6905,-.3378,-.0266,2.3115,-.3318,.5694,1.6283,-.6941,.6209,1.4481,-.1981,.7541,1.5337,-.307,.4317,1.5958,-.7142,.3195,1.555,-.6925
-                    ,.7541,1.5337,-.307,.6915,1.8279,-.4625,.726,1.7099,-.4829,.6573,1.9342,-.4151,.6915,1.8279,-.4625,.3881,2.6723,-.0638,.4644,2.5234,-.1272,.3523,2.7332,-.0602,.3881,2.6723,-.0638,.4317,1.5958,-.7142,.6209,1.4481,-.1981,.4662,1.3914,-.1629,.5694,1.6283,-.6941,.1155,2.4403,-.3507,.3454,2.3314,.2776,.4644,2.5234,-.1272,.6573,1.9342,-.4151
-                    ,.4871,2.4201,.1527,.2891,2.5463,-.3206,-.1093,2.3623,-.2996,-.1021,2.662,-.2919,-.4093,2.7092,.065,-.1093,2.3623,-.2996,-.7127,1.4201,-.0515,-.5261,2.4885,.1216,-.8235,1.4709,.0232,-.6005,1.4716,.5042,-.8602,1.3441,.0616,-.7776,1.5289,.456,-.8577,1.6335,.2441,-.8293,1.7472,.2023,-.0266,2.3115,-.3318,-.1941,2.2234,-.2521,-.4408,2.6448,.0851
-                    ,-.1021,2.662,-.2919,-.1072,2.6565,-.3118,-.445,1.4149,.4731,-.6005,1.4716,.5042,.071,2.3738,.3915,-.0001,2.2584,.4073,-.8235,1.4709,.0232,-.7127,1.4201,-.0515,.3793,2.7342,-.0695,-.3337,2.3258,-.2184,-.7849,1.8592,.1871,-.5261,2.4885,.1216,-.3954,2.4839,.3896,-.445,1.4149,.4731,-.4754,2.4317,-.1303,-.1941,2.2234,-.2521,.4662,1.3914,-.1629
-                    ,.0588,2.9224,.3272,-.3977,2.8706,.0775,-.4057,2.9317,.0622,.3385,2.8778,-.083,-.1058,2.8555,-.3022,-.1073,2.9185,-.3083,.2286,2.739,-.244,-.1072,2.6565,-.3118,.3631,2.8858,-.0907,.3793,2.7342,-.0695,.2508,2.6423,.2963,.0614,2.6544,.3514,.2286,2.739,-.244,-.4374,2.7097,.0703,-.3928,2.6727,-.1452,-.2829,2.6492,-.2772,-.1072,2.6565,-.3118
-                    ,-.1315,2.6722,.3716,-.3139,2.7094,.3333,-.3139,2.7094,.3333,-.4374,2.7097,.0703,-.423,2.8786,.0824,.0614,2.6544,.3514,-.1315,2.6722,.3716,-.3928,2.6727,-.1452,-.2829,2.6492,-.2772,.3385,2.8778,-.083,-.111,2.8617,-.3225,.0611,2.8657,.3359,.3631,2.8858,-.0907,.4045,2.6629,.2037,.3793,2.7342,-.0695,.0614,2.6544,.3514,-.423,2.8786,.0824
-                    
+                    .1392,3.9959,-.1509,.2227,4.0712,-.0471,.1302,4.0623,-.135,.2607,3.3502,.3385,.1157,3.7647,.4004,.3772,3.7461,.3029,.4261,3.3593,-.1376,.1825,3.0978,-.3238,.3114,3.0959,-.1305,.8987,3.2729,-.2389,.8614,2.9973,-.3304,.9671,2.9919,-.21,.0213,3.92,-.2052,.1392,3.9959,-.1509,.0381,3.9957,-.1693,.7415,3.714,.0418,.6066,3.3811,.0421
+                    ,.5621,3.3659,.1655,.2279,2.8527,.2652,.0903,3.0906,.3504,.2264,3.0903,.285,.0197,3.4359,-.3935,-.1151,3.0909,-.3082,.0417,3.0932,-.3443,.499,3.7474,-.3902,.5204,3.4158,-.3167,.6979,3.416,-.3012,.3251,2.8776,-.0769,.2041,2.7316,-.2141,.3403,2.726,-.0561,.6877,3.7447,-.1768,.7832,3.4281,-.2143,.861,2.8695,-.0431,.7305,2.794,-.1969
+                    ,.7548,2.9013,-.1568,.6372,3.1498,-.3763,.7794,3.2474,-.3667,.7577,3.1265,.0311,.9651,2.9583,-.0584,.861,2.8695,-.0431,.7548,2.9013,-.1568,.6091,3.1344,-.1651,.9525,2.608,-.5312,1.0237,2.4337,-.4539,1.0642,2.5986,-.3887,1.0656,2.8257,-.0923,.8612,2.7507,-.038,.8614,2.9973,-.3304,1.0569,2.871,-.2939,.9671,2.9919,-.21,.7686,2.9351,-.3126
+                    ,.927,2.8846,-.4603,.8614,2.9973,-.3304,.8697,2.3906,-.2672,.7729,2.3815,-.3875,.8072,2.4264,-.3881,.8087,2.5694,-.4896,.9324,2.4481,-.5694,.8068,2.5303,-.3134,.8697,2.3906,-.2672,.8072,2.4264,-.3881,.8924,2.4961,-.1677,1.0256,2.4111,-.3125,.8697,2.3906,-.2672,.9519,2.1739,-.3332,.8407,2.0713,-.4929,.8878,2.1867,-.5041,1.0256,2.4111,-.3125
+                    ,.8951,2.3356,-.2635,.9324,2.4481,-.5694,1.0187,2.3919,-.4614,1.0237,2.4337,-.4539,.8096,2.4485,-.5322,.9202,2.4127,-.5999,.9324,2.4481,-.5694,1.0151,2.1767,-.4903,.8359,2.2005,-.647,.9274,2.1891,-.6495,.3317,3.9472,-.0543,.499,3.7474,-.3902,.6877,3.7447,-.1768,-.0809,3.919,-.193,.0266,3.7804,-.3519,.1157,3.7647,.4004,.1772,3.8934,.2889
+                    ,.3772,3.7461,.3029,.3093,3.4543,-.3842,.0266,3.7804,-.3519,.0585,3.9959,.2762,.1596,3.996,.2317,.3317,3.9472,-.0543,.2829,3.9975,.1248,.2562,4.0087,-.0365,-.0984,2.6618,-.2775,.0774,2.5613,-.2753,.0594,2.6911,-.3006,-.1021,2.857,-.2878,.0594,2.6911,-.3006,.049,2.8704,-.316,.3638,2.6623,.189,.2267,2.6466,.2676,-.0969,2.3479,-.2532
+                    ,.1395,2.4315,-.3022,.3403,2.726,-.0561,.2269,2.6649,-.2272,.3716,2.6534,-.0528,.2267,2.6466,.2676,.3929,2.5772,.1865,.2848,2.4768,.2711,.3376,1.8974,-.5448,.3462,1.5355,-.6007,.4408,1.5724,-.62,.2875,2.5306,-.2824,.4377,2.5073,-.1163,.4604,2.4214,.1297,.337,2.3494,.2314,.4361,1.4254,-.2476,.3564,1.3686,-.5035,.3298,1.4844,-.4726
+                    ,.6165,1.9186,-.3935,.5355,1.5978,-.608,.6617,1.5892,-.5068,.2288,1.7645,-.2891,.4361,1.4254,-.2476,.3298,1.4844,-.4726,.5185,1.7732,-.0973,.6696,1.5342,-.3533,.572,1.4752,-.2763,.4743,1.453,-.6652,.5307,1.0054,-.6518,.6133,1.0302,-.6698,.572,1.4752,-.2763,.706,1.4135,-.3973,.5899,1.3576,-.3161,.4408,1.5724,-.62,.3808,1.4233,-.6441
+                    ,.6617,1.5892,-.5068,.5786,1.4682,-.637,.717,1.4669,-.5419,.7794,.3806,-.3277,.8103,.1283,-.4961,.7268,.378,-.4843,.7176,1.0574,-.6456,.8364,1.0842,-.5648,.4573,1.3171,-.2865,.4481,.9692,-.5154,.8206,1.0672,-.416,.7109,1.0175,-.2373,.9219,.0528,-.2929,1.0293,-.0176,-.3205,.923,-.0179,-.2765,.8832,.4089,-.3167,1.0176,.135,-.4007
+                    ,.9216,.1328,-.33,.8234,.4173,-.6219,.851,.1911,-.6049,.8898,.2024,-.6256,.981,.4538,-.5177,.9418,.2105,-.5866,1.0548,.1411,-.4808,.9275,-.0179,-.4911,.8043,-.0182,-.9962,.7919,-.0182,-.4794,.9094,.0528,-1.0078,.8043,-.0182,-.9962,.9089,-.0179,-1.0536,1.0825,.0572,-.9056,1.07,-.0174,-.5029,1.0681,.0563,-.4995,.8243,.0525,-.3152
+                    ,.7919,-.0182,-.4794,.7978,.0505,-.4818,.8049,2.0916,-.6469,.7093,2.0409,-.5668,.8698,2.0464,-.6545,1.0497,2.3616,-.3055,.929,2.0136,-.4954,.7514,1.9813,-.3538,.9743,1.9973,-.3319,.8261,.0522,-.9499,.7919,-.0182,-.4794,.8043,-.0182,-.9962,1.029,.0531,-.3296,1.07,-.0174,-.5029,.9275,-.0179,-.4911,.8262,-.0182,-.2987,.923,-.0179,-.2765
+                    ,.9591,.4399,-.4258,1.0548,.1411,-.4808,.3564,1.3686,-.5035,.8364,1.0842,-.5648,.7268,.378,-.4843,.7719,.4014,-.6099,.6696,1.5342,-.3533,.717,1.4669,-.5419,.2136,1.8465,-.5203,.3298,1.4844,-.4726,.6165,1.9186,-.3935,.6251,1.8409,-.1781,.3298,1.4844,-.4726,.3462,1.5355,-.6007,.3716,2.6534,-.0528,.3638,2.6623,.189,.3716,2.6534,-.0528
+                    ,.236,3.9054,-.2377,.2562,4.0087,-.0365,.1392,3.9959,-.1509,.4159,3.906,.1202,.6877,3.7447,-.1768,.7415,3.714,.0418,.7911,2.2148,-.5093,1.0187,2.3919,-.4614,1.0473,2.1753,-.3169,1.0256,2.4111,-.3125,1.0187,2.3919,-.4614,.8072,2.4264,-.3881,.8096,2.4485,-.5322,.8072,2.4264,-.3881,.7502,2.4084,-.5317,.9671,2.9919,-.21,.9651,2.9583,-.0584
+                    ,1.0642,2.5986,-.3887,1.0715,2.5598,-.2163,.6091,3.1344,-.1651,.7686,2.9351,-.3126,.7305,2.794,-.1969,.7352,2.8396,-.4032,.6877,3.7447,-.1768,.8067,3.4253,-.0335,.3732,2.8578,.1699,.3403,2.726,-.0561,.9102,3.2644,-.0404,.9671,2.9919,-.21,.4239,3.09,.1371,.4261,3.3593,-.1376,.3114,3.0959,-.1305,.2562,4.0087,-.0365,.2202,4.0598,.1066
+                    ,.2227,4.0712,-.0471,.0441,4.0622,-.1704,.0381,3.9957,-.1693,.0585,3.9959,.2762,.1306,4.0585,.1985,.1596,3.996,.2317,1.0176,.135,-.4007,1.0681,.0563,-.4995,.851,.1911,-.6049,.7978,.0505,-.4818,.8385,.1316,-.3427,.8103,.1283,-.4961,.9418,.2105,-.5866,1.0548,.1411,-.4808,.8898,.2024,-.6256,.9216,.1328,-.33,.7832,3.4281,-.2143
+                    ,.8067,3.4253,-.0335,.8067,3.4253,-.0335,.6066,3.3811,.0421,.6979,3.416,-.3012,.7832,3.4281,-.2143,1.0569,2.871,-.2939,.8068,2.5303,-.3134,.3251,2.8776,-.0769,.1153,3.3512,.4004,.193,2.8792,-.2226,.6066,3.3811,.0421,.5325,3.3026,-.1558,.4261,3.3593,-.1376,.3093,3.4543,-.3842,.5325,3.3026,-.1558,.5204,3.4158,-.3167,.4261,3.3593,-.1376
+                    ,.5325,3.3026,-.1558,.5621,3.3659,.1655,.8898,.2024,-.6256,.9418,.2105,-.5866,.1596,3.996,.2317,.2829,3.9975,.1248,.0381,3.9957,-.1693,-.0196,4.0621,-.181,-.0389,3.9956,-.1729,1.0293,-.0176,-.3205,.9275,-.0179,-.4911,.923,-.0179,-.2765,1.1197,-.0166,-.9497,1.1197,-.0166,-.9497,1.07,-.0174,-.5029,.8833,.4327,-.5985,.8385,.1316,-.3427
+                    ,.8262,-.0182,-.2987,.5035,.9624,-.2921,.5355,1.5978,-.608,.4361,1.4254,-.2476,.3206,1.7001,-.0529,.1263,2.2384,.3021,.0599,2.3725,.3471,.4605,1.9342,-.5317,.0527,2.6578,.3169,.0527,2.6578,.3169,.052,2.861,.3018,.2041,2.7316,-.2141,-.1452,3.7781,-.2947,-.1577,3.4339,-.3422,.3772,3.7461,.3029,.7415,3.714,.0418,.499,3.7474,-.3902
+                    ,-.0389,3.9956,-.1729,.5621,3.3659,.1655,.7415,3.714,.0418,.1395,2.4315,-.3022,.2875,2.5306,-.2824,.337,2.3494,.2314,.1263,2.2384,.3021,.4377,2.5073,-.1163,.4604,2.4214,.1297,-.0057,2.2976,-.2824,.2288,1.7645,-.2891,.4604,2.4214,.1297,.337,2.3494,.2314,.0299,2.176,-.0612,.2875,2.5306,-.2824,.4377,2.5073,-.1163,.1395,2.4315,-.3022
+                    ,.4481,.9692,-.5154,.981,.4538,-.5177,-.0297,2.2741,-.0056,-.0297,2.2741,-.0056,-.0057,2.2976,-.2824,.2267,2.6466,.2676,.1176,4.4728,.1563,.2016,4.5544,.0599,.2092,4.4723,.0621,.1049,4.1966,.1391,.1723,4.3335,.0135,.1758,4.1602,.0504,.2269,4.5505,-.1077,.2375,4.4698,-.1073,.202,4.2817,-.09,.2009,4.1517,-.0776,.2269,4.5505,-.1077
+                    ,.2106,4.471,-.2595,.2375,4.4698,-.1073,.202,4.2817,-.09,.1211,4.1254,-.1766,.2009,4.1517,-.0776,.0568,4.2952,-.3487,.0059,4.2778,-.3534,.0783,4.1075,-.3377,.1345,4.4705,-.3679,.0052,4.5463,-.3759,.0044,4.4699,-.3976,.1281,4.5468,-.3541,.0064,4.6277,-.3406,.0052,4.5463,-.3759,.2269,4.5505,-.1077,.176,4.6279,-.2128,.2009,4.5473,-.2599
+                    ,.2016,4.5544,.0599,.1955,4.6307,-.1063,.2269,4.5505,-.1077,.1138,4.555,.153,.1633,4.6343,.0429,.2016,4.5544,.0599,.1297,4.3721,-.3463,.0568,4.2952,-.3487,.1179,4.2778,-.3443,.202,4.2817,-.09,.2176,4.4426,-.2595,.1858,4.2781,-.2742,.1723,4.3335,.0135,.2371,4.4419,-.1068,.202,4.2817,-.09,.0988,4.3342,.1209,.2045,4.4398,.0455
+                    ,.1723,4.3335,.0135,.0044,4.4699,-.3976,.0044,4.4419,-.3982,.0518,4.442,-.3864,.2375,4.4698,-.1073,.2176,4.4426,-.2595,.2371,4.4419,-.1068,.2045,4.4398,.0455,.2375,4.4698,-.1073,.2371,4.4419,-.1068,.115,4.4404,.141,.2092,4.4723,.0621,.2045,4.4398,.0455,.094,4.635,.1252,.0192,4.7023,.0447,.0572,4.7019,.0298,.1955,4.6307,-.1063
+                    ,.1082,4.6974,-.1537,.0933,4.7013,-.0435,.106,4.6992,-.1028,.0639,4.6973,-.2413,.1109,4.6277,-.3105,.0933,4.7013,-.0435,.0192,4.7023,.0447,.0095,4.6974,-.2474,.0234,4.4407,.1693,.1176,4.4728,.1563,.0234,4.4407,.1693,.0224,4.3346,.1422,.0238,4.5553,.1815,.0224,4.3346,.1422,.0229,4.1969,.1576,.0238,4.4732,.1832,.1138,4.555,.153
+                    ,.0095,4.6974,-.2474,.2106,4.471,-.2595,.1397,4.4422,-.3605,.2176,4.4426,-.2595,.1281,4.5468,-.3541,.1858,4.2781,-.2742,.0241,4.0651,-.2898,.1109,4.0877,-.1643,.1088,4.113,.171,.0249,4.1157,.1942,-.0072,4.1074,-.3476,-.0121,4.065,-.3028,.2009,4.1517,-.0776,.2078,4.1056,-.0622,.2078,4.1056,-.0622,.1903,4.1086,.0737,.0298,4.0585,.2257
+                    ,.2227,4.0712,-.0471,.1858,4.2781,-.2742,.1179,4.2778,-.3443,.0059,4.2778,-.3534,.0431,4.2906,-.3552,.0061,4.2906,-.3472,.0061,4.2906,-.3472,.0235,4.2896,-.4039,.0038,4.2896,-.4164,.0379,4.3698,-.3683,.0431,4.2906,-.3552,.0043,4.3744,-.4009,.0568,4.2952,-.3487,.0403,4.3712,-.35,.0404,4.4249,-.3789,.0355,4.3744,-.3938,.0391,4.4031,-.3736
+                    ,.0467,4.415,-.3486,.0355,4.3744,-.3938,.1397,4.4422,-.3605,.0518,4.442,-.3864,.0047,4.4364,-.3904,.7085,2.0627,-.4613,.7257,2.0161,-.4604,.7257,2.0161,-.4604,.7292,2.0331,-.3564,.9002,2.04,-.3351,.8407,2.0713,-.4929,.6906,2.0976,-.5677,.7085,2.0627,-.4613,.929,2.0136,-.4954,.6899,2.1637,-.4803,.7212,2.2983,-.4512,.7191,2.3113,-.5282
+                    ,.7596,2.2176,-.588,.7308,2.1427,-.5669,.6978,2.0867,-.5388,.7251,2.0685,-.5632,.7491,2.1434,-.5202,.6844,2.1767,-.5246,.7356,2.0691,-.5363,.7012,2.0794,-.5134,1.0151,2.1767,-.4903,.929,2.0136,-.4954,.0913,3.7579,-.3575,.0056,4.1172,-.3623,.0053,3.7089,-.3695,.1635,4.128,-.3097,.1074,4.1337,-.3654,.0059,4.2778,-.3534,.056,4.2775,-.3691
+                    ,.0568,4.2952,-.3487,.1179,4.2778,-.3443,.0568,4.2952,-.3487,.1179,4.2778,-.3443,.1858,4.2494,-.2944,.1858,4.2781,-.2742,.1858,4.2781,-.2742,.21,4.2562,-.1432,.202,4.2817,-.09,.257,4.0088,-.1943,.1109,4.2015,-.3477,.0065,4.1936,-.336,.1175,4.2601,-.3647,-.222,3.9958,-.0622,-.2266,4.0711,.0188,-.2751,4.0084,.1026,-.0333,3.3562,.4539
+                    ,.1157,3.7647,.4004,.1153,3.3512,.4004,-.3878,3.0926,.1013,-.544,3.4432,-.0613,-.467,3.3557,.2135,-.8707,3.2721,.49,-.8896,2.9973,.4358,-.864,3.2264,.3198,-.1718,3.9199,-.1481,-.222,3.9958,-.0622,-.3915,3.904,-.015,-.4748,3.4038,.4884,-.5948,3.7364,.5382,-.362,3.3957,.5465,-.0567,3.0921,.3855,.052,2.861,.3018,-.1191,2.8628,.3432
+                    ,-.2772,3.0879,-.2607,-.1577,3.4339,-.3422,-.3281,3.4321,-.2654,-.696,3.738,.0599,-.6492,3.3917,.1582,-.544,3.4432,-.0613,-.3963,2.7023,.0645,-.3421,2.8599,-.1154,-.383,2.8706,.0761,-.6999,3.7394,.3366,-.7705,3.3972,.2906,-.698,2.8008,.455,-.69,2.8881,.6527,-.6907,2.9105,.4954,-.7584,3.1238,.2307,-.5788,3.1566,.6143,-.7809,2.9812,.7064
+                    ,-.7485,3.2897,.6449,-.6907,2.9105,.4954,-.5971,3.1335,.3698,-1.0773,2.43,.4927,-1.0847,2.6011,.377,-1.0675,2.6008,.5547,-.8719,2.8452,.7589,-.7809,2.9812,.7064,-1.0044,2.8783,.6034,-.8896,2.9973,.4358,-.8847,3.0018,.596,-1.0236,2.8801,.3928,-.8079,2.9346,.3893,-.8896,2.9973,.4358,-.8504,2.3796,.367,-.837,2.3962,.5191,-.8685,2.4247,.3863
+                    ,-1.0986,2.4452,.3533,-.9431,2.5631,.3074,-.8193,2.5333,.4333,-.837,2.3962,.5191,-.7888,2.5081,.6029,-.9789,2.4129,.5933,-.9542,2.5722,.6866,-.986,2.0453,.3243,-.9263,2.1707,.5026,-1.015,2.1901,.3431,-.8501,2.3404,.5384,-.9789,2.4129,.5933,-1.0757,2.385,.4905,-1.0986,2.4452,.3533,-1.0773,2.43,.4927,-1.1155,2.4139,.3289,-.9759,2.4455,.2911
+                    ,-1.0986,2.4452,.3533,-1.0873,2.1717,.4492,-1.0907,2.2112,.2142,-.9458,2.4128,.258,-.3505,3.9465,.1829,-.696,3.738,.0599,-.1452,3.7781,-.2947,-.0809,3.919,-.193,-.0139,3.8933,.3561,.1157,3.7647,.4004,-.1461,3.7539,.4978,-.3126,3.7802,-.2251,.0585,3.9959,.2762,.1018,3.8658,.3743,-.3505,3.9465,.1829,-.2141,3.9983,.2668,-.3062,3.9098,.3713
+                    ,-.2654,2.4985,-.2097,-.0984,2.6618,-.2775,-.2587,2.6534,-.2475,-.2552,2.8543,-.2573,-.0984,2.6618,-.2775,-.1021,2.857,-.2878,-.2861,2.7026,.3013,-.2911,2.8741,.3246,-.3292,2.3326,-.1642,-.0969,2.3479,-.2532,-.3963,2.7023,.0645,-.381,2.5873,-.123,-.3559,2.6706,-.1299,-.1246,2.6725,.3346,-.3109,2.629,.3227,-.2861,2.7026,.3013,-.573,1.75,-.065
+                    ,-.5765,1.3929,.0162,-.4497,1.6982,-.0909,-.4194,2.6288,.0918,-.4533,2.429,-.0952,-.1682,2.5401,.3727,-.3842,2.4753,.3573,-.521,1.2701,.1548,-.465,1.4157,.3793,-.493,1.3858,.1269,-.7375,1.8477,.189,-.7482,1.4675,.085,-.6751,1.801,-.0048,-.3384,1.6995,.1282,-.465,1.4157,.3793,-.2928,1.7253,.3809,-.4906,1.8,.4241,-.7285,1.5057,.3766
+                    ,-.6289,1.8472,.3908,-.7114,1.3077,.0571,-.7179,.8996,.2248,-.6178,1.2776,.0367,-.6005,1.4663,.4084,-.7712,1.3812,.4009,-.7285,1.5057,.3766,-.6707,1.4304,.0362,-.5765,1.3929,.0162,-.8044,1.5055,.2321,-.7879,1.3413,.1272,-.7482,1.4675,.085,-.8298,.1295,.7751,-.7311,.4097,.7907,-.7621,.3606,.6328,-.8585,1.3849,.2733,-.8803,.9667,.3072
+                    ,-.5763,.8959,.3067,-.4932,1.3026,.3962,-.6256,1.344,.4257,-.8561,1.0477,.5448,-.9263,.0529,.9892,-1.0121,-.0221,.9947,-1.0187,.0485,.9857,-.9214,.1328,.9528,-.9384,.4547,.7785,-.8171,.4484,.8402,-.9167,.3684,.5561,-.917,.1638,.6501,-.8651,.3522,.545,-1.0039,.4447,.7097,-.9878,.1907,.7004,-.958,.3945,.6007,-.9877,-.0204,.8092
+                    ,-1.1033,-.0204,.3022,-1.2223,-.0275,.2975,-1.2067,.0437,.3398,-1.1033,-.0204,.3022,-1.1054,.0465,.3551,-1.1163,-.0278,.8551,-1.312,.0323,.5104,-1.1069,.0488,.8487,-.8549,-.0127,.7638,-.8305,.0535,.9605,-.8545,.0555,.769,-.9182,1.9903,.2029,-1.0721,2.0569,.1845,-1.1238,2.0235,.2368,-.9753,2.1652,.5856,-.9812,2.354,.614,-.8427,1.993,.4105
+                    ,-1.0519,2.0081,.3977,-.9579,2.001,.5362,-.8549,-.0127,.7638,-.8545,.0555,.769,-1.1163,-.0278,.8551,-1.1069,.0488,.8487,-.8299,-.017,.9751,-.9877,-.0204,.8092,-.9239,-.0177,1.0051,-1.067,.1413,.8294,-1.0039,.4447,.7097,-.521,1.2701,.1548,-.9448,1.0242,.4253,-.8585,1.3849,.2733,-.7621,.3606,.6328,-.7285,1.5057,.3766,-.8585,1.3849,.2733
+                    ,-.8044,1.5055,.2321,-.493,1.3858,.1269,-.3384,1.6995,.1282,-.7375,1.8477,.189,-.493,1.3858,.1269,-.5765,1.3929,.0162,-.4194,2.6288,.0918,-.2861,2.7026,.3013,-.4194,2.6288,.0918,-.3963,2.7023,.0645,-.2751,4.0084,.1026,-.6999,3.7394,.3366,-.3505,3.9465,.1829,-.9929,2.2333,.2056,-1.0757,2.385,.4905,-.9789,2.4129,.5933,-1.0757,2.385,.4905
+                    ,-1.0773,2.43,.4927,-.8685,2.4247,.3863,-.8193,2.5333,.4333,-.8685,2.4247,.3863,-.8847,3.0018,.596,-.7809,2.9812,.7064,-1.0675,2.6008,.5547,-.8079,2.9346,.3893,-.5971,3.1335,.3698,-.698,2.8008,.455,-.6907,2.9105,.4954,-.6767,3.4464,.5602,-.6999,3.7394,.3366,-.383,2.8706,.0761,-.8847,3.0018,.596,-.8707,3.2721,.49,-.3047,3.1,.3927
+                    ,-.467,3.3557,.2135,-.362,3.3957,.5465,-.2751,4.0084,.1026,-.18,4.0597,.1669,-.2141,3.9983,.2668,-.1108,3.9956,-.1409,-.1588,4.0623,-.0952,-.0518,3.9959,.2931,.0298,4.0585,.2257,.0585,3.9959,.2762,-1.0237,.1359,.8955,-1.1069,.0488,.8487,-1.067,.1413,.8294,-.917,.1638,.6501,-.8545,.0555,.769,-.8298,.1295,.7751,-.8437,.1344,.9324
+                    ,-.8298,.1295,.7751,-.9878,.1907,.7004,-1.067,.1413,.8294,-.9641,.1706,.6472,-.917,.1638,.6501,-.9214,.1328,.9528,-.6767,3.4464,.5602,-.8707,3.2721,.49,-.778,3.4238,.4102,-.6767,3.4464,.5602,-.4748,3.4038,.4884,-.7705,3.3972,.2906,-.6492,3.3917,.1582,-.778,3.4238,.4102,-.7705,3.3972,.2906,-1.0044,2.8783,.6034,-.8436,2.8348,.3056
+                    ,-.8193,2.5333,.4333,-.698,2.8008,.455,-.6837,2.7689,.6623,-.3878,3.0926,.1013,-.1151,3.0909,-.3082,.0903,3.0906,.3504,-.4009,3.0889,-.1411,-.4748,3.4038,.4884,-.467,3.3557,.2135,-.5455,3.2981,.3002,-.5455,3.2981,.3002,-.6492,3.3917,.1582,-.467,3.3557,.2135,-.5455,3.2981,.3002,-.362,3.3957,.5465,-.9214,.1328,.9528,-.9878,.1907,.7004
+                    ,-.2141,3.9983,.2668,-.0705,4.0585,.2242,-.0389,3.9956,-.1729,-.0808,4.0622,-.1542,-1.0121,-.0221,.9947,-.9877,-.0204,.8092,-1.1163,-.0278,.8551,-1.3634,-.0392,.4854,-1.3634,-.0392,.4854,-1.1163,-.0278,.8551,-.9641,.1706,.6472,-.8437,.1344,.9324,-.8299,-.017,.9751,-.6689,1.0409,.6522,-.7482,1.4675,.085,-.8001,.9253,.2436,-.465,1.4157,.3793
+                    ,.0599,2.3725,.3471,-.2233,2.417,.3993,.0527,2.6578,.3169,.0599,2.3725,.3471,.052,2.861,.3018,-.1246,2.6725,.3346,-.3559,2.6706,-.1299,-.1452,3.7781,-.2947,-.1577,3.4339,-.3422,-.5948,3.7364,.5382,-.3126,3.7802,-.2251,-.0809,3.919,-.193,-.1108,3.9956,-.1409,-.362,3.3957,.5465,-.1461,3.7539,.4978,-.3292,2.3326,-.1642,-.4533,2.429,-.0952
+                    ,-.0147,2.2579,.3584,-.2233,2.417,.3993,-.4962,2.4743,.1223,-.3842,2.4753,.3573,-.0963,2.1486,.039,-.1863,2.2212,-.1972,-.3842,2.4753,.3573,-.2233,2.417,.3993,-.0963,2.1486,.039,-.4533,2.429,-.0952,-.4962,2.4743,.1223,-.3292,2.3326,-.1642,-.5128,.956,.52,-.5763,.8959,.3067,-1.0039,.4447,.7097,-.9448,1.0242,.4253,-.0147,2.2579,.3584
+                    ,-.0297,2.2741,-.0056,-.0963,2.1486,.039,-.0297,2.2741,-.0056,-.1863,2.2212,-.1972,-.0963,2.1486,.039,.0527,2.6578,.3169,-.0715,4.4729,.1626,-.1618,4.5545,.072,-.0679,4.555,.1591,-.06,4.1966,.1447,-.1356,4.3336,.0238,-.0552,4.3342,.126,-.1692,4.4723,.0747,-.1982,4.5506,-.0935,-.1411,4.1602,.0687,-.1767,4.2817,-.0737,-.192,4.471,-.2461
+                    ,-.1982,4.5506,-.0935,-.2087,4.4699,-.0925,-.1286,4.1254,-.156,-.1767,4.2817,-.0737,-.1888,4.1517,-.0475,-.0072,4.1074,-.3476,-.0445,4.2953,-.3453,-.1063,4.2779,-.3366,-.1233,4.4705,-.3593,.0052,4.5463,-.3759,-.116,4.5468,-.3459,-.116,4.5468,-.3459,.0064,4.6277,-.3406,-.0959,4.6277,-.3036,-.1982,4.5506,-.0935,-.1544,4.6279,-.2018,-.1667,4.6308,-.0942
+                    ,-.1618,4.5545,.072,-.1667,4.6308,-.0942,-.1247,4.6343,.0525,-.0679,4.555,.1591,-.05,4.635,.13,-.0445,4.2953,-.3453,-.1172,4.3721,-.338,-.1063,4.2779,-.3366,-.1767,4.2817,-.0737,-.199,4.4426,-.2456,-.2083,4.442,-.0919,-.1356,4.3336,.0238,-.2083,4.442,-.0919,-.1656,4.4399,.0578,-.0552,4.3342,.126,-.07,4.4404,.1472,-.0421,4.4421,-.3833
+                    ,.0044,4.4699,-.3976,-.1233,4.4705,-.3593,-.199,4.4426,-.2456,-.2087,4.4699,-.0925,-.2083,4.442,-.0919,-.1656,4.4399,.0578,-.2087,4.4699,-.0925,-.1692,4.4723,.0747,-.07,4.4404,.1472,-.1692,4.4723,.0747,-.0715,4.4729,.1626,.0192,4.7023,.0447,.0226,4.6355,.1446,-.0827,4.6975,-.1473,-.1667,4.6308,-.0942,-.0606,4.7013,-.0384,-.0444,4.6973,-.2377
+                    ,.0095,4.6974,-.2474,.0192,4.7023,.0447,-.0606,4.7013,-.0384,-.0197,4.7019,.0324,.0234,4.4407,.1693,-.0715,4.4729,.1626,.0238,4.4732,.1832,-.0552,4.3342,.126,.0234,4.4407,.1693,.0224,4.3346,.1422,.0238,4.5553,.1815,.0224,4.3346,.1422,.0229,4.1969,.1576,.0238,4.4732,.1832,.0238,4.5553,.1815,.0064,4.6277,-.3406,-.1281,4.4422,-.3516
+                    ,-.192,4.471,-.2461,-.199,4.4426,-.2456,-.1739,4.2781,-.2598,-.1824,4.5473,-.2471,-.1824,4.5473,-.2471,-.092,4.1075,-.3273,-.1739,4.2781,-.2598,-.0495,4.0651,-.2839,-.1311,4.0877,-.1383,-.0604,4.113,.1819,.0229,4.1969,.1576,.0249,4.1157,.1942,-.0072,4.1074,-.3476,-.2046,4.1056,-.0173,-.2046,4.1056,-.0173,-.1567,4.1086,.1059,.0298,4.0585,.2257
+                    ,.0249,4.1157,.1942,-.2266,4.0711,.0188,-.0196,4.0621,-.181,-.1739,4.2781,-.2598,.0059,4.2778,-.3534,-.0314,4.2906,-.3527,-.0445,4.2953,-.3453,.0061,4.2906,-.3472,-.0151,4.2896,-.4026,-.0314,4.2906,-.3527,-.027,4.3698,-.3661,-.0314,4.2906,-.3527,.0043,4.3744,-.4009,-.0263,4.3744,-.3917,-.0445,4.2953,-.3453,-.0314,4.2906,-.3527,.0043,4.3744,-.4009
+                    ,-.0302,4.4249,-.3766,-.0282,4.3712,-.3477,-.0282,4.4032,-.358,-.0345,4.415,-.3459,-.0263,4.3744,-.3917,-.1281,4.4422,-.3516,-.122,4.4156,-.3252,.0047,4.4364,-.3904,-.8735,2.0363,.2761,-.8709,2.0022,.3111,-.8332,2.0345,.3763,-.8709,2.0022,.3111,-.9112,2.0319,.4725,-.9134,2.041,.1735,-.986,2.0453,.3243,-1.0519,2.0081,.3977,-.8619,2.1814,.2114
+                    ,-.9508,2.2186,.2788,-.8633,2.3052,.2786,-.9541,2.1634,.1832,-.9099,2.1123,.1623,-.8931,2.1997,.1824,-.9296,2.1544,.226,-.9226,2.3245,.2296,-.9315,2.0871,.1877,-.8922,2.1011,.1789,-1.0873,2.1717,.4492,-1.0519,2.0081,.3977,-1.153,2.1952,.2809,-.0797,3.7579,-.3518,-.0962,4.1337,-.3586,-.1498,4.128,-.2988,.0059,4.2778,-.3534,-.0451,4.2775,-.3657
+                    ,.0052,4.2601,-.3737,-.1063,4.2779,-.3366,-.0445,4.2953,-.3453,-.1063,4.2779,-.3366,-.1739,4.2495,-.2806,-.1067,4.2601,-.3571,-.1739,4.2781,-.2598,-.1886,4.2563,-.1265,-.236,4.0089,-.1765,-.0987,4.2015,-.3406,.0404,4.4249,-.3789,.0518,4.442,-.3864,-.0302,4.4249,-.3766,-.0421,4.4421,-.3833,.2562,4.0087,-.0365,.1392,3.9959,-.1509,.3093,3.4543,-.3842
+                    ,.7686,2.9351,-.3126,.861,2.8695,-.0431,.7548,2.9013,-.1568,.9651,2.9583,-.0584,.8614,2.9973,-.3304,.8096,2.4485,-.5322,.8697,2.3906,-.2672,1.0256,2.4111,-.3125,.9324,2.4481,-.5694,.499,3.7474,-.3902,-.1452,3.7781,-.2947,.1157,3.7647,.4004,.1018,3.8658,.3743,.499,3.7474,-.3902,.0266,3.7804,-.3519,.1018,3.8658,.3743,.3317,3.9472,-.0543
+                    ,-.0984,2.6618,-.2775,.0594,2.6911,-.3006,-.0057,2.2976,-.2824,.3403,2.726,-.0561,.2041,2.7316,-.2141,.2267,2.6466,.2676,.3638,2.6623,.189,.4361,1.4254,-.2476,.572,1.4752,-.2763,.6696,1.5342,-.3533,.4408,1.5724,-.62,.3462,1.5355,-.6007,.6617,1.5892,-.5068,.5355,1.5978,-.608,.8385,.1316,-.3427,.9089,-.0179,-1.0536,.8043,-.0182,-.9962
+                    ,.8262,-.0182,-.2987,.7919,-.0182,-.4794,.7257,2.0161,-.4604,.7978,.0505,-.4818,.7919,-.0182,-.4794,1.0681,.0563,-.4995,1.07,-.0174,-.5029,.9275,-.0179,-.4911,.7919,-.0182,-.4794,.981,.4538,-.5177,1.0548,.1411,-.4808,.3564,1.3686,-.5035,.4481,.9692,-.5154,.717,1.4669,-.5419,.8364,1.0842,-.5648,.7268,.378,-.4843,.8103,.1283,-.4961
+                    ,.6696,1.5342,-.3533,.6617,1.5892,-.5068,.717,1.4669,-.5419,.2288,1.7645,-.2891,.3298,1.4844,-.4726,.6165,1.9186,-.3935,.6617,1.5892,-.5068,.3298,1.4844,-.4726,.3564,1.3686,-.5035,.3716,2.6534,-.0528,.4377,2.5073,-.1163,.3638,2.6623,.189,.3403,2.726,-.0561,.3716,2.6534,-.0528,.2562,4.0087,-.0365,.3317,3.9472,-.0543,.6877,3.7447,-.1768
+                    ,1.0187,2.3919,-.4614,1.0151,2.1767,-.4903,1.0256,2.4111,-.3125,1.0237,2.4337,-.4539,1.0187,2.3919,-.4614,.8407,2.0713,-.4929,.8068,2.5303,-.3134,.8072,2.4264,-.3881,.8072,2.4264,-.3881,.9671,2.9919,-.21,1.0569,2.871,-.2939,1.0642,2.5986,-.3887,1.0237,2.4337,-.4539,.6091,3.1344,-.1651,.7548,2.9013,-.1568,.7686,2.9351,-.3126,.7548,2.9013,-.1568
+                    ,.7305,2.794,-.1969,.6877,3.7447,-.1768,.7832,3.4281,-.2143,.3251,2.8776,-.0769,.3403,2.726,-.0561,.8987,3.2729,-.2389,.9671,2.9919,-.21,.5621,3.3659,.1655,.4261,3.3593,-.1376,.2562,4.0087,-.0365,.2829,3.9975,.1248,.0585,3.9959,.2762,1.0176,.135,-.4007,1.0548,.1411,-.4808,1.0681,.0563,-.4995,.851,.1911,-.6049,.8103,.1283,-.4961
+                    ,.7978,.0505,-.4818,.9418,.2105,-.5866,.8898,.2024,-.6256,.851,.1911,-.6049,.9216,.1328,-.33,1.0176,.135,-.4007,.7832,3.4281,-.2143,.8987,3.2729,-.2389,.8067,3.4253,-.0335,.6979,3.416,-.3012,.5204,3.4158,-.3167,.7832,3.4281,-.2143,.6979,3.416,-.3012,1.0569,2.871,-.2939,1.0642,2.5986,-.3887,.7305,2.794,-.1969,.8068,2.5303,-.3134
+                    ,.3114,3.0959,-.1305,.3251,2.8776,-.0769,.6066,3.3811,.0421,.4261,3.3593,-.1376,.5325,3.3026,-.1558,.5325,3.3026,-.1558,.6091,3.1344,-.1651,.4261,3.3593,-.1376,.9216,.1328,-.33,.8898,.2024,-.6256,.1596,3.996,.2317,.0381,3.9957,-.1693,1.0293,-.0176,-.3205,1.07,-.0174,-.5029,.9275,-.0179,-.4911,1.1197,-.0166,-.9497,.9089,-.0179,-1.0536
+                    ,.8385,.1316,-.3427,.8262,-.0182,-.2987,.5355,1.5978,-.608,.4408,1.5724,-.62,.572,1.4752,-.2763,.4361,1.4254,-.2476,.0527,2.6578,.3169,.0594,2.6911,-.3006,.0266,3.7804,-.3519,.3772,3.7461,.3029,-.0389,3.9956,-.1729,.5621,3.3659,.1655,.1395,2.4315,-.3022,.337,2.3494,.2314,.4377,2.5073,-.1163,.6165,1.9186,-.3935,.0299,2.176,-.0612
+                    ,.2288,1.7645,-.2891,.4604,2.4214,.1297,.1263,2.2384,.3021,.2875,2.5306,-.2824,.4481,.9692,-.5154,.7268,.378,-.4843,.8364,1.0842,-.5648,.981,.4538,-.5177,.0299,2.176,-.0612,-.0297,2.2741,-.0056,.0299,2.176,-.0612,-.0057,2.2976,-.2824,.1138,4.555,.153,.0988,4.3342,.1209,.2269,4.5505,-.1077,.2009,4.5473,-.2599,.202,4.2817,-.09
+                    ,.1858,4.2781,-.2742,.1179,4.2778,-.3443,.1281,4.5468,-.3541,.2269,4.5505,-.1077,.1955,4.6307,-.1063,.2016,4.5544,.0599,.0568,4.2952,-.3487,.202,4.2817,-.09,.2371,4.4419,-.1068,.1723,4.3335,.0135,.115,4.4404,.141,.1345,4.4705,-.3679,.1345,4.4705,-.3679,.0044,4.4699,-.3976,.2375,4.4698,-.1073,.2106,4.471,-.2595,.2176,4.4426,-.2595
+                    ,.2045,4.4398,.0455,.2092,4.4723,.0621,.2375,4.4698,-.1073,.1176,4.4728,.1563,.2092,4.4723,.0621,.0226,4.6355,.1446,.1955,4.6307,-.1063,.106,4.6992,-.1028,.0639,4.6973,-.2413,.1082,4.6974,-.1537,.106,4.6992,-.1028,.0933,4.7013,-.0435,.0572,4.7019,.0298,.0192,4.7023,.0447,.0933,4.7013,-.0435,.1082,4.6974,-.1537,.106,4.6992,-.1028
+                    ,.0238,4.4732,.1832,.1176,4.4728,.1563,.0234,4.4407,.1693,.115,4.4404,.141,.0226,4.6355,.1446,.0224,4.3346,.1422,.0988,4.3342,.1209,.0238,4.5553,.1815,.1138,4.555,.153,.2106,4.471,-.2595,.1345,4.4705,-.3679,.1397,4.4422,-.3605,.1354,4.4155,-.3338,.2009,4.5473,-.2599,.1281,4.5468,-.3541,.2009,4.1517,-.0776,.2078,4.1056,-.0622
+                    ,.2078,4.1056,-.0622,.2227,4.0712,-.0471,.0059,4.2778,-.3534,.0568,4.2952,-.3487,.0061,4.2906,-.3472,.0431,4.2906,-.3552,.0355,4.3744,-.3938,.0431,4.2906,-.3552,.0568,4.2952,-.3487,.0404,4.4249,-.3789,.0355,4.3744,-.3938,.1397,4.4422,-.3605,.7257,2.0161,-.4604,.7085,2.0627,-.4613,.8407,2.0713,-.4929,.929,2.0136,-.4954,1.0151,2.1767,-.4903
+                    ,.929,2.0136,-.4954,.0059,4.2778,-.3534,.1179,4.2778,-.3443,.1179,4.2778,-.3443,.1858,4.2781,-.2742,-.1461,3.7539,.4978,.1157,3.7647,.4004,-.8847,3.0018,.596,-.1108,3.9956,-.1409,-.222,3.9958,-.0622,.0903,3.0906,.3504,.052,2.861,.3018,-.1151,3.0909,-.3082,-.1577,3.4339,-.3422,-.3559,2.6706,-.1299,-.778,3.4238,.4102,-.8079,2.9346,.3893
+                    ,-.69,2.8881,.6527,-.6907,2.9105,.4954,-.69,2.8881,.6527,-.8896,2.9973,.4358,-.9759,2.4455,.2911,-.8685,2.4247,.3863,-.837,2.3962,.5191,-.837,2.3962,.5191,-.9789,2.4129,.5933,-1.0986,2.4452,.3533,-.6999,3.7394,.3366,-.696,3.738,.0599,-.3126,3.7802,-.2251,-.1452,3.7781,-.2947,.1157,3.7647,.4004,-.696,3.738,.0599,-.0518,3.9959,.2931
+                    ,.0585,3.9959,.2762,-.3505,3.9465,.1829,-.2751,4.0084,.1026,-.0969,2.3479,-.2532,-.0984,2.6618,-.2775,-.2587,2.6534,-.2475,-.0984,2.6618,-.2775,-.1246,2.6725,.3346,-.1863,2.2212,-.1972,-.0969,2.3479,-.2532,-.3963,2.7023,.0645,-.6707,1.4304,.0362,-.4962,2.4743,.1223,-.8044,1.5055,.2321,-.493,1.3858,.1269,-.465,1.4157,.3793,-.6005,1.4663,.4084
+                    ,-.8437,.1344,.9324,-.9448,1.0242,.4253,-.9239,-.0177,1.0051,-1.0237,.1359,.8955,-.9641,.1706,.6472,-1.067,.1413,.8294,-.8549,-.0127,.7638,-1.2223,-.0275,.2975,-1.1033,-.0204,.3022,-.8299,-.017,.9751,-.8709,2.0022,.3111,-1.1033,-.0204,.3022,-.8549,-.0127,.7638,-1.1163,-.0278,.8551,-.8549,-.0127,.7638,-.9877,-.0204,.8092,-1.0237,.1359,.8955
+                    ,-.5763,.8959,.3067,-.521,1.2701,.1548,-.8298,.1295,.7751,-.7621,.3606,.6328,-.7285,1.5057,.3766,-.8585,1.3849,.2733,-.493,1.3858,.1269,-.8044,1.5055,.2321,-.7375,1.8477,.189,-.521,1.2701,.1548,-.493,1.3858,.1269,-.4962,2.4743,.1223,-.4194,2.6288,.0918,-.2861,2.7026,.3013,-.4194,2.6288,.0918,-.222,3.9958,-.0622,-.2751,4.0084,.1026
+                    ,-.5948,3.7364,.5382,-.6999,3.7394,.3366,-1.0873,2.1717,.4492,-1.0757,2.385,.4905,-.9789,2.4129,.5933,-1.0757,2.385,.4905,-.986,2.0453,.3243,-.9759,2.4455,.2911,-.8685,2.4247,.3863,-.8685,2.4247,.3863,-1.0044,2.8783,.6034,-.8847,3.0018,.596,-1.0773,2.43,.4927,-1.0675,2.6008,.5547,-.8079,2.9346,.3893,-.6907,2.9105,.4954,-.5971,3.1335,.3698
+                    ,-.698,2.8008,.455,-.778,3.4238,.4102,-.6999,3.7394,.3366,-.3963,2.7023,.0645,-.383,2.8706,.0761,-.8847,3.0018,.596,-.3878,3.0926,.1013,-.467,3.3557,.2135,-.2751,4.0084,.1026,-.2266,4.0711,.0188,.0298,4.0585,.2257,-1.1069,.0488,.8487,-.917,.1638,.6501,-.8545,.0555,.769,-.9878,.1907,.7004,-.9214,.1328,.9528,-.6767,3.4464,.5602
+                    ,-.8707,3.2721,.49,-.6767,3.4464,.5602,-.7705,3.3972,.2906,-.778,3.4238,.4102,-1.0675,2.6008,.5547,-1.0044,2.8783,.6034,-.8193,2.5333,.4333,-.383,2.8706,.0761,-.3878,3.0926,.1013,-.1021,2.857,-.2878,-.1151,3.0909,-.3082,.1153,3.3512,.4004,.0903,3.0906,.3504,-.4748,3.4038,.4884,-.5455,3.2981,.3002,-.467,3.3557,.2135,-.544,3.4432,-.0613
+                    ,-.5971,3.1335,.3698,-.5455,3.2981,.3002,-.467,3.3557,.2135,-.9214,.1328,.9528,-.2141,3.9983,.2668,-.0389,3.9956,-.1729,-.0196,4.0621,-.181,-1.0121,-.0221,.9947,-.9877,-.0204,.8092,-1.2223,-.0275,.2975,-1.3634,-.0392,.4854,-.9641,.1706,.6472,-.8437,.1344,.9324,-.8299,-.017,.9751,-.9239,-.0177,1.0051,-.7482,1.4675,.085,-.465,1.4157,.3793
+                    ,-.6005,1.4663,.4084,.0599,2.3725,.3471,-.0147,2.2579,.3584,-.6707,1.4304,.0362,.052,2.861,.3018,.0527,2.6578,.3169,-.1246,2.6725,.3346,-.3559,2.6706,-.1299,-.2587,2.6534,-.2475,-.0518,3.9959,.2931,-.1452,3.7781,-.2947,-.696,3.738,.0599,-.3126,3.7802,-.2251,-.0809,3.919,-.193,-.0389,3.9956,-.1729,-.1108,3.9956,-.1409,-.362,3.3957,.5465
+                    ,-.5948,3.7364,.5382,-.1461,3.7539,.4978,-.3292,2.3326,-.1642,-.7375,1.8477,.189,-.3384,1.6995,.1282,-.3842,2.4753,.3573,-.0963,2.1486,.039,-.4533,2.429,-.0952,-.7621,.3606,.6328,-.5763,.8959,.3067,-1.0039,.4447,.7097,-.9448,1.0242,.4253,-.0147,2.2579,.3584,.0599,2.3725,.3471,-.0297,2.2741,-.0056,-.0297,2.2741,-.0056,-.0969,2.3479,-.2532
+                    ,-.1863,2.2212,-.1972,-.2087,4.4699,-.0925,-.1888,4.1517,-.0475,-.1824,4.5473,-.2471,-.1982,4.5506,-.0935,-.1739,4.2781,-.2598,-.1767,4.2817,-.0737,-.0072,4.1074,-.3476,-.0072,4.1074,-.3476,.0059,4.2778,-.3534,.0044,4.4699,-.3976,.0052,4.5463,-.3759,-.116,4.5468,-.3459,.0052,4.5463,-.3759,.0064,4.6277,-.3406,-.1982,4.5506,-.0935,-.1618,4.5545,.072
+                    ,-.1982,4.5506,-.0935,-.1667,4.6308,-.0942,-.0679,4.555,.1591,-.1618,4.5545,.072,-.0445,4.2953,-.3453,-.1767,4.2817,-.0737,-.1356,4.3336,.0238,-.1767,4.2817,-.0737,-.2083,4.442,-.0919,-.0552,4.3342,.126,-.1356,4.3336,.0238,-.1233,4.4705,-.3593,.0044,4.4419,-.3982,.0044,4.4699,-.3976,-.199,4.4426,-.2456,-.192,4.471,-.2461,-.2087,4.4699,-.0925
+                    ,-.1656,4.4399,.0578,-.2083,4.442,-.0919,-.2087,4.4699,-.0925,-.07,4.4404,.1472,-.1656,4.4399,.0578,-.1692,4.4723,.0747,.0192,4.7023,.0447,-.0772,4.6992,-.0966,-.1667,4.6308,-.0942,-.0772,4.6992,-.0966,-.0772,4.6992,-.0966,-.0827,4.6975,-.1473,.0095,4.6974,-.2474,-.0444,4.6973,-.2377,.0095,4.6974,-.2474,-.0827,4.6975,-.1473,.0192,4.7023,.0447
+                    ,-.0197,4.7019,.0324,-.0606,4.7013,-.0384,-.0606,4.7013,-.0384,-.0772,4.6992,-.0966,.0095,4.6974,-.2474,.0234,4.4407,.1693,-.07,4.4404,.1472,-.0715,4.4729,.1626,-.0552,4.3342,.126,.0234,4.4407,.1693,.0238,4.5553,.1815,-.0679,4.555,.1591,.0224,4.3346,.1422,.0238,4.4732,.1832,.0064,4.6277,-.3406,.0095,4.6974,-.2474,-.1233,4.4705,-.3593
+                    ,-.192,4.471,-.2461,-.1063,4.2779,-.3366,-.1281,4.4422,-.3516,-.116,4.5468,-.3459,.0229,4.1969,.1576,-.0121,4.065,-.3028,-.0072,4.1074,-.3476,-.2046,4.1056,-.0173,-.1888,4.1517,-.0475,.0298,4.0585,.2257,-.2266,4.0711,.0188,-.2046,4.1056,-.0173,-.0196,4.0621,-.181,-.0121,4.065,-.3028,.0059,4.2778,-.3534,.0061,4.2906,-.3472,.0061,4.2906,-.3472
+                    ,.0038,4.2896,-.4164,-.0263,4.3744,-.3917,.0038,4.2896,-.4164,.0043,4.3744,-.4009,-.0445,4.2953,-.3453,.0043,4.3744,-.4009,.0047,4.4364,-.3904,-.0263,4.3744,-.3917,-.0302,4.4249,-.3766,-.0421,4.4421,-.3833,-.1281,4.4422,-.3516,.0047,4.4364,-.3904,.0044,4.4419,-.3982,-.8735,2.0363,.2761,-.8709,2.0022,.3111,-.986,2.0453,.3243,-.8735,2.0363,.2761
+                    ,-1.0519,2.0081,.3977,-.9456,2.0924,.163,-1.0873,2.1717,.4492,-1.0519,2.0081,.3977,.0059,4.2778,-.3534,-.0445,4.2953,-.3453,-.1063,4.2779,-.3366,-.1063,4.2779,-.3366,-.1739,4.2781,-.2598,-.1739,4.2781,-.2598,-.1767,4.2817,-.0737,.0404,4.4249,-.3789,-.0302,4.4249,-.3766
                 ]),
                 false);
 
                 var _i;//indices & affected indices for shapekeys
-                _i = new Uint32Array(4044);
+                _i = new Uint32Array(3258);
                 CONTIG(_i, 0, 0, 30);
                 _i.set([26,31,32,33,34,35,10,36,37,38,39,37,40,41,42,43,44,32], 31);
                 CONTIG(_i, 49, 45, 57);
@@ -2843,215 +3209,176 @@ var Warrior;
                 _i.set([128,136,137,138,139,140,141,138,142,143,144,145,117,133], 155);
                 CONTIG(_i, 169, 146, 175);
                 _i.set([64,68,176,177,178,179,180,181,182,183,149,184,185,186,187,188,152,189,129,135,132,190,146,191,155,192,193,194,132,195,196,110,197,126,198,199,135,200,201,114,107,202,203,107,204,205,206,207,208,209
-                ,76,210,66,211,212,175,213,214,175,66,172,76,56,215,216,72,54,217,218,45,219,220,62,221,222,223,35,50,224,225,226,227,15,228,229,99,230,231,38,232,233,234,235,236,237,0,238,239,240,241
-                ,242,243,244,182,245,246,179,247,171,248,249,168,250,251,179,163,252,182,148,253,230,254,255,37,256,257,35,36,258,36,9,259,221,45,225,260,56,46,221,61,33,61,58,225,42,51,51,44,48,232
-                ,261,228,98,22,96,20,262,3,8,263,27,264,41,265,266,25,267,268,35,269,270,16,271,232,3,272,7,98,263,247,148,169,273,166,274,275,236,276,277,278,279,280,281,282,163,283,166,284,160,285
-                ,286,156,158,151,287,139,148,288,169,144,147,289,290,128,137,116,133,144,137,130,142,125,291,292,108,293,294,109,120,295,296,108,294,94,112,104,18,297,298,98,28,263,95,104,299,84,91,207,21,300
-                ,301,302,207,303,204,82,304,7,21,23,228,20,232,12,305,81,306,5,307,308,295,309,310,292,311,312,198,313,314,315,195,316,125,317,318,292,122,319,119,320,314,109,321,147,139,289,142,154,286,322
-                ,192,129,146,323,187,143,286,157,130,192,154,147,187,151,289,141,145,293,324,294,325,326,101,108,296,327,328,329,330,331,332,333,330,334,335,333], 199);
-                CONTIG(_i, 535, 336, 390);
-                _i.set([354,357,391,392,354,393,394,395,396,397,360,388,391,398,399,383,400,371,401,402,386,359,403,331,404,405,406,328,351,393,407,408,409,410,366,362,367,355,394,350,339,411,347,342,412,346,342,413,414,404
-                ,415,416,413,417,418,419,414,420,333,421,422,331,422,415,423,415,241,415,236,241,422,424,236,420,2,1,414,238,2,413,278,238,346,425,426,427,428,429,430,431,432,433,431,434,431,435,432,433,436,437
-                ,438,435,439,440,437,441,440,442,433,441,443,444,376,445,438,173,446,447,448,449,177,450,177,449,451,452,172,65,449,453,454,173,447,210,455,456,217,456,457,54,210,456,217,458,76,459,460,461,458,462
-                ,210,458,463,459,456,463,457,460,464,461,455,460,463,462,465,455,459,464,462,64,178,450,466,178,212,77,467,75,77,172,174,468,469,470,468,471,472,473,474,475,474,476,477,478,479,480,481,482,483,471
-                ,482,479,484,471,468,485,474,486,485,479,487,472,471,485,472,486,469], 590);
-                CONTIG(_i, 807, 488, 519);
-                _i.set([512,520,521,522,498,523,499,524,525,526,527,524,528,529,530,531,521], 839);
-                CONTIG(_i, 856, 532, 542);
-                _i.set([530,543,544,545,546,547,547,548,549,550,551,552,553,554,541,555,556,557,558,559,556,560,558,555,558,561,562,540,551,553,563,564,502,500,565,566,567,568,569,570,495,511,567], 867);
-                CONTIG(_i, 910, 571, 581);
-                _i.set([508,582,583,584,585,576], 921);
-                CONTIG(_i, 927, 586, 596);
-                _i.set([587,597,598,590], 938);
-                CONTIG(_i, 942, 599, 617);
-                _i.set([613,618,619,620,621,622,623,624,625,626,620,627,628,599,629,630,615], 961);
-                CONTIG(_i, 978, 631, 657);
-                _i.set([553,658,659,660,661,662,648,663,664,633,665,666,667,668,669,635,670,671,612,672,613,615,673,674,638,675,639,676,677,678,594,679,680,609,681,610,613,682,683,598,684,590,685,686,687,502,688,563,575,689
-                ,690,552,691,561,658,692,659,693,694,695,656,552,561,544,696,697,698,540,699,532,700,701,548,702,549,703,704,523,538,705,706,707,708,504,582,709,583,526], 1005);
-                CONTIG(_i, 1093, 710, 719);
-                _i.set([488,720,721,722,723,724,725,726,727,728,654,729,730,651,731,732,733,648,734,735,633,723,736,737,738,524,739,740,741,523,742,743,499,744,549,745,532,746,747,748,749,549,532,520,547,749,537,544,746,531
-                ,537,534,583,750,712,579,751,509,491,752,506,517,753,494,754,528,524,755,513,756,523,757,758,503,759,760,491,712,761,516,509,753,653,762,729,650,733,763,764,765,720,766,767,718,768,769,770,771,646,650
-                ,643,772,773,642,774,637,775,636,623,776,631,653,628,777,629,778,611,617,600,629,614,620,779,611,780,608,607,781,782,597,603,592,604,783,784,597,596,576,587,785,786,508,787,579,516,587,578,588,574,567
-                ,575,788,511,789,575,569,790,502,791,500,753,511,495,712,508,583,792,793,500,794,795,491,604,796,797,798,608,799,610,800,801,594,802,803,608,804,805,806,607,798,602,807,808,592,803,809,623,777,810,626
-                ,637,779,639,811,612,630,812,673,813,642,626,779,639,612,777,635,630,624,810,627,814,815,816,817,818,819,597,589,820,821,822,823,824,825,826,827,828,822,829,830,825], 1103);
-                CONTIG(_i, 1344, 831, 852);
-                _i.set([851], 1366);
-                CONTIG(_i, 1367, 853, 863);
-                _i.set([862], 1378);
-                CONTIG(_i, 1379, 864, 876);
-                _i.set([853,877,878,879,848,847,880,881,851,882,847,845,883,884,885,851,886,853,887,888,889,890,891,892,893,853,878,824,894,895,896,823,897,898,882,845,899,900,901,855,858,902,903,845,847,831,842,904,834,905
-                ,906,907,834,908,909,910,911,907,912,905,908,836,913,914,829,915,915,824,909,916,909,917,716,909,765,918,915,716,719,913,489,767,908,719,919,907,767,905,839,920,921,922,923,924,925,926,925,927,928,925
-                ,929,930,927,931,932,933,934,930,935,936,937,938,936,927,937,939,940,941,865,934,942,655,943,944,945,660,946,660,662,947,948,656,550,944,946,949,655,657,950,951,952,562,952,540,540,951,552,691,562,561
-                ,953,954,955,956,691,951,691,955,957,955,952,957,954,958,959,954,950,955,959,956,950,958,953,956,551,662,658,662,960,658,961,962,560,962,656,561,963,469,964,963,964,965,966,967,968,969,967,970,971,972
-                ,973,974,975,972,975,965,972,976,963,965,967,973,977,977,972,965,964,977,965,486,964,469,362,441,437,978,441,979,937,855,935,937,980,981,0,982,1,3,262,4,6,86,7,9,36,10,12,204,983,15
-                ,227,16,18,298,19,21,301,22,24,984,25,27,263,28,30,24,26,32,46,33,35,985,10,37,230,38,37,986,987,42,57,43,32,988,45,989,51,48,50,225,51,53,68,54,56,990,57,58,61,991
-                ,61,221,62,64,450,65,992,175,68,993,73,70,72,217,73,73,77,75,73,217,76,54,68,64,78,204,994,81,995,82,996,997,84,86,998,999,84,1000,88,1001,207,91,93,101,94,96,1002,1003,18,228
-                ,99,101,1004,102,1005,1006,104,1007,1008,107,109,195,110,105,104,112,108,107,114,116,144,117,119,295,120,122,292,1009,125,198,126,128,135,129,1010,1011,132,1012,1013,135,1014,1015,137,139,1016,140,138,137,142,144
-                ,289,145,133,132,146,148,182,149,151,187,152,154,192,155,157,286,158,160,1017,161,163,179,1018,166,283,167,169,1019,1020,172,452,173,175,212,64,176,1021,177,179,1022,1023,182,1024,1025,1026,1027,185,187,1028,1029
-                ,1030,1031,129,132,1032,1033,1034,1035,155,1036,1037,1038,195,1039,1040,1041,1042,126,1043,1044,135,1045,1046,114,1047,1048,1049,204,78,1050,207,1051,1052,76,458,210,1053,1054,212,1055,1056,1057,66,1058,172,56,1059,1060,72,1061
-                ,54,1062,1063,45,1064,1065,62,1066,1067,1068,50,1069,1070,1071,1072,227,228,1073,1074,230,1075,1076,232,1077,1078,1079,1080,236,0,2,238,1081,423,241,1082,1083,1084,1085,1086,1087,247,169,171,1088,166,168,1089,1090,179,1091
-                ,1092,182,1093,1094,230,1095,230,37,1096,1097,35,1098,1099,36,1100,1101,221,225,1102,1103,46,45,221,33,46,61,225,56,42,51,42,44,232,1104,1105,98,23,22,20,19,262,8,7,263,1106,37,41,1107,1108,25
-                ,1109,1110,35,1111,17,16,232,20,3,7,23,98,247,1112,148,1113,163,166,1114,241,236,1115,238,278,1116,1117,1118,163,165,283,1119,1120,160,286,154,156,151,153,1121,148,150,1122,144,133,147,1123,1124,128,116,1125
-                ,133,137,128,130,125,127,1126,108,115,293,109,111,120,94,102,112,18,100,1127,98,1128,28,95,94,104,84,89,91,21,1129,300,1130,84,207,204,12,82,7,86,21,228,18,20,12,14,1131,1132,3,5,1133
-                ,109,295,1134,125,292,1135,1136,198,314,1137,1138,1139,198,125,318,1140,292,1141,295,119,314,195,109,147,151,139,142,130,154,1142,1143,192,146,1144,1145,143,142,286,130,129,192,147,146,187,289,139,141,293,1146,324
-                ,1147,1148,1149,328,1150,329,331,1151,332,330,329,334,333,332,336,1152,1153,339,1154,1155,342,417,346,345,1156,344,346,347,1157,348,350,394,351,1158,1159,354,1160,360,357,359,386,360,362,437,1161,1162,1163,366,1164,372
-                ,369,371,1165,372,376,409,1166,1167,1168,376,1169,1170,1171,1172,1173,1174,383,1175,1176,386,1177,387,1178,1179,390,357,360,391,354,390,393,1180,1181,397,1182,1183,397,1184,1185,1186,397,1187,1188,360,386,388,398,1189,1190,1191
-                ,1192,371,402,1193,386,1194,1195,331,405,1196,1197,351,394,393,1198,1199,409,364,367,362,366,1200,1201,1201,362,366,355,354,394,339,1202,1203,342,346,413,404,331,415,413,346,417,1204,342,414,333,337,1205,331,333,422
-                ,423,416,415,415,422,236,422,1206,1207,420,414,2,414,413,238,413,418,278,1208,1209,428,1210,1211,431,433,1212,431,431,439,435,433,1213,1214,438,445,435,440,433,437,440,1215,1216,441,1201,1217,376,375,445,173,452
-                ,446,1218,1219,449,450,178,177,1220,446,452,65,450,449,1221,174,173,210,462,455,217,54,456,54,66,210,217,457,458,459,463,460,458,459,462,458,457,463,456,455,463,460,465,464,455,465,460,462,464,465,459
-                ,461,464,64,212,178,1222,176,178,77,174,1223,77,76,172,468,472,469,1224,968,474,474,487,1225,1226,487,479,1227,479,482,471,484,482,968,486,474,485,487,474,485,471,479,472,485,486,488,719,489,491,1228,1229
-                ,494,753,495,497,1230,498,500,1231,1232,503,707,504,506,1233,1234,509,1235,1236,512,519,513,515,1237,516,518,1238,519,520,749,521,498,1239,523,524,1240,525,1241,1242,524,529,1243,530,521,749,532,534,537,1244,537,746
-                ,538,540,553,541,530,1245,543,545,1246,1247,547,1248,548,550,946,551,553,659,1249,555,558,556,558,562,1250,560,962,558,558,962,561,540,552,551,563,1251,1252,500,1253,1254,567,572,1255,570,1256,495,567,1257,1258,1259
-                ,1260,574,576,1261,1262,579,1263,1264,508,1265,582,584,1266,1267,1268,595,587,589,597,590,592,1269,593,595,1270,596,597,782,598,599,628,600,602,1271,603,605,1272,1273,608,1274,609,611,779,612,614,629,615,617,611,613
-                ,619,625,620,622,1275,623,625,1276,626,627,810,628,629,777,630,631,1277,632,634,1278,635,637,1279,638,640,1280,641,643,1281,644,646,1282,1283,649,771,650,652,1284,653,655,947,656,553,551,658,660,1285,661,648,1286
-                ,1287,633,632,1288,667,1289,1290,635,1291,670,612,1292,1293,615,630,673,638,1294,1295,1296,615,1297,594,593,1298,609,1299,1300,613,1301,1302,598,1303,1304,1305,590,1306,502,1307,1308,575,1309,1310,552,951,691,658,1311,1312,1313
-                ,659,1314,656,1315,552,544,543,1316,1317,562,540,532,1318,1319,548,1320,1321,1322,1323,1324,538,746,1325,707,1326,1327,582,1328,1329,526,525,1330,712,1331,1332,1333,1334,716,718,767,719,720,765,1335,723,633,1336,1337,648,1338
-                ,654,653,729,651,650,1339,733,646,648,1340,631,633,1341,526,1342,524,526,1343,1344,499,523,1345,497,499,549,1346,1347,746,544,1348,749,547,549,520,545,547,537,530,544,531,530,537,583,1349,1350,579,1351,1352,491,1353
-                ,1354,517,516,753,1355,1356,528,1357,1358,513,523,1359,1360,503,505,1361,491,506,712,516,579,509,653,631,1362,650,646,733,1363,716,765,1364,1365,767,1366,669,1367,771,1368,646,643,645,1369,642,641,1370,1371,634,636,1372
-                ,1373,631,628,810,777,1374,620,611,600,628,629,620,626,779,1375,1376,608,1377,1378,782,603,1379,592,596,584,576,1380,1381,1382,1383,1384,579,587,576,578,574,1385,567,1386,570,511,575,567,569,502,1387,1388,753,509,511
-                ,712,506,508,1389,1390,1391,1392,1393,1394,604,592,1395,798,607,608,610,1396,800,594,1397,802,608,610,1398,1399,605,607,602,604,1400,592,594,803,623,636,777,626,642,637,639,1401,1402,630,635,1403,1404,640,642,779,637
-                ,639,777,636,635,624,623,810,1405,1406,1407,1408,1409,1410,821,827,822,824,829,825,827,1411,828,829,1412,830,831,1413,1414,834,1415,1416,839,905,1417,1418,1419,838,840,1420,1421,1422,1423,1424,1425,903,847,1426,1427,1428,1429
-                ,1430,851,1431,935,855,1432,902,858,1433,1434,1435,1436,1437,862,1438,899,865,865], 1392);
-                CONTIG(_i, 3010, 1439, 1449);
-                _i.set([853,886,1450,879,1451,848,1452,1453,881,882,879,847], 3021);
-                CONTIG(_i, 3033, 1454, 1465);
-                _i.set([851,881,886,1466,1467,1468,1469,864,1470,1471,1472,853,824,826,1473,1474,821,823,1475,1476,882,899,1477,1478,858,855,940,1479,855,902,940,1480,858,903,1481,845,831,840,842,907,905,834,909,824,1482,907,1483,1484,908,834
-                ,836,1485,1486,829,915,829,824,1487,765,909,716,915,909,1488,1489,915,719,908,913,767,907,908,1490,1491,907,1492,1493,922,1494,1495,925,925,1496,927,925,1497,1498,927,935,1499,1500,1501,934,935,927,936,1502,1503,936,937
-                ,1504,1505,1506,1507,865,942,947,655,944,1508,1509,946,944,660,947,942,1510,550,1511,944,1512,943,655,950,956,951,562,957,952,540,952,951,691,957,562,953,1513,954,956,953,691,691,953,955,955,950,952,954,1513,958
-                ,954,959,950,959,958,956,958,1513,953,551,946,662,662,661,1514,1515,657,962,962,657,656,963,470,469,1516,1517,967,1518,973,967,1519,1520,972,1521,1522,975,975,976,965,977,486,967,968,967,486,977,973,972,486,977
-                ,964,362,1201,441,1523,440,441,937,940,855,937,936,1524,1525,1526,1527,1528,1529,1530,1530,1531,1528,1532,1533,1534,1535,1536,1529,1537,1538,1539,1540,1541,1542,1543,1544,1545,1539,1546,1547,1542], 3045);
-                CONTIG(_i, 3286, 1548, 1566);
-                _i.set([1557,1567,1568,1554,1541,1569,1548,1570,1571,1541,1572,1573,1574,1562,1561,1575,1576,1558,1577,1553,1578,1579,1542,1580,1581,1543,1582,1550,1583,1542,1581,1529,1546,1538,1584,1585,1586,1540,1587,1588,1530,1538,1589,1590,1550,1591,1592,1579,1593,1594
-                ,1567,1595,1596,1553,1597,1598,1552,1599,1600,1543,1601,1542,1583,1540,1602,1603,1604,1605,1606,1607,1608,1609,1610,1602,1611,1612,1613,1614,1605,1615,1532,1616,1604,1617,1602,1618,1619,1620,1615,1621,1622,1623,1624,1617,1544,1620,1619,1625,1626,1627
-                ,1619,1560,1544], 3305);
-                CONTIG(_i, 3408, 1628, 1645);
-                _i.set([1630,1646,1647,1648,1649,1620,1617,1650,1651,1602,1652,1653,1607,1654,1533,1638,1655,1634,1656,1657,1631,1658,1628,1659,1660,1661,1623,1662,1618,1626,1663,1664,1623,1621,1605,1622,1537,1665,1589,1666,1573,1667,1622,1607,1532,1626,1668,1669,1670,1628
-                ,1671,1630,1672,1673,1674,1580,1675,1628,1676,1677,1678,1579,1679,1627,1680,1681,1618,1682,1683,1684,1685,1577,1659,1580,1579,1623,1604,1686,1666,1687,1574,1688,1689,1610,1608,1689,1690,1584,1691,1692,1574,1693,1572,1584,1694,1695,1696,1697,1698,1525
-                ,1699,1700,1698,1701,1525,1586,1702,1694,1703,1690,1704,1705,1706,1666,1707,1708,1709,1710,1711,1712,1609,1713,1714,1715,1716,1713,1609,1717,1718,1712,1719,1585,1720,1573,1721,1667,1722,1723,1527,1724,1725,1726,1727,1725,1526,1728,1527,1729,1667,1573
-                ,1570,1588,1730,1731,1585,1707,1666,1732,1733,1530,1665,1734,1610,1735,1688,1608,1736,1715,1584,1710,1712,1570,1737,1738,1616,1534,1739,1698,1527,1725,1604,1740,1741,1698], 3426);
-                CONTIG(_i, 3610, 1742, 1752);
-                _i.set([1747,1753,1754,1752,1746,1745,1755,1756,1750,1748,1746,1749,1747,1755,1757,1754,1745,1747,1757,1750,1758,1758,1752,1754,1753,1756,1759,1749,1751,1753,1759,1744,1748,1758,1748,1757,1753,1758,1754,1525,1760,1526,1528,1535,1529,1530,1761,1531,1532,1607
-                ,1533,1535,1762,1536,1537,1589,1538,1540,1570,1541,1543,1648,1544,1539,1538,1546,1542,1541,1548,1550,1763,1551,1553,1567,1554,1764,1765,1557,1766,1767,1560,1562,1575,1563,1768,1769,1770,1567,1771,1772,1541,1773,1774,1570,1775,1776,1572,1721,1573,1562
-                ,1777,1561,1576,1778,1558,1553,1555,1779,1542,1549,1580,1543,1545,1780,1529,1536,1546,1584,1712,1585,1540,1583,1587,1530,1529,1538,1781,1543,1550,1782,1553,1579,1783,1784,1567,1785,1567,1553,1786,1550,1552,1600,1648,1543,1602,1612,1603,1605,1787,1788
-                ,1608,1715,1609,1602,1789,1611,1613,1645,1790,1615,1622,1532,1604,1623,1617,1618,1791,1619,1615,1792,1621,1623,1661,1624,1544,1648,1620,1625,1793,1626,1619,1635,1560,1628,1794,1629,1631,1657,1632,1634,1655,1635,1637,1795,1638,1796,1632,1797,1630,1629
-                ,1798,1648,1799,1800,1617,1624,1650,1602,1617,1801,1607,1802,1803,1638,1795,1655,1656,1684,1657,1804,1805,1628,1806,1807,1661,1808,1809,1618,1621,1613,1605,1537,1810,1665,1666,1574,1573,1622,1605,1607,1626,1618,1811,1670,1659,1628,1630,1812,1813,1628
-                ,1630,1814,1815,1659,1579,1627,1626,1816,1618,1620,1817,1684,1656,1818,1659,1670,1580,1666,1706,1687,1688,1819,1689,1608,1610,1689,1584,1695,1691,1574,1687,1693,1584,1586,1694,1820,1821,1697,1525,1701,1699,1698,1697,1701,1586,1822,1702,1703,1608,1690
-                ,1823,1824,1706,1707,1585,1825,1710,1826,1711,1609,1715,1713,1715,1827,1828,1609,1829,1830,1712,1711,1831,1832,1833,1573,1667,1834,1835,1527,1836,1837,1838,1839,1840,1526,1841,1842,1843,1844,1667,1570,1540,1588,1845,1586,1585,1666,1667,1846,1530,1589
-                ,1665,1610,1609,1847,1608,1703,1848,1584,1692,1710,1570,1849,1850,1616,1532,1534,1698,1525,1527,1604,1603,1851,1698,1725,1852,1744,1755,1745,1747,1757,1748,1750,1756,1751,1747,1749,1753,1752,1751,1746,1755,1744,1756,1748,1744,1746,1747,1745,1755,1754
-                ,1752,1745,1757,1755,1750,1758,1750,1752,1753,1751,1756,1749,1746,1751,1759,1756,1744,1758,1759,1748,1753,1759,1758], 3621);
+                ,76,210,66,211,212,175,213,214,175,66,172,76,56,215,216,217,218,72,219,45,220,221,62,222,223,224,35,50,225,226,227,228,15,229,230,99,231,232,38,233,234,235,236,237,238,0,239,240,241,242
+                ,243,244,245,182,246,247,179,248,171,249,250,168,251,252,179,163,253,182,148,254,231,255,256,37,257,258,35,36,259,36,9,260,222,45,226,261,56,46,222,61,33,61,58,51,56,42,51,44,48,233
+                ,262,229,98,22,96,20,263,3,8,264,27,265,41,266,267,25,268,269,35,270,271,16,272,233,3,273,7,98,264,248,148,169,274,166,275,276,237,277,278,279,280,281,282,283,163,284,166,285,160,286
+                ,287,156,158,151,288,139,148,289,169,144,147,290,291,128,137,116,133,144,137,130,142,125,292,293,108,294,295,109,120,296,297,108,295,94,112,104,18,298,299,98,28,264,95,104,300,84,91,207,21,301
+                ,302,303,207,304,204,82,305,7,21,23,229,20,233,12,306,81,307,5,308,309,296,310,311,293,312,313,198,314,315,316,195,317,125,318,319,293,122,320,119,321,315,109,322,147,139,290,142,154,287,323
+                ,192,129,146,324,187,143,287,157,130,192,154,147,187,151,290,141,145,294,325,295,326,327,101,108,297,328,329,330,331,332,333,334,331,335,336,334], 199);
+                CONTIG(_i, 535, 337, 391);
+                _i.set([355,358,392,393,355,394,395,396,397,398,361,389,392,399,400,384,401,372,402,403,387,360,404,332,405,406,407,329,352,394,408,409,410,411,367,363,368,356,395,351,340,412,348,343,413,347,343,414,415,405
+                ,416,417,414,418,419,420,415,421,334,422,423,332,423,416,424,416,242,416,237,242,423,425,237,421,2,1,415,239,2,414,279,239,347,426,427,428,429,430,431,432,433,434,432,435,432,436,433,434,437,438
+                ,439,436,440,441,438,442,441,443,434,442,444,445,377,446,439,173,447,448,449,450,177,451,177,450,452,453,172,65,450,454,455,173,448,210,456,457,218,457,458,54,210,457,218,459,76,460,461,462,459,463
+                ,210,459,464,460,457,464,458,461,465,462,456,461,464,463,466,456,460,465,463,64,178,451,467,178,212,77,468,75,77,172,174,469,470,471,469,472,473,474,475,476,475,477,478,479,480,481,482,483,484,472
+                ,483,480,485,472,469,486,475,487,486,480,488,473,472,486,473,487,470], 590);
+                CONTIG(_i, 807, 489, 520);
+                _i.set([513,521,522,523,499,524,500,525,526,527,528,525,529,530,531,532,522], 839);
+                CONTIG(_i, 856, 533, 545);
+                _i.set([531,546,547,548,548,549,550,551,552,553,554,555,542,556,557,558,559,560,561,562,559,556,559,563,564,541,552,554,565,566,503,501,567,568,569,570,571,572,496,512,569], 869);
+                CONTIG(_i, 910, 573, 583);
+                _i.set([509,584,585,586,587,578], 921);
+                CONTIG(_i, 927, 588, 598);
+                _i.set([589,599,600,592], 938);
+                CONTIG(_i, 942, 601, 619);
+                _i.set([615,620,621,622,623,624,625,626,627,628,622,629,630,601,631,632,617], 961);
+                CONTIG(_i, 978, 633, 659);
+                _i.set([554,660,661,662,663,664,650,665,666,635,667,668,669,670,671,637,672,673,614,674,615,617,675,676,640,677,641,678,679,680,596,681,682,611,683,612,615,684,685,600,686,592,687,688,689,503,690,565,577,691
+                ,692,553,693,563,660,694,661,695,696,697,658,553,563,545,698,699,564,700,560,533,701,702,549,703,550,704,705,524,539,706,707,708,709,505,584,710,585,527], 1005);
+                CONTIG(_i, 1093, 711, 720);
+                _i.set([489,721,722,723,724,725,726,727,728,729,656,730,731,653,732,733,734,650,735,736,635,724,737,738,739,525,740,741,742,524,743,744,500,745,550,746,533,747,748,749,750,550,533,521,548,750,538,545,747,532
+                ,538,535,585,751,713,581,752,510,492,753,507,518,754,495,755,529,525,756,514,757,524,758,759,504,760,761,492,713,762,517,510,754,655,763,730,652,734,764,765,766,721,767,768,719,769,770,771,772,648,652
+                ,645,773,774,644,775,639,776,638,625,777,633,655,630,778,631,779,613,619,602,631,616,622,780,613,781,610,609,782,783,599,605,594,606,784,785,599,598,578,589,786,787,509,788,581,517,589,580,590,576,569
+                ,577,789,512,790,577,571,791,503,792,501,754,512,496,713,509,585,793,794,501,795,796,492,606,797,798,799,610,800,612,801,802,596,803,804,610,805,806,807,609,799,604,808,809,594,804,810,625,778,811,628
+                ,639,780,641,812,614,632,813,675,814,644,628,780,641,614,778,637,632,626,811,629,815,816,817,818,819,820,599,591,821,822,823,824,825,826,827,828,829,823,830,831,826], 1103);
+                CONTIG(_i, 1344, 832, 853);
+                _i.set([852], 1366);
+                CONTIG(_i, 1367, 854, 864);
+                _i.set([863], 1378);
+                CONTIG(_i, 1379, 865, 877);
+                _i.set([854,878,879,880,849,848,881,882,852,883,848,846,884,885,886,852,887,854,888,889,890,891,892,893,894,854,879,825,895,896,897,824,898,899,883,846,900,901,902,856,859,903,904,846,848,832,843,905,835,906
+                ,907,908,835,909,910,911,912,908,913,906,909,837,914,915,830,916,916,825,910,917,910,918,717,910,766,919,916,717,720,914,490,768,909,720,920,908,768,906,840,921,922,923,924,925,926,927,926,928,929,926
+                ,930,931,928,932,933,934,935,931,936,937,938,939,937,928,938,940,941,942,866,935,943,657,944,945,946,662,947,662,664,948,949,658,551,945,947,950,657,659,951,952,953,564,953,541,541,952,553,693,564,563
+                ,954,955,956,957,693,952,693,956,958,956,953,958,955,959,960,955,951,956,960,957,951,959,954,957,552,664,660,664,961,660,962,963,562,963,658,563,964,470,965,964,965,966,967,968,969,970,968,971,972,973
+                ,974,975,976,973,976,966,973,977,964,966,968,974,978,978,973,966,965,978,966,487,965,470,363,442,438,979,442,980,938,856,936,938,981,982,0,983,1,3,263,4,6,86,7,9,36,10,12,204,984,15
+                ,228,16,18,299,19,21,302,22,24,985,25,27,264,28,30,24,26,32,46,33,35,986,10,37,231,38,37,987,988,42,57,43,32,989,45,990,51,48,50,226,51,53,68,54,56,991,57,58,61,992
+                ,61,222,62,64,451,65,993,175,68,994,73,70,72,218,73,73,77,75,73,218,76,54,68,64,78,204,995,81,996,82,997,998,84,86,999,1000,84,1001,88,1002,207,91,93,101,94,96,1003,1004,18,229
+                ,99,101,1005,102,1006,1007,104,1008,1009,107,109,195,110,105,104,112,108,107,114,116,144,117,119,296,120,122,293,1010,125,198,126,128,135,129,1011,1012,132,1013,1014,135,1015,1016,137,139,1017,140,138,137,142,144
+                ,290,145,133,132,146,148,182,149,151,187,152,154,192,155,157,287,158,160,1018,161,163,179,1019,166,284,167,169,1020,1021,172,453,173,175,212,64,176,1022,177,179,1023,1024,182,1025,1026,1027,1028,185,187,1029,1030
+                ,1031,1032,129,132,1033,1034,1035,1036,155,1037,1038,1039,195,1040,1041,1042,1043,126,1044,1045,135,1046,1047,114,1048,1049,1050,204,78,1051,207,1052,1053,76,459,210,1054,1055,212,1056,1057,1058,66,1059,172,56,1060,1061,1062,54
+                ,218,1063,1064,45,1065,1066,62,1067,1068,1069,50,1070,1071,1072,1073,228,229,1074,1075,231,1076,1077,233,1078,1079,1080,1081,237,0,2,239,1082,424,242,1083,1084,1085,1086,1087,1088,248,169,171,1089,166,168,1090,1091,179,1092
+                ,1093,182,1094,1095,231,1096,231,37,1097,1098,35,1099,1100,36,1101,1102,222,226,1103,1104,46,45,222,33,46,61,51,226,56,51,42,44,233,1105,1106,98,23,22,20,19,263,8,7,264,1107,37,41,1108,1109,25
+                ,1110,1111,35,1112,17,16,233,20,3,7,23,98,248,1113,148,1114,163,166,1115,242,237,1116,239,279,1117,1118,1119,163,165,284,1120,1121,160,287,154,156,151,153,1122,148,150,1123,144,133,147,1124,1125,128,116,1126
+                ,133,137,128,130,125,127,1127,108,115,294,109,111,120,94,102,112,18,100,1128,98,1129,28,95,94,104,84,89,91,21,1130,301,1131,84,207,204,12,82,7,86,21,229,18,20,12,14,1132,1133,3,5,1134
+                ,109,296,1135,125,293,1136,1137,198,315,1138,1139,1140,198,125,319,1141,293,1142,296,119,315,195,109,147,151,139,142,130,154,1143,1144,192,146,1145,1146,143,142,287,130,129,192,147,146,187,290,139,141,294,1147,325
+                ,1148,1149,1150,329,1151,330,332,1152,333,331,330,335,334,333,337,1153,1154,340,1155,1156,343,418,347,346,1157,345,347,348,1158,349,351,395,352,1159,1160,355,1161,361,358,360,387,361,363,438,1162,1163,1164,367,1165,373
+                ,370,372,1166,373,377,410,1167,1168,1169,377,1170,1171,1172,1173,1174,1175,384,1176,1177,387,1178,388,1179,1180,391,358,361,392,355,391,394,1181,1182,398,1183,1184,398,1185,1186,1187,398,1188,1189,361,387,389,399,1190,1191,1192
+                ,1193,372,403,1194,387,1195,1196,332,406,1197,1198,352,395,394,1199,1200,410,365,368,363,367,1201,1202,1202,363,367,356,355,395,340,1203,1204,343,347,414,405,332,416,414,347,418,1205,343,415,334,338,1206,332,334,423
+                ,424,417,416,416,423,237,423,1207,1208,421,415,2,415,414,239,414,419,279,1209,1210,429,1211,1212,432,434,1213,432,432,440,436,434,1214,1215,439,446,436,441,434,438,441,1216,1217,442,1202,1218,377,376,446,173,453
+                ,447,1219,1220,450,451,178,177,1221,447,453,65,451,450,1222,174,173,210,463,456,218,54,457,54,66,210,218,458,459,460,464,461,459,460,463,459,458,464,457,456,464,461,466,465,456,466,461,463,465,466,460
+                ,462,465,64,212,178,1223,176,178,77,174,1224,77,76,172,469,473,470,1225,969,475,475,488,1226,1227,488,480,1228,480,483,472,485,483,969,487,475,486,488,475,486,472,480,473,486,487,489,720,490,492,1229,1230
+                ,495,754,496,498,1231,499,501,1232,1233,504,708,505,507,1234,1235,510,1236,1237,513,520,514,516,1238,517,519,1239,520,521,750,522,499,1240,524,525,1241,526,1242,1243,525,530,544,531,522,750,533,535,538,1244,538,747
+                ,539,541,554,542,544,1245,545,546,1246,1247,548,1248,549,551,947,552,554,661,1249,556,559,1250,559,564,560,562,963,559,559,963,563,541,553,552,565,1251,1252,501,1253,1254,569,574,1255,572,1256,496,569,1257,1258,1259
+                ,1260,576,578,1261,1262,581,1263,1264,509,1265,584,586,1266,1267,1268,597,589,591,599,592,594,1269,595,597,1270,598,599,783,600,601,630,602,604,1271,605,607,1272,1273,610,1274,611,613,780,614,616,631,617,619,613,615
+                ,621,627,622,624,1275,625,627,1276,628,629,811,630,631,778,632,633,1277,634,636,1278,637,639,1279,640,642,1280,643,645,1281,646,648,1282,1283,651,772,652,654,1284,655,657,948,658,554,552,660,662,1285,663,650,1286
+                ,1287,635,634,1288,669,1289,1290,637,1291,672,614,1292,1293,617,632,675,640,1294,1295,1296,617,1297,596,595,1298,611,1299,1300,615,1301,1302,600,1303,1304,1305,592,1306,503,1307,1308,577,1309,1310,553,952,693,660,1311,1312,1313
+                ,661,1314,658,1315,553,545,1316,1317,564,541,1318,533,1319,1320,549,1321,1322,1323,1324,1325,539,747,1326,708,1327,1328,584,1329,1330,527,526,1331,713,1332,1333,1334,1335,717,719,768,720,721,766,1336,724,635,1337,1338,650,1339
+                ,656,655,730,653,652,1340,734,648,650,1341,633,635,1342,527,1343,525,527,1344,1345,500,524,1346,498,500,550,1347,1348,747,545,1349,750,548,550,521,546,548,538,531,545,532,531,538,585,1350,1351,581,1352,1353,492,1354
+                ,1355,518,517,754,1356,1357,529,1358,1359,514,524,1360,1361,504,506,1362,492,507,713,517,581,510,655,633,1363,652,648,734,1364,717,766,1365,1366,768,1367,671,1368,772,1369,648,645,647,1370,644,643,1371,1372,636,638,1373
+                ,1374,633,630,811,778,1375,622,613,602,630,631,622,628,780,1376,1377,610,1378,1379,783,605,1380,594,598,586,578,1381,1382,1383,1384,1385,581,589,578,580,576,1386,569,1387,572,512,577,569,571,503,1388,1389,754,510,512
+                ,713,507,509,1390,1391,1392,1393,1394,1395,606,594,1396,799,609,610,612,1397,801,596,1398,803,610,612,1399,1400,607,609,604,606,1401,594,596,804,625,638,778,628,644,639,641,1402,1403,632,637,1404,1405,642,644,780,639
+                ,641,778,638,637,626,625,811,1406,1407,1408,1409,1410,1411,822,828,823,825,830,826,828,1412,829,830,1413,831,832,1414,1415,835,1416,1417,840,906,1418,1419,1420,839,841,1421,1422,1423,1424,1425,1426,904,848,1427,1428,1429,1430
+                ,1431,852,1432,936,856,1433,903,859,1434,1435,1436,1437,1438,863,1439,900,866,866], 1392);
+                CONTIG(_i, 3010, 1440, 1450);
+                _i.set([854,887,1451,880,1452,849,1453,1454,882,883,880,848], 3021);
+                CONTIG(_i, 3033, 1455, 1466);
+                _i.set([852,882,887,1467,1468,1469,1470,865,1471,1472,1473,854,825,827,1474,1475,822,824,1476,1477,883,900,1478,1479,859,856,941,1480,856,903,941,1481,859,904,1482,846,832,841,843,908,906,835,910,825,1483,908,1484,1485,909,835
+                ,837,1486,1487,830,916,830,825,1488,766,910,717,916,910,1489,1490,916,720,909,914,768,908,909,1491,1492,908,1493,1494,923,1495,1496,926,926,1497,928,926,1498,1499,928,936,1500,1501,1502,935,936,928,937,1503,1504,937,938
+                ,1505,1506,1507,1508,866,943,948,657,945,1509,1510,947,945,662,948,943,1511,551,1512,945,1513,944,657,951,957,952,564,958,953,541,953,952,693,958,564,954,1514,955,957,954,693,693,954,956,956,951,953,955,1514,959
+                ,955,960,951,960,959,957,959,1514,954,552,947,664,664,663,1515,1516,659,963,963,659,658,964,471,470,1517,1518,968,1519,974,968,1520,1521,973,1522,1523,976,976,977,966,978,487,968,969,968,487,978,974,973,487,978
+                ,965,363,1202,442,1524,441,442,938,941,856,938,937,1525], 3045);
                 this.setIndices(_i);
 
                 this.setVerticesData(_B.VertexBuffer.NormalKind, new Float32Array([
-                    .3174,.511,-.7988,.8744,.3529,-.333,.6052,-.0119,-.796,.4459,-.148,.8827,.3424,.2325,.9103,.4741,.2954,.8294,.3767,-.8444,-.3809,.4921,-.2491,-.8341,.8372,-.2461,-.4884,.8348,.3951,-.3834,.3052,.359,-.882,.8672,.4483,-.2169,-.0379,.5891,-.8072,.3174,.511,-.7988,.1295,.1802,-.975,.8313,.4141,.3706,.291,-.6912,.6614
-                    ,.7616,-.4112,.5008,.4055,-.0389,.9132,.3122,-.2068,.9272,.5032,-.1426,.8523,-.1187,-.0163,-.9928,-.2407,-.1141,-.9638,-.0353,-.1367,-.99,.3304,.4377,-.8362,-.1575,-.4506,-.8787,.3995,.2817,-.8724,.8809,-.0496,-.4707,.6233,.1564,-.7661,.9073,.1803,-.3799,.7199,.6106,-.33,.7909,.4532,-.4111,-.2575,-.1481,.9549,-.9519,-.0737,.2974
-                    ,-.9074,-.2489,.3385,-.5386,-.2673,-.799,.3332,.2534,-.9082,-.2019,-.2336,.9511,.6893,.1508,.7086,-.2575,-.1481,.9549,-.9074,-.2489,.3385,-.8586,-.4804,.1787,.3144,.2156,-.9244,.9284,-.0604,-.3666,.9411,.0188,-.3375,.8039,.0862,.5884,-.2758,-.24,.9308,.3052,.359,-.882,.8705,.4166,-.2619,.8672,.4483,-.2169,-.8183,.0746,-.5699
-                    ,.2278,.5329,-.8149,.3052,.359,-.882,-.4253,-.368,.8268,-.8784,-.1014,.4671,-.9616,-.0397,.2715,-.8016,.1075,-.5882,.3797,.3547,-.8543,-.9245,-.2519,.2859,-.4253,-.368,.8268,-.9616,-.0397,.2715,-.1937,-.5493,.8128,.865,-.0911,.4934,-.4253,-.368,.8268,-.4915,-.1346,.8604,-.498,.8076,.3158,-.8709,-.2639,.4145,.865,-.0911,.4934
-                    ,-.237,-.2431,.9406,.3797,.3547,-.8543,.9276,.0304,-.3723,.9284,-.0604,-.3666,-.7196,.4344,-.5417,.2811,.4018,-.8715,.3797,.3547,-.8543,.916,-.1776,-.3595,-.5556,-.0263,-.831,.5392,-.0206,-.8419,.4982,.8384,-.221,.3304,.4377,-.8362,.7199,.6106,-.33,-.2673,.5403,-.7979,-.15,.4145,-.8976,.3424,.2325,.9103,.454,.5431,.7063
-                    ,.4741,.2954,.8294,.2126,-.2645,-.9406,-.15,.4145,-.8976,.2165,.6089,.7631,.4651,.5375,.7034,.4982,.8384,-.221,.595,.73,.3361,.6898,.6636,-.2894,-.1548,-.0965,-.9832,.0093,.0274,-.9996,.1632,-.0877,-.9827,-.179,-.081,-.9805,.1632,-.0877,-.9827,.1507,-.1358,-.9792,.8383,.1488,.5246,.3771,.0774,.9229,-.2069,-.3993,-.8931
-                    ,-.1747,.2339,-.9564,.9073,.1803,-.3799,.5083,.3619,-.7815,.8719,.4256,-.2421,.3771,.0774,.9229,.8189,.2378,.5224,.449,.0327,.8929,-.139,.2786,-.9503,-.7187,-.0408,-.6941,-.1164,.2569,-.9594,.3623,.4582,-.8116,.8607,.437,-.2613,.8907,.1247,.4371,.5427,-.1689,.8227,-.3612,-.5054,.7837,-.9652,-.2611,.0109,-.9443,-.3272,.035
-                    ,.8796,.3208,-.3511,.3521,.3249,-.8777,.8441,.3545,-.4023,-.8961,-.4373,.0759,-.3612,-.5054,.7837,-.9443,-.3272,.035,.5262,-.3294,.7839,.9084,.0263,.4173,.5079,-.2841,.8132,-.0335,.1613,-.9863,-.5389,-.1994,-.8184,.0162,-.0255,-.9995,.5079,-.2841,.8132,.8493,.1532,.5052,.4374,.0187,.8991,-.1164,.2569,-.9594,-.6782,-.0697,-.7316
-                    ,.8441,.3545,-.4023,.3986,.2502,-.8823,.8484,.3573,-.3905,-.5651,-.2756,.7776,-.9933,-.041,-.108,-.9198,-.39,-.043,.3862,.0987,-.9171,.8742,.2417,-.421,-.5171,-.1851,.8356,-.9409,-.2973,-.1622,.8864,.2701,.3759,.3512,.1204,.9285,.0652,.3038,.9505,.6011,-.5754,.5546,.0698,-.5567,.8278,.4125,.0316,.9104,.8052,.285,.52
-                    ,.2069,.265,.9418,.0737,-.0262,-.9969,-.8468,.1682,-.5046,-.0393,.6567,-.7531,.9309,.191,-.3112,.6726,.4411,-.5942,.9778,.1916,-.085,.003,-1,-.0003,-.7521,-.405,-.5199,-.7572,-.6518,.0425,-.0287,.7392,-.6728,-.7521,-.405,-.5199,-.0179,-.3948,-.9186,.6378,.7118,-.2941,.7288,-.678,.0956,.975,.2127,.0639,-.7201,.2369,.6521
-                    ,-.7572,-.6518,.0425,-.9879,.1508,.0357,-.6067,.1863,-.7728,-.6382,-.663,-.3912,.24,-.5994,-.7636,.8221,.1301,.5542,.49,-.8119,-.3174,-.4188,-.7478,.5151,.495,-.6849,.5347,-.6836,.6468,-.3381,-.7572,-.6518,.0425,-.7521,-.405,-.5199,.7157,.2797,.6399,.7288,-.678,.0956,.003,-1,-.0003,-.5676,-.5456,.6165,.0698,-.5567,.8278
-                    ,.8775,.2038,.434,.9778,.1916,-.085,-.9652,-.2611,.0109,.8742,.2417,-.421,-.9198,-.39,-.043,-.5814,-.276,-.7653,.9084,.0263,.4173,.8484,.3573,-.3905,-.744,-.0581,-.6656,-.9443,-.3272,.035,.8796,.3208,-.3511,.9167,-.0153,.3994,-.9443,-.3272,.035,-.7187,-.0408,-.6941,.8719,.4256,-.2421,.8383,.1488,.5246,.8719,.4256,-.2421
-                    ,.1537,.7874,-.5969,.6898,.6636,-.2894,.3174,.511,-.7988,.5264,.7784,.3421,.7199,.6106,-.33,.8313,.4141,.3706,.1695,-.8104,.5607,.9276,.0304,-.3723,.7345,-.1855,.6528,.865,-.0911,.4934,.9276,.0304,-.3723,-.9616,-.0397,.2715,-.7196,.4344,-.5417,-.7783,.4872,-.3959,.8672,.4483,-.2169,.6893,.1508,.7086,.9411,.0188,-.3375
-                    ,.8361,-.326,.4412,-.8586,-.4804,.1787,-.8183,.0746,-.5699,-.9519,-.0737,.2974,-.8026,.2966,-.5175,.7199,.6106,-.33,.8052,.279,.5232,.9103,-.0647,.4088,.9073,.1803,-.3799,.7915,.3178,.522,.8672,.4483,-.2169,.9209,-.2832,.2677,.3767,-.8444,-.3809,.8372,-.2461,-.4884,.6898,.6636,-.2894,.6883,.6541,.3136,.8744,.3529,-.333
-                    ,.2945,-.6242,-.7236,.1295,.1802,-.975,.2165,.6089,.7631,.4303,.5709,.6992,.4651,.5375,.7034,.8052,.285,.52,.975,.2127,.0639,-.8468,.1682,-.5046,-.9879,.1508,.0357,-.7016,.0985,.7057,-.9933,-.041,-.108,.6726,.4411,-.5942,.9778,.1916,-.085,-.0393,.6567,-.7531,.2069,.265,.9418,.7909,.4532,-.4111,.8052,.279,.5232
-                    ,.8052,.279,.5232,.291,-.6912,.6614,.3995,.2817,-.8724,.7909,.4532,-.4111,.8705,.4166,-.2619,-.9245,-.2519,.2859,.8809,-.0496,-.4707,.3648,-.109,.9247,.6697,-.1225,-.7325,.291,-.6912,.6614,-.7672,-.6354,.087,.3767,-.8444,-.3809,.2126,-.2645,-.9406,-.7672,-.6354,.087,-.1575,-.4506,-.8787,.3767,-.8444,-.3809,-.7672,-.6354,.087
-                    ,.7616,-.4112,.5008,-.0393,.6567,-.7531,.6726,.4411,-.5942,.4651,.5375,.7034,.595,.73,.3361,.1295,.1802,-.975,-.0689,-.7795,-.6225,-.2009,.1787,-.9631,.6011,-.5754,.5546,.003,-1,-.0003,.0698,-.5567,.8278,.7995,-.3569,-.4831,.7995,-.3569,-.4831,.7288,-.678,.0956,.4987,.0877,-.8623,-.7016,.0985,.7057,-.5676,-.5456,.6165
-                    ,-.6984,-.2274,.6786,.3521,.3249,-.8777,-.3612,-.5054,.7837,-.3325,-.6181,.7123,-.2163,-.5102,.8324,.2652,-.2187,.9391,.3351,.3728,-.8653,.1978,.0949,.9756,.1978,.0949,.9756,.2007,-.0991,.9746,.6233,.1564,-.7661,-.3251,.4,-.8569,-.337,.015,-.9413,.4741,.2954,.8294,.8313,.4141,.3706,.3304,.4377,-.8362,-.2009,.1787,-.9631
-                    ,.7616,-.4112,.5008,.8313,.4141,.3706,-.1747,.2339,-.9564,.3623,.4582,-.8116,.5427,-.1689,.8227,-.2163,-.5102,.8324,.8607,.437,-.2613,.8907,.1247,.4371,-.6692,-.223,-.7088,-.8961,-.4373,.0759,.8907,.1247,.4371,.5427,-.1689,.8227,-.8618,-.4976,.0981,.3623,.4582,-.8116,.8607,.437,-.2613,-.1747,.2339,-.9564,-.9409,-.2973,-.1622
-                    ,.9309,.191,-.3112,.0074,-.9937,-.1122,.0074,-.9937,-.1122,-.6692,-.223,-.7088,.3771,.0774,.9229,.5033,-.1717,.8468,.8632,.2648,.4298,.876,-.1249,.4659,.5498,.2377,.8007,.9037,-.1399,.4047,.9066,.2434,.3447,.9694,.2452,-.0137,.9982,.0576,.0154,.9938,-.1081,.025,.9589,-.0156,-.2832,.9694,.2452,-.0137,.9028,.1684,-.3956
-                    ,.9982,.0576,.0154,.9938,-.1081,.025,.8314,-.418,-.3662,.9589,-.0156,-.2832,.1869,.1776,-.9662,-.0263,.3857,-.9222,.499,-.5466,-.6725,.5329,.0541,-.8444,-.0316,.323,-.9458,-.033,.1416,-.9893,.5033,.3223,-.8017,-.0264,.6097,-.7921,-.0316,.323,-.9458,.9694,.2452,-.0137,.7515,.597,-.2808,.8717,.2794,-.4025,.8632,.2648,.4298
-                    ,.8117,.5841,-.004,.9694,.2452,-.0137,.5208,.2232,.824,.6937,.6305,.3481,.8632,.2648,.4298,.4139,.0403,-.9094,.1869,.1776,-.9662,.4828,.2104,-.85,.9938,-.1081,.025,.9217,.0119,-.3877,.9226,-.0749,-.3783,.9037,-.1399,.4047,.9905,-.127,.0526,.9938,-.1081,.025,.5667,-.0827,.8198,.8643,-.3194,.3885,.9037,-.1399,.4047
-                    ,-.033,.1416,-.9893,-.0303,-.4187,-.9076,.2765,-.3932,-.8769,.9982,.0576,.0154,.9217,.0119,-.3877,.9905,-.127,.0526,.8643,-.3194,.3885,.9982,.0576,.0154,.9905,-.127,.0526,.51,-.3289,.7948,.876,-.1249,.4659,.8643,-.3194,.3885,.4276,.6119,.6653,.011,.9441,.3294,.2397,.9384,.2487,.8117,.5841,-.004,.3756,.9214,-.0998
-                    ,.3219,.9432,.0819,.349,.9369,.0177,.2362,.9158,-.3248,.4607,.6298,-.6253,.3219,.9432,.0819,.011,.9441,.3294,-.0115,.9389,-.344,.0315,-.3294,.9437,.5033,-.1717,.8468,.0315,-.3294,.9437,.0333,-.0643,.9974,.0326,.2065,.9779,.0333,-.0643,.9974,.0391,.2589,.9651,.0328,-.1811,.9829,.5208,.2232,.824,-.0115,.9389,-.344
-                    ,.9028,.1684,-.3956,.5315,-.3937,-.75,.9217,.0119,-.3877,.5033,.3223,-.8017,.9226,-.0749,-.3783,.2619,-.9234,-.2806,.6308,-.5151,-.5802,.4548,.4581,.7637,.0531,.4468,.893,-.0455,-.4238,-.9046,-.0477,-.8867,-.4599,.9589,-.0156,-.2832,.9324,.1286,-.3376,.9324,.1286,-.3376,.8157,.4958,.298,.0995,.6091,.7868,.8744,.3529,-.333
-                    ,.9226,-.0749,-.3783,.4828,.2104,-.85,-.0263,.3857,-.9222,.5275,-.7506,-.3979,-.0289,-.4982,-.8666,-.0289,-.4982,-.8666,.5766,-.6246,-.5266,-.0282,-.5336,-.8452,.9844,-.0103,-.1753,.5275,-.7506,-.3979,-.0329,.1652,-.9857,.1869,.1776,-.9662,.7049,.0441,-.7079,.6371,-.3249,-.6989,.7373,.0598,-.6729,.9841,-.0926,-.1513,.5593,-.3646,-.7444
-                    ,.7373,.0598,-.6729,.5315,-.3937,-.75,.2765,-.3932,-.8769,-.0297,-.4536,-.8907,-.8002,.5161,.3054,-.6127,-.7839,-.1007,-.6127,-.7839,-.1007,-.6871,.3685,.6261,-.3074,.2503,.9181,-.498,.8076,.3158,-.7725,.5835,-.2503,-.8002,.5161,.3054,.49,-.8119,-.3174,-.527,-.2352,.8166,-.7183,-.093,.6895,-.8984,.2539,-.3582,-.4213,-.375,-.8257
-                    ,.1448,-.1944,-.9702,-.8361,-.4227,-.3496,.0764,-.7019,-.7082,.8497,-.3956,.3485,-.9486,.0676,-.3092,.585,-.7848,.2045,-.3981,-.6935,.6004,.916,-.1776,-.3595,.49,-.8119,-.3174,.2824,-.0023,-.9593,-.033,.1435,-.9891,-.0334,.0206,-.9992,.7893,.0351,-.613,.3362,.1155,-.9347,-.0263,.3857,-.9222,.0306,.3415,-.9394,.1869,.1776,-.9662
-                    ,.4828,.2104,-.85,.1869,.1776,-.9662,.4828,.2104,-.85,.8653,.0964,-.492,.9226,-.0749,-.3783,.9226,-.0749,-.3783,.9305,.3218,-.1745,.9938,-.1081,.025,.8067,.066,-.5872,.3234,-.0571,-.9445,-.0335,-.0247,-.9991,.4172,.1837,-.89,-.6341,.5081,-.5828,-.8406,.5334,-.0945,-.6279,.7768,.0481,.2614,-.1568,.9524,.3424,.2325,.9103
-                    ,.3648,-.109,.9247,-.9575,-.2243,.1811,-.7991,-.2589,-.5425,-.5372,-.8434,.0063,-.9052,.3662,.2155,-.8432,.2942,-.4498,-.865,.141,-.4816,-.4083,.574,-.7097,-.6341,.5081,-.5828,-.5195,.7711,-.3681,.2518,-.5907,.7666,-.3955,.4965,.7727,-.1758,-.3715,.9116,.1287,-.2368,.963,.2007,-.0991,.9746,.0537,-.1561,.9863,-.5267,-.1202,-.8415
-                    ,-.337,.015,-.9413,-.5591,.012,-.829,-.8181,.4024,-.4107,-.4483,-.5472,-.7068,-.7991,-.2589,-.5425,-.9782,.1978,.0626,-.9188,-.0591,-.3903,-.992,-.0346,.1211,-.786,.5912,.1805,-.891,.1813,-.4161,.8994,-.0761,-.4304,.8451,-.0775,.5288,.9066,-.2451,-.3435,-.1148,-.4072,-.9061,.7934,-.114,.5979,-.028,.233,.972,-.2596,.4054,.8765
-                    ,.9066,-.2451,-.3435,.784,-.4952,-.3743,-.9131,-.0591,.4035,-.8708,.1735,-.4599,-.9159,.0172,.401,-.1874,.1359,.9728,-.028,.233,.972,-.8242,.4198,.38,-.8432,.2942,-.4498,-.7935,.453,.4063,-.7352,.4906,-.4677,.2058,-.0034,-.9786,-.8432,.2942,-.4498,.9452,-.0909,-.3135,.8873,-.3278,.3243,.8734,-.0482,-.4845,.1183,.369,-.9218
-                    ,.1741,.0417,-.9838,.8723,-.2543,-.4176,.8873,-.3278,.3243,.7136,-.5017,.4889,-.2848,-.1173,.9514,-.302,-.2811,.9109,.5764,.77,-.2735,.9668,-.2475,.0628,.8524,-.3436,-.3941,.8512,-.1653,.4981,-.2848,-.1173,.9514,-.8909,-.0164,.4538,-.8767,.3732,-.3035,-.9131,-.0591,.4035,-.836,.4336,-.3362,.1183,.369,-.9218,-.871,-.1592,.4647
-                    ,-.2218,.0392,-.9743,.2454,.5301,-.8116,-.5065,.8535,.1218,-.8181,.4024,-.4107,-.3251,.4,-.8569,-.2673,.5403,-.7979,.0786,.5747,.8146,.3424,.2325,.9103,.193,.3408,.9201,-.4749,.4109,-.7782,.2165,.6089,.7631,.2991,.4195,.8571,-.5065,.8535,.1218,-.2749,.8159,.5086,-.1743,.8171,.5495,-.4355,-.0885,-.8958,-.1548,-.0965,-.9832
-                    ,-.4723,-.0943,-.8763,-.5538,-.0445,-.8314,-.1548,-.0965,-.9832,-.179,-.081,-.9805,-.5969,.1695,.7842,-.634,-.182,.7516,-.4012,-.0491,-.9146,-.2069,-.3993,-.8931,-.9782,.1978,.0626,-.8223,.1878,-.5372,-.8825,.1438,-.4477,-.0026,.1413,.99,-.5202,.4065,.751,-.5969,.1695,.7842,-.3969,-.0819,-.9142,.2683,-.3405,-.9012,.3066,-.3684,-.8777
-                    ,-.9131,.3961,.097,-.7689,.2107,-.6036,.0219,.2195,.9754,-.555,.3419,.7583,.8603,-.3301,-.3883,.7529,-.2468,.6101,.8567,-.3887,-.3392,-.9609,.2708,.0573,-.7755,.0473,-.6295,-.7622,.0913,-.6408,.8474,-.4718,-.2433,.7529,-.2468,.6101,.7088,-.3768,.5963,-.0211,.0016,.9998,-.5701,.254,.7813,-.5823,.2092,.7855,-.4814,-.1605,-.8617
-                    ,.0763,-.4678,-.8805,.2253,-.3605,-.9051,.0018,.0555,.9984,-.4864,.3789,.7873,-.5701,.254,.7813,-.4089,-.0897,-.9081,.2683,-.3405,-.9012,-.9593,.2821,-.0133,-.8086,-.0013,-.5884,-.7755,.0473,-.6295,.9066,-.3603,-.2195,.8828,-.1232,.4532,.7956,-.4819,-.367,-.9544,.2985,.004,-.7973,-.1316,-.589,.7552,-.4082,-.5128,.8743,.0382,.4839
-                    ,.0742,.3328,.9401,-.6003,.4352,.671,.0985,.302,.9482,-.341,-.6035,.7207,-.4859,.3071,.8183,-.0657,.4402,.8955,-.5614,.3871,.7314,.0817,.3168,.9449,-.5537,-.298,-.7775,.5981,-.1891,-.7788,.14,-.5315,-.8354,-.9713,.1872,.1466,-.8422,.3819,-.3805,-.8651,-.1102,-.4892,.0513,-.9986,-.01,.4646,-.3598,-.8091,-.3706,-.4051,-.8357
-                    ,-.3179,.7546,-.574,.4646,-.3598,-.8091,.418,.6887,-.5925,-.6165,-.6681,.4165,-.6973,.7128,.0745,-.8215,.3834,.4219,.7296,-.6324,-.26,.8213,.2146,.5285,.9438,-.0837,-.3198,.3413,-.8071,-.4817,-.0988,-.01,-.995,-.7566,-.5918,-.278,-.0151,-.3034,.9527,-.1852,.0787,.9795,.7286,-.6066,.3179,-.5793,-.7716,.2628,.0515,-.6594,.75
-                    ,.7296,-.6324,-.26,.9438,-.0837,-.3198,-.6165,-.6681,.4165,-.8215,.3834,.4219,.6811,-.5329,.5021,.0513,-.9986,-.01,.0919,-.5685,.8175,-.93,.3599,.0745,-.9713,.1872,.1466,.8603,-.3301,-.3883,-.9822,.1864,.0211,-.9544,.2985,.004,.7956,-.4819,-.367,-.5701,.254,.7813,-.9544,.2985,.004,-.9593,.2821,-.0133,.8567,-.3887,-.3392
-                    ,.8474,-.4718,-.2433,-.9609,.2708,.0573,.8567,-.3887,-.3392,.2683,-.3405,-.9012,-.9131,.3961,.097,-.5969,.1695,.7842,-.9131,.3961,.097,-.9782,.1978,.0626,-.6279,.7768,.0481,-.786,.5912,.1805,-.5065,.8535,.1218,-.2909,-.2768,-.9158,-.8909,-.0164,.4538,-.2848,-.1173,.9514,-.8909,-.0164,.4538,-.9131,-.0591,.4035,.8734,-.0482,-.4845
-                    ,.8723,-.2543,-.4176,.1183,.369,-.9218,.8734,-.0482,-.4845,-.7935,.453,.4063,-.028,.233,.972,-.9159,.0172,.401,.2058,-.0034,-.9786,.784,-.4952,-.3743,.8994,-.0761,-.4304,.9066,-.2451,-.3435,-.2617,.3887,.8834,-.786,.5912,.1805,-.992,-.0346,.1211,-.7935,.453,.4063,-.9052,.3662,.2155,-.5373,-.3516,.7666,-.5372,-.8434,.0063
-                    ,-.1758,-.3715,.9116,-.6279,.7768,.0481,-.4816,.7839,.3918,-.2749,.8159,.5086,-.4852,.2654,-.8332,-.7433,.0889,-.663,-.0232,.6134,.7894,.0995,.6091,.7868,.2165,.6089,.7631,-.6171,.4787,.6245,-.8215,.3834,.4219,-.93,.3599,.0745,.5981,-.1891,-.7788,.9438,-.0837,-.3198,.9066,-.3603,-.2195,.7524,.1412,.6433,.9066,-.3603,-.2195
-                    ,-.8422,.3819,-.3805,-.93,.3599,.0745,-.3249,.5952,-.7349,.5981,-.1891,-.7788,-.0657,.4402,.8955,-.2617,.3887,.8834,-.9052,.3662,.2155,-.8905,.4311,.1455,-.2617,.3887,.8834,.2518,-.5907,.7666,-.891,.1813,-.4161,-.4483,-.5472,-.7068,-.8905,.4311,.1455,-.891,.1813,-.4161,-.8242,.4198,.38,.2224,.2496,-.9425,.8723,-.2543,-.4176
-                    ,.8994,-.0761,-.4304,.8433,-.1938,.5012,-.9575,-.2243,.1811,-.2407,-.1141,-.9638,.3122,-.2068,.9272,-.8764,-.2294,-.4234,.2518,-.5907,.7666,-.5372,-.8434,.0063,.6823,-.6378,-.3573,.6823,-.6378,-.3573,-.4483,-.5472,-.7068,-.5372,-.8434,.0063,.6823,-.6378,-.3573,-.1758,-.3715,.9116,-.0657,.4402,.8955,-.8422,.3819,-.3805,-.2749,.8159,.5086
-                    ,-.1383,.7076,.693,-.2009,.1787,-.9631,-.5277,-.5444,-.6521,-.341,-.6035,.7207,.0513,-.9986,-.01,-.6165,-.6681,.4165,-.9154,-.3969,-.0674,-.9154,-.3969,-.0674,-.6165,-.6681,.4165,-.3249,.5952,-.7349,.7524,.1412,.6433,.6811,-.5329,.5021,.1474,.4001,.9045,-.7755,.0473,-.6295,-.508,-.3066,-.8049,.7529,-.2468,.6101,.2652,-.2187,.9391
-                    ,.002,.1195,.9928,.1978,.0949,.9756,.2652,-.2187,.9391,.2007,-.0991,.9746,-.0026,.1413,.99,-.8825,.1438,-.4477,-.3251,.4,-.8569,-.337,.015,-.9413,-.3955,.4965,.7727,-.4749,.4109,-.7782,-.2673,.5403,-.7979,-.4852,.2654,-.8332,-.1758,-.3715,.9116,.193,.3408,.9201,-.4012,-.0491,-.9146,-.7689,.2107,-.6036,.6853,-.3539,.6365
-                    ,.002,.1195,.9928,-.9096,.4071,.0831,-.555,.3419,.7583,.8307,-.4987,-.2475,.2588,-.4187,-.8704,-.555,.3419,.7583,.002,.1195,.9928,.8307,-.4987,-.2475,-.7689,.2107,-.6036,-.9096,.4071,.0831,-.4012,-.0491,-.9146,.9564,-.0872,.2786,.7552,-.4082,-.5128,-.9713,.1872,.1466,-.9822,.1864,.0211,.6853,-.3539,.6365,.0074,-.9937,-.1122
-                    ,.8307,-.4987,-.2475,.0074,-.9937,-.1122,.2588,-.4187,-.8704,.8307,-.4987,-.2475,.1978,.0949,.9756,-.4457,-.1717,.8785,-.8326,.2648,.4864,-.4646,.2232,.8569,-.4637,.2807,.8403,-.8692,-.1176,.4802,-.5107,-.0828,.8557,-.843,-.1249,.5232,-.9681,.2452,.051,-.8129,.3666,.4525,-.992,-.0425,.1189,-.9272,.1684,-.3346,-.9681,.2452,.051
-                    ,-.995,.0576,.0819,-.9148,-.2474,-.3192,-.992,-.0425,.1189,-.9828,.124,-.1366,-.0455,-.4238,-.9046,-.2497,.1874,-.95,-.5258,.2286,-.8193,-.588,.0541,-.807,-.0316,.323,-.9458,-.5557,.3223,-.7664,-.5557,.3223,-.7664,-.0264,.6097,-.7921,-.5014,.6298,-.5932,-.9681,.2452,.051,-.7685,.597,-.23,-.8101,.5841,.0501,-.8326,.2648,.4864
-                    ,-.8101,.5841,.0501,-.6689,.6305,.3936,-.4646,.2232,.8569,-.3823,.6119,.6924,-.2497,.1874,-.95,-.4684,.0452,-.8824,-.5258,.2286,-.8193,-.992,-.0425,.1189,-.9443,.023,-.3282,-.9858,-.1159,.1211,-.8692,-.1176,.4802,-.9858,-.1159,.1211,-.8365,-.3194,.4453,-.5107,-.0828,.8557,-.4558,-.3289,.827,-.3343,-.3932,-.8565,-.033,.1416,-.9893
-                    ,-.588,.0541,-.807,-.9443,.023,-.3282,-.995,.0576,.0819,-.9858,-.1159,.1211,-.8365,-.3194,.4453,-.995,.0576,.0819,-.843,-.1249,.5232,-.4558,-.3289,.827,-.843,-.1249,.5232,-.4457,-.1717,.8785,.011,.9441,.3294,.0259,.6284,.7774,-.3815,.9214,-.0746,-.8101,.5841,.0501,-.3157,.9432,.1032,-.2573,.9158,-.3083,-.0115,.9389,-.344
-                    ,.011,.9441,.3294,-.3157,.9432,.1032,-.2226,.9384,.2642,.0315,-.3294,.9437,-.4457,-.1717,.8785,.0328,-.1811,.9829,-.5107,-.0828,.8557,.0315,-.3294,.9437,.0333,-.0643,.9974,.0326,.2065,.9779,.0333,-.0643,.9974,.0391,.2589,.9651,.0328,-.1811,.9829,.0326,.2065,.9779,-.0264,.6097,-.7921,-.5804,-.3937,-.7129,-.9272,.1684,-.3346
-                    ,-.9443,.023,-.3282,-.9457,-.042,-.3223,-.8966,.2794,-.3435,-.8966,.2794,-.3435,-.5887,-.5032,-.6326,-.9457,-.042,-.3223,-.3294,-.9051,-.2687,-.7647,-.3675,-.5293,-.2945,.5234,.7996,.0391,.2589,.9651,.0531,.4468,.893,-.0455,-.4238,-.9046,-.9405,.3018,-.156,-.9405,.3018,-.156,-.6652,.6199,.4162,.0995,.6091,.7868,.0531,.4468,.893
-                    ,-.8406,.5334,-.0945,-.0689,-.7795,-.6225,-.9457,-.042,-.3223,-.0263,.3857,-.9222,-.5528,-.7506,-.3618,-.2497,.1874,-.95,-.0289,-.4982,-.8666,-.6105,-.6246,-.487,-.5528,-.7506,-.3618,-.9942,.0047,-.107,-.5528,-.7506,-.3618,-.0329,.1652,-.9857,-.7829,.0631,-.6189,-.2497,.1874,-.95,-.5528,-.7506,-.3618,-.0329,.1652,-.9857,-.6842,-.3406,-.6449
-                    ,-.7447,.0608,-.6646,-.9753,-.1301,-.1782,-.5694,-.3857,-.7259,-.7829,.0631,-.6189,-.5804,-.3937,-.7129,-.5453,-.261,-.7965,-.0297,-.4536,-.8907,.7787,.5581,-.2866,.5645,-.7967,-.2158,.8663,.4994,-.0064,.5645,-.7967,-.2158,.8527,.3649,.3738,.4593,.3798,-.803,.5764,.77,-.2735,-.5793,-.7716,.2628,.9709,-.2266,.0769,.2836,-.8601,.4239
-                    ,.9933,-.0742,-.0888,-.8345,-.113,-.5392,.2713,-.1911,-.9433,.3666,.2699,-.8903,-.2524,-.5843,.7713,.3272,.3778,-.8661,-.1927,-.9091,.3694,.735,-.6718,-.0918,-.871,-.1592,.4647,-.5793,-.7716,.2628,-.9868,.0242,-.1599,-.3459,-.0027,-.9382,-.394,.1155,-.9118,-.8238,.0291,-.566,-.0263,.3857,-.9222,-.0927,.341,-.9355,-.0333,.0404,-.9986
-                    ,-.5258,.2286,-.8193,-.2497,.1874,-.95,-.5258,.2286,-.8193,-.8928,.0828,-.4426,-.469,.1827,-.8641,-.9457,-.042,-.3223,-.942,.3169,-.1107,-.8434,.0639,-.5333,-.3805,-.059,-.9229,.6371,-.3249,-.6989,.2765,-.3932,-.8769,-.6842,-.3406,-.6449,-.3343,-.3932,-.8565,.6898,.6636,-.2894,.3174,.511,-.7988,.2126,-.2645,-.9406,-.8183,.0746,-.5699
-                    ,-.2575,-.1481,.9549,-.9074,-.2489,.3385,.6893,.1508,.7086,.3052,.359,-.882,-.7196,.4344,-.5417,-.4253,-.368,.8268,.865,-.0911,.4934,.3797,.3547,-.8543,.3304,.4377,-.8362,-.3251,.4,-.8569,.3424,.2325,.9103,.2991,.4195,.8571,.3304,.4377,-.8362,-.15,.4145,-.8976,.2991,.4195,.8571,.4982,.8384,-.221,-.1548,-.0965,-.9832
-                    ,.1632,-.0877,-.9827,-.6692,-.223,-.7088,.9073,.1803,-.3799,.6233,.1564,-.7661,.3771,.0774,.9229,.8383,.1488,.5246,-.3612,-.5054,.7837,.5079,-.2841,.8132,.9084,.0263,.4173,-.1164,.2569,-.9594,-.7187,-.0408,-.6941,.8441,.3545,-.4023,.3521,.3249,-.8777,-.7016,.0985,.7057,-.0179,-.3948,-.9186,-.7521,-.405,-.5199,-.5676,-.5456,.6165
-                    ,-.7572,-.6518,.0425,-.6127,-.7839,-.1007,-.9879,.1508,.0357,-.7572,-.6518,.0425,.975,.2127,.0639,.7288,-.678,.0956,.003,-1,-.0003,-.7572,-.6518,.0425,.9309,.191,-.3112,.9778,.1916,-.085,-.9652,-.2611,.0109,-.9409,-.2973,-.1622,.8484,.3573,-.3905,.8742,.2417,-.421,-.9198,-.39,-.043,-.9933,-.041,-.108,.9084,.0263,.4173
-                    ,.8441,.3545,-.4023,.8484,.3573,-.3905,-.8961,-.4373,.0759,-.9443,-.3272,.035,.8796,.3208,-.3511,.8441,.3545,-.4023,-.9443,-.3272,.035,-.9652,-.2611,.0109,.8719,.4256,-.2421,.8607,.437,-.2613,.8383,.1488,.5246,.9073,.1803,-.3799,.8719,.4256,-.2421,.6898,.6636,-.2894,.4982,.8384,-.221,.7199,.6106,-.33,.9276,.0304,-.3723
-                    ,.916,-.1776,-.3595,.865,-.0911,.4934,.9284,-.0604,-.3666,.9276,.0304,-.3723,-.498,.8076,.3158,-.9245,-.2519,.2859,-.9616,-.0397,.2715,-.9616,-.0397,.2715,.8672,.4483,-.2169,.8705,.4166,-.2619,.9411,.0188,-.3375,.9284,-.0604,-.3666,-.8586,-.4804,.1787,-.9074,-.2489,.3385,-.8183,.0746,-.5699,-.9074,-.2489,.3385,-.9519,-.0737,.2974
-                    ,.7199,.6106,-.33,.7909,.4532,-.4111,.8809,-.0496,-.4707,.9073,.1803,-.3799,.8348,.3951,-.3834,.8672,.4483,-.2169,.7616,-.4112,.5008,.3767,-.8444,-.3809,.6898,.6636,-.2894,.595,.73,.3361,.2165,.6089,.7631,.8052,.285,.52,.9778,.1916,-.085,.975,.2127,.0639,-.8468,.1682,-.5046,-.9933,-.041,-.108,-.9879,.1508,.0357
-                    ,.6726,.4411,-.5942,-.0393,.6567,-.7531,-.8468,.1682,-.5046,.2069,.265,.9418,.8052,.285,.52,.7909,.4532,-.4111,.8348,.3951,-.3834,.8052,.279,.5232,.3995,.2817,-.8724,-.1575,-.4506,-.8787,.7909,.4532,-.4111,.3995,.2817,-.8724,.8705,.4166,-.2619,.9411,.0188,-.3375,-.9519,-.0737,.2974,-.9245,-.2519,.2859,.8372,-.2461,-.4884
-                    ,.8809,-.0496,-.4707,.291,-.6912,.6614,.3767,-.8444,-.3809,-.7672,-.6354,.087,-.7672,-.6354,.087,-.8586,-.4804,.1787,.3767,-.8444,-.3809,.2069,.265,.9418,-.0393,.6567,-.7531,.4651,.5375,.7034,.1295,.1802,-.975,.6011,-.5754,.5546,.7288,-.678,.0956,.003,-1,-.0003,.7995,-.3569,-.4831,-.0179,-.3948,-.9186,-.7016,.0985,.7057
-                    ,-.5676,-.5456,.6165,.3521,.3249,-.8777,-.1164,.2569,-.9594,.5079,-.2841,.8132,-.3612,-.5054,.7837,.1978,.0949,.9756,.1632,-.0877,-.9827,-.15,.4145,-.8976,.4741,.2954,.8294,-.2009,.1787,-.9631,.7616,-.4112,.5008,-.1747,.2339,-.9564,.5427,-.1689,.8227,.8607,.437,-.2613,.8796,.3208,-.3511,-.8618,-.4976,.0981,-.8961,-.4373,.0759
-                    ,.8907,.1247,.4371,-.2163,-.5102,.8324,.3623,.4582,-.8116,-.9409,-.2973,-.1622,-.9198,-.39,-.043,.8742,.2417,-.421,.9309,.191,-.3112,-.8618,-.4976,.0981,.0074,-.9937,-.1122,-.8618,-.4976,.0981,-.6692,-.223,-.7088,.5208,.2232,.824,.5667,-.0827,.8198,.9694,.2452,-.0137,.8717,.2794,-.4025,.9938,-.1081,.025,.9226,-.0749,-.3783
-                    ,.4828,.2104,-.85,.5033,.3223,-.8017,.9694,.2452,-.0137,.8117,.5841,-.004,.8632,.2648,.4298,.1869,.1776,-.9662,.9938,-.1081,.025,.9905,-.127,.0526,.9037,-.1399,.4047,.51,-.3289,.7948,.5329,.0541,-.8444,.5329,.0541,-.8444,-.033,.1416,-.9893,.9982,.0576,.0154,.9028,.1684,-.3956,.9217,.0119,-.3877,.8643,-.3194,.3885
-                    ,.876,-.1249,.4659,.9982,.0576,.0154,.5033,-.1717,.8468,.876,-.1249,.4659,.0259,.6284,.7774,.8117,.5841,-.004,.349,.9369,.0177,.2362,.9158,-.3248,.3756,.9214,-.0998,.349,.9369,.0177,.3219,.9432,.0819,.2397,.9384,.2487,.011,.9441,.3294,.3219,.9432,.0819,.3756,.9214,-.0998,.349,.9369,.0177,.0328,-.1811,.9829
-                    ,.5033,-.1717,.8468,.0315,-.3294,.9437,.51,-.3289,.7948,.0259,.6284,.7774,.0333,-.0643,.9974,.5667,-.0827,.8198,.0326,.2065,.9779,.5208,.2232,.824,.9028,.1684,-.3956,.5329,.0541,-.8444,.5315,-.3937,-.75,.491,-.261,-.8311,.8717,.2794,-.4025,.5033,.3223,-.8017,.9589,-.0156,-.2832,.9324,.1286,-.3376,.9324,.1286,-.3376
-                    ,.8744,.3529,-.333,-.0263,.3857,-.9222,.1869,.1776,-.9662,-.0289,-.4982,-.8666,.5275,-.7506,-.3979,.7373,.0598,-.6729,.5275,-.7506,-.3979,.1869,.1776,-.9662,.6371,-.3249,-.6989,.7373,.0598,-.6729,.5315,-.3937,-.75,-.6127,-.7839,-.1007,-.8002,.5161,.3054,-.498,.8076,.3158,.49,-.8119,-.3174,.916,-.1776,-.3595,.49,-.8119,-.3174
-                    ,-.0263,.3857,-.9222,.4828,.2104,-.85,.4828,.2104,-.85,.9226,-.0749,-.3783,.193,.3408,.9201,.3424,.2325,.9103,-.7935,.453,.4063,-.4852,.2654,-.8332,-.6341,.5081,-.5828,.3122,-.2068,.9272,.2007,-.0991,.9746,-.2407,-.1141,-.9638,-.337,.015,-.9413,-.8825,.1438,-.4477,-.8905,.4311,.1455,.2058,-.0034,-.9786,.8451,-.0775,.5288
-                    ,.9066,-.2451,-.3435,.8451,-.0775,.5288,-.8767,.3732,-.3035,-.8432,.2942,-.4498,-.8767,.3732,-.3035,.8734,-.0482,-.4845,.8873,-.3278,.3243,.8873,-.3278,.3243,-.2848,-.1173,.9514,.1183,.369,-.9218,-.786,.5912,.1805,-.8181,.4024,-.4107,-.4749,.4109,-.7782,-.3251,.4,-.8569,.3424,.2325,.9103,-.8181,.4024,-.4107,-.0232,.6134,.7894
-                    ,.2165,.6089,.7631,-.5065,.8535,.1218,-.6279,.7768,.0481,-.2069,-.3993,-.8931,-.1548,-.0965,-.9832,-.4723,-.0943,-.8763,-.1548,-.0965,-.9832,-.0026,.1413,.99,.2588,-.4187,-.8704,-.2069,-.3993,-.8931,-.9782,.1978,.0626,-.4089,-.0897,-.9081,-.9096,.4071,.0831,-.9593,.2821,-.0133,.8567,-.3887,-.3392,.7529,-.2468,.6101,.0018,.0555,.9984
-                    ,.7524,.1412,.6433,-.9822,.1864,.0211,.0919,-.5685,.8175,-.6171,.4787,.6245,-.3249,.5952,-.7349,-.93,.3599,.0745,.7296,-.6324,-.26,-.3706,-.4051,-.8357,.4646,-.3598,-.8091,.6811,-.5329,.5021,.5645,-.7967,-.2158,.4646,-.3598,-.8091,.7296,-.6324,-.26,-.6165,-.6681,.4165,.7296,-.6324,-.26,.0513,-.9986,-.01,-.6171,.4787,.6245
-                    ,.7552,-.4082,-.5128,.8603,-.3301,-.3883,.9066,-.3603,-.2195,.7956,-.4819,-.367,-.5701,.254,.7813,-.9544,.2985,.004,.8567,-.3887,-.3392,-.9593,.2821,-.0133,-.9609,.2708,.0573,.8603,-.3301,-.3883,.8567,-.3887,-.3392,-.9096,.4071,.0831,-.9131,.3961,.097,-.5969,.1695,.7842,-.9131,.3961,.097,-.6341,.5081,-.5828,-.6279,.7768,.0481
-                    ,-.3955,.4965,.7727,-.786,.5912,.1805,-.871,-.1592,.4647,-.8909,-.0164,.4538,-.2848,-.1173,.9514,-.8909,-.0164,.4538,.5764,.77,-.2735,.8734,-.0482,-.4845,.1183,.369,-.9218,-.8242,.4198,.38,-.7935,.453,.4063,-.9131,-.0591,.4035,-.9159,.0172,.401,.2058,-.0034,-.9786,.9066,-.2451,-.3435,.784,-.4952,-.3743,.8994,-.0761,-.4304
-                    ,-.8905,.4311,.1455,-.786,.5912,.1805,-.9782,.1978,.0626,-.992,-.0346,.1211,-.7935,.453,.4063,-.9575,-.2243,.1811,-.5372,-.8434,.0063,-.6279,.7768,.0481,-.8406,.5334,-.0945,.0995,.6091,.7868,-.8215,.3834,.4219,.5981,-.1891,-.7788,.9438,-.0837,-.3198,-.8422,.3819,-.3805,-.0657,.4402,.8955,-.2617,.3887,.8834,-.9052,.3662,.2155
-                    ,-.2617,.3887,.8834,-.891,.1813,-.4161,-.8905,.4311,.1455,-.9159,.0172,.401,-.8242,.4198,.38,.8723,-.2543,-.4176,-.992,-.0346,.1211,-.9575,-.2243,.1811,-.179,-.081,-.9805,-.2407,-.1141,-.9638,.3648,-.109,.9247,.3122,-.2068,.9272,.2518,-.5907,.7666,.6823,-.6378,-.3573,-.5372,-.8434,.0063,-.7991,-.2589,-.5425,.784,-.4952,-.3743
-                    ,.6823,-.6378,-.3573,-.5372,-.8434,.0063,-.0657,.4402,.8955,-.2749,.8159,.5086,-.2009,.1787,-.9631,-.0689,-.7795,-.6225,-.341,-.6035,.7207,.0513,-.9986,-.01,-.3706,-.4051,-.8357,-.9154,-.3969,-.0674,-.3249,.5952,-.7349,.7524,.1412,.6433,.6811,-.5329,.5021,.0919,-.5685,.8175,-.7755,.0473,-.6295,.7529,-.2468,.6101,.0018,.0555,.9984
-                    ,.2652,-.2187,.9391,.6853,-.3539,.6365,-.4089,-.0897,-.9081,.2007,-.0991,.9746,.1978,.0949,.9756,-.0026,.1413,.99,-.8825,.1438,-.4477,-.4723,-.0943,-.8763,-.0232,.6134,.7894,-.3251,.4,-.8569,-.8181,.4024,-.4107,-.4749,.4109,-.7782,-.2673,.5403,-.7979,-.2009,.1787,-.9631,-.4852,.2654,-.8332,-.1758,-.3715,.9116,-.3955,.4965,.7727
-                    ,.193,.3408,.9201,-.4012,-.0491,-.9146,-.9609,.2708,.0573,.8474,-.4718,-.2433,-.555,.3419,.7583,.8307,-.4987,-.2475,-.7689,.2107,-.6036,.7956,-.4819,-.367,.7552,-.4082,-.5128,-.9713,.1872,.1466,-.9822,.1864,.0211,.6853,-.3539,.6365,.2652,-.2187,.9391,.0074,-.9937,-.1122,.0074,-.9937,-.1122,-.2069,-.3993,-.8931,.2588,-.4187,-.8704
-                    ,-.995,.0576,.0819,-.9828,.124,-.1366,-.8966,.2794,-.3435,-.9681,.2452,.051,-.9457,-.042,-.3223,-.992,-.0425,.1189,-.0455,-.4238,-.9046,-.0455,-.4238,-.9046,-.0263,.3857,-.9222,-.033,.1416,-.9893,-.0316,.323,-.9458,-.5557,.3223,-.7664,-.0316,.323,-.9458,-.0264,.6097,-.7921,-.9681,.2452,.051,-.8326,.2648,.4864,-.9681,.2452,.051
-                    ,-.8101,.5841,.0501,-.4646,.2232,.8569,-.8326,.2648,.4864,-.2497,.1874,-.95,-.992,-.0425,.1189,-.8692,-.1176,.4802,-.992,-.0425,.1189,-.9858,-.1159,.1211,-.5107,-.0828,.8557,-.8692,-.1176,.4802,-.588,.0541,-.807,-.0303,-.4187,-.9076,-.033,.1416,-.9893,-.9443,.023,-.3282,-.9272,.1684,-.3346,-.995,.0576,.0819,-.8365,-.3194,.4453
-                    ,-.9858,-.1159,.1211,-.995,.0576,.0819,-.4558,-.3289,.827,-.8365,-.3194,.4453,-.843,-.1249,.5232,.011,.9441,.3294,-.347,.9369,.041,-.8101,.5841,.0501,-.347,.9369,.041,-.347,.9369,.041,-.3815,.9214,-.0746,-.0115,.9389,-.344,-.2573,.9158,-.3083,-.0115,.9389,-.344,-.3815,.9214,-.0746,.011,.9441,.3294,-.2226,.9384,.2642
-                    ,-.3157,.9432,.1032,-.3157,.9432,.1032,-.347,.9369,.041,-.0115,.9389,-.344,.0315,-.3294,.9437,-.4558,-.3289,.827,-.4457,-.1717,.8785,-.5107,-.0828,.8557,.0315,-.3294,.9437,.0326,.2065,.9779,-.4646,.2232,.8569,.0333,-.0643,.9974,.0328,-.1811,.9829,-.0264,.6097,-.7921,-.0115,.9389,-.344,-.588,.0541,-.807,-.9272,.1684,-.3346
-                    ,-.5258,.2286,-.8193,-.5804,-.3937,-.7129,-.5557,.3223,-.7664,.0391,.2589,.9651,-.0477,-.8867,-.4599,-.0455,-.4238,-.9046,-.9405,.3018,-.156,-.9828,.124,-.1366,.0995,.6091,.7868,-.8406,.5334,-.0945,-.9405,.3018,-.156,-.0689,-.7795,-.6225,-.0477,-.8867,-.4599,-.0263,.3857,-.9222,-.0289,-.4982,-.8666,-.0289,-.4982,-.8666,-.0282,-.5336,-.8452
-                    ,-.7829,.0631,-.6189,-.0282,-.5336,-.8452,-.0329,.1652,-.9857,-.2497,.1874,-.95,-.0329,.1652,-.9857,-.0297,-.4536,-.8907,-.7829,.0631,-.6189,-.6842,-.3406,-.6449,-.3343,-.3932,-.8565,-.5804,-.3937,-.7129,-.0297,-.4536,-.8907,-.0303,-.4187,-.9076,.7787,.5581,-.2866,.5645,-.7967,-.2158,.5764,.77,-.2735,.7787,.5581,-.2866,-.5793,-.7716,.2628
-                    ,-.5768,-.5996,-.5547,-.871,-.1592,.4647,-.5793,-.7716,.2628,-.0263,.3857,-.9222,-.2497,.1874,-.95,-.5258,.2286,-.8193,-.5258,.2286,-.8193,-.9457,-.042,-.3223,-.9457,-.042,-.3223,-.992,-.0425,.1189,.6371,-.3249,-.6989,-.6842,-.3406,-.6449,.0459,.8154,.5771,.1275,.8182,.5605,.0581,.7242,.6871,-.0196,-.7689,-.6391,-.0531,.1326,-.9897
-                    ,.2652,-.7812,-.5652,-.0132,-.8076,-.5896,-.7306,-.6508,-.2063,-.3728,-.7371,-.5636,-.7147,-.6626,-.224,-.3006,-.0068,-.9537,-.1771,.2748,-.945,.6788,-.6002,-.4229,.4378,.4862,-.7562,.8352,.5038,-.2203,.2598,-.7337,.6278,.7852,.3051,.5387,.4347,.1233,.8921,-.1382,.3267,-.9349,-.4178,.1671,-.893,-.1039,.2881,-.9519,.3609,.4937,-.7912
-                    ,.8465,.4711,-.2478,.8712,.1794,.4569,.5351,-.1079,.8378,.369,.4358,-.8209,.8711,.3452,-.3493,.8536,.4208,-.3069,.5337,-.2766,.7992,.9231,.0441,.3819,.513,-.2528,.8203,.513,-.2528,.8203,.7997,-.0079,.6003,.4588,-.2238,.8598,-.1039,.2881,-.9519,-.409,.2138,-.8871,-.0699,.3048,-.9498,.4039,.3471,-.8464,.9116,.3095,-.2702
-                    ,.8711,.3452,-.3493,.9231,.0441,.3819,.9116,.3095,-.2702,.9236,.0598,.3788,.8711,.3452,-.3493,.8465,.4711,-.2478,.6318,-.7678,.1056,.8352,.5038,-.2203,-.5311,.8461,.0451,-.556,.7897,-.2592,-.589,.7718,-.2394,.3884,.319,-.8645,.4382,-.2751,.8557,.4242,-.2328,.8751,.4382,-.2751,.8557,.4529,-.3192,.8325,.4249,-.1807,.887
-                    ,.2928,.0533,.9547,.4039,.3471,-.8464,.0984,-.7389,.6666,.0067,.8655,-.5008,.3738,.7903,-.4854,.4042,.7849,-.4696,.0558,-.761,.6464,.2687,-.7902,.5507,.6066,-.5577,-.5665,-.1771,.2748,-.945,.3609,.4937,-.7912,.5351,-.1079,.8378,.4249,-.1807,.887,.8465,.4711,-.2478,.8712,.1794,.4569,.8712,.1794,.4569,.5351,-.1079,.8378
-                    ,.3609,.4937,-.7912,.8465,.4711,-.2478,-.391,.1877,-.901,-.1771,.2748,-.945,-.5421,-.6814,.4917,-.1061,-.7526,.6498,-.1281,-.6558,.7439,-.4034,.0028,-.915,-.0196,-.7689,-.6391,-.2575,-.8394,-.4786,.3863,.8975,.2125,.2575,.7475,.6122,.2561,.8095,.5282,-.8021,-.5853,.1183,-.5269,-.6276,.5731,-.3977,-.0104,-.9174,-.3006,-.0068,-.9537
-                    ,-.8795,.47,.0743,-.7573,-.6405,.1278,-.4818,.4763,.7355,-.3945,-.0325,-.9183,-.4182,-.0414,-.9074,-.41,-.0248,-.9117,-.764,.2466,-.5962,-.7808,.2886,-.5541,.0455,.3154,.9478,-.5318,.3998,.7465,-.9548,.2937,.0458,-.7745,.1683,-.6097,-.9244,.3787,.0455,-.0234,.0582,.998,-.6015,.2604,.7552,-.6049,.2737,.7477,-.0016,.0883,.9961
-                    ,-.3779,.2735,.8845,-.6015,.2604,.7552,-.4185,-.0563,-.9065,-.383,-.0266,-.9233,-.4182,-.0414,-.9074,-.946,.2884,.1475,-.8066,.0838,-.5851,-.9548,.2937,.0458,-.6015,.2604,.7552,-.946,.2884,.1475,-.9548,.2937,.0458,-.391,.1877,-.901,-.3006,-.0068,-.9537,-.4037,.0346,-.9142,-.9548,.2937,.0458,-.9244,.3787,.0455,-.4228,.1947,-.885
-                    ,-.4037,.0346,-.9142,-.8933,.4429,.0761,-.8795,.47,.0743,-.8795,.47,.0743,-.7573,-.6405,.1278,-.0132,-.8076,-.5896,-.4484,-.0368,-.8931,.3826,-.043,.9229,.0631,.1262,.99,.3826,-.043,.9229,.3726,-.144,.9167,.2928,.0533,.9547,.0128,.1816,.9833,-.8066,.0838,-.5851,.0984,-.7389,.6666,.2928,.0533,.9547,.5495,-.6271,-.552
-                    ,-.2736,.8621,-.4265,-.3693,.6937,-.6184,-.3977,-.0104,-.9174,-.764,.2466,-.5962,.2765,-.0465,.9599,.0128,.1816,.9833,-.8933,.4429,.0761,-.5318,.3998,.7465,.2928,.0533,.9547,.2765,-.0465,.9599,-.5318,.3998,.7465,.0128,.1816,.9833,.3826,-.043,.9229,.4382,-.2751,.8557,-.764,.2466,-.5962,-.8933,.4429,.0761,-.4037,.0346,-.9142
-                    ,-.3977,-.0104,-.9174,.3959,.0349,.9176,.4382,-.2751,.8557,.0984,-.7389,.6666,-.8912,-.2477,-.38,.1747,.7362,.6537,.3854,-.1495,.9106,.9141,-.1458,.3783,-.1807,-.0954,-.9789,-.1585,.7798,-.6056,-.9915,-.1228,.0417,.6224,-.1917,-.7589,.183,-.0773,-.98,-.5311,.8461,.0451,-.6243,-.0919,.7757,-.2374,.9073,.3468,.2159,-.1684,.9618
-                    ,.1747,.7362,.6537,.0362,-.103,.994,.8736,-.0996,-.4763,.5017,.8478,-.1716,.8736,-.0996,-.4763,-.1585,.7798,-.6056,-.5322,-.1173,-.8384,.5806,.7641,-.2811,.5495,-.6271,-.552,.7132,-.5874,-.3825,-.153,.7718,-.6172,.258,-.7005,-.6654,.0732,.6986,-.7118,.6923,-.6657,.2783,.2687,-.7902,.5507,.6878,.6559,.3109,.7132,-.5874,-.3825
-                    ,.0558,-.761,.6464,.1275,.8182,.5605,.5495,-.6271,-.552,-.8021,-.5853,.1183,-.6452,.7616,.0603,-.0132,-.8076,-.5896,-.153,.7718,-.6172,-.5269,-.6276,.5731,-.4433,.6453,.6221,-.5269,-.6276,.5731,-.6452,.7616,.0603,-.1061,-.7526,.6498,-.7147,-.6626,-.224,.6923,-.6657,.2783,.5017,.8478,-.1716,-.153,.7718,-.6172,-.1585,.7798,-.6056
-                    ,.258,-.7005,-.6654,.1275,.8182,.5605,.5806,.7641,-.2811,.7132,-.5874,-.3825,.6788,-.6002,-.4229,-.8021,-.5853,.1183,.0558,-.761,.6464,.0984,-.7389,.6666,-.6452,.7616,.0603,-.5311,.8461,.0451,-.5773,.5773,-.5773,-.5773,-.5773,.5773,-.5773,-.5773,-.5773,.3015,.3015,.9045,.3015,-.3015,-.9045,.3015,.3015,-.9045,.5773,.5773,.5773
-                    ,.5773,-.5773,-.5773,.5773,-.5773,.5773,-.3015,.3015,-.9045,-.3015,.3015,.9045,-.5773,.5773,.5773,.5773,.5773,-.5773,.3015,-.3015,.9045,-.3015,-.3015,.9045,-.3015,-.3015,-.9045,.1747,.7362,.6537,.258,-.7005,-.6654,-.391,.1877,-.901,.4039,.3471,-.8464,.513,-.2528,.8203,.9231,.0441,.3819,-.1039,.2881,-.9519,-.4178,.1671,-.893
-                    ,.9231,.0441,.3819,.8711,.3452,-.3493,.9116,.3095,-.2702,.8536,.4208,-.3069,.8711,.3452,-.3493,.8352,.5038,-.2203,.8465,.4711,-.2478,.6788,-.6002,-.4229,.8352,.5038,-.2203,-.1039,.2881,-.9519,.513,-.2528,.8203,.4382,-.2751,.8557,.4039,.3471,-.8464,-.1771,.2748,-.945,.5351,-.1079,.8378,.8465,.4711,-.2478,.8536,.4208,-.3069
-                    ,.8712,.1794,.4569,.3609,.4937,-.7912,-.3006,-.0068,-.9537,-.0196,-.7689,-.6391,-.7573,-.6405,.1278,-.3006,-.0068,-.9537,-.4185,-.0563,-.9065,-.8933,.4429,.0761,-.8066,.0838,-.5851,-.0016,.0883,.9961,-.8008,.0503,-.5968,-.6015,.2604,.7552,-.946,.2884,.1475,-.9548,.2937,.0458,-.391,.1877,-.901,-.4037,.0346,-.9142,-.8795,.47,.0743
-                    ,-.0196,-.7689,-.6391,-.0132,-.8076,-.5896,.3826,-.043,.9229,-.0016,.0883,.9961,.2928,.0533,.9547,.2765,-.0465,.9599,-.8066,.0838,-.5851,-.4185,-.0563,-.9065,.7132,-.5874,-.3825,-.3977,-.0104,-.9174,-.9244,.3787,.0455,-.8933,.4429,.0761,-.5318,.3998,.7465,.3826,-.043,.9229,-.764,.2466,-.5962,-.4037,.0346,-.9142,.4382,-.2751,.8557
-                    ,.2159,-.1684,.9618,-.5311,.8461,.0451,-.9915,-.1228,.0417,.5017,.8478,-.1716,-.1585,.7798,-.6056,-.1807,-.0954,-.9789,.5495,-.6271,-.552,-.0132,-.8076,-.5896,.5806,.7641,-.2811,.7132,-.5874,-.3825,.2687,-.7902,.5507,.0558,-.761,.6464,.5495,-.6271,-.552,-.8021,-.5853,.1183,-.7147,-.6626,-.224,-.3728,-.7371,-.5636,-.0132,-.8076,-.5896
-                    ,-.1061,-.7526,.6498,-.5269,-.6276,.5731,-.5269,-.6276,.5731,-.8021,-.5853,.1183,-.6452,.7616,.0603,.0558,-.761,.6464,-.1061,-.7526,.6498,-.7147,-.6626,-.224,-.3728,-.7371,-.5636,.5017,.8478,-.1716,-.153,.7718,-.6172,.1275,.8182,.5605,.5806,.7641,-.2811,.6923,-.6657,.2783,.7132,-.5874,-.3825,.0558,-.761,.6464,-.6452,.7616,.0603
-                    
+                    .3169,.5115,-.7987,.8741,.353,-.3335,.6054,-.0143,-.7957,.4459,-.1491,.8825,.3424,.2312,.9106,.4741,.2942,.8298,.3768,-.8439,-.3819,.4921,-.2481,-.8344,.8372,-.2456,-.4886,.8348,.3956,-.3829,.3052,.3601,-.8816,.8672,.4486,-.2163,-.0382,.5906,-.8061,.3169,.5115,-.7987,.1296,.1795,-.9752,.8313,.4136,.3712,.291,-.6921,.6605
+                    ,.7616,-.4119,.5003,.4057,-.0393,.9131,.3122,-.2077,.927,.5033,-.1434,.8521,-.1187,-.015,-.9928,-.2408,-.1132,-.964,-.0354,-.1357,-.9901,.3304,.4388,-.8356,-.1575,-.4494,-.8793,.3995,.2828,-.872,.8809,-.0492,-.4707,.6232,.1564,-.7662,.9073,.1802,-.38,.7199,.611,-.3292,.7909,.4537,-.4105,-.2575,-.1493,.9547,-.9551,-.0977,.2798
+                    ,-.9074,-.2494,.3381,-.5386,-.2662,-.7993,.3332,.2546,-.9078,-.2019,-.2348,.9508,.6893,.1499,.7088,-.2575,-.1493,.9547,-.9074,-.2494,.3381,-.8586,-.4806,.178,.3144,.2164,-.9243,.9284,-.0599,-.3667,.9411,.0193,-.3375,.8039,.0855,.5885,-.2758,-.2412,.9304,.3052,.3601,-.8816,.8705,.417,-.2614,.8672,.4486,-.2163,-.8183,.0753,-.5698
+                    ,.2279,.534,-.8142,.3052,.3601,-.8816,-.4858,-.3113,.8167,-.8467,.1018,.5223,-.9218,.276,.2721,-.7912,.089,-.6051,.3814,.3554,-.8534,-.946,-.2523,.2036,-.4858,-.3113,.8167,-.9218,.276,.2721,-.2383,-.5608,.7929,.865,-.0917,.4933,-.4858,-.3113,.8167,-.4915,-.1357,.8602,-.498,.8072,.3168,-.8709,-.2644,.4141,.865,-.0917,.4933
+                    ,-.237,-.2443,.9403,.3814,.3554,-.8534,.9276,.0308,-.3723,.9284,-.0599,-.3667,-.6072,.5323,-.5898,.2808,.4028,-.8712,.3814,.3554,-.8534,.916,-.1772,-.3598,-.5556,-.0252,-.831,.5392,-.0195,-.8419,.4978,.8389,-.22,.3304,.4388,-.8356,.7199,.611,-.3292,-.2673,.5418,-.7969,-.1501,.4161,-.8968,.3424,.2312,.9106,.4541,.5423,.7069
+                    ,.4741,.2942,.8298,.2126,-.2633,-.941,-.1501,.4161,-.8968,.2163,.6091,.763,.4648,.5379,.7033,.4978,.8389,-.22,.5945,.7303,.3365,.6892,.6645,-.2888,-.1549,-.0965,-.9832,.0093,.027,-.9996,.163,-.0876,-.9827,-.1791,-.0804,-.9805,.163,-.0876,-.9827,.1506,-.1351,-.9793,.8383,.149,.5244,.3773,.0775,.9228,-.2069,-.3998,-.8929
+                    ,-.1744,.2332,-.9566,.9073,.1802,-.38,.5083,.3613,-.7817,.872,.4254,-.2422,.3773,.0775,.9228,.8188,.2381,.5223,.4489,.0331,.8929,-.1389,.2779,-.9505,-.7185,-.0413,-.6942,-.1162,.2562,-.9596,.3626,.4577,-.8118,.8607,.4368,-.2614,.8906,.1251,.4372,.5425,-.1683,.823,-.3613,-.5048,.7839,-.9652,-.2611,.011,-.9443,-.3272,.0351
+                    ,.8797,.3206,-.3511,.3523,.3243,-.8779,.8441,.3543,-.4024,-.8961,-.4373,.076,-.3613,-.5048,.7839,-.9443,-.3272,.0351,.5261,-.3288,.7843,.9083,.0267,.4175,.5078,-.2834,.8135,-.0334,.161,-.9864,-.539,-.199,-.8184,.016,-.0251,-.9995,.5078,-.2834,.8135,.8492,.1532,.5053,.4373,.0187,.8991,-.1162,.2562,-.9596,-.6782,-.0699,-.7316
+                    ,.8441,.3543,-.4024,.3987,.25,-.8823,.8485,.3573,-.3903,-.565,-.276,.7775,-.9933,-.0409,-.1081,-.9199,-.3898,-.0431,.3861,.0991,-.9171,.8742,.2418,-.4209,-.517,-.185,.8357,-.9409,-.2971,-.1622,.8865,.2697,.3759,.3514,.1197,.9285,.0652,.3038,.9505,.6011,-.5754,.5546,.0698,-.5567,.8278,.4127,.0309,.9103,.8053,.2847,.52
+                    ,.2069,.2646,.9419,.0735,-.0255,-.9969,-.8467,.1685,-.5046,-.0393,.6568,-.753,.9309,.191,-.3112,.6726,.4412,-.5941,.9778,.1915,-.0851,.003,-1,-.0003,-.7521,-.405,-.5199,-.7572,-.6518,.0425,-.0287,.7392,-.6728,-.7521,-.405,-.5199,-.0179,-.3948,-.9186,.6378,.7118,-.2941,.7288,-.678,.0956,.975,.2127,.0639,-.7201,.2369,.6521
+                    ,-.7572,-.6518,.0425,-.9879,.1508,.0357,-.6067,.1872,-.7725,-.6382,-.6625,-.3921,.24,-.5984,-.7644,.8221,.1294,.5544,.49,-.8115,-.3184,-.4188,-.7485,.5141,.495,-.6855,.5338,-.6836,.6467,-.3382,-.7572,-.6518,.0425,-.7521,-.405,-.5199,.7157,.2797,.6399,.7288,-.678,.0956,.003,-1,-.0003,-.5676,-.5456,.6165,.0698,-.5567,.8278
+                    ,.8777,.2033,.434,.9778,.1915,-.0851,-.9652,-.2611,.011,.8742,.2418,-.4209,-.9199,-.3898,-.0431,-.5816,-.2753,-.7654,.9083,.0267,.4175,.8485,.3573,-.3903,-.7438,-.0586,-.6658,-.9443,-.3272,.0351,.8797,.3206,-.3511,.9166,-.0149,.3996,-.9443,-.3272,.0351,-.7185,-.0413,-.6942,.872,.4254,-.2422,.8383,.149,.5244,.872,.4254,-.2422
+                    ,.1532,.7885,-.5956,.6892,.6645,-.2888,.3169,.5115,-.7987,.5264,.7779,.343,.7199,.611,-.3292,.8313,.4136,.3712,.1695,-.8112,.5597,.9276,.0308,-.3723,.7345,-.1863,.6525,.865,-.0917,.4933,.9276,.0308,-.3723,-.9218,.276,.2721,-.6072,.5323,-.5898,-.9218,.276,.2721,-.7412,.5618,-.3675,.8672,.4486,-.2163,.6893,.1499,.7088
+                    ,.9411,.0193,-.3375,.8361,-.3265,.4407,-.8586,-.4806,.178,-.8183,.0753,-.5698,-.9551,-.0977,.2798,-.8136,.2671,-.5164,.7199,.611,-.3292,.8052,.2783,.5235,.9103,-.065,.4087,.9073,.1802,-.38,.7915,.3171,.5224,.8672,.4486,-.2163,.9209,-.2836,.2673,.3768,-.8439,-.3819,.8372,-.2456,-.4886,.6892,.6645,-.2888,.6873,.6555,.3127
+                    ,.8741,.353,-.3335,.2943,-.6271,-.7212,.1296,.1795,-.9752,.2163,.6091,.763,.4296,.573,.6979,.4648,.5379,.7033,.8053,.2847,.52,.975,.2127,.0639,-.8467,.1685,-.5046,-.9879,.1508,.0357,-.7017,.0982,.7056,-.9933,-.0409,-.1081,.6726,.4412,-.5941,.9778,.1915,-.0851,-.0393,.6568,-.753,.2069,.2646,.9419,.7909,.4537,-.4105
+                    ,.8052,.2783,.5235,.8052,.2783,.5235,.291,-.6921,.6605,.3995,.2828,-.872,.7909,.4537,-.4105,.8705,.417,-.2614,-.946,-.2523,.2036,.8809,-.0492,-.4707,.3648,-.1101,.9245,.6696,-.1218,-.7326,.291,-.6921,.6605,-.7672,-.6355,.0862,.3768,-.8439,-.3819,.2126,-.2633,-.941,-.7672,-.6355,.0862,-.1575,-.4494,-.8793,.3768,-.8439,-.3819
+                    ,-.7672,-.6355,.0862,.7616,-.4119,.5003,-.0393,.6568,-.753,.6726,.4412,-.5941,.4648,.5379,.7033,.5945,.7303,.3365,.1296,.1795,-.9752,-.0684,-.7819,-.6196,-.2011,.1779,-.9633,.6011,-.5754,.5546,.003,-1,-.0003,.0698,-.5567,.8278,.7995,-.3569,-.4831,.7995,-.3569,-.4831,.7288,-.678,.0956,.4986,.0882,-.8623,-.7017,.0982,.7056
+                    ,-.5676,-.5456,.6165,-.6983,-.2278,.6786,.3523,.3243,-.8779,-.3613,-.5048,.7839,-.3326,-.6176,.7126,-.2165,-.5098,.8326,.2652,-.2184,.9391,.3352,.3722,-.8655,.1977,.095,.9756,.1977,.095,.9756,.2006,-.0996,.9746,.6232,.1564,-.7662,-.325,.4016,-.8562,-.337,.0162,-.9413,.4741,.2942,.8298,.8313,.4136,.3712,.3304,.4388,-.8356
+                    ,-.2011,.1779,-.9633,.7616,-.4119,.5003,.8313,.4136,.3712,-.1744,.2332,-.9566,.3626,.4577,-.8118,.5425,-.1683,.823,-.2165,-.5098,.8326,.8607,.4368,-.2614,.8906,.1251,.4372,-.669,-.2235,-.7088,-.8961,-.4373,.076,.8906,.1251,.4372,.5425,-.1683,.823,-.8618,-.4976,.0983,.3626,.4577,-.8118,.8607,.4368,-.2614,-.1744,.2332,-.9566
+                    ,-.9409,-.2971,-.1622,.9309,.191,-.3112,.0073,-.9937,-.112,.0073,-.9937,-.112,-.669,-.2235,-.7088,.3773,.0775,.9228,.5033,-.1692,.8473,.8632,.2662,.429,.876,-.1235,.4662,.5496,.2406,.8,.9037,-.1386,.4052,.9064,.245,.3441,.9694,.2451,-.0144,.9982,.0576,.0152,.9938,-.1081,.0252,.9589,-.0168,-.2832,.9694,.2451,-.0144
+                    ,.9028,.1672,-.3962,.9982,.0576,.0152,.9938,-.1081,.0252,.8311,-.4199,-.3645,.9589,-.0168,-.2832,.187,.1746,-.9667,-.0263,.3828,-.9235,.4988,-.5492,-.6705,.5329,.0515,-.8446,-.0316,.3202,-.9468,-.033,.1386,-.9898,.5033,.3199,-.8027,-.0264,.6073,-.794,-.0316,.3202,-.9468,.9694,.2451,-.0144,.7515,.5961,-.2826,.8717,.2782,-.4033
+                    ,.8632,.2662,.429,.8117,.5841,-.0058,.9694,.2451,-.0144,.5208,.2257,.8233,.6937,.6316,.3462,.8632,.2662,.429,.4139,.0375,-.9095,.187,.1746,-.9667,.4829,.2077,-.8507,.9938,-.1081,.0252,.9217,.0107,-.3878,.9226,-.0763,-.378,.9037,-.1386,.4052,.9905,-.1269,.0529,.9938,-.1081,.0252,.5667,-.0803,.82,.8643,-.3182,.3894
+                    ,.9037,-.1386,.4052,-.033,.1386,-.9898,-.0303,-.4215,-.9063,.2765,-.3959,-.8757,.9982,.0576,.0152,.9217,.0107,-.3878,.9905,-.1269,.0529,.8643,-.3182,.3894,.9982,.0576,.0152,.9905,-.1269,.0529,.51,-.3265,.7958,.876,-.1235,.4662,.8643,-.3182,.3894,.4276,.6139,.6635,.011,.9451,.3266,.2397,.9392,.2459,.8117,.5841,-.0058
+                    ,.3756,.921,-.1026,.3219,.9434,.079,.349,.937,.0149,.2362,.9148,-.3276,.4607,.6279,-.6272,.3219,.9434,.079,.011,.9451,.3266,-.0115,.9378,-.3469,.0315,-.3265,.9446,.5033,-.1692,.8473,.0315,-.3265,.9446,.0333,-.0612,.9976,.0326,.2095,.9772,.0333,-.0612,.9976,.0391,.2622,.9642,.0328,-.1781,.9834,.5208,.2257,.8233
+                    ,-.0115,.9378,-.3469,.9028,.1672,-.3962,.5315,-.396,-.7487,.9217,.0107,-.3878,.5033,.3199,-.8027,.9226,-.0763,-.378,.2617,-.9246,-.2767,.6304,-.5185,-.5777,.4542,.4611,.7623,.053,.45,.8914,-.0454,-.4273,-.903,-.0475,-.8886,-.4562,.9589,-.0168,-.2832,.9325,.1274,-.3378,.9325,.1274,-.3378,.8151,.4975,.2968,.0992,.611,.7854
+                    ,.8741,.353,-.3335,.9226,-.0763,-.378,.4829,.2077,-.8507,-.0263,.3828,-.9235,.5275,-.7518,-.3956,-.0289,-.5008,-.865,-.0289,-.5008,-.865,.5766,-.6262,-.5247,-.0282,-.5362,-.8436,.9844,-.0108,-.1752,.5275,-.7518,-.3956,-.0329,.1622,-.9862,.187,.1746,-.9667,.7049,.0419,-.708,.6371,-.3271,-.6979,.7373,.0578,-.673,.9841,-.0931,-.151
+                    ,.5593,-.3669,-.7433,.7373,.0578,-.673,.5315,-.396,-.7487,.2765,-.3959,-.8757,-.0297,-.4563,-.8893,-.8002,.5158,.3061,-.6127,-.7837,-.1017,-.6127,-.7837,-.1017,-.6871,.3677,.6266,-.3074,.2491,.9184,-.498,.8072,.3168,-.7725,.5838,-.2496,-.8002,.5158,.3061,.49,-.8115,-.3184,-.527,-.2363,.8163,-.7183,-.0938,.6894,-.8984,.2543,-.3579
+                    ,-.4213,-.3739,-.8262,.1448,-.1932,-.9704,-.8361,-.4222,-.3501,.0764,-.701,-.709,.8497,-.3961,.348,-.9486,.068,-.3091,.585,-.785,.2035,-.3981,-.6943,.5995,.916,-.1772,-.3598,.49,-.8115,-.3184,.2824,-.0052,-.9593,-.033,.1405,-.9895,-.0334,.0175,-.9993,.7893,.0332,-.6131,.3362,.1126,-.935,-.0263,.3828,-.9235,.0306,.3386,-.9404
+                    ,.187,.1746,-.9667,.4829,.2077,-.8507,.187,.1746,-.9667,.4829,.2077,-.8507,.8653,.095,-.4922,.9226,-.0763,-.378,.9226,-.0763,-.378,.9305,.3213,-.1755,.9938,-.1081,.0252,.8067,.0642,-.5874,.3235,-.0599,-.9443,-.0335,-.0277,-.999,.4172,.1809,-.8906,-.6339,.5085,-.5827,-.8403,.5337,-.0953,-.6272,.7773,.048,.2614,-.1581,.9522
+                    ,.3424,.2312,.9106,.3648,-.1101,.9245,-.9575,-.2245,.1809,-.7991,-.2582,-.5428,-.5372,-.8434,.0053,-.9052,.3659,.216,-.8434,.2952,-.4489,-.865,.1416,-.4813,-.4079,.5754,-.7089,-.6339,.5085,-.5827,-.5191,.7718,-.3673,.2518,-.5917,.7658,-.3955,.4955,.7733,-.1758,-.3728,.9111,.1286,-.2378,.9627,.2006,-.0996,.9746,.0535,-.1567,.9862
+                    ,-.5266,-.1193,-.8416,-.337,.0162,-.9413,-.5591,.0132,-.829,-.8181,.4029,-.4102,-.4483,-.5463,-.7074,-.7991,-.2582,-.5428,-.9782,.1978,.0625,-.9188,-.0587,-.3904,-.992,-.0345,.121,-.786,.591,.1812,-.891,.1818,-.4159,.8929,-.0928,-.4405,.8451,-.0786,.5287,.9066,-.2445,-.3439,-.1149,-.4062,-.9065,.7934,-.1148,.5977,-.028,.2311,.9725
+                    ,-.2595,.4043,.877,.9066,-.2445,-.3439,.7839,-.4948,-.375,-.9131,-.0599,.4032,-.869,.1675,-.4655,-.9159,.0162,.401,-.1874,.1335,.9731,-.028,.2311,.9725,-.8242,.4189,.381,-.8434,.2952,-.4489,-.7934,.4523,.4073,-.7351,.4919,-.4665,.2057,-.0016,-.9786,-.8434,.2952,-.4489,.9609,.0566,-.2709,.9131,-.2892,.2873,.8638,.1991,-.4628
+                    ,-.8708,.3821,-.3094,.1494,.0207,-.9886,.8436,-.2577,-.4711,.9131,-.2892,.2873,.7279,-.5112,.4569,-.285,-.1187,.9511,-.302,-.2834,.9102,.5765,.7696,-.2743,.9669,-.2474,.0627,.8524,-.3433,-.3943,.8515,-.1659,.4974,-.285,-.1187,.9511,-.891,-.0166,.4537,-.8708,.3821,-.3094,-.9131,-.0599,.4032,-.8351,.4346,-.337,.0103,.4847,-.8746
+                    ,-.8708,.3821,-.3094,-.871,-.1588,.4649,-.2221,.0377,-.9743,.237,.5971,-.7663,-.5064,.8535,.1225,-.8181,.4029,-.4102,-.325,.4016,-.8562,-.2673,.5418,-.7969,.0786,.5737,.8153,.3424,.2312,.9106,.193,.3396,.9205,-.4747,.4123,-.7776,.2163,.6091,.763,.2991,.4183,.8576,-.5064,.8535,.1225,-.275,.8157,.5089,-.1744,.8164,.5505
+                    ,-.4355,-.089,-.8957,-.1549,-.0965,-.9832,-.4722,-.0942,-.8764,-.5537,-.044,-.8315,-.1549,-.0965,-.9832,-.1791,-.0804,-.9805,-.597,.1696,.7841,-.6341,-.1825,.7513,-.4014,-.0498,-.9145,-.2069,-.3998,-.8929,-.9782,.1978,.0625,-.8223,.1873,-.5372,-.8825,.1437,-.4478,-.0028,.1415,.9899,-.5202,.407,.7508,-.597,.1696,.7841,-.3971,-.0827,-.914
+                    ,.2681,-.3411,-.901,.3064,-.3689,-.8775,-.9131,.396,.0969,-.7691,.2101,-.6036,.0219,.22,.9752,-.5549,.3423,.7582,.8604,-.33,-.3883,.7531,-.2462,.61,.8566,-.3888,-.3391,-.9609,.2706,.0573,-.7757,.0466,-.6294,-.7624,.0906,-.6407,.8475,-.4718,-.2432,.7531,-.2462,.61,.7091,-.3762,.5964,-.0208,.0024,.9998,-.5699,.2545,.7812
+                    ,-.5821,.2097,.7855,-.4815,-.1607,-.8616,.0764,-.4672,-.8808,.2253,-.3608,-.905,.0021,.0563,.9984,-.4863,.3789,.7873,-.5699,.2545,.7812,-.4092,-.0905,-.9079,.2681,-.3411,-.901,-.9593,.2818,-.0132,-.8086,-.0015,-.5883,-.7757,.0466,-.6294,.9066,-.3603,-.2196,.8827,-.1238,.4533,.7956,-.4817,-.3673,-.9544,.2986,.0042,-.7972,-.131,-.5893
+                    ,.7552,-.4079,-.513,.8741,.0384,.4841,.0743,.3328,.9401,-.6004,.4347,.6712,.0985,.302,.9482,-.341,-.6035,.7207,-.4859,.3071,.8183,-.0658,.4399,.8956,-.5615,.3866,.7316,.0816,.316,.9452,-.5536,-.2972,-.7779,.598,-.1887,-.779,.1401,-.5307,-.8358,-.9713,.1873,.1465,-.8421,.3822,-.3804,-.865,-.1096,-.4895,.0513,-.9986,-.01
+                    ,.4646,-.3598,-.8091,-.3706,-.4051,-.8357,-.3179,.7546,-.574,.4646,-.3598,-.8091,.418,.6885,-.5926,-.6165,-.6681,.4165,-.6974,.7128,.0744,-.8215,.3834,.422,.7296,-.6324,-.26,.8213,.2147,.5285,.9438,-.0837,-.3198,.3413,-.8076,-.4809,-.0988,-.0111,-.995,-.7566,-.5921,-.2774,-.015,-.3025,.953,-.1851,.0792,.9795,.7286,-.6063,.3186
+                    ,-.5793,-.7713,.2636,.0515,-.6585,.7508,.7296,-.6324,-.26,.9438,-.0837,-.3198,-.6165,-.6681,.4165,-.8215,.3834,.422,.6811,-.5329,.5021,.0513,-.9986,-.01,.0919,-.5685,.8175,-.93,.3598,.0744,-.9713,.1873,.1465,.8604,-.33,-.3883,-.9822,.1866,.0211,-.9544,.2986,.0042,.7956,-.4817,-.3673,-.5699,.2545,.7812,-.9544,.2986,.0042
+                    ,-.9593,.2818,-.0132,.8566,-.3888,-.3391,.8475,-.4718,-.2432,-.9609,.2706,.0573,.8566,-.3888,-.3391,.2681,-.3411,-.901,-.9131,.396,.0969,-.597,.1696,.7841,-.9131,.396,.0969,-.9782,.1978,.0625,-.6272,.7773,.048,-.786,.591,.1812,-.5064,.8535,.1225,-.2913,-.2769,-.9156,-.891,-.0166,.4537,-.285,-.1187,.9511,-.891,-.0166,.4537
+                    ,-.9131,-.0599,.4032,.8638,.1991,-.4628,.8436,-.2577,-.4711,.8638,.1991,-.4628,-.7934,.4523,.4073,-.028,.2311,.9725,-.9159,.0162,.401,.2057,-.0016,-.9786,.7839,-.4948,-.375,.8929,-.0928,-.4405,.9066,-.2445,-.3439,-.2617,.3876,.8839,-.786,.591,.1812,-.992,-.0345,.121,-.7934,.4523,.4073,-.9052,.3659,.216,-.5373,-.3525,.7661
+                    ,-.5372,-.8434,.0053,-.1758,-.3728,.9111,-.6272,.7773,.048,-.4813,.7846,.3907,-.275,.8157,.5089,-.4852,.2651,-.8332,-.7434,.0871,-.6631,-.0233,.6134,.7894,.0992,.611,.7854,.2163,.6091,.763,-.6172,.4785,.6245,-.8215,.3834,.422,-.93,.3598,.0744,.598,-.1887,-.779,.9438,-.0837,-.3198,.9066,-.3603,-.2196,.7525,.1408,.6434
+                    ,.9066,-.3603,-.2196,-.8421,.3822,-.3804,-.93,.3598,.0744,-.3248,.5954,-.7349,.598,-.1887,-.779,-.0658,.4399,.8956,-.2617,.3876,.8839,-.9052,.3659,.216,-.8905,.4309,.146,-.2617,.3876,.8839,.2518,-.5917,.7658,-.891,.1818,-.4159,-.4483,-.5463,-.7074,-.8905,.4309,.146,-.891,.1818,-.4159,-.8242,.4189,.381,.2291,.2304,-.9457
+                    ,.8436,-.2577,-.4711,.8929,-.0928,-.4405,.8433,-.195,.5007,-.9575,-.2245,.1809,-.2408,-.1132,-.964,.3122,-.2077,.927,-.8764,-.2288,-.4237,.2518,-.5917,.7658,-.5372,-.8434,.0053,.6823,-.6373,-.3581,.6823,-.6373,-.3581,-.4483,-.5463,-.7074,-.5372,-.8434,.0053,.6823,-.6373,-.3581,-.1758,-.3728,.9111,-.0658,.4399,.8956,-.8421,.3822,-.3804
+                    ,-.275,.8157,.5089,-.1382,.7089,.6915,-.2011,.1779,-.9633,-.5271,-.5472,-.6501,-.341,-.6035,.7207,.0513,-.9986,-.01,-.6165,-.6681,.4165,-.9154,-.3969,-.0674,-.9154,-.3969,-.0674,-.6165,-.6681,.4165,-.3248,.5954,-.7349,.7525,.1408,.6434,.6811,-.5329,.5021,.1473,.3993,.9049,-.7757,.0466,-.6294,-.5079,-.306,-.8052,.7531,-.2462,.61
+                    ,.2652,-.2184,.9391,.0022,.1202,.9927,.1977,.095,.9756,.2652,-.2184,.9391,.2006,-.0996,.9746,-.0028,.1415,.9899,-.8825,.1437,-.4478,-.325,.4016,-.8562,-.337,.0162,-.9413,-.3955,.4955,.7733,-.4747,.4123,-.7776,-.2673,.5418,-.7969,-.4852,.2651,-.8332,-.1758,-.3728,.9111,.193,.3396,.9205,-.4014,-.0498,-.9145,-.7691,.2101,-.6036
+                    ,.6856,-.3535,.6364,.0022,.1202,.9927,-.9097,.4069,.083,-.5549,.3423,.7582,.8307,-.4987,-.2474,.2586,-.4193,-.8702,-.5549,.3423,.7582,.0022,.1202,.9927,.8307,-.4987,-.2474,-.7691,.2101,-.6036,-.9097,.4069,.083,-.4014,-.0498,-.9145,.9563,-.0876,.2788,.7552,-.4079,-.513,-.9713,.1873,.1465,-.9822,.1866,.0211,.6856,-.3535,.6364
+                    ,.0073,-.9937,-.112,.8307,-.4987,-.2474,.0073,-.9937,-.112,.2586,-.4193,-.8702,.8307,-.4987,-.2474,.1977,.095,.9756,-.4457,-.1691,.879,-.8326,.2663,.4856,-.4646,.2258,.8562,-.4635,.2836,.8394,-.8692,-.116,.4806,-.5107,-.0801,.856,-.843,-.1234,.5236,-.9681,.2453,.0502,-.8126,.3685,.4516,-.992,-.0422,.1191,-.9272,.1674,-.3351
+                    ,-.9681,.2453,.0502,-.995,.0578,.0818,-.9148,-.2488,-.3183,-.992,-.0422,.1191,-.9828,.1235,-.1369,-.0454,-.4273,-.903,-.2497,.1844,-.9506,-.5259,.226,-.82,-.588,.0516,-.8072,-.0316,.3202,-.9468,-.5557,.32,-.7673,-.5557,.32,-.7673,-.0264,.6073,-.794,-.5014,.628,-.5951,-.9681,.2453,.0502,-.7685,.5963,-.2318,-.8101,.5842,.0483
+                    ,-.8326,.2663,.4856,-.8101,.5842,.0483,-.6689,.6317,.3917,-.4646,.2258,.8562,-.3823,.614,.6905,-.2497,.1844,-.9506,-.4684,.0425,-.8825,-.5259,.226,-.82,-.992,-.0422,.1191,-.9443,.022,-.3282,-.9858,-.1155,.1214,-.8692,-.116,.4806,-.9858,-.1155,.1214,-.8365,-.318,.4462,-.5107,-.0801,.856,-.4558,-.3264,.828,-.3343,-.3958,-.8553
+                    ,-.033,.1386,-.9898,-.588,.0516,-.8072,-.9443,.022,-.3282,-.995,.0578,.0818,-.9858,-.1155,.1214,-.8365,-.318,.4462,-.995,.0578,.0818,-.843,-.1234,.5236,-.4558,-.3264,.828,-.843,-.1234,.5236,-.4457,-.1691,.879,.011,.9451,.3266,.0259,.6308,.7755,-.3815,.9211,-.0774,-.8101,.5842,.0483,-.3157,.9435,.1003,-.2573,.9149,-.3111
+                    ,-.0115,.9378,-.3469,.011,.9451,.3266,-.3157,.9435,.1003,-.2226,.9392,.2613,.0315,-.3265,.9446,-.4457,-.1691,.879,.0328,-.1781,.9834,-.5107,-.0801,.856,.0315,-.3265,.9446,.0333,-.0612,.9976,.0326,.2095,.9772,.0333,-.0612,.9976,.0391,.2622,.9642,.0328,-.1781,.9834,.0326,.2095,.9772,-.0264,.6073,-.794,-.5804,-.3959,-.7116
+                    ,-.9272,.1674,-.3351,-.9443,.022,-.3282,-.9457,-.0431,-.3221,-.8966,.2784,-.3443,-.8966,.2784,-.3443,-.5885,-.5057,-.6308,-.9457,-.0431,-.3221,-.3288,-.9064,-.265,-.7643,-.3704,-.5279,-.2942,.5262,.7978,.0391,.2622,.9642,.053,.45,.8914,-.0454,-.4273,-.903,-.9405,.3014,-.1567,-.9405,.3014,-.1567,-.6647,.6214,.4148,.0992,.611,.7854
+                    ,.053,.45,.8914,-.8403,.5337,-.0953,-.0684,-.7819,-.6196,-.9457,-.0431,-.3221,-.0263,.3828,-.9235,-.5528,-.7517,-.3595,-.2497,.1844,-.9506,-.0289,-.5008,-.865,-.6105,-.6261,-.4851,-.5528,-.7517,-.3595,-.9942,.0044,-.107,-.5528,-.7517,-.3595,-.0329,.1622,-.9862,-.7829,.0612,-.619,-.2497,.1844,-.9506,-.5528,-.7517,-.3595,-.0329,.1622,-.9862
+                    ,-.6842,-.3426,-.6438,-.7447,.0588,-.6648,-.9753,-.1306,-.1778,-.5694,-.388,-.7248,-.7829,.0612,-.619,-.5804,-.3959,-.7116,-.5453,-.2634,-.7957,-.0297,-.4563,-.8893,.7787,.5578,-.2872,.5645,-.7969,-.215,.8663,.4994,-.0069,.5645,-.7969,-.215,.8527,.3653,.3734,.4593,.379,-.8033,.5765,.7696,-.2743,-.5793,-.7713,.2636,.9709,-.2265,.0771
+                    ,.285,-.8598,.4237,.9932,-.0739,-.0894,-.8345,-.1135,-.5392,.2713,-.1921,-.9431,.3665,.269,-.8907,-.2524,-.5836,.7718,.3266,.3773,-.8665,-.1927,-.9087,.3704,.735,-.6719,-.0911,-.871,-.1588,.4649,-.5793,-.7713,.2636,-.9868,.0239,-.1599,-.3459,-.0055,-.9382,-.394,.1127,-.9121,-.8238,.0275,-.5661,-.0263,.3828,-.9235,-.0928,.3381,-.9365
+                    ,-.0333,.0374,-.9987,-.5259,.226,-.82,-.2497,.1844,-.9506,-.5259,.226,-.82,-.8929,.0815,-.4428,-.4691,.18,-.8646,-.9457,-.0431,-.3221,-.942,.3166,-.1116,-.8435,.0623,-.5335,-.3806,-.0618,-.9227,.6371,-.3271,-.6979,.2765,-.3959,-.8757,-.6842,-.3426,-.6438,-.3343,-.3958,-.8553,.6892,.6645,-.2888,.3169,.5115,-.7987,.2126,-.2633,-.941
+                    ,-.8183,.0753,-.5698,-.2575,-.1493,.9547,-.9074,-.2494,.3381,.6893,.1499,.7088,.3052,.3601,-.8816,-.6072,.5323,-.5898,-.4858,-.3113,.8167,.865,-.0917,.4933,.3814,.3554,-.8534,.3304,.4388,-.8356,-.325,.4016,-.8562,.3424,.2312,.9106,.2991,.4183,.8576,.3304,.4388,-.8356,-.1501,.4161,-.8968,.2991,.4183,.8576,.4978,.8389,-.22
+                    ,-.1549,-.0965,-.9832,.163,-.0876,-.9827,-.669,-.2235,-.7088,.9073,.1802,-.38,.6232,.1564,-.7662,.3773,.0775,.9228,.8383,.149,.5244,-.3613,-.5048,.7839,.5078,-.2834,.8135,.9083,.0267,.4175,-.1162,.2562,-.9596,-.7185,-.0413,-.6942,.8441,.3543,-.4024,.3523,.3243,-.8779,-.7017,.0982,.7056,-.0179,-.3948,-.9186,-.7521,-.405,-.5199
+                    ,-.5676,-.5456,.6165,-.7572,-.6518,.0425,-.6127,-.7837,-.1017,-.9879,.1508,.0357,-.7572,-.6518,.0425,.975,.2127,.0639,.7288,-.678,.0956,.003,-1,-.0003,-.7572,-.6518,.0425,.9309,.191,-.3112,.9778,.1915,-.0851,-.9652,-.2611,.011,-.9409,-.2971,-.1622,.8485,.3573,-.3903,.8742,.2418,-.4209,-.9199,-.3898,-.0431,-.9933,-.0409,-.1081
+                    ,.9083,.0267,.4175,.8441,.3543,-.4024,.8485,.3573,-.3903,-.8961,-.4373,.076,-.9443,-.3272,.0351,.8797,.3206,-.3511,.8441,.3543,-.4024,-.9443,-.3272,.0351,-.9652,-.2611,.011,.872,.4254,-.2422,.8607,.4368,-.2614,.8383,.149,.5244,.9073,.1802,-.38,.872,.4254,-.2422,.6892,.6645,-.2888,.4978,.8389,-.22,.7199,.611,-.3292
+                    ,.9276,.0308,-.3723,.916,-.1772,-.3598,.865,-.0917,.4933,.9284,-.0599,-.3667,.9276,.0308,-.3723,-.498,.8072,.3168,-.946,-.2523,.2036,-.9218,.276,.2721,-.9218,.276,.2721,.8672,.4486,-.2163,.8705,.417,-.2614,.9411,.0193,-.3375,.9284,-.0599,-.3667,-.8586,-.4806,.178,-.9074,-.2494,.3381,-.8183,.0753,-.5698,-.9074,-.2494,.3381
+                    ,-.9551,-.0977,.2798,.7199,.611,-.3292,.7909,.4537,-.4105,.8809,-.0492,-.4707,.9073,.1802,-.38,.8348,.3956,-.3829,.8672,.4486,-.2163,.7616,-.4119,.5003,.3768,-.8439,-.3819,.6892,.6645,-.2888,.5945,.7303,.3365,.2163,.6091,.763,.8053,.2847,.52,.9778,.1915,-.0851,.975,.2127,.0639,-.8467,.1685,-.5046,-.9933,-.0409,-.1081
+                    ,-.9879,.1508,.0357,.6726,.4412,-.5941,-.0393,.6568,-.753,-.8467,.1685,-.5046,.2069,.2646,.9419,.8053,.2847,.52,.7909,.4537,-.4105,.8348,.3956,-.3829,.8052,.2783,.5235,.3995,.2828,-.872,-.1575,-.4494,-.8793,.7909,.4537,-.4105,.3995,.2828,-.872,.8705,.417,-.2614,.9411,.0193,-.3375,-.9551,-.0977,.2798,-.946,-.2523,.2036
+                    ,.8372,-.2456,-.4886,.8809,-.0492,-.4707,.291,-.6921,.6605,.3768,-.8439,-.3819,-.7672,-.6355,.0862,-.7672,-.6355,.0862,-.8586,-.4806,.178,.3768,-.8439,-.3819,.2069,.2646,.9419,-.0393,.6568,-.753,.4648,.5379,.7033,.1296,.1795,-.9752,.6011,-.5754,.5546,.7288,-.678,.0956,.003,-1,-.0003,.7995,-.3569,-.4831,-.0179,-.3948,-.9186
+                    ,-.7017,.0982,.7056,-.5676,-.5456,.6165,.3523,.3243,-.8779,-.1162,.2562,-.9596,.5078,-.2834,.8135,-.3613,-.5048,.7839,.1977,.095,.9756,.163,-.0876,-.9827,-.1501,.4161,-.8968,.4741,.2942,.8298,-.2011,.1779,-.9633,.7616,-.4119,.5003,-.1744,.2332,-.9566,.5425,-.1683,.823,.8607,.4368,-.2614,.8797,.3206,-.3511,-.8618,-.4976,.0983
+                    ,-.8961,-.4373,.076,.8906,.1251,.4372,-.2165,-.5098,.8326,.3626,.4577,-.8118,-.9409,-.2971,-.1622,-.9199,-.3898,-.0431,.8742,.2418,-.4209,.9309,.191,-.3112,-.8618,-.4976,.0983,.0073,-.9937,-.112,-.8618,-.4976,.0983,-.669,-.2235,-.7088,.5208,.2257,.8233,.5667,-.0803,.82,.9694,.2451,-.0144,.8717,.2782,-.4033,.9938,-.1081,.0252
+                    ,.9226,-.0763,-.378,.4829,.2077,-.8507,.5033,.3199,-.8027,.9694,.2451,-.0144,.8117,.5841,-.0058,.8632,.2662,.429,.187,.1746,-.9667,.9938,-.1081,.0252,.9905,-.1269,.0529,.9037,-.1386,.4052,.51,-.3265,.7958,.5329,.0515,-.8446,.5329,.0515,-.8446,-.033,.1386,-.9898,.9982,.0576,.0152,.9028,.1672,-.3962,.9217,.0107,-.3878
+                    ,.8643,-.3182,.3894,.876,-.1235,.4662,.9982,.0576,.0152,.5033,-.1692,.8473,.876,-.1235,.4662,.0259,.6308,.7755,.8117,.5841,-.0058,.349,.937,.0149,.2362,.9148,-.3276,.3756,.921,-.1026,.349,.937,.0149,.3219,.9434,.079,.2397,.9392,.2459,.011,.9451,.3266,.3219,.9434,.079,.3756,.921,-.1026,.349,.937,.0149
+                    ,.0328,-.1781,.9834,.5033,-.1692,.8473,.0315,-.3265,.9446,.51,-.3265,.7958,.0259,.6308,.7755,.0333,-.0612,.9976,.5667,-.0803,.82,.0326,.2095,.9772,.5208,.2257,.8233,.9028,.1672,-.3962,.5329,.0515,-.8446,.5315,-.396,-.7487,.491,-.2635,-.8303,.8717,.2782,-.4033,.5033,.3199,-.8027,.9589,-.0168,-.2832,.9325,.1274,-.3378
+                    ,.9325,.1274,-.3378,.8741,.353,-.3335,-.0263,.3828,-.9235,.187,.1746,-.9667,-.0289,-.5008,-.865,.5275,-.7518,-.3956,.7373,.0578,-.673,.5275,-.7518,-.3956,.187,.1746,-.9667,.6371,-.3271,-.6979,.7373,.0578,-.673,.5315,-.396,-.7487,-.6127,-.7837,-.1017,-.8002,.5158,.3061,-.498,.8072,.3168,.49,-.8115,-.3184,.916,-.1772,-.3598
+                    ,.49,-.8115,-.3184,-.0263,.3828,-.9235,.4829,.2077,-.8507,.4829,.2077,-.8507,.9226,-.0763,-.378,.193,.3396,.9205,.3424,.2312,.9106,-.7934,.4523,.4073,-.4852,.2651,-.8332,-.6339,.5085,-.5827,.3122,-.2077,.927,.2006,-.0996,.9746,-.2408,-.1132,-.964,-.337,.0162,-.9413,-.8825,.1437,-.4478,-.8905,.4309,.146,.2057,-.0016,-.9786
+                    ,.8451,-.0786,.5287,.9066,-.2445,-.3439,.8451,-.0786,.5287,-.8434,.2952,-.4489,.0103,.4847,-.8746,.8638,.1991,-.4628,.9131,-.2892,.2873,.9131,-.2892,.2873,-.285,-.1187,.9511,-.8708,.3821,-.3094,-.786,.591,.1812,-.8181,.4029,-.4102,-.4747,.4123,-.7776,-.325,.4016,-.8562,.3424,.2312,.9106,-.8181,.4029,-.4102,-.0233,.6134,.7894
+                    ,.2163,.6091,.763,-.5064,.8535,.1225,-.6272,.7773,.048,-.2069,-.3998,-.8929,-.1549,-.0965,-.9832,-.4722,-.0942,-.8764,-.1549,-.0965,-.9832,-.0028,.1415,.9899,.2586,-.4193,-.8702,-.2069,-.3998,-.8929,-.9782,.1978,.0625,-.4092,-.0905,-.9079,-.9097,.4069,.083,-.9593,.2818,-.0132,.8566,-.3888,-.3391,.7531,-.2462,.61,.0021,.0563,.9984
+                    ,.7525,.1408,.6434,-.9822,.1866,.0211,.0919,-.5685,.8175,-.6172,.4785,.6245,-.3248,.5954,-.7349,-.93,.3598,.0744,.7296,-.6324,-.26,-.3706,-.4051,-.8357,.4646,-.3598,-.8091,.6811,-.5329,.5021,.5645,-.7969,-.215,.4646,-.3598,-.8091,.7296,-.6324,-.26,-.6165,-.6681,.4165,.7296,-.6324,-.26,.0513,-.9986,-.01,-.6172,.4785,.6245
+                    ,.7552,-.4079,-.513,.8604,-.33,-.3883,.9066,-.3603,-.2196,.7956,-.4817,-.3673,-.5699,.2545,.7812,-.9544,.2986,.0042,.8566,-.3888,-.3391,-.9593,.2818,-.0132,-.9609,.2706,.0573,.8604,-.33,-.3883,.8566,-.3888,-.3391,-.9097,.4069,.083,-.9131,.396,.0969,-.597,.1696,.7841,-.9131,.396,.0969,-.6339,.5085,-.5827,-.6272,.7773,.048
+                    ,-.3955,.4955,.7733,-.786,.591,.1812,-.871,-.1588,.4649,-.891,-.0166,.4537,-.285,-.1187,.9511,-.891,-.0166,.4537,.5765,.7696,-.2743,.0103,.4847,-.8746,.8638,.1991,-.4628,.8638,.1991,-.4628,-.8242,.4189,.381,-.7934,.4523,.4073,-.9131,-.0599,.4032,-.9159,.0162,.401,.2057,-.0016,-.9786,.9066,-.2445,-.3439,.7839,-.4948,-.375
+                    ,.8929,-.0928,-.4405,-.8905,.4309,.146,-.786,.591,.1812,-.9782,.1978,.0625,-.992,-.0345,.121,-.7934,.4523,.4073,-.9575,-.2245,.1809,-.5372,-.8434,.0053,-.6272,.7773,.048,-.8403,.5337,-.0953,.0992,.611,.7854,-.8215,.3834,.422,.598,-.1887,-.779,.9438,-.0837,-.3198,-.8421,.3822,-.3804,-.0658,.4399,.8956,-.2617,.3876,.8839
+                    ,-.9052,.3659,.216,-.2617,.3876,.8839,-.891,.1818,-.4159,-.8905,.4309,.146,-.9159,.0162,.401,-.8242,.4189,.381,.8436,-.2577,-.4711,-.992,-.0345,.121,-.9575,-.2245,.1809,-.1791,-.0804,-.9805,-.2408,-.1132,-.964,.3648,-.1101,.9245,.3122,-.2077,.927,.2518,-.5917,.7658,.6823,-.6373,-.3581,-.5372,-.8434,.0053,-.7991,-.2582,-.5428
+                    ,.7839,-.4948,-.375,.6823,-.6373,-.3581,-.5372,-.8434,.0053,-.0658,.4399,.8956,-.275,.8157,.5089,-.2011,.1779,-.9633,-.0684,-.7819,-.6196,-.341,-.6035,.7207,.0513,-.9986,-.01,-.3706,-.4051,-.8357,-.9154,-.3969,-.0674,-.3248,.5954,-.7349,.7525,.1408,.6434,.6811,-.5329,.5021,.0919,-.5685,.8175,-.7757,.0466,-.6294,.7531,-.2462,.61
+                    ,.0021,.0563,.9984,.2652,-.2184,.9391,.6856,-.3535,.6364,-.4092,-.0905,-.9079,.2006,-.0996,.9746,.1977,.095,.9756,-.0028,.1415,.9899,-.8825,.1437,-.4478,-.4722,-.0942,-.8764,-.0233,.6134,.7894,-.325,.4016,-.8562,-.8181,.4029,-.4102,-.4747,.4123,-.7776,-.2673,.5418,-.7969,-.2011,.1779,-.9633,-.4852,.2651,-.8332,-.1758,-.3728,.9111
+                    ,-.3955,.4955,.7733,.193,.3396,.9205,-.4014,-.0498,-.9145,-.9609,.2706,.0573,.8475,-.4718,-.2432,-.5549,.3423,.7582,.8307,-.4987,-.2474,-.7691,.2101,-.6036,.7956,-.4817,-.3673,.7552,-.4079,-.513,-.9713,.1873,.1465,-.9822,.1866,.0211,.6856,-.3535,.6364,.2652,-.2184,.9391,.0073,-.9937,-.112,.0073,-.9937,-.112,-.2069,-.3998,-.8929
+                    ,.2586,-.4193,-.8702,-.995,.0578,.0818,-.9828,.1235,-.1369,-.8966,.2784,-.3443,-.9681,.2453,.0502,-.9457,-.0431,-.3221,-.992,-.0422,.1191,-.0454,-.4273,-.903,-.0454,-.4273,-.903,-.0263,.3828,-.9235,-.033,.1386,-.9898,-.0316,.3202,-.9468,-.5557,.32,-.7673,-.0316,.3202,-.9468,-.0264,.6073,-.794,-.9681,.2453,.0502,-.8326,.2663,.4856
+                    ,-.9681,.2453,.0502,-.8101,.5842,.0483,-.4646,.2258,.8562,-.8326,.2663,.4856,-.2497,.1844,-.9506,-.992,-.0422,.1191,-.8692,-.116,.4806,-.992,-.0422,.1191,-.9858,-.1155,.1214,-.5107,-.0801,.856,-.8692,-.116,.4806,-.588,.0516,-.8072,-.0303,-.4215,-.9063,-.033,.1386,-.9898,-.9443,.022,-.3282,-.9272,.1674,-.3351,-.995,.0578,.0818
+                    ,-.8365,-.318,.4462,-.9858,-.1155,.1214,-.995,.0578,.0818,-.4558,-.3264,.828,-.8365,-.318,.4462,-.843,-.1234,.5236,.011,.9451,.3266,-.347,.9371,.0381,-.8101,.5842,.0483,-.347,.9371,.0381,-.347,.9371,.0381,-.3815,.9211,-.0774,-.0115,.9378,-.3469,-.2573,.9149,-.3111,-.0115,.9378,-.3469,-.3815,.9211,-.0774,.011,.9451,.3266
+                    ,-.2226,.9392,.2613,-.3157,.9435,.1003,-.3157,.9435,.1003,-.347,.9371,.0381,-.0115,.9378,-.3469,.0315,-.3265,.9446,-.4558,-.3264,.828,-.4457,-.1691,.879,-.5107,-.0801,.856,.0315,-.3265,.9446,.0326,.2095,.9772,-.4646,.2258,.8562,.0333,-.0612,.9976,.0328,-.1781,.9834,-.0264,.6073,-.794,-.0115,.9378,-.3469,-.588,.0516,-.8072
+                    ,-.9272,.1674,-.3351,-.5259,.226,-.82,-.5804,-.3959,-.7116,-.5557,.32,-.7673,.0391,.2622,.9642,-.0475,-.8886,-.4562,-.0454,-.4273,-.903,-.9405,.3014,-.1567,-.9828,.1235,-.1369,.0992,.611,.7854,-.8403,.5337,-.0953,-.9405,.3014,-.1567,-.0684,-.7819,-.6196,-.0475,-.8886,-.4562,-.0263,.3828,-.9235,-.0289,-.5008,-.865,-.0289,-.5008,-.865
+                    ,-.0282,-.5362,-.8436,-.7829,.0612,-.619,-.0282,-.5362,-.8436,-.0329,.1622,-.9862,-.2497,.1844,-.9506,-.0329,.1622,-.9862,-.0297,-.4563,-.8893,-.7829,.0612,-.619,-.6842,-.3426,-.6438,-.3343,-.3958,-.8553,-.5804,-.3959,-.7116,-.0297,-.4563,-.8893,-.0303,-.4215,-.9063,.7787,.5578,-.2872,.5645,-.7969,-.215,.5765,.7696,-.2743,.7787,.5578,-.2872
+                    ,-.5793,-.7713,.2636,-.5768,-.6002,-.5541,-.871,-.1588,.4649,-.5793,-.7713,.2636,-.0263,.3828,-.9235,-.2497,.1844,-.9506,-.5259,.226,-.82,-.5259,.226,-.82,-.9457,-.0431,-.3221,-.9457,-.0431,-.3221,-.992,-.0422,.1191,.6371,-.3271,-.6979,-.6842,-.3426,-.6438
                 ]),
                 false);
 
@@ -3064,405 +3391,245 @@ var Warrior;
                     ,.2281,.3695,.1582,.3804,.1646,.3552,.0467,.8129,.031,.7395,.0474,.7394,.2073,.2724,.1786,.2485,.2087,.247,.0461,.8365,.0286,.8132,.0951,.834,.0667,.8117,.0979,.8082,.2336,.0566,.2587,.0008,.2656,.0557,.0678,.7378,.095,.7345,.2376,.2475,.2902,.1764,.1743,.1742,.2116,.1712,.6958,.2479,.7194,.2529
                     ,.6992,.2607,.2124,.0565,.1904,.0007,.2125,.0007,.0483,.6173,.0379,.5751,.0467,.5752,.0848,.6136,.0591,.5735,.0826,.5592,.903,.9482,.812,.9147,.9081,.9233,.2478,.6563,.2309,.6733,.234,.6489,.2767,.6368,.3519,.6419,.3497,.6557,.678,.2505,.6459,.2608,.6466,.2471,.765,.6135,.7931,.6197,.7659,.6284
                     ,.6863,.5136,.7642,.4905,.7727,.524,.7489,.5177,.2481,.6734,.2912,.75,.2309,.6733,.7143,.2409,.7483,.2322,.4786,.9175,.4568,.8833,.4745,.8777,.1858,.0559,.1743,.0007,.0007,.8099,.1461,.1756,.0125,.6144,.0378,.6174,.1807,.2748,.1487,.2517,.3986,.5591,.3681,.4948,.2068,.4359,.2223,.3964,.0007,.8328
-                    ,.0267,.8352,.1618,.8171,.1925,.7792,.1618,.8171,.3567,.2328,.3469,.2706,.327,.2461,.5917,.8391,.6693,.8296,.6544,.8689,.7175,.5876,.6812,.4809,.7199,.516,.6753,.5133,.6812,.4809,.7918,.1444,.8204,.1375,.6866,.6077,.2414,.8804,.2748,.8789,.2433,.7869,.2734,.8012,.1309,.876,.1773,.8431,.7895,.2253
-                    ,.8237,.2118,.0007,.9604,.0346,.9008,.5692,.0505,.5298,.0007,.8516,.7369,.8365,.6795,.558,.096,.4939,.1243,.505,.074,.9131,.8107,.9394,.8128,.9137,.8271,.8791,.618,.8922,.6161,.9881,.8044,.9639,.8132,.9686,.7983,.7125,.2218,.7389,.2217,.31,.6984,.3016,.7409,.6758,.2349,.6459,.2314,.3248,.6851
-                    ,.3519,.6725,.3125,.6897,.6921,.2315,.8147,.7708,.8509,.772,.8509,.772,.8911,.7845,.1862,.9345,.2111,.9388,.2309,.844,.7856,.1694,.5206,.0355,.6412,.1473,.6119,.3064,.8911,.7845,.9331,.7754,.251,.885,.2309,.9359,.1205,.9116,.1498,.9388,.0818,.8386,.0581,.849,.5459,.156,.3125,.6897,.3248,.6851
-                    ,.9686,.7983,.9394,.7935,.8922,.6161,.8771,.6052,.8885,.6027,.4949,.8843,.4786,.9175,.4745,.8777,.2693,.6207,.8141,.9744,.8979,.9744,.0608,.6164,.2288,.0007,.6806,.2638,.2483,.1728,.0648,.8372,.1695,.3278,.2351,.3313,.1592,.6859,.1851,.6893,.4464,.5535,.2295,.718,.6445,.0237,.6414,.0576,.7666,.7894
-                    ,.5306,.4739,.5353,.4098,.5729,.882,.6544,.8689,.4172,.2106,.2916,.2352,.5459,.156,.5141,.2233,.436,.6727,.4678,.6759,.352,.3885,.3398,.3443,.3298,.4674,.3454,.4203,.4027,.6633,.3534,.5603,.3454,.4203,.352,.3885,.3228,.2797,.4678,.6759,.5095,.6683,.436,.6727,.0007,.7359,.1678,.0557,.1706,.6207
-                    ,.6707,.6932,.7109,.7156,.2099,.7489,.0572,.9772,.0333,.9891,.0327,.9768,.9595,.8435,.9367,.8722,.9366,.8392,.0017,.9903,.0007,.9782,.9165,.8678,.9131,.8449,.5941,.9817,.5665,.968,.5953,.9697,.8602,.6714,.8708,.6356,.8814,.6587,.8164,.6219,.8156,.6114,.8479,.615,.5437,.968,.5199,.9805,.5188,.9693
-                    ,.9209,.077,.9075,.1011,.8995,.0865,.9717,.0859,.947,.0949,.9436,.077,.9476,.6007,.9215,.623,.9166,.6077,.9717,.6033,.9491,.6172,.9476,.6007,.7186,.9227,.7051,.908,.7169,.9049,.7709,.9024,.742,.9389,.736,.9047,.9379,.8829,.9131,.907,.9177,.8736,.962,.8803,.9421,.907,.9379,.8829,.6707,.9366
-                    ,.6735,.9323,.681,.9373,.734,.978,.7141,.9572,.7371,.9739,.4852,.2718,.4556,.2724,.4565,.2673,.5097,.2713,.4871,.2784,.4852,.2718,.968,.6191,.9648,.6427,.9577,.6391,.9661,.1015,.9485,.1159,.9419,.6402,.9306,.6427,.9299,.1132,.926,.0935,.4917,.9635,.5077,.9779,.4532,.9779,.5271,.2673,.5116,.2778
-                    ,.9836,.8988,.9763,.8765,.9888,.6105,.9735,.8698,.9751,.8452,.0754,.9781,.0571,.9894,.921,.1186,.7107,.9615,.6951,.9466,.7141,.9572,.5431,.9792,.835,.6476,.8581,.6077,.8781,.6319,.9625,.8261,.9787,.8296,.845,.6007,.8564,.6007,.8814,.6587,.891,.6577,.9133,.8356,.9375,.827,.9823,.8184,.9137,.8271
-                    ,.835,.6476,.8243,.6316,.2916,.272,.2992,.2733,.2924,.2754,.701,.9014,.6925,.9082,.689,.9057,.6998,.9225,.7022,.9083,.6811,.9195,.7051,.908,.703,.9216,.6808,.9334,.686,.9228,.6998,.9287,.7026,.9299,.6953,.9238,.7197,.9391,.7022,.9382,.6751,.9295,.8122,.6074,.8143,.629,.7894,.5199,.7752,.5305
-                    ,.7515,.5309,.7771,.5765,.7916,.6114,.7904,.537,.7808,.6651,.7103,.5939,.6986,.589,.7004,.6001,.7164,.601,.7114,.5948,.7111,.5944,.7111,.5944,.7117,.5941,.7102,.5948,.7112,.5944,.7111,.5944,.7285,.4809,.7808,.6651,.611,.6866,.5946,.7533,.5946,.6773,.6278,.7563,.6129,.7564,.5946,.7862,.6037,.7838
-                    ,.6043,.7886,.6156,.7851,.6043,.7886,.6156,.7851,.6311,.7796,.6341,.7853,.6341,.7853,.6598,.7827,.6693,.7889,.656,.7335,.6139,.7695,.5946,.768,.6139,.7807,.9554,.1617,.9389,.1445,.9489,.1315,.2769,.5867,.3515,.6194,.2759,.616,.6691,.0787,.6933,.1535,.6459,.1269,.8186,.3745,.7996,.3205,.8385,.3487
-                    ,.9073,.4263,.8905,.4459,.8628,.4291,.9305,.287,.8989,.3549,.907,.2784,.2277,.5863,.1863,.6163,.1838,.5813,.7442,.0831,.7814,.1446,.7472,.1466,.4053,.978,.4099,.9143,.4519,.9318,.669,.0007,.7081,.039,.67,.0368,.3534,.9715,.3762,.9103,.7856,.0823,.8233,.1076,.7898,.1067,.8489,.3224,.8696,.5263
-                    ,.9168,.5493,.8621,.5633,.9131,.4936,.8612,.4818,.6707,.8872,.7037,.8635,.7066,.9,.8598,.0942,.8485,.1223,.7655,.9,.7847,.8558,.7978,.8858,.7524,.8646,.7763,.8345,.7847,.8558,.4974,.3856,.5117,.357,.5074,.3872,.6787,.8272,.7047,.829,.7991,.0266,.8295,.0094,.8311,.0371,.8634,.0113,.8645,.0463
-                    ,.4205,.3477,.4673,.3355,.4463,.3676,.502,.3504,.5178,.325,.4637,.4772,.4772,.4474,.4728,.4795,.4692,.4418,.4903,.4193,.4142,.4643,.4361,.407,.4822,.4132,.8478,.4653,.8055,.3994,.927,.3907,.9264,.4243,.4834,.8462,.5003,.8764,.4485,.8764,.7506,.2108,.5038,.8257,.5031,.857,.4261,.7962,.4541,.8142
-                    ,.4308,.833,.4257,.7404,.44,.7831,.4118,.7648,.7422,.0399,.7741,.0039,.7745,.039,.1433,.5516,.1792,.5441,.4387,.7095,.472,.7353,.3534,.7236,.3939,.7297,.3857,.7446,.6924,.3975,.7253,.4208,.7097,.4278,.5973,.5563,.6257,.4948,.6218,.5591,.3582,.707,.4092,.6997,.7196,.3888,.7571,.4098,.0047,.2532
-                    ,.0547,.2711,.0051,.2769,.5362,.544,.5878,.4895,.574,.5535,.4267,.0174,.4808,.07,.4155,.0641,.4169,.103,.4846,.1236,.4189,.1304,.0518,.5336,.0676,.4602,.07,.5339,.0833,.2724,.1122,.2486,.1099,.2749,.0524,.5572,.0718,.5559,.0034,.5547,.0318,.5323,.0337,.5579,.0326,.0007,.0576,.0566,.0256,.0556
-                    ,.0007,.5289,.0308,.4585,.0007,.1762,.0532,.2474,.082,.2471,.1166,.1743,.5485,.2525,.5268,.2628,.5289,.2499,.0788,.0007,.1054,.056,.0788,.0565,.0503,.3379,.0607,.2958,.0608,.338,.0138,.3342,.0396,.2942,.0379,.337,.2253,.9741,.1316,.9993,.1205,.9801,.8142,.8305,.8139,.8066,.8263,.8185,.8789,.9134
-                    ,.8214,.8647,.8869,.9019,.6002,.2533,.5665,.2509,.5962,.2402,.3763,.3969,.405,.3983,.4002,.4123,.4741,.316,.5071,.3224,.421,.3098,.438,.2797,.4457,.31,.9106,.7935,.9117,.8072,.4939,.2495,.5005,.2371,.5018,.9246,.4799,.9587,.4841,.9189,.117,.0008,.1234,.0558,.0979,.5306,.1448,.1757,.142,.2518
-                    ,.0862,.3351,.1099,.2749,.142,.2518,.1413,.2785,.6523,.4948,.6671,.5603,.4286,.1718,.0979,.5535,.0718,.5559,.7405,.4657,.7097,.4278,.7405,.4657,.7252,.4742,.8677,.4678,.3534,.8217,.4261,.7962,.4552,.3989,.5206,.2921,.5178,.325,.5206,.2921,.5293,.2957,.6866,.7988,.7118,.7935,.4903,.4193,.5071,.3906
-                    ,.881,.1301,.8485,.1223,.8967,.0379,.8087,.2996,.8643,.2879,.7676,.7993,.7893,.8062,.9466,.3247,.9237,.3894,.1641,.4954,.9191,.5799,.8662,.5994,.2246,.5328,.253,.4687,.2847,.5207,.9611,.0757,.9589,.0494,.9783,.0494,.9584,.1838,.9425,.1699,.9734,.0202,.9533,.0064,.9674,.0007,.5262,.231,.5005,.2371
-                    ,.511,.2247,.8882,.8436,.9117,.8072,.9117,.8237,.565,.2351,.5933,.2247,.8896,.8635,.9002,.8914,.8839,.8516,.8882,.8436,.5484,.2357,.8271,.5631,.8662,.5994,.8273,.5994,.8271,.5631,.8156,.5226,.8698,.3682,.8976,.3444,.856,.3894,.8698,.3682,.8981,.0964,.7528,.833,.7118,.7935,.7676,.7993,.8253,.0846
-                    ,.2026,.4798,.7765,.0811,.2286,.615,.7132,.0844,.8156,.5226,.4318,.8809,.4061,.8777,.8976,.3044,.8976,.3444,.9628,.2484,.9704,.2731,.2847,.5207,.5484,.2357,.8896,.8635,.9783,.0494,.9586,.0249,.9632,.1967,.9466,.1899,.4637,.9254,.4799,.9587,.4532,.9586,.8049,.871,.139,.9401,.2225,.9476,.052,.2959
-                    ,.0625,.0007,.5671,.2644,.0793,.1712,.0337,.5579,.0511,.46,.4808,.07,.7171,.3379,.7442,.38,.6727,.3666,.7171,.3379,.1863,.6163,.1489,.5847,.7079,.0021,.7842,.2088,.7814,.1446,.3673,.8614,.8936,.391,.9264,.4243,.9125,.4413,.2847,.5207,.35,.5692,.5844,.6727,.5527,.6759,.31,.0622,.2916,.1042
-                    ,.3024,.1854,.2936,.1366,.6671,.653,.6177,.6633,.2936,.1366,.2916,.1042,.3359,.0007,.5527,.6759,.5109,.6683,.5844,.6727,.0426,.1728,.0979,.4566,.1234,.0558,.0036,.4551,.7431,.3345,.7316,.2693,.7508,.2693,.5186,.7162,.4726,.7131,.5186,.6972,.6727,.3666,.8557,.9888,.8317,.9769,.8556,.9766,.9282,.0293
-                    ,.8995,.0521,.9023,.0292,.8312,.9892,.8001,.9757,.9325,.0522,.904,.0723,.0483,.9755,.0759,.9617,.0771,.9738,.9295,.1805,.9,.1577,.9246,.1556,.9291,.2239,.8936,.2235,.8942,.211,.0255,.9755,.0017,.9629,.025,.9643,.0992,.3013,.1233,.2879,.1156,.3064,.1081,.3521,.117,.3274,.1236,.3465,.9404,.9567
-                    ,.9144,.9343,.9419,.9401,.9645,.954,.9609,.9383,.5609,.959,.5687,.9406,.5731,.9579,.6247,.9419,.5851,.9174,.6132,.9098,.933,.9833,.9094,.958,.9384,.9595,.957,.9871,.9624,.9643,.5283,.9396,.5188,.9438,.5334,.9239,.5527,.9096,.5644,.8833,.5687,.8862,.9233,.2404,.8936,.2397,.9251,.2338,.9477,.2408
-                    ,.9251,.2338,.9496,.2344,.9576,.9147,.973,.932,.1381,.3289,.9144,.9343,.9348,.9172,.1354,.3103,.9166,.644,.9711,.644,.9551,.6584,.9506,.9183,.9651,.2448,.9496,.2344,.9673,.2386,.957,.9871,.9794,.9697,.971,.9916,.9817,.9469,.9019,.0152,.9266,.0137,.8738,.9879,.8732,.9757,.1233,.2879,.5384,.926
-                    ,.5481,.9068,.5527,.9096,.5911,.9516,.0992,.324,.0472,.9642,.9231,.2106,.8936,.1917,.9357,.2106,.9377,.1792,.9456,.0263,.9266,.0137,.9421,.0101,.9291,.2239,.933,.1508,.9361,.0755,.9447,.0512,.9533,.0064,.9421,.0101,.9446,.0751,.9525,.2015,.8936,.1917,.3131,.272,.3055,.2733,.303,.272,.5594,.9666
-                    ,.549,.9631,.5581,.9597,.551,.9472,.5581,.9597,.5344,.9563,.538,.9516,.5609,.959,.5581,.9597,.5344,.9563,.5295,.9434,.5543,.9469,.5489,.9414,.5511,.9393,.5463,.9475,.5642,.9247,.5664,.9327,.5254,.949,.361,.3799,.3534,.4002,.4169,.3154,.406,.3015,.4397,.322,.3798,.3893,.403,.3593,.3763,.4439
-                    ,.4629,.3936,.4576,.3857,.4755,.392,.4616,.3942,.462,.3939,.4628,.3945,.4616,.3934,.4709,.4022,.462,.3939,.462,.3939,.4749,.2797,.3763,.4439,.4283,.4251,.5782,.6866,.5763,.7564,.5614,.7563,.5946,.7862,.5855,.7838,.5946,.7813,.5736,.7851,.5849,.7886,.5736,.7851,.5582,.7796,.5753,.7807,.5551,.7853
-                    ,.5294,.7827,.5332,.7335,.5753,.7695,.6997,.9348,.7022,.9382,.5468,.9356,.548,.9316,.9152,.664,.327,.2461,.2309,.9359,.1773,.8431,.8934,.6773,.9226,.6877,.2748,.8789,.8454,.2444,.8204,.1375,.3147,.7716,.6753,.5133,.6825,.6421,.4172,.2106,.2977,.1868,.5211,.8808,.5188,.8614,.6517,.4795,.5642,.4768
-                    ,.5188,.8614,.5972,.8024,.547,.2693,.5805,.2705,.7109,.7156,.8051,.7894,.7666,.7894,.2099,.7489,.1925,.7792,.1695,.3278,.2073,.2724,.1807,.2748,.0461,.8365,.0267,.8352,.0951,.834,.0648,.8372,.2288,.0007,.7991,.9329,.2309,.6733,.6806,.2638,.6459,.2608,.7894,.5199,.3016,.7409,.2912,.75,.7389,.2217
-                    ,.7483,.2322,.4786,.9175,.4532,.9174,.1678,.0557,.1743,.0007,.0007,.8099,.0007,.7359,.1487,.2517,.1461,.1756,.0125,.6144,.0132,.5602,.1807,.2748,.1493,.2784,.1487,.2517,.3534,.5603,.3681,.4948,.2068,.4359,.1461,.4088,.0007,.8328,.0007,.8099,.1618,.8171,.1293,.8074,.1925,.7792,.177,.8256,.1618,.8171
-                    ,.3469,.2706,.5972,.8024,.6693,.8296,.6812,.4809,.7285,.4809,.6753,.5133,.6719,.482,.6812,.4809,.7771,.5765,.7856,.1694,.7918,.1444,.6684,.5795,.2414,.8804,.2309,.844,.2433,.7869,.2559,.7514,.1309,.876,.151,.8269,.1773,.8431,.7956,.2473,.7895,.2253,.0007,.9604,.0007,.8987,.5206,.0355,.5298,.0007
-                    ,.8157,.7319,.8365,.6795,.5459,.156,.4939,.1243,.9131,.8107,.9394,.7935,.9881,.8044,.7125,.2218,.7258,.2121,.7389,.2217,.31,.6984,.313,.7291,.3016,.7409,.3248,.6851,.3125,.6897,.31,.6984,.6921,.2315,.7125,.2218,.8147,.7708,.8157,.7319,.8509,.772,.1862,.9345,.1498,.9388,.2111,.9388,.1862,.9345
-                    ,.2309,.844,.2433,.7869,.7895,.2253,.7856,.1694,.505,.074,.5206,.0355,.8911,.7845,.251,.885,.2766,.8818,.1205,.9116,.1309,.876,.0818,.8386,.6921,.2315,.3125,.6897,.9686,.7983,.8922,.6161,.4949,.8843,.5053,.9175,.4786,.9175,.8141,.9744,.7991,.9329,.2288,.0007,.6806,.2638,.0648,.8372,.0461,.8365
-                    ,.2073,.2724,.1695,.3278,.6445,.0237,.5805,.2705,.5642,.4768,.5729,.882,.2916,.2352,.5459,.156,.436,.6727,.352,.3885,.3298,.4674,.2068,.4359,.3534,.653,.3534,.5603,.3454,.4203,.3398,.3443,.4678,.6759,.0007,.7359,.0125,.6144,.1461,.1756,.1678,.0557,.1515,.6207,.6707,.6932,.681,.6773,.7109,.7156
-                    ,.0571,.9894,.9596,.8695,.5941,.9817,.5654,.9792,.8602,.6714,.835,.6476,.8243,.6316,.5431,.9792,.9717,.0859,.9661,.1015,.9476,.6007,.7051,.908,.7709,.9024,.7709,.9366,.9379,.8829,.9663,.9033,.6911,.9504,.6911,.9504,.6707,.9366,.734,.978,.7107,.9615,.7141,.9572,.4852,.2718,.4871,.2784,.4556,.2724
-                    ,.5116,.2778,.4871,.2784,.9801,.6254,.9661,.1015,.9569,.1208,.4547,.9678,.4713,.96,.4808,.9608,.4917,.9635,.5052,.9707,.5077,.9779,.4917,.9635,.4713,.96,.4808,.9608,.5293,.2736,.5116,.2778,.9836,.8988,.9663,.9033,.9801,.6254,.9735,.8698,.9596,.8695,.0747,.9903,.0571,.9894,.7107,.9615,.6911,.9504
-                    ,.7197,.9391,.7192,.9309,.5654,.9792,.5431,.9792,.8814,.6587,.9133,.8356,.9133,.8356,.9137,.8271,.2916,.272,.3016,.272,.701,.9014,.7022,.9083,.6953,.9238,.7022,.9083,.7051,.908,.6997,.9348,.6953,.9238,.7197,.9391,.7894,.5199,.7904,.537,.7771,.5765,.7808,.6651,.7285,.4809,.7808,.6651,.5946,.7862
-                    ,.6156,.7851,.6156,.7851,.6341,.7853,.35,.5692,.3515,.6194,.7743,.3389,.9125,.4413,.8905,.4459,.2286,.615,.1863,.6163,.7765,.0811,.7814,.1446,.7079,.0021,.3534,.9098,.8087,.2996,.9229,.5231,.9131,.4936,.9229,.5231,.6717,.8566,.7847,.8558,.6717,.8566,.8012,.0007,.8295,.0094,.8295,.0094,.5178,.325
-                    ,.4903,.4193,.7743,.4413,.8055,.3994,.8936,.391,.927,.3907,.5003,.8764,.663,.2108,.4831,.8231,.5038,.8257,.4261,.7962,.4425,.7845,.472,.7353,.44,.7831,.7406,.0041,.7741,.0039,.1489,.5847,.4726,.7131,.472,.7353,.3534,.7236,.6063,.4924,.3737,.6773,.5582,.4809,.4925,.0231,.4808,.07,.4819,.0978
+                    ,.0267,.8352,.1618,.8171,.1925,.7792,.1618,.8171,.3567,.2328,.3469,.2706,.327,.2461,.5917,.8391,.6693,.8296,.6544,.8689,.7175,.5876,.6812,.4809,.7199,.516,.6753,.5133,.6812,.4809,.7918,.1444,.8204,.1375,.6684,.5795,.6866,.6077,.2414,.8804,.2748,.8789,.2433,.7869,.2734,.8012,.1309,.876,.1773,.8431
+                    ,.7895,.2253,.8237,.2118,.0007,.9604,.0346,.9008,.5692,.0505,.5298,.0007,.8516,.7369,.8365,.6795,.558,.096,.4939,.1243,.505,.074,.9131,.8107,.9394,.8128,.9137,.8271,.8791,.618,.8922,.6161,.9881,.8044,.9639,.8132,.9686,.7983,.7125,.2218,.7389,.2217,.31,.6984,.3016,.7409,.6758,.2349,.6459,.2314
+                    ,.3248,.6851,.3519,.6725,.3125,.6897,.6921,.2315,.8147,.7708,.8509,.772,.8509,.772,.8911,.7845,.1862,.9345,.2111,.9388,.2309,.844,.7856,.1694,.5206,.0355,.6412,.1473,.6119,.3064,.8911,.7845,.9331,.7754,.251,.885,.2309,.9359,.1205,.9116,.1498,.9388,.0818,.8386,.0581,.849,.5459,.156,.3125,.6897
+                    ,.3248,.6851,.9686,.7983,.9394,.7935,.8922,.6161,.8771,.6052,.8885,.6027,.4949,.8843,.4786,.9175,.4745,.8777,.2693,.6207,.8141,.9744,.8979,.9744,.0608,.6164,.2288,.0007,.6806,.2638,.2483,.1728,.0648,.8372,.1695,.3278,.2351,.3313,.1592,.6859,.1851,.6893,.4464,.5535,.2295,.718,.6445,.0237,.6414,.0576
+                    ,.7666,.7894,.5306,.4739,.5353,.4098,.5729,.882,.6544,.8689,.4172,.2106,.2916,.2352,.5459,.156,.5141,.2233,.436,.6727,.4678,.6759,.352,.3885,.3398,.3443,.3298,.4674,.3454,.4203,.4027,.6633,.3534,.5603,.3454,.4203,.352,.3885,.3228,.2797,.4678,.6759,.5095,.6683,.436,.6727,.0007,.7359,.1678,.0557
+                    ,.1706,.6207,.6707,.6932,.7109,.7156,.2099,.7489,.0572,.9772,.0333,.9891,.0327,.9768,.9595,.8435,.9367,.8722,.9366,.8392,.0017,.9903,.0007,.9782,.9165,.8678,.9131,.8449,.5941,.9817,.5665,.968,.5953,.9697,.8602,.6714,.8708,.6356,.8814,.6587,.8164,.6219,.8156,.6114,.8479,.615,.5437,.968,.5199,.9805
+                    ,.5188,.9693,.9209,.077,.9075,.1011,.8995,.0865,.9717,.0859,.947,.0949,.9436,.077,.9476,.6007,.9215,.623,.9166,.6077,.9717,.6033,.9491,.6172,.9476,.6007,.7186,.9227,.7051,.908,.7169,.9049,.7709,.9024,.742,.9389,.736,.9047,.9379,.8829,.9131,.907,.9177,.8736,.962,.8803,.9421,.907,.9379,.8829
+                    ,.6707,.9366,.6735,.9323,.681,.9373,.734,.978,.7141,.9572,.7371,.9739,.4852,.2718,.4556,.2724,.4565,.2673,.5097,.2713,.4871,.2784,.4852,.2718,.968,.6191,.9648,.6427,.9577,.6391,.9661,.1015,.9485,.1159,.9419,.6402,.9306,.6427,.9299,.1132,.926,.0935,.4917,.9635,.5077,.9779,.4532,.9779,.5271,.2673
+                    ,.5116,.2778,.9836,.8988,.9763,.8765,.9888,.6105,.9735,.8698,.9751,.8452,.0754,.9781,.0571,.9894,.921,.1186,.7107,.9615,.6951,.9466,.7141,.9572,.5431,.9792,.835,.6476,.8581,.6077,.8781,.6319,.9625,.8261,.9787,.8296,.845,.6007,.8564,.6007,.8814,.6587,.891,.6577,.9133,.8356,.9375,.827,.9823,.8184
+                    ,.9137,.8271,.835,.6476,.8243,.6316,.2916,.272,.2992,.2733,.2924,.2754,.701,.9014,.6925,.9082,.689,.9057,.6998,.9225,.7022,.9083,.6811,.9195,.7051,.908,.703,.9216,.6808,.9334,.686,.9228,.6998,.9287,.7026,.9299,.6953,.9238,.7197,.9391,.7022,.9382,.6751,.9295,.8122,.6074,.8143,.629,.7894,.5199
+                    ,.7752,.5305,.7515,.5309,.7771,.5765,.7916,.6114,.7904,.537,.7808,.6651,.7103,.5939,.6986,.589,.7004,.6001,.7164,.601,.7114,.5948,.7111,.5944,.7111,.5944,.7117,.5941,.7102,.5948,.7112,.5944,.7111,.5944,.7285,.4809,.7808,.6651,.611,.6866,.5946,.7533,.5946,.6773,.6278,.7563,.6129,.7564,.5946,.7862
+                    ,.6037,.7838,.6043,.7886,.6156,.7851,.6043,.7886,.6156,.7851,.6311,.7796,.6341,.7853,.6341,.7853,.6598,.7827,.6693,.7889,.656,.7335,.6139,.7695,.5946,.768,.6139,.7807,.9554,.1617,.9389,.1445,.9489,.1315,.2769,.5867,.3515,.6194,.2759,.616,.6691,.0787,.6933,.1535,.6459,.1269,.8186,.3745,.7996,.3205
+                    ,.8385,.3487,.9073,.4263,.8905,.4459,.8628,.4291,.9305,.287,.8989,.3549,.907,.2784,.2277,.5863,.1863,.6163,.1838,.5813,.7442,.0831,.7814,.1446,.7472,.1466,.4053,.978,.4099,.9143,.4519,.9318,.669,.0007,.7081,.039,.67,.0368,.3534,.9715,.3762,.9103,.7856,.0823,.8233,.1076,.7898,.1067,.8489,.3224
+                    ,.8696,.5263,.9168,.5493,.8621,.5633,.9131,.4936,.8612,.4818,.6707,.8872,.7037,.8635,.7066,.9,.8598,.0942,.8485,.1223,.7655,.9,.7847,.8558,.7978,.8858,.7524,.8646,.7763,.8345,.7847,.8558,.4974,.3856,.5117,.357,.5074,.3872,.6717,.8566,.7047,.829,.7991,.0266,.8295,.0094,.8311,.0371,.8634,.0113
+                    ,.8645,.0463,.4205,.3477,.4673,.3355,.4463,.3676,.502,.3504,.5178,.325,.4637,.4772,.4772,.4474,.4728,.4795,.4692,.4418,.4903,.4193,.4772,.4474,.4142,.4643,.4361,.407,.4822,.4132,.8478,.4653,.8055,.3994,.927,.3907,.9264,.4243,.4834,.8462,.5003,.8764,.4485,.8764,.7506,.2108,.5038,.8257,.5031,.857
+                    ,.4261,.7962,.4541,.8142,.4308,.833,.4257,.7404,.44,.7831,.4118,.7648,.7422,.0399,.7741,.0039,.7745,.039,.1433,.5516,.1792,.5441,.4387,.7095,.472,.7353,.3534,.7236,.3939,.7297,.3857,.7446,.6924,.3975,.7253,.4208,.7097,.4278,.5973,.5563,.6257,.4948,.6218,.5591,.3582,.707,.4092,.6997,.7196,.3888
+                    ,.7571,.4098,.0047,.2532,.0547,.2711,.0051,.2769,.5362,.544,.5878,.4895,.574,.5535,.4267,.0174,.4808,.07,.4155,.0641,.4169,.103,.4846,.1236,.4189,.1304,.0518,.5336,.0676,.4602,.07,.5339,.0833,.2724,.1122,.2486,.1099,.2749,.0524,.5572,.0718,.5559,.0034,.5547,.0318,.5323,.0337,.5579,.0326,.0007
+                    ,.0576,.0566,.0256,.0556,.0007,.5289,.0308,.4585,.0007,.1762,.0532,.2474,.082,.2471,.1166,.1743,.5485,.2525,.5268,.2628,.5289,.2499,.0788,.0007,.1054,.056,.0788,.0565,.0503,.3379,.0607,.2958,.0608,.338,.0138,.3342,.0396,.2942,.0379,.337,.2253,.9741,.1316,.9993,.1205,.9801,.8142,.8305,.8139,.8066
+                    ,.8263,.8185,.8789,.9134,.8214,.8647,.8869,.9019,.6002,.2533,.5665,.2509,.5962,.2402,.3763,.3969,.405,.3983,.4002,.4123,.4741,.316,.5071,.3224,.421,.3098,.438,.2797,.4457,.31,.9106,.7935,.9117,.8072,.4939,.2495,.5005,.2371,.5018,.9246,.4799,.9587,.4841,.9189,.117,.0008,.1234,.0558,.0979,.5306
+                    ,.1448,.1757,.142,.2518,.0862,.3351,.1099,.2749,.142,.2518,.1413,.2785,.6523,.4948,.6671,.5603,.4286,.1718,.0979,.5535,.0718,.5559,.7405,.4657,.7097,.4278,.7405,.4657,.7252,.4742,.8677,.4678,.3534,.8217,.4261,.7962,.4552,.3989,.5206,.2921,.5178,.325,.5206,.2921,.5293,.2957,.6866,.7988,.7118,.7935
+                    ,.5071,.3906,.881,.1301,.8485,.1223,.8967,.0379,.8087,.2996,.8643,.2879,.7676,.7993,.7893,.8062,.9466,.3247,.9237,.3894,.1641,.4954,.9191,.5799,.8662,.5994,.2246,.5328,.253,.4687,.2847,.5207,.9611,.0757,.9589,.0494,.9783,.0494,.9584,.1838,.9425,.1699,.9734,.0202,.9533,.0064,.9674,.0007,.5262,.231
+                    ,.5005,.2371,.511,.2247,.8882,.8436,.9117,.8072,.9117,.8237,.565,.2351,.5933,.2247,.8896,.8635,.9002,.8914,.8839,.8516,.8882,.8436,.5484,.2357,.8271,.5631,.8662,.5994,.8273,.5994,.8271,.5631,.8156,.5226,.8698,.3682,.8976,.3444,.856,.3894,.8698,.3682,.8981,.0964,.7528,.833,.7118,.7935,.7676,.7993
+                    ,.8253,.0846,.2026,.4798,.7765,.0811,.2286,.615,.7132,.0844,.8156,.5226,.4318,.8809,.4061,.8777,.8976,.3044,.8976,.3444,.9628,.2484,.9704,.2731,.2847,.5207,.5484,.2357,.8896,.8635,.9783,.0494,.9586,.0249,.9632,.1967,.9466,.1899,.4637,.9254,.4799,.9587,.4532,.9586,.8049,.871,.139,.9401,.2225,.9476
+                    ,.052,.2959,.0625,.0007,.5671,.2644,.0793,.1712,.0337,.5579,.0511,.46,.4808,.07,.7171,.3379,.7442,.38,.6727,.3666,.7171,.3379,.1863,.6163,.1489,.5847,.7079,.0021,.7842,.2088,.7814,.1446,.3673,.8614,.8936,.391,.9264,.4243,.9125,.4413,.2847,.5207,.35,.5692,.5844,.6727,.5527,.6759,.31,.0622
+                    ,.2916,.1042,.3024,.1854,.2936,.1366,.6671,.653,.6177,.6633,.2936,.1366,.2916,.1042,.3359,.0007,.5527,.6759,.5109,.6683,.5844,.6727,.0426,.1728,.0979,.4566,.1234,.0558,.0036,.4551,.7431,.3345,.7316,.2693,.7508,.2693,.5186,.7162,.4726,.7131,.5186,.6972,.6727,.3666,.8557,.9888,.8317,.9769,.8556,.9766
+                    ,.9282,.0293,.8995,.0521,.9023,.0292,.8312,.9892,.8001,.9757,.9325,.0522,.904,.0723,.0483,.9755,.0759,.9617,.0771,.9738,.9295,.1805,.9,.1577,.9246,.1556,.9291,.2239,.8936,.2235,.8942,.211,.0255,.9755,.0017,.9629,.025,.9643,.0992,.3013,.1233,.2879,.1156,.3064,.1081,.3521,.117,.3274,.1236,.3465
+                    ,.9404,.9567,.9144,.9343,.9419,.9401,.9645,.954,.9609,.9383,.5609,.959,.5687,.9406,.5731,.9579,.6247,.9419,.5851,.9174,.6132,.9098,.933,.9833,.9094,.958,.9384,.9595,.957,.9871,.9624,.9643,.5283,.9396,.5188,.9438,.5334,.9239,.5527,.9096,.5644,.8833,.5687,.8862,.9233,.2404,.8936,.2397,.9251,.2338
+                    ,.9477,.2408,.9251,.2338,.9496,.2344,.9576,.9147,.973,.932,.1381,.3289,.9144,.9343,.9348,.9172,.1354,.3103,.9166,.644,.9711,.644,.9551,.6584,.9506,.9183,.9651,.2448,.9496,.2344,.9673,.2386,.957,.9871,.9794,.9697,.971,.9916,.9817,.9469,.9019,.0152,.9266,.0137,.8738,.9879,.8732,.9757,.1233,.2879
+                    ,.5384,.926,.5481,.9068,.5527,.9096,.5911,.9516,.0992,.324,.0472,.9642,.9231,.2106,.8936,.1917,.9357,.2106,.9377,.1792,.9456,.0263,.9266,.0137,.9421,.0101,.9291,.2239,.933,.1508,.9361,.0755,.9447,.0512,.9533,.0064,.9421,.0101,.9446,.0751,.9525,.2015,.8936,.1917,.3131,.272,.3055,.2733,.303,.272
+                    ,.5594,.9666,.549,.9631,.5581,.9597,.551,.9472,.5581,.9597,.5344,.9563,.538,.9516,.5609,.959,.5581,.9597,.5344,.9563,.5295,.9434,.5543,.9469,.5489,.9414,.5511,.9393,.5463,.9475,.5642,.9247,.5664,.9327,.5254,.949,.361,.3799,.3534,.4002,.4169,.3154,.406,.3015,.4397,.322,.3798,.3893,.403,.3593
+                    ,.3763,.4439,.4629,.3936,.4576,.3857,.4755,.392,.4616,.3942,.462,.3939,.4628,.3945,.4616,.3934,.4709,.4022,.462,.3939,.462,.3939,.4749,.2797,.3763,.4439,.4283,.4251,.5782,.6866,.5763,.7564,.5614,.7563,.5946,.7862,.5855,.7838,.5946,.7813,.5736,.7851,.5849,.7886,.5736,.7851,.5582,.7796,.5753,.7807
+                    ,.5551,.7853,.5294,.7827,.5332,.7335,.5753,.7695,.6997,.9348,.7022,.9382,.5468,.9356,.548,.9316,.9152,.664,.327,.2461,.2309,.9359,.1773,.8431,.8934,.6773,.9226,.6877,.2748,.8789,.8454,.2444,.8204,.1375,.3147,.7716,.6753,.5133,.6825,.6421,.4172,.2106,.2977,.1868,.5211,.8808,.5188,.8614,.6517,.4795
+                    ,.5642,.4768,.5188,.8614,.5972,.8024,.547,.2693,.5805,.2705,.7109,.7156,.8051,.7894,.7666,.7894,.2099,.7489,.1925,.7792,.1695,.3278,.2073,.2724,.1807,.2748,.0461,.8365,.0267,.8352,.0951,.834,.0648,.8372,.2288,.0007,.7991,.9329,.2309,.6733,.6806,.2638,.6459,.2608,.7894,.5199,.3016,.7409,.2912,.75
+                    ,.7389,.2217,.7483,.2322,.4786,.9175,.4532,.9174,.1678,.0557,.1743,.0007,.0007,.8099,.0007,.7359,.1487,.2517,.1461,.1756,.0125,.6144,.0132,.5602,.1807,.2748,.1493,.2784,.1487,.2517,.3534,.5603,.3681,.4948,.2068,.4359,.1461,.4088,.0007,.8328,.0007,.8099,.1618,.8171,.1293,.8074,.1925,.7792,.177,.8256
+                    ,.1618,.8171,.3469,.2706,.5972,.8024,.6693,.8296,.6812,.4809,.7285,.4809,.6753,.5133,.6719,.482,.6812,.4809,.7771,.5765,.7856,.1694,.7918,.1444,.6684,.5795,.2414,.8804,.2309,.844,.2433,.7869,.2559,.7514,.1309,.876,.151,.8269,.1773,.8431,.7956,.2473,.7895,.2253,.0007,.9604,.0007,.8987,.5206,.0355
+                    ,.5298,.0007,.8157,.7319,.8365,.6795,.5459,.156,.4939,.1243,.9131,.8107,.9394,.7935,.9881,.8044,.7125,.2218,.7258,.2121,.7389,.2217,.31,.6984,.313,.7291,.3016,.7409,.3248,.6851,.3125,.6897,.31,.6984,.6921,.2315,.7125,.2218,.8147,.7708,.8157,.7319,.8509,.772,.1862,.9345,.1498,.9388,.2111,.9388
+                    ,.1862,.9345,.2309,.844,.2433,.7869,.7895,.2253,.7856,.1694,.505,.074,.5206,.0355,.8911,.7845,.251,.885,.2766,.8818,.1205,.9116,.1309,.876,.0818,.8386,.6921,.2315,.3125,.6897,.9686,.7983,.8922,.6161,.4949,.8843,.5053,.9175,.4786,.9175,.8141,.9744,.7991,.9329,.2288,.0007,.6806,.2638,.0648,.8372
+                    ,.0461,.8365,.2073,.2724,.1695,.3278,.6445,.0237,.5805,.2705,.5642,.4768,.5729,.882,.2916,.2352,.5459,.156,.436,.6727,.352,.3885,.3298,.4674,.2068,.4359,.3534,.653,.3534,.5603,.3454,.4203,.3398,.3443,.4678,.6759,.0007,.7359,.0125,.6144,.1461,.1756,.1678,.0557,.1515,.6207,.6707,.6932,.681,.6773
+                    ,.7109,.7156,.0571,.9894,.9596,.8695,.5941,.9817,.5654,.9792,.8602,.6714,.835,.6476,.8243,.6316,.5431,.9792,.9717,.0859,.9661,.1015,.9476,.6007,.7051,.908,.7709,.9024,.7709,.9366,.9379,.8829,.9663,.9033,.6911,.9504,.6911,.9504,.6707,.9366,.734,.978,.7107,.9615,.7141,.9572,.4852,.2718,.4871,.2784
+                    ,.4556,.2724,.5116,.2778,.4871,.2784,.9801,.6254,.9661,.1015,.9569,.1208,.4547,.9678,.4713,.96,.4808,.9608,.4917,.9635,.5052,.9707,.5077,.9779,.4917,.9635,.4713,.96,.4808,.9608,.5293,.2736,.5116,.2778,.9836,.8988,.9663,.9033,.9801,.6254,.9735,.8698,.9596,.8695,.0747,.9903,.0571,.9894,.7107,.9615
+                    ,.6911,.9504,.7197,.9391,.7192,.9309,.5654,.9792,.5431,.9792,.8814,.6587,.9133,.8356,.9133,.8356,.9137,.8271,.2916,.272,.3016,.272,.701,.9014,.7022,.9083,.6953,.9238,.7022,.9083,.7051,.908,.6997,.9348,.6953,.9238,.7197,.9391,.7894,.5199,.7904,.537,.7771,.5765,.7808,.6651,.7285,.4809,.7808,.6651
+                    ,.5946,.7862,.6156,.7851,.6156,.7851,.6341,.7853,.35,.5692,.3515,.6194,.7743,.3389,.9125,.4413,.8905,.4459,.2286,.615,.1863,.6163,.7765,.0811,.7814,.1446,.7079,.0021,.3534,.9098,.8087,.2996,.9229,.5231,.9131,.4936,.9229,.5231,.7847,.8558,.6787,.8272,.8012,.0007,.8295,.0094,.8295,.0094,.5178,.325
+                    ,.4772,.4474,.7743,.4413,.8055,.3994,.8936,.391,.927,.3907,.5003,.8764,.663,.2108,.4831,.8231,.5038,.8257,.4261,.7962,.4425,.7845,.472,.7353,.44,.7831,.7406,.0041,.7741,.0039,.1489,.5847,.4726,.7131,.472,.7353,.3534,.7236,.6063,.4924,.3737,.6773,.5582,.4809,.4925,.0231,.4808,.07,.4819,.0978
                     ,.0625,.0007,.0036,.4551,.5483,.2658,.1009,.0007,.052,.2959,.016,.2799,.2281,.9993,.7991,.8262,.8139,.8066,.5671,.2644,.406,.3015,.8139,.8066,.9106,.7935,.4939,.2495,.5053,.9587,.4799,.9587,.1009,.0007,.0979,.4566,.0979,.5306,.0855,.2809,.0862,.3351,.1099,.2749,.142,.2518,.6523,.4948,.4925,.1535
-                    ,.4286,.1718,.0979,.5306,.0979,.5535,.7729,.456,.7405,.4657,.7097,.4278,.7405,.4657,.8905,.4459,.8677,.4678,.3673,.8614,.3534,.8217,.4749,.2797,.5206,.2921,.5178,.325,.5206,.2921,.403,.3593,.6866,.7988,.4903,.4193,.8981,.0964,.881,.1301,.891,.0007,.8967,.0379,.8087,.2996,.8147,.2693,.8643,.2879
-                    ,.7676,.7993,.9704,.3491,.9237,.3894,.1293,.5047,.1641,.4954,.9191,.5799,.2026,.4798,.253,.4687,.9611,.0757,.9446,.0751,.9533,.0064,.5005,.2371,.8882,.8436,.9117,.8072,.8896,.8635,.5484,.2357,.8271,.5631,.8662,.5994,.8271,.5631,.8698,.3682,.856,.3894,.8967,.0379,.8981,.0964,.7118,.7935,.1641,.4954
-                    ,.2026,.4798,.7745,.039,.7765,.0811,.2759,.616,.2286,.615,.8156,.5226,.8258,.4809,.4318,.8809,.4519,.9318,.8643,.2879,.8976,.3044,.9628,.2484,.5484,.2357,.9783,.0494,.9632,.1967,.9525,.2015,.4637,.9254,.4799,.9587,.7991,.8262,.139,.9401,.052,.2959,.0625,.0007,.5671,.2644,.5483,.2658,.0337,.5579
-                    ,.4808,.07,.4819,.0978,.7171,.3379,.7431,.3345,.6063,.4924,.1863,.6163,.1524,.6194,.1489,.5847,.7079,.0021,.7406,.0041,.4831,.8231,.7842,.2088,.8055,.3994,.8936,.391,.9264,.4243,.927,.4395,.9125,.4413,.2847,.5207,.352,.489,.35,.5692,.5844,.6727,.4286,.1718,.6671,.5603,.2936,.1366,.3359,.0007
-                    ,.5527,.6759,.0862,.3351,.0979,.4566,.1234,.0558,.0036,.4551,.7431,.3345,.7171,.3379,.7316,.2693,.5186,.7162,.472,.7353,.4726,.7131,.7991,.9878,.9268,.0757,.0472,.9642,.0759,.9617,.8936,.1917,.9,.1577,.9291,.2239,.9291,.2239,.8991,.2324,.0007,.9741,.0017,.9629,.0992,.3013,.1087,.2799,.1233,.2879
-                    ,.1081,.3521,.9404,.9567,.9094,.9497,.9144,.9343,.9645,.954,.9404,.9567,.5609,.959,.6247,.9419,.933,.9833,.9124,.9916,.9094,.958,.957,.9871,.933,.9833,.5334,.9239,.5229,.9468,.5188,.9438,.5527,.9096,.5481,.9068,.5644,.8833,.9233,.2404,.8946,.2448,.8936,.2397,.9477,.2408,.9233,.2404,.9251,.2338
-                    ,.9576,.9147,.143,.3373,.9144,.9343,.9234,.9147,.9441,.6611,.9346,.6618,.9166,.644,.918,.6541,.9166,.644,.9346,.6618,.9711,.644,.9685,.6512,.9551,.6584,.9551,.6584,.9441,.6611,.9166,.644,.9651,.2448,.9477,.2408,.9496,.2344,.957,.9871,.9794,.9697,.9817,.9469,.9645,.954,.9019,.0152,.8738,.9879
-                    ,.1233,.2879,.1408,.3014,.5334,.9239,.5481,.9068,.5731,.9579,.5642,.9247,.0992,.3013,.9266,.0137,.9383,.2172,.9291,.2239,.9361,.0755,.9268,.0757,.9533,.0064,.9446,.0751,.9361,.0755,.9525,.2015,.9383,.2172,.3131,.272,.3122,.2754,.5594,.9666,.5466,.9666,.5463,.9475,.5466,.9666,.5344,.9563,.5609,.959
-                    ,.5344,.9563,.5254,.949,.5463,.9475,.5468,.9356,.548,.9316,.5642,.9247,.5254,.949,.5229,.9468,.4005,.3177,.406,.3015,.403,.3593,.4005,.3177,.3763,.4439,.462,.3939,.4749,.2797,.3763,.4439,.5946,.7862,.5849,.7886,.5736,.7851,.5736,.7851,.5551,.7853,.5551,.7853,.5199,.7889,.6997,.9348,.5468,.9356
-                    ,.1838,.5813,.1863,.6163,.1838,.5813,.7001,.7921,.7353,.7641,.7337,.7921,.7001,.7921,.3857,.7446,.4118,.7648,.3857,.7446,.6993,.7345,.7412,.7311,.8051,.7894,.7679,.7724,.8101,.7729,.2099,.7489,.1769,.7722,.1826,.7402,.4232,.5563,.3948,.4948,.4142,.4924,.7713,.7389,.8133,.7395,.1452,.7612,.1581,.7314
-                    ,.4464,.5535,.4623,.4809,.4842,.544,.2281,.3695,.1582,.3804,.1646,.3552,.2073,.2724,.1786,.2485,.2087,.247,.0461,.8365,.0286,.8132,.0467,.8129,.0648,.8372,.0979,.8082,.0951,.834,.1807,.2748,.1487,.2517,.2223,.3964,.1461,.4088,.1293,.8074,.1925,.7792,.1618,.8171,.67,.0368,.7081,.039,.7081,.039
-                    ,.0667,.8117,.2359,.2712,.2376,.2475,.1695,.3278,.2351,.3313,.1592,.6859,.1851,.6893,.4326,.4895,.2295,.718,.5777,.3063,.6119,.3064,.6119,.3064,.2295,.718,.2099,.7489,.7666,.7894,.436,.6727,.4678,.6759,.352,.3885,.3398,.3443,.3298,.4674,.3454,.4203,.3454,.4203,.352,.3885,.4678,.6759,.5095,.6683
-                    ,.4027,.6633,.436,.6727,.7097,.4278,.6924,.3975,.6924,.3975,.4257,.7404,.44,.7831,.4118,.7648,.5692,.0505,.6064,.0551,.6064,.0551,.7252,.4742,.7097,.4278,.4387,.7095,.472,.7353,.3582,.707,.3534,.7236,.7253,.4208,.5973,.5563,.6257,.4948,.6218,.5591,.4092,.6997,.3939,.7297,.7196,.3888,.7571,.4098
-                    ,.5582,.4809,.574,.5535,.5362,.544,.4169,.103,.4846,.1236,.4189,.1304,.0833,.2724,.1122,.2486,.1099,.2749,.0524,.5572,.07,.5339,.0718,.5559,.0007,.5289,.0337,.5579,.0034,.5547,.1099,.2749,.142,.2518,.1413,.2785,.7109,.7156,.472,.7353,.4726,.7131,.4925,.1535,.4286,.1718,.3986,.5591,.6177,.6633
-                    ,.7729,.456,.7405,.4657,.7405,.4657,.7252,.4742,.44,.7831,.0518,.5336,.0547,.2711,.082,.2471,.4808,.07,.4155,.0641,.7171,.3379,.7442,.38,.5878,.4895,.6727,.3666,.7171,.3379,.7666,.7894,.7422,.0399,.7422,.0399,.5844,.6727,.5527,.6759,.31,.0622,.2916,.1042,.3024,.1854,.2936,.1366,.7171,.3379
-                    ,.7431,.3345,.2936,.1366,.2916,.1042,.4808,.07,.1695,.3278,.5527,.6759,.5109,.6683,.6177,.6633,.5844,.6727,.0532,.2474,.1695,.3278,.6727,.3666,.7081,.039,.6414,.0576,.6064,.0551,.5692,.0505,.5455,.3044,.5455,.3044,.67,.0368,.6119,.3064,.5777,.3063,.1641,.4954,.1792,.5441,.1792,.5441,.1863,.6163
-                    ,.1863,.6163,.1838,.5813,.65,.3054,.5206,.0355,.5206,.0355,.7745,.039,.7422,.0399,.65,.3054,.6132,.2696,.6521,.2693,.5455,.3044,.5805,.2705,.5777,.3063,.5767,.0146,.6098,.0202,.5692,.0505,.5298,.0007,.6445,.0237,.6414,.0576,.6132,.2696,.669,.0007,.67,.0368,.7741,.0039,.7745,.039,.1433,.5516
-                    ,.1792,.5441,.1433,.5516,.1641,.4954,.1489,.5847,.7079,.0021,.1925,.7792,.65,.3054,.7745,.039,.7745,.039,.7337,.7921,.6414,.0576,.5206,.0355,.177,.8256,.177,.8256,.3534,.7236,.6727,.3666,.6727,.3666,.1641,.4954,.1641,.4954,0,0,0,0,0,0,0,0,0,0,0,0
-                    ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,.1863,.6163,.7337,.7921,.7109,.7156,.4326,.4895,.2073,.2724,.1807,.2748,.0461,.8365,.0267,.8352,.1807,.2748,.1493,.2784,.1487,.2517,.2068,.4359,.1461,.4088,.1618,.8171,.1293,.8074
-                    ,.177,.8256,.1618,.8171,.0461,.8365,.2073,.2724,.1695,.3278,.4326,.4895,.436,.6727,.352,.3885,.3298,.4674,.2068,.4359,.3454,.4203,.4678,.6759,.472,.7353,.44,.7831,.7252,.4742,.472,.7353,.6063,.4924,.3737,.6773,.5878,.4895,.4819,.0978,.0318,.5323,.1099,.2749,.142,.2518,.4925,.1535,.7109,.7156
-                    ,.6177,.6633,.7405,.4657,.44,.7831,.44,.7831,.4808,.07,.4819,.0978,.7171,.3379,.7431,.3345,.5878,.4895,.6063,.4924,.8051,.7894,.5844,.6727,.4286,.1718,.3024,.1854,.2936,.1366,.4808,.07,.5527,.6759,.6177,.6633,.1695,.3278,.6414,.0576,.1641,.4954,.1641,.4954,.65,.3054,.7745,.039,.7745,.039
-                    ,.6132,.2696,.547,.2693,.5206,.0355,.5298,.0007,.6098,.0202,.6445,.0237,.6132,.2696,.669,.0007,.7079,.0021,.7406,.0041,.7741,.0039,.1489,.5847,.1433,.5516,.1433,.5516,.1293,.5047,.1641,.4954,.1524,.6194,.1489,.5847,.7079,.0021,.7406,.0041,.65,.3054,.7745,.039,.6414,.0576,.5206,.0355,.1925,.7792
-                    ,.177,.8256,.6727,.3666,.1641,.4954
+                    ,.4286,.1718,.0979,.5306,.0979,.5535,.7729,.456,.7405,.4657,.7097,.4278,.7405,.4657,.8905,.4459,.8677,.4678,.3673,.8614,.3534,.8217,.4749,.2797,.5206,.2921,.5178,.325,.5206,.2921,.403,.3593,.6787,.8272,.6866,.7988,.5071,.3906,.8981,.0964,.881,.1301,.891,.0007,.8967,.0379,.8087,.2996,.8147,.2693
+                    ,.8643,.2879,.7676,.7993,.9704,.3491,.9237,.3894,.1293,.5047,.1641,.4954,.9191,.5799,.2026,.4798,.253,.4687,.9611,.0757,.9446,.0751,.9533,.0064,.5005,.2371,.8882,.8436,.9117,.8072,.8896,.8635,.5484,.2357,.8271,.5631,.8662,.5994,.8271,.5631,.8698,.3682,.856,.3894,.8967,.0379,.8981,.0964,.7118,.7935
+                    ,.1641,.4954,.2026,.4798,.7745,.039,.7765,.0811,.2759,.616,.2286,.615,.8156,.5226,.8258,.4809,.4318,.8809,.4519,.9318,.8643,.2879,.8976,.3044,.9628,.2484,.5484,.2357,.9783,.0494,.9632,.1967,.9525,.2015,.4637,.9254,.4799,.9587,.7991,.8262,.139,.9401,.052,.2959,.0625,.0007,.5671,.2644,.5483,.2658
+                    ,.0337,.5579,.4808,.07,.4819,.0978,.7171,.3379,.7431,.3345,.6063,.4924,.1863,.6163,.1524,.6194,.1489,.5847,.7079,.0021,.7406,.0041,.4831,.8231,.7842,.2088,.8055,.3994,.8936,.391,.9264,.4243,.927,.4395,.9125,.4413,.2847,.5207,.352,.489,.35,.5692,.5844,.6727,.4286,.1718,.6671,.5603,.2936,.1366
+                    ,.3359,.0007,.5527,.6759,.0862,.3351,.0979,.4566,.1234,.0558,.0036,.4551,.7431,.3345,.7171,.3379,.7316,.2693,.5186,.7162,.472,.7353,.4726,.7131,.7991,.9878,.9268,.0757,.0472,.9642,.0759,.9617,.8936,.1917,.9,.1577,.9291,.2239,.9291,.2239,.8991,.2324,.0007,.9741,.0017,.9629,.0992,.3013,.1087,.2799
+                    ,.1233,.2879,.1081,.3521,.9404,.9567,.9094,.9497,.9144,.9343,.9645,.954,.9404,.9567,.5609,.959,.6247,.9419,.933,.9833,.9124,.9916,.9094,.958,.957,.9871,.933,.9833,.5334,.9239,.5229,.9468,.5188,.9438,.5527,.9096,.5481,.9068,.5644,.8833,.9233,.2404,.8946,.2448,.8936,.2397,.9477,.2408,.9233,.2404
+                    ,.9251,.2338,.9576,.9147,.143,.3373,.9144,.9343,.9234,.9147,.9441,.6611,.9346,.6618,.9166,.644,.918,.6541,.9166,.644,.9346,.6618,.9711,.644,.9685,.6512,.9551,.6584,.9551,.6584,.9441,.6611,.9166,.644,.9651,.2448,.9477,.2408,.9496,.2344,.957,.9871,.9794,.9697,.9817,.9469,.9645,.954,.9019,.0152
+                    ,.8738,.9879,.1233,.2879,.1408,.3014,.5334,.9239,.5481,.9068,.5731,.9579,.5642,.9247,.0992,.3013,.9266,.0137,.9383,.2172,.9291,.2239,.9361,.0755,.9268,.0757,.9533,.0064,.9446,.0751,.9361,.0755,.9525,.2015,.9383,.2172,.3131,.272,.3122,.2754,.5594,.9666,.5466,.9666,.5463,.9475,.5466,.9666,.5344,.9563
+                    ,.5609,.959,.5344,.9563,.5254,.949,.5463,.9475,.5468,.9356,.548,.9316,.5642,.9247,.5254,.949,.5229,.9468,.4005,.3177,.406,.3015,.403,.3593,.4005,.3177,.3763,.4439,.462,.3939,.4749,.2797,.3763,.4439,.5946,.7862,.5849,.7886,.5736,.7851,.5736,.7851,.5551,.7853,.5551,.7853,.5199,.7889,.6997,.9348
+                    ,.5468,.9356
                 ]),
                 false);
 
-                _i = new Float32Array(7412);
-                _i.set([.2248,.1319,.5525,.0537,.0003,.4771,.1405,.3214,.3796,.2891,.2591,.0496,.1157,.016,.7541,.0549,.0782,.0782,.7793,0,.1626,.3122,.4785,0,.4,.039,.1418,.3823,.054,.2831,.4623,.093,.1063,.1803,.5163,.097,.9086,.0878,0,0,.1005,.8968,0,0,.0868,.9125,0,0,.0071,.1306
-                ,.0894,.5852,.2248,.1319,.5525,.0537,.2976,.2148,.3321,.1261,.8624,.1355,0,0,.9052,.0425,.0089,0,.7379,.1548,.0658,0,.1197,.5423,.1849,.1105,.7508,.1427,.0111,0,.0221,.0083,.1432,.7258,.0595,.1063,.4918,.2346,.0288,.606,.2026,.024,.0036,.0207,.5285,.259,.2054,.7578,0,0
-                ,.8153,.014,.1271,0,.9441,.0171,0,0,.0204,.0178,.4647,.1702,.1058,.1865,.053,.611,.0279,.1516,.0533,.728,.871,.1177,0,0,.9739,0,0,0,.0907,.9087,0,0,.9807,0,0,0,.0729,.9255,0,0,.8617,.1216,0,0,.8897,.1001,0,0,.924,.0701
-                ,0,0,.4319,.5677,0,0,.0907,.9087,0,0,.0729,.9255,0,0,.9212,.0638,0,0,.9088,.0761,0,0,.7144,.2808,0,0,.9646,.0151,0,0,.0692,.9272,0,0,.0023,.9701,0,0,.1005,.8968,0,0,.98,0,0,0,.0868,.9125,0,0
-                ,.0892,.9072,0,0,.9669,0,0,0,.1005,.8968,0,0,.8944,.0752,0,0,.733,.0466,.2095,0,.8568,.0103,.1082,0,.9149,.0124,.0496,0,.4763,.4772,.0277,0,.9709,0,0,0,.8944,.0752,0,0,.8568,.0103,.1082,0,.9707,0,0,0,.7739,.2167
-                ,0,0,.8944,.0752,0,0,.0878,.7887,.095,0,.9495,0,0,0,.7478,.0912,.1344,0,.7739,.2167,0,0,.7672,.1875,.005,0,.4763,.4772,.0277,0,.1813,.8114,0,0,.7144,.2808,0,0,.6017,.1156,.275,0,.2312,.6709,.0773,0,.4763,.4772,.0277,0
-                ,.9607,.0106,0,0,.5914,.1166,.2248,.0172,.7379,.1346,.0756,0,.0716,.0312,.0691,.7956,.2054,.7578,0,0,.871,.1177,0,0,.0035,.1231,.0909,.3718,.6812,.0959,.0123,.1189,.0782,.0782,.7793,0,.6828,.0729,.2441,0,.1626,.3122,.4785,0,.2195,.0562,.185,.4939,.6812,.0959
-                ,.0123,.1189,.6904,.2253,.0335,.0335,.6031,.2393,.1382,0,.0716,.0312,.0691,.7956,.0589,.1942,.2339,.4882,.029,.2475,.0585,.6072,.4638,.2051,.0239,.1392,.2031,.0973,.5804,.0886,.3435,.2081,.0372,.3342,.1445,.5927,.0873,.0681,.3435,.2081,.0372,.3342,.12,.561,.1066,.1339,.0964,.1442,.0553,.6782
-                ,.4361,.1611,.0544,.3152,.3231,.009,.3193,.3193,.0843,.8355,.0492,0,.0279,.1516,.0533,.728,.0834,.1032,.0081,.7464,.0086,.0704,.8607,0,.4361,.1611,.0544,.3152,.0682,.0646,.8291,0,.194,.043,.7225,0,.9838,0,0,0,.9766,0,0,0,.9797,0,0,0,.0283,.9097
-                ,0,0,.9616,0,0,0,.0376,.9366,0,0,.1628,.8095,0,0,.9795,0,0,0,.9229,.0765,0,0,.9786,0,0,0,.9958,0,0,0,.9836,0,0,0,.9873,0,0,0,.9808,0,0,0,.9795,0,0,0,.9786,0,0,0
-                ,.9825,0,0,0,.99,0,0,0,.9892,0,0,0,.9278,.0717,0,0,.0453,.9523,0,0,.0299,.96,0,0,.9892,0,0,0,.9426,.0572,0,0,.9407,.059,0,0,.9797,0,0,0,.9254,.074,0,0,.9873,0,0,0,.935,.0648
-                ,0,0,.9355,.0644,0,0,.023,.9492,0,0,.1625,.1407,.6968,0,.9784,0,0,0,.0165,.9667,0,0,.0301,.9596,0,0,.916,.0833,0,0,.0537,.9458,0,0,.0321,.9582,0,0,.0557,.9423,0,0,.1104,.8865,0,0,.7157,.2754,0,0
-                ,.1612,.8364,0,0,.0065,.9491,0,0,.2182,.072,.7098,0,.8311,.1482,0,0,.9981,0,0,0,.0792,.8381,.0827,0,.0811,.8719,.0441,0,.9835,0,0,0,.0269,.9044,.0571,0,.2099,.2063,.5837,0,.9715,0,0,0,.9895,0,0,0,.8731,.1033
-                ,0,0,.9957,0,0,0,.9895,0,0,0,.9966,0,0,0,.9291,.0707,0,0,.8876,.0038,.0855,0,.7202,.0706,.2092,0,.151,.8362,0,0,.8731,.1033,0,0,.7451,.0641,.1908,0,.1292,.7201,.1058,.0213,.1492,.8246,0,0,.136,.74,.0931,0
-                ,.379,.6008,0,0,.0011,.9551,0,0,.0071,.2039,.7641,0,.1424,.7921,.0515,0,.9607,.0208,0,0,.8731,.1033,0,0,.9895,0,0,0,.6813,.3003,0,0,.8876,.0038,.0855,0,.9715,0,0,0,.1837,.8099,0,0,.1612,.8364,0,0,.9669,0
-                ,0,0,.2099,.2063,.5837,0,.9229,.0765,0,0,.0301,.9596,0,0,.9784,0,0,0,1.0022,0,0,0,.99,0,0,0,.9355,.0644,0,0,.9751,0,0,0,.9786,0,0,0,.9958,0,0,0,.9938,0,0,0,.9786,0,0,0
-                ,.9766,0,0,0,.0086,.0704,.8607,0,.0964,.1442,.0553,.6782,.0086,.0704,.8607,0,.0307,.054,.0005,.8231,.029,.2475,.0585,.6072,.2248,.1319,.5525,.0537,.1826,.1638,.0561,.5842,.871,.1177,0,0,.8624,.1355,0,0,.0554,.8816,.0437,0,.1813,.8114,0,0,.0662,.8279
-                ,.0929,0,.7739,.2167,0,0,.1813,.8114,0,0,.8568,.0103,.1082,0,.6017,.1156,.275,0,.3127,.1031,.5713,0,.0868,.9125,0,0,.4319,.5677,0,0,.9646,.0151,0,0,.9649,.0005,0,0,.9212,.0638,0,0,.0892,.9072,0,0,.9807,0,0,0
-                ,.9662,0,0,0,.871,.1177,0,0,.9702,0,0,0,.0446,.0557,.4626,.1853,.0279,.1516,.0533,.728,.9426,.0539,0,0,.0868,.9125,0,0,.1761,.1494,.5327,.0526,.4,.039,.1418,.3823,.1063,.1803,.5163,.097,.029,.2475,.0585,.6072,.0925,.5883,.0331,.2488,.0003,.4771
-                ,.1405,.3214,.2924,.4013,.195,.0922,.2976,.2148,.3321,.1261,.6904,.2253,.0335,.0335,.1992,.6933,.0799,0,.6031,.2393,.1382,0,.2182,.072,.7098,0,.7202,.0706,.2092,0,.0792,.8381,.0827,0,.7451,.0641,.1908,0,.163,.04,.7919,0,.1625,.1407,.6968,0,.0269,.9044,.0571,0
-                ,.2099,.2063,.5837,0,.0811,.8719,.0441,0,.8311,.1482,0,0,.9739,0,0,0,.9702,0,0,0,.9702,0,0,0,.9052,.0425,.0089,0,.9441,.0171,0,0,.9739,0,0,0,.98,0,0,0,.9709,0,0,0,.0204,.0178,.4647,.1702,.0294,.0294
-                ,.0125,.8252,.0623,.5054,.1497,.0076,.9052,.0425,.0089,0,.8622,.0094,.081,0,.4,.039,.1418,.3823,.2195,.0562,.185,.4939,.8622,.0094,.081,0,.8153,.014,.1271,0,.4,.039,.1418,.3823,.8622,.0094,.081,0,.7379,.1548,.0658,0,.0811,.8719,.0441,0,.0269,.9044,.0571,0
-                ,.6031,.2393,.1382,0,.0589,.1942,.2339,.4882,.2976,.2148,.3321,.1261,.2727,.4319,.1387,.1387,.2886,.2316,.226,.226,.7157,.2754,0,0,.9715,0,0,0,.1612,.8364,0,0,.9708,.0137,0,0,.9708,.0137,0,0,.8876,.0038,.0855,0,.9959,0,0,0,.163,.04
-                ,.7919,0,.1837,.8099,0,0,.0623,.9359,0,0,.9836,0,0,0,.9795,0,0,0,.0131,.9636,0,0,.689,.2658,.0262,0,.7308,.1244,.1244,0,.9903,0,0,0,.657,.1395,.0286,.0792,.657,.1395,.0286,.0792,.1408,.6207,.1559,.0155,.1058,.1865,.053,.611
-                ,.4104,.4104,.0863,.013,.1339,.1339,.1218,.5291,.1626,.3122,.4785,0,.8624,.1355,0,0,.2054,.7578,0,0,.2886,.2316,.226,.226,.7379,.1548,.0658,0,.8624,.1355,0,0,.0843,.8355,.0492,0,.0283,.9097,0,0,.1628,.8095,0,0,.689,.2658,.0262,0,.9616,0
-                ,0,0,.0376,.9366,0,0,.1598,.7112,.1128,0,.9808,0,0,0,.0376,.9366,0,0,.1628,.8095,0,0,.2185,.7122,.0664,0,.0283,.9097,0,0,.9616,0,0,0,.0843,.8355,.0492,0,.0537,.9458,0,0,.9835,0,0,0,.5933,.202,.202,0
-                ,.5933,.202,.202,0,.1598,.7112,.1128,0,.4361,.1611,.0544,.3152,.9757,0,0,0,.9829,0,0,0,.9697,.0017,0,0,.1277,.8423,0,0,.8667,.1136,0,0,.1796,.7178,.0736,0,.9702,0,0,0,.9507,.0271,0,0,.7723,.175,.0295,0,.3399,.4989
-                ,.1305,0,.9702,0,0,0,.9416,.0373,0,0,.9507,.0271,0,0,.7723,.175,.0295,0,.5053,.3194,.1304,.0166,.3399,.4989,.1305,0,.8191,.14,0,0,.7805,.1746,0,0,.6178,.2816,.0556,.0277,.9347,.0488,0,0,.95,.0262,0,0,.9311,.0527,0,0
-                ,.9517,.0231,0,0,.9687,0,0,0,.95,.0262,0,0,.9702,0,0,0,.9772,0,0,0,.9582,.0129,0,0,.9829,0,0,0,.9844,0,0,0,.9702,0,0,0,.9868,0,0,0,.992,0,0,0,.9829,0,0,0,.8794,.0909
-                ,0,0,.8191,.14,0,0,.8138,.1394,.0032,0,.7723,.175,.0295,0,.9314,.0511,0,0,.8094,.1375,.02,0,.8667,.1136,0,0,.9381,.0467,0,0,.7723,.175,.0295,0,.8771,.1167,0,0,.9574,.0224,0,0,.8667,.1136,0,0,.9311,.0527,0,0
-                ,.9199,.0613,0,0,.921,.0604,0,0,.9507,.0271,0,0,.9314,.0511,0,0,.9381,.0467,0,0,.9574,.0224,0,0,.9507,.0271,0,0,.9381,.0467,0,0,.9652,.0146,0,0,.9697,.0017,0,0,.9574,.0224,0,0,.9936,0,0,0,.9987,0
-                ,0,0,.9983,0,0,0,.9844,0,0,0,.9897,0,0,0,.9959,0,0,0,.9934,0,0,0,.9839,0,0,0,.9705,0,0,0,.9959,0,0,0,.9987,0,0,0,.9843,0,0,0,.9679,.0109,0,0,.9757,0,0,0
-                ,.9679,.0109,0,0,.8876,.1087,0,0,.9877,0,0,0,.8876,.1087,0,0,.0915,.8919,0,0,.9775,0,0,0,.9868,0,0,0,.9843,0,0,0,.9416,.0373,0,0,.9245,.057,0,0,.9314,.0511,0,0,.9517,.0231,0,0,.8094,.1375
-                ,.02,0,.5795,.2686,.0801,.0628,.3954,.3629,.1817,.0396,.0252,.0667,.8514,.0256,.9001,.0563,0,0,.6152,.289,.0399,.0399,.5947,.2662,.0655,.0655,.3399,.4989,.1305,0,.2176,.518,.22,0,.2176,.518,.22,0,.0974,.0373,.701,.1407,.1897,.761,0,0,.0003,.4771,.1405,.3214
-                ,.8094,.1375,.02,0,.8138,.1394,.0032,0,.7805,.1746,0,0,.1402,.8191,0,0,.1538,.8047,0,0,.1538,.8047,0,0,.1245,.8399,0,0,.121,.8443,0,0,.0935,.8786,0,0,.1402,.8191,0,0,.0901,.8832,0,0,.8191,.14,0,0,.8761,.0953
-                ,0,0,.0672,.9122,0,0,.0903,.8828,0,0,.8954,.0803,0,0,.0779,.8985,0,0,.0903,.8828,0,0,.9245,.057,0,0,.921,.0604,0,0,.0673,.9122,0,0,.2312,.7543,0,0,.0231,.9611,0,0,.0231,.9611,0,0,.0074,.2579,.7097,0
-                ,.1278,.7677,.0888,0,.9495,0,0,0,.1803,.7897,0,0,.2312,.7543,0,0,.0011,.9551,0,0,.4758,.5209,0,0,.1201,.8389,0,0,.0653,.0147,.8669,.0132,.1225,.7248,.1125,0,.0775,.9135,0,0,.9878,0,0,0,.9971,0,0,0,.0826,.9143
-                ,0,0,.4935,.5037,0,0,1.0025,0,0,0,.0231,.9631,0,0,.9607,.0106,0,0,.0011,.9551,0,0,.8076,.1443,0,0,.8112,.142,0,0,.8075,.1444,0,0,.8075,.1439,.0042,0,.8097,.1427,0,0,.7805,.1746,0,0,.8108,.1459,0,0
-                ,.8191,.14,0,0,.8138,.1394,.0032,0,.8191,.14,0,0,.8138,.1394,.0032,0,.8085,.1403,.0147,0,.8094,.1375,.02,0,.8094,.1375,.02,0,.7832,.1644,.0255,0,.7723,.175,.0295,0,.8024,.1482,.0081,0,.8117,.1415,.0006,0,.8176,.1387,0,0,.8126,.141
-                ,.0014,0,.2248,.1319,.5525,.0537,.0003,.4771,.1405,.3214,.029,.2475,.0585,.6072,.1157,.016,.7541,.0549,.0782,.0782,.7793,0,.0294,.0294,.0125,.8252,.1063,.1803,.5163,.097,.2195,.0562,.185,.4939,.4,.039,.1418,.3823,.9086,.0878,0,0,.1005,.8968,0,0,.8897,.1001,0,0
-                ,.0071,.1306,.0894,.5852,.2248,.1319,.5525,.0537,.0307,.054,.0005,.8231,.9052,.0425,.0089,0,.8624,.1355,0,0,.7379,.1548,.0658,0,.0221,.0083,.1432,.7258,.1408,.6207,.1559,.0155,.1197,.5423,.1849,.1105,.0036,.0207,.5285,.259,.1339,.1339,.1218,.5291,.0595,.1063,.4918,.2346,.2054,.7578
-                ,0,0,.8153,.014,.1271,0,.2195,.0562,.185,.4939,.0279,.1516,.0533,.728,.0623,.5054,.1497,.0076,.0204,.0178,.4647,.1702,.871,.1177,0,0,.9441,.0171,0,0,.9807,0,0,0,.0907,.9087,0,0,.0729,.9255,0,0,.8617,.1216,0,0,.924,.0701,0,0
-                ,.4319,.5677,0,0,.9426,.0539,0,0,.0729,.9255,0,0,.9212,.0638,0,0,.7144,.2808,0,0,.9088,.0761,0,0,.9646,.0151,0,0,.0692,.9272,0,0,.4319,.5677,0,0,.98,0,0,0,.1005,.8968,0,0,.0868,.9125,0,0,.9669,0
-                ,0,0,.0892,.9072,0,0,.1005,.8968,0,0,.733,.0466,.2095,0,.8944,.0752,0,0,.8568,.0103,.1082,0,.6017,.1156,.275,0,.9149,.0124,.0496,0,.9709,0,0,0,.8944,.0752,0,0,.9707,0,0,0,.7739,.2167,0,0,.9649,.0005,0,0
-                ,.9495,0,0,0,.0878,.7887,.095,0,.7478,.0912,.1344,0,.7672,.1875,.005,0,.7739,.2167,0,0,.1813,.8114,0,0,.4763,.4772,.0277,0,.7144,.2808,0,0,.2312,.6709,.0773,0,.6017,.1156,.275,0,.9607,.0106,0,0,.5914,.1166,.2248,.0172,.3127,.1031
-                ,.5713,0,.0716,.0312,.0691,.7956,.2054,.7578,0,0,.4104,.4104,.0863,.013,.0035,.1231,.0909,.3718,.6828,.0729,.2441,0,.0782,.0782,.7793,0,.1626,.3122,.4785,0,.6812,.0959,.0123,.1189,.6904,.2253,.0335,.0335,.7898,.0501,.0825,.0825,.0716,.0312,.0691,.7956,.0589,.1942,.2339,.4882
-                ,.1826,.1638,.0561,.5842,.2031,.0973,.5804,.0886,.4638,.2051,.0239,.1392,.3435,.2081,.0372,.3342,.12,.561,.1066,.1339,.4638,.2051,.0239,.1392,.1445,.5927,.0873,.0681,.0964,.1442,.0553,.6782,.0446,.0557,.4626,.1853,.0843,.8355,.0492,0,.3231,.009,.3193,.3193,.0279,.1516,.0533,.728,.0834,.1032
-                ,.0081,.7464,.1058,.1865,.053,.611,.4361,.1611,.0544,.3152,.0682,.0646,.8291,0,.0964,.1442,.0553,.6782,.9838,0,0,0,.9766,0,0,0,.9751,0,0,0,.0086,.0704,.8607,0,.0283,.9097,0,0,.194,.043,.7225,0,.0376,.9366,0,0,.9229,.0765,0,0
-                ,.9795,0,0,0,.9786,0,0,0,.9958,0,0,0,.9836,0,0,0,.9903,0,0,0,.9808,0,0,0,.9795,0,0,0,.0131,.9636,0,0,.9825,0,0,0,.99,0,0,0,.9938,0,0,0,.9278,.0717,0,0,.0453,.9523
-                ,0,0,.9254,.074,0,0,.9892,0,0,0,.9426,.0572,0,0,.99,0,0,0,.9797,0,0,0,.9766,0,0,0,.9873,0,0,0,.935,.0648,0,0,.9836,0,0,0,.1625,.1407,.6968,0,.023,.9492,0,0,.9784,0,0,0
-                ,.9355,.0644,0,0,.0165,.9667,0,0,.0537,.9458,0,0,.916,.0833,0,0,.9407,.059,0,0,.0321,.9582,0,0,.1104,.8865,0,0,.7157,.2754,0,0,.6813,.3003,0,0,.8311,.1482,0,0,.9669,0,0,0,.0065,.9491,0,0,.9981,0
-                ,0,0,.0792,.8381,.0827,0,1.0022,0,0,0,.9835,0,0,0,.0269,.9044,.0571,0,.9959,0,0,0,.9715,0,0,0,.9895,0,0,0,.9966,0,0,0,.9957,0,0,0,.9895,0,0,0,.9607,.0208,0,0,.8876,.0038,.0855,0
-                ,.9291,.0707,0,0,.7202,.0706,.2092,0,.8731,.1033,0,0,.151,.8362,0,0,.7451,.0641,.1908,0,.1492,.8246,0,0,.1292,.7201,.1058,.0213,.136,.74,.0931,0,.0662,.8279,.0929,0,.379,.6008,0,0,.0071,.2039,.7641,0,.0011,.9551,0,0,.1424,.7921
-                ,.0515,0,.8731,.1033,0,0,.7451,.0641,.1908,0,.8876,.0038,.0855,0,.7202,.0706,.2092,0,.1837,.8099,0,0,.9715,0,0,0,.1612,.8364,0,0,.2099,.2063,.5837,0,.9835,0,0,0,.9229,.0765,0,0,.0301,.9596,0,0,.9355,.0644,0,0
-                ,.9784,0,0,0,.99,0,0,0,.9355,.0644,0,0,.9873,0,0,0,.9786,0,0,0,.9808,0,0,0,.9958,0,0,0,.9786,0,0,0,.9766,0,0,0,.0086,.0704,.8607,0,.0964,.1442,.0553,.6782,.0086,.0704,.8607,0,.0279,.1516
-                ,.0533,.728,.029,.2475,.0585,.6072,.871,.1177,0,0,.0716,.0312,.0691,.7956,.1225,.7248,.1125,0,.1813,.8114,0,0,.7739,.2167,0,0,.1813,.8114,0,0,.7144,.2808,0,0,.8568,.0103,.1082,0,.9709,0,0,0,.6017,.1156,.275,0,.8568,.0103,.1082,0
-                ,.0868,.9125,0,0,.4319,.5677,0,0,.9646,.0151,0,0,.0892,.9072,0,0,.9212,.0638,0,0,.9807,0,0,0,.0729,.9255,0,0,.9702,0,0,0,.871,.1177,0,0,.0204,.0178,.4647,.1702,.0868,.9125,0,0,.9086,.0878,0,0,.1761,.1494
-                ,.5327,.0526,.4,.039,.1418,.3823,.7379,.1548,.0658,0,.029,.2475,.0585,.6072,.0925,.5883,.0331,.2488,.0589,.1942,.2339,.4882,.2976,.2148,.3321,.1261,.3796,.2891,.2591,.0496,.6031,.2393,.1382,0,.1897,.761,0,0,.6904,.2253,.0335,.0335,.2182,.072,.7098,0,.7202,.0706,.2092,0
-                ,.2099,.2063,.5837,0,.0792,.8381,.0827,0,.7451,.0641,.1908,0,.1625,.1407,.6968,0,.163,.04,.7919,0,.1625,.1407,.6968,0,.0269,.9044,.0571,0,.2099,.2063,.5837,0,.0811,.8719,.0441,0,.0792,.8381,.0827,0,.8311,.1482,0,0,.9702,0,0,0,.9086,.0878
-                ,0,0,.9739,0,0,0,.9702,0,0,0,.9052,.0425,.0089,0,.9441,.0171,0,0,.8153,.014,.1271,0,.9739,0,0,0,.9441,.0171,0,0,.98,0,0,0,.9662,0,0,0,.9709,0,0,0,.9807,0,0,0,.0023,.9701,0,0
-                ,.1063,.1803,.5163,.097,.0288,.606,.2026,.024,.7508,.1427,.0111,0,.054,.2831,.4623,.093,.9052,.0425,.0089,0,.4,.039,.1418,.3823,.8622,.0094,.081,0,.8622,.0094,.081,0,.8153,.014,.1271,0,.4,.039,.1418,.3823,.8622,.0094,.081,0,.7379,.1548,.0658,0,.8311,.1482
-                ,0,0,.0269,.9044,.0571,0,.0589,.1942,.2339,.4882,.1992,.6933,.0799,0,.2886,.2316,.226,.226,.2924,.4013,.195,.0922,.7157,.2754,0,0,.9715,0,0,0,.8876,.0038,.0855,0,.9708,.0137,0,0,.9708,.0137,0,0,.8876,.0038,.0855,0,.0811,.8719,.0441,0
-                ,.163,.04,.7919,0,.1837,.8099,0,0,.0557,.9423,0,0,.9836,0,0,0,.0299,.96,0,0,.9795,0,0,0,.7308,.1244,.1244,0,.1628,.8095,0,0,.657,.1395,.0286,.0792,.7308,.1244,.1244,0,.1408,.6207,.1559,.0155,.4361,.1611,.0544,.3152,.1058,.1865
-                ,.053,.611,.4104,.4104,.0863,.013,.1339,.1339,.1218,.5291,.8624,.1355,0,0,.6812,.0959,.0123,.1189,.0035,.1231,.0909,.3718,.2976,.2148,.3321,.1261,.7379,.1548,.0658,0,.1626,.3122,.4785,0,.0843,.8355,.0492,0,.0283,.9097,0,0,.689,.2658,.0262,0,.1628,.8095,0,0
-                ,.9616,0,0,0,.0376,.9366,0,0,.2185,.7122,.0664,0,.1598,.7112,.1128,0,.0376,.9366,0,0,.1628,.8095,0,0,.2185,.7122,.0664,0,.0283,.9097,0,0,.9616,0,0,0,.0843,.8355,.0492,0,.0623,.9359,0,0,.0537,.9458,0,0,.9835,0
-                ,0,0,.0301,.9596,0,0,.689,.2658,.0262,0,.5933,.202,.202,0,.2185,.7122,.0664,0,.5933,.202,.202,0,.1598,.7112,.1128,0,.2185,.7122,.0664,0,.657,.1395,.0286,.0792,.9757,0,0,0,.9829,0,0,0,.9868,0,0,0,.1277,.8423,0,0
-                ,.8667,.1136,0,0,.8771,.1167,0,0,.9697,.0017,0,0,.9702,0,0,0,.1796,.7178,.0736,0,.7723,.175,.0295,0,.9416,.0373,0,0,.9702,0,0,0,.9507,.0271,0,0,.5053,.3194,.1304,.0166,.7723,.175,.0295,0,.3399,.4989,.1305,0,.6152,.289
-                ,.0399,.0399,.8191,.14,0,0,.8138,.1394,.0032,0,.9347,.0488,0,0,.95,.0262,0,0,.9517,.0231,0,0,.9517,.0231,0,0,.9687,0,0,0,.9705,0,0,0,.9702,0,0,0,.9772,0,0,0,.9844,0,0,0,.9829,0,0,0
-                ,.9844,0,0,0,.992,0,0,0,.9868,0,0,0,.9936,0,0,0,.8191,.14,0,0,.8794,.0909,0,0,.8138,.1394,.0032,0,.7723,.175,.0295,0,.9314,.0511,0,0,.9381,.0467,0,0,.8667,.1136,0,0,.9381,.0467,0,0,.9574,.0224
-                ,0,0,.8771,.1167,0,0,.9652,.0146,0,0,.921,.0604,0,0,.9311,.0527,0,0,.9347,.0488,0,0,.9314,.0511,0,0,.9507,.0271,0,0,.9381,.0467,0,0,.9574,.0224,0,0,.9507,.0271,0,0,.9697,.0017,0,0,.9652,.0146,0,0
-                ,.9697,.0017,0,0,.9757,0,0,0,.9987,0,0,0,.9956,0,0,0,.9897,0,0,0,.9844,0,0,0,.9959,0,0,0,.9839,0,0,0,.9843,0,0,0,.9987,0,0,0,.9959,0,0,0,.9983,0,0,0,.9679,.0109
-                ,0,0,.9757,0,0,0,.9775,0,0,0,.8771,.1167,0,0,.9679,.0109,0,0,.8876,.1087,0,0,.9877,0,0,0,.8876,.1087,0,0,.0915,.8919,0,0,.9775,0,0,0,.9877,0,0,0,.9687,0,0,0,.9245,.057,0,0
-                ,.9416,.0373,0,0,.9314,.0511,0,0,.8094,.1375,.02,0,.9582,.0129,0,0,.9582,.0129,0,0,.6178,.2816,.0556,.0277,.8094,.1375,.02,0,.5795,.2686,.0801,.0628,.3954,.3629,.1817,.0396,.0252,.0667,.8514,.0256,.0915,.8919,0,0,.9001,.0563,0,0,.6152,.289
-                ,.0399,.0399,.2176,.518,.22,0,.2176,.518,.22,0,.0974,.0373,.701,.1407,.1897,.761,0,0,.9001,.0563,0,0,.0003,.4771,.1405,.3214,.2727,.4319,.1387,.1387,.8094,.1375,.02,0,.7805,.1746,0,0,.1402,.8191,0,0,.8191,.14,0,0,.1538,.8047,0,0
-                ,.1245,.8399,0,0,.1402,.8191,0,0,.0935,.8786,0,0,.1402,.8191,0,0,.0901,.8832,0,0,.0903,.8828,0,0,.8191,.14,0,0,.1402,.8191,0,0,.0901,.8832,0,0,.0672,.9122,0,0,.8761,.0953,0,0,.8954,.0803,0,0,.0779,.8985
-                ,0,0,.0903,.8828,0,0,.9245,.057,0,0,.074,.9019,0,0,.0673,.9122,0,0,.2312,.7543,0,0,.0231,.9611,0,0,.0074,.2579,.7097,0,.0231,.9611,0,0,.1278,.7677,.0888,0,.1803,.7897,0,0,.9495,0,0,0,.0011,.9551,0,0
-                ,.4758,.5209,0,0,.0554,.8816,.0437,0,.1201,.8389,0,0,.0775,.9135,0,0,.9878,0,0,0,.4935,.5037,0,0,.0826,.9143,0,0,.0653,.0147,.8669,.0132,1.0025,0,0,0,.0231,.9631,0,0,.9607,.0106,0,0,.0011,.9551,0,0,.7379,.1346
-                ,.0756,0,.8076,.1443,0,0,.8097,.1427,0,0,.8075,.1439,.0042,0,.7805,.1746,0,0,.8108,.1459,0,0,.8027,.1537,0,0,.8138,.1394,.0032,0,.8191,.14,0,0,.8138,.1394,.0032,0,.8085,.1403,.0147,0,.8126,.141,.0014,0,.8094,.1375,.02,0
-                ,.7832,.1644,.0255,0,.8024,.1482,.0081,0,.8117,.1415,.0006,0,.0672,.9122,0,0,.921,.0604,0,0,.0672,.9122,0,0,.921,.0604,0,0,.029,.2475,.0585,.6072,.2248,.1319,.5525,.0537,.2195,.0562,.185,.4939,.0892,.9072,0,0,.0907,.9087,0,0,.0729,.9255
-                ,0,0,.4319,.5677,0,0,.1005,.8968,0,0,.6017,.1156,.275,0,.8944,.0752,0,0,.7739,.2167,0,0,.4763,.4772,.0277,0,.2054,.7578,0,0,.4104,.4104,.0863,.013,.0782,.0782,.7793,0,.7898,.0501,.0825,.0825,.2054,.7578,0,0,.6812,.0959,.0123,.1189
-                ,.7898,.0501,.0825,.0825,.0716,.0312,.0691,.7956,.4638,.2051,.0239,.1392,.3435,.2081,.0372,.3342,.1598,.7112,.1128,0,.0279,.1516,.0533,.728,.1058,.1865,.053,.611,.4361,.1611,.0544,.3152,.0964,.1442,.0553,.6782,.9795,0,0,0,.9892,0,0,0,.99,0,0,0,.9797,0
-                ,0,0,.9766,0,0,0,.9873,0,0,0,.9836,0,0,0,.163,.04,.7919,0,.9966,0,0,0,.9895,0,0,0,.1837,.8099,0,0,.8731,.1033,0,0,.0231,.9611,0,0,.7451,.0641,.1908,0,.8731,.1033,0,0,.7202,.0706,.2092,0
-                ,.8876,.0038,.0855,0,.9715,0,0,0,.8731,.1033,0,0,.9835,0,0,0,.2099,.2063,.5837,0,.9229,.0765,0,0,.0537,.9458,0,0,.9355,.0644,0,0,.0301,.9596,0,0,.9784,0,0,0,.1625,.1407,.6968,0,.99,0,0,0,.9873,0
-                ,0,0,.9355,.0644,0,0,.9808,0,0,0,.9786,0,0,0,.9958,0,0,0,.9873,0,0,0,.9786,0,0,0,.9229,.0765,0,0,.0086,.0704,.8607,0,.9616,0,0,0,.0964,.1442,.0553,.6782,.0279,.1516,.0533,.728,.0086,.0704,.8607,0
-                ,.029,.2475,.0585,.6072,.0716,.0312,.0691,.7956,.871,.1177,0,0,.1813,.8114,0,0,.9607,.0106,0,0,.7739,.2167,0,0,.7144,.2808,0,0,.1813,.8114,0,0,.9495,0,0,0,.9709,0,0,0,.8568,.0103,.1082,0,.8568,.0103,.1082,0,.0868,.9125
-                ,0,0,.98,0,0,0,.9646,.0151,0,0,.7144,.2808,0,0,.9212,.0638,0,0,.0729,.9255,0,0,.0892,.9072,0,0,.0729,.9255,0,0,.9807,0,0,0,.871,.1177,0,0,.9739,0,0,0,.0204,.0178,.4647,.1702,.0279,.1516,.0533,.728
-                ,.9086,.0878,0,0,.0868,.9125,0,0,.7379,.1548,.0658,0,.4,.039,.1418,.3823,.029,.2475,.0585,.6072,.0589,.1942,.2339,.4882,.6904,.2253,.0335,.0335,.2182,.072,.7098,0,.2099,.2063,.5837,0,.7202,.0706,.2092,0,.0792,.8381,.0827,0,.1625,.1407,.6968,0,.7451,.0641
-                ,.1908,0,.0269,.9044,.0571,0,.0811,.8719,.0441,0,.0792,.8381,.0827,0,.8311,.1482,0,0,.2182,.072,.7098,0,.9739,0,0,0,.9086,.0878,0,0,.9702,0,0,0,.9441,.0171,0,0,.8153,.014,.1271,0,.9739,0,0,0,.9441,.0171,0,0
-                ,.98,0,0,0,.9646,.0151,0,0,.9807,0,0,0,.9709,0,0,0,.1063,.1803,.5163,.097,.0204,.0178,.4647,.1702,.9052,.0425,.0089,0,.4,.039,.1418,.3823,.8622,.0094,.081,0,.8622,.0094,.081,0,.9212,.0638,0,0,.4,.039,.1418,.3823,.8311,.1482
-                ,0,0,.0811,.8719,.0441,0,.6031,.2393,.1382,0,.2976,.2148,.3321,.1261,.7157,.2754,0,0,.8876,.0038,.0855,0,.9715,0,0,0,.9708,.0137,0,0,.9966,0,0,0,.163,.04,.7919,0,.1837,.8099,0,0,.9836,0,0,0,.9797,0,0,0
-                ,.9892,0,0,0,.9795,0,0,0,.657,.1395,.0286,.0792,.3435,.2081,.0372,.3342,.6812,.0959,.0123,.1189,.1626,.3122,.4785,0,.2886,.2316,.226,.226,.7379,.1548,.0658,0,.0843,.8355,.0492,0,.1628,.8095,0,0,.9616,0,0,0,.9958,0,0,0,.2185,.7122
-                ,.0664,0,.9808,0,0,0,.0376,.9366,0,0,.689,.2658,.0262,0,.0283,.9097,0,0,.0537,.9458,0,0,.9784,0,0,0,.0301,.9596,0,0,.9835,0,0,0,.2185,.7122,.0664,0,.5933,.202,.202,0,.2185,.7122,.0664,0,.1598,.7112,.1128,0
-                ,.9868,0,0,0,.8771,.1167,0,0,.9702,0,0,0,.9582,.0129,0,0,.7723,.175,.0295,0,.8094,.1375,.02,0,.8138,.1394,.0032,0,.9517,.0231,0,0,.9702,0,0,0,.9844,0,0,0,.9829,0,0,0,.8191,.14,0,0,.7723,.175
-                ,.0295,0,.9381,.0467,0,0,.8667,.1136,0,0,.9652,.0146,0,0,.9347,.0488,0,0,.9347,.0488,0,0,.9311,.0527,0,0,.9507,.0271,0,0,.9416,.0373,0,0,.9314,.0511,0,0,.9574,.0224,0,0,.9697,.0017,0,0,.9507,.0271,0,0
-                ,.9757,0,0,0,.9697,.0017,0,0,.9956,0,0,0,.9844,0,0,0,.9934,0,0,0,.9839,0,0,0,.9897,0,0,0,.9934,0,0,0,.9959,0,0,0,.9983,0,0,0,.9987,0,0,0,.9959,0,0,0,.9897,0
-                ,0,0,.9934,0,0,0,.9775,0,0,0,.9757,0,0,0,.9679,.0109,0,0,.9652,.0146,0,0,.9956,0,0,0,.8876,.1087,0,0,.8771,.1167,0,0,.9877,0,0,0,.9868,0,0,0,.9416,.0373,0,0,.9347,.0488,0,0
-                ,.9245,.057,0,0,.074,.9019,0,0,.9582,.0129,0,0,.9517,.0231,0,0,.3399,.4989,.1305,0,.2176,.518,.22,0,.2176,.518,.22,0,.0003,.4771,.1405,.3214,.7805,.1746,0,0,.8191,.14,0,0,.1538,.8047,0,0,.1402,.8191,0,0,.0903,.8828
-                ,0,0,.1402,.8191,0,0,.8191,.14,0,0,.0672,.9122,0,0,.0903,.8828,0,0,.9245,.057,0,0,.0231,.9611,0,0,.2312,.7543,0,0,.9495,0,0,0,.0011,.9551,0,0,.9607,.0106,0,0,.0011,.9551,0,0,.7805,.1746,0,0
-                ,.8138,.1394,.0032,0,.8138,.1394,.0032,0,.8094,.1375,.02,0,.1626,.3122,.4785,0,.0782,.0782,.7793,0,.0868,.9125,0,0,.2976,.2148,.3321,.1261,.2248,.1319,.5525,.0537,.7508,.1427,.0111,0,.1408,.6207,.1559,.0155,.0288,.606,.2026,.024,.1339,.1339,.1218,.5291,.1058,.1865
-                ,.053,.611,.9739,0,0,0,.0892,.9072,0,0,.0907,.9087,0,0,.0729,.9255,0,0,.0907,.9087,0,0,.4763,.4772,.0277,0,.1005,.8968,0,0,.4763,.4772,.0277,0,.8568,.0103,.1082,0,.8944,.0752,0,0,.8944,.0752,0,0,.7739,.2167,0,0
-                ,.6017,.1156,.275,0,.871,.1177,0,0,.2054,.7578,0,0,.6812,.0959,.0123,.1189,.4104,.4104,.0863,.013,.0782,.0782,.7793,0,.2054,.7578,0,0,.6031,.2393,.1382,0,.6904,.2253,.0335,.0335,.0716,.0312,.0691,.7956,.029,.2475,.0585,.6072,.3231,.009,.3193,.3193,.4638,.2051
-                ,.0239,.1392,.3435,.2081,.0372,.3342,.4638,.2051,.0239,.1392,.4361,.1611,.0544,.3152,.1598,.7112,.1128,0,.3231,.009,.3193,.3193,.0279,.1516,.0533,.728,.9797,0,0,0,.9616,0,0,0,.9873,0,0,0,.9786,0,0,0,.9795,0,0,0,.9892,0,0,0
-                ,.163,.04,.7919,0,.0301,.9596,0,0,.1612,.8364,0,0,.2182,.072,.7098,0,.0811,.8719,.0441,0,.2099,.2063,.5837,0,.8731,.1033,0,0,.9966,0,0,0,.9895,0,0,0,.1837,.8099,0,0,.0231,.9611,0,0,.9895,0,0,0,.8731,.1033
-                ,0,0,.8876,.0038,.0855,0,.8731,.1033,0,0,.9715,0,0,0,.2182,.072,.7098,0,.0537,.9458,0,0,.9229,.0765,0,0,.1625,.1407,.6968,0,.9784,0,0,0,.99,0,0,0,.9355,.0644,0,0,.9786,0,0,0,.9873,0,0,0
-                ,.9958,0,0,0,.9229,.0765,0,0,.9786,0,0,0,.9616,0,0,0,.0086,.0704,.8607,0,.0964,.1442,.0553,.6782,.0086,.0704,.8607,0,.2248,.1319,.5525,.0537,.029,.2475,.0585,.6072,.8624,.1355,0,0,.871,.1177,0,0,.9607,.0106,0,0,.1813,.8114
-                ,0,0,.7739,.2167,0,0,.1813,.8114,0,0,.9495,0,0,0,.8568,.0103,.1082,0,.6017,.1156,.275,0,.98,0,0,0,.0868,.9125,0,0,.7144,.2808,0,0,.9646,.0151,0,0,.0892,.9072,0,0,.0729,.9255,0,0,.9212,.0638,0,0
-                ,.9807,0,0,0,.9739,0,0,0,.871,.1177,0,0,.0279,.1516,.0533,.728,.0204,.0178,.4647,.1702,.0868,.9125,0,0,.1063,.1803,.5163,.097,.4,.039,.1418,.3823,.029,.2475,.0585,.6072,.0003,.4771,.1405,.3214,.1897,.761,0,0,.7202,.0706,.2092,0,.0792,.8381
-                ,.0827,0,.7451,.0641,.1908,0,.0269,.9044,.0571,0,.8311,.1482,0,0,.9702,0,0,0,.9086,.0878,0,0,.9702,0,0,0,.9441,.0171,0,0,.9739,0,0,0,.9646,.0151,0,0,.98,0,0,0,.9709,0,0,0,.0204,.0178,.4647,.1702
-                ,.1063,.1803,.5163,.097,.1445,.5927,.0873,.0681,.0288,.606,.2026,.024,.0294,.0294,.0125,.8252,.7508,.1427,.0111,0,.9052,.0425,.0089,0,.8622,.0094,.081,0,.4,.039,.1418,.3823,.2195,.0562,.185,.4939,.9212,.0638,0,0,.8622,.0094,.081,0,.4,.039,.1418,.3823,.8311,.1482
-                ,0,0,.0589,.1942,.2339,.4882,.2886,.2316,.226,.226,.2727,.4319,.1387,.1387,.7157,.2754,0,0,.9715,0,0,0,.9966,0,0,0,.9708,.0137,0,0,.0811,.8719,.0441,0,.163,.04,.7919,0,.1837,.8099,0,0,.1612,.8364,0,0,.9836,0,0,0
-                ,.9795,0,0,0,.9892,0,0,0,.7308,.1244,.1244,0,.689,.2658,.0262,0,.9797,0,0,0,.1408,.6207,.1559,.0155,.657,.1395,.0286,.0792,.4361,.1611,.0544,.3152,.1058,.1865,.053,.611,.3435,.2081,.0372,.3342,.6031,.2393,.1382,0,.4104,.4104,.0863,.013,.2054,.7578
-                ,0,0,.6812,.0959,.0123,.1189,.0035,.1231,.0909,.3718,.2886,.2316,.226,.226,.2976,.2148,.3321,.1261,.7379,.1548,.0658,0,.8624,.1355,0,0,.1626,.3122,.4785,0,.0843,.8355,.0492,0,.9958,0,0,0,.9808,0,0,0,.0376,.9366,0,0,.2185,.7122,.0664,0
-                ,.0283,.9097,0,0,.9784,0,0,0,.0537,.9458,0,0,.9835,0,0,0,.0301,.9596,0,0,.689,.2658,.0262,0,.7308,.1244,.1244,0,.5933,.202,.202,0,.5933,.202,.202,0,.3231,.009,.3193,.3193,.1598,.7112,.1128,0,.9507,.0271,0,0,.3399,.4989
-                ,.1305,0,.9582,.0129,0,0,.9702,0,0,0,.8094,.1375,.02,0,.7723,.175,.0295,0,.6152,.289,.0399,.0399,.6152,.289,.0399,.0399,.7805,.1746,0,0,.9311,.0527,0,0,.95,.0262,0,0,.9517,.0231,0,0,.95,.0262,0,0,.9687,0,0,0
-                ,.9702,0,0,0,.9829,0,0,0,.9702,0,0,0,.9844,0,0,0,.9868,0,0,0,.9829,0,0,0,.8191,.14,0,0,.7723,.175,.0295,0,.8667,.1136,0,0,.7723,.175,.0295,0,.9381,.0467,0,0,.8771,.1167,0,0,.8667,.1136
-                ,0,0,.9347,.0488,0,0,.9199,.0613,0,0,.9311,.0527,0,0,.9314,.0511,0,0,.9416,.0373,0,0,.9507,.0271,0,0,.9574,.0224,0,0,.9381,.0467,0,0,.9507,.0271,0,0,.9652,.0146,0,0,.9574,.0224,0,0,.9697,.0017,0,0
-                ,.9987,0,0,0,.9934,0,0,0,.9844,0,0,0,.9934,0,0,0,.9934,0,0,0,.9897,0,0,0,.9843,0,0,0,.9839,0,0,0,.9843,0,0,0,.9897,0,0,0,.9987,0,0,0,.9983,0,0,0,.9959,0
-                ,0,0,.9959,0,0,0,.9934,0,0,0,.9843,0,0,0,.9679,.0109,0,0,.9652,.0146,0,0,.9757,0,0,0,.8771,.1167,0,0,.9679,.0109,0,0,.9877,0,0,0,.9868,0,0,0,.8876,.1087,0,0,.9775,0,0,0
-                ,.9687,0,0,0,.9843,0,0,0,.9347,.0488,0,0,.9416,.0373,0,0,.8138,.1394,.0032,0,.9245,.057,0,0,.9517,.0231,0,0,.0915,.8919,0,0,.5947,.2662,.0655,.0655,.6152,.289,.0399,.0399,.2176,.518,.22,0,.3399,.4989,.1305,0,.1897,.761
-                ,0,0,.0003,.4771,.1405,.3214,.2176,.518,.22,0,.2727,.4319,.1387,.1387,.5947,.2662,.0655,.0655,.7805,.1746,0,0,.1538,.8047,0,0,.1538,.8047,0,0,.121,.8443,0,0,.0903,.8828,0,0,.121,.8443,0,0,.0901,.8832,0,0,.8191,.14,0,0
-                ,.0901,.8832,0,0,.0673,.9122,0,0,.0903,.8828,0,0,.0672,.9122,0,0,.921,.0604,0,0,.9245,.057,0,0,.0673,.9122,0,0,.9199,.0613,0,0,.2312,.7543,0,0,.0231,.9611,0,0,.9495,0,0,0,.2312,.7543,0,0,.0011,.9551
-                ,0,0,.9971,0,0,0,.9607,.0106,0,0,.0011,.9551,0,0,.7805,.1746,0,0,.8191,.14,0,0,.8138,.1394,.0032,0,.8138,.1394,.0032,0,.8094,.1375,.02,0,.8094,.1375,.02,0,.7723,.175,.0295,0,.0672,.9122,0,0,.0672,.9122,0,0
-                ,.1197,.5423,.1849,.1105,.1408,.6207,.1559,.0155,.1197,.5423,.1849,.1105,.4638,.2051,.0239,.1392,.2031,.0973,.5804,.0886,.3435,.2081,.0372,.3342,.4638,.2051,.0239,.1392,.1058,.1865,.053,.611,.3435,.2081,.0372,.3342,.1058,.1865,.053,.611,.3231,.009,.3193,.3193,.0843,.8355,.0492,0,.0279,.1516
-                ,.0533,.728,.0834,.1032,.0081,.7464,.0086,.0704,.8607,0,.4361,.1611,.0544,.3152,.0682,.0646,.8291,0,.194,.043,.7225,0,.9838,0,0,0,.9766,0,0,0,.9797,0,0,0,.0283,.9097,0,0,.9616,0,0,0,.0376,.9366,0,0,.1628,.8095,0,0
-                ,.9903,0,0,0,.9873,0,0,0,.9958,0,0,0,.9825,0,0,0,.99,0,0,0,.9892,0,0,0,.9892,0,0,0,.9426,.0572,0,0,.9407,.059,0,0,.9797,0,0,0,.9254,.074,0,0,.9278,.0717,0,0,.9836,0
-                ,0,0,.9355,.0644,0,0,.9873,0,0,0,.99,0,0,0,.9355,.0644,0,0,.9938,0,0,0,.9873,0,0,0,.9616,0,0,0,.0964,.1442,.0553,.6782,.0086,.0704,.8607,0,.0204,.0178,.4647,.1702,.0623,.5054,.1497,.0076,.0623,.5054,.1497,.0076
-                ,.935,.0648,0,0,.9795,0,0,0,.916,.0833,0,0,.9795,0,0,0,.0131,.9636,0,0,.689,.2658,.0262,0,.7308,.1244,.1244,0,.9836,0,0,0,.657,.1395,.0286,.0792,.12,.561,.1066,.1339,.0623,.5054,.1497,.0076,.0623,.5054,.1497,.0076,.657,.1395
-                ,.0286,.0792,.4361,.1611,.0544,.3152,.1058,.1865,.053,.611,.0843,.8355,.0492,0,.0283,.9097,0,0,.1628,.8095,0,0,.689,.2658,.0262,0,.9616,0,0,0,.0376,.9366,0,0,.0376,.9366,0,0,.1628,.8095,0,0,.0283,.9097,0,0,.9616,0,0,0
-                ,.1598,.7112,.1128,0,.0843,.8355,.0492,0,.0964,.1442,.0553,.6782,.4361,.1611,.0544,.3152,.4361,.1611,.0544,.3152,.2031,.0973,.5804,.0886,.4638,.2051,.0239,.1392,.3435,.2081,.0372,.3342,.0446,.0557,.4626,.1853,.1197,.5423,.1849,.1105,.1197,.5423,.1849,.1105,.0279,.1516,.0533,.728,.0964,.1442
-                ,.0553,.6782,.0843,.8355,.0492,0,.3231,.009,.3193,.3193,.0086,.0704,.8607,0,.0279,.1516,.0533,.728,.0682,.0646,.8291,0,.9838,0,0,0,.9766,0,0,0,.9751,0,0,0,.0283,.9097,0,0,.0834,.1032,.0081,.7464,.194,.043,.7225,0,.0376,.9366,0,0
-                ,.9873,0,0,0,.9903,0,0,0,.9958,0,0,0,.9825,0,0,0,.99,0,0,0,.9938,0,0,0,.9892,0,0,0,.9426,.0572,0,0,.99,0,0,0,.9797,0,0,0,.9254,.074,0,0,.9766,0,0,0,.9355,.0644
-                ,0,0,.9836,0,0,0,.9873,0,0,0,.99,0,0,0,.9355,.0644,0,0,.9873,0,0,0,.1598,.7112,.1128,0,.3231,.009,.3193,.3193,.1598,.7112,.1128,0,.9873,0,0,0,.9958,0,0,0,.9751,0,0,0,.1598,.7112,.1128,0
-                ,.9616,0,0,0,.0086,.0704,.8607,0,.0086,.0704,.8607,0,.0279,.1516,.0533,.728,.4638,.2051,.0239,.1392,.9278,.0717,0,0,.9795,0,0,0,.9407,.059,0,0,.9795,0,0,0,.0131,.9636,0,0,.7308,.1244,.1244,0,.1628,.8095,0,0,.9836,0
-                ,0,0,.657,.1395,.0286,.0792,.7308,.1244,.1244,0,.1058,.1865,.053,.611,.12,.561,.1066,.1339,.12,.561,.1066,.1339,.0843,.8355,.0492,0,.0283,.9097,0,0,.689,.2658,.0262,0,.1628,.8095,0,0,.9616,0,0,0,.0376,.9366,0,0,.7308,.1244,.1244,0
-                ,.689,.2658,.0262,0,.0376,.9366,0,0,.1628,.8095,0,0,.9795,0,0,0,.9795,0,0,0,.0283,.9097,0,0,.9616,0,0,0,.1598,.7112,.1128,0,.0843,.8355,.0492,0,.916,.0833,0,0,.9795,0,0,0,.657,.1395,.0286,.0792,.0623,.5054
-                ,.1497,.0076,.1408,.6207,.1559,.0155,.1197,.5423,.1849,.1105,.0446,.0557,.4626,.1853,.1445,.5927,.0873,.0681,.1445,.5927,.0873,.0681,.0204,.0178,.4647,.1702,.0623,.5054,.1497,.0076,.12,.561,.1066,.1339,.0204,.0178,.4647,.1702,.0446,.0557,.4626,.1853,.0446,.0557,.4626,.1853,.1408,.6207,.1559,.0155
-                ,.1408,.6207,.1559,.0155,.1197,.5423,.1849,.1105,.0204,.0178,.4647,.1702,.0204,.0178,.4647,.1702,.0204,.0178,.4647,.1702,.1445,.5927,.0873,.0681,.12,.561,.1066,.1339,.0204,.0178,.4647,.1702,.1058,.1865,.053,.611,.0279,.1516,.0533,.728,.1445,.5927,.0873,.0681,.3435,.2081,.0372,.3342,.12,.561
-                ,.1066,.1339,.0964,.1442,.0553,.6782,.4361,.1611,.0544,.3152,.0446,.0557,.4626,.1853,.0279,.1516,.0533,.728,.657,.1395,.0286,.0792,.1408,.6207,.1559,.0155,.1058,.1865,.053,.611,.0279,.1516,.0533,.728,.0204,.0178,.4647,.1702,.4638,.2051,.0239,.1392,.1445,.5927,.0873,.0681,.0964,.1442,.0553,.6782
-                ,.0446,.0557,.4626,.1853,.0964,.1442,.0553,.6782,.0204,.0178,.4647,.1702,.4361,.1611,.0544,.3152,.1058,.1865,.053,.611,.0964,.1442,.0553,.6782,.0204,.0178,.4647,.1702,.1445,.5927,.0873,.0681,.1445,.5927,.0873,.0681,.3435,.2081,.0372,.3342,.1408,.6207,.1559,.0155,.0204,.0178,.4647,.1702,.0279,.1516
-                ,.0533,.728,.0279,.1516,.0533,.728,.0279,.1516,.0533,.728,.657,.1395,.0286,.0792,.657,.1395,.0286,.0792,.0204,.0178,.4647,.1702,.0204,.0178,.4647,.1702]);
-                _i.set([.1408,.6207,.1559,.0155,.3435,.2081,.0372,.3342,.1598,.7112,.1128,0,.9836,0,0,0,.9892,0,0,0,.99,0,0,0,.9797,0,0,0,.9766,0,0,0,.99,0,0,0,.9873,0,0,0,.9355,.0644,0,0,.9958,0,0,0,.9873,0
-                ,0,0,.0086,.0704,.8607,0,.9616,0,0,0,.0279,.1516,.0533,.728,.0086,.0704,.8607,0,.9797,0,0,0,.9892,0,0,0,.9795,0,0,0,.9836,0,0,0,.0843,.8355,.0492,0,.1628,.8095,0,0,.9616,0,0,0,.9958,0,0,0
-                ,.0376,.9366,0,0,.0283,.9097,0,0,.3231,.009,.3193,.3193,.4638,.2051,.0239,.1392,.0279,.1516,.0533,.728,.3231,.009,.3193,.3193,.9797,0,0,0,.9616,0,0,0,.9836,0,0,0,.9892,0,0,0,.935,.0648,0,0,.99,0,0,0,.9355,.0644
-                ,0,0,.9873,0,0,0,.1598,.7112,.1128,0,.1598,.7112,.1128,0,.0086,.0704,.8607,0,.4638,.2051,.0239,.1392,.4638,.2051,.0239,.1392,.9795,0,0,0,.9892,0,0,0,.7308,.1244,.1244,0,.689,.2658,.0262,0,.9836,0,0,0,.9797,0,0,0
-                ,.0279,.1516,.0533,.728,.0843,.8355,.0492,0,.9958,0,0,0,.9616,0,0,0,.0376,.9366,0,0,.9795,0,0,0,.0283,.9097,0,0,.1598,.7112,.1128,0,.9795,0,0,0,.1408,.6207,.1559,.0155,.0204,.0178,.4647,.1702,.0204,.0178,.4647,.1702,.0204,.0178
-                ,.4647,.1702,.1445,.5927,.0873,.0681,.1445,.5927,.0873,.0681,.1058,.1865,.053,.611,.4638,.2051,.0239,.1392,.0204,.0178,.4647,.1702,.0279,.1516,.0533,.728,.4361,.1611,.0544,.3152,.657,.1395,.0286,.0792,.1058,.1865,.053,.611,.0279,.1516,.0533,.728,.1058,.1865,.053,.611,.3435,.2081,.0372,.3342
-                ,.4638,.2051,.0239,.1392,.4361,.1611,.0544,.3152,.0964,.1442,.0553,.6782,.0964,.1442,.0553,.6782,.0279,.1516,.0533,.728,.0204,.0178,.4647,.1702,.657,.1395,.0286,.0792,.4361,.1611,.0544,.3152,.1058,.1865,.053,.611,.3435,.2081,.0372,.3342,.0204,.0178,.4647,.1702,.1445,.5927,.0873,.0681,.1408,.6207
-                ,.1559,.0155,.0204,.0178,.4647,.1702,.0964,.1442,.0553,.6782,.0279,.1516,.0533,.728,.657,.1395,.0286,.0792,.0204,.0178,.4647,.1702], 7040);
+                _i = new Float32Array(6104);
+                _i.set([.5525,.2248,.1319,.0537,.4771,.3214,.1405,.0003,.3796,.2891,.2591,.0496,.7541,.1157,.0549,.016,.7793,.0782,.0782,0,.4785,.3122,.1626,0,.4,.3823,.1418,.039,.4623,.2831,.093,.0584,.5163,.1803,.1063,.097,.9086,.0878,0,0,.8968,.1005,0,0,.9125,.0868,0,0,.5852,.1473
+                ,.1306,.0894,.5525,.2248,.1319,.0537,.3321,.2976,.2148,.1261,.8624,.1355,0,0,.9052,.0425,.0089,0,.7379,.1548,.0658,0,.5423,.1849,.1197,.1105,.7508,.1427,.0111,0,.7258,.1432,.0221,.0083,.4918,.2346,.1063,.0642,.606,.2026,.0288,.024,.5285,.259,.0629,.0367,.7578,.2054,0,0
+                ,.8153,.1271,.014,0,.9441,.0171,0,0,.4647,.2572,.1702,.0204,.611,.1865,.1058,.053,.728,.1516,.0533,.0279,.871,.1177,0,0,.9739,0,0,0,.9087,.0907,0,0,.9807,0,0,0,.9255,.0729,0,0,.8617,.1216,0,0,.8897,.1001,0,0,.924,.0701
+                ,0,0,.5677,.4319,0,0,.9087,.0907,0,0,.9255,.0729,0,0,.9212,.0638,0,0,.9088,.0761,0,0,.7144,.2808,0,0,.9646,.0151,0,0,.9272,.0692,0,0,.9701,.0023,0,0,.8968,.1005,0,0,.98,0,0,0,.9125,.0868,0,0
+                ,.9072,.0892,0,0,.9669,0,0,0,.8968,.1005,0,0,.8944,.0752,0,0,.733,.2095,.0466,0,.8568,.1082,.0103,0,.9149,.0496,.0124,0,.4772,.4763,.0277,0,.9709,0,0,0,.8944,.0752,0,0,.8568,.1082,.0103,0,.9707,0,0,0,.7739,.2167
+                ,0,0,.8944,.0752,0,0,.7887,.095,.0878,0,.9495,0,0,0,.7478,.1344,.0912,0,.7739,.2167,0,0,.7672,.1875,.005,0,.4772,.4763,.0277,0,.8114,.1813,0,0,.7144,.2808,0,0,.6017,.275,.1156,0,.6709,.2312,.0773,0,.4772,.4763,.0277,0
+                ,.9607,.0106,0,0,.5914,.2248,.1166,.0172,.7379,.1346,.0756,0,.7956,.0716,.0691,.0312,.7578,.2054,0,0,.871,.1177,0,0,.3718,.3718,.1231,.0909,.6812,.1189,.0959,.0123,.7793,.0782,.0782,0,.6828,.2441,.0729,0,.4785,.3122,.1626,0,.4939,.2195,.185,.0562,.6812,.1189
+                ,.0959,.0123,.6904,.2253,.0335,.0335,.6031,.2393,.1382,0,.7956,.0716,.0691,.0312,.4882,.2339,.1942,.0589,.6072,.2475,.0585,.029,.4638,.2051,.1392,.1392,.5804,.2031,.0973,.0886,.3435,.3342,.2081,.0526,.5927,.1445,.0873,.0681,.3435,.3342,.2081,.0526,.561,.1339,.12,.1066,.6782,.1442,.0964,.0553
+                ,.4361,.3152,.1611,.0544,.3231,.3193,.3193,.009,.8355,.0843,.0492,0,.728,.1516,.0533,.0279,.7464,.1032,.0834,.0081,.8607,.0704,.0086,0,.4361,.3152,.1611,.0544,.8291,.0682,.0646,0,.7225,.194,.043,0,.9838,0,0,0,.9766,0,0,0,.9797,0,0,0,.9097,.0283
+                ,0,0,.9616,0,0,0,.9366,.0376,0,0,.8095,.1628,0,0,.9795,0,0,0,.9229,.0765,0,0,.9786,0,0,0,.9958,0,0,0,.9836,0,0,0,.9873,0,0,0,.9808,0,0,0,.9795,0,0,0,.9786,0,0,0
+                ,.9825,0,0,0,.99,0,0,0,.9892,0,0,0,.9278,.0717,0,0,.9523,.0453,0,0,.96,.0299,0,0,.9892,0,0,0,.9426,.0572,0,0,.9407,.059,0,0,.9797,0,0,0,.9254,.074,0,0,.9873,0,0,0,.935,.0648
+                ,0,0,.9355,.0644,0,0,.9492,.023,0,0,.6968,.1625,.1407,0,.9784,0,0,0,.9667,.0165,0,0,.9596,.0301,0,0,.916,.0833,0,0,.9458,.0537,0,0,.9582,.0321,0,0,.9423,.0557,0,0,.8865,.1104,0,0,.7157,.2754,0,0
+                ,.8364,.1612,0,0,.9491,.0065,0,0,.7098,.2182,.072,0,.8311,.1482,0,0,.9981,0,0,0,.8381,.0827,.0792,0,.8719,.0811,.0441,0,.9835,0,0,0,.9044,.0571,.0269,0,.5837,.2099,.2063,0,.9715,0,0,0,.9895,0,0,0,.8731,.1033
+                ,0,0,.9957,0,0,0,.9895,0,0,0,.9966,0,0,0,.9291,.0707,0,0,.8876,.0855,.0038,0,.7202,.2092,.0706,0,.8362,.151,0,0,.8731,.1033,0,0,.7451,.1908,.0641,0,.7201,.1292,.1058,.0213,.8246,.1492,0,0,.74,.136,.0931,0
+                ,.6008,.379,0,0,.9551,.0011,0,0,.7641,.2039,.0071,0,.7921,.1424,.0515,0,.9607,.0208,0,0,.8731,.1033,0,0,.9895,0,0,0,.6813,.3003,0,0,.8876,.0855,.0038,0,.9715,0,0,0,.8099,.1837,0,0,.8364,.1612,0,0,.9669,0
+                ,0,0,.5837,.2099,.2063,0,.9229,.0765,0,0,.9596,.0301,0,0,.9784,0,0,0,1.0022,0,0,0,.99,0,0,0,.9355,.0644,0,0,.9751,0,0,0,.9786,0,0,0,.9958,0,0,0,.9938,0,0,0,.9786,0,0,0
+                ,.9766,0,0,0,.8607,.0704,.0086,0,.6782,.1442,.0964,.0553,.8607,.0704,.0086,0,.8231,.054,.0307,.0063,.6072,.2475,.0585,.029,.5525,.2248,.1319,.0537,.5842,.1826,.1638,.0561,.871,.1177,0,0,.8624,.1355,0,0,.8816,.0554,.0437,0,.8114,.1813,0,0,.8279,.0929
+                ,.0662,0,.7739,.2167,0,0,.8114,.1813,0,0,.8568,.1082,.0103,0,.6017,.275,.1156,0,.8568,.1082,.0103,0,.5713,.3127,.1031,0,.9125,.0868,0,0,.5677,.4319,0,0,.9646,.0151,0,0,.9649,.0005,0,0,.9212,.0638,0,0,.9072,.0892,0,0
+                ,.9807,0,0,0,.9662,0,0,0,.871,.1177,0,0,.9702,0,0,0,.4626,.2225,.1853,.0557,.728,.1516,.0533,.0279,.9426,.0539,0,0,.9125,.0868,0,0,.5327,.1761,.1494,.0608,.4,.3823,.1418,.039,.5163,.1803,.1063,.097,.6072,.2475,.0585,.029,.5883,.2488
+                ,.0925,.0331,.4771,.3214,.1405,.0003,.4013,.2924,.195,.0922,.3321,.2976,.2148,.1261,.6904,.2253,.0335,.0335,.6933,.1992,.0799,0,.6031,.2393,.1382,0,.7098,.2182,.072,0,.7202,.2092,.0706,0,.8381,.0827,.0792,0,.7451,.1908,.0641,0,.7919,.163,.04,0,.6968,.1625,.1407,0
+                ,.9044,.0571,.0269,0,.5837,.2099,.2063,0,.8719,.0811,.0441,0,.8311,.1482,0,0,.9739,0,0,0,.9702,0,0,0,.9702,0,0,0,.9052,.0425,.0089,0,.9441,.0171,0,0,.9739,0,0,0,.98,0,0,0,.9709,0,0,0,.4647,.2572
+                ,.1702,.0204,.8252,.0294,.0294,.0125,.5054,.2109,.1497,.0623,.9052,.0425,.0089,0,.8622,.081,.0094,0,.4,.3823,.1418,.039,.4939,.2195,.185,.0562,.8622,.081,.0094,0,.8153,.1271,.014,0,.4,.3823,.1418,.039,.8622,.081,.0094,0,.7379,.1548,.0658,0,.8719,.0811,.0441,0
+                ,.9044,.0571,.0269,0,.6031,.2393,.1382,0,.4882,.2339,.1942,.0589,.3321,.2976,.2148,.1261,.4319,.2727,.1387,.1387,.2886,.2316,.226,.226,.7157,.2754,0,0,.9715,0,0,0,.8364,.1612,0,0,.9708,.0137,0,0,.9708,.0137,0,0,.8876,.0855,.0038,0,.9959,0
+                ,0,0,.7919,.163,.04,0,.8099,.1837,0,0,.9359,.0623,0,0,.9836,0,0,0,.9795,0,0,0,.9636,.0131,0,0,.689,.2658,.0262,0,.7308,.1244,.1244,0,.9903,0,0,0,.657,.1395,.0792,.0792,.657,.1395,.0792,.0792,.6207,.1559,.1408,.0155
+                ,.611,.1865,.1058,.053,.4104,.4104,.0863,.013,.5291,.1339,.1339,.1218,.4785,.3122,.1626,0,.8624,.1355,0,0,.7578,.2054,0,0,.2886,.2316,.226,.226,.7379,.1548,.0658,0,.8624,.1355,0,0,.8355,.0843,.0492,0,.9097,.0283,0,0,.8095,.1628,0,0,.689,.2658
+                ,.0262,0,.9616,0,0,0,.9366,.0376,0,0,.7112,.1598,.1128,0,.9808,0,0,0,.9366,.0376,0,0,.8095,.1628,0,0,.7122,.2185,.0664,0,.9097,.0283,0,0,.9616,0,0,0,.8355,.0843,.0492,0,.9458,.0537,0,0,.9835,0,0,0
+                ,.5933,.202,.202,0,.5933,.202,.202,0,.7112,.1598,.1128,0,.4361,.3152,.1611,.0544,.9757,0,0,0,.9829,0,0,0,.9697,.0017,0,0,.8423,.1277,0,0,.8667,.1136,0,0,.7178,.1796,.0736,0,.9702,0,0,0,.9507,.0271,0,0,.7723,.175
+                ,.0295,0,.4989,.3399,.1305,0,.9702,0,0,0,.9416,.0373,0,0,.9507,.0271,0,0,.7723,.175,.0295,0,.5053,.3194,.1304,.0166,.4989,.3399,.1305,0,.8191,.14,0,0,.7805,.1746,0,0,.6178,.2816,.0556,.0277,.9347,.0488,0,0,.95,.0262,0,0
+                ,.9311,.0527,0,0,.9517,.0231,0,0,.9687,0,0,0,.95,.0262,0,0,.9702,0,0,0,.9772,0,0,0,.9582,.0129,0,0,.9829,0,0,0,.9844,0,0,0,.9702,0,0,0,.9868,0,0,0,.992,0,0,0,.9829,0
+                ,0,0,.8794,.0909,0,0,.8191,.14,0,0,.8138,.1394,.0032,0,.7723,.175,.0295,0,.9314,.0511,0,0,.8094,.1375,.02,0,.8667,.1136,0,0,.9381,.0467,0,0,.7723,.175,.0295,0,.8771,.1167,0,0,.9574,.0224,0,0,.8667,.1136,0,0
+                ,.9311,.0527,0,0,.9199,.0613,0,0,.921,.0604,0,0,.9507,.0271,0,0,.9314,.0511,0,0,.9381,.0467,0,0,.9574,.0224,0,0,.9507,.0271,0,0,.9381,.0467,0,0,.9652,.0146,0,0,.9697,.0017,0,0,.9574,.0224,0,0,.9936,0
+                ,0,0,.9987,0,0,0,.9983,0,0,0,.9844,0,0,0,.9897,0,0,0,.9959,0,0,0,.9934,0,0,0,.9839,0,0,0,.9705,0,0,0,.9959,0,0,0,.9987,0,0,0,.9843,0,0,0,.9679,.0109,0,0
+                ,.9757,0,0,0,.9679,.0109,0,0,.8876,.1087,0,0,.9877,0,0,0,.8876,.1087,0,0,.8919,.0915,0,0,.9775,0,0,0,.9868,0,0,0,.9843,0,0,0,.9416,.0373,0,0,.9245,.057,0,0,.9314,.0511,0,0,.9517,.0231
+                ,0,0,.8094,.1375,.02,0,.5795,.2686,.0801,.0628,.3954,.3629,.1817,.0396,.8514,.0667,.0256,.0252,.9001,.0563,0,0,.6152,.289,.0399,.0399,.5947,.2662,.0655,.0655,.4989,.3399,.1305,0,.518,.22,.2176,0,.518,.22,.2176,0,.701,.1407,.0974,.0373,.761,.1897,0,0
+                ,.4771,.3214,.1405,.0003,.8094,.1375,.02,0,.8138,.1394,.0032,0,.7805,.1746,0,0,.8191,.1402,0,0,.8047,.1538,0,0,.8047,.1538,0,0,.8399,.1245,0,0,.8443,.121,0,0,.8786,.0935,0,0,.8191,.1402,0,0,.8832,.0901,0,0,.8191,.14
+                ,0,0,.8761,.0953,0,0,.9122,.0672,0,0,.8828,.0903,0,0,.8954,.0803,0,0,.8985,.0779,0,0,.8828,.0903,0,0,.9245,.057,0,0,.921,.0604,0,0,.9122,.0673,0,0,.7543,.2312,0,0,.9611,.0231,0,0,.9611,.0231,0,0
+                ,.7097,.2579,.0074,0,.7677,.1278,.0888,0,.9495,0,0,0,.7897,.1803,0,0,.7543,.2312,0,0,.9551,.0011,0,0,.5209,.4758,0,0,.8389,.1201,0,0,.8669,.0653,.0147,.0132,.7248,.1225,.1125,0,.9135,.0775,0,0,.9878,0,0,0,.9971,0
+                ,0,0,.9143,.0826,0,0,.5037,.4935,0,0,1.0025,0,0,0,.9631,.0231,0,0,.9607,.0106,0,0,.9551,.0011,0,0,.8076,.1443,0,0,.8112,.142,0,0,.8075,.1444,0,0,.8075,.1439,.0042,0,.8097,.1427,0,0,.7805,.1746,0,0
+                ,.8108,.1459,0,0,.8191,.14,0,0,.8138,.1394,.0032,0,.8191,.14,0,0,.8138,.1394,.0032,0,.8085,.1403,.0147,0,.8094,.1375,.02,0,.8094,.1375,.02,0,.7832,.1644,.0255,0,.7723,.175,.0295,0,.8024,.1482,.0081,0,.8117,.1415,.0006,0,.8176,.1387
+                ,0,0,.8126,.141,.0014,0,.5525,.2248,.1319,.0537,.4771,.3214,.1405,.0003,.6072,.2475,.0585,.029,.7541,.1157,.0549,.016,.7793,.0782,.0782,0,.8252,.0294,.0294,.0125,.5163,.1803,.1063,.097,.4939,.2195,.185,.0562,.4,.3823,.1418,.039,.9086,.0878,0,0,.8968,.1005,0,0
+                ,.8897,.1001,0,0,.5852,.1473,.1306,.0894,.5525,.2248,.1319,.0537,.8231,.054,.0307,.0063,.9052,.0425,.0089,0,.8624,.1355,0,0,.7379,.1548,.0658,0,.7258,.1432,.0221,.0083,.6207,.1559,.1408,.0155,.5423,.1849,.1197,.1105,.5285,.259,.0629,.0367,.5291,.1339,.1339,.1218,.4918,.2346
+                ,.1063,.0642,.7578,.2054,0,0,.8153,.1271,.014,0,.4939,.2195,.185,.0562,.728,.1516,.0533,.0279,.5054,.2109,.1497,.0623,.4647,.2572,.1702,.0204,.871,.1177,0,0,.9441,.0171,0,0,.9807,0,0,0,.9087,.0907,0,0,.9255,.0729,0,0,.8617,.1216,0,0
+                ,.924,.0701,0,0,.5677,.4319,0,0,.9426,.0539,0,0,.9255,.0729,0,0,.9212,.0638,0,0,.7144,.2808,0,0,.9088,.0761,0,0,.9646,.0151,0,0,.9272,.0692,0,0,.5677,.4319,0,0,.98,0,0,0,.8968,.1005,0,0,.9125,.0868
+                ,0,0,.9669,0,0,0,.9072,.0892,0,0,.8968,.1005,0,0,.733,.2095,.0466,0,.8944,.0752,0,0,.8568,.1082,.0103,0,.4772,.4763,.0277,0,.9149,.0496,.0124,0,.9709,0,0,0,.8944,.0752,0,0,.9707,0,0,0,.7739,.2167,0,0
+                ,.9649,.0005,0,0,.9495,0,0,0,.7887,.095,.0878,0,.7478,.1344,.0912,0,.7672,.1875,.005,0,.7739,.2167,0,0,.8114,.1813,0,0,.4772,.4763,.0277,0,.7144,.2808,0,0,.6709,.2312,.0773,0,.6017,.275,.1156,0,.4772,.4763,.0277,0,.9607,.0106
+                ,0,0,.5914,.2248,.1166,.0172,.5713,.3127,.1031,0,.7956,.0716,.0691,.0312,.7578,.2054,0,0,.4104,.4104,.0863,.013,.3718,.3718,.1231,.0909,.6828,.2441,.0729,0,.7793,.0782,.0782,0,.4785,.3122,.1626,0,.6812,.1189,.0959,.0123,.6904,.2253,.0335,.0335,.7898,.0825,.0825,.0501
+                ,.7956,.0716,.0691,.0312,.4882,.2339,.1942,.0589,.5842,.1826,.1638,.0561,.5804,.2031,.0973,.0886,.4638,.2051,.1392,.1392,.3435,.3342,.2081,.0526,.561,.1339,.12,.1066,.4638,.2051,.1392,.1392,.5927,.1445,.0873,.0681,.6782,.1442,.0964,.0553,.4626,.2225,.1853,.0557,.8355,.0843,.0492,0,.3231,.3193
+                ,.3193,.009,.728,.1516,.0533,.0279,.7464,.1032,.0834,.0081,.611,.1865,.1058,.053,.4361,.3152,.1611,.0544,.8291,.0682,.0646,0,.6782,.1442,.0964,.0553,.9838,0,0,0,.9766,0,0,0,.9751,0,0,0,.8607,.0704,.0086,0,.9097,.0283,0,0,.7225,.194,.043,0
+                ,.9366,.0376,0,0,.9229,.0765,0,0,.9795,0,0,0,.9786,0,0,0,.9958,0,0,0,.9836,0,0,0,.9903,0,0,0,.9808,0,0,0,.9795,0,0,0,.9636,.0131,0,0,.9825,0,0,0,.99,0,0,0,.9938,0
+                ,0,0,.9278,.0717,0,0,.9523,.0453,0,0,.9254,.074,0,0,.9892,0,0,0,.9426,.0572,0,0,.99,0,0,0,.9797,0,0,0,.9766,0,0,0,.9873,0,0,0,.935,.0648,0,0,.9836,0,0,0,.6968,.1625,.1407,0
+                ,.9492,.023,0,0,.9784,0,0,0,.9355,.0644,0,0,.9667,.0165,0,0,.9458,.0537,0,0,.916,.0833,0,0,.9407,.059,0,0,.9582,.0321,0,0,.8865,.1104,0,0,.7157,.2754,0,0,.6813,.3003,0,0,.8311,.1482,0,0,.9669,0
+                ,0,0,.9491,.0065,0,0,.9981,0,0,0,.8381,.0827,.0792,0,1.0022,0,0,0,.9835,0,0,0,.9044,.0571,.0269,0,.9959,0,0,0,.9715,0,0,0,.9895,0,0,0,.9966,0,0,0,.9957,0,0,0,.9895,0,0,0
+                ,.9607,.0208,0,0,.8876,.0855,.0038,0,.9291,.0707,0,0,.7202,.2092,.0706,0,.8731,.1033,0,0,.8362,.151,0,0,.7451,.1908,.0641,0,.8246,.1492,0,0,.7201,.1292,.1058,.0213,.74,.136,.0931,0,.8279,.0929,.0662,0,.6008,.379,0,0,.7641,.2039
+                ,.0071,0,.9551,.0011,0,0,.7921,.1424,.0515,0,.8731,.1033,0,0,.7451,.1908,.0641,0,.8876,.0855,.0038,0,.7202,.2092,.0706,0,.8099,.1837,0,0,.9715,0,0,0,.8364,.1612,0,0,.5837,.2099,.2063,0,.9835,0,0,0,.9229,.0765,0,0
+                ,.9596,.0301,0,0,.9355,.0644,0,0,.9784,0,0,0,.99,0,0,0,.9355,.0644,0,0,.9873,0,0,0,.9786,0,0,0,.9808,0,0,0,.9958,0,0,0,.9786,0,0,0,.9766,0,0,0,.8607,.0704,.0086,0,.6782,.1442
+                ,.0964,.0553,.8607,.0704,.0086,0,.728,.1516,.0533,.0279,.6072,.2475,.0585,.029,.871,.1177,0,0,.7956,.0716,.0691,.0312,.7248,.1225,.1125,0,.8114,.1813,0,0,.7739,.2167,0,0,.8114,.1813,0,0,.7144,.2808,0,0,.8568,.1082,.0103,0,.9709,0,0,0
+                ,.8568,.1082,.0103,0,.9125,.0868,0,0,.5677,.4319,0,0,.9646,.0151,0,0,.9072,.0892,0,0,.9212,.0638,0,0,.9807,0,0,0,.9255,.0729,0,0,.9702,0,0,0,.871,.1177,0,0,.4647,.2572,.1702,.0204,.9125,.0868,0,0,.9086,.0878
+                ,0,0,.5327,.1761,.1494,.0608,.4,.3823,.1418,.039,.7379,.1548,.0658,0,.6072,.2475,.0585,.029,.5883,.2488,.0925,.0331,.4882,.2339,.1942,.0589,.3321,.2976,.2148,.1261,.3796,.2891,.2591,.0496,.6031,.2393,.1382,0,.761,.1897,0,0,.6904,.2253,.0335,.0335,.7098,.2182,.072,0
+                ,.7202,.2092,.0706,0,.5837,.2099,.2063,0,.8381,.0827,.0792,0,.7451,.1908,.0641,0,.6968,.1625,.1407,0,.7919,.163,.04,0,.6968,.1625,.1407,0,.9044,.0571,.0269,0,.5837,.2099,.2063,0,.8719,.0811,.0441,0,.8381,.0827,.0792,0,.8311,.1482,0,0,.9702,0
+                ,0,0,.9086,.0878,0,0,.9739,0,0,0,.9702,0,0,0,.9052,.0425,.0089,0,.9441,.0171,0,0,.8153,.1271,.014,0,.9739,0,0,0,.9441,.0171,0,0,.98,0,0,0,.9662,0,0,0,.9709,0,0,0,.9807,0,0,0
+                ,.9701,.0023,0,0,.5163,.1803,.1063,.097,.606,.2026,.0288,.024,.7508,.1427,.0111,0,.4623,.2831,.093,.0584,.9052,.0425,.0089,0,.4,.3823,.1418,.039,.8622,.081,.0094,0,.8622,.081,.0094,0,.8153,.1271,.014,0,.4,.3823,.1418,.039,.8622,.081,.0094,0,.7379,.1548
+                ,.0658,0,.8311,.1482,0,0,.9044,.0571,.0269,0,.4882,.2339,.1942,.0589,.6933,.1992,.0799,0,.2886,.2316,.226,.226,.4013,.2924,.195,.0922,.7157,.2754,0,0,.9715,0,0,0,.8876,.0855,.0038,0,.9708,.0137,0,0,.9708,.0137,0,0,.8876,.0855,.0038,0
+                ,.8719,.0811,.0441,0,.7919,.163,.04,0,.8099,.1837,0,0,.9423,.0557,0,0,.9836,0,0,0,.96,.0299,0,0,.9795,0,0,0,.7308,.1244,.1244,0,.8095,.1628,0,0,.657,.1395,.0792,.0792,.7308,.1244,.1244,0,.6207,.1559,.1408,.0155,.4361,.3152
+                ,.1611,.0544,.611,.1865,.1058,.053,.4104,.4104,.0863,.013,.5291,.1339,.1339,.1218,.8624,.1355,0,0,.6812,.1189,.0959,.0123,.3718,.3718,.1231,.0909,.3321,.2976,.2148,.1261,.7379,.1548,.0658,0,.4785,.3122,.1626,0,.8355,.0843,.0492,0,.9097,.0283,0,0,.689,.2658,.0262,0
+                ,.8095,.1628,0,0,.9616,0,0,0,.9366,.0376,0,0,.7122,.2185,.0664,0,.7112,.1598,.1128,0,.9366,.0376,0,0,.8095,.1628,0,0,.7122,.2185,.0664,0,.9097,.0283,0,0,.9616,0,0,0,.8355,.0843,.0492,0,.9359,.0623,0,0,.9458,.0537
+                ,0,0,.9835,0,0,0,.9596,.0301,0,0,.689,.2658,.0262,0,.5933,.202,.202,0,.7122,.2185,.0664,0,.5933,.202,.202,0,.7112,.1598,.1128,0,.7122,.2185,.0664,0,.657,.1395,.0792,.0792,.9757,0,0,0,.9829,0,0,0,.9868,0,0,0
+                ,.8423,.1277,0,0,.8667,.1136,0,0,.8771,.1167,0,0,.9697,.0017,0,0,.9702,0,0,0,.7178,.1796,.0736,0,.7723,.175,.0295,0,.9416,.0373,0,0,.9702,0,0,0,.9507,.0271,0,0,.5053,.3194,.1304,.0166,.7723,.175,.0295,0,.4989,.3399
+                ,.1305,0,.6152,.289,.0399,.0399,.8191,.14,0,0,.8138,.1394,.0032,0,.9347,.0488,0,0,.95,.0262,0,0,.9517,.0231,0,0,.9517,.0231,0,0,.9687,0,0,0,.9705,0,0,0,.9702,0,0,0,.9772,0,0,0,.9844,0,0,0
+                ,.9829,0,0,0,.9844,0,0,0,.992,0,0,0,.9868,0,0,0,.9936,0,0,0,.8191,.14,0,0,.8794,.0909,0,0,.8138,.1394,.0032,0,.7723,.175,.0295,0,.9314,.0511,0,0,.9381,.0467,0,0,.8667,.1136,0,0,.9381,.0467
+                ,0,0,.9574,.0224,0,0,.8771,.1167,0,0,.9652,.0146,0,0,.921,.0604,0,0,.9311,.0527,0,0,.9347,.0488,0,0,.9314,.0511,0,0,.9507,.0271,0,0,.9381,.0467,0,0,.9574,.0224,0,0,.9507,.0271,0,0,.9697,.0017,0,0
+                ,.9652,.0146,0,0,.9697,.0017,0,0,.9757,0,0,0,.9987,0,0,0,.9956,0,0,0,.9897,0,0,0,.9844,0,0,0,.9959,0,0,0,.9839,0,0,0,.9843,0,0,0,.9987,0,0,0,.9959,0,0,0,.9983,0
+                ,0,0,.9679,.0109,0,0,.9757,0,0,0,.9775,0,0,0,.8771,.1167,0,0,.9679,.0109,0,0,.8876,.1087,0,0,.9877,0,0,0,.8876,.1087,0,0,.8919,.0915,0,0,.9775,0,0,0,.9877,0,0,0,.9687,0,0,0
+                ,.9245,.057,0,0,.9416,.0373,0,0,.9314,.0511,0,0,.8094,.1375,.02,0,.9582,.0129,0,0,.9582,.0129,0,0,.6178,.2816,.0556,.0277,.8094,.1375,.02,0,.5795,.2686,.0801,.0628,.3954,.3629,.1817,.0396,.8514,.0667,.0256,.0252,.8919,.0915,0,0,.9001,.0563
+                ,0,0,.6152,.289,.0399,.0399,.518,.22,.2176,0,.518,.22,.2176,0,.701,.1407,.0974,.0373,.761,.1897,0,0,.9001,.0563,0,0,.4771,.3214,.1405,.0003,.4319,.2727,.1387,.1387,.8094,.1375,.02,0,.7805,.1746,0,0,.8191,.1402,0,0,.8191,.14,0,0
+                ,.8047,.1538,0,0,.8399,.1245,0,0,.8191,.1402,0,0,.8786,.0935,0,0,.8191,.1402,0,0,.8832,.0901,0,0,.8828,.0903,0,0,.8191,.14,0,0,.8191,.1402,0,0,.8832,.0901,0,0,.9122,.0672,0,0,.8761,.0953,0,0,.8954,.0803
+                ,0,0,.8985,.0779,0,0,.8828,.0903,0,0,.9245,.057,0,0,.9019,.074,0,0,.9122,.0673,0,0,.7543,.2312,0,0,.9611,.0231,0,0,.7097,.2579,.0074,0,.9611,.0231,0,0,.7677,.1278,.0888,0,.7897,.1803,0,0,.9495,0,0,0
+                ,.9551,.0011,0,0,.5209,.4758,0,0,.8816,.0554,.0437,0,.8389,.1201,0,0,.9135,.0775,0,0,.9878,0,0,0,.5037,.4935,0,0,.9143,.0826,0,0,.8669,.0653,.0147,.0132,1.0025,0,0,0,.9631,.0231,0,0,.9607,.0106,0,0,.9551,.0011
+                ,0,0,.7379,.1346,.0756,0,.8076,.1443,0,0,.8097,.1427,0,0,.8075,.1439,.0042,0,.7805,.1746,0,0,.8108,.1459,0,0,.8027,.1537,0,0,.8138,.1394,.0032,0,.8191,.14,0,0,.8138,.1394,.0032,0,.8085,.1403,.0147,0,.8126,.141,.0014,0
+                ,.8094,.1375,.02,0,.7832,.1644,.0255,0,.8024,.1482,.0081,0,.8117,.1415,.0006,0,.9122,.0672,0,0,.921,.0604,0,0,.9122,.0672,0,0,.921,.0604,0,0,.6072,.2475,.0585,.029,.5525,.2248,.1319,.0537,.4939,.2195,.185,.0562,.9072,.0892,0,0,.9087,.0907
+                ,0,0,.9255,.0729,0,0,.5677,.4319,0,0,.8968,.1005,0,0,.6017,.275,.1156,0,.8944,.0752,0,0,.7739,.2167,0,0,.4772,.4763,.0277,0,.7578,.2054,0,0,.4104,.4104,.0863,.013,.7793,.0782,.0782,0,.7898,.0825,.0825,.0501,.7578,.2054,0,0
+                ,.6812,.1189,.0959,.0123,.7898,.0825,.0825,.0501,.7956,.0716,.0691,.0312,.4638,.2051,.1392,.1392,.3435,.3342,.2081,.0526,.7112,.1598,.1128,0,.728,.1516,.0533,.0279,.611,.1865,.1058,.053,.4361,.3152,.1611,.0544,.6782,.1442,.0964,.0553,.9795,0,0,0,.9892,0,0,0,.99,0
+                ,0,0,.9797,0,0,0,.9766,0,0,0,.9873,0,0,0,.9836,0,0,0,.7919,.163,.04,0,.9966,0,0,0,.9895,0,0,0,.8099,.1837,0,0,.8731,.1033,0,0,.9611,.0231,0,0,.7451,.1908,.0641,0,.8731,.1033,0,0
+                ,.7202,.2092,.0706,0,.8876,.0855,.0038,0,.9715,0,0,0,.8731,.1033,0,0,.9835,0,0,0,.5837,.2099,.2063,0,.9229,.0765,0,0,.9458,.0537,0,0,.9355,.0644,0,0,.9596,.0301,0,0,.9784,0,0,0,.6968,.1625,.1407,0,.99,0
+                ,0,0,.9873,0,0,0,.9355,.0644,0,0,.9808,0,0,0,.9786,0,0,0,.9958,0,0,0,.9873,0,0,0,.9786,0,0,0,.9229,.0765,0,0,.8607,.0704,.0086,0,.9616,0,0,0,.6782,.1442,.0964,.0553,.728,.1516,.0533,.0279
+                ,.8607,.0704,.0086,0,.6072,.2475,.0585,.029,.7956,.0716,.0691,.0312,.871,.1177,0,0,.8114,.1813,0,0,.9607,.0106,0,0,.7739,.2167,0,0,.7144,.2808,0,0,.8114,.1813,0,0,.9495,0,0,0,.9709,0,0,0,.8568,.1082,.0103,0,.8568,.1082
+                ,.0103,0,.9125,.0868,0,0,.98,0,0,0,.9646,.0151,0,0,.7144,.2808,0,0,.9212,.0638,0,0,.9255,.0729,0,0,.9072,.0892,0,0,.9255,.0729,0,0,.9807,0,0,0,.871,.1177,0,0,.9739,0,0,0,.4647,.2572,.1702,.0204
+                ,.728,.1516,.0533,.0279,.9086,.0878,0,0,.9125,.0868,0,0,.7379,.1548,.0658,0,.4,.3823,.1418,.039,.6072,.2475,.0585,.029,.4882,.2339,.1942,.0589,.6904,.2253,.0335,.0335,.7098,.2182,.072,0,.5837,.2099,.2063,0,.7202,.2092,.0706,0,.8381,.0827,.0792,0,.6968,.1625
+                ,.1407,0,.7451,.1908,.0641,0,.9044,.0571,.0269,0,.8719,.0811,.0441,0,.8381,.0827,.0792,0,.8311,.1482,0,0,.7098,.2182,.072,0,.9739,0,0,0,.9086,.0878,0,0,.9702,0,0,0,.9441,.0171,0,0,.8153,.1271,.014,0,.9739,0,0,0
+                ,.9441,.0171,0,0,.98,0,0,0,.9646,.0151,0,0,.9807,0,0,0,.9709,0,0,0,.5163,.1803,.1063,.097,.4647,.2572,.1702,.0204,.9052,.0425,.0089,0,.4,.3823,.1418,.039,.8622,.081,.0094,0,.8622,.081,.0094,0,.9212,.0638,0,0,.4,.3823
+                ,.1418,.039,.8311,.1482,0,0,.8719,.0811,.0441,0,.6031,.2393,.1382,0,.3321,.2976,.2148,.1261,.7157,.2754,0,0,.8876,.0855,.0038,0,.9715,0,0,0,.9708,.0137,0,0,.9966,0,0,0,.7919,.163,.04,0,.8099,.1837,0,0,.9836,0,0,0
+                ,.9797,0,0,0,.9892,0,0,0,.9795,0,0,0,.657,.1395,.0792,.0792,.3435,.3342,.2081,.0526,.6812,.1189,.0959,.0123,.4785,.3122,.1626,0,.2886,.2316,.226,.226,.7379,.1548,.0658,0,.8355,.0843,.0492,0,.8095,.1628,0,0,.9616,0,0,0,.9958,0
+                ,0,0,.7122,.2185,.0664,0,.9808,0,0,0,.9366,.0376,0,0,.689,.2658,.0262,0,.9097,.0283,0,0,.9458,.0537,0,0,.9784,0,0,0,.9596,.0301,0,0,.9835,0,0,0,.7122,.2185,.0664,0,.5933,.202,.202,0,.7122,.2185,.0664,0
+                ,.7112,.1598,.1128,0,.9868,0,0,0,.8771,.1167,0,0,.9702,0,0,0,.9582,.0129,0,0,.7723,.175,.0295,0,.8094,.1375,.02,0,.8138,.1394,.0032,0,.9517,.0231,0,0,.9702,0,0,0,.9844,0,0,0,.9829,0,0,0,.8191,.14
+                ,0,0,.7723,.175,.0295,0,.9381,.0467,0,0,.8667,.1136,0,0,.9652,.0146,0,0,.9347,.0488,0,0,.9347,.0488,0,0,.9311,.0527,0,0,.9507,.0271,0,0,.9416,.0373,0,0,.9314,.0511,0,0,.9574,.0224,0,0,.9697,.0017,0,0
+                ,.9507,.0271,0,0,.9757,0,0,0,.9697,.0017,0,0,.9956,0,0,0,.9844,0,0,0,.9934,0,0,0,.9839,0,0,0,.9897,0,0,0,.9934,0,0,0,.9959,0,0,0,.9983,0,0,0,.9987,0,0,0,.9959,0
+                ,0,0,.9897,0,0,0,.9934,0,0,0,.9775,0,0,0,.9757,0,0,0,.9679,.0109,0,0,.9652,.0146,0,0,.9956,0,0,0,.8876,.1087,0,0,.8771,.1167,0,0,.9877,0,0,0,.9868,0,0,0,.9416,.0373,0,0
+                ,.9347,.0488,0,0,.9245,.057,0,0,.9019,.074,0,0,.9582,.0129,0,0,.9517,.0231,0,0,.4989,.3399,.1305,0,.518,.22,.2176,0,.518,.22,.2176,0,.4771,.3214,.1405,.0003,.7805,.1746,0,0,.8191,.14,0,0,.8047,.1538,0,0,.8191,.1402
+                ,0,0,.8828,.0903,0,0,.8191,.1402,0,0,.8191,.14,0,0,.9122,.0672,0,0,.8828,.0903,0,0,.9245,.057,0,0,.9611,.0231,0,0,.7543,.2312,0,0,.9495,0,0,0,.9551,.0011,0,0,.9607,.0106,0,0,.9551,.0011,0,0
+                ,.7805,.1746,0,0,.8138,.1394,.0032,0,.8138,.1394,.0032,0,.8094,.1375,.02,0,.4785,.3122,.1626,0,.7793,.0782,.0782,0,.9125,.0868,0,0,.3321,.2976,.2148,.1261,.5525,.2248,.1319,.0537,.7508,.1427,.0111,0,.6207,.1559,.1408,.0155,.606,.2026,.0288,.024,.5291,.1339
+                ,.1339,.1218,.611,.1865,.1058,.053,.9739,0,0,0,.9072,.0892,0,0,.9087,.0907,0,0,.9255,.0729,0,0,.9087,.0907,0,0,.8968,.1005,0,0,.6017,.275,.1156,0,.8568,.1082,.0103,0,.8944,.0752,0,0,.8944,.0752,0,0,.7739,.2167,0,0
+                ,.4772,.4763,.0277,0,.871,.1177,0,0,.7578,.2054,0,0,.6812,.1189,.0959,.0123,.4104,.4104,.0863,.013,.7793,.0782,.0782,0,.7578,.2054,0,0,.6031,.2393,.1382,0,.6904,.2253,.0335,.0335,.7956,.0716,.0691,.0312,.6072,.2475,.0585,.029,.3231,.3193,.3193,.009,.4638,.2051
+                ,.1392,.1392,.3435,.3342,.2081,.0526,.4638,.2051,.1392,.1392,.4361,.3152,.1611,.0544,.7112,.1598,.1128,0,.3231,.3193,.3193,.009,.728,.1516,.0533,.0279,.9797,0,0,0,.9616,0,0,0,.9873,0,0,0,.9786,0,0,0,.9795,0,0,0,.9892,0,0,0
+                ,.7919,.163,.04,0,.9596,.0301,0,0,.8364,.1612,0,0,.7098,.2182,.072,0,.8719,.0811,.0441,0,.5837,.2099,.2063,0,.8731,.1033,0,0,.9966,0,0,0,.9895,0,0,0,.8099,.1837,0,0,.9611,.0231,0,0,.9895,0,0,0,.8731,.1033
+                ,0,0,.8876,.0855,.0038,0,.8731,.1033,0,0,.9715,0,0,0,.7098,.2182,.072,0,.9458,.0537,0,0,.9229,.0765,0,0,.6968,.1625,.1407,0,.9784,0,0,0,.99,0,0,0,.9355,.0644,0,0,.9786,0,0,0,.9873,0,0,0
+                ,.9958,0,0,0,.9229,.0765,0,0,.9786,0,0,0,.9616,0,0,0,.8607,.0704,.0086,0,.6782,.1442,.0964,.0553,.8607,.0704,.0086,0,.5525,.2248,.1319,.0537,.6072,.2475,.0585,.029,.8624,.1355,0,0,.871,.1177,0,0,.9607,.0106,0,0,.8114,.1813
+                ,0,0,.7739,.2167,0,0,.8114,.1813,0,0,.9495,0,0,0,.6017,.275,.1156,0,.8568,.1082,.0103,0,.8568,.1082,.0103,0,.98,0,0,0,.9125,.0868,0,0,.7144,.2808,0,0,.9646,.0151,0,0,.9072,.0892,0,0,.9255,.0729,0,0
+                ,.9212,.0638,0,0,.9807,0,0,0,.9739,0,0,0,.871,.1177,0,0,.728,.1516,.0533,.0279,.4647,.2572,.1702,.0204,.9125,.0868,0,0,.5163,.1803,.1063,.097,.4,.3823,.1418,.039,.6072,.2475,.0585,.029,.4771,.3214,.1405,.0003,.761,.1897,0,0,.7202,.2092
+                ,.0706,0,.8381,.0827,.0792,0,.7451,.1908,.0641,0,.9044,.0571,.0269,0,.8311,.1482,0,0,.9702,0,0,0,.9086,.0878,0,0,.9702,0,0,0,.9441,.0171,0,0,.9739,0,0,0,.9646,.0151,0,0,.98,0,0,0,.9709,0,0,0
+                ,.4647,.2572,.1702,.0204,.5163,.1803,.1063,.097,.5927,.1445,.0873,.0681,.606,.2026,.0288,.024,.8252,.0294,.0294,.0125,.7508,.1427,.0111,0,.9052,.0425,.0089,0,.8622,.081,.0094,0,.4,.3823,.1418,.039,.4939,.2195,.185,.0562,.9212,.0638,0,0,.8622,.081,.0094,0,.4,.3823
+                ,.1418,.039,.8311,.1482,0,0,.4882,.2339,.1942,.0589,.2886,.2316,.226,.226,.4319,.2727,.1387,.1387,.7157,.2754,0,0,.9715,0,0,0,.9966,0,0,0,.9708,.0137,0,0,.8719,.0811,.0441,0,.7919,.163,.04,0,.8099,.1837,0,0,.8364,.1612,0,0
+                ,.9836,0,0,0,.9795,0,0,0,.9892,0,0,0,.7308,.1244,.1244,0,.689,.2658,.0262,0,.9797,0,0,0,.6207,.1559,.1408,.0155,.657,.1395,.0792,.0792,.4361,.3152,.1611,.0544,.611,.1865,.1058,.053,.3435,.3342,.2081,.0526,.6031,.2393,.1382,0,.4104,.4104
+                ,.0863,.013,.7578,.2054,0,0,.6812,.1189,.0959,.0123,.3718,.3718,.1231,.0909,.2886,.2316,.226,.226,.3321,.2976,.2148,.1261,.7379,.1548,.0658,0,.8624,.1355,0,0,.4785,.3122,.1626,0,.8355,.0843,.0492,0,.9958,0,0,0,.9808,0,0,0,.9366,.0376,0,0
+                ,.7122,.2185,.0664,0,.9097,.0283,0,0,.9784,0,0,0,.9458,.0537,0,0,.9835,0,0,0,.9596,.0301,0,0,.689,.2658,.0262,0,.7308,.1244,.1244,0,.5933,.202,.202,0,.5933,.202,.202,0,.3231,.3193,.3193,.009,.7112,.1598,.1128,0,.9507,.0271
+                ,0,0,.4989,.3399,.1305,0,.9582,.0129,0,0,.9702,0,0,0,.8094,.1375,.02,0,.7723,.175,.0295,0,.6152,.289,.0399,.0399,.6152,.289,.0399,.0399,.7805,.1746,0,0,.9311,.0527,0,0,.95,.0262,0,0,.9517,.0231,0,0,.95,.0262,0,0
+                ,.9687,0,0,0,.9702,0,0,0,.9829,0,0,0,.9702,0,0,0,.9844,0,0,0,.9868,0,0,0,.9829,0,0,0,.8191,.14,0,0,.7723,.175,.0295,0,.8667,.1136,0,0,.7723,.175,.0295,0,.9381,.0467,0,0,.8771,.1167
+                ,0,0,.8667,.1136,0,0,.9347,.0488,0,0,.9199,.0613,0,0,.9311,.0527,0,0,.9314,.0511,0,0,.9416,.0373,0,0,.9507,.0271,0,0,.9574,.0224,0,0,.9381,.0467,0,0,.9507,.0271,0,0,.9652,.0146,0,0,.9574,.0224,0,0
+                ,.9697,.0017,0,0,.9987,0,0,0,.9934,0,0,0,.9844,0,0,0,.9934,0,0,0,.9934,0,0,0,.9897,0,0,0,.9843,0,0,0,.9839,0,0,0,.9843,0,0,0,.9897,0,0,0,.9987,0,0,0,.9983,0
+                ,0,0,.9959,0,0,0,.9959,0,0,0,.9934,0,0,0,.9843,0,0,0,.9679,.0109,0,0,.9652,.0146,0,0,.9757,0,0,0,.8771,.1167,0,0,.9679,.0109,0,0,.9877,0,0,0,.9868,0,0,0,.8876,.1087,0,0
+                ,.9775,0,0,0,.9687,0,0,0,.9843,0,0,0,.9347,.0488,0,0,.9416,.0373,0,0,.8138,.1394,.0032,0,.9245,.057,0,0,.9517,.0231,0,0,.8919,.0915,0,0,.5947,.2662,.0655,.0655,.6152,.289,.0399,.0399,.518,.22,.2176,0,.4989,.3399
+                ,.1305,0,.761,.1897,0,0,.4771,.3214,.1405,.0003,.518,.22,.2176,0,.4319,.2727,.1387,.1387,.5947,.2662,.0655,.0655,.7805,.1746,0,0,.8047,.1538,0,0,.8047,.1538,0,0,.8443,.121,0,0,.8828,.0903,0,0,.8443,.121,0,0,.8832,.0901,0,0
+                ,.8191,.14,0,0,.8832,.0901,0,0,.9122,.0673,0,0,.8828,.0903,0,0,.9122,.0672,0,0,.921,.0604,0,0,.9245,.057,0,0,.9122,.0673,0,0,.9199,.0613,0,0,.7543,.2312,0,0,.9611,.0231,0,0,.9495,0,0,0,.7543,.2312
+                ,0,0,.9551,.0011,0,0,.9971,0,0,0,.9607,.0106,0,0,.9551,.0011,0,0,.7805,.1746,0,0,.8191,.14,0,0,.8138,.1394,.0032,0,.8138,.1394,.0032,0,.8094,.1375,.02,0,.8094,.1375,.02,0,.7723,.175,.0295,0,.9122,.0672,0,0
+                ,.9122,.0672]);
                 this.setVerticesData(_B.VertexBuffer.MatricesWeightsKind, _i, false);
 
-                _i = new Uint32Array(1853);
-                _i.set([319424776,168364039,319424776,168232459,463626,657163,168232459,168232459,168232459,3083,3083,3083,168364039,319424776,319424776,2571,657163,657163,470222341,329223,117835019,168232459,168232453,117835019,2571,657163,2571,117835019,470222341,470222341,2571,11,3083,12]);
-                REPEAT(_i, 34, 8, 3083);
-                _i.set([3340,3340,3340,3083,3083,3083,12,3083,3083,12,3083,3340,1051916,1051916,1051916,1051916,12,3340,1051916,12,3340,3340,920844,14,1052173,3340,1051916,1051916,3340,3340,1051916,1051916,1051916,3597,286264845,1052173,168298251,2571,2571,168364039,319293194,463626,657415,657163,168232459,319293194,319424519,657415,168298251,168298251
-                ,168364039,470222341,505153029,470222341,470222341,470222341,470222341,470222341,470222341,505153029,1973253,470222341,470222341,1836549,470222341,1836549,1836549,28,28,28,7173,28,7173,7173,28,7452], 42);
+                _i = new Uint32Array(1526);
+                _i.set([319358986,118032904,319424776,101321479,1247751,722698,101124619,470418951,168494599,3083,2828,2828,151524106,319358986,319358986,2571,657163,657163,470091526,329223,84608519,319162887,168101638,470419206,2826,461323,2571,185015302,117769756,84346396,2571,11,2828,12,2828,3083,3083,3083,2828,2828,2828,3083,3340,3340,3340,2828,2828,2828,12,2828
+                ,2828,12,2828,3340,856076,856076,856076,1051661,12,3340,856076,12,3340,3340,790029,14,921613,3340,1051916,1051661,3085,3340,856076,1051661,1051661,3597,286134285,1052173,117967626,2826,2571,151524106,134681354,1247751,526855,722698,101124874,134681354,319424519,657415,117967626,185010186,118032394,505153029,503711004,503716869,470222086,503716869,117775366,117769756
+                ,117840901,102636549,1967388,84346396,117769756,329244,117840901,394524,394524,28,28,28,1308,28,1308,1308,28,7452]);
                 REPEAT(_i, 118, 10, 28);
-                _i.set([7452,7452,7452,28,7452,7452,28,7452,28,7452,7452,7425,72962,29,7452,7452,7452,7452,7452,7452,258,258,258,7426,72962,258,29,72962,72962,29,72962,72962,2,2,258,2,2,2,7426,72962,72962,258,258,72962,269422093,3854,986637,3340,3597,986637
-                ,986637,7426,258,2,258,72962,2,258,258,29,72962,7452,7452,29,29,28,7452,28,28,28,28,28,28,1836549,470222341,1836549,168364043,168364039,319424776,168298251,2571,2571,1118221,3340,920844,3340,3340,1051916,1051916,1051916,3083,3083,3340,3340,3083,3083,12,12,2571,11
-                ,117835019,470222341,3083,3083,168232459,168232459,168232459,168364039,168364039,168364039,319424776,319424776,319424519,657415,657415], 128);
-                REPEAT(_i, 243, 9, 72962);
-                _i.set([258,11,11,11,657163,2571,11,12,12,117835019,117838859,168232453,657163,657163,168232459,168232459,657163,657163,168232459,657163,657163,72962,72962,657415,168298251,319424776,319424776,319424776,258,2,258,7426,7426,72962,29,72962,258,7452,28,28,7173,1973253,1973253,28,470222341,470222341,470222341,470222341,134681354,117838602
-                ,657163,2571,2571,319424776,657163,2571,1973253,7173,7173,1973253,28,7173,1973253,28,7173,7173,1973253,7173,28,1973253,7452,29,1973253,1973253,1973253,470222341,9,9,2057,2057,2057,657417,9,2057,657417,657417,9,2057,2057,657417,319424521,657417,2057,2057,319424521,2057,2057,2057,2057,9
-                ,2057,9,9,2057,9,9,9,9,9,9,2057,2057,657417,657417,2057,657417,2057,2057,657417], 252);
-                REPEAT(_i, 371, 15, 2057);
-                REPEAT(_i, 386, 12, 9);
-                _i.set([2057,9,2057,2057,9,2057,2057,9,9,9,2057,2057,2057,2057,657417,319424521,319424521,168298249,1800,319424521,319424521,657417,657417,657417,168298249,2055,168364039,657417,657417,2057], 398);
-                REPEAT(_i, 428, 8, 2312);
-                _i.set([2057,2057,2312,2312,2057,2312,2312,2057,2057,2312,3854,3854,3854,986637,986637,14,3854,3854,3597,4368,4108,286264588,1118221,4368,17,17,4368,4368,17,4368,3597,3597,2057,2057,2057,657417,2057,2057,2057,2057,657417,2057], 436);
-                REPEAT(_i, 478, 8, 657417);
-                _i.set([2057,657417,169019656,319358983,319358983,319227412,463626,117838859,319227412,319227412,319227412,5396,5396,5396,319358983,169019656,319358996,1246996,4884,1246996,117835028,470222341,503776773,117835028,117838602,319227412,4884,1246996,319227412,503776773,319227397,117835028,4884,4884,21], 486);
-                REPEAT(_i, 521, 8, 5396);
-                _i.set([5653,5653,5653,5396,5396,21,5396,5396,21,5396,5396,1709589,5653,1709589,1709589,1709589,21,5653,21,5653,5653,23,1512981,1709846,1709589,5653,5653,1709589,5653,1709589,1709589,5910,454694678,1709589,319293204,4884,134681354,168364039,1247239,463626,1246996,168298259,319424519,319424519,319293204,319293204,319293204,471729669,470222341,503776773
-                ,503776773,470222341,470222341,503776773,117835028,1842693,505153029,503776773,503776773,503776773,503776773,1967621,503776773,30,30,30,1967621,7685,1967621,7685,7966,30,30,30,30,30,30,30,7685,30,30,30,7966,7966,7966,30,7966,30,30,30,30,7966,30,204548,7939,31,7966,7966,7966,7966
-                ,7966,7966,772,772,772,772,31,7940,31,204548,31,31,204548,31,4,4,4,4,4,7940,204548,7940,204548,772,772,204548,6167,437786390,1578774,1512981,5653,1578774,5910,1578774,772,204548,204548,204548,772,4,772,204548,31,7966,7966,7966,31,30,7966,30
-                ,30,30,30,30,30,1967621,503776773,1967621,503776773,319358983,4884,319293204,1776150,5653,5653,5653,5653,1709589,21,1709589,1709589,5396,5396,5653,5396,5396,21,5396,20,4884,117835028,5396,5396,319227412,319227412,1246996,319358983,319358983,319293204,169019656,169019656,1247239,2055,319424519], 529);
-                REPEAT(_i, 723, 12, 204548);
-                _i.set([772,20,5396,20,20,1246996,4884,1246996,20,4884,21,21,21,21,5396,319227412,168232453,329223,319227412,1246996,319227412,1246996,1246996,1246996,319227412,1246996,1246996,772,204548,319293204,1247239,319424776,169019656,772,4,204548,7940,7940,204548,204548,204548,772,7966,30,7966,30,1973253,7685,470222341,1973253
-                ,470222341,503776773,503776773,134681354,117838602,4884,168298259,168364039,169019656,1246996,1246996,1842693,7685,1842693,7685,30,7685,1842693,1842693,7685,7685,1842693,7685,30,1842693,7966,7966,31,7966,1842693,1973253,1842693,1973253,1842693,1842693,470222341,9,9,9,2057,2057,2057,2057,9,1247241,1247241,2057,9,2057,169019401
-                ,1247241,1247241,319424521,2057,1247241,2057,2057,2057,2057], 735);
-                REPEAT(_i, 844, 10, 9);
-                _i.set([2057,2057,1247241,1247241], 854);
-                REPEAT(_i, 858, 18, 2057);
-                REPEAT(_i, 876, 11, 9);
-                _i.set([2057,9,9,2057,2057,2057,9,2057,2057,9,9,9,2057,2057,2057,1247241,2057,2057,169019401,1247241,169019401,169019401,319293193,2057,1800,319424521,1247241,1247241,319293193,2055,1800,319358983,319424776,1247241,2057,2312,2057,2312,2312,2312,2312,2312,2312,2312,2057,2312,2312,2312,2057,2057
-                ,2312,2312,2057,2312,2312,6167,6167,1578774,6167,1578774,6167,23,5910,6938,1776150,6677,6938,27,6938,6938,454694421,27,6938,5910,5910,1709846,2057,2057,1247241,2057,2057,2057,1247241,2057,1247241,1247241,1247241,1247241,1247241,1247241,1247241,2312,2057,2312,2057,168364039,319424776,168232459,3083,3083
-                ,3083,3083,3083,1051916,3340,3340,1051916,2571,134681354,463626,319424519,2571,319293194,319424519,168298251,470222341,470222341,1973253,470222341,470222341,470222341,470222341,28,28,28,28,28,28,28,72962,2,2,258,258,3854,72962,258,72962,72962,2,258,29,72962,7452,7452,7452,7452,29,72962,28
-                ,28,7452,28,28,28,28,28,7452,1836549,28,470222341,470222341,1836549,168364039,168298251,2571,3340,3597,3340,3340,3340,14,12,1051916,1051916,3083,12,3340,3340,3083,3083,3083,3083,12,2571,11,117835019,470222341,3083,3083,657163,168232459,168364039,168298251,319424519], 887);
-                REPEAT(_i, 1082, 9, 72962);
-                _i.set([258,72962,11,3083,11,2571,657163,11,2571,12,3340,12,12,168232459,117835019,657163,168232459,657163,657163,3083,168232459,258,72962,657415,319424776,258,72962,2,7426,2,72962,258,28,28,28,28,470222341,470222341,319293194,657163,319424776,657163,1973253,7173,28,28,1973253,28,7173,1973253
-                ,7173,7452,29,7452,29,1973253,1973253,1973253,1973253,9,2057,9,2057,657417,657417,657417,2057,9,9,9,2057,657417], 1091);
-                REPEAT(_i, 1163, 12, 2057);
-                _i.set([9,2057], 1175);
-                REPEAT(_i, 1177, 14, 9);
-                _i.set([2057,2057,9,2057,2057,9,9,2057,2057,2057,2312,2057,2057,657417,657417,657417,168364039,2057,2057,2312,2312,2312,2312,2057,2312,2312,2057,3854,3854,14,3597,3597,3597,2057,657417,657417,657417,1246996,463626,5396,169019656,169019656,329223,470222341,168232453,117838602,503776773,20,5396,5396
-                ,5396,5396,1709589,5396,1709589,1709589,5653,5653,5653,1709589,4884,4884,168298259,134681354,463626,4884,1247239,319424519,319293204,319358983,505153029,470222341,503776773,470222341,503776773,1842693,505153029,503776773,30,30,30,30,30,30,204548,7966,772,204548,204548,204548,772,4,4,772,6167,4,772,204548,772,4
-                ,204548,7966,7966,204548,31,30,7966,30,30,30,7966,30,30,1967621,503776773,1967621,169019656,319358983,4884,4884,5910,5653,5653,5653,23,1709589,1709589,21,5396,5653,5653,5396,5396,5396,21,20,4884,503776773,117835028,5396,319227412,319227412,319358983,319358983,2055,204548,204548,204548,204548,772
-                ,20,5396,20,4884,20,5653,21,21,117835028,319227412,470222341,168232453,117838859,329223,1246996,1246996,319227412,319227412,5396,1246996,319227412,772,319293204,319424776,319424776,772,4,4,7940,204548,204548,772,772,30,30,30,1973253,1842693,30,470222341,470222341,503776773,503776773,503776773,1247239,134681354,4884,168298259,168364039,319424776
-                ,169019656,1246996,4884,1246996,1842693,30,30,7685,1842693,7685,31,7966,31,7966,1842693,1973253,1973253,1973253,505153029,1842693,2057,1247241,2057,9,1247241,1247241,319424521,319424521,2057,2057,2057,2057,2057,9,9,9,9,9,9,9,2057,1247241,2057,1247241], 1191);
-                REPEAT(_i, 1435, 15, 2057);
-                REPEAT(_i, 1450, 16, 9);
-                _i.set([2057,2057,9,2057,2057,9,9,2057,9,9,9,2057,2057,1247241,2057,2057,2057,319424521,319424521,1247241,1247241,2055,319358983,1247241,319424776,319424521,2057,2312,2312,2312,2312,2312,2312,2057,2312,2312,2312,2312,2057,2057,2312,2057,6167,6167,23,6167,5910,27,5910,5910
-                ,2057,2057,1247241,1247241,1247241,1247241,1247241,2312,2312,503776773,470222341,503776773,470222341,505153029,470222341,470222341,503776773,503776773,503776773,505153029,1973253,470222341,470222341,1836549,470222341,1836549,1836549,28,28,28,7173,28,7173,7173,28,28,28,28,28,28,28,7452,7452,28,7452,7452,28,7452,28,28
-                ,7452,28,28,28,470222341,1836549,117835028,319227397,319227397,7452,28,7452,28,7173,1973253,1973253,28,470222341,470222341,168232453,168232453,470222341,470222341,470222341,1973253,7173,7173,1973253,28,7173,7173,7173,7173,28,1973253,1973253,503776773,503776773,503776773,471729669,470222341,503776773,117835019,470222341,470222341,503776773,503776773,1842693,505153029,1967621
-                ,503776773,1967621,30,30,30,7685,503776773,1967621,7685,30,30,30,30,30,30,30,7966,30,30,7966,30,7966,30,30,30,7966,30,1973253,505153029,1842693,30,30,28,1842693,30,1967621,1967621,503776773,470222341,7966,30,7966,30,7685,1973253,7685,30,470222341,1973253,470222341
-                ,503776773,503776773,1842693,7685,1842693,7685,30,7685,1973253,1842693,7685,7685,30,28,7685,30,1842693,1842693,7966,28,470222341,319227397,470222341,470222341,117835019,470222341,470222341,117835028,168232453,470222341,117835028,117835028,117835028,470222341,470222341,503776773,117835019,117835019,117835019,470222341,503776773,117835019,470222341,470222341,470222341,470222341,470222341,470222341,470222341,117835019
-                ,470222341,470222341,470222341,470222341,503776773,117835028,470222341,470222341,503776773,117835028,503776773,117835028,503776773,503776773,470222341,117835019,470222341,470222341,470222341,470222341,117835019,470222341,470222341,503776773,470222341,470222341,117835028,117835028], 1466);
-                _i.set([470222341,470222341,1973253,28,28,28,28,28,28,28,7452,28,28,1836549,28,470222341,1836549,28,28,28,28,1973253,7173,28,28,7173,7173,505153029,470222341,503776773,505153029,30,30,30,30,7966,30,7966,30,1973253,1842693,1967621,470222341,470222341,30,30,1973253,1842693,30,30
-                ,470222341,1842693,30,30,7685,30,7685,1842693,28,470222341,117835028,117835028,117835019,470222341,470222341,470222341,470222341,117835019,470222341,470222341,470222341,470222341,503776773,503776773,503776773,470222341,503776773,503776773,503776773,503776773,117835028,470222341,503776773,503776773,503776773,117835019,470222341,470222341,117835019,470222341,470222341,470222341,117835028], 1760);
+                _i.set([7452,7197,7197,28,7452,7452,28,7452,28,7452,7452,285,1901057,29,7197,7197,7452,7197,7197,7197,513,258,513,541,1901057,258,29,131357,66077,29,131357,1901057,2,2,258,2,2,2,7426,1900802,1900802,513,258,1900802,269421838,3599,986382,3085,3342,855567
+                ,986382,7426,258,2,258,1900802,2,513,513,29,1901057,7452,7197,29,29,28,7452,28,28,28,28,28,28,329244,117769756,329244,319490058,118032394,319358986,134679306,2571,2571,1117456,3085,790029,3340,3085,856076,856076,856076,855056,2828,2828,3340,3340,3083,2828,12,12,2571
+                ,11,84352006,84346396,3083,2828,470158087,101124619,168494599,118032394,151456264,118032904,319424521,319358986,319424519,657160,657415,1901057,1900802,131357,1900802,1901057,1901057,131357,1901057,66077,258,11,11,11,657163,2571,11,12,12,185015302,101976839,84352006,657163,461323,101124619,101124874,461323,461323,101124619,461323,657163,66077,131357,657415,185010186
+                ,319358986,319424521,319424776,258,2,513,7426,7426,1900802,29,1901057,513,7197,28,28,1308,1973253,1973253,28,505153029,505153029,470091526,117769756,134681354,101911047,722698,2571,2826,319424776,657163,2571,1967388,1308,1308,1973253,28,1308,1967388,28,1308,1308,1967388,1308,28,1967388,7197,29,1973253,1973253,1967388
+                ,117840901,9,9,2057,2312,2057,657672,9,2057,657417,657672,9,2057,2057,657417,319424521,657672,2057,2057,319424521,2057,2057,2057,2057,9,2057,9,9,2057,9,9,9,9,9,9,2057,2057,657417,657417,2057,657417,2057,2057,657417], 128);
+                REPEAT(_i, 372, 15, 2057);
+                REPEAT(_i, 387, 12, 9);
+                _i.set([2057,9,2057,2057,9,2057,2312,9,9,9,2057,2057,2057,2057,657417,319424521,319424521,151652104,1800,319424521,319424521,657672,592392,592392,118032904,1800,118032904,657417,657417], 399);
+                REPEAT(_i, 428, 19, 2057);
+                _i.set([3599,3599,3599,855567,986382,14,3599,3599,3342,4113,3088,286067728,1117456,4113,17,17,4113,4113,17,4113,3597,3342,2057,2057,2057,657417,2057,2057,2057,2057,657417,2057], 447);
+                REPEAT(_i, 479, 8, 657417);
+                _i.set([2057,657417,168364051,118035208,118032403,101913607,1247751,101976839,320079367,101127187,101126932,5396,5141,5396,151521811,168364051,169084947,1246996,4884,1246996,85198343,470091526,503645958,504563462,101911047,168170247,5139,463636,101127187,84346398,84352518,336010758,4884,4884,21,5141,5141,5396,5396,5141,5396,5141,5396,5653,5653,5653,5141,5141,21,5141
+                ,5141,21,5141,5141,1448469,5653,1448469,1709334,1448469,21,5653,21,5653,5653,23,1382166,1514006,1709589,5653,5398,1709334,5653,1709334,1448469,1709334,5910,454498838,1447194,117969939,5139,134681354,151524106,529159,1247751,1312531,134679059,319424519,135465479,117969939,336005139,134681619,470156574,505153029,470162949,117775878,505153029,470222086,117769758,84352518,1836318
+                ,102636549,84346398,117769758,117769758,117841413,394526,117769758,30,30,30,329246,1310,394526,1310,7966,30,30,30,30,30,30,30,1310,30,30,30,7966,7711,7966,30,7966,30,30,30,30,7966,30,2032643,799,31,7966,7711,7711,7966,7966,7711,1027,772,772,772
+                ,31,1055,31,262943,31,31,262943,31,4,4,4,4,4,7940,2032388,7940,2032388,772,1027,2032388,5912,437786135,1578519,1382166,5398,1447704,5655,1578519,772,2032388,2032388,2032388,1027,4,1027,2032643,31,7966,7711,7966,31,30,7966,30,30,30,30,30,30,329246
+                ,117769758,329246,84346398,118032403,4884,117969939,1775130,5398,5653,5398,5653,1448469,21,1448469,5141,5141,5653,5141,5396,21,5141,20,4884,336010758,5141,5396,503714823,101126932,1246996,118032403,151458568,336005139,168364051,169019656,1247239,1800,319424519,2032643,2032388,2032643,262943,2032388,2032643,2032643,2032643,262943,2032643,197663,262943,772
+                ,20,5396,20,20,1246996,4884,463636,20,4884,21,21,21,21,5141,320079367,168101638,329223,504563207,1246996,101126932,463636,463636,463636,101126932,463636,1246996,772,262943,336005139,1246984,319424776,169019401,772,4,2032388,7940,7940,2032388,197663,2032643,1027,7711,30,7711,30,1973253,1310,505153029,1973253,470091526
+                ,117841413,117769758,134681354,101911047,4884,134679059,151524106,168364051,1246996,1312531,1836318,1310,1842693,1310,30,1310,1836318,1836318,1310,1310,1836318,1310,30,1836318,7711,7711,31,7711,1842693,1973253,1836318,1973253,1836318,1836318,505153029,9,9,9,2312,2057,2057,2057,9,1247496,1247241,2057,9,2057,169019401,1247241
+                ,1247496,319424521,2057,1247241,2057,2057,2057,2057], 487);
+                REPEAT(_i, 845, 10, 9);
+                _i.set([2057,2057,1247241,1247241], 855);
+                REPEAT(_i, 859, 18, 2057);
+                REPEAT(_i, 877, 11, 9);
+                _i.set([2057,9,9,2057,2057,2057,9,2057,2312,9,9,9,2057,2057,2057,1247241,2057,2057,169019401,1247241,169019401,169019401,152241928,2312,1800,319424521,594696,594696,118035208,1800,1800,118035208,319424521,1247241], 888);
+                REPEAT(_i, 922, 21, 2057);
+                _i.set([5912,5912,1447704,5912,1578519,5912,23,5655,6683,1775130,5402,6683,27,6683,6683,454432026,27,6683,5910,5655,1709846,2057,2057,1247241,2057,2057,2057,1247241,2057,1247241,1247241,1247241,1247241,1247241,1247241,1247241,2057,2057,2057,2057,118032394,319358986,101124874,2828,2828,2828,2828,2828,856076,3340
+                ,3340,1051661,2826,134681354,1247751,135465479,2826,134681354,135465479,117967626,505153029,503716869,1967388,84346396,117769756,117840901,117769756,28,28,28,28,28,28,28,1901057,2,2,513,258,3599,1900802,258,1900802,1900802,2,258,29,1901057,7452,7197,7452,7197,29,1901057,28,28,7452,28,28,28
+                ,28,28,7452,329244,28,117769756,84346396,329244,118032394,117967626,2571,3085,3597,3340,3340,3085,14,12,856076,856076,2828,12,3340,3340,3083,2828,2828,2828,12,2571,11,185015302,84346396,3083,2828,657163,101124619,118032394,185010186,319424519,1901057,1901057,1900802,131357,1901057,1900802,131357,66077,131357,258
+                ,1901057,11,3083,11,2571,461323,11,2571,12,3340,12,12,168494599,185015302,657163,101124619,461323,461323,3083,101124619,258,66077,657415,319358986,258,1900802,2,7426,2,1901057,513,28,28,28,28,505153029,503716869,134681354,722698,319424776,657163,1967388,1308,28,28,1967388,28,1308,1973253,1308
+                ,7197,29,7197,29,1967388,1973253,1967388,1967388,9,2057,9,2057,657417,657417,657417,2057,9,9,9,2057,657417], 943);
+                REPEAT(_i, 1164, 12, 2057);
+                _i.set([9,2057], 1176);
+                REPEAT(_i, 1178, 14, 9);
+                _i.set([2057,2057,9,2057,2057,9,9,2057,2057,2057,2057,2057,2057,657672,592392,592392,118032904], 1192);
+                REPEAT(_i, 1209, 10, 2057);
+                _i.set([3599,3599,14,3342,3597,3342,2057,657417,657417,657417,1312531,1247751,5141,168364051,168364051,329223,470091526,168101638,101911047,117769758,20,5141,5141,5141,5141,5141,1448469,1448469,5653,5653,5653,1709334,4884,5139,134679059,134681354,1247751,5139,1247239,319424519,117969939,118032403,102636549,505153029,470162949,505153029,117841413,1836318,102636549,84346398
+                ,30,30,30,30,30,30,2032643,7711,1027,2032643,197663,2032643,772,4,4,1027,5912,4,772,2032388,772,4,2032643,7711,7966,2032643,31,30,7966,30,30,30,7966,30,30,329246,117769758,329246,168364051,118032403,4884,4884,5910,5398,5653,5398,23,1448469,1448469,1448469
+                ,21,5141,5653,5653,5141,5141,5396,21,20,4884,84346398,336010758,5141,320079367,101126932,118032403,118035208,1800,2032388,262943,2032388,262943,772,20,5396,20,4884,20,5653,21,21,336010758,320079367,470222086,168101638,101976839,329223,1246996,463636,101126932,101127187,5396,463636,101126932,772,336005139,319424776,319424521,772,4
+                ,4,7940,197663,2032643,1027,1027,30,30,30,1973253,1842693,30,470091526,505153029,117841413,117769758,470162949,1247239,134681354,5139,134679059,151524106,319424776,168364051,1246996,4884,1312531,1836318,30,30,1310,1836318,1310,31,7711,31,7711,1842693,1973253,1973253,1973253,102636549,1836318,2057,1247496,2057,9,1247241,1247241,319424521
+                ,319424521,2057,2057,2057,2057,2057,9,9,9,9,9,9,9,2057,1247241,2057,1247241], 1219);
+                REPEAT(_i, 1436, 15, 2057);
+                REPEAT(_i, 1451, 16, 9);
+                _i.set([2057,2057,9,2057,2057,9,9,2057,9,9,9,2057,2057,1247241,2057,2057,2312,319424521,319424521,594696,1247496,1800,118035208,594696,319424521,319424521], 1467);
+                REPEAT(_i, 1493, 16, 2057);
+                _i.set([5912,5912,23,5912,5655,27,5910,5655,2057,2057,1247241,1247241,1247241,1247241,1247241], 1509);
+                REPEAT(_i, 1524, 2, 2057);
                 this.setVerticesData(_B.VertexBuffer.MatricesIndicesKind, UNPACK(_i), false);
 
-                _i = new Float32Array(7412);
-                _i.set([.0584,0,0,0,.0746], 28);
-                _i.set([.1473], 48);
-                _i.set([.0073,0,0,0,.0642,0,0,0,.024,.0016,.0016,0,.0629,.0367], 80);
-                _i.set([.0084,.2572], 108);
-                _i.set([.3718], 324);
-                _i.set([.0158,0,0,0,.1392,0,0,0,0,0,0,0,.0526,0,0,0,.0681,0,0,0,.0526,0,0,0,.0158], 368);
-                _i.set([.0033], 416);
-                _i.set([.0063,0,0,0,.0158], 816);
-                _i.set([.2225], 912);
-                _i.set([.0608,0,0,0,0,0,0,0,.0746,0,0,0,.0158], 928);
-                _i.set([.0084,.2572,0,0,0,0,0,0,.2109], 1044);
-                _i.set([.0792,0,0,0,.0792,0,0,0,.0155], 1184);
-                _i.set([.0158], 1960);
-                _i.set([.0746], 1976);
-                _i.set([.1473,0,0,0,0,0,0,0,.0063], 2000);
-                _i.set([.0073,0,0,0,.0155,0,0,0,0,0,0,0,.0629,.0367,0,0,0,0,0,0,.0642], 2024);
-                _i.set([.2109,0,0,0,.0084,.2572], 2064);
-                _i.set([.3718], 2264);
-                _i.set([.1392,0,0,0,.0526,0,0,0,.0158,0,0,0,.1392,0,0,0,.0681,0,0,0,0,0,0,0,.2225], 2308);
-                _i.set([.0033], 2348);
-                _i.set([.0158], 2752);
-                _i.set([.0084,.2572], 2836);
-                _i.set([.0608], 2848);
-                _i.set([.0158], 2860);
-                _i.set([.0746,0,0,0,.024,.0016,.0016,0,0,0,0,0,.0584], 3000);
-                _i.set([.0792,0,0,0,0,0,0,0,.0155], 3132);
-                _i.set([.3718], 3168);
-                _i.set([.0792], 3280);
-                _i.set([.0158], 3928);
-                _i.set([.1392,0,0,0,.0526], 4008);
-                _i.set([.0158], 4200);
-                _i.set([.0084,.2572], 4292);
-                _i.set([.0158], 4316);
-                _i.set([.0746,0,0,0,.0084,.2572], 4416);
-                _i.set([.0792,0,0,0,.0526], 4508);
-                _i.set([.0155,0,0,0,.024,.0016,.0016], 4936);
-                _i.set([.0158,0,0,0,0,0,0,0,.1392,0,0,0,.0526,0,0,0,.1392], 5040);
-                _i.set([.0158], 5232);
-                _i.set([.0084,.2572,0,0,0,0,0,0,.0746,0,0,0,0,0,0,0,.0158], 5316);
-                _i.set([.0084,.2572,0,0,.0746,0,0,0,.0681,0,0,0,.024,.0016,.0016], 5396);
-                _i.set([.0155,0,0,0,.0792], 5520);
-                _i.set([.0526], 5536);
-                _i.set([.3718], 5556);
-                _i.set([.0155,0,0,0,0,0,0,0,.1392,0,0,0,0,0,0,0,.0526,0,0,0,.1392,0,0,0,0,0,0,0,.0526], 6104);
-                _i.set([.0033], 6152);
-                _i.set([.0084,.2572,0,0,.2109,0,0,0,.2109], 6288);
-                _i.set([.0792,0,0,0,.0158,0,0,0,.2109,0,0,0,.2109,0,0,0,.0792], 6332);
-                _i.set([.1392,0,0,0,.0526,0,0,0,.2225], 6424);
-                _i.set([.0033], 6488);
-                _i.set([.1392], 6616);
-                _i.set([.0792], 6652);
-                _i.set([.0158,0,0,0,.0158], 6664);
-                _i.set([.0792,0,0,0,.2109,0,0,0,.0155,0,0,0,0,0,0,0,.2225,0,0,0,.0681,0,0,0,.0681,0,0,0,.0084,.2572,0,0,.2109,0,0,0,.0158,0,0,0,.0084,.2572,0,0,.2225,0,0,0,.2225,0
-                ,0,0,.0155,0,0,0,.0155,0,0,0,0,0,0,0,.0084,.2572,0,0,.0084,.2572,0,0,.0084,.2572,0,0,.0681,0,0,0,.0158,0,0,0,.0084,.2572], 6744);
-                _i.set([.0681,0,0,0,.0526,0,0,0,.0158], 6840);
-                _i.set([.2225,0,0,0,0,0,0,0,.0792,0,0,0,.0155], 6860);
-                _i.set([.0084,.2572,0,0,.1392,0,0,0,.0681,0,0,0,0,0,0,0,.2225,0,0,0,0,0,0,0,.0084,.2572], 6884);
-                _i.set([.0084,.2572,0,0,.0681,0,0,0,.0681,0,0,0,.0526,0,0,0,.0155,0,0,0,.0084,.2572], 6924);
-                _i.set([.0792,0,0,0,.0792,0,0,0,.0084,.2572,0,0,.0084,.2572], 6960);
-                _i.set([.0155,0,0,0,.0526], 7040);
-                _i.set([.1392], 7152);
-                _i.set([.1392,0,0,0,.1392], 7208);
-                _i.set([.0155,0,0,0,.0084,.2572,0,0,.0084,.2572,0,0,.0084,.2572,0,0,.0681,0,0,0,.0681,0,0,0,0,0,0,0,.1392,0,0,0,.0084,.2572], 7276);
-                _i.set([.0792], 7320);
-                _i.set([.0526,0,0,0,.1392], 7336);
-                _i.set([.0084,.2572,0,0,.0792], 7360);
-                _i.set([.0526,0,0,0,.0084,.2572,0,0,.0681,0,0,0,.0155,0,0,0,.0084,.2572], 7376);
-                _i.set([.0792,0,0,0,.0084,.2572], 7404);
-                this.setVerticesData(_B.VertexBuffer.MatricesWeightsExtraKind, _i, false);
-
-                _i = new Uint32Array(1853);
-                _i.set([0,0,0,0,0,0,0,28,28,0,0,0,19,0,0,0,0,0,0,0,28,19,1973267,7178,0,0,0,7178]);
-                _i.set([19], 81);
-                _i.set([11,30,0,30,30,30,30,0,0,0,0,0,30], 92);
-                _i.set([19,11], 204);
-                _i.set([28,0,0,0,28,0,28,11], 228);
-                _i.set([7178,0,28], 261);
-                _i.set([30,30,30], 296);
-                _i.set([20,0,0,0,30,0,0,0,0,0,10,0,10,0,0,0,30,30,0,7699,0,10,0,0,0,0,30,7699], 490);
-                _i.set([19], 566);
-                _i.set([30,28,28,30,30,0,30,0,0,0,28], 577);
-                _i.set([20], 688);
-                _i.set([7699,0,0,30,0,0,20], 709);
-                _i.set([30,1973267,0,30], 750);
-                _i.set([30,0,30,0,0,0,0,0,0,19], 783);
-                _i.set([30], 820);
-                _i.set([11], 982);
-                _i.set([30,30], 1002);
-                _i.set([11], 1050);
-                _i.set([7178,0,0,0,0,0,11], 1073);
-                _i.set([28,7178], 1104);
-                _i.set([30,30], 1127);
-                _i.set([30,1973267], 1234);
-                _i.set([20,0,30,28,30], 1260);
-                _i.set([20], 1308);
-                _i.set([7699,0,30,0,20], 1329);
-                _i.set([7699,30,30,1973267], 1349);
-                _i.set([30,30,0,0,28,0,0,0,0,19], 1380);
-                _i.set([30,0,30,0,30,30,0,28,0,0,0,0,30], 1526);
-                _i.set([7699,30,30], 1572);
-                _i.set([30,30,28,28,30], 1583);
-                _i.set([30,28,28], 1606);
-                _i.set([28], 1622);
-                _i.set([30], 1654);
-                _i.set([30,0,0,28,28], 1663);
-                _i.set([30,30,30,0,28,30,30,7699,28,30,7699,30,30,30,30,0,7178,7178,7178,30,28,7178,0,0,30,30,30,0,0,28,0,30,30,0,0,7699,30,30,0,30,0,7699,0,0,0,7178,30,30,30,30
-                ,7178,0,0,0,30,30,7699,7699], 1686);
-                _i.set([30,30], 1760);
-                _i.set([30], 1788);
-                _i.set([30,30], 1802);
-                _i.set([30,7699,7699,7178,30,30,0,30,7178,0,0,30,0,0,0,28,30,0,0,0,0,7699,30,0,0,28,7178,30,30,7178,0,0,30,7699], 1819);
-                this.setVerticesData(_B.VertexBuffer.MatricesIndicesExtraKind, UNPACK(_i), false);
-
-                this.setMaterialByID("Warrior.Multimaterial#0");
+                this.setMaterialByID("Warrior.texture");
                 this.subMeshes = [];
-                new _B.SubMesh(0, 0, 1525, 0, 3258, this);
-                new _B.SubMesh(1, 1525, 328, 3258, 786, this);
+                new _B.SubMesh(0, 0, 1526, 0, 3258, this);
                 if (scene._selectionOctree) {
                     scene.createOrUpdateSelectionOctree();
                 }
@@ -3478,11 +3645,767 @@ var Warrior;
         Warrior.prototype.dispose = function (doNotRecurse) {
             _super.prototype.dispose.call(this, doNotRecurse);
             if (this.skeleton) this.skeleton.dispose();
-            clean(0);
+            clean(2);
         };
         return Warrior;
     })(QI.Mesh);
     Warrior.Warrior = Warrior;
+
+    var Armor = (function (_super) {
+        __extends(Armor, _super);
+        function Armor(name, scene, materialsRootDir, source) {
+            _super.call(this, name, scene, null, source, true);
+
+            if (!materialsRootDir) { materialsRootDir = "./"; }
+            defineMaterials(scene, materialsRootDir); //embedded version check
+            var cloning = source && source !== null;
+            this.position.x  = 0;
+            this.position.y  = 0;
+            this.position.z  = 0;
+            this.rotation.x  = 0;
+            this.rotation.y  = 0;
+            this.rotation.z  = 0;
+            this.scaling.x   = 1;
+            this.scaling.y   = 1;
+            this.scaling.z   = 1;
+            this.skeleton = skel_metarig(name, scene);
+            this.numBoneInfluencers = 8;
+
+
+            this.id = this.name;
+            this.billboardMode  = 0;
+            this.isVisible  = false; //always false; evaluated again at bottom
+            this.setEnabled(true);
+            this.checkCollisions = false;
+            this.receiveShadows  = false;
+            this.castShadows  = false;
+            if (!cloning){
+                this.setVerticesData(_B.VertexBuffer.PositionKind, new Float32Array([
+                    -.1178,2.8607,.358,.0622,2.8648,.3355,-.1233,2.8675,.3813,-.1022,2.6611,-.2921,.061,2.5574,-.3215,.0596,2.6926,-.3153,.0596,2.6926,-.3153,-.1073,2.6554,-.3118,-.1022,2.6611,-.2921,-.3682,2.6741,-.1373,-.2831,2.6483,-.2773,-.3921,2.6717,-.146,-.1091,2.3617,-.2997,.1152,2.4348,-.3503,.061,2.5574,-.3215,.3526,2.7322,-.061,.2288,2.6746,-.2628
+                    ,.3888,2.6703,-.0653,.2332,2.648,.2805,.4058,2.5877,.2037,.2812,2.4823,.3094,.3271,1.9162,-.6201,.3201,1.5534,-.6926,.4322,1.5941,-.7144,.3888,2.6703,-.0653,.2894,2.5453,-.3211,.4647,2.5225,-.1276,.4874,2.4194,.1524,.3444,2.3325,.2787,.4878,1.9615,-.5998,.692,1.8268,-.4624,.6578,1.9332,-.4151,.5608,1.7457,-.0373,.7545,1.5327,-.3067
+                    ,.6212,1.4475,-.1979,.7783,1.4111,-.3338,.633,1.3437,-.2329,.3535,1.4451,-.7342,.4676,1.4781,-.7583,.5699,1.627,-.6939,.7276,1.7087,-.4769,.6973,1.8379,-.148,.4058,2.5877,.2037,.3766,2.6658,.195,-.3968,2.8699,.0766,-.3791,2.8651,-.1276,-.3546,2.8578,-.1223,.6084,1.4976,-.7242,.4664,1.3911,-.1628,.4837,1.2975,-.1975,.3479,1.6654,.0118
+                    ,.136,2.2342,.352,.071,2.3729,.3915,.0563,2.6598,.3309,.061,2.5574,-.3215,.2288,2.6746,-.2628,.05,2.8685,-.3305,.2166,2.8856,-.254,.2008,2.8788,-.2332,.2332,2.648,.2805,.0614,2.6533,.3513,.2498,2.638,.2983,.2113,2.7373,-.2254,.1152,2.4348,-.3503,.4878,1.9615,-.5998,.2894,2.5453,-.3211,.3444,2.3325,.2787,.3479,1.6654,.0118
+                    ,.136,2.2342,.352,.4647,2.5225,-.1276,.6973,1.8379,-.148,.4874,2.4194,.1524,.4874,2.4194,.1524,.5608,1.7457,-.0373,.3444,2.3325,.2787,.2894,2.5453,-.3211,.6578,1.9332,-.4151,.4647,2.5225,-.1276,-.0297,2.3036,-.3283,.3271,1.9162,-.6201,.1152,2.4348,-.3503,-.294,2.708,.3127,-.1298,2.6713,.3704,-.1238,2.6754,.3491,-.2733,2.4928,-.2561
+                    ,-.2662,2.6535,-.2604,.3866,2.8555,.1764,.252,2.8559,.2942,.2342,2.8498,.2789,-.4368,2.7095,.0694,-.313,2.7098,.3322,-.333,2.3254,-.219,-.2733,2.4928,-.2561,-.4417,2.6432,.0857,-.3682,2.6741,-.1373,-.4097,2.7081,.0651,-.1238,2.6754,.3491,-.3139,2.6444,.3411,-.294,2.708,.3127,-.6038,1.7416,-.1364,-.6022,1.3766,-.0761,-.4702,1.6853,-.1654
+                    ,-.4417,2.6432,.0857,-.4758,2.4305,-.1301,-.4013,2.5869,-.1546,-.1465,2.5509,.4031,-.3957,2.4832,.3898,-.3139,2.6444,.3411,-.8295,1.7463,.2032,-.7354,1.8067,-.0545,-.7851,1.8583,.1878,-.4939,1.7984,.5023,-.7776,1.5281,.4571,-.6753,1.8615,.4523,-.6006,1.4711,.505,-.801,1.4067,.489,-.713,1.4186,-.0505,-.6419,1.2659,-.0563,-.8564,1.6339,.2491
+                    ,-.8237,1.4698,.0242,-.0297,2.3036,-.3283,-.1901,2.2272,-.2554,.1924,1.8612,-.5942,-.1901,2.2272,-.2554,-.4702,1.6853,-.1654,-.3139,2.6444,.3411,-.5265,2.4875,.1218,-.4417,2.6432,.0857,-.294,2.708,.3127,-.2662,2.6535,-.2604,-.7549,1.3001,-.029,-.445,1.4146,.4737,-.6193,1.3617,.5192,-.2804,1.7167,.4578,-.2055,2.4111,.4463,-.2733,2.4928,-.2561
+                    ,.3526,2.7322,-.061,.228,2.7397,-.2429,.2113,2.7373,-.2254,-.2799,2.858,-.2872,-.2633,2.8515,-.2699,-.4013,2.5869,-.1546,-.3682,2.6741,-.1373,-.7354,1.8067,-.0545,-.333,2.3254,-.219,-.4758,2.4305,-.1301,.0005,2.2572,.4068,-.4939,1.7984,.5023,-.2055,2.4111,.4463,-.6753,1.8615,.4523,-.5265,2.4875,.1218,-.3957,2.4832,.3898,.0005,2.2572,.4068
+                    ,-.4939,1.7984,.5023,-.3957,2.4832,.3898,-.2055,2.4111,.4463,-.7851,1.8583,.1878,-.4758,2.4305,-.1301,-.5265,2.4875,.1218,-.6038,1.7416,-.1364,-.1901,2.2272,-.2554,-.333,2.3254,-.219,-.4693,1.315,.4877,-.2804,1.7167,.4578,.136,2.2342,.352,.3479,1.6654,.0118,-.1238,2.6754,.3491,-.3546,2.8578,-.1223,-.2723,2.916,-.2731,-.3716,2.9199,-.1354
+                    ,.2342,2.8498,.2789,.0643,2.9224,.325,.2439,2.9153,.2776,.3866,2.8555,.1764,.3965,2.9197,.1682,.05,2.8685,-.3305,-.1097,2.9199,-.3097,-.1058,2.8546,-.3022,-.3546,2.8578,-.1223,-.41,2.9297,.0743,-.3968,2.8699,.0766,.05,2.8685,-.3305,.1961,2.9377,-.267,.0499,2.9298,-.3407,-.2994,2.8729,.3364,-.2998,2.9353,.3524,.0558,2.8585,.3164
+                    ,-.1135,2.9248,.369,-.1178,2.8607,.358,.2008,2.8788,-.2332,.3395,2.9368,-.1099,.3377,2.8775,-.0817,-.2633,2.8515,-.2699,.3631,2.885,-.0917,.228,2.7397,-.2429,.3788,2.7347,-.0686,-.1113,2.8611,-.3227,.0661,2.6896,-.3381,.0553,2.8754,-.354,.252,2.8559,.2942,.4037,2.6618,.2052,.2498,2.638,.2983,.4149,2.8624,.1821,.252,2.8559,.2942
+                    ,.0614,2.6533,.3513,.0622,2.8648,.3355,.228,2.7397,-.2429,.2166,2.8856,-.254,-.4368,2.7095,.0694,-.3791,2.8651,-.1276,-.4233,2.8776,.0829,-.2799,2.858,-.2872,-.1073,2.6554,-.3118,-.1233,2.8675,.3813,-.313,2.7098,.3322,-.3179,2.8805,.3602,-.313,2.7098,.3322,.0622,2.8648,.3355,-.1298,2.6713,.3704,-.1233,2.8675,.3813,-.3921,2.6717,-.146
+                    ,-.2799,2.858,-.2872,-.3791,2.8651,-.1276,.3766,2.6658,.195,.4037,2.6618,.2052,.3377,2.8775,-.0817,.3631,2.885,-.0917,-.1113,2.8611,-.3227,-.1058,2.8546,-.3022,.0596,2.6926,-.3153,.0661,2.6896,-.3381,.0558,2.8585,.3164,.3631,2.885,-.0917,.4149,2.8624,.1821,-.1113,2.8611,-.3227,.0553,2.8754,-.354,.3766,2.6658,.195,.3788,2.7347,-.0686
+                    ,.3526,2.7322,-.061,-.4097,2.7081,.0651,-.2994,2.8729,.3364,-.3179,2.8805,.3602,.0563,2.6598,.3309,-.2994,2.8729,.3364,-.4233,2.8776,.0829,.0558,2.8585,.3164,-.1091,2.3617,-.2997,.0596,2.6926,-.3153,.0661,2.6896,-.3381,-.2662,2.6535,-.2604,-.0297,2.3036,-.3283,.1924,1.8612,-.5942,.3888,2.6703,-.0653,.2288,2.6746,-.2628,.4058,2.5877,.2037
+                    ,.4058,2.5877,.2037,.3888,2.6703,-.0653,-.4233,2.8776,.0829,.061,2.5574,-.3215,.0553,2.8754,-.354,.2332,2.648,.2805,.0563,2.6598,.3309,.1152,2.4348,-.3503,.3271,1.9162,-.6201,.4878,1.9615,-.5998,.3444,2.3325,.2787,.5608,1.7457,-.0373,.3479,1.6654,.0118,.4647,2.5225,-.1276,.6578,1.9332,-.4151,.6973,1.8379,-.148,.4874,2.4194,.1524
+                    ,.6973,1.8379,-.148,.5608,1.7457,-.0373,.2894,2.5453,-.3211,.4878,1.9615,-.5998,.6578,1.9332,-.4151,.3271,1.9162,-.6201,-.1091,2.3617,-.2997,.4149,2.8624,.1821,-.4097,2.7081,.0651,-.4013,2.5869,-.1546,-.3682,2.6741,-.1373,-.1238,2.6754,.3491,-.4417,2.6432,.0857,.1924,1.8612,-.5942,-.8603,1.3431,.0628,-.1901,2.2272,-.2554,-.3139,2.6444,.3411
+                    ,-.294,2.708,.3127,-.2662,2.6535,-.2604,-.1022,2.6611,-.2921,.0005,2.2572,.4068,-.2733,2.4928,-.2561,.3526,2.7322,-.061,.3788,2.7347,-.0686,-.4013,2.5869,-.1546,-.7354,1.8067,-.0545,-.6038,1.7416,-.1364,-.333,2.3254,-.219,-.2804,1.7167,.4578,-.4939,1.7984,.5023,-.6753,1.8615,.4523,-.7851,1.8583,.1878,-.5265,2.4875,.1218,-.4939,1.7984,.5023
+                    ,-.6753,1.8615,.4523,-.3957,2.4832,.3898,-.7851,1.8583,.1878,-.7354,1.8067,-.0545,-.4758,2.4305,-.1301,-.6038,1.7416,-.1364,-.4702,1.6853,-.1654,-.1901,2.2272,-.2554,-.2804,1.7167,.4578,.136,2.2342,.352,-.3546,2.8578,-.1223,-.2633,2.8515,-.2699,.2342,2.8498,.2789,.3866,2.8555,.1764,.2342,2.8498,.2789,.05,2.8685,-.3305,-.3546,2.8578,-.1223
+                    ,.05,2.8685,-.3305,.2008,2.8788,-.2332,-.3968,2.8699,.0766,-.1178,2.8607,.358,.2008,2.8788,-.2332,.3866,2.8555,.1764,-.2633,2.8515,-.2699,.2166,2.8856,-.254,.228,2.7397,-.2429,-.1073,2.6554,-.3118,.252,2.8559,.2942,.252,2.8559,.2942,.2498,2.638,.2983,.0614,2.6533,.3513,.228,2.7397,-.2429,-.4368,2.7095,.0694,-.3921,2.6717,-.146
+                    ,-.3791,2.8651,-.1276,-.2799,2.858,-.2872,-.2831,2.6483,-.2773,-.1073,2.6554,-.3118,-.1233,2.8675,.3813,-.1298,2.6713,.3704,-.313,2.7098,.3322,-.313,2.7098,.3322,-.4368,2.7095,.0694,.0622,2.8648,.3355,.0614,2.6533,.3513,-.1298,2.6713,.3704,-.3921,2.6717,-.146,-.2831,2.6483,-.2773,-.2799,2.858,-.2872,.3766,2.6658,.195,.2332,2.648,.2805
+                    ,.3377,2.8775,-.0817,-.1113,2.8611,-.3227,.0596,2.6926,-.3153,.2113,2.7373,-.2254,.3377,2.8775,-.0817,.3631,2.885,-.0917,-.1058,2.8546,-.3022,-.1113,2.8611,-.3227,.3766,2.6658,.195,.4037,2.6618,.2052,.3788,2.7347,-.0686,-.4097,2.7081,.0651,-.2994,2.8729,.3364,-.2994,2.8729,.3364,-.3179,2.8805,.3602,-.4233,2.8776,.0829
+                ]),
+                false);
+
+                var _i;//indices & affected indices for shapekeys
+                _i = new Uint32Array(690);
+                CONTIG(_i, 0, 0, 26);
+                _i.set([20,27,28,29,30,31,32,33,34,34,35,36,23,37,38,39,40,30,33,40,35,41,30,33,42,26,27,43,17,19,44,45,46,39,38,47,48,36,49,32,48,50,20,51,52,21,39,29,53,20
+                ,52,54,25,55,56,57,58,59,60,61,5,16], 27);
+                CONTIG(_i, 89, 62, 80);
+                _i.set([20,53,18,81,82,83,84,3,85,86,87,88,81,89,90,91,12], 108);
+                CONTIG(_i, 125, 92, 107);
+                _i.set([22,101,100,108,109,110,100,37,22,111,112,113,114,115,112,116,117,100,118,119,108,112,118,108,120,12,121,113,108,110,122,123,124,125,126,127,128,93,95,129,7,10,119,130,116,131,132,114,131,111
+                ,133,52,134,105,119,99,109,53,52,105,103,135,104,136,137,138,46,139,140,141,85], 141);
+                CONTIG(_i, 212, 142, 151);
+                _i.set([52,51,152,153,154,155,131,50,48,156,157,158,159,160,161,162,48,49,163,164,165,105,166,53,167,168,169,170,171,172,173,172], 222);
+                CONTIG(_i, 254, 174, 184);
+                _i.set([179,185,186,187,171,184,187,188,189,190,182,191,174,190,192,176,168], 265);
+                CONTIG(_i, 282, 193, 202);
+                _i.set([195,200,203,204,205,198,206,207,208,209,210,211,212,196,213,214,215,216,210,215,217,218,219,220,221,222,223,61,224,225,57,226,140,227,228,229,137,230,88,1,231,86,232,233,56,234,235,236,237,238
+                ,239,11,89,240,2,241,83,60,242,243,244,44,0,245,1,3,246,4,247,248,7,9,249,10,12,250,13,15,62,16,18,43,19,21,251,22,252,253,25,20,254,27,29,39,30,32,41,33,34,33
+                ,35,23,22,37,39,47,40,33,30,40,41,31,30,255,256,26,43,15,17,44,257,45,39,23,38,48,34,36,32,34,48,20,28,51,21,23,39,258,13,25,56,259,57,260,261,60,5,4,16], 292);
+                CONTIG(_i, 441, 262, 276);
+                _i.set([78,122,277,81,90,82,84,278,3,86,279,87,81,280,89,91,121,12,93,281,282,283,105,97,99,116,100,284,126,103,105,134,106,22,285,101,108,119,109,100,117,37,111,114,112,114,132,115,116,130
+                ,117,118,286,119,112,115,118,113,112,108,122,78,287,288,106,126,289,97,93,290,291,7,119,286,130,131,162,132,131,114,111,52,292,134,119,116,99,103,91,293,294,295,137,46,45,139,296,84,85,297
+                ,298,299,146,300,301,302,303,304,305,306,307,131,133,50,308,309,310,311,312,313,162,131,48,314,146,315,316,317,168,318,186,171,319,320,172,321,183,176,322,169,179,323,324,182,184,325,179,186,326,187
+                ,184,185,187,327,191,190,191,328,174,329,177,176,193,330,331,196,332,197,333,202,200,202,193,195,334,335,336,198,197], 456);
+                CONTIG(_i, 635, 337, 348);
+                _i.set([210,349,350,351,352,353,354,355,356,61,357,58,57,140,139,358,359,360,137,88,87,1,86,361,362,56,363,364,365,366,367,368,9,11,369,0,2,83,82,60], 647);
+                CONTIG(_i, 687, 370, 372);
+                this.setIndices(_i);
+
+                this.setVerticesData(_B.VertexBuffer.NormalKind, new Float32Array([
+                    .0491,.7989,.5994,.1278,.825,.5504,.0599,.7218,.6894,-.0216,-.7715,-.6358,-.055,.1321,-.9897,.2695,-.777,-.5688,.2695,-.777,-.5688,-.0131,-.8104,-.5857,-.0216,-.7715,-.6358,-.731,-.6499,-.2078,-.3728,-.7371,-.5636,-.7138,-.6633,-.2247,-.2926,-.01,-.9561,-.1812,.2651,-.947,-.055,.1321,-.9897,.7027,-.571,-.4244,.4374,.4858,-.7567
+                    ,.8344,.5042,-.2226,.2406,-.7756,.5835,.7863,.3064,.5365,.4349,.1279,.8913,-.1395,.3287,-.9341,-.4179,.1656,-.8932,-.103,.2871,-.9523,.8344,.5042,-.2226,.3581,.4916,-.7938,.8466,.4709,-.248,.8712,.1796,.4569,.5337,-.1042,.8392,.3683,.436,-.8211,.8712,.3429,-.3511,.8537,.4207,-.307,.5335,-.2765,.7993,.9219,.043,.385
+                    ,.5121,-.2592,.8189,.7979,-.0132,.6026,.4592,-.2376,.856,-.4088,.2112,-.8878,-.0689,.3029,-.9505,.4086,.3458,-.8446,.92,.3057,-.2452,.9235,.0601,.3789,.7863,.3064,.5365,.6403,-.7624,.0934,-.5918,.8056,.0261,-.5596,.7863,-.2617,-.5875,.7588,-.2811,.3933,.319,-.8623,.4383,-.2821,.8534,.4256,-.2439,.8714,.453,-.3194,.8323
+                    ,.4244,-.1791,.8876,.2926,.0533,.9547,.0979,-.7444,.6605,-.055,.1321,-.9897,.4374,.4858,-.7567,.0042,.8376,-.5462,.3943,.7616,-.5143,.4694,.6995,-.5388,.2406,-.7756,.5835,.051,-.7648,.6423,.243,-.8189,.5199,.6164,-.5278,-.5844,-.1812,.2651,-.947,.3683,.436,-.8211,.3581,.4916,-.7938,.5337,-.1042,.8392,.453,-.3194,.8323
+                    ,.4244,-.1791,.8876,.8466,.4709,-.248,.9235,.0601,.3789,.8712,.1796,.4569,.8712,.1796,.4569,.5335,-.2765,.7993,.5337,-.1042,.8392,.3581,.4916,-.7938,.8537,.4207,-.307,.8466,.4709,-.248,-.3847,.1789,-.9055,-.1395,.3287,-.9341,-.1812,.2651,-.947,-.5542,-.6543,.5144,-.1057,-.7549,.6472,-.1277,-.6571,.7429,-.4049,.0034,-.9143
+                    ,-.2565,-.8404,-.4774,.3451,.912,.2216,.2516,.7581,.6016,.2441,.8426,.48,-.8088,-.5757,.1202,-.5334,-.6148,.5809,-.3993,-.0078,-.9167,-.4049,.0034,-.9143,-.8792,.4705,.0746,-.731,-.6499,-.2078,-.771,-.624,.1271,-.1277,-.6571,.7429,-.4812,.4758,.7362,-.5542,-.6543,.5144,-.3954,-.0337,-.9178,-.4183,-.0428,-.9073,-.4103,-.0267,-.9116
+                    ,-.8792,.4705,.0746,-.7642,.2464,-.596,-.7806,.2883,-.5545,.0455,.3135,.9485,-.5307,.3994,.7475,-.4812,.4758,.7362,-.9554,.2916,.0454,-.7748,.1676,-.6095,-.9245,.3785,.0454,-.0229,.0588,.998,-.5994,.2605,.7569,-.6048,.2741,.7477,-.001,.0841,.9964,-.3754,.2708,.8864,-.4193,-.0573,-.906,-.3833,-.029,-.9232,-.9416,.2927,.1667
+                    ,-.809,.0834,-.5818,-.3847,.1789,-.9055,-.4014,.0378,-.9151,-.4224,.1972,-.8847,-.4014,.0378,-.9151,-.4103,-.0267,-.9116,-.4812,.4758,.7362,-.8935,.4425,.076,-.8792,.4705,.0746,-.5542,-.6543,.5144,-.2565,-.8404,-.4774,-.4493,-.0386,-.8925,.3819,-.0474,.9229,.0625,.117,.9911,.3727,-.1436,.9167,.015,.1792,.9837,-.4049,.0034,-.9143
+                    ,.7027,-.571,-.4244,.557,-.6104,-.5632,.6164,-.5278,-.5844,-.367,.6977,-.6153,-.2759,.8738,-.4003,-.7806,.2883,-.5545,-.731,-.6499,-.2078,-.7748,.1676,-.6095,-.3993,-.0078,-.9167,-.7642,.2464,-.596,.2756,-.0459,.9602,-.0229,.0588,.998,.015,.1792,.9837,-.6048,.2741,.7477,-.8935,.4425,.076,-.5307,.3994,.7475,.2756,-.0459,.9602
+                    ,-.0229,.0588,.998,-.5307,.3994,.7475,.015,.1792,.9837,-.9245,.3785,.0454,-.7642,.2464,-.596,-.8935,.4425,.076,-.3954,-.0337,-.9178,-.4014,.0378,-.9151,-.3993,-.0078,-.9167,.3946,.0278,.9184,.3727,-.1436,.9167,.4244,-.1791,.8876,.453,-.3194,.8323,-.1277,-.6571,.7429,-.5875,.7588,-.2811,-.5846,-.1465,-.7979,-.8744,-.3171,-.3673
+                    ,.2441,.8426,.48,.2215,-.1436,.9645,.428,-.0365,.903,.3451,.912,.2216,.9503,-.1051,.2928,.0042,.8376,-.5462,-.1859,-.1215,-.975,-.1616,.776,-.6097,-.5875,.7588,-.2811,-.9734,-.2138,.0818,-.5918,.8056,.0261,.0042,.8376,-.5462,.5861,-.3363,-.7371,.1508,-.1605,-.9754,-.2823,.882,.3772,-.5607,-.2089,.8012,.1698,.7488,.6407
+                    ,.0566,-.1809,.9818,.0491,.7989,.5994,.4694,.6995,-.5388,.828,-.2599,-.4968,.5814,.7938,-.1784,-.2759,.8738,-.4003,.5949,.7502,-.2886,.557,-.6104,-.5632,.7249,-.571,-.3853,-.155,.7742,-.6136,.2625,-.6999,-.6643,.0765,.6935,-.7164,.2516,.7581,.6016,.6963,-.6612,.2791,.243,-.8189,.5199,.686,.6605,.305,.2516,.7581,.6016
+                    ,.051,-.7648,.6423,.1278,.825,.5504,.557,-.6104,-.5632,.3943,.7616,-.5143,-.8088,-.5757,.1202,-.5596,.7863,-.2617,-.6551,.7528,.0641,-.367,.6977,-.6153,-.0131,-.8104,-.5857,.0599,.7218,.6894,-.5334,-.6148,.5809,-.446,.6335,.6322,-.5334,-.6148,.5809,.1278,.825,.5504,-.1057,-.7549,.6472,.0599,.7218,.6894,-.7138,-.6633,-.2247
+                    ,-.367,.6977,-.6153,-.5596,.7863,-.2617,.6403,-.7624,.0934,.6963,-.6612,.2791,.5814,.7938,-.1784,.5949,.7502,-.2886,-.155,.7742,-.6136,-.1616,.776,-.6097,.2695,-.777,-.5688,.2625,-.6999,-.6643,.1698,.7488,.6407,.5949,.7502,-.2886,.686,.6605,.305,-.155,.7742,-.6136,.0765,.6935,-.7164,.6403,-.7624,.0934,.7249,-.571,-.3853
+                    ,.7027,-.571,-.4244,-.771,-.624,.1271,-.2823,.882,.3772,-.446,.6335,.6322,.0979,-.7444,.6605,-.2823,.882,.3772,-.6551,.7528,.0641,.1698,.7488,.6407,-.2926,-.01,-.9561,.2695,-.777,-.5688,.2625,-.6999,-.6643,-.2565,-.8404,-.4774,-.3847,.1789,-.9055,-.4224,.1972,-.8847,.8344,.5042,-.2226,.4374,.4858,-.7567,.7863,.3064,.5365
+                    ,.7863,.3064,.5365,.8344,.5042,-.2226,-.6551,.7528,.0641,-.055,.1321,-.9897,.0765,.6935,-.7164,.2406,-.7756,.5835,.0979,-.7444,.6605,-.1812,.2651,-.947,-.1395,.3287,-.9341,.3683,.436,-.8211,.5337,-.1042,.8392,.5335,-.2765,.7993,.453,-.3194,.8323,.8466,.4709,-.248,.8537,.4207,-.307,.9235,.0601,.3789,.8712,.1796,.4569
+                    ,.9235,.0601,.3789,.5335,-.2765,.7993,.3581,.4916,-.7938,.3683,.436,-.8211,.8537,.4207,-.307,-.1395,.3287,-.9341,-.2926,-.01,-.9561,.686,.6605,.305,-.771,-.624,.1271,-.7806,.2883,-.5545,-.731,-.6499,-.2078,-.1277,-.6571,.7429,-.8792,.4705,.0746,-.4224,.1972,-.8847,-.8032,.0511,-.5935,-.4014,.0378,-.9151,-.4812,.4758,.7362
+                    ,-.5542,-.6543,.5144,-.2565,-.8404,-.4774,-.0216,-.7715,-.6358,.2756,-.0459,.9602,-.4049,.0034,-.9143,.7027,-.571,-.4244,.7249,-.571,-.3853,-.7806,.2883,-.5545,-.7748,.1676,-.6095,-.3954,-.0337,-.9178,-.3993,-.0078,-.9167,.3727,-.1436,.9167,-.0229,.0588,.998,-.6048,.2741,.7477,-.9245,.3785,.0454,-.8935,.4425,.076,-.0229,.0588,.998
+                    ,-.6048,.2741,.7477,-.5307,.3994,.7475,-.9245,.3785,.0454,-.7748,.1676,-.6095,-.7642,.2464,-.596,-.3954,-.0337,-.9178,-.4103,-.0267,-.9116,-.4014,.0378,-.9151,.3727,-.1436,.9167,.4244,-.1791,.8876,-.5875,.7588,-.2811,-.2759,.8738,-.4003,.2441,.8426,.48,.3451,.912,.2216,.2441,.8426,.48,.0042,.8376,-.5462,-.5875,.7588,-.2811
+                    ,.0042,.8376,-.5462,.4694,.6995,-.5388,-.5918,.8056,.0261,.0491,.7989,.5994,.4694,.6995,-.5388,.3451,.912,.2216,-.2759,.8738,-.4003,.3943,.7616,-.5143,.557,-.6104,-.5632,-.0131,-.8104,-.5857,.2516,.7581,.6016,.2516,.7581,.6016,.243,-.8189,.5199,.051,-.7648,.6423,.557,-.6104,-.5632,-.8088,-.5757,.1202,-.7138,-.6633,-.2247
+                    ,-.5596,.7863,-.2617,-.367,.6977,-.6153,-.3728,-.7371,-.5636,-.0131,-.8104,-.5857,.0599,.7218,.6894,-.1057,-.7549,.6472,-.5334,-.6148,.5809,-.5334,-.6148,.5809,-.8088,-.5757,.1202,.1278,.825,.5504,.051,-.7648,.6423,-.1057,-.7549,.6472,-.7138,-.6633,-.2247,-.3728,-.7371,-.5636,-.367,.6977,-.6153,.6403,-.7624,.0934,.2406,-.7756,.5835
+                    ,.5814,.7938,-.1784,-.155,.7742,-.6136,.2695,-.777,-.5688,.6164,-.5278,-.5844,.5814,.7938,-.1784,.5949,.7502,-.2886,-.1616,.776,-.6097,-.155,.7742,-.6136,.6403,-.7624,.0934,.6963,-.6612,.2791,.7249,-.571,-.3853,-.771,-.624,.1271,-.2823,.882,.3772,-.2823,.882,.3772,-.446,.6335,.6322,-.6551,.7528,.0641
+                ]),
+                false);
+
+                this.setVerticesData(_B.VertexBuffer.UVKind, new Float32Array([
+                    .7657,.952,.8127,.9576,.7626,.9571,.5532,.3039,.4883,.2648,.5356,.2551,.6362,.9532,.5909,.9584,.591,.9532,.5088,.9268,.5428,.9576,.5033,.9303,.9516,.1155,.9026,.0811,.9336,.0429,.5769,.1556,.5092,.1945,.5657,.1288,.689,.1743,.6578,.1111,.7236,.1414,.281,.7333,.293,.649,.3251,.6647,.8021,.0133
+                    ,.87,.0545,.8173,.0607,.7753,.0973,.7739,.1364,.3045,.7479,.3422,.7718,.3203,.776,.2867,.8321,.385,.8603,.3394,.9079,.4256,.8922,.3614,.9511,.3068,.6119,.3486,.6297,.3581,.69,.3743,.7794,.3141,.8108,.7285,.0682,.6472,.1371,.7126,.8688,.7322,.8218,.7372,.8251,.393,.6628,.2872,.9356,.2955,.9776
+                    ,.2444,.8437,.8016,.1735,.7802,.1945,.7172,.2241,.9336,.0429,.88,.0101,.8561,.7958,.8944,.8225,.8894,.8258,.6403,.8002,.5924,.7899,.6435,.7952,.5421,.2045,.2846,.1695,.4424,.1189,.2976,.1848,.2665,.2425,.2429,.4282,.2394,.2508,.3032,.2115,.4318,.3601,.2889,.235,.2889,.235,.3551,.4191,.2665,.2425
+                    ,.2976,.1848,.4772,.2245,.3032,.2115,.2706,.1514,.4065,.0733,.2846,.1695,.4995,.8158,.5411,.7943,.5442,.7994,.5424,.3792,.5805,.3485,.9061,.9358,.8627,.9576,.8597,.9524,.4777,.8807,.4934,.8118,.9456,.176,.9965,.1771,.698,.4061,.6239,.3771,.6834,.3809,.7382,.2778,.7659,.3424,.739,.3346,.1693,.7283
+                    ,.1672,.6413,.1954,.727,.9348,.3002,.9459,.2209,.9876,.2415,.7855,.2722,.8539,.2608,.8438,.3155,.1082,.7629,.1458,.7371,.1315,.7677,.1567,.8303,.057,.8519,.1353,.8076,.1006,.9035,.0125,.882,.1332,.6541,.1571,.6034,.074,.7683,.0975,.6763,.9165,.118,.9266,.1404,.3681,.0421,.254,.1465,.2458,.0002
+                    ,.8438,.3155,.9091,.2576,.9348,.3002,.739,.3346,.5458,.9524,.1131,.6164,.1529,.9339,.0755,.947,.1949,.8405,.8215,.2366,.9965,.1771,.6984,.8822,.679,.9318,.6736,.9282,.768,.7901,.7708,.7954,.6104,.4093,.6239,.3771,.1355,.0152,.2331,.1505,.2133,.1551,.2244,.2467,.0323,.3241,.2094,.2243,.0002,.2287
+                    ,.1971,.1761,.1969,.2055,.8098,.1915,.0323,.3241,.1969,.2055,.2094,.2243,.0405,.0839,.2133,.1551,.1971,.1761,.1945,.0002,.254,.1465,.2331,.1505,.1429,.9776,.1268,.395,.2394,.2508,.2429,.4282,.7382,.2778,.7479,.5382,.7622,.5935,.731,.55,.933,.4514,.8855,.4055,.9468,.4343,.9742,.4896,.9946,.485
+                    ,.8676,.6142,.8119,.6208,.8192,.6008,.7479,.5382,.7195,.4841,.7388,.4822,.8676,.6142,.9217,.6183,.8684,.6329,.7653,.4185,.7516,.4032,.8782,.4267,.8187,.3897,.8193,.4115,.9156,.5979,.9736,.5718,.9588,.5582,.7746,.58,.6841,.5987,.7189,.5199,.74,.5975,.5806,.5124,.6674,.464,.6306,.5185,.6197,.6808
+                    ,.7153,.6909,.6492,.7448,.666,.6566,.6197,.6808,.5594,.7614,.5639,.6835,.7189,.5199,.6643,.5505,.4023,.571,.4899,.5396,.4592,.5842,.5307,.5142,.5856,.4367,.507,.6731,.4067,.6744,.4623,.6484,.4067,.6744,.5639,.6835,.4705,.7365,.507,.6731,.4411,.498,.5307,.5142,.4899,.5396,.6848,.8174,.6909,.8135
+                    ,.9136,.8697,.9203,.8693,.8135,.7899,.8134,.7952,.6362,.9532,.6391,.9584,.8127,.9524,.9203,.8693,.9122,.9398,.8135,.7899,.8589,.7906,.6848,.8174,.7054,.8827,.6984,.8822,.4848,.8804,.7195,.9349,.7134,.9388,.5923,.7952,.7195,.9349,.7059,.8683,.8127,.9524,.4669,.3449,.6362,.9532,.6391,.9584,.5458,.9524
+                    ,.9165,.118,.2544,.7295,.8021,.0133,.88,.0101,.7285,.0682,.7285,.0682,.8021,.0133,.7059,.8683,.9336,.0429,.8589,.7906,.6403,.8002,.5923,.7952,.2846,.1695,.4065,.0733,.4424,.1189,.2665,.2425,.3551,.4191,.2429,.4282,.3032,.2115,.4772,.2245,.4318,.3601,.2889,.235,.4318,.3601,.3551,.4191,.2976,.1848
+                    ,.4424,.1189,.4772,.2245,.4065,.0733,.4669,.3449,.9122,.9398,.4848,.8804,.6104,.4093,.6239,.3771,.7382,.2778,.9348,.3002,.2544,.7295,.0643,.6455,.254,.1465,.8438,.3155,.739,.3346,.5458,.9524,.591,.9532,.8098,.1915,.9965,.1771,.6984,.8822,.7054,.8827,.6104,.4093,.1355,.0152,.1945,.0002,.2331,.1505
+                    ,.1268,.395,.0323,.3241,.0002,.2287,.0405,.0839,.1971,.1761,.0323,.3241,.0002,.2287,.1969,.2055,.0405,.0839,.1355,.0152,.2133,.1551,.1945,.0002,.2458,.0002,.254,.1465,.1268,.395,.2394,.2508,.7479,.5382,.7746,.58,.933,.4514,.9742,.4896,.933,.4514,.8676,.6142,.7479,.5382,.8676,.6142,.9156,.5979
+                    ,.7388,.4822,.8193,.4115,.9156,.5979,.9742,.4896,.7746,.58,.6643,.5505,.7189,.5199,.5856,.4367,.6197,.6808,.6197,.6808,.6492,.7448,.5594,.7614,.7189,.5199,.4023,.571,.4411,.498,.4899,.5396,.5307,.5142,.5023,.4534,.5856,.4367,.507,.6731,.4705,.7365,.4067,.6744,.4067,.6744,.4023,.571,.5639,.6835
+                    ,.5594,.7614,.4705,.7365,.4411,.498,.5023,.4534,.5307,.5142,.6848,.8174,.6403,.8002,.9136,.8697,.8135,.7899,.6362,.9532,.6736,.9282,.9136,.8697,.9203,.8693,.8134,.7952,.8135,.7899,.6848,.8174,.6909,.8135,.7054,.8827,.4848,.8804,.7195,.9349,.7195,.9349,.7134,.9388,.7059,.8683
+                ]),
+                false);
+
+                _i = new Float32Array([.5382,.1836,.123,.1127,.5951,.1879,.1338,.0146,.5259,.2037,.1142,.1093,.4638,.2051,.1392,.1392,.5432,.2232,.1021,.0986,.343,.3337,.2088,.0525,.343,.3337,.2088,.0525,.4622,.203,.1411,.1411,.4638,.2051,.1392,.1392,.6109,.1866,.1058,.053,.3435,.3342,.2081,.0526,.6256,.1776,.1034,.0481,.3303,.31
+                ,.31,.0192,.8108,.0966,.0581,.0042,.5432,.2232,.1021,.0986,.7256,.1532,.0539,.0279,.7497,.1011,.0823,.0079,.8495,.0773,.0103,.0045,.4319,.3124,.1662,.0561,.8166,.0712,.0706,.0046,.6854,.2207,.0485,.0046,.9838,0,0,0,.9735,.0045,0,0,.9759,.0052,0,0,.8495,.0773,.0103,.0045
+                ,.9098,.0283,0,0,.9616,0,0,0,.9366,.0376,0,0,.78,.1899,.0019,.0007,.9903,0,0,0,.993,0,0,0,.9958,0,0,0,.9825,0,0,0,.9901,0,0,0,.9855,.0045,0,0,.9277,.072,0,0,.8784,.1212,0,0,.9254,.074
+                ,0,0,.9278,.0717,0,0,.9836,0,0,0,.99,0,0,0,.9938,0,0,0,.8166,.0712,.0706,.0046,.67,.15,.0957,.0576,.4581,.2671,.1678,.02,.4937,.2029,.1662,.0591,.4978,.2204,.1474,.0634,.9358,.0637,0,0,.9735,.008,0,0,.8598,.1394,0,0
+                ,.9637,.013,0,0,.6905,.2607,.0298,0,.7308,.1244,.1244,0,.6536,.1426,.0788,.0788,.5432,.2232,.1021,.0986,.7497,.1011,.0823,.0079,.5568,.1363,.1226,.1057,.4937,.2029,.1662,.0591,.4978,.2204,.1474,.0634,.4319,.3124,.1662,.0561,.6592,.1353,.0806,.0806,.4146,.3515,.1505,.0495,.611,.1865
+                ,.1058,.053,.8108,.0966,.0581,.0042,.9903,0,0,0,.9098,.0283,0,0,.78,.1899,.0019,.0007,.9637,.013,0,0,.6905,.2607,.0298,0,.9616,0,0,0,.9938,0,0,0,.9366,.0376,0,0,.9366,.0376,0,0,.9825,0,0,0,.78,.1899,.0019,.0007
+                ,.9098,.0283,0,0,.9958,0,0,0,.9616,0,0,0,.6581,.1819,.1408,.0012,.9838,0,0,0,.8108,.0966,.0581,.0042,.67,.15,.0957,.0576,.4146,.3515,.1506,.0495,.4319,.3124,.1662,.0561,.5432,.2232,.1021,.0986,.343,.3337,.2088,.0525,.4593,.2271,.1839,.0561,.5259,.2037
+                ,.1142,.1093,.5382,.1836,.123,.1127,.7414,.1434,.0479,.026,.6997,.1329,.0924,.0474,.8107,.0966,.0581,.0042,.5432,.2232,.1021,.0986,.8495,.0773,.0103,.0045,.6109,.1866,.1058,.053,.7256,.1532,.0539,.0279,.4319,.3124,.1662,.0561,.8166,.0712,.0706,.0046,.67,.15,.0957,.0576,.9838,0,0,0
+                ,.9735,.0045,0,0,.9751,0,0,0,.8495,.0773,.0103,.0045,.9098,.0283,0,0,.7497,.1011,.0823,.0079,.6854,.2207,.0485,.0046,.9366,.0376,0,0,.8166,.0712,.0706,.0046,.993,0,0,0,.9903,0,0,0,.9958,0,0,0,.9825,0,0,0,.9901,0
+                ,0,0,.9938,0,0,0,.9855,.0045,0,0,.9276,.0721,0,0,.9759,.0052,0,0,.9254,.074,0,0,.99,0,0,0,.9836,0,0,0,.6581,.1819,.1408,.0012,.6581,.1819,.1408,.0012,.9751,0,0,0,.6581,.1819,.1408,.0012,.9751,0,0,0
+                ,.8166,.0712,.0706,.0046,.9616,0,0,0,.8495,.0773,.0103,.0045,.67,.15,.0957,.0576,.343,.3337,.2088,.0525,.9278,.0717,0,0,.9735,.008,0,0,.8784,.1212,0,0,.9637,.013,0,0,.7799,.1899,.0019,.0007,.5432,.2232,.1021,.0986,.7256,.1532,.0539,.0279,.6256,.1776
+                ,.1034,.0481,.611,.1865,.1058,.053,.5601,.1315,.1175,.1104,.5568,.1363,.1226,.1057,.7497,.1011,.0823,.0079,.6109,.1866,.1058,.053,.9903,0,0,0,.8107,.0966,.0581,.0042,.9098,.0283,0,0,.6905,.2607,.0298,0,.9825,0,0,0,.7799,.1899,.0019,.0007,.9938,0,0,0
+                ,.9616,0,0,0,.9366,.0376,0,0,.6905,.2607,.0298,0,.9825,0,0,0,.9366,.0376,0,0,.7799,.1899,.0019,.0007,.9958,0,0,0,.9098,.0283,0,0,.9616,0,0,0,.9838,0,0,0,.6581,.1819,.1408,.0012,.8107,.0966,.0581,.0042,.8598,.1394
+                ,0,0,.9637,.013,0,0,.6905,.2607,.0298,0,.9637,.013,0,0,.4319,.3124,.1662,.0561,.4978,.2204,.1474,.0634,.5522,.1478,.1076,.0932,.4419,.2389,.1674,.0446,.5382,.1836,.123,.1127,.4874,.3219,.1046,.0111,.4292,.3298,.0872,.0864,.4593,.2271,.1839,.0561,.3754,.2819,.1775,.0812
+                ,.5568,.1363,.1226,.1057,.5964,.1191,.1126,.0497,.5891,.1475,.0867,.0687,.4978,.2204,.1474,.0634,.3925,.2595,.2083,.0418,.4581,.2671,.1678,.02,.5568,.1363,.1226,.1057,.4419,.2389,.1674,.0446,.5522,.1478,.1076,.0932,.4593,.2271,.1839,.0561,.3754,.2819,.1775,.0812,.6125,.1538,.1495,.0165,.4292,.3298
+                ,.0872,.0864,.5382,.1836,.123,.1127,.4978,.2204,.1474,.0634,.3925,.2595,.2083,.0418,.4581,.2671,.1678,.02,.5568,.1363,.1226,.1057,.4612,.255,.1744,.0215,.6256,.1776,.1034,.0481,.7414,.1434,.0479,.026,.5931,.1414,.0904,.0663,.3435,.3342,.2081,.0526,.5601,.1315,.1175,.1104,.5259,.2037,.1142,.1093
+                ,.6997,.1329,.0924,.0474,.4146,.3515,.1505,.0495,.446,.2139,.2037,.0528,.5259,.2037,.1142,.1093,.6592,.1353,.0806,.0806,.5951,.1879,.1338,.0146,.6256,.1776,.1034,.0481,.4937,.2029,.1662,.0591,.7414,.1434,.0479,.026,.4937,.2029,.1662,.0591,.4612,.255,.1744,.0215,.5601,.1315,.1175,.1104,.4622,.203
+                ,.1411,.1411,.5259,.2037,.1142,.1093,.6997,.1329,.0924,.0474,.446,.2139,.2037,.0528,.6997,.1329,.0924,.0474,.5951,.1879,.1338,.0146,.4146,.3515,.1506,.0495,.5259,.2037,.1142,.1093,.6256,.1776,.1034,.0481,.5601,.1315,.1175,.1104,.4937,.2029,.1662,.0591,.67,.15,.0957,.0576,.6997,.1329,.0924,.0474
+                ,.4581,.2671,.1678,.02,.4612,.255,.1744,.0215,.5931,.1414,.0904,.0663,.5891,.1475,.0867,.0687,.343,.3337,.2088,.0525,.3435,.3342,.2081,.0526,.6125,.1538,.1495,.0165,.4612,.255,.1744,.0215,.446,.2139,.2037,.0528,.5931,.1414,.0904,.0663,.5601,.1315,.1175,.1104,.67,.15,.0957,.0576,.7414,.1434
+                ,.0479,.026,.7256,.1532,.0539,.0279,.7256,.1532,.0539,.0279,.4593,.2271,.1839,.0561,.446,.2139,.2037,.0528,.6536,.1426,.0788,.0788,.4593,.2271,.1839,.0561,.4612,.255,.1744,.0215,.6125,.1538,.1495,.0165,.3303,.31,.31,.0192,.343,.3337,.2088,.0525,.3435,.3342,.2081,.0526,.343,.3337,.2088,.0525
+                ,.6581,.1819,.1408,.0012,.9751,0,0,0,.8495,.0773,.0103,.0045,.7497,.1011,.0823,.0079,.8166,.0712,.0706,.0046,.8166,.0712,.0706,.0046,.8495,.0773,.0103,.0045,.4612,.255,.1744,.0215,.5432,.2232,.1021,.0986,.5601,.1315,.1175,.1104,.4319,.3124,.1662,.0561,.6536,.1426,.0788,.0788,.8108,.0966
+                ,.0581,.0042,.9838,0,0,0,.9903,0,0,0,.78,.1899,.0019,.0007,.9825,0,0,0,.9637,.013,0,0,.9616,0,0,0,.9958,0,0,0,.9938,0,0,0,.9366,.0376,0,0,.9938,0,0,0,.9825,0,0,0,.9098,.0283,0,0
+                ,.9903,0,0,0,.9958,0,0,0,.9838,0,0,0,.3303,.31,.31,.0192,.446,.2139,.2037,.0528,.7256,.1532,.0539,.0279,.7497,.1011,.0823,.0079,.6109,.1866,.1058,.053,.4319,.3124,.1662,.0561,.8495,.0773,.0103,.0045,.9751,0,0,0,.9357,.0637,0,0,.6581,.1819
+                ,.1408,.0012,.8166,.0712,.0706,.0046,.67,.15,.0957,.0576,.343,.3337,.2088,.0525,.4638,.2051,.1392,.1392,.6905,.2607,.0298,0,.5432,.2232,.1021,.0986,.7256,.1532,.0539,.0279,.7414,.1434,.0479,.026,.7497,.1011,.0823,.0079,.9903,0,0,0,.9838,0,0,0,.8107,.0966,.0581,.0042
+                ,.9637,.013,0,0,.9825,0,0,0,.9938,0,0,0,.9958,0,0,0,.9616,0,0,0,.9825,0,0,0,.9938,0,0,0,.9366,.0376,0,0,.9958,0,0,0,.9903,0,0,0,.9098,.0283,0,0,.9838,0,0,0,.9751,0
+                ,0,0,.6581,.1819,.1408,.0012,.9637,.013,0,0,.6905,.2607,.0298,0,.4978,.2204,.1474,.0634,.5568,.1363,.1226,.1057,.5382,.1836,.123,.1127,.4593,.2271,.1839,.0561,.5382,.1836,.123,.1127,.5568,.1363,.1226,.1057,.4978,.2204,.1474,.0634,.5568,.1363,.1226,.1057,.4978,.2204,.1474,.0634
+                ,.4581,.2671,.1678,.02,.5382,.1836,.123,.1127,.4978,.2204,.1474,.0634,.4593,.2271,.1839,.0561,.5568,.1363,.1226,.1057,.4937,.2029,.1662,.0591,.6256,.1776,.1034,.0481,.4622,.203,.1411,.1411,.5259,.2037,.1142,.1093,.5259,.2037,.1142,.1093,.4146,.3515,.1505,.0495,.6592,.1353,.0806,.0806,.6256,.1776
+                ,.1034,.0481,.7414,.1434,.0479,.026,.6256,.1776,.1034,.0481,.4937,.2029,.1662,.0591,.5601,.1315,.1175,.1104,.3435,.3342,.2081,.0526,.4622,.203,.1411,.1411,.5259,.2037,.1142,.1093,.4146,.3515,.1506,.0495,.6997,.1329,.0924,.0474,.6997,.1329,.0924,.0474,.7414,.1434,.0479,.026,.5951,.1879,.1338,.0146
+                ,.6592,.1353,.0806,.0806,.4146,.3515,.1506,.0495,.6256,.1776,.1034,.0481,.3435,.3342,.2081,.0526,.5601,.1315,.1175,.1104,.67,.15,.0957,.0576,.4319,.3124,.1662,.0561,.4581,.2671,.1678,.02,.5931,.1414,.0904,.0663,.343,.3337,.2088,.0525,.611,.1865,.1058,.053,.4581,.2671,.1678,.02,.4612,.255
+                ,.1744,.0215,.5891,.1475,.0867,.0687,.5931,.1414,.0904,.0663,.67,.15,.0957,.0576,.6997,.1329,.0924,.0474,.7414,.1434,.0479,.026,.7256,.1532,.0539,.0279,.4593,.2271,.1839,.0561,.4593,.2271,.1839,.0561,.446,.2139,.2037,.0528,.4612,.255,.1744,.0215]);
+                this.setVerticesData(_B.VertexBuffer.MatricesWeightsKind, _i, false);
+
+                _i = new Uint32Array([503645958,470091526,503645958,505153029,503711004,503716869,503716869,505153029,505153029,117769758,470162949,117769758,102636549,102630684,503711004,84346396,117769756,117769756,117840901,117769756,503711004,34867996,336272668,336272668,117769756,336266524,34867996,336266524,102630684,34867996,34867996,34867996,34867996,34867996,336272668,336272668,336272668,336272668,336272668,34867996,34867996,34867996,117769756,117769756,336010758,84352518,84352518,336272668,336272668,336272668
+                ,336266524,186522629,186522629,505153029,503711004,117769756,117775366,84352006,84352006,117840901,505153029,117840901,117769756,102630684,34867996,336266524,102630684,336266524,186522629,34867996,34867996,336266524,336266524,34867996,102630684,336266524,34867996,34867996,102630684,34867996,102630684,117769758,117841413,117841413,470156574,470162949,84352006,470091526,470091526,84346398,117769758,102499614,470156574,117769758,117769758,84346398,117841413,117769758,117769758,34867998
+                ,336273182,34867998,117769758,336266526,117769758,470156574,336266526,117769758,34867998,34867998,34867998,34867998,34867998,34867998,336273182,336273182,336273182,336273182,34867998,34867998,102630684,102499614,34867996,102499614,34867998,117769758,34867998,117769758,117769758,470162949,336273182,336273182,336273182,336266526,102499614,470156574,84346396,117769756,117769756,117775878,117775878,117769758,117769758,34867998,102499614,336266526,186392069,34867998,102499614,34867998
+                ,34867998,336266526,186392069,34867998,336266526,102499614,34867998,336266526,34867998,34867998,102499614,102499614,336273182,336266526,186522629,336266524,117841413,84352518,85853958,85853958,470091526,470091526,85722886,84352006,186386182,117775366,470091526,470222086,84352518,337512198,336010758,117775366,85722886,85722886,84352518,337512198,470091526,85853958,503645958,84352006,186386182,185015302,117775878,185015302,117769756,84346396,470222086,503716869,117775366,470091526
+                ,117769756,117840901,84352006,470091526,505153029,470091526,117769756,84352006,84346398,84352518,336010758,117775878,505153029,503645958,117769758,84352518,117769758,470091526,117841413,503645958,117769758,117775878,84352518,117769756,117769756,185015302,185015302,470222086,470222086,503716869,503716869,470091526,185015302,84352006,470222086,117775366,117769756,84346396,84346396,84346398,84352518,84352518,505153029,84352518,336010758,470091526,102636549,503716869,503716869,470162949
+                ,102630684,34867996,117769756,117769756,117769756,117769756,117769756,336010758,503711004,117775366,117840901,505153029,102630684,34867996,34867996,102630684,34867996,336266524,34867996,34867996,34867996,336266524,34867996,34867996,336266524,34867996,34867996,34867996,102636549,84352006,84346398,117769758,117769758,117841413,117769758,34867996,336273182,102499614,117769758,117769758,470162949,505153029,186392069,470156574,84346396,84346396,117769758,34867998,34867998,102499614
+                ,336266526,34867998,34867998,34867998,34867998,34867998,34867998,336266526,34867998,34867998,336266526,34867998,34867998,102499614,336266526,186522629,84352518,117775878,470091526,84352006,470091526,117775366,84352518,117775366,84352006,336010758,503645958,84352006,84352006,117775878,84352006,117769756,505153029,470091526,470091526,117840901,505153029,117769756,84346398,117769758,84352518,117775878,470162949,505153029,503645958,117841413,117769758,117769758,84346398,470091526
+                ,505153029,117841413,117769758,470162949,117775878,117769756,117840901,185015302,470222086,503716869,117769756,185015302,185015302,470222086,470222086,117769756,117769756,84346396,84346398,84352518,84352518,84352518,336010758]);
+                this.setVerticesData(_B.VertexBuffer.MatricesIndicesKind, UNPACK(_i), false);
+
+                _i = new Float32Array(1492);
+                _i.set([0,0,0,0,.0146,0,0,0,.0027,.0003,0,0,.0239,0,0,0,.0027,0,0,0,.0374,0,0,0,.0374,0,0,0,.0236,0,0,0,.0239,0,0,0,0,0,0,0,.0372,0,0,0,.0004,0,0,0,.0012,0
+                ,0,0,0,0,0,0,.0027,0,0,0,.0001,0,0,0,.0032]);
+                _i.set([.0016], 80);
+                _i.set([.0008,0,0,0,.018,.0082,0,0,.0121,.0028,0,0,.0074], 172);
+                _i.set([.0295,0,0,0,.0027,0,0,0,.0032,0,0,0,.0163,0,0,0,.0121,.0028,0,0,.0074,0,0,0,0,0,0,0,.0278], 212);
+                _i.set([.0008], 324);
+                _i.set([.0027,0,0,0,.0374,0,0,0,.0442,0,0,0,.0027,.0003], 336);
+                _i.set([.0027], 368);
+                _i.set([.0001], 380);
+                _i.set([.0008], 392);
+                _i.set([.0032,0,0,0,.0016], 416);
+                _i.set([.0008,0,0,0,.0374], 512);
+                _i.set([.0027,0,0,0,.0001,0,0,0,.0004,0,0,0,0,0,0,0,.0154,.0016,.0001,0,.0163,0,0,0,.0032], 540);
+                _i.set([.0074,0,0,0,.017,.0116,.001,0,.032,.0154,0,0,0,0,0,0,.0111,0,0,0,.0115,.0013,0,0,.0442,0,0,0,.0402,.0146,0,0,.0163,0,0,0,.0497,.0066,.0066,0,.0687,0,0,0,.0074,0,0,0,.0315,.0141
+                ,0,0,.018,.0082,0,0,.0163,0,0,0,.032,.0154,0,0,.017,.0116,.001,0,.0442,0,0,0,.0402,.0146,0,0,.0165,0,0,0,.0115,.0013,0,0,0,0,0,0,.0074,0,0,0,.0315,.0141,0,0,.018,.0082,0,0
+                ,.0163,0,0,0,.0175,.0095,0,0,.0004,0,0,0,0,0,0,0,.0663,.0006,.0006,0,.0372,0,0,0,.0154,.0016,.0001,0,.0027,.0003], 668);
+                _i.set([.0516,.0028,0,0,.0027,.0003,0,0,.0278,0,0,0,.0146,0,0,0,.0004,0,0,0,.0121,.0028,0,0,0,0,0,0,.0121,.0028,0,0,.0175,.0095,0,0,.0154,.0016,.0001,0,.0236,0,0,0,.0027,.0003,0,0,0,0
+                ,0,0,.0516,.0028,0,0,0,0,0,0,.0146,0,0,0,0,0,0,0,.0027,.0003,0,0,.0004,0,0,0,.0154,.0016,.0001,0,.0121,.0028,0,0,.0008,0,0,0,0,0,0,0,.018,.0082,0,0,.0175,.0095,0,0
+                ,.0663,.0006,.0006,0,.0687,0,0,0,.0374,0,0,0,.0372,0,0,0,.0165,0,0,0,.0175,.0095,0,0,.0516,.0028,0,0,.0663,.0006,.0006,0,.0154,.0016,.0001,0,.0008,0,0,0,0,0,0,0,.0001,0,0,0,.0001,0
+                ,0,0,.0442,0,0,0,.0516,.0028,0,0,.0295,0,0,0,.0442,0,0,0,.0175,.0095,0,0,.0165,0,0,0,.0012,0,0,0,.0374,0,0,0,.0372,0,0,0,.0374], 808);
+                _i.set([.0032], 1012);
+                _i.set([.0175,.0095,0,0,.0027,0,0,0,.0154,.0016,.0001,0,0,0,0,0,.0295], 1028);
+                _i.set([.0012,0,0,0,.0516,.0028,0,0,.0001,0,0,0,.0032], 1112);
+                _i.set([.0008,0,0,0,.0374,0,0,0,.0239,0,0,0,0,0,0,0,.0027,0,0,0,.0001,0,0,0,0,0,0,0,.0032], 1156);
+                _i.set([.0074,0,0,0,.0163,0,0,0,0,0,0,0,.0442,0,0,0,0,0,0,0,.0163,0,0,0,.0074,0,0,0,.0163,0,0,0,.0074,0,0,0,.018,.0082,0,0,0,0,0,0,.0074,0,0,0,.0442,0
+                ,0,0,.0163,0,0,0,.0121,.0028,0,0,.0004,0,0,0,.0236,0,0,0,.0027,.0003,0,0,.0027,.0003,0,0,0,0,0,0,.0278,0,0,0,.0004,0,0,0,0,0,0,0,.0004,0,0,0,.0121,.0028,0,0
+                ,.0154,.0016,.0001,0,.0372,0,0,0,.0236,0,0,0,.0027,.0003], 1264);
+                _i.set([.0146,0,0,0,.0278,0,0,0,0,0,0,0,.0004,0,0,0,.0372,0,0,0,.0154,.0016,.0001,0,.0008,0,0,0,0,0,0,0,.018,.0082,0,0,.0663,.0006,.0006,0,.0374,0,0,0,0,0,0,0,.018,.0082
+                ,0,0,.0175,.0095,0,0,.0687,0,0,0,.0663,.0006,.0006,0,.0008], 1396);
+                _i.set([.0001,0,0,0,.0442,0,0,0,.0442,0,0,0,.0516,.0028,0,0,.0175,.0095], 1472);
+                this.setVerticesData(_B.VertexBuffer.MatricesWeightsExtraKind, _i, false);
+
+                _i = new Uint32Array([67245067,34867998,34280212,34867975,34867975,34867975,34867975,34867975,34867975,34867987,34867975,34867996,34867975,67245067,34867975,34867723,34867998,67245067,67245067,67245067,34867975,83888388,590850,590850,67245067,590850,83888388,590850,67245067,83888388,83888388,83888388,83888388,83888388,590850,590850,590850,590850,590850,83888388,83888388,83888388,67245067,67245067,34280197,34280467,34867987,590850,590850,590850
+                ,590850,151257620,151257620,34867975,34867975,34867998,34867998,34867978,34867978,67245067,34867975,67245067,67245067,67245067,83888388,590850,67245067,590850,151257620,83888388,83888388,590850,590850,83888388,67245067,590850,83888388,83888388,67245067,83888388,67245067,67242772,67245067,67245067,34867975,34867975,67245067,34867723,67245067,67245067,67245067,67245067,34867975,67245067,34867987,34280212,67245067,67245067,67242772,83888388
+                ,590850,83888388,67245067,590850,34867996,34867975,590850,67245067,83888388,83888388,83888388,83888388,83888388,83888388,590850,590850,590850,590850,83888388,83888388,67245067,67245067,83888388,67245067,83888388,67245067,83888388,67245067,67242772,34867975,590850,590850,590850,590850,67245067,34867975,34867723,34867998,67245067,185864988,34867996,34867996,34867987,83888388,67245067,590850,151257620,83888388,67245067,83888388
+                ,83888388,590850,151257620,83888388,590850,67245067,83888388,590850,83888388,83888388,67245067,67245067,590850,590850,151257620,590850,67245067,34867987,185867283,34280467,67245067,34867998,34867723,67245067,34867717,34867998,185797150,34867998,34867987,34276627,34280197,34867998,34867978,336272906,67242772,34280197,34867998,34280212,67245067,34867978,34866442,34867717,34867996,34867717,34867998,67245067,185797150,34867975,336267806,34867723
+                ,67245067,67245067,34867723,34867723,34867975,34867998,34867998,34867978,67245067,34280467,34280197,185864988,34867975,34280212,67245067,34280212,67245067,34867998,67245067,34280212,34867996,185864988,34280467,67245067,67245067,34867717,34867717,185797150,34867998,34867975,34867975,34867998,34867717,34867723,185797150,336267806,67245067,67245067,34867723,34280212,67242772,34280212,34867975,67242772,34280197,34867998,34867975,34867975,34867975,34867975
+                ,67245067,83888388,67245067,34867998,67245067,67245067,67245067,34280197,34867975,336267806,67245067,34867975,67245067,83888388,83888388,67245067,83888388,590850,83888388,83888388,83888388,590850,83888388,83888388,590850,83888388,83888388,83888388,34867975,34867723,34280212,34867996,34867987,67245067,67245067,83888388,590850,67245067,67245067,67242772,34867975,34867975,151257620,34867975,34867723,67245067,34867996,83888388,83888388,67245067
+                ,590850,83888388,83888388,83888388,83888388,83888388,83888388,590850,83888388,83888388,590850,83888388,83888388,67245067,590850,151257620,34867987,34867996,67245067,67245067,67245067,34867998,34867987,34867998,34867978,34280197,67245067,34867978,67245067,34867996,34867978,34867998,34867975,34867723,34867723,67245067,34867975,34867998,67245067,34867996,34280467,185864988,34867975,34867975,34280212,67245067,67245067,67245067,67245067,34867998
+                ,34867975,67245067,34867996,34867975,185864988,67245067,67245067,34867717,185797150,34867975,67245067,34867717,34867717,34867998,185797150,67245067,67245067,67245067,34280212,67242772,67242772,34280212,34280197]);
+                this.setVerticesData(_B.VertexBuffer.MatricesIndicesExtraKind, UNPACK(_i), false);
+
+                this.setMaterialByID("Warrior.Material.002");
+                this.subMeshes = [];
+                new _B.SubMesh(0, 0, 373, 0, 690, this);
+                if (scene._selectionOctree) {
+                    scene.createOrUpdateSelectionOctree();
+                }
+            }
+            if (this.postConstruction) this.postConstruction();
+        }
+
+        Armor.prototype.dispose = function (doNotRecurse) {
+            _super.prototype.dispose.call(this, doNotRecurse);
+            if (this.skeleton) this.skeleton.dispose();
+            clean(3);
+        };
+        return Armor;
+    })(QI.Mesh);
+    Warrior.Armor = Armor;
+
+    var Hair = (function (_super) {
+        __extends(Hair, _super);
+        function Hair(name, scene, materialsRootDir, source) {
+            _super.call(this, name, scene, null, source, true);
+
+            if (!materialsRootDir) { materialsRootDir = "./"; }
+            defineMaterials(scene, materialsRootDir); //embedded version check
+            var cloning = source && source !== null;
+            this.position.x  = 0;
+            this.position.y  = 4.8376;
+            this.position.z  = -.0275;
+            this.rotation.x  = 0;
+            this.rotation.y  = 0;
+            this.rotation.z  = 0;
+            this.scaling.x   = 1;
+            this.scaling.y   = 1;
+            this.scaling.z   = 1;
+            this.skeleton = skel_metarig(name, scene);
+            this.numBoneInfluencers = 1;
+
+
+            this.id = this.name;
+            this.billboardMode  = 0;
+            this.isVisible  = false; //always false; evaluated again at bottom
+            this.setEnabled(true);
+            this.checkCollisions = false;
+            this.receiveShadows  = false;
+            this.castShadows  = false;
+            if (!cloning){
+                this.setVerticesData(_B.VertexBuffer.PositionKind, new Float32Array([
+                    .1591,-1.1605,.4595,.1304,-1.0674,.4848,.2859,-1.1218,.463,.0955,-1.2,.4803,.0589,-1.2119,.5082,.101,-.3877,.3222,.1679,-.3405,.2264,.2056,-.4109,.2865,.0952,-.3195,.2662,.0957,-.2448,.2726,.0342,-1.2111,.5245,.1325,-.6989,.3774,.0271,-.3929,.3099,.3392,-1.0897,.3992,.3011,-.8184,.3216,.4306,-1.0573,.3251,.2412,-.688,.3217
+                    ,.2412,-.688,.3217,.3256,-.6645,.1795,.3011,-.8184,.3216,.2594,-.4341,.19,.2412,-.688,.3217,.2056,-.4109,.2865,.2061,-.3372,.1906,.2487,-.3646,.1334,.2108,-1.1588,.4622,.2859,-1.1218,.463,.2894,-1.1154,.4362,.2108,-1.1588,.4622,.5637,-1.0518,.1217,.5825,-1.0832,.1998,.3952,-.7699,-.0203,.4387,-1.0788,.2942,.4306,-1.0573,.3251
+                    ,.5217,-1.0925,.2663,.255,-.349,-.0712,.2623,-.3095,.0391,.2421,-.3117,-.1239,.5661,-1.0916,.2468,.3488,-.692,.0486,.2897,-.3868,.1398,.3056,-.3834,.0602,.5217,-1.0925,.2663,.3256,-.6645,.1795,.5661,-1.0916,.2468,.3256,-.6645,.1795,.2594,-.4341,.19,.2897,-.3868,.1398,.3501,-.6054,-.0313,.3507,-.8261,-.1985,.3213,-.6816,-.2092
+                    ,.3085,-.3936,-.1344,.2421,-.3117,-.1239,.2497,-.352,-.1999,.2788,-.3791,-.2551,.5751,-1.0836,.0922,.5208,-1.0242,.0221,.5039,-1.0067,-.0272,.5249,-1.0348,-.0528,.4647,-.992,-.0998,.5075,-1.0685,-.0931,.5491,-1.0738,-.0326,.4263,-1.025,-.1493,.4412,-1.091,-.1481,.526,-1.1232,-.0744,.2445,-.2684,.1038,.2153,-.2726,.1668,.2105,-.1645,.1227
+                    ,.2654,-.2058,-.0392,.2553,-.2568,-.1206,.0586,-.0437,-.0193,.0151,-.0678,-.0516,.0472,-.0489,-.1297,.1838,-.1063,-.0261,.2105,-.1645,.1227,.0586,-.0437,-.0193,.0208,-.095,.118,.0767,-.093,.1638,.1009,-.1633,.2465,.0767,-.093,.1638,.2105,-.1645,.1227,.2153,-.2726,.1668,.0257,-.1983,.265,.0365,-.1099,-.2794,.136,-.1327,-.2544
+                    ,.1582,-.1,-.1544,.136,-.1327,-.2544,.0451,-.2082,-.3766,.163,-.2403,-.3129,.0077,-.1457,-.2739,.0051,-.2726,-.3503,.0451,-.2082,-.3766,.2237,-.2349,-.2226,.1582,-.1,-.1544,.2298,-.3012,-.1906,.2142,-.3155,-.2386,.1745,-.3336,-.2803,.4089,-1.1161,-.2374,.2935,-.8876,-.2999,.3286,-1.1691,-.2836,.2935,-.8876,-.2999,.1924,-.9611,-.3333
+                    ,.3897,-1.1147,-.2564,.2935,-.8876,-.2999,.2403,-1.1029,-.3115,.2619,-1.2225,-.307,.3143,-.7645,-.3322,.2996,-.5325,-.307,.2689,-.5549,-.3144,.1746,-.3958,-.3247,.2996,-.5325,-.307,.3143,-.7645,-.3322,.2788,-.3791,-.2551,.1746,-.3958,-.3247,.2996,-.5325,-.307,.2689,-.5549,-.3144,.2654,-.6708,-.2586,.3143,-.7645,-.3322,.1746,-.3958,-.3247
+                    ,.1582,-.3863,-.2746,.2689,-.5549,-.3144,.1296,-.2637,-.3303,.163,-.2403,-.3129,.0664,-.2504,-.3309,.1296,-.2637,-.3303,.2078,-1.1726,-.291,.3143,-.7645,-.3322,.2654,-.6708,-.2586,.1924,-.9611,-.3333,.1909,-1.0437,-.2807,.2078,-1.1726,-.291,.2424,-1.2262,-.3052,.0256,-.3281,.265,.0767,-.093,.1638,.3256,-.6645,.1795,.2412,-.688,.3217
+                    ,.2056,-.4109,.2865,.2061,-.3372,.1906,.2061,-.3372,.1906,.2153,-.2726,.1668,.2859,-1.1218,.463,.3392,-1.0897,.3992,.3392,-1.0897,.3992,.4306,-1.0573,.3251,.5217,-1.0925,.2663,.3256,-.6645,.1795,.3056,-.3834,.0602,.2897,-.3868,.1398,.2487,-.3646,.1334,.2897,-.3868,.1398,.2594,-.4341,.19,.2487,-.3646,.1334,.2788,-.3791,-.2551
+                    ,.2788,-.3791,-.2551,.2788,-.3791,-.2551,.1582,-.1,-.1544,.1838,-.1063,-.0261,.1838,-.1063,-.0261,.1838,-.1063,-.0261,.0586,-.0437,-.0193,.2105,-.1645,.1227,.0767,-.093,.1638,.2105,-.1645,.1227,.2153,-.2726,.1668,.136,-.1327,-.2544,.0451,-.2082,-.3766,.136,-.1327,-.2544,.1582,-.1,-.1544,.2532,-.5907,-.0922,.2158,-.4722,-.1537
+                    ,.236,-.4891,-.1168,.2497,-.352,-.1999,.2497,-.352,-.1999,.3143,-.7645,-.3322,.2935,-.8876,-.2999,.3897,-1.1147,-.2564,.3845,-1.1747,-.2513,.1746,-.3958,-.3247,.1746,-.3958,-.3247,.2788,-.3791,-.2551,.2142,-.3155,-.2386,.2788,-.3791,-.2551,.2497,-.352,-.1999,.2996,-.5325,-.307,.2788,-.3791,-.2551,.2654,-.6708,-.2586,.259,-.699,-.1401
+                    ,.2171,-.7849,-.211,.2654,-.6708,-.2586,.2689,-.5549,-.3144,.1582,-.3863,-.2746,.2654,-.6708,-.2586,.1582,-.3863,-.2746,.2654,-.6708,-.2586,.1924,-.9611,-.3333,.2045,-.8763,-.2176,.2019,-.97,-.2143,.1582,-.3863,-.2746,.1622,-.42,-.187,.1746,-.3958,-.3247,.1745,-.3336,-.2803,.163,-.2403,-.3129,.0451,-.2082,-.3766,.0664,-.2504,-.3309
+                    ,.0664,-.2504,-.3309,.0451,-.2082,-.3766,.0051,-.2726,-.3503,.2654,-.6708,-.2586,.1897,-1.0509,-.2326,-.0947,-1.1604,.468,-.221,-1.1218,.4799,-.0643,-1.0674,.4913,-.0299,-1.2,.4844,.0086,-1.2119,.5099,-.0457,-.3877,.3271,-.1525,-.4108,.2984,-.1189,-.3405,.236,-.0437,-.3195,.2709,-.0437,-.2448,.2772,-.0735,-.6989,.3843,-.2784,-1.0896,.4198
+                    ,-.3746,-1.0572,.352,-.2455,-.8184,.3399,-.1857,-.6879,.336,-.1857,-.6879,.336,-.2455,-.8184,.3399,-.2794,-.6645,.1997,-.2126,-.4341,.2058,-.1857,-.6879,.336,-.1525,-.4108,.2984,-.1594,-.3372,.2029,-.2057,-.3646,.1486,-.1461,-1.1588,.4741,-.221,-1.1218,.4799,-.1461,-1.1588,.4741,-.2263,-1.1154,.4534,-.5209,-1.0516,.1579,-.3622,-.7698,.005
+                    ,-.5344,-1.0831,.2371,-.3847,-1.0787,.3217,-.4694,-1.0924,.2994,-.3746,-1.0572,.352,-.2256,-.3489,-.0552,-.2163,-.3117,-.1086,-.2255,-.3095,.0554,-.3113,-.692,.0706,-.515,-1.0915,.2828,-.2673,-.3833,.0793,-.2462,-.3868,.1577,-.4694,-1.0924,.2994,-.515,-1.0915,.2828,-.2794,-.6645,.1997,-.3179,-.6053,-.009,-.3297,-.8261,-.1758,-.301,-.6816,-.1884
+                    ,-.2256,-.3489,-.0552,-.2673,-.3833,.0793,-.2833,-.3936,-.1146,-.2163,-.3117,-.1086,-.2616,-.379,-.237,-.2289,-.3519,-.1839,-.5343,-1.0835,.1292,-.4847,-1.0241,.0556,-.4712,-1.0066,.0054,-.4939,-1.0347,-.0188,-.4369,-.9919,-.0697,-.3297,-.8261,-.1758,-.4369,-.9919,-.0697,-.5166,-1.0737,.003,-.4792,-1.0684,-.0602,-.3297,-.8261,-.1758,-.4792,-1.0684,-.0602
+                    ,-.4019,-1.0249,-.1216,-.4019,-1.0249,-.1216,-.4964,-1.1231,-.0403,-.4167,-1.0909,-.1195,-.2034,-.2683,.1187,-.1682,-.1644,.1354,-.1701,-.2726,.1796,-.2339,-.2058,-.0226,-.2292,-.2568,-.1044,-.0261,-.0437,-.0164,-.0221,-.0489,-.1274,.0151,-.0678,-.0516,-.1515,-.1062,-.0149,-.1682,-.1644,.1354,-.0261,-.0437,-.0164,.0151,-.0678,-.0516,.0208,-.095,.118
+                    ,-.032,-.093,.1674,.0208,-.095,.118,-.0506,-.1632,.2516,-.1682,-.1644,.1354,-.1701,-.2726,.1796,-.0506,-.1632,.2516,-.0506,-.1632,.2516,-.0214,-.1099,-.2774,-.1346,-.1,-.1446,-.119,-.1327,-.2459,-.1499,-.2402,-.3025,-.0365,-.2082,-.3739,-.0221,-.0489,-.1274,-.0214,-.1099,-.2774,.0077,-.1457,-.2739,.0051,-.2726,-.3503,-.0214,-.1099,-.2774
+                    ,-.0365,-.2082,-.3739,-.2044,-.2348,-.2083,-.2339,-.2058,-.0226,-.2084,-.3012,-.176,-.1961,-.3155,-.2249,-.2044,-.2348,-.2083,-.1592,-.3336,-.2692,-.1499,-.2402,-.3025,-.1961,-.3155,-.2249,-.3904,-1.116,-.2107,-.2794,-.8875,-.2808,-.3134,-1.1691,-.2622,-.1807,-.9611,-.3208,-.2794,-.8875,-.2808,-.2794,-.8875,-.2808,-.3725,-1.1146,-.231,-.2271,-1.1028,-.2959
+                    ,-.2484,-1.2224,-.29,-.3023,-.7644,-.3116,-.2558,-.5548,-.2969,-.2859,-.5325,-.2875,-.1623,-.3958,-.3135,-.1592,-.3336,-.2692,-.1961,-.3155,-.2249,-.3023,-.7644,-.3116,-.2859,-.5325,-.2875,-.1623,-.3958,-.3135,-.2616,-.379,-.237,-.2859,-.5325,-.2875,-.2558,-.5548,-.2969,-.3023,-.7644,-.3116,-.2486,-.6708,-.2415,-.1623,-.3958,-.3135,-.2558,-.5548,-.2969
+                    ,-.1426,-.3862,-.2646,-.1499,-.2402,-.3025,-.1177,-.2637,-.3221,-.1499,-.2402,-.3025,-.0547,-.2503,-.3269,-.1933,-1.1725,-.2776,-.3023,-.7644,-.3116,-.2486,-.6708,-.2415,-.1807,-.9611,-.3208,-.1933,-1.1725,-.2776,-.1758,-1.0436,-.2684,-.2288,-1.2262,-.2895,-.032,-.093,.1674,.0208,-.095,.118,-.2455,-.8184,.3399,-.3746,-1.0572,.352,-.1857,-.6879,.336
+                    ,-.1525,-.4108,.2984,-.1594,-.3372,.2029,-.1594,-.3372,.2029,-.1701,-.2726,.1796,-.221,-1.1218,.4799,-.2784,-1.0896,.4198,-.3847,-1.0787,.3217,-.3746,-1.0572,.352,-.2784,-1.0896,.4198,-.4694,-1.0924,.2994,-.2794,-.6645,.1997,-.3746,-1.0572,.352,-.2673,-.3833,.0793,-.2057,-.3646,.1486,-.2462,-.3868,.1577,-.2462,-.3868,.1577,-.2057,-.3646,.1486
+                    ,-.2126,-.4341,.2058,-.3622,-.7698,.005,-.4939,-1.0347,-.0188,-.3297,-.8261,-.1758,-.2616,-.379,-.237,-.2833,-.3936,-.1146,-.2833,-.3936,-.1146,-.2616,-.379,-.237,-.2163,-.3117,-.1086,-.2256,-.3489,-.0552,-.2163,-.3117,-.1086,-.4939,-1.0347,-.0188,-.4369,-.9919,-.0697,-.4792,-1.0684,-.0602,-.3297,-.8261,-.1758,-.4019,-1.0249,-.1216,-.4167,-1.0909,-.1195
+                    ,-.2339,-.2058,-.0226,-.2339,-.2058,-.0226,-.1682,-.1644,.1354,-.1682,-.1644,.1354,-.0506,-.1632,.2516,-.2044,-.2348,-.2083,-.0506,-.1632,.2516,.0151,-.0678,-.0516,-.0221,-.0489,-.1274,.0077,-.1457,-.2739,.0077,-.1457,-.2739,-.0214,-.1099,-.2774,.0051,-.2726,-.3503,-.2253,-.5907,-.0762,-.192,-.4722,-.1401,-.2289,-.3519,-.1839,-.1499,-.2402,-.3025
+                    ,-.2044,-.2348,-.2083,-.1961,-.3155,-.2249,-.2084,-.3012,-.176,-.3023,-.7644,-.3116,-.2794,-.8875,-.2808,-.2794,-.8875,-.2808,-.3904,-1.116,-.2107,-.4167,-1.0909,-.1195,-.367,-1.1746,-.2263,-.1623,-.3958,-.3135,-.1961,-.3155,-.2249,-.1961,-.3155,-.2249,-.2859,-.5325,-.2875,-.2616,-.379,-.237,-.1972,-.7849,-.1972,-.2343,-.6989,-.1236,-.2558,-.5548,-.2969
+                    ,-.1426,-.3862,-.2646,-.1426,-.3862,-.2646,-.1807,-.9611,-.3208,-.1851,-.8763,-.2046,-.1426,-.3862,-.2646,-.192,-.4722,-.1401,-.1407,-.4199,-.1769,-.1623,-.3958,-.3135,-.1426,-.3862,-.2646,-.1592,-.3336,-.2692,-.1499,-.2402,-.3025,-.0365,-.2082,-.3739,.0051,-.2726,-.3503,-.0365,-.2082,-.3739,-.1823,-.97,-.2015,-.1713,-1.0509,-.2206,.0208,-.095,.118
+                    ,.0767,-.093,.1638,.2654,-.6708,-.2586,.1924,-.9611,-.3333,.2654,-.6708,-.2586,.1924,-.9611,-.3333,-.0506,-.1632,.2516,-.032,-.093,.1674,-.2044,-.2348,-.2083,-.2097,-.4891,-.1019,-.1807,-.9611,-.3208,-.1807,-.9611,-.3208,.148,-.2964,.2515,.2049,-.3521,.211,.1487,-.3532,.2732,.2535,-.2891,.0966,.2807,-.3429,-.0377,.2709,-.3475,.1006
+                    ,.2456,-.2799,-.1623,.2126,-.3337,-.2796,.2572,-.3383,-.1648,.1168,-.3319,-.344,.0053,-.2714,-.3453,.0047,-.3299,-.3631,.0264,-.2991,.2863,.027,-.3543,.3047,.2651,-.2845,-.0351,.2012,-.2753,-.2772,-.1568,-.3521,.2231,-.0973,-.2964,.2597,-.0966,-.3531,.2814,-.2491,-.3429,-.0201,-.2129,-.289,.1122,-.2301,-.3474,.1173,-.1972,-.3337,-.266
+                    ,-.2223,-.2799,-.1467,-.2341,-.3383,-.1484,-.1059,-.3318,-.3365,-.1056,-.2734,-.328,-.1428,-.2936,.2258,-.2333,-.2844,-.0185,-.1857,-.2753,-.2643,.1911,-.2937,.2147,.1171,-.2734,-.3355
+                ]),
+                false);
+
+                var _i;//indices & affected indices for shapekeys
+                _i = new Uint32Array(1032);
+                _i.set([0,1,2,3,4,1,5,6,7,5,8,6,8,9,6,4,10,1,1,10,11,11,12,5,13,14,15,16,2,1,17,18,19,5,16,11,20,18,21,5,7,16,22,23,20,23,24,20,2,25
+                ,0]);
+                CONTIG(_i, 51, 26, 37);
+                _i.set([30,38,39,39,40,41,42,43,44,38,18,39,41,24,36,45,46,47,48,49,31,48,50,49,35,51,41,52,53,54,31,55,29,31,56,55,31,57,56,58,49,59,59,60,61,49,62,60,62,63
+                ,64,65,66,67,65,67,68,36,65,68,24,23,65,37,36,69,70,71,72,73,74,75,70,76,71,77,76,70,78,79,80,81,6,78,9,82,78,83,84,85,86,87,88,72,83,85,70,72,85,72
+                ,89,83,90,91,83,92,68,93,94,37,69,95,94,92,96,95,88,97,49,98,99,100,101,99,102,103,104,105,99,106,107,108,109,95,96,98,110,111,107,112,113,98,50,114,115,116,117,118,119,120
+                ,88,121,96,122,123,124,101,125,104,126,127,101,128,129,130,104,125,131,0,3,1,8,12,132,16,1,11,11,10,12,9,132,82,2,14,13,82,133,78,14,134,15,135,136,20,7,6,137,138,6
+                ,139,140,141,27,32,142,143,31,39,48,31,30,39,48,39,41,35,41,36,39,18,40,144,15,145,146,147,148,149,150,151,31,49,58,48,152,50,41,51,48,51,153,48,51,35,37,51,37,154,31
+                ,58,57,59,49,60,62,49,63,155,68,156,68,67,157,65,23,66,69,36,68,36,24,65,85,158,70,159,160,161,162,163,78,69,92,94,78,6,9,92,164,88,84,83,165,71,89,72,89,90,83
+                ,166,92,167,168,169,170,94,171,37,88,95,92,95,172,94,173,101,174,175,97,98,104,99,101,97,63,49,99,176,102,104,131,105,108,107,177,178,179,180,95,181,182,98,49,50,183,50,184,185,186
+                ,187,188,168,186,189,190,191,192,169,193,194,195,196,197,198,169,199,200,119,201,202,203,204,205,206,207,187,195,129,196,208,209,210,211,212,211,213,214,215,216,214,216,217,217,216,218,213,211,10,211
+                ,219,10,219,214,12,220,221,222,223,211,210,224,225,226,214,219,223,227,228,226,214,223,215,229,227,230,230,227,231,210,209], 63);
+                CONTIG(_i, 494, 232, 244);
+                _i.set([238,245,246,245,247,248,249,250,251,246,245,226,247,244,231,226,248,227,252,237,253,252,253,254,255,256,257,258,259,260,237,236,261,237,261,262,237], 507);
+                CONTIG(_i, 544, 262, 278);
+                _i.set([276,279,277,244,279,276,231,276,230,243,280,244,281,282,283,284,281,285,286,287,288,289,281,290,291,292,289,293,294,216,218,295,82,296,297,298,298,299,300,282,297,296,281,297,282,301,302,303,304,305
+                ,306,307,297,308,309,280,243,310,311,309,312,313,314,315,316,253,317,318,319,317,320,321,322,317,323,324,325,326,327,328,329,316,330,331,326,332,333,316,334,254,335,336,337,338,339,340,341,312,342,343
+                ,342,344,318,322,345,346,318,347,348,349,350,322,351,345,209,211,212,217,12,214,223,219,211,219,12,10,218,132,217,222,210,220,82,352,353,354,355,226,356,227,357,215,358,216,359,360,216,361,235,362
+                ,363,364,365,237,252,245,237,245,238,252,247,245,242,244,247,245,248,226], 561);
+                CONTIG(_i, 729, 366, 377);
+                _i.set([252,254,378,247,252,379,380,252,381,257,382,383,257,259,384,237,263,385,386,387,388,389,390,253,297,284,391,392,284,393,276,278,230,280,279,244,244,276,231,297,281,284,281,289,394,277,395,278,280,396
+                ,279,397,218,216,307,299,298,298,300,296,398,399,400,401,402,403,298,297,307,404,405,337,309,243,406,407,408,310,409,410,260,411,412,318,321,413,414,322,318,317,315,253,415,317,321,416,322,323,351,325
+                ,417,326,327,418,259,419,260,259,316,254,253,420,421,254,337,422,423,337,423,404,424,337,425,426,337,405,427,428,337,429,430,431,432,433,434,435,344,436,344,437,438,337,428,422,439,350,440,8,5,12
+                ,9,8,132,2,16,14,82,441,442,69,68,92,168,443,169,444,445,195,129,446,196,217,132,12,218,82,132,222,223,210,82,447,448,280,309,449,404,450,405,451,439,428,439,452,350], 741);
+                CONTIG(_i, 936, 453, 465);
+                _i.set([455,466,454,456,458,467,461,457,468,462,460], 949);
+                CONTIG(_i, 960, 469, 478);
+                _i.set([463,479,471,465,466,469,473,480,477,481,472,478,482,475,453,483,454,456,467,457,459,468,460,462,484,463,465,453,455,454,483,456,467,459,461,468,484,462,469,480,470,472,481,473,475,482,476,478,464,463
+                ,471,470,465,469,474,473,477,476,481,478,479,482], 970);
+                this.setIndices(_i);
+
+                this.setVerticesData(_B.VertexBuffer.NormalKind, new Float32Array([
+                    .2066,-.1691,.9637,.1593,.1517,.9755,.5852,-.4582,.669,.5665,-.1761,.805,.572,-.1521,.806,.1201,.4377,.891,.5522,.456,.6979,.616,.4021,.6774,.2467,.2583,.934,.3142,.1057,.9434,.0334,.0183,.9993,.2684,.2413,.9326,.0305,.4039,.9142,.6547,.1881,.732,.6897,.3441,.637,.645,-.0625,.7616,.6243,.268,.7338
+                    ,.6243,.268,.7338,.8816,.3131,.353,.6897,.3441,.637,.7871,.3114,.5325,.6243,.268,.7338,.616,.4021,.6774,.758,.34,.5565,.7383,.5029,.4493,-.0064,-.0091,.9999,.5852,-.4582,.669,.3766,-.9112,-.167,-.0064,-.0091,.9999,.8708,.4871,-.0667,.7841,.5665,.2533,.9072,.3991,-.1331,.2304,-.7695,.5955,.645,-.0625,.7616
+                    ,.4539,.2849,.8443,.8577,.5135,-.0249,.9685,.236,.0795,.9772,.1874,-.0997,.6305,.5005,.5932,.9325,.3268,.1537,.6889,.5661,.4526,.9007,.414,.1312,.4539,.2849,.8443,.8816,.3131,.353,.6305,.5005,.5932,.8816,.3131,.353,.7871,.3114,.5325,.6889,.5661,.4526,.9855,.1682,-.0201,.8549,.2317,-.4641,.9648,.0896,-.2473
+                    ,.9137,.3963,-.0895,.9772,.1874,-.0997,.4727,.816,-.3328,.749,.4812,-.4555,.8785,.4275,-.2131,.8736,.3811,-.3026,.9059,.4133,.0923,.9025,.3795,-.2036,.7918,.2193,-.5699,.769,.3407,-.5408,.7747,.391,-.4968,.7158,.1087,-.6897,.789,.1829,-.5865,.679,.1404,-.7205,.933,.1692,.3176,.8104,.1572,.5644,.7495,.5476,.3719
+                    ,.9459,.323,-.0303,.9794,-.0201,-.2008,-.03,.9934,.1102,-.0001,1,-.0065,-.221,.9501,-.22,.6163,.7854,.0578,.7495,.5476,.3719,-.03,.9934,.1102,.012,.9338,.3574,.0683,.8888,.4532,.3227,.5515,.7692,.0683,.8888,.4532,.7495,.5476,.3719,.8104,.1572,.5644,.0306,.3973,.9171,-.2778,.7999,-.5319,.5264,.6894,-.4976
+                    ,.5851,.7717,-.2493,.5264,.6894,-.4976,-.1279,.1639,-.9781,.6341,.1632,-.7559,-.0239,.6946,-.719,-.0331,-.1183,-.9924,-.1279,.1639,-.9781,.8788,.2496,-.4067,.5851,.7717,-.2493,.9542,.1246,-.272,.7992,.2903,-.5262,.4848,.2605,-.8349,.8137,.2094,-.5423,.6755,-.0349,-.7365,.3722,-.0238,-.9278,.6755,-.0349,-.7365,-.6225,.039,-.7816
+                    ,.56,.0499,-.827,.6755,-.0349,-.7365,.0428,-.1078,-.9932,.0824,-.0226,-.9963,.6969,.3234,-.64,.7607,.1513,-.6311,-.311,-.1067,-.9444,-.452,.0911,-.8873,.7607,.1513,-.6311,.6969,.3234,-.64,.749,.4812,-.4555,-.452,.0911,-.8873,.7607,.1513,-.6311,-.311,-.1067,-.9444,-.9593,-.0108,-.282,.6969,.3234,-.64,-.452,.0911,-.8873
+                    ,-.9446,-.2282,-.2359,-.311,-.1067,-.9444,.3107,.2398,-.9197,.6341,.1632,-.7559,.2935,-.5521,-.7804,.3107,.2398,-.9197,-.4742,-.0902,-.8758,.6969,.3234,-.64,-.9593,-.0108,-.282,-.6225,.039,-.7816,-.9965,-.0068,-.0832,-.4742,-.0902,-.8758,-.1985,-.0535,-.9786,.0319,.2974,.9542,.0683,.8888,.4532,.8816,.3131,.353,.6243,.268,.7338
+                    ,.616,.4021,.6774,.758,.34,.5565,.758,.34,.5565,.8104,.1572,.5644,.5852,-.4582,.669,.6547,.1881,.732,.6547,.1881,.732,.645,-.0625,.7616,.4539,.2849,.8443,.8816,.3131,.353,.9007,.414,.1312,.6889,.5661,.4526,.7383,.5029,.4493,.6889,.5661,.4526,.7871,.3114,.5325,.7383,.5029,.4493,.749,.4812,-.4555
+                    ,.749,.4812,-.4555,.749,.4812,-.4555,.5851,.7717,-.2493,.6163,.7854,.0578,.6163,.7854,.0578,.6163,.7854,.0578,-.03,.9934,.1102,.7495,.5476,.3719,.0683,.8888,.4532,.7495,.5476,.3719,.8104,.1572,.5644,.5264,.6894,-.4976,-.1279,.1639,-.9781,.5264,.6894,-.4976,.5851,.7717,-.2493,-.9807,-.1826,.0699,-.9267,-.3398,.1602
+                    ,-.8841,-.0374,.4657,.4727,.816,-.3328,.4727,.816,-.3328,.6969,.3234,-.64,.6755,-.0349,-.7365,.56,.0499,-.827,.4881,-.1157,-.8651,-.452,.0911,-.8873,-.452,.0911,-.8873,.749,.4812,-.4555,.7992,.2903,-.5262,.749,.4812,-.4555,.4727,.816,-.3328,.7607,.1513,-.6311,.749,.4812,-.4555,-.9593,-.0108,-.282,-.9885,.1499,-.0177
+                    ,-.9031,.2319,-.3614,-.9593,-.0108,-.282,-.311,-.1067,-.9444,-.9446,-.2282,-.2359,-.9593,-.0108,-.282,-.9446,-.2282,-.2359,-.9593,-.0108,-.282,-.6225,.039,-.7816,-.9786,.1891,-.0804,-.9955,.0646,.0684,-.9446,-.2282,-.2359,-.581,-.768,-.2691,-.452,.0911,-.8873,.4848,.2605,-.8349,.6341,.1632,-.7559,-.1279,.1639,-.9781,.2935,-.5521,-.7804
+                    ,.2935,-.5521,-.7804,-.1279,.1639,-.9781,-.0331,-.1183,-.9924,-.9593,-.0108,-.282,-.9886,.1506,-.0028,-.1419,-.1691,.9753,-.5394,-.4581,.7065,-.0938,.1517,.9839,-.5116,-.176,.841,-.517,-.152,.8424,-.0603,.4377,.8971,-.5694,.4022,.7169,-.5043,.4561,.7332,-.1839,.2583,.9484,-.2506,.1057,.9623,-.2056,.2413,.9484,-.6044,.1882,.7741
+                    ,-.5928,-.0624,.8029,-.6456,.3442,.6816,-.5739,.2681,.7738,-.5739,.2681,.7738,-.6456,.3442,.6816,-.8561,.3133,.411,-.7497,.3115,.5838,-.5739,.2681,.7738,-.5694,.4022,.7169,-.7192,.3402,.6058,-.7066,.5031,.4975,.0731,-.0091,.9973,-.5394,-.4581,.7065,.0731,-.0091,.9973,-.3871,-.9111,-.1415,-.8732,.4873,-.0085,-.914,.3992,-.0723
+                    ,-.7654,.5667,.3051,-.1904,-.7695,.6096,-.3965,.285,.8727,-.5928,-.0624,.8029,-.8573,.5137,.0323,-.9816,.1876,-.0343,-.961,.2362,.144,-.9201,.327,.2156,-.5894,.5007,.6339,-.8899,.4142,.191,-.6571,.5663,.4975,-.3965,.285,.8727,-.5894,.5007,.6339,-.8561,.3133,.411,-.9846,.1684,.0457,-.8839,.2319,-.4061,-.9791,.0898,-.1824
+                    ,-.8573,.5137,.0323,-.8899,.4142,.191,-.9176,.3965,-.0284,-.9816,.1876,-.0343,-.7776,.4814,-.4045,-.4937,.8161,-.3005,-.8907,.4277,-.1541,-.8918,.3813,-.2437,-.8976,.4135,.1525,-.914,.3797,-.1429,-.8281,.2195,-.5159,-.8839,.2319,-.4061,-.8281,.2195,-.5159,-.8061,.3912,-.444,-.8033,.3408,-.4883,-.8839,.2319,-.4061,-.8033,.3408,-.4883
+                    ,-.7602,.1088,-.6404,-.7602,.1088,-.6404,-.7255,.1406,-.6736,-.8263,.1831,-.5326,-.9097,.1694,.3792,-.723,.5477,.421,-.7709,.1574,.6172,-.9457,.3232,.0328,-.9906,-.0199,-.1351,.0375,.9934,.108,.206,.9501,-.2343,-.0001,1,-.0065,-.6109,.7855,.0988,-.723,.5477,.421,.0375,.9934,.108,-.0001,1,-.0065,.012,.9338,.3574
+                    ,-.0378,.8888,.4567,.012,.9338,.3574,-.2705,.5516,.789,-.723,.5477,.421,-.7709,.1574,.6172,-.2705,.5516,.789,-.2705,.5516,.789,.2419,.7999,-.5492,-.6002,.7718,-.2098,-.5583,.6895,-.4614,-.683,.1634,-.7119,.0624,.1639,-.9845,.206,.9501,-.2343,.2419,.7999,-.5492,-.0239,.6946,-.719,-.0331,-.1183,-.9924,.2419,.7999,-.5492
+                    ,.0624,.1639,-.9845,-.9039,.2498,-.3471,-.9457,.3232,.0328,-.9702,.1248,-.2078,-.8325,.2905,-.4718,-.9039,.2498,-.3471,-.5394,.2607,-.8007,-.683,.1634,-.7119,-.8325,.2905,-.4718,-.848,.2095,-.4868,-.7231,-.0348,-.6898,-.4333,-.0237,-.9009,.569,.0389,-.8214,-.7231,-.0348,-.6898,-.7231,-.0348,-.6898,-.6139,.05,-.7878,-.109,-.1077,-.9882
+                    ,-.1486,-.0226,-.9886,-.738,.3236,-.5921,.2473,-.1067,-.963,-.8011,.1514,-.579,.3919,.091,-.9155,-.5394,.2607,-.8007,-.8325,.2905,-.4718,-.738,.3236,-.5921,-.8011,.1514,-.579,.3919,.091,-.9155,-.7776,.4814,-.4045,-.8011,.1514,-.579,.2473,-.1067,-.963,-.738,.3236,-.5921,.9384,-.011,-.3454,.3919,.091,-.9155,.2473,-.1067,-.963
+                    ,.9267,-.2284,-.2984,-.683,.1634,-.7119,-.3713,.2399,-.8969,-.683,.1634,-.7119,-.345,-.552,-.7591,.4147,-.0903,-.9054,-.738,.3236,-.5921,.9384,-.011,-.3454,.569,.0389,-.8214,.4147,-.0903,-.9054,.9887,-.007,-.1495,.1328,-.0536,-.9897,-.0378,.8888,.4567,.012,.9338,.3574,-.6456,.3442,.6816,-.5928,-.0624,.8029,-.5739,.2681,.7738
+                    ,-.5694,.4022,.7169,-.7192,.3402,.6058,-.7192,.3402,.6058,-.7709,.1574,.6172,-.5394,-.4581,.7065,-.6044,.1882,.7741,-.1904,-.7695,.6096,-.5928,-.0624,.8029,-.6044,.1882,.7741,-.3965,.285,.8727,-.8561,.3133,.411,-.5928,-.0624,.8029,-.8899,.4142,.191,-.7066,.5031,.4975,-.6571,.5663,.4975,-.6571,.5663,.4975,-.7066,.5031,.4975
+                    ,-.7497,.3115,.5838,-.914,.3992,-.0723,-.914,.3797,-.1429,-.8839,.2319,-.4061,-.7776,.4814,-.4045,-.9176,.3965,-.0284,-.9176,.3965,-.0284,-.7776,.4814,-.4045,-.9816,.1876,-.0343,-.8573,.5137,.0323,-.9816,.1876,-.0343,-.914,.3797,-.1429,-.8281,.2195,-.5159,-.8033,.3408,-.4883,-.8839,.2319,-.4061,-.7602,.1088,-.6404,-.8263,.1831,-.5326
+                    ,-.9457,.3232,.0328,-.9457,.3232,.0328,-.723,.5477,.421,-.723,.5477,.421,-.2705,.5516,.789,-.9039,.2498,-.3471,-.2705,.5516,.789,-.0001,1,-.0065,.206,.9501,-.2343,-.0239,.6946,-.719,-.0239,.6946,-.719,.2419,.7999,-.5492,-.0331,-.1183,-.9924,.9831,-.1828,.0043,.9353,-.34,.098,-.4937,.8161,-.3005,-.683,.1634,-.7119
+                    ,-.9039,.2498,-.3471,-.8325,.2905,-.4718,-.9702,.1248,-.2078,-.738,.3236,-.5921,-.7231,-.0348,-.6898,-.7231,-.0348,-.6898,-.848,.2095,-.4868,-.8263,.1831,-.5326,-.5447,-.1155,-.8306,.3919,.091,-.9155,-.8325,.2905,-.4718,-.8325,.2905,-.4718,-.8011,.1514,-.579,-.7776,.4814,-.4045,.877,.2317,-.4209,.9852,.1497,-.0836,.2473,-.1067,-.963
+                    ,.9267,-.2284,-.2984,.9267,-.2284,-.2984,.569,.0389,-.8214,.9711,.1889,-.1455,.9267,-.2284,-.2984,.9353,-.34,.098,.5617,-.7682,-.3073,.3919,.091,-.9155,.9267,-.2284,-.2984,-.5394,.2607,-.8007,-.683,.1634,-.7119,.0624,.1639,-.9845,-.0331,-.1183,-.9924,.0624,.1639,-.9845,.9979,.0644,.0018,.9862,.1504,-.0687,.012,.9338,.3574
+                    ,.0683,.8888,.4532,-.9593,-.0108,-.282,-.6225,.039,-.7816,-.9593,-.0108,-.282,-.6225,.039,-.7816,-.2705,.5516,.789,-.0378,.8888,.4567,-.9039,.2498,-.3471,.9132,-.0376,.4057,.569,.0389,-.8214,.569,.0389,-.8214,.5124,.273,.8142,.7869,.1959,.5852,.4698,.3137,.8251,.9167,.2727,.2918,.9634,.2653,-.0386,.9085,.2924,.2985
+                    ,.948,.1983,-.249,.7843,.1786,-.5941,.9465,.208,-.2465,.3425,.162,-.9254,-.0323,.246,-.9687,-.0319,.2904,-.9564,.0316,.3269,.9445,.0317,.3153,.9485,.9673,.2514,-.0332,.7598,.1699,-.6275,-.7461,.1961,.6363,-.4569,.2732,.8465,-.4136,.3138,.8546,-.9638,.2655,.0257,-.8952,.2728,.3523,-.8865,.2926,.3584,-.8221,.1788,-.5405
+                    ,-.9624,.1985,-.1852,-.9608,.2082,-.1828,-.4035,.1621,-.9005,-.406,.1333,-.9041,-.714,.138,.6864,-.9673,.2516,.0314,-.8,.17,-.5754,.7582,.1379,.6373,.3448,.1332,-.9292
+                ]),
+                false);
+
+                this.setVerticesData(_B.VertexBuffer.UVKind, new Float32Array([
+                    .2067,.4981,.207,.4581,.2634,.5031,.1738,.5056,.1554,.5069,.3054,.1661,.3458,.1498,.3467,.1891,.3168,.133,.3275,.1035,.1444,.504,.2689,.3011,.2756,.1554,.294,.4933,.3234,.3715,.3406,.4887,.3182,.3094,.4218,.3004,.4763,.283,.4265,.3584,.4613,.1819,.4218,.3004,.4218,.1766,.4581,.1386,.4818,.1479
+                    ,.2277,.5059,.9722,.5405,.982,.5333,.9869,.5742,.5113,.4528,.4787,.4716,.5641,.3181,.9514,.2106,.9611,.2053,.9621,.2391,.5679,.1287,.5179,.1183,.5889,.109,.4601,.4779,.5326,.2875,.4781,.1587,.511,.1526,.3762,.5125,.3653,.3016,.3956,.5176,.9437,.4177,.9261,.3166,.9437,.2933,.5613,.2448,.6463,.3311
+                    ,.6436,.2668,.5946,.1453,.9777,.6662,.9722,.629,.9777,.6007,.5252,.4652,.5546,.434,.5755,.423,.5869,.4341,.6078,.4115,.6073,.4461,.5793,.4528,.6332,.4222,.6359,.4514,.6016,.4714,.4888,.104,.4638,.1091,.4762,.0592,.5448,.0684,.5833,.0855,.3212,.6119,.3398,.6296,.3175,.6584,.1126,.8674,.1347,.8333
+                    ,.1347,.9248,.3565,.5639,.3383,.5441,.3432,.0693,.3492,.0303,.3956,.077,.3789,.125,.3064,.073,.3205,.7297,.2882,.7218,.2819,.6752,.6396,.021,.7017,.045,.6697,.0649,.3386,.7335,.3565,.7851,.3271,.7852,.6273,.0692,.5936,.0132,.6174,.1002,.6397,.1032,.6609,.1079,.6774,.4564,.6966,.3507,.8749,.232
+                    ,.8853,.1071,.9253,.1358,.8515,.2106,.8853,.1071,.9087,.1999,.9012,.253,.9574,.9486,.931,.851,.9456,.8553,.6837,.1324,.6774,.1954,.7017,.2954,.9218,.7849,.9574,.7747,.6774,.1954,.0403,.9268,.0131,.8775,.0403,.8333,.0665,.8637,.0865,.8555,.0865,.9331,.6805,.0735,.6995,.9355,.6995,.975,.6913,.9485
+                    ,.9253,.2307,.8719,.0522,.8994,.0132,.8256,.5955,.7996,.5616,.798,.5043,.9097,.2544,.2874,.1253,.3492,.0303,.3653,.3016,.4218,.3004,.4218,.1766,.3641,.1515,.3641,.1515,.3789,.125,.9722,.5405,.9869,.5043,.9621,.153,.9611,.2053,.3762,.5125,.3653,.3016,.6652,.9763,.6564,.9427,.6652,.9355,.9437,.2933
+                    ,.9261,.3166,.9274,.2808,.6469,.1311,.6469,.1311,.6469,.1311,.5936,.0132,.5377,.0242,.5377,.0242,.2837,.623,.7934,.3753,.8245,.4592,.7907,.4592,.3956,.077,.3789,.125,.6396,.021,.3271,.7852,.6396,.021,.5936,.0132,.7347,.7677,.7676,.8176,.7502,.8115,.6233,.1221,.6233,.1221,.8719,.0522,.8853,.1071
+                    ,.6866,.4542,.8548,.237,.9574,.7747,.9574,.7747,.9218,.7849,.9394,.7486,.6469,.1311,.6233,.1221,.6774,.1954,.6469,.1311,.8027,.7251,.7506,.718,.7793,.6778,.8027,.7251,.3495,.898,.3738,.8117,.3738,.946,.8256,.8508,.8027,.7251,.8256,.5955,.7788,.6376,.7736,.5967,.8256,.8508,.7863,.8398,.0665,.8637
+                    ,.0808,.8333,.8022,.9486,.781,.9001,.8038,.9073,.8038,.9073,.781,.9001,.8038,.8773,.8027,.7251,.7786,.5606,.1035,.4584,.0572,.4237,.1278,.4276,.1228,.486,.1349,.4991,.2457,.1431,.201,.133,.2291,.1048,.2603,.1112,.2708,.0817,.1851,.2688,.0427,.3965,.0131,.3625,.101,.2858,.1446,.2425,.7085,.7397
+                    ,.7043,.796,.6468,.7238,.6584,.624,.7085,.7397,.7013,.6175,.6618,.5823,.6359,.592,.0825,.45,.4218,.954,.4336,.9355,.4301,.9628,.6089,.888,.5565,.7631,.6419,.9036,.6241,.9728,.6303,.9355,.6303,.9858,.5474,.5791,.5256,.5615,.5964,.5648,.589,.7317,.6621,.909,.6031,.5971,.6377,.6011,.8817,.5118
+                    ,.8997,.5043,.8997,.7221,.5567,.6913,.4778,.7836,.4775,.7203,.8889,.8669,.8788,.926,.8523,.8484,.8957,.8461,.8518,.796,.8748,.8146,.5951,.9009,.5668,.8738,.546,.865,.391,.6742,.3826,.639,.391,.5441,.9431,.6645,.9431,.7193,.9258,.6921,.9461,.5043,.9461,.6381,.9258,.5983,.9863,.3766,.9863,.4437
+                    ,.9698,.4011,.6257,.5489,.6372,.5043,.6532,.5531,.5653,.5169,.5286,.5372,.1214,.7174,.1326,.6713,.1364,.7002,.0618,.7046,.0307,.756,.3826,.7116,.3954,.7006,.3954,.7761,.0928,.7844,.1176,.7652,.0652,.8068,.0307,.756,.2221,.0646,.2816,.0456,.2816,.0456,.1364,.6,.0818,.653,.0917,.6067,.0661,.5651
+                    ,.1224,.5441,.2966,.9469,.2819,.8776,.2967,.8711,.3234,.8117,.2819,.8776,.2929,.8175,.037,.6031,.0131,.683,.4971,.5552,.4759,.5604,.4851,.5252,.7646,.3923,.7278,.4138,.7518,.3753,.4523,.909,.4325,.8089,.2132,.759,.1805,.6521,.2335,.6356,.2335,.6356,.2469,.7453,.1836,.7188,.1776,.7718,.8999,.2808
+                    ,.8854,.3723,.8692,.3765,.8761,.7486,.8957,.7703,.891,.7952,.4218,.7534,.4394,.6523,.8999,.452,.8515,.4389,.4394,.6523,.8253,.0895,.8092,.1806,.7881,.1319,.7347,.9453,.7549,.8773,.7549,.9562,.7278,.4138,.7421,.4254,.7278,.4138,.7464,.4531,.1625,.7455,.2558,.5843,.2518,.5441,.7824,.2642,.74,.3488
+                    ,.7505,.2929,.1692,.7712,.305,.0132,.3294,.0184,.7043,.796,.6981,.8987,.7085,.7397,.7013,.6175,.2154,.0943,.2154,.0943,.2221,.0646,.4218,.954,.4336,.9868,.5136,.9831,.5026,.9708,.5136,.9355,.8817,.5118,.8997,.7221,.8518,.5391,.4765,.9355,.4765,.9745,.4597,.9626,.5397,.948,.556,.9355,.556,.9714
+                    ,.2426,.7983,.2426,.9104,.1625,.8225,.4665,.5867,.5183,.596,.5183,.596,.4665,.5867,.8957,.8461,.8889,.8669,.8957,.8461,.5339,.8763,.9514,.0444,.962,.0132,.962,.1265,.493,.8711,.4915,.8999,.0131,.683,.0131,.683,.0307,.756,.0307,.756,.6918,.5094,.4851,.5252,.2816,.0456,.3234,.9711,.2966,.9469
+                    ,.2967,.8711,.2967,.8711,.2819,.8776,.3234,.8117,.7278,.0778,.7664,.035,.4914,.5769,.4461,.5262,.4851,.5252,.891,.7952,.8945,.8181,.2558,.5843,.2335,.6356,.2335,.6356,.2558,.7494,.4915,.8999,.2374,.7701,.8999,.452,.891,.7952,.891,.7952,.4394,.6523,.4665,.5867,.7531,.1746,.7351,.1295,.8253,.0895
+                    ,.8253,.0132,.8253,.0132,.7824,.2642,.7446,.2142,.9861,.2808,.9861,.3501,.9698,.3185,.5979,.9692,.5822,.9528,.5979,.9355,.7278,.4138,.7318,.472,.7646,.4763,.7318,.472,.7319,.2536,.7296,.2901,.3294,.0184,.3492,.0303,.8027,.7251,.8256,.5955,.8027,.7251,.8256,.5955,.2816,.0456,.305,.0132,.4851,.5252
+                    ,.7496,.0377,.7824,.2642,.7824,.2642,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+                    ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+                ]),
+                false);
+
+                this.setVerticesData(_B.VertexBuffer.ColorKind, new Float32Array([
+                    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                ]),
+                false);
+
+                _i = new Float32Array(1940);
+                _i.set([1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1]);
+                this.setVerticesData(_B.VertexBuffer.MatricesWeightsKind, _i, false);
+
+                _i = new Uint32Array(485);
+                REPEAT(_i, 0, 485, 9);
+                this.setVerticesData(_B.VertexBuffer.MatricesIndicesKind, UNPACK(_i), false);
+
+                this.setMaterialByID("Warrior.Multimaterial#0");
+                this.subMeshes = [];
+                new _B.SubMesh(0, 0, 453, 0, 936, this);
+                new _B.SubMesh(1, 453, 32, 936, 96, this);
+                if (scene._selectionOctree) {
+                    scene.createOrUpdateSelectionOctree();
+                }
+            }
+            if (this.postConstruction) this.postConstruction();
+        }
+
+        Hair.prototype.dispose = function (doNotRecurse) {
+            _super.prototype.dispose.call(this, doNotRecurse);
+            if (this.skeleton) this.skeleton.dispose();
+            clean(4);
+        };
+        return Hair;
+    })(QI.Mesh);
+    Warrior.Hair = Hair;
+
+    var Helm = (function (_super) {
+        __extends(Helm, _super);
+        function Helm(name, scene, materialsRootDir, source) {
+            _super.call(this, name, scene, null, source, true);
+
+            if (!materialsRootDir) { materialsRootDir = "./"; }
+            defineMaterials(scene, materialsRootDir); //embedded version check
+            var cloning = source && source !== null;
+            this.position.x  = 0;
+            this.position.y  = 0;
+            this.position.z  = 0;
+            this.rotation.x  = 0;
+            this.rotation.y  = 0;
+            this.rotation.z  = 0;
+            this.scaling.x   = 1;
+            this.scaling.y   = 1;
+            this.scaling.z   = 1;
+            this.skeleton = skel_metarig(name, scene);
+            this.numBoneInfluencers = 1;
+
+
+            this.id = this.name;
+            this.billboardMode  = 0;
+            this.isVisible  = false; //always false; evaluated again at bottom
+            this.setEnabled(true);
+            this.checkCollisions = false;
+            this.receiveShadows  = false;
+            this.castShadows  = false;
+            if (!cloning){
+                this.setVerticesData(_B.VertexBuffer.PositionKind, new Float32Array([
+                    .1591,3.6771,.4321,.1304,3.7702,.4573,.2859,3.7158,.4356,.0955,3.6376,.4528,.0589,3.6257,.4808,.101,4.4499,.2947,.1679,4.4971,.1989,.2056,4.4267,.259,.0952,4.5181,.2388,.0957,4.5928,.2451,.0342,3.6265,.4971,.1325,4.1386,.3499,.0271,4.4446,.2824,.3392,3.7479,.3717,.3011,4.0192,.2941,.4306,3.7803,.2977,.2412,4.1496,.2943
+                    ,.2412,4.1496,.2943,.3256,4.1731,.152,.3011,4.0192,.2941,.2594,4.4035,.1626,.2412,4.1496,.2943,.2056,4.4267,.259,.2061,4.5004,.1632,.2487,4.473,.106,.2108,3.6788,.4347,.2859,3.7158,.4356,.2894,3.7222,.4087,.2108,3.6788,.4347,.5637,3.7858,.0942,.5825,3.7544,.1724,.3952,4.0677,-.0477,.4387,3.7588,.2668,.4306,3.7803,.2977
+                    ,.5217,3.7451,.2388,.255,4.4886,-.0987,.2623,4.5281,.0116,.2421,4.5259,-.1514,.5661,3.746,.2193,.3488,4.1456,.0211,.2897,4.4508,.1123,.3056,4.4542,.0327,.5217,3.7451,.2388,.3256,4.1731,.152,.5661,3.746,.2193,.3256,4.1731,.152,.2594,4.4035,.1626,.2897,4.4508,.1123,.3501,4.2322,-.0588,.3507,4.0115,-.226,.3213,4.1559,-.2366
+                    ,.3085,4.444,-.1618,.2421,4.5259,-.1514,.2497,4.4856,-.2273,.2788,4.4585,-.2825,.5751,3.754,.0647,.5208,3.8133,-.0054,.5039,3.8309,-.0546,.5249,3.8028,-.0802,.4647,3.8456,-.1272,.5075,3.7691,-.1206,.5491,3.7638,-.06,.4263,3.8126,-.1767,.4412,3.7466,-.1756,.526,3.7144,-.1019,.2445,4.5692,.0763,.2153,4.565,.1393,.2105,4.6731,.0953
+                    ,.2654,4.6317,-.0667,.2553,4.5808,-.148,.0586,4.7939,-.0467,.0151,4.7698,-.0791,.0472,4.7887,-.1572,.1838,4.7313,-.0535,.2105,4.6731,.0953,.0586,4.7939,-.0467,.0208,4.7426,.0906,.0767,4.7446,.1363,.1009,4.6743,.2191,.0767,4.7446,.1363,.2105,4.6731,.0953,.2153,4.565,.1393,.0257,4.6393,.2376,.0365,4.7277,-.3068,.136,4.7049,-.2818
+                    ,.1582,4.7376,-.1819,.136,4.7049,-.2818,.0451,4.6294,-.4041,.163,4.5973,-.3404,.0077,4.6919,-.3014,.0051,4.565,-.3778,.0451,4.6294,-.4041,.2237,4.6027,-.25,.1582,4.7376,-.1819,.2298,4.5364,-.2181,.2142,4.5221,-.266,.1745,4.5039,-.3078,.4089,3.7215,-.2648,.2935,3.95,-.3273,.3286,3.6685,-.3111,.2935,3.95,-.3273,.1924,3.8765,-.3607
+                    ,.3897,3.7229,-.2839,.2935,3.95,-.3273,.2403,3.7347,-.339,.2619,3.6151,-.3345,.3143,4.0731,-.3597,.2996,4.3051,-.3345,.2689,4.2827,-.3418,.1746,4.4418,-.3522,.2996,4.3051,-.3345,.3143,4.0731,-.3597,.2788,4.4585,-.2825,.1746,4.4418,-.3522,.2996,4.3051,-.3345,.2689,4.2827,-.3418,.2654,4.1668,-.2861,.3143,4.0731,-.3597,.1746,4.4418,-.3522
+                    ,.1582,4.4513,-.3021,.2689,4.2827,-.3418,.1296,4.5739,-.3578,.163,4.5973,-.3404,.0664,4.5872,-.3584,.1296,4.5739,-.3578,.2078,3.665,-.3184,.3143,4.0731,-.3597,.2654,4.1668,-.2861,.1924,3.8765,-.3607,.1909,3.7939,-.3081,.2078,3.665,-.3184,.2424,3.6113,-.3327,.0256,4.5094,.2375,.0767,4.7446,.1363,.3256,4.1731,.152,.2412,4.1496,.2943
+                    ,.2056,4.4267,.259,.2061,4.5004,.1632,.2061,4.5004,.1632,.2153,4.565,.1393,.2859,3.7158,.4356,.3392,3.7479,.3717,.3392,3.7479,.3717,.4306,3.7803,.2977,.5217,3.7451,.2388,.3256,4.1731,.152,.3056,4.4542,.0327,.2897,4.4508,.1123,.2487,4.473,.106,.2897,4.4508,.1123,.2594,4.4035,.1626,.2487,4.473,.106,.2788,4.4585,-.2825
+                    ,.2788,4.4585,-.2825,.2788,4.4585,-.2825,.1582,4.7376,-.1819,.1838,4.7313,-.0535,.1838,4.7313,-.0535,.1838,4.7313,-.0535,.0586,4.7939,-.0467,.2105,4.6731,.0953,.0767,4.7446,.1363,.2105,4.6731,.0953,.2153,4.565,.1393,.136,4.7049,-.2818,.0451,4.6294,-.4041,.136,4.7049,-.2818,.1582,4.7376,-.1819,.2532,4.2469,-.1196,.2158,4.3654,-.1812
+                    ,.236,4.3484,-.1442,.2497,4.4856,-.2273,.2497,4.4856,-.2273,.3143,4.0731,-.3597,.2935,3.95,-.3273,.3897,3.7229,-.2839,.3845,3.6629,-.2788,.1746,4.4418,-.3522,.1746,4.4418,-.3522,.2788,4.4585,-.2825,.2142,4.5221,-.266,.2788,4.4585,-.2825,.2497,4.4856,-.2273,.2996,4.3051,-.3345,.2788,4.4585,-.2825,.2654,4.1668,-.2861,.259,4.1386,-.1676
+                    ,.2171,4.0527,-.2385,.2654,4.1668,-.2861,.2689,4.2827,-.3418,.1582,4.4513,-.3021,.2654,4.1668,-.2861,.1582,4.4513,-.3021,.2654,4.1668,-.2861,.1924,3.8765,-.3607,.2045,3.9612,-.2451,.2019,3.8676,-.2418,.1582,4.4513,-.3021,.1622,4.4176,-.2145,.1746,4.4418,-.3522,.1745,4.5039,-.3078,.163,4.5973,-.3404,.0451,4.6294,-.4041,.0664,4.5872,-.3584
+                    ,.0664,4.5872,-.3584,.0451,4.6294,-.4041,.0051,4.565,-.3778,.2654,4.1668,-.2861,.1897,3.7867,-.2601,-.0947,3.6771,.4406,-.221,3.7158,.4525,-.0643,3.7702,.4638,-.0299,3.6376,.457,.0086,3.6257,.4825,-.0457,4.4499,.2996,-.1525,4.4267,.271,-.1189,4.4971,.2085,-.0437,4.5181,.2434,-.0437,4.5928,.2498,-.0735,4.1387,.3568,-.2784,3.748,.3923
+                    ,-.3746,3.7803,.3245,-.2455,4.0192,.3124,-.1857,4.1496,.3085,-.1857,4.1496,.3085,-.2455,4.0192,.3124,-.2794,4.1731,.1722,-.2126,4.4035,.1783,-.1857,4.1496,.3085,-.1525,4.4267,.271,-.1594,4.5004,.1754,-.2057,4.473,.1211,-.1461,3.6788,.4467,-.221,3.7158,.4525,-.1461,3.6788,.4467,-.2263,3.7222,.4259,-.5209,3.7859,.1304,-.3622,4.0678,-.0225
+                    ,-.5344,3.7545,.2097,-.3847,3.7589,.2943,-.4694,3.7452,.2719,-.3746,3.7803,.3245,-.2256,4.4887,-.0826,-.2163,4.5259,-.1361,-.2255,4.5281,.0279,-.3113,4.1456,.0431,-.515,3.7461,.2554,-.2673,4.4543,.0518,-.2462,4.4508,.1302,-.4694,3.7452,.2719,-.515,3.7461,.2554,-.2794,4.1731,.1722,-.3179,4.2322,-.0365,-.3297,4.0115,-.2032,-.301,4.156,-.2159
+                    ,-.2256,4.4887,-.0826,-.2673,4.4543,.0518,-.2833,4.444,-.1421,-.2163,4.5259,-.1361,-.2616,4.4586,-.2645,-.2289,4.4857,-.2113,-.5343,3.7541,.1018,-.4847,3.8134,.0282,-.4712,3.831,-.0221,-.4939,3.8029,-.0462,-.4369,3.8457,-.0971,-.3297,4.0115,-.2032,-.4369,3.8457,-.0971,-.5166,3.7639,-.0244,-.4792,3.7692,-.0877,-.3297,4.0115,-.2032,-.4792,3.7692,-.0877
+                    ,-.4019,3.8127,-.1491,-.4019,3.8127,-.1491,-.4964,3.7145,-.0678,-.4167,3.7467,-.1469,-.2034,4.5692,.0913,-.1682,4.6731,.1079,-.1701,4.565,.1522,-.2339,4.6318,-.05,-.2292,4.5808,-.1318,-.0261,4.7939,-.0439,-.0221,4.7887,-.1549,.0151,4.7698,-.0791,-.1515,4.7314,-.0423,-.1682,4.6731,.1079,-.0261,4.7939,-.0439,.0151,4.7698,-.0791,.0208,4.7426,.0906
+                    ,-.032,4.7446,.1399,.0208,4.7426,.0906,-.0506,4.6743,.2241,-.1682,4.6731,.1079,-.1701,4.565,.1522,-.0506,4.6743,.2241,-.0506,4.6743,.2241,-.0214,4.7277,-.3049,-.1346,4.7376,-.1721,-.119,4.7049,-.2733,-.1499,4.5973,-.3299,-.0365,4.6294,-.4013,-.0221,4.7887,-.1549,-.0214,4.7277,-.3049,.0077,4.6919,-.3014,.0051,4.565,-.3778,-.0214,4.7277,-.3049
+                    ,-.0365,4.6294,-.4013,-.2044,4.6028,-.2357,-.2339,4.6318,-.05,-.2084,4.5364,-.2034,-.1961,4.5221,-.2523,-.2044,4.6028,-.2357,-.1592,4.504,-.2966,-.1499,4.5973,-.3299,-.1961,4.5221,-.2523,-.3904,3.7216,-.2382,-.2794,3.9501,-.3082,-.3134,3.6685,-.2896,-.1807,3.8765,-.3483,-.2794,3.9501,-.3082,-.2794,3.9501,-.3082,-.3725,3.723,-.2584,-.2271,3.7347,-.3234
+                    ,-.2484,3.6152,-.3175,-.3023,4.0731,-.3391,-.2558,4.2828,-.3243,-.2859,4.3051,-.3149,-.1623,4.4418,-.3409,-.1592,4.504,-.2966,-.1961,4.5221,-.2523,-.3023,4.0731,-.3391,-.2859,4.3051,-.3149,-.1623,4.4418,-.3409,-.2616,4.4586,-.2645,-.2859,4.3051,-.3149,-.2558,4.2828,-.3243,-.3023,4.0731,-.3391,-.2486,4.1668,-.2689,-.1623,4.4418,-.3409,-.2558,4.2828,-.3243
+                    ,-.1426,4.4514,-.292,-.1499,4.5973,-.3299,-.1177,4.5739,-.3495,-.1499,4.5973,-.3299,-.0547,4.5872,-.3543,-.1933,3.6651,-.305,-.3023,4.0731,-.3391,-.2486,4.1668,-.2689,-.1807,3.8765,-.3483,-.1933,3.6651,-.305,-.1758,3.794,-.2959,-.2288,3.6114,-.3169,-.032,4.7446,.1399,.0208,4.7426,.0906,-.2455,4.0192,.3124,-.3746,3.7803,.3245,-.1857,4.1496,.3085
+                    ,-.1525,4.4267,.271,-.1594,4.5004,.1754,-.1594,4.5004,.1754,-.1701,4.565,.1522,-.221,3.7158,.4525,-.2784,3.748,.3923,-.3847,3.7589,.2943,-.3746,3.7803,.3245,-.2784,3.748,.3923,-.4694,3.7452,.2719,-.2794,4.1731,.1722,-.3746,3.7803,.3245,-.2673,4.4543,.0518,-.2057,4.473,.1211,-.2462,4.4508,.1302,-.2462,4.4508,.1302,-.2057,4.473,.1211
+                    ,-.2126,4.4035,.1783,-.3622,4.0678,-.0225,-.4939,3.8029,-.0462,-.3297,4.0115,-.2032,-.2616,4.4586,-.2645,-.2833,4.444,-.1421,-.2833,4.444,-.1421,-.2616,4.4586,-.2645,-.2163,4.5259,-.1361,-.2256,4.4887,-.0826,-.2163,4.5259,-.1361,-.4939,3.8029,-.0462,-.4369,3.8457,-.0971,-.4792,3.7692,-.0877,-.3297,4.0115,-.2032,-.4019,3.8127,-.1491,-.4167,3.7467,-.1469
+                    ,-.2339,4.6318,-.05,-.2339,4.6318,-.05,-.1682,4.6731,.1079,-.1682,4.6731,.1079,-.0506,4.6743,.2241,-.2044,4.6028,-.2357,-.0506,4.6743,.2241,.0151,4.7698,-.0791,-.0221,4.7887,-.1549,.0077,4.6919,-.3014,.0077,4.6919,-.3014,-.0214,4.7277,-.3049,.0051,4.565,-.3778,-.2253,4.2469,-.1036,-.192,4.3654,-.1676,-.2289,4.4857,-.2113,-.1499,4.5973,-.3299
+                    ,-.2044,4.6028,-.2357,-.1961,4.5221,-.2523,-.2084,4.5364,-.2034,-.3023,4.0731,-.3391,-.2794,3.9501,-.3082,-.2794,3.9501,-.3082,-.3904,3.7216,-.2382,-.4167,3.7467,-.1469,-.367,3.663,-.2537,-.1623,4.4418,-.3409,-.1961,4.5221,-.2523,-.1961,4.5221,-.2523,-.2859,4.3051,-.3149,-.2616,4.4586,-.2645,-.1972,4.0527,-.2246,-.2343,4.1387,-.1511,-.2558,4.2828,-.3243
+                    ,-.1426,4.4514,-.292,-.1426,4.4514,-.292,-.1807,3.8765,-.3483,-.1851,3.9613,-.2321,-.1426,4.4514,-.292,-.192,4.3654,-.1676,-.1407,4.4177,-.2044,-.1623,4.4418,-.3409,-.1426,4.4514,-.292,-.1592,4.504,-.2966,-.1499,4.5973,-.3299,-.0365,4.6294,-.4013,.0051,4.565,-.3778,-.0365,4.6294,-.4013,-.1823,3.8676,-.229,-.1713,3.7867,-.248,.0208,4.7426,.0906
+                    ,.0767,4.7446,.1363,.2654,4.1668,-.2861,.1924,3.8765,-.3607,.2654,4.1668,-.2861,.1924,3.8765,-.3607,-.0506,4.6743,.2241,-.032,4.7446,.1399,-.2044,4.6028,-.2357,-.2097,4.3485,-.1293,-.1807,3.8765,-.3483,-.1807,3.8765,-.3483,.148,4.5412,.2241,.2049,4.4855,.1835,.1487,4.4844,.2457,.2535,4.5485,.0691,.2807,4.4947,-.0652,.2709,4.4901,.0732
+                    ,.2456,4.5577,-.1898,.2126,4.5039,-.3071,.2572,4.4992,-.1922,.1171,4.5642,-.3629,.0047,4.5077,-.3905,.1166,4.4937,-.3757,.0264,4.5385,.2589,.027,4.4832,.2772,.2651,4.5531,-.0626,-.1568,4.4855,.1956,-.0973,4.5412,.2323,-.0966,4.4844,.2539,-.2491,4.4947,-.0475,-.2129,4.5486,.0847,-.2301,4.4902,.0899,-.1972,4.5039,-.2934,-.2223,4.5577,-.1741
+                    ,-.2341,4.4993,-.1758,-.1056,4.5642,-.3555,-.106,4.4938,-.3683,-.1428,4.544,.1984,-.2333,4.5531,-.0459,-.1857,4.5623,-.2917,-.0377,4.4859,-.3829,.0045,4.4871,-.3964,.0475,4.4859,-.3858,-.0255,4.3776,-.4019,.0039,4.3785,-.4136,.034,4.3776,-.4039,.1911,4.5439,.1872,.2012,4.5623,-.3046,.0053,4.5662,-.3728
+                ]),
+                false);
+
+                var _i;//indices & affected indices for shapekeys
+                _i = new Uint32Array(1056);
+                _i.set([0,1,2,3,4,1,5,6,7,5,8,6,8,9,6,4,10,1,1,10,11,11,12,5,13,14,15,16,2,1,17,18,19,5,16,11,20,18,21,5,7,16,22,23,20,23,24,20,2,25
+                ,0]);
+                CONTIG(_i, 51, 26, 37);
+                _i.set([30,38,39,39,40,41,42,43,44,38,18,39,41,24,36,45,46,47,48,49,31,48,50,49,35,51,41,52,53,54,31,55,29,31,56,55,31,57,56,58,49,59,59,60,61,49,62,60,62,63
+                ,64,65,66,67,65,67,68,36,65,68,24,23,65,37,36,69,70,71,72,73,74,75,70,76,71,77,76,70,78,79,80,81,6,78,9,82,78,83,84,85,86,87,88,72,83,85,70,72,85,72
+                ,89,83,90,91,83,92,68,93,94,37,69,95,94,92,96,95,88,97,49,98,99,100,101,99,102,103,104,105,99,106,107,108,109,95,96,98,110,111,107,112,113,98,50,114,115,116,117,118,119,120
+                ,88,121,96,122,123,124,101,125,104,126,127,101,128,129,130,104,125,131,0,3,1,8,12,132,16,1,11,11,10,12,9,132,82,2,14,13,82,133,78,14,134,15,135,136,20,7,6,137,138,6
+                ,139,140,141,27,32,142,143,31,39,48,31,30,39,48,39,41,35,41,36,39,18,40,144,15,145,146,147,148,149,150,151,31,49,58,48,152,50,41,51,48,51,153,48,51,35,37,51,37,154,31
+                ,58,57,59,49,60,62,49,63,155,68,156,68,67,157,65,23,66,69,36,68,36,24,65,85,158,70,159,160,161,162,163,78,69,92,94,78,6,9,92,164,88,84,83,165,71,89,72,89,90,83
+                ,166,92,167,168,169,170,94,171,37,88,95,92,95,172,94,173,101,174,175,97,98,104,99,101,97,63,49,99,176,102,104,131,105,108,107,177,178,179,180,95,181,182,98,49,50,183,50,184,185,186
+                ,187,188,168,186,189,190,191,192,169,193,194,195,196,197,198,169,199,200,119,201,202,203,204,205,206,207,187,195,129,196,208,209,210,211,212,211,213,214,215,216,214,216,217,217,216,218,213,211,10,211
+                ,219,10,219,214,12,220,221,222,223,211,210,224,225,226,214,219,223,227,228,226,214,223,215,229,227,230,230,227,231,210,209], 63);
+                CONTIG(_i, 494, 232, 244);
+                _i.set([238,245,246,245,247,248,249,250,251,246,245,226,247,244,231,226,248,227,252,237,253,252,253,254,255,256,257,258,259,260,237,236,261,237,261,262,237], 507);
+                CONTIG(_i, 544, 262, 278);
+                _i.set([276,279,277,244,279,276,231,276,230,243,280,244,281,282,283,284,281,285,286,287,288,289,281,290,291,292,289,293,294,216,218,295,82,296,297,298,298,299,300,282,297,296,281,297,282,301,302,303,304,305
+                ,306,307,297,308,309,280,243,310,311,309,312,313,314,315,316,253,317,318,319,317,320,321,322,317,323,324,325,326,327,328,329,316,330,331,326,332,333,316,334,254,335,336,337,338,339,340,341,312,342,343
+                ,342,344,318,322,345,346,318,347,348,349,350,322,351,345,209,211,212,217,12,214,223,219,211,219,12,10,218,132,217,222,210,220,82,352,353,354,355,226,356,227,357,215,358,216,359,360,216,361,235,362
+                ,363,364,365,237,252,245,237,245,238,252,247,245,242,244,247,245,248,226], 561);
+                CONTIG(_i, 729, 366, 377);
+                _i.set([252,254,378,247,252,379,380,252,381,257,382,383,257,259,384,237,263,385,386,387,388,389,390,253,297,284,391,392,284,393,276,278,230,280,279,244,244,276,231,297,281,284,281,289,394,277,395,278,280,396
+                ,279,397,218,216,307,299,298,298,300,296,398,399,400,401,402,403,298,297,307,404,405,337,309,243,406,407,408,310,409,410,260,411,412,318,321,413,414,322,318,317,315,253,415,317,321,416,322,323,351,325
+                ,417,326,327,418,259,419,260,259,316,254,253,420,421,254,337,422,423,337,423,404,424,337,425,426,337,405,427,428,337,429,430,431,432,433,434,435,344,436,344,437,438,337,428,422,439,350,440,8,5,12
+                ,9,8,132,2,16,14,82,441,442,69,68,92,168,443,169,444,445,195,129,446,196,217,132,12,218,82,132,222,223,210,82,447,448,280,309,449,404,450,405,451,439,428,439,452,350], 741);
+                CONTIG(_i, 936, 453, 465);
+                _i.set([455,466,454,456,458,467,461,457,460,462,464,468,469,470,471,472,473,474,475,476,463,477,478,470,465,466,468,472,479,476,480,471,474,477,481,463,482,483,463,484,464,483,485,486,483,487,484,453,488,454
+                ,456,467,457,459,489,460,462,490,463,465,453,455,454,488,456,467,459,461,460,489,462,468,479,469,471,480,472,474,481,475,463,490,477,470,469,465,468,473,472,476,475,480,474,478,477,463,478,482,463,483
+                ,484,483,482,485,483], 949);
+                CONTIG(_i, 1054, 486, 487);
+                this.setIndices(_i);
+
+                this.setVerticesData(_B.VertexBuffer.NormalKind, new Float32Array([
+                    .2066,-.1691,.9637,.1593,.1517,.9755,.5852,-.4582,.669,.5665,-.1761,.805,.572,-.1521,.806,.1201,.4377,.891,.5522,.456,.6979,.616,.4021,.6774,.2467,.2583,.934,.3142,.1057,.9434,.0334,.0183,.9993,.2684,.2413,.9326,.0305,.4039,.9142,.6547,.1881,.732,.6897,.3441,.637,.645,-.0625,.7616,.6243,.268,.7338
+                    ,.6243,.268,.7338,.8816,.3131,.353,.6897,.3441,.637,.7871,.3114,.5325,.6243,.268,.7338,.616,.4021,.6774,.758,.34,.5565,.7383,.5029,.4493,-.0064,-.0091,.9999,.5852,-.4582,.669,.3766,-.9112,-.167,-.0064,-.0091,.9999,.8708,.4871,-.0667,.7841,.5665,.2533,.9072,.3991,-.1331,.2304,-.7695,.5955,.645,-.0625,.7616
+                    ,.4539,.2849,.8443,.8577,.5135,-.0249,.9685,.236,.0795,.9772,.1874,-.0997,.6305,.5005,.5932,.9325,.3268,.1537,.6889,.5661,.4526,.9007,.414,.1312,.4539,.2849,.8443,.8816,.3131,.353,.6305,.5005,.5932,.8816,.3131,.353,.7871,.3114,.5325,.6889,.5661,.4526,.9855,.1682,-.0201,.8549,.2317,-.4641,.9648,.0896,-.2473
+                    ,.9137,.3963,-.0895,.9772,.1874,-.0997,.4727,.816,-.3328,.749,.4812,-.4555,.8785,.4275,-.2131,.8736,.3811,-.3026,.9059,.4133,.0923,.9025,.3795,-.2036,.7918,.2193,-.5699,.769,.3407,-.5408,.7747,.391,-.4968,.7158,.1087,-.6897,.789,.1829,-.5865,.679,.1404,-.7205,.933,.1692,.3176,.8104,.1572,.5644,.7495,.5476,.3719
+                    ,.9459,.323,-.0303,.9794,-.0201,-.2008,-.03,.9934,.1102,-.0001,1,-.0065,-.221,.9501,-.22,.6163,.7854,.0578,.7495,.5476,.3719,-.03,.9934,.1102,.012,.9338,.3574,.0683,.8888,.4532,.3227,.5515,.7692,.0683,.8888,.4532,.7495,.5476,.3719,.8104,.1572,.5644,.0306,.3973,.9171,-.2778,.7999,-.5319,.5264,.6894,-.4976
+                    ,.5851,.7717,-.2493,.5264,.6894,-.4976,-.1279,.1639,-.9781,.6341,.1632,-.7559,-.0239,.6946,-.719,-.0331,-.1183,-.9924,-.1279,.1639,-.9781,.8788,.2496,-.4067,.5851,.7717,-.2493,.9542,.1246,-.272,.7992,.2903,-.5262,.4848,.2605,-.8349,.8137,.2094,-.5423,.6755,-.0349,-.7365,.3722,-.0238,-.9278,.6755,-.0349,-.7365,-.6225,.039,-.7816
+                    ,.56,.0499,-.827,.6755,-.0349,-.7365,.0428,-.1078,-.9932,.0824,-.0226,-.9963,.6969,.3234,-.64,.7607,.1513,-.6311,-.311,-.1067,-.9444,-.452,.0911,-.8873,.7607,.1513,-.6311,.6969,.3234,-.64,.749,.4812,-.4555,-.452,.0911,-.8873,.7607,.1513,-.6311,-.311,-.1067,-.9444,-.9593,-.0108,-.282,.6969,.3234,-.64,-.452,.0911,-.8873
+                    ,-.9446,-.2282,-.2359,-.311,-.1067,-.9444,.3107,.2398,-.9197,.6341,.1632,-.7559,.2935,-.5521,-.7804,.3107,.2398,-.9197,-.4742,-.0902,-.8758,.6969,.3234,-.64,-.9593,-.0108,-.282,-.6225,.039,-.7816,-.9965,-.0068,-.0832,-.4742,-.0902,-.8758,-.1985,-.0535,-.9786,.0319,.2974,.9542,.0683,.8888,.4532,.8816,.3131,.353,.6243,.268,.7338
+                    ,.616,.4021,.6774,.758,.34,.5565,.758,.34,.5565,.8104,.1572,.5644,.5852,-.4582,.669,.6547,.1881,.732,.6547,.1881,.732,.645,-.0625,.7616,.4539,.2849,.8443,.8816,.3131,.353,.9007,.414,.1312,.6889,.5661,.4526,.7383,.5029,.4493,.6889,.5661,.4526,.7871,.3114,.5325,.7383,.5029,.4493,.749,.4812,-.4555
+                    ,.749,.4812,-.4555,.749,.4812,-.4555,.5851,.7717,-.2493,.6163,.7854,.0578,.6163,.7854,.0578,.6163,.7854,.0578,-.03,.9934,.1102,.7495,.5476,.3719,.0683,.8888,.4532,.7495,.5476,.3719,.8104,.1572,.5644,.5264,.6894,-.4976,-.1279,.1639,-.9781,.5264,.6894,-.4976,.5851,.7717,-.2493,-.9807,-.1826,.0699,-.9267,-.3398,.1602
+                    ,-.8841,-.0374,.4657,.4727,.816,-.3328,.4727,.816,-.3328,.6969,.3234,-.64,.6755,-.0349,-.7365,.56,.0499,-.827,.4881,-.1157,-.8651,-.452,.0911,-.8873,-.452,.0911,-.8873,.749,.4812,-.4555,.7992,.2903,-.5262,.749,.4812,-.4555,.4727,.816,-.3328,.7607,.1513,-.6311,.749,.4812,-.4555,-.9593,-.0108,-.282,-.9885,.1499,-.0177
+                    ,-.9031,.2319,-.3614,-.9593,-.0108,-.282,-.311,-.1067,-.9444,-.9446,-.2282,-.2359,-.9593,-.0108,-.282,-.9446,-.2282,-.2359,-.9593,-.0108,-.282,-.6225,.039,-.7816,-.9786,.1891,-.0804,-.9955,.0646,.0684,-.9446,-.2282,-.2359,-.581,-.768,-.2691,-.452,.0911,-.8873,.4848,.2605,-.8349,.6341,.1632,-.7559,-.1279,.1639,-.9781,.2935,-.5521,-.7804
+                    ,.2935,-.5521,-.7804,-.1279,.1639,-.9781,-.0331,-.1183,-.9924,-.9593,-.0108,-.282,-.9886,.1506,-.0028,-.1419,-.1691,.9753,-.5394,-.4581,.7065,-.0938,.1517,.9839,-.5116,-.176,.841,-.517,-.152,.8424,-.0603,.4377,.8971,-.5694,.4022,.7169,-.5043,.4561,.7332,-.1839,.2583,.9484,-.2506,.1057,.9623,-.2056,.2413,.9484,-.6044,.1882,.7741
+                    ,-.5928,-.0624,.8029,-.6456,.3442,.6816,-.5739,.2681,.7738,-.5739,.2681,.7738,-.6456,.3442,.6816,-.8561,.3133,.411,-.7497,.3115,.5838,-.5739,.2681,.7738,-.5694,.4022,.7169,-.7192,.3402,.6058,-.7066,.5031,.4975,.0731,-.0091,.9973,-.5394,-.4581,.7065,.0731,-.0091,.9973,-.3871,-.9111,-.1415,-.8732,.4873,-.0085,-.914,.3992,-.0723
+                    ,-.7654,.5667,.3051,-.1904,-.7695,.6096,-.3965,.285,.8727,-.5928,-.0624,.8029,-.8573,.5137,.0323,-.9816,.1876,-.0343,-.961,.2362,.144,-.9201,.327,.2156,-.5894,.5007,.6339,-.8899,.4142,.191,-.6571,.5663,.4975,-.3965,.285,.8727,-.5894,.5007,.6339,-.8561,.3133,.411,-.9846,.1684,.0457,-.8839,.2319,-.4061,-.9791,.0898,-.1824
+                    ,-.8573,.5137,.0323,-.8899,.4142,.191,-.9176,.3965,-.0284,-.9816,.1876,-.0343,-.7776,.4814,-.4045,-.4937,.8161,-.3005,-.8907,.4277,-.1541,-.8918,.3813,-.2437,-.8976,.4135,.1525,-.914,.3797,-.1429,-.8281,.2195,-.5159,-.8839,.2319,-.4061,-.8281,.2195,-.5159,-.8061,.3912,-.444,-.8033,.3408,-.4883,-.8839,.2319,-.4061,-.8033,.3408,-.4883
+                    ,-.7602,.1088,-.6404,-.7602,.1088,-.6404,-.7255,.1406,-.6736,-.8263,.1831,-.5326,-.9097,.1694,.3792,-.723,.5477,.421,-.7709,.1574,.6172,-.9457,.3232,.0328,-.9906,-.0199,-.1351,.0375,.9934,.108,.206,.9501,-.2343,-.0001,1,-.0065,-.6109,.7855,.0988,-.723,.5477,.421,.0375,.9934,.108,-.0001,1,-.0065,.012,.9338,.3574
+                    ,-.0378,.8888,.4567,.012,.9338,.3574,-.2705,.5516,.789,-.723,.5477,.421,-.7709,.1574,.6172,-.2705,.5516,.789,-.2705,.5516,.789,.2419,.7999,-.5492,-.6002,.7718,-.2098,-.5583,.6895,-.4614,-.683,.1634,-.7119,.0624,.1639,-.9845,.206,.9501,-.2343,.2419,.7999,-.5492,-.0239,.6946,-.719,-.0331,-.1183,-.9924,.2419,.7999,-.5492
+                    ,.0624,.1639,-.9845,-.9039,.2498,-.3471,-.9457,.3232,.0328,-.9702,.1248,-.2078,-.8325,.2905,-.4718,-.9039,.2498,-.3471,-.5394,.2607,-.8007,-.683,.1634,-.7119,-.8325,.2905,-.4718,-.848,.2095,-.4868,-.7231,-.0348,-.6898,-.4333,-.0237,-.9009,.569,.0389,-.8214,-.7231,-.0348,-.6898,-.7231,-.0348,-.6898,-.6139,.05,-.7878,-.109,-.1077,-.9882
+                    ,-.1486,-.0226,-.9886,-.738,.3236,-.5921,.2473,-.1067,-.963,-.8011,.1514,-.579,.3919,.091,-.9155,-.5394,.2607,-.8007,-.8325,.2905,-.4718,-.738,.3236,-.5921,-.8011,.1514,-.579,.3919,.091,-.9155,-.7776,.4814,-.4045,-.8011,.1514,-.579,.2473,-.1067,-.963,-.738,.3236,-.5921,.9384,-.011,-.3454,.3919,.091,-.9155,.2473,-.1067,-.963
+                    ,.9267,-.2284,-.2984,-.683,.1634,-.7119,-.3713,.2399,-.8969,-.683,.1634,-.7119,-.345,-.552,-.7591,.4147,-.0903,-.9054,-.738,.3236,-.5921,.9384,-.011,-.3454,.569,.0389,-.8214,.4147,-.0903,-.9054,.9887,-.007,-.1495,.1328,-.0536,-.9897,-.0378,.8888,.4567,.012,.9338,.3574,-.6456,.3442,.6816,-.5928,-.0624,.8029,-.5739,.2681,.7738
+                    ,-.5694,.4022,.7169,-.7192,.3402,.6058,-.7192,.3402,.6058,-.7709,.1574,.6172,-.5394,-.4581,.7065,-.6044,.1882,.7741,-.1904,-.7695,.6096,-.5928,-.0624,.8029,-.6044,.1882,.7741,-.3965,.285,.8727,-.8561,.3133,.411,-.5928,-.0624,.8029,-.8899,.4142,.191,-.7066,.5031,.4975,-.6571,.5663,.4975,-.6571,.5663,.4975,-.7066,.5031,.4975
+                    ,-.7497,.3115,.5838,-.914,.3992,-.0723,-.914,.3797,-.1429,-.8839,.2319,-.4061,-.7776,.4814,-.4045,-.9176,.3965,-.0284,-.9176,.3965,-.0284,-.7776,.4814,-.4045,-.9816,.1876,-.0343,-.8573,.5137,.0323,-.9816,.1876,-.0343,-.914,.3797,-.1429,-.8281,.2195,-.5159,-.8033,.3408,-.4883,-.8839,.2319,-.4061,-.7602,.1088,-.6404,-.8263,.1831,-.5326
+                    ,-.9457,.3232,.0328,-.9457,.3232,.0328,-.723,.5477,.421,-.723,.5477,.421,-.2705,.5516,.789,-.9039,.2498,-.3471,-.2705,.5516,.789,-.0001,1,-.0065,.206,.9501,-.2343,-.0239,.6946,-.719,-.0239,.6946,-.719,.2419,.7999,-.5492,-.0331,-.1183,-.9924,.9831,-.1828,.0043,.9353,-.34,.098,-.4937,.8161,-.3005,-.683,.1634,-.7119
+                    ,-.9039,.2498,-.3471,-.8325,.2905,-.4718,-.9702,.1248,-.2078,-.738,.3236,-.5921,-.7231,-.0348,-.6898,-.7231,-.0348,-.6898,-.848,.2095,-.4868,-.8263,.1831,-.5326,-.5447,-.1155,-.8306,.3919,.091,-.9155,-.8325,.2905,-.4718,-.8325,.2905,-.4718,-.8011,.1514,-.579,-.7776,.4814,-.4045,.877,.2317,-.4209,.9852,.1497,-.0836,.2473,-.1067,-.963
+                    ,.9267,-.2284,-.2984,.9267,-.2284,-.2984,.569,.0389,-.8214,.9711,.1889,-.1455,.9267,-.2284,-.2984,.9353,-.34,.098,.5617,-.7682,-.3073,.3919,.091,-.9155,.9267,-.2284,-.2984,-.5394,.2607,-.8007,-.683,.1634,-.7119,.0624,.1639,-.9845,-.0331,-.1183,-.9924,.0624,.1639,-.9845,.9979,.0644,.0018,.9862,.1504,-.0687,.012,.9338,.3574
+                    ,.0683,.8888,.4532,-.9593,-.0108,-.282,-.6225,.039,-.7816,-.9593,-.0108,-.282,-.6225,.039,-.7816,-.2705,.5516,.789,-.0378,.8888,.4567,-.9039,.2498,-.3471,.9132,-.0376,.4057,.569,.0389,-.8214,.569,.0389,-.8214,.5124,.273,.8142,.7869,.1959,.5852,.4698,.3137,.8251,.9167,.2727,.2918,.9634,.2653,-.0386,.9085,.2924,.2985
+                    ,.948,.1983,-.249,.7819,.1781,-.5973,.9465,.208,-.2465,.3647,.1817,-.9132,-.0323,.2383,-.9706,.3432,.1561,-.9262,.0316,.3269,.9445,.0317,.3153,.9485,.9673,.2514,-.0332,-.7461,.1961,.6363,-.4569,.2732,.8465,-.4136,.3138,.8546,-.9638,.2655,.0257,-.8952,.2728,.3523,-.8865,.2926,.3584,-.82,.1783,-.5438,-.9624,.1985,-.1852
+                    ,-.9608,.2082,-.1828,-.4248,.1817,-.8868,-.4042,.1561,-.9012,-.714,.138,.6864,-.9673,.2516,.0314,-.8027,.1753,-.57,-.247,.1015,-.9637,-.0326,.2064,-.9779,.1823,.1015,-.978,-.3548,.1438,-.9238,-.0329,.1568,-.9871,.2925,.1438,-.9454,.7582,.1379,.6373,.7629,.1751,-.6223,-.0319,.2904,-.9564
+                ]),
+                false);
+
+                this.setVerticesData(_B.VertexBuffer.UVKind, new Float32Array([
+                    .2067,.4981,.207,.4581,.2634,.5031,.1738,.5056,.1554,.5069,.3054,.1661,.3458,.1498,.3467,.1891,.3168,.133,.3275,.1035,.1444,.504,.2689,.3011,.2756,.1554,.294,.4933,.3234,.3715,.3406,.4887,.3182,.3094,.4218,.3004,.4763,.283,.4265,.3584,.4613,.1819,.4218,.3004,.4218,.1766,.4581,.1386,.4818,.1479
+                    ,.2277,.5059,.9722,.5405,.982,.5333,.9869,.5742,.5113,.4528,.4787,.4716,.5641,.3181,.9514,.2106,.9611,.2053,.9621,.2391,.5679,.1287,.5179,.1183,.5889,.109,.4601,.4779,.5326,.2875,.4781,.1587,.511,.1526,.3762,.5125,.3653,.3016,.3956,.5176,.9437,.4177,.9261,.3166,.9437,.2933,.5613,.2448,.6463,.3311
+                    ,.6436,.2668,.5946,.1453,.9777,.6662,.9722,.629,.9777,.6007,.5252,.4652,.5546,.434,.5755,.423,.5869,.4341,.6078,.4115,.6073,.4461,.5793,.4528,.6332,.4222,.6359,.4514,.6016,.4714,.4888,.104,.4638,.1091,.4762,.0592,.5448,.0684,.5833,.0855,.3212,.6119,.3398,.6296,.3175,.6584,.1126,.8674,.1347,.8333
+                    ,.1347,.9248,.3565,.5639,.3383,.5441,.3432,.0693,.3492,.0303,.3956,.077,.3789,.125,.3064,.073,.3205,.7297,.2882,.7218,.2819,.6752,.6396,.021,.7017,.045,.6697,.0649,.3386,.7335,.3565,.7851,.3271,.7852,.6273,.0692,.5936,.0132,.6174,.1002,.6397,.1032,.6609,.1079,.6774,.4564,.6966,.3507,.8749,.232
+                    ,.8853,.1071,.9253,.1358,.8515,.2106,.8853,.1071,.9087,.1999,.9012,.253,.9574,.9486,.931,.851,.9456,.8553,.6837,.1324,.6774,.1954,.7017,.2954,.9218,.7849,.9574,.7747,.6774,.1954,.0403,.9268,.0131,.8775,.0403,.8333,.0665,.8637,.0865,.8555,.0865,.9331,.6805,.0735,.6995,.9355,.6995,.975,.6913,.9485
+                    ,.9253,.2307,.8719,.0522,.8994,.0132,.8256,.5955,.7996,.5616,.798,.5043,.9097,.2544,.2874,.1253,.3492,.0303,.3653,.3016,.4218,.3004,.4218,.1766,.3641,.1515,.3641,.1515,.3789,.125,.9722,.5405,.9869,.5043,.9621,.153,.9611,.2053,.3762,.5125,.3653,.3016,.6652,.9763,.6564,.9427,.6652,.9355,.9437,.2933
+                    ,.9261,.3166,.9274,.2808,.6469,.1311,.6469,.1311,.6469,.1311,.5936,.0132,.5377,.0242,.5377,.0242,.2837,.623,.7934,.3753,.8245,.4592,.7907,.4592,.3956,.077,.3789,.125,.6396,.021,.3271,.7852,.6396,.021,.5936,.0132,.7347,.7677,.7676,.8176,.7502,.8115,.6233,.1221,.6233,.1221,.8719,.0522,.8853,.1071
+                    ,.6866,.4542,.8548,.237,.9574,.7747,.9574,.7747,.9218,.7849,.9394,.7486,.6469,.1311,.6233,.1221,.6774,.1954,.6469,.1311,.8027,.7251,.7506,.718,.7793,.6778,.8027,.7251,.3495,.898,.3738,.8117,.3738,.946,.8256,.8508,.8027,.7251,.8256,.5955,.7788,.6376,.7736,.5967,.8256,.8508,.7863,.8398,.0665,.8637
+                    ,.0808,.8333,.8022,.9486,.781,.9001,.8038,.9073,.8038,.9073,.781,.9001,.8038,.8773,.8027,.7251,.7786,.5606,.1035,.4584,.0572,.4237,.1278,.4276,.1228,.486,.1349,.4991,.2457,.1431,.201,.133,.2291,.1048,.2603,.1112,.2708,.0817,.1851,.2688,.0427,.3965,.0131,.3625,.101,.2858,.1446,.2425,.7085,.7397
+                    ,.7043,.796,.6468,.7238,.6584,.624,.7085,.7397,.7013,.6175,.6618,.5823,.6359,.592,.0825,.45,.4218,.954,.4336,.9355,.4301,.9628,.6089,.888,.5565,.7631,.6419,.9036,.6241,.9728,.6303,.9355,.6303,.9858,.5474,.5791,.5256,.5615,.5964,.5648,.589,.7317,.6621,.909,.6031,.5971,.6377,.6011,.8817,.5118
+                    ,.8997,.5043,.8997,.7221,.5567,.6913,.4778,.7836,.4775,.7203,.8889,.8669,.8788,.926,.8523,.8484,.8957,.8461,.8518,.796,.8748,.8146,.5951,.9009,.5668,.8738,.546,.865,.391,.6742,.3826,.639,.391,.5441,.9431,.6645,.9431,.7193,.9258,.6921,.9461,.5043,.9461,.6381,.9258,.5983,.9863,.3766,.9863,.4437
+                    ,.9698,.4011,.6257,.5489,.6372,.5043,.6532,.5531,.5653,.5169,.5286,.5372,.1214,.7174,.1326,.6713,.1364,.7002,.0618,.7046,.0307,.756,.3826,.7116,.3954,.7006,.3954,.7761,.0928,.7844,.1176,.7652,.0652,.8068,.0307,.756,.2221,.0646,.2816,.0456,.2816,.0456,.1364,.6,.0818,.653,.0917,.6067,.0661,.5651
+                    ,.1224,.5441,.2966,.9469,.2819,.8776,.2967,.8711,.3234,.8117,.2819,.8776,.2929,.8175,.037,.6031,.0131,.683,.4971,.5552,.4759,.5604,.4851,.5252,.7646,.3923,.7278,.4138,.7518,.3753,.4523,.909,.4325,.8089,.2132,.759,.1805,.6521,.2335,.6356,.2335,.6356,.2469,.7453,.1836,.7188,.1776,.7718,.8999,.2808
+                    ,.8854,.3723,.8692,.3765,.8761,.7486,.8957,.7703,.891,.7952,.4218,.7534,.4394,.6523,.8999,.452,.8515,.4389,.4394,.6523,.8253,.0895,.8092,.1806,.7881,.1319,.7347,.9453,.7549,.8773,.7549,.9562,.7278,.4138,.7421,.4254,.7278,.4138,.7464,.4531,.1625,.7455,.2558,.5843,.2518,.5441,.7824,.2642,.74,.3488
+                    ,.7505,.2929,.1692,.7712,.305,.0132,.3294,.0184,.7043,.796,.6981,.8987,.7085,.7397,.7013,.6175,.2154,.0943,.2154,.0943,.2221,.0646,.4218,.954,.4336,.9868,.5136,.9831,.5026,.9708,.5136,.9355,.8817,.5118,.8997,.7221,.8518,.5391,.4765,.9355,.4765,.9745,.4597,.9626,.5397,.948,.556,.9355,.556,.9714
+                    ,.2426,.7983,.2426,.9104,.1625,.8225,.4665,.5867,.5183,.596,.5183,.596,.4665,.5867,.8957,.8461,.8889,.8669,.8957,.8461,.5339,.8763,.9514,.0444,.962,.0132,.962,.1265,.493,.8711,.4915,.8999,.0131,.683,.0131,.683,.0307,.756,.0307,.756,.6918,.5094,.4851,.5252,.2816,.0456,.3234,.9711,.2966,.9469
+                    ,.2967,.8711,.2967,.8711,.2819,.8776,.3234,.8117,.7278,.0778,.7664,.035,.4914,.5769,.4461,.5262,.4851,.5252,.891,.7952,.8945,.8181,.2558,.5843,.2335,.6356,.2335,.6356,.2558,.7494,.4915,.8999,.2374,.7701,.8999,.452,.891,.7952,.891,.7952,.4394,.6523,.4665,.5867,.7531,.1746,.7351,.1295,.8253,.0895
+                    ,.8253,.0132,.8253,.0132,.7824,.2642,.7446,.2142,.9861,.2808,.9861,.3501,.9698,.3185,.5979,.9692,.5822,.9528,.5979,.9355,.7278,.4138,.7318,.472,.7646,.4763,.7318,.472,.7319,.2536,.7296,.2901,.3294,.0184,.3492,.0303,.8027,.7251,.8256,.5955,.8027,.7251,.8256,.5955,.2816,.0456,.305,.0132,.4851,.5252
+                    ,.7496,.0377,.7824,.2642,.7824,.2642,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+                    ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+                ]),
+                false);
+
+                this.setVerticesData(_B.VertexBuffer.ColorKind, new Float32Array([
+                    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    ,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                ]),
+                false);
+
+                _i = new Float32Array(1964);
+                _i.set([1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0
+                ,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0
+                ,0,0,1,0,0,0,1,0,0,0,1]);
+                this.setVerticesData(_B.VertexBuffer.MatricesWeightsKind, _i, false);
+
+                _i = new Uint32Array(491);
+                REPEAT(_i, 0, 491, 9);
+                this.setVerticesData(_B.VertexBuffer.MatricesIndicesKind, UNPACK(_i), false);
+
+                this.setMaterialByID("Warrior.Multimaterial#1");
+                this.subMeshes = [];
+                new _B.SubMesh(0, 0, 453, 0, 936, this);
+                new _B.SubMesh(1, 453, 38, 936, 120, this);
+                if (scene._selectionOctree) {
+                    scene.createOrUpdateSelectionOctree();
+                }
+            }
+            if (this.postConstruction) this.postConstruction();
+        }
+
+        Helm.prototype.dispose = function (doNotRecurse) {
+            _super.prototype.dispose.call(this, doNotRecurse);
+            if (this.skeleton) this.skeleton.dispose();
+            clean(5);
+        };
+        return Helm;
+    })(QI.Mesh);
+    Warrior.Helm = Helm;
 
     function freshenShadowRenderLists(scene) {
         var renderList = [];

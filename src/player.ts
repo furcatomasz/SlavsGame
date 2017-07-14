@@ -39,10 +39,16 @@ class Player extends Character {
 
         if(this.isControllable) {
             this.mesh.isPickable = false;
-            let playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
+            //let playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
+            //playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
+            //playerLight.specular = new BABYLON.Color3(1, 1, 1);
+            //playerLight.position.y = 64;
+
+            var playerLight = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 12, 0), game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
-            playerLight.specular = new BABYLON.Color3(1, 1, 1);
-            playerLight.position.y = 64;
+            //playerLight.specular = new BABYLON.Color3(1, 1, 1);
+            playerLight.intensity = 1;
+            playerLight.range = 40;
 
             game.getScene().lights.push(playerLight);
 
@@ -182,11 +188,11 @@ class Player extends Character {
             for (var i = 0; i < game.sceneManager.environment.colliders.length; i++) {
                 var sceneMesh = game.sceneManager.environment.colliders[i];
                 if(game.getScene().isActiveMesh(sceneMesh)) {
-                    if (this.mesh.intersectsMesh(sceneMesh, false)) {
+                    if (this.mesh.intersectsMesh(sceneMesh, true)) {
                         game.controller.targetPoint = null;
                         game.controller.ball.visibility = 0;
                         game.controller.forward = false;
-                        this.mesh.translate(BABYLON.Axis.Z, 1.5, BABYLON.Space.LOCAL);
+                        this.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
                         game.getScene().activeCamera.position = this.mesh.position;
                         game.getScene().lights[1].position.x = this.mesh.position.x;
                         game.getScene().lights[1].position.z = this.mesh.position.z;

@@ -25,6 +25,7 @@ namespace GUI {
             buttonPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             buttonPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             buttonPanel.width = 0.2;
+            buttonPanel.isPointerBlocker = true;
             this.buttonpanel = buttonPanel;
             this.texture.addControl(buttonPanel);
 
@@ -33,6 +34,8 @@ namespace GUI {
             button.height = "40px";
             button.color = "white";
             button.background = "black";
+            button.isPointerBlocker = true;
+
             buttonPanel.addControl(button);
             button.onPointerUpObservable.add(function() {
                 self.inventory.open();

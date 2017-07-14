@@ -19,7 +19,7 @@ class Environment {
             var meshName = scene.meshes[i]['name'];
 
             if (meshName.search("Forest_ground") >= 0) {
-                 //sceneMesh.receiveShadows = true;
+                 sceneMesh.receiveShadows = true;
             } else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;
                 this.trees.push(sceneMesh);

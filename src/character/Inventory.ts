@@ -29,7 +29,7 @@ namespace Character {
             let helm = new Items.Helm(this.game);
             let gloves = new Items.Gloves(this.game);
             let boots = new Items.Boots(this.game);
-console.log(sword);
+            
             this.items.push(sword);
             this.items.push(shield);
             this.items.push(armor);

@@ -86,13 +86,14 @@ var Scene = (function () {
         return this;
     };
     Scene.prototype.setShadowGenerator = function (light) {
-        this.shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+        this.shadowGenerator = new BABYLON.ShadowGenerator(4096, light);
         this.shadowGenerator.bias = -0.0000001;
         this.shadowGenerator.setDarkness(0.5);
         //this.shadowGenerator.forceBackFacesOnly = true;
         //this.shadowGenerator.usePoissonSampling = true;
         //this.shadowGenerator.useExponentialShadowMap = true;
         //this.shadowGenerator.useBlurExponentialShadowMap = true;
+        return this;
     };
     Scene.prototype.setCamera = function (scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
@@ -198,7 +199,7 @@ var Environment = (function () {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
             if (meshName.search("Forest_ground") >= 0) {
-                //sceneMesh.receiveShadows = true;
+                sceneMesh.receiveShadows = true;
             }
             else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;
@@ -277,7 +278,8 @@ var Simple = (function (_super) {
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
-                scene.lights[0].intensity = 0.2;
+                scene.lights[0].intensity = 0;
+                //scene.lights[0].diffuse = new BABYLON.Color3(0.5, 0.5, 1);
                 self.environment = new Environment(game, scene);
                 new Characters(game, scene);
                 new Items(game, scene);
@@ -431,10 +433,15 @@ var Player = (function (_super) {
         // this.guiCharacterName.linkWithMesh(this.mesh);
         if (_this.isControllable) {
             _this.mesh.isPickable = false;
-            var playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
+            //let playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
+            //playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
+            //playerLight.specular = new BABYLON.Color3(1, 1, 1);
+            //playerLight.position.y = 64;
+            var playerLight = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 12, 0), game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
-            playerLight.specular = new BABYLON.Color3(1, 1, 1);
-            playerLight.position.y = 64;
+            //playerLight.specular = new BABYLON.Color3(1, 1, 1);
+            playerLight.intensity = 1;
+            playerLight.range = 40;
             game.getScene().lights.push(playerLight);
             var characterBottomPanel = new BABYLON.GUI.StackPanel();
             characterBottomPanel.width = "50%";
@@ -556,11 +563,11 @@ var Player = (function (_super) {
             for (var i = 0; i < game.sceneManager.environment.colliders.length; i++) {
                 var sceneMesh = game.sceneManager.environment.colliders[i];
                 if (game.getScene().isActiveMesh(sceneMesh)) {
-                    if (this.mesh.intersectsMesh(sceneMesh, false)) {
+                    if (this.mesh.intersectsMesh(sceneMesh, true)) {
                         game.controller.targetPoint = null;
                         game.controller.ball.visibility = 0;
                         game.controller.forward = false;
-                        this.mesh.translate(BABYLON.Axis.Z, 1.5, BABYLON.Space.LOCAL);
+                        this.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
                         game.getScene().activeCamera.position = this.mesh.position;
                         game.getScene().lights[1].position.x = this.mesh.position.x;
                         game.getScene().lights[1].position.z = this.mesh.position.z;
@@ -902,7 +909,6 @@ var Character;
             var helm = new Items.Helm(this.game);
             var gloves = new Items.Gloves(this.game);
             var boots = new Items.Boots(this.game);
-            console.log(sword);
             this.items.push(sword);
             this.items.push(shield);
             this.items.push(armor);
@@ -987,6 +993,7 @@ var GUI;
             buttonPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             buttonPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             buttonPanel.width = 0.2;
+            buttonPanel.isPointerBlocker = true;
             this.buttonpanel = buttonPanel;
             this.texture.addControl(buttonPanel);
             var button = BABYLON.GUI.Button.CreateSimpleButton("button.inventory", "Inventory");
@@ -994,6 +1001,7 @@ var GUI;
             button.height = "40px";
             button.color = "white";
             button.background = "black";
+            button.isPointerBlocker = true;
             buttonPanel.addControl(button);
             button.onPointerUpObservable.add(function () {
                 self.inventory.open();

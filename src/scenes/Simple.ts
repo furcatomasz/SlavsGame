@@ -22,12 +22,15 @@ class Simple extends Scene {
             game.activeScene = sceneIndex - 1;
 
             scene.executeWhenReady(function () {
-                scene.lights[0].intensity = 0.2;
+                scene.lights[0].intensity = 0;
+                //scene.lights[0].diffuse = new BABYLON.Color3(0.5, 0.5, 1);
+
                 self.environment = new Environment(game, scene);
                 new Characters(game, scene);
                 new Items(game, scene);
                 game.controller.registerControls(scene);
                 game.client.connect(serverUrl);
+
 
                });
         });

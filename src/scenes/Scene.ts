@@ -17,14 +17,16 @@ abstract class Scene {
         return this;
     }
 
-    protected setShadowGenerator(light: BABYLON.IShadowLight) {
-        this.shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+    public setShadowGenerator(light: BABYLON.IShadowLight) {
+        this.shadowGenerator = new BABYLON.ShadowGenerator(4096, light);
         this.shadowGenerator.bias = -0.0000001;
         this.shadowGenerator.setDarkness(0.5);
         //this.shadowGenerator.forceBackFacesOnly = true;
         //this.shadowGenerator.usePoissonSampling = true;
         //this.shadowGenerator.useExponentialShadowMap = true;
         //this.shadowGenerator.useBlurExponentialShadowMap = true;
+
+        return this;
     }
 
     public setCamera(scene: BABYLON.Scene) {

@@ -52,7 +52,7 @@ class Environment {
             sfxFireplace.attachToMesh(cone);
         }
 
-        let plane = scene.getMeshByName("Plane");
+        let plane = scene.getMeshByName("Entrace_city");
         if (plane) {
             plane.visibility = 0;
             plane.isPickable = 0;

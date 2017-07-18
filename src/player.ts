@@ -5,7 +5,7 @@ class Player extends Character {
 
     public guiExp: BABYLON.GUI.Slider;
     public walkSmoke: BABYLON.ParticleSystem;
-    protected inventory: Character.Inventory;
+    public inventory: Character.Inventory;
 
     public constructor(game:Game, id, name, registerMoving: boolean) {
         this.id = id;
@@ -87,7 +87,7 @@ class Player extends Character {
             characterBottomPanel.addControl(hpSlider);
             characterBottomPanel.addControl(expSlider);
 
-            game.gui = new GUI.Main(game);
+            game.gui = new GUI.Main(game, this);
 
             let attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
                 width: 4,

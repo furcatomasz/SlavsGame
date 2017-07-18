@@ -3,7 +3,8 @@
 namespace GUI {
     export class Main {
 
-        protected game:Game;
+        public game:Game;
+        public player:Player;
         protected texture: BABYLON.GUI.AdvancedDynamicTexture;
 
         public inventory: GUI.Inventory;
@@ -11,8 +12,9 @@ namespace GUI {
 
         protected buttonpanel: BABYLON.GUI.StackPanel;
 
-        constructor(game:Game) {
+        constructor(game:Game, player: Player) {
             this.game = game;
+            this.player = player;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
 
             this.initInventory().initAttributes();
@@ -41,6 +43,8 @@ namespace GUI {
                 self.inventory.open();
             });
 
+            this.registerBlockMoveCharacter(button);
+
             return this;
         }
 
@@ -56,6 +60,26 @@ namespace GUI {
             this.buttonpanel.addControl(button);
             button.onPointerUpObservable.add(function() {
                 self.attributes.open();
+            });
+
+            this.registerBlockMoveCharacter(button);
+
+            return this;
+        }
+
+        /**
+         *
+         * @param control
+         * @returns {GUI.Main}
+         */
+        public registerBlockMoveCharacter(control: BABYLON.GUI.Control) {
+            let self = this;
+            control.onPointerEnterObservable.add(function() {
+                self.game.sceneManager.environment.ground.isPickable = false;
+            });
+
+            control.onPointerOutObservable.add(function() {
+                self.game.sceneManager.environment.ground.isPickable = true;
             });
 
             return this;

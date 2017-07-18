@@ -5,14 +5,14 @@ namespace Character {
         protected game:Game;
 
         /** Equipt items */
-        protected helm:Items.Item;
-        protected gloves:Items.Item;
-        protected boots:Items.Item;
-        protected armor:Items.Item;
-        protected weapon:Items.Item;
-        protected shield:Items.Item;
+        public helm:Items.Item;
+        public gloves:Items.Item;
+        public boots:Items.Item;
+        public armor:Items.Item;
+        public weapon:Items.Item;
+        public shield:Items.Item;
 
-        protected items:Array<Items.Item>;
+        public items:Array<Items.Item>;
 
         constructor(game:Game, player:Player) {
             this.game = game;
@@ -37,12 +37,12 @@ namespace Character {
             this.items.push(gloves);
             this.items.push(boots);
 
-            sword.mount(this.player);
-            shield.mount(this.player);
-            armor.mount(this.player);
-            helm.mount(this.player);
-            gloves.mount(this.player);
-            boots.mount(this.player);
+            this.mount(sword);
+            this.mount(shield);
+            this.mount(armor);
+            this.mount(helm);
+            this.mount(gloves);
+            this.mount(boots);
 
             this.weapon = sword;
             this.shield = shield;
@@ -53,5 +53,21 @@ namespace Character {
         }
 
 
+        /**
+         * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
+         * @param item
+         * @returns {Character.Inventory}
+         */
+        public mount(item: Items.Item) {
+            if (item.mountType == 1) {
+
+                this.player.mount(item.mesh, item.mountBoneName);
+            } else if(item.mountType == 2) {
+                item.mesh.parent = this.player.mesh;
+                item.mesh.skeleton = this.player.mesh.skeleton;
+            }
+
+            return this;
+        }
     }
 }

@@ -5,8 +5,8 @@ class Environment {
     trees: Array<BABYLON.AbstractMesh>;
     bushes: Array<BABYLON.AbstractMesh>;
     colliders: Array<BABYLON.AbstractMesh>;
-
     entrace: BABYLON.AbstractMesh;
+    ground: BABYLON.Mesh;
 
     constructor(game:Game, scene: BABYLON.Scene) {
         let self = this;
@@ -20,6 +20,7 @@ class Environment {
 
             if (meshName.search("Forest_ground") >= 0) {
                  sceneMesh.receiveShadows = true;
+                this.ground = sceneMesh;
             } else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;
                 this.trees.push(sceneMesh);

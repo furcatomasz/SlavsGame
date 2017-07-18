@@ -200,6 +200,7 @@ var Environment = (function () {
             var meshName = scene.meshes[i]['name'];
             if (meshName.search("Forest_ground") >= 0) {
                 sceneMesh.receiveShadows = true;
+                this.ground = sceneMesh;
             }
             else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;
@@ -474,7 +475,7 @@ var Player = (function (_super) {
             expSlider.borderColor = 'black';
             characterBottomPanel.addControl(hpSlider);
             characterBottomPanel.addControl(expSlider);
-            game.gui = new GUI.Main(game);
+            game.gui = new GUI.Main(game, _this);
             var attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
                 width: 4,
                 height: 0.1,
@@ -893,45 +894,6 @@ var Game = (function () {
     };
     return Game;
 }());
-var Character;
-(function (Character) {
-    var Inventory = (function () {
-        function Inventory(game, player) {
-            this.game = game;
-            this.player = player;
-            this.items = [];
-            this.initPlayerItems();
-        }
-        Inventory.prototype.initPlayerItems = function () {
-            var sword = new Items.Sword(this.game);
-            var shield = new Items.Shield(this.game);
-            var armor = new Items.Armor(this.game);
-            var helm = new Items.Helm(this.game);
-            var gloves = new Items.Gloves(this.game);
-            var boots = new Items.Boots(this.game);
-            this.items.push(sword);
-            this.items.push(shield);
-            this.items.push(armor);
-            this.items.push(helm);
-            this.items.push(gloves);
-            this.items.push(boots);
-            sword.mount(this.player);
-            shield.mount(this.player);
-            armor.mount(this.player);
-            helm.mount(this.player);
-            gloves.mount(this.player);
-            boots.mount(this.player);
-            this.weapon = sword;
-            this.shield = shield;
-            this.armor = armor;
-            this.helm = helm;
-            this.gloves = gloves;
-            this.boots = boots;
-        };
-        return Inventory;
-    }());
-    Character.Inventory = Inventory;
-})(Character || (Character = {}));
 /// <reference path="Controller.ts"/>
 var Mouse = (function (_super) {
     __extends(Mouse, _super);
@@ -976,13 +938,68 @@ var Mouse = (function (_super) {
     };
     return Mouse;
 }(Controller));
+var Character;
+(function (Character) {
+    var Inventory = (function () {
+        function Inventory(game, player) {
+            this.game = game;
+            this.player = player;
+            this.items = [];
+            this.initPlayerItems();
+        }
+        Inventory.prototype.initPlayerItems = function () {
+            var sword = new Items.Sword(this.game);
+            var shield = new Items.Shield(this.game);
+            var armor = new Items.Armor(this.game);
+            var helm = new Items.Helm(this.game);
+            var gloves = new Items.Gloves(this.game);
+            var boots = new Items.Boots(this.game);
+            this.items.push(sword);
+            this.items.push(shield);
+            this.items.push(armor);
+            this.items.push(helm);
+            this.items.push(gloves);
+            this.items.push(boots);
+            this.mount(sword);
+            this.mount(shield);
+            this.mount(armor);
+            this.mount(helm);
+            this.mount(gloves);
+            this.mount(boots);
+            this.weapon = sword;
+            this.shield = shield;
+            this.armor = armor;
+            this.helm = helm;
+            this.gloves = gloves;
+            this.boots = boots;
+        };
+        /**
+         * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
+         * @param item
+         * @returns {Character.Inventory}
+         */
+        Inventory.prototype.mount = function (item) {
+            if (item.mountType == 1) {
+                this.player.mount(item.mesh, item.mountBoneName);
+            }
+            else if (item.mountType == 2) {
+                item.mesh.parent = this.player.mesh;
+                item.mesh.skeleton = this.player.mesh.skeleton;
+            }
+            return this;
+        };
+        return Inventory;
+    }());
+    Character.Inventory = Inventory;
+})(Character || (Character = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var GUI;
 (function (GUI) {
     var Main = (function () {
-        function Main(game) {
+        function Main(game, player) {
             this.game = game;
+            this.player = player;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
             this.initInventory().initAttributes();
         }
@@ -1006,6 +1023,7 @@ var GUI;
             button.onPointerUpObservable.add(function () {
                 self.inventory.open();
             });
+            this.registerBlockMoveCharacter(button);
             return this;
         };
         Main.prototype.initAttributes = function () {
@@ -1019,6 +1037,22 @@ var GUI;
             this.buttonpanel.addControl(button);
             button.onPointerUpObservable.add(function () {
                 self.attributes.open();
+            });
+            this.registerBlockMoveCharacter(button);
+            return this;
+        };
+        /**
+         *
+         * @param control
+         * @returns {GUI.Main}
+         */
+        Main.prototype.registerBlockMoveCharacter = function (control) {
+            var self = this;
+            control.onPointerEnterObservable.add(function () {
+                self.game.sceneManager.environment.ground.isPickable = false;
+            });
+            control.onPointerOutObservable.add(function () {
+                self.game.sceneManager.environment.ground.isPickable = true;
             });
             return this;
         };
@@ -1036,22 +1070,6 @@ var Items;
         function Item(game) {
             this.game = game;
         }
-        /**
-         * Value 1 define mounting item usign bone, value 2 define mouting using skeleton.
-         *
-         * @param player
-         * @returns {Items.Item}
-         */
-        Item.prototype.mount = function (player) {
-            if (this.mountType == 1) {
-                player.mount(this.mesh, this.mountBoneName);
-            }
-            else if (this.mountType == 2) {
-                this.mesh.parent = player.mesh;
-                this.mesh.skeleton = player.mesh.skeleton;
-            }
-            return this;
-        };
         return Item;
     }());
     Items.Item = Item;
@@ -1475,6 +1493,9 @@ var GUI;
         function Popup(guiMain) {
             this.guiMain = guiMain;
         }
+        /**
+         * @returns {GUI.Popup}
+         */
         Popup.prototype.initTexture = function () {
             this.guiTexture = this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
             var image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, this.imageUrl);
@@ -1482,7 +1503,9 @@ var GUI;
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             image.width = 0.33;
             image.height = 1;
+            this.guiMain.registerBlockMoveCharacter(image);
             this.container = image;
+            return this;
         };
         return Popup;
     }());
@@ -1504,18 +1527,23 @@ var GUI;
         Attributes.prototype.open = function () {
             var self = this;
             this.guiTexture.addControl(this.container);
-            var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
-            buttonClose.color = "white";
-            buttonClose.background = "black";
-            buttonClose.width = "70px;";
-            buttonClose.height = "40px";
-            buttonClose.horizontalAlignment = this.position;
-            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            buttonClose.onPointerUpObservable.add(function () {
-                self.close();
-                self.guiTexture.removeControl(buttonClose);
-            });
-            this.guiTexture.addControl(buttonClose);
+            if (!this.buttonClose) {
+                var buttonClose_1 = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
+                buttonClose_1.color = "white";
+                buttonClose_1.background = "black";
+                buttonClose_1.width = "70px;";
+                buttonClose_1.height = "40px";
+                buttonClose_1.horizontalAlignment = this.position;
+                buttonClose_1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                buttonClose_1.onPointerUpObservable.add(function () {
+                    self.close();
+                    self.guiTexture.removeControl(buttonClose_1);
+                    self.buttonClose = null;
+                });
+                this.guiMain.registerBlockMoveCharacter(buttonClose_1);
+                this.guiTexture.addControl(buttonClose_1);
+                this.buttonClose = buttonClose_1;
+            }
         };
         Attributes.prototype.close = function () {
             this.guiTexture.removeControl(this.container);
@@ -1542,21 +1570,48 @@ var GUI;
         Inventory.prototype.open = function () {
             var self = this;
             this.guiTexture.addControl(this.container);
-            var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
-            buttonClose.color = "white";
-            buttonClose.background = "black";
-            buttonClose.width = "70px;";
-            buttonClose.height = "40px";
-            buttonClose.horizontalAlignment = this.position;
-            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            buttonClose.onPointerUpObservable.add(function () {
-                self.close();
-                self.guiTexture.removeControl(buttonClose);
-            });
-            this.guiTexture.addControl(buttonClose);
+            this.showItems(this.container);
+            if (!this.buttonClose) {
+                var buttonClose_2 = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
+                buttonClose_2.color = "white";
+                buttonClose_2.background = "black";
+                buttonClose_2.width = "70px;";
+                buttonClose_2.height = "40px";
+                buttonClose_2.horizontalAlignment = this.position;
+                buttonClose_2.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                buttonClose_2.onPointerUpObservable.add(function () {
+                    self.close();
+                    self.guiTexture.removeControl(buttonClose_2);
+                    self.buttonClose = null;
+                });
+                this.guiMain.registerBlockMoveCharacter(buttonClose_2);
+                this.guiTexture.addControl(buttonClose_2);
+                this.buttonClose = buttonClose_2;
+            }
+            return this;
         };
         Inventory.prototype.close = function () {
             this.guiTexture.removeControl(this.container);
+        };
+        Inventory.prototype.showItems = function (container) {
+            console.log(container);
+            var inventory = this.guiMain.player.inventory;
+            for (var i = 0; i < inventory.items.length; i++) {
+                var item = inventory.items[i];
+                var image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, 'assets/Miniatures/' + item.name + '.png');
+                //image.horizontalAlignment = this.position;
+                image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                image.width = '80px';
+                image.height = '80px';
+                var left = i * 80;
+                image.left = 400 + left;
+                image.top = -300;
+                image.paddingBottom = 150;
+                this.guiTexture.addControl(image);
+                this.guiMain.registerBlockMoveCharacter(image);
+                this.container = image;
+            }
+            return this;
         };
         Inventory.prototype.initData = function () {
         };

@@ -15,20 +15,26 @@ namespace GUI {
             let self = this;
             this.guiTexture.addControl(this.container);
 
-            let buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
-            buttonClose.color = "white";
-            buttonClose.background = "black";
-            buttonClose.width = "70px;";
-            buttonClose.height = "40px";
-            buttonClose.horizontalAlignment = this.position;
-            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            if (!this.buttonClose) {
+                let buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
+                buttonClose.color = "white";
+                buttonClose.background = "black";
+                buttonClose.width = "70px;";
+                buttonClose.height = "40px";
+                buttonClose.horizontalAlignment = this.position;
+                buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
-            buttonClose.onPointerUpObservable.add(function() {
-                self.close();
-                self.guiTexture.removeControl(buttonClose);
-            });
+                buttonClose.onPointerUpObservable.add(function() {
+                    self.close();
+                    self.guiTexture.removeControl(buttonClose);
+                    self.buttonClose = null;
+                });
 
-            this.guiTexture.addControl(buttonClose);
+                this.guiMain.registerBlockMoveCharacter(buttonClose);
+
+                this.guiTexture.addControl(buttonClose);
+                this.buttonClose = buttonClose;
+            }
         }
 
         public close() {

@@ -49,7 +49,7 @@ class Player extends Character {
             //playerLight.specular = new BABYLON.Color3(1, 1, 1);
             playerLight.intensity = 1;
             playerLight.range = 40;
-
+            playerLight.parent = this.mesh;
             game.getScene().lights.push(playerLight);
 
             let characterBottomPanel = new BABYLON.GUI.StackPanel();
@@ -173,6 +173,7 @@ class Player extends Character {
 
                         if (newValue <= 0) {
                             animationEnemty.removeFromWorld();
+                            game.controller.attackPoint = null;
                         }
                     }, 300);
                 }
@@ -194,8 +195,6 @@ class Player extends Character {
                         game.controller.forward = false;
                         this.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
                         game.getScene().activeCamera.position = this.mesh.position;
-                        game.getScene().lights[1].position.x = this.mesh.position.x;
-                        game.getScene().lights[1].position.z = this.mesh.position.z;
                     }
                 }
             }
@@ -222,8 +221,6 @@ class Player extends Character {
                 self.registerMoving();
                 if(self.game.controller.forward) {
                     self.game.getScene().activeCamera.position = self.mesh.position;
-                    self.game.getScene().lights[1].position.x = self.mesh.position.x;
-                    self.game.getScene().lights[1].position.z = self.mesh.position.z;
                 }
             }
         }

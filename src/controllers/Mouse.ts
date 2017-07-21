@@ -2,7 +2,6 @@
 
 class Mouse extends Controller {
 
-    private attackPoint: BABYLON.AbstractMesh;
 
     public registerControls(scene: BABYLON.Scene) {
         let self = this;

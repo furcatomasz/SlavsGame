@@ -17,7 +17,7 @@ class Simple extends Scene {
                 .optimizeScene(scene)
                 .setCamera(scene);
 
-             //scene.debugLayer.show();
+             // scene.debugLayer.show();
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
 

@@ -4,6 +4,7 @@ abstract class Controller {
     protected game:Game;
 
     public targetPoint;
+    public attackPoint: BABYLON.AbstractMesh;
     public ball: BABYLON.Mesh;
 
     public forward:boolean;

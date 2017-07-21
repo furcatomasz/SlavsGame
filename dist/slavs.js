@@ -122,6 +122,7 @@ var Scene = (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
+        scene.renderTargetsEnabled = false;
         return this;
     };
     Scene.prototype.createGameGUI = function () {
@@ -250,7 +251,6 @@ var Environment = (function () {
         this.entrace = plane;
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
-            // sceneMesh.material.freeze();
             sceneMesh.freezeWorldMatrix();
         }
         var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
@@ -276,7 +276,7 @@ var Simple = (function (_super) {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-            //scene.debugLayer.show();
+            // scene.debugLayer.show();
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
@@ -444,6 +444,7 @@ var Player = (function (_super) {
             //playerLight.specular = new BABYLON.Color3(1, 1, 1);
             playerLight.intensity = 1;
             playerLight.range = 40;
+            playerLight.parent = _this.mesh;
             game.getScene().lights.push(playerLight);
             var characterBottomPanel = new BABYLON.GUI.StackPanel();
             characterBottomPanel.width = "50%";
@@ -548,6 +549,7 @@ var Player = (function (_super) {
                         animationEnemty_1.guiHp.value = newValue;
                         if (newValue <= 0) {
                             animationEnemty_1.removeFromWorld();
+                            game.controller.attackPoint = null;
                         }
                     }, 300);
                 }
@@ -571,8 +573,6 @@ var Player = (function (_super) {
                         game.controller.forward = false;
                         this.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
                         game.getScene().activeCamera.position = this.mesh.position;
-                        game.getScene().lights[1].position.x = this.mesh.position.x;
-                        game.getScene().lights[1].position.z = this.mesh.position.z;
                     }
                 }
             }
@@ -594,8 +594,6 @@ var Player = (function (_super) {
                 self.registerMoving();
                 if (self.game.controller.forward) {
                     self.game.getScene().activeCamera.position = self.mesh.position;
-                    self.game.getScene().lights[1].position.x = self.mesh.position.x;
-                    self.game.getScene().lights[1].position.z = self.mesh.position.z;
                 }
             }
         };

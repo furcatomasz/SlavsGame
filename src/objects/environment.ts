@@ -19,7 +19,8 @@ class Environment {
             var meshName = scene.meshes[i]['name'];
 
             if (meshName.search("Forest_ground") >= 0) {
-                 sceneMesh.receiveShadows = true;
+                sceneMesh.receiveShadows = true;
+                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
             } else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;

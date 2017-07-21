@@ -200,6 +200,7 @@ var Environment = (function () {
             var meshName = scene.meshes[i]['name'];
             if (meshName.search("Forest_ground") >= 0) {
                 sceneMesh.receiveShadows = true;
+                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
             }
             else if (meshName.search("Spruce") >= 0) {
@@ -956,13 +957,17 @@ var Mouse = (function (_super) {
     }
     Mouse.prototype.registerControls = function (scene) {
         var self = this;
+        var clickTrigger = false;
         var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
         ball.isPickable = false;
         ball.visibility = 0;
         this.ball = ball;
+        scene.onPointerUp = function (evt, pickResult) {
+            clickTrigger = false;
+        };
         scene.onPointerDown = function (evt, pickResult) {
-            console.log(pickResult);
             var pickedMesh = pickResult.pickedMesh;
+            clickTrigger = true;
             if (pickedMesh) {
                 if (self.game.player && pickedMesh.name == 'Forest_ground') {
                     self.attackPoint = null;
@@ -978,6 +983,19 @@ var Mouse = (function (_super) {
                     self.game.player.mesh.lookAt(pickResult.pickedPoint);
                     self.targetPoint = null;
                     self.ball.visibility = 0;
+                }
+            }
+        };
+        scene.onPointerMove = function (evt, pickResult) {
+            if (clickTrigger) {
+                var pickedMesh = pickResult.pickedMesh;
+                if (pickedMesh && self.targetPoint) {
+                    if (self.game.player) {
+                        self.targetPoint = pickResult.pickedPoint;
+                        self.targetPoint.y = 0;
+                        self.ball.position = self.targetPoint;
+                        self.game.player.mesh.lookAt(self.ball.position);
+                    }
                 }
             }
         };
@@ -997,9 +1015,11 @@ var Mouse = (function (_super) {
                         self.game.controller.forward = true;
                     }
                     else {
-                        self.game.controller.forward = false;
-                        self.targetPoint = null;
-                        self.ball.visibility = 0;
+                        if (!clickTrigger) {
+                            self.game.controller.forward = false;
+                            self.targetPoint = null;
+                            self.ball.visibility = 0;
+                        }
                     }
                 }
             }

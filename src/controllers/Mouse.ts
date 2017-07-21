@@ -6,14 +6,19 @@ class Mouse extends Controller {
 
     public registerControls(scene: BABYLON.Scene) {
         let self = this;
-        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
+        let clickTrigger = false;
+        let ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
         ball.isPickable = false;
         ball.visibility = 0;
         this.ball = ball;
 
+        scene.onPointerUp = function (evt, pickResult) {
+            clickTrigger = false;
+        }
+        
         scene.onPointerDown = function (evt, pickResult) {
-            console.log(pickResult);
             let pickedMesh = pickResult.pickedMesh;
+            clickTrigger = true;
 
             if (pickedMesh) {
                 if (self.game.player && pickedMesh.name == 'Forest_ground') {
@@ -35,6 +40,20 @@ class Mouse extends Controller {
             }
         };
 
+        scene.onPointerMove= function (evt, pickResult) {
+            if(clickTrigger) {
+                let pickedMesh = pickResult.pickedMesh;
+                if (pickedMesh && self.targetPoint) {
+                    if (self.game.player) {
+                        self.targetPoint = pickResult.pickedPoint;
+                        self.targetPoint.y = 0;
+                        self.ball.position = self.targetPoint;
+                        self.game.player.mesh.lookAt(self.ball.position);
+                    }
+                }
+            }
+        };
+
         scene.registerBeforeRender(function () {
             if (self.game.player) {
                 if (self.attackPoint) {
@@ -50,9 +69,11 @@ class Mouse extends Controller {
                     if (!self.game.player.mesh.intersectsPoint(self.targetPoint)) {
                         self.game.controller.forward = true;
                     } else {
-                        self.game.controller.forward = false;
-                        self.targetPoint = null;
-                        self.ball.visibility = 0;
+                        if(!clickTrigger) {
+                            self.game.controller.forward = false;
+                            self.targetPoint = null;
+                            self.ball.visibility = 0;
+                        }
                     }
                 }
             }

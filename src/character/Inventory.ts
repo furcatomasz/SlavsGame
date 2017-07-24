@@ -50,6 +50,27 @@ namespace Character {
             this.helm = helm;
             this.gloves = gloves;
             this.boots = boots;
+
+            let sword = new Items.Sword(this.game);
+            this.items.push(sword);
+
+            let sword = new Items.Sword(this.game);
+            this.items.push(sword);
+
+            let sword = new Items.Sword(this.game);
+            this.items.push(sword);
+
+            let sword = new Items.Shield(this.game);
+            this.items.push(sword);
+
+            let sword = new Items.Shield(this.game);
+            this.items.push(sword);
+
+            let sword = new Items.Sword(this.game);
+            this.items.push(sword);
+
+
+
         }
 
 

@@ -396,14 +396,14 @@ var Character = (function () {
     ;
     Character.prototype.onWalkEnd = function () { };
     ;
-    Character.WALK_SPEED = 0.25;
-    Character.ROTATION_SPEED = 0.05;
-    Character.ANIMATION_WALK = 'Run';
-    Character.ANIMATION_STAND = 'stand';
-    Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    Character.ANIMATION_ATTACK = 'Attack';
     return Character;
 }());
+Character.WALK_SPEED = 0.25;
+Character.ROTATION_SPEED = 0.05;
+Character.ANIMATION_WALK = 'Run';
+Character.ANIMATION_STAND = 'stand';
+Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+Character.ANIMATION_ATTACK = 'Attack';
 /// <reference path="characters/character.ts"/>
 /// <reference path="game.ts"/>
 var Player = (function (_super) {
@@ -927,6 +927,18 @@ var Character;
             this.helm = helm;
             this.gloves = gloves;
             this.boots = boots;
+            var sword = new Items.Sword(this.game);
+            this.items.push(sword);
+            var sword = new Items.Sword(this.game);
+            this.items.push(sword);
+            var sword = new Items.Sword(this.game);
+            this.items.push(sword);
+            var sword = new Items.Shield(this.game);
+            this.items.push(sword);
+            var sword = new Items.Shield(this.game);
+            this.items.push(sword);
+            var sword = new Items.Sword(this.game);
+            this.items.push(sword);
         };
         /**
          * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
@@ -1531,13 +1543,20 @@ var GUI;
          */
         Popup.prototype.initTexture = function () {
             this.guiTexture = this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
+            var container = new BABYLON.GUI.StackPanel();
+            container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            container.width = 0.33;
+            container.height = 1;
+            container.background = 'red';
+            this.container = container;
             var image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, this.imageUrl);
             image.horizontalAlignment = this.position;
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            image.width = 0.33;
+            image.width = 1;
             image.height = 1;
             this.guiMain.registerBlockMoveCharacter(image);
-            this.container = image;
+            this.container.addControl(image);
+            this.containerBackground = image;
             return this;
         };
         return Popup;
@@ -1597,53 +1616,94 @@ var GUI;
             _this.name = 'Inventory';
             _this.imageUrl = "assets/gui/inventory.png";
             _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            _this.initTexture();
             return _this;
         }
         Inventory.prototype.open = function () {
+            this.initTexture();
             var self = this;
             this.guiTexture.addControl(this.container);
-            this.showItems(this.container);
+            this.showItems();
             if (!this.buttonClose) {
-                var buttonClose_2 = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
-                buttonClose_2.color = "white";
-                buttonClose_2.background = "black";
-                buttonClose_2.width = "70px;";
-                buttonClose_2.height = "40px";
-                buttonClose_2.horizontalAlignment = this.position;
-                buttonClose_2.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                buttonClose_2.onPointerUpObservable.add(function () {
+                var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
+                buttonClose.color = "white";
+                buttonClose.background = "black";
+                buttonClose.width = "70px;";
+                buttonClose.height = "40px";
+                buttonClose.horizontalAlignment = this.position;
+                buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                buttonClose.onPointerUpObservable.add(function () {
                     self.close();
-                    self.guiTexture.removeControl(buttonClose_2);
+                    self.guiTexture.dispose();
                     self.buttonClose = null;
                 });
-                this.guiMain.registerBlockMoveCharacter(buttonClose_2);
-                this.guiTexture.addControl(buttonClose_2);
-                this.buttonClose = buttonClose_2;
+                this.guiMain.registerBlockMoveCharacter(buttonClose);
+                this.guiTexture.addControl(buttonClose);
+                this.buttonClose = buttonClose;
             }
             return this;
         };
         Inventory.prototype.close = function () {
             this.guiTexture.removeControl(this.container);
         };
-        Inventory.prototype.showItems = function (container) {
-            console.log(container);
+        Inventory.prototype.showItems = function () {
+            ////items
+            var left = -42;
+            var level = 1;
+            var top = 0;
+            var panelItems = new BABYLON.GUI.Rectangle();
+            panelItems.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            panelItems.width = "32%";
+            panelItems.height = "45%";
+            panelItems.top = "26%";
+            panelItems.thickness = 0;
             var inventory = this.guiMain.player.inventory;
             for (var i = 0; i < inventory.items.length; i++) {
                 var item = inventory.items[i];
+                if (i == 0) {
+                    top = -35;
+                }
+                else if (i % 5 == 0) {
+                    left = -42;
+                    top = (30 * level) - 35;
+                    level++;
+                }
+                else {
+                    left += 20;
+                }
+                var result = new BABYLON.GUI.Button(name);
+                result.width = 0.20;
+                result.height = 0.3;
+                result.left = left + "%";
+                result.top = top + "%";
+                result.thickness = 0;
+                var textBlock = new BABYLON.GUI.TextBlock(i + "_guiImage", item.name);
+                //textBlock.textWrapping = true;
+                textBlock.top = -40;
+                textBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                result.addControl(textBlock);
                 var image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, 'assets/Miniatures/' + item.name + '.png');
-                //image.horizontalAlignment = this.position;
+                image.height = 0.6;
+                image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
                 image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                image.width = '80px';
-                image.height = '80px';
-                var left = i * 80;
-                image.left = 400 + left;
-                image.top = -300;
-                image.paddingBottom = 150;
-                this.guiTexture.addControl(image);
-                this.guiMain.registerBlockMoveCharacter(image);
-                this.container = image;
+                result.addControl(image);
+                panelItems.addControl(result);
             }
+            this.guiTexture.addControl(panelItems);
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 1600) {
+                    panelItems.height = "45%";
+                    panelItems.top = "26%";
+                }
+                else if (window.innerWidth > 1200) {
+                    panelItems.height = "30%";
+                    panelItems.top = "20%";
+                }
+                else {
+                    panelItems.height = "20%";
+                    panelItems.top = "15%";
+                }
+            });
             return this;
         };
         Inventory.prototype.initData = function () {

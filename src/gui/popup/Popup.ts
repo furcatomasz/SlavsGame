@@ -8,7 +8,8 @@ namespace GUI {
         protected position: number;
         protected guiTexture: BABYLON.GUI.AdvancedDynamicTexture;
         protected guiMain: GUI.Main;
-        protected container: BABYLON.GUI.Image;
+        protected container: BABYLON.GUI.StackPanel;
+        protected containerBackground: BABYLON.GUI.Image;
         protected buttonClose: BABYLON.GUI.Control;
 
         constructor(guiMain: GUI.Main) {
@@ -21,15 +22,22 @@ namespace GUI {
         protected initTexture() {
             this.guiTexture = this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
 
+            let container = new BABYLON.GUI.StackPanel();
+            container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            container.width = 0.33;
+            container.height = 1;
+            container.background = 'red';
+            this.container = container;
+
             let image = new BABYLON.GUI.Image('gui.popup.image.'+this.name, this.imageUrl);
             image.horizontalAlignment = this.position;
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            image.width = 0.33;
+            image.width = 1;
             image.height = 1;
 
             this.guiMain.registerBlockMoveCharacter(image);
-
-            this.container = image;
+            this.container.addControl(image);
+            this.containerBackground = image;
 
             return this;
         }

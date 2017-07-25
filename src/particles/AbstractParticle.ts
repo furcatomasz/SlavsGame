@@ -7,7 +7,7 @@ namespace Particles {
         protected emitter:BABYLON.Mesh;
         public particleSystem:BABYLON.ParticleSystem;
 
-        constructor(game:Game, emitter:BABYLON.Mesh) {
+        constructor(game:Game, emitter:BABYLON.AbstractMesh) {
             this.game = game;
             this.emitter = emitter;
 

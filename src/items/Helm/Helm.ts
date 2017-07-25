@@ -9,6 +9,7 @@ namespace Items {
             this.name = 'Helm';
             this.mountType = 2;
             this.mesh = this.game.characters.player.instance('Helm', false);
+            this.mesh.visibility = 0;
         }
     }
 }

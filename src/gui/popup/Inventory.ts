@@ -45,7 +45,7 @@ namespace GUI {
         }
 
         protected showItems() {
-
+            let self = this;
             ////items
             let left = -42;
             let level = 1;
@@ -58,7 +58,7 @@ namespace GUI {
             panelItems.thickness = 0;
 
             let inventory = this.guiMain.player.inventory;
-            for (var i = 0; i < inventory.items.length; i++) {
+            for (let i = 0; i < inventory.items.length; i++) {
 
                 let item = inventory.items[i];
 
@@ -72,14 +72,14 @@ namespace GUI {
                     left += 20;
                 }
 
-                var result = new BABYLON.GUI.Button(name);
+                let result = new BABYLON.GUI.Button(name);
                 result.width = 0.20;
                 result.height = 0.3;
                 result.left = left+"%";
                 result.top = top+"%";
                 result.thickness = 0;
 
-                var textBlock = new BABYLON.GUI.TextBlock(i + "_guiImage", item.name);
+                let textBlock = new BABYLON.GUI.TextBlock(i + "_guiImage", item.name);
                 //textBlock.textWrapping = true;
                 textBlock.top = -40;
                 textBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
@@ -94,6 +94,10 @@ namespace GUI {
 
                 result.addControl(image);
                 panelItems.addControl(result);
+
+                result.onPointerUpObservable.add(function () {
+                    self.guiMain.game.player.inventory.mount(item);
+                });
             }
 
             this.guiTexture.addControl(panelItems);

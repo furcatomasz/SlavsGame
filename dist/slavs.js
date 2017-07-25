@@ -236,14 +236,13 @@ var Environment = (function () {
         var plane = scene.getMeshByName("Entrace_city");
         if (plane) {
             plane.visibility = 0;
-            plane.isPickable = 0;
+            plane.isPickable = false;
             var smokeSystem = new Particles.Entrace(game, plane).particleSystem;
             smokeSystem.start();
             game.getScene().registerAfterRender(function () {
                 if (game.player && self.entrace) {
                     if (game.player.mesh.intersectsMesh(self.entrace, true)) {
                         game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-                        //game.enemies.push(new Worm('Worm', 'Worm', game, new BABYLON.Vector3(3, 0.1, 0), new BABYLON.Quaternion(3, 0.1, 0, 0)));
                     }
                 }
             });
@@ -396,14 +395,14 @@ var Character = (function () {
     ;
     Character.prototype.onWalkEnd = function () { };
     ;
+    Character.WALK_SPEED = 0.25;
+    Character.ROTATION_SPEED = 0.05;
+    Character.ANIMATION_WALK = 'Run';
+    Character.ANIMATION_STAND = 'stand';
+    Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+    Character.ANIMATION_ATTACK = 'Attack';
     return Character;
 }());
-Character.WALK_SPEED = 0.25;
-Character.ROTATION_SPEED = 0.05;
-Character.ANIMATION_WALK = 'Run';
-Character.ANIMATION_STAND = 'stand';
-Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-Character.ANIMATION_ATTACK = 'Attack';
 /// <reference path="characters/character.ts"/>
 /// <reference path="game.ts"/>
 var Player = (function (_super) {
@@ -903,8 +902,8 @@ var Character;
             this.initPlayerItems();
         }
         Inventory.prototype.initPlayerItems = function () {
-            var sword = new Items.Sword(this.game);
-            var shield = new Items.Shield(this.game);
+            var sword = new Items.Weapons.Sword(this.game);
+            var shield = new Items.Shields.WoodShield(this.game);
             var armor = new Items.Armor(this.game);
             var helm = new Items.Helm(this.game);
             var gloves = new Items.Gloves(this.game);
@@ -927,18 +926,42 @@ var Character;
             this.helm = helm;
             this.gloves = gloves;
             this.boots = boots;
-            var sword = new Items.Sword(this.game);
+            var sword = new Items.Weapons.Sword(this.game);
             this.items.push(sword);
-            var sword = new Items.Sword(this.game);
+            var sword = new Items.Weapons.BigSword(this.game);
             this.items.push(sword);
-            var sword = new Items.Sword(this.game);
+            var sword = new Items.Weapons.BigSword(this.game);
             this.items.push(sword);
-            var sword = new Items.Shield(this.game);
+            var sword = new Items.Shields.WoodShield(this.game);
             this.items.push(sword);
-            var sword = new Items.Shield(this.game);
+            var sword = new Items.Shields.WoodShield(this.game);
             this.items.push(sword);
-            var sword = new Items.Sword(this.game);
+            var sword = new Items.Weapons.Sword(this.game);
             this.items.push(sword);
+        };
+        /**
+         * @param item
+         */
+        Inventory.prototype.removeItem = function (item) {
+            if (item) {
+                item.mesh.visibility = 0;
+            }
+        };
+        /**
+         * @param item
+         */
+        Inventory.prototype.setInInventory = function (item) {
+            switch (item.mountType) {
+                case Items.Weapon.TYPE:
+                    this.removeItem(this.weapon);
+                    this.weapon = item;
+                    break;
+                case Items.Shield.TYPE:
+                    this.removeItem(this.shield);
+                    this.weapon = item;
+                    break;
+            }
+            item.mesh.visibility = 1;
         };
         /**
          * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
@@ -953,6 +976,7 @@ var Character;
                 item.mesh.parent = this.player.mesh;
                 item.mesh.skeleton = this.player.mesh.skeleton;
             }
+            this.setInInventory(item);
             return this;
         };
         return Inventory;
@@ -1646,6 +1670,7 @@ var GUI;
             this.guiTexture.removeControl(this.container);
         };
         Inventory.prototype.showItems = function () {
+            var self = this;
             ////items
             var left = -42;
             var level = 1;
@@ -1657,7 +1682,7 @@ var GUI;
             panelItems.top = "26%";
             panelItems.thickness = 0;
             var inventory = this.guiMain.player.inventory;
-            for (var i = 0; i < inventory.items.length; i++) {
+            var _loop_2 = function (i) {
                 var item = inventory.items[i];
                 if (i == 0) {
                     top = -35;
@@ -1682,12 +1707,19 @@ var GUI;
                 textBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
                 textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 result.addControl(textBlock);
-                var image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, 'assets/Miniatures/' + item.name + '.png');
+                var image = new BABYLON.GUI.Image('gui.popup.image.' + this_2.name, 'assets/Miniatures/' + item.name + '.png');
                 image.height = 0.6;
                 image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
                 image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
                 result.addControl(image);
                 panelItems.addControl(result);
+                result.onPointerUpObservable.add(function () {
+                    self.guiMain.game.player.inventory.mount(item);
+                });
+            };
+            var this_2 = this;
+            for (var i = 0; i < inventory.items.length; i++) {
+                _loop_2(i);
             }
             this.guiTexture.addControl(panelItems);
             window.addEventListener('resize', function () {
@@ -1722,6 +1754,7 @@ var Items;
             _this.name = 'Armor';
             _this.mountType = 2;
             _this.mesh = _this.game.characters.player.instance('Armor', false);
+            _this.mesh.visibility = 0;
             return _this;
         }
         return Armor;
@@ -1738,6 +1771,7 @@ var Items;
             _this.name = 'Boots';
             _this.mountType = 2;
             _this.mesh = _this.game.characters.player.instance('Boots', false);
+            _this.mesh.visibility = 0;
             return _this;
         }
         return Boots;
@@ -1754,6 +1788,7 @@ var Items;
             _this.name = 'Gloves';
             _this.mountType = 2;
             _this.mesh = _this.game.characters.player.instance('Gloves', false);
+            _this.mesh.visibility = 0;
             return _this;
         }
         return Gloves;
@@ -1770,6 +1805,7 @@ var Items;
             _this.name = 'Helm';
             _this.mountType = 2;
             _this.mesh = _this.game.characters.player.instance('Helm', false);
+            _this.mesh.visibility = 0;
             return _this;
         }
         return Helm;
@@ -1782,35 +1818,95 @@ var Items;
     var Shield = (function (_super) {
         __extends(Shield, _super);
         function Shield(game) {
-            var _this = _super.call(this, game) || this;
-            _this.name = 'Shield';
-            _this.mountType = 1;
-            _this.mountBoneName = 'shield.bone';
-            _this.mesh = _this.game.items.shield.instance('Shield', false);
-            return _this;
+            return _super.call(this, game) || this;
         }
+        Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
     Items.Shield = Shield;
 })(Items || (Items = {}));
+/// <reference path="Shield.ts"/>
+var Items;
+(function (Items) {
+    var Shields;
+    (function (Shields) {
+        var WoodShield = (function (_super) {
+            __extends(WoodShield, _super);
+            function WoodShield(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Shield';
+                _this.mountType = 1;
+                _this.mountBoneName = 'shield.bone';
+                _this.mesh = _this.game.items.shield.instance('Shield', false);
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            return WoodShield;
+        }(Items.Shield));
+        Shields.WoodShield = WoodShield;
+    })(Shields = Items.Shields || (Items.Shields = {}));
+})(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Sword = (function (_super) {
-        __extends(Sword, _super);
-        function Sword(game) {
-            var _this = _super.call(this, game) || this;
-            _this.name = 'Sword';
-            _this.mountType = 1;
-            _this.mountBoneName = 'weapon.bone';
-            _this.mesh = _this.game.items.sword.instance('Sword', false);
-            _this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", _this.game.getScene(), null, {
-                loop: false,
-                autoplay: false
-            });
-            return _this;
+    var Weapon = (function (_super) {
+        __extends(Weapon, _super);
+        function Weapon(game) {
+            return _super.call(this, game) || this;
         }
-        return Sword;
+        Weapon.TYPE = 1;
+        return Weapon;
     }(Items.Item));
-    Items.Sword = Sword;
+    Items.Weapon = Weapon;
+})(Items || (Items = {}));
+/// <reference path="Weapon.ts"/>
+var Items;
+(function (Items) {
+    var Weapons;
+    (function (Weapons) {
+        var BigSword = (function (_super) {
+            __extends(BigSword, _super);
+            function BigSword(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Sword';
+                _this.mountType = 1;
+                _this.mountBoneName = 'weapon.bone';
+                _this.mesh = _this.game.items.sword.instance('Sword', false);
+                _this.mesh.visibility = 0;
+                _this.mesh.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+                _this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", _this.game.getScene(), null, {
+                    loop: false,
+                    autoplay: false
+                });
+                return _this;
+            }
+            return BigSword;
+        }(Items.Weapon));
+        Weapons.BigSword = BigSword;
+    })(Weapons = Items.Weapons || (Items.Weapons = {}));
+})(Items || (Items = {}));
+/// <reference path="Weapon.ts"/>
+var Items;
+(function (Items) {
+    var Weapons;
+    (function (Weapons) {
+        var Sword = (function (_super) {
+            __extends(Sword, _super);
+            function Sword(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Sword';
+                _this.mountType = 1;
+                _this.mountBoneName = 'weapon.bone';
+                _this.mesh = _this.game.items.sword.instance('Sword', false);
+                _this.mesh.visibility = 0;
+                _this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", _this.game.getScene(), null, {
+                    loop: false,
+                    autoplay: false
+                });
+                return _this;
+            }
+            return Sword;
+        }(Items.Weapon));
+        Weapons.Sword = Sword;
+    })(Weapons = Items.Weapons || (Items.Weapons = {}));
 })(Items || (Items = {}));

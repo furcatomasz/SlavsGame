@@ -63,7 +63,7 @@ class Environment {
         let plane = scene.getMeshByName("Entrace_city");
         if (plane) {
             plane.visibility = 0;
-            plane.isPickable = 0;
+            plane.isPickable = false;
             let smokeSystem = new Particles.Entrace(game, plane).particleSystem;
             smokeSystem.start();
 
@@ -71,7 +71,6 @@ class Environment {
                 if(game.player && self.entrace) {
                     if (game.player.mesh.intersectsMesh(self.entrace, true)) {
                         game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-                        //game.enemies.push(new Worm('Worm', 'Worm', game, new BABYLON.Vector3(3, 0.1, 0), new BABYLON.Quaternion(3, 0.1, 0, 0)));
                     }
                 }
             });

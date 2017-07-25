@@ -23,8 +23,8 @@ namespace Character {
         }
 
         public initPlayerItems() {
-            let sword = new Items.Sword(this.game);
-            let shield = new Items.Shield(this.game);
+            let sword = new Items.Weapons.Sword(this.game);
+            let shield = new Items.Shields.WoodShield(this.game);
             let armor = new Items.Armor(this.game);
             let helm = new Items.Helm(this.game);
             let gloves = new Items.Gloves(this.game);
@@ -51,28 +51,55 @@ namespace Character {
             this.gloves = gloves;
             this.boots = boots;
 
-            let sword = new Items.Sword(this.game);
+            let sword = new Items.Weapons.Sword(this.game);
             this.items.push(sword);
 
-            let sword = new Items.Sword(this.game);
+            let sword = new Items.Weapons.BigSword(this.game);
             this.items.push(sword);
 
-            let sword = new Items.Sword(this.game);
+            let sword = new Items.Weapons.BigSword(this.game);
             this.items.push(sword);
 
-            let sword = new Items.Shield(this.game);
+            let sword = new Items.Shields.WoodShield(this.game);
             this.items.push(sword);
 
-            let sword = new Items.Shield(this.game);
+            let sword = new Items.Shields.WoodShield(this.game);
             this.items.push(sword);
 
-            let sword = new Items.Sword(this.game);
+            let sword = new Items.Weapons.Sword(this.game);
             this.items.push(sword);
 
 
 
         }
 
+        /**
+         * @param item
+         */
+        protected removeItem(item: Items.Item) {
+            if(item) {
+                item.mesh.visibility = 0;
+            }
+        }
+
+        /**
+         * @param item
+         */
+        protected setInInventory(item: Items.Item) {
+            switch (item.mountType) {
+                case Items.Weapon.TYPE:
+                    this.removeItem(this.weapon);
+                    this.weapon = item;
+                    break;
+                case Items.Shield.TYPE:
+                    this.removeItem(this.shield);
+                    this.weapon = item;
+                    break;
+            }
+
+            item.mesh.visibility = 1;
+
+        }
 
         /**
          * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
@@ -81,12 +108,13 @@ namespace Character {
          */
         public mount(item: Items.Item) {
             if (item.mountType == 1) {
-
                 this.player.mount(item.mesh, item.mountBoneName);
             } else if(item.mountType == 2) {
                 item.mesh.parent = this.player.mesh;
                 item.mesh.skeleton = this.player.mesh.skeleton;
             }
+
+            this.setInInventory(item);
 
             return this;
         }

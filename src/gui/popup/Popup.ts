@@ -26,7 +26,6 @@ namespace GUI {
             container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             container.width = 0.33;
             container.height = 1;
-            container.background = 'red';
             this.container = container;
 
             let image = new BABYLON.GUI.Image('gui.popup.image.'+this.name, this.imageUrl);

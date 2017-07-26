@@ -395,14 +395,14 @@ var Character = (function () {
     ;
     Character.prototype.onWalkEnd = function () { };
     ;
-    Character.WALK_SPEED = 0.25;
-    Character.ROTATION_SPEED = 0.05;
-    Character.ANIMATION_WALK = 'Run';
-    Character.ANIMATION_STAND = 'stand';
-    Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    Character.ANIMATION_ATTACK = 'Attack';
     return Character;
 }());
+Character.WALK_SPEED = 0.25;
+Character.ROTATION_SPEED = 0.05;
+Character.ANIMATION_WALK = 'Run';
+Character.ANIMATION_STAND = 'stand';
+Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+Character.ANIMATION_ATTACK = 'Attack';
 /// <reference path="characters/character.ts"/>
 /// <reference path="game.ts"/>
 var Player = (function (_super) {
@@ -949,35 +949,50 @@ var Character;
         };
         /**
          * @param item
+         * @param setItem
          */
-        Inventory.prototype.setInInventory = function (item) {
+        Inventory.prototype.equip = function (item, setItem) {
             switch (item.getType()) {
                 case Items.Weapon.TYPE:
                     this.removeItem(this.weapon);
-                    this.weapon = item;
+                    if (setItem) {
+                        this.weapon = item;
+                    }
                     break;
                 case Items.Shield.TYPE:
                     this.removeItem(this.shield);
-                    this.shield = item;
+                    if (setItem) {
+                        this.shield = item;
+                    }
                     break;
                 case Items.Helm.TYPE:
                     this.removeItem(this.helm);
-                    this.helm = item;
+                    if (setItem) {
+                        this.helm = item;
+                    }
                     break;
                 case Items.Gloves.TYPE:
                     this.removeItem(this.gloves);
-                    this.gloves = item;
+                    if (setItem) {
+                        this.gloves = item;
+                    }
                     break;
                 case Items.Boots.TYPE:
                     this.removeItem(this.boots);
-                    this.boots = item;
+                    if (setItem) {
+                        this.boots = item;
+                    }
                     break;
                 case Items.Armor.TYPE:
                     this.removeItem(this.armor);
-                    this.armor = item;
+                    if (setItem) {
+                        this.armor = item;
+                    }
                     break;
             }
-            item.mesh.visibility = 1;
+            if (setItem) {
+                item.mesh.visibility = 1;
+            }
         };
         /**
          * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
@@ -992,7 +1007,12 @@ var Character;
                 item.mesh.parent = this.player.mesh;
                 item.mesh.skeleton = this.player.mesh.skeleton;
             }
-            this.setInInventory(item);
+            this.equip(item, true);
+            return this;
+        };
+        Inventory.prototype.umount = function (item) {
+            console.log(1);
+            this.equip(item, false);
             return this;
         };
         return Inventory;
@@ -1155,9 +1175,9 @@ var Items;
         function Item(game) {
             this.game = game;
         }
-        Item.TYPE = 0;
         return Item;
     }());
+    Item.TYPE = 0;
     Items.Item = Item;
 })(Items || (Items = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
@@ -1588,7 +1608,6 @@ var GUI;
             container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             container.width = 0.33;
             container.height = 1;
-            container.background = 'red';
             this.container = container;
             var image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, this.imageUrl);
             image.horizontalAlignment = this.position;
@@ -1664,6 +1683,7 @@ var GUI;
             var self = this;
             this.guiTexture.addControl(this.container);
             this.showItems();
+            this.showEquipedItems();
             if (!this.buttonClose) {
                 var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
                 buttonClose.color = "white";
@@ -1685,6 +1705,27 @@ var GUI;
         };
         Inventory.prototype.close = function () {
             this.guiTexture.removeControl(this.container);
+        };
+        Inventory.prototype.showEquipedItems = function () {
+            var inventory = this.guiMain.player.inventory;
+            var panelItem = new BABYLON.GUI.Rectangle();
+            panelItem.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            panelItem.width = "6%";
+            panelItem.height = "20%";
+            panelItem.top = "-27%";
+            panelItem.left = "-22.5%";
+            panelItem.thickness = 0;
+            this.guiTexture.addControl(panelItem);
+            var image = this.createItemImage(inventory.weapon);
+            image.onPointerUpObservable.add(function () {
+                self.guiMain.game.player.inventory.umount(inventory.weapon);
+                if (self.weaponImage) {
+                    self.guiTexture.removeControl(self.weaponImage);
+                }
+            });
+            panelItem.addControl(image);
+            this.guiTexture.addControl(panelItem);
+            this.weaponImage = panelItem;
         };
         Inventory.prototype.showItems = function () {
             var self = this;
@@ -1718,20 +1759,37 @@ var GUI;
                 result.left = left + "%";
                 result.top = top + "%";
                 result.thickness = 0;
+                result.fontSize = '14';
                 var textBlock = new BABYLON.GUI.TextBlock(i + "_guiImage", item.name);
-                //textBlock.textWrapping = true;
-                textBlock.top = -40;
+                textBlock.top = '-25%';
                 textBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
                 textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 result.addControl(textBlock);
-                var image = new BABYLON.GUI.Image('gui.popup.image.' + this_2.name, 'assets/Miniatures/' + item.image + '.png');
-                image.height = 0.6;
-                image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-                image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                var image = this_2.createItemImage(item);
                 result.addControl(image);
                 panelItems.addControl(result);
                 result.onPointerUpObservable.add(function () {
                     self.guiMain.game.player.inventory.mount(item);
+                    if (self.weaponImage) {
+                        self.guiTexture.removeControl(self.weaponImage);
+                    }
+                    var panelItem = new BABYLON.GUI.Rectangle();
+                    panelItem.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                    panelItem.width = "6%";
+                    panelItem.height = "20%";
+                    panelItem.top = "-27%";
+                    panelItem.left = "-22.5%";
+                    panelItem.thickness = 0;
+                    self.guiTexture.addControl(panelItem);
+                    var image = self.createItemImage(item);
+                    self.weaponImage = panelItem;
+                    panelItem.addControl(image);
+                    image.onPointerUpObservable.add(function () {
+                        self.guiMain.game.player.inventory.umount(inventory.weapon);
+                        if (self.weaponImage) {
+                            self.guiTexture.removeControl(self.weaponImage);
+                        }
+                    });
                 });
             };
             var this_2 = this;
@@ -1755,6 +1813,13 @@ var GUI;
             });
             return this;
         };
+        Inventory.prototype.createItemImage = function (item) {
+            var image = new BABYLON.GUI.Image('gui.popup.image.' + item.name, 'assets/Miniatures/' + item.image + '.png');
+            image.height = 0.6;
+            image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            return image;
+        };
         Inventory.prototype.initData = function () {
         };
         return Inventory;
@@ -1775,9 +1840,9 @@ var Items;
         Armor.prototype.getType = function () {
             return Items.Armor.TYPE;
         };
-        Armor.TYPE = 6;
         return Armor;
     }(Items.Item));
+    Armor.TYPE = 6;
     Items.Armor = Armor;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -1815,9 +1880,9 @@ var Items;
         Boots.prototype.getType = function () {
             return Items.Boots.TYPE;
         };
-        Boots.TYPE = 5;
         return Boots;
     }(Items.Item));
+    Boots.TYPE = 5;
     Items.Boots = Boots;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -1855,9 +1920,9 @@ var Items;
         Gloves.prototype.getType = function () {
             return Items.Gloves.TYPE;
         };
-        Gloves.TYPE = 4;
         return Gloves;
     }(Items.Item));
+    Gloves.TYPE = 4;
     Items.Gloves = Gloves;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -1895,9 +1960,9 @@ var Items;
         Helm.prototype.getType = function () {
             return Items.Helm.TYPE;
         };
-        Helm.TYPE = 3;
         return Helm;
     }(Items.Item));
+    Helm.TYPE = 3;
     Items.Helm = Helm;
 })(Items || (Items = {}));
 /// <reference path="Helm.ts"/>
@@ -1935,9 +2000,9 @@ var Items;
         Shield.prototype.getType = function () {
             return Items.Shield.TYPE;
         };
-        Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
+    Shield.TYPE = 2;
     Items.Shield = Shield;
 })(Items || (Items = {}));
 /// <reference path="Shield.ts"/>
@@ -1999,9 +2064,9 @@ var Items;
         Weapon.prototype.getType = function () {
             return Items.Weapon.TYPE;
         };
-        Weapon.TYPE = 1;
         return Weapon;
     }(Items.Item));
+    Weapon.TYPE = 1;
     Items.Weapon = Weapon;
 })(Items || (Items = {}));
 /// <reference path="Weapon.ts"/>
@@ -2014,7 +2079,7 @@ var Items;
             function BigSword(game) {
                 var _this = _super.call(this, game) || this;
                 _this.name = 'Big Sword';
-                _this.image = 'Sword';
+                _this.image = 'BigSword';
                 _this.mountType = 1;
                 _this.mountBoneName = 'weapon.bone';
                 _this.mesh = _this.game.items.sword.instance('Sword', false);

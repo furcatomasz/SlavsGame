@@ -7,7 +7,7 @@ namespace Items.Weapons {
             super(game);
 
             this.name = 'Big Sword';
-            this.image = 'Sword';
+            this.image = 'BigSword';
             this.mountType = 1;
             this.mountBoneName = 'weapon.bone';
             this.mesh = this.game.items.sword.instance('Sword', false);

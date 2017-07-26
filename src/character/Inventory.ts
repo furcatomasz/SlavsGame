@@ -84,37 +84,51 @@ namespace Character {
 
         /**
          * @param item
+         * @param setItem
          */
-        protected setInInventory(item: Items.Item) {
+        protected equip(item: Items.Item, setItem: boolean) {
             switch (item.getType()) {
                 case Items.Weapon.TYPE:
                     this.removeItem(this.weapon);
-                    this.weapon = item;
+                    if (setItem) {
+                        this.weapon = item;
+                    }
                     break;
                 case Items.Shield.TYPE:
                     this.removeItem(this.shield);
-                    this.shield = item;
+                    if (setItem) {
+                        this.shield = item;
+                    }
                     break;
                 case Items.Helm.TYPE:
                     this.removeItem(this.helm);
-                    this.helm = item;
+                    if (setItem) {
+                        this.helm = item;
+                    }
                     break;
                 case Items.Gloves.TYPE:
                     this.removeItem(this.gloves);
-                    this.gloves = item;
+                    if (setItem) {
+                        this.gloves = item;
+                    }
                     break;
                 case Items.Boots.TYPE:
                     this.removeItem(this.boots);
-                    this.boots = item;
+                    if (setItem) {
+                        this.boots = item;
+                    }
                     break;
                 case Items.Armor.TYPE:
                     this.removeItem(this.armor);
-                    this.armor = item;
+                    if (setItem) {
+                        this.armor = item;
+                    }
                     break;
             }
 
-            item.mesh.visibility = 1;
-
+            if(setItem) {
+                item.mesh.visibility = 1;
+            }
         }
 
         /**
@@ -130,7 +144,14 @@ namespace Character {
                 item.mesh.skeleton = this.player.mesh.skeleton;
             }
 
-            this.setInInventory(item);
+            this.equip(item, true);
+
+            return this;
+        }
+
+        public umount(item: Items.Item) {
+            console.log(1);
+            this.equip(item, false);
 
             return this;
         }

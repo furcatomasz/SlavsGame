@@ -1,8 +1,8 @@
 /// <reference path="../Item.ts"/>
 
 namespace Items {
-    export abstract class Armor extends Item {
-        static readonly TYPE = 6;
+    export abstract class Helm extends Item {
+        static readonly TYPE = 3;
 
         constructor(game: Game) {
             super(game);
@@ -12,7 +12,7 @@ namespace Items {
          * @returns {number}
          */
         public getType() {
-            return Items.Armor.TYPE;
+            return Items.Helm.TYPE;
         }
     }
 }

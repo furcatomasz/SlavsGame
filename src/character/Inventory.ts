@@ -24,11 +24,11 @@ namespace Character {
 
         public initPlayerItems() {
             let sword = new Items.Weapons.Sword(this.game);
-            let shield = new Items.Shields.WoodShield(this.game);
-            let armor = new Items.Armor(this.game);
-            let helm = new Items.Helm(this.game);
-            let gloves = new Items.Gloves(this.game);
-            let boots = new Items.Boots(this.game);
+            let shield = new Items.Shields.BigWoodShield(this.game);
+            let armor = new Items.Armors.PrimaryArmor(this.game);
+            let helm = new Items.Helms.PrimaryHelm(this.game);
+            let gloves = new Items.Gloves.PrimaryGloves(this.game);
+            let boots = new Items.Boots.PrimaryBoots(this.game);
             
             this.items.push(sword);
             this.items.push(shield);
@@ -86,14 +86,30 @@ namespace Character {
          * @param item
          */
         protected setInInventory(item: Items.Item) {
-            switch (item.mountType) {
+            switch (item.getType()) {
                 case Items.Weapon.TYPE:
                     this.removeItem(this.weapon);
                     this.weapon = item;
                     break;
                 case Items.Shield.TYPE:
                     this.removeItem(this.shield);
-                    this.weapon = item;
+                    this.shield = item;
+                    break;
+                case Items.Helm.TYPE:
+                    this.removeItem(this.helm);
+                    this.helm = item;
+                    break;
+                case Items.Gloves.TYPE:
+                    this.removeItem(this.gloves);
+                    this.gloves = item;
+                    break;
+                case Items.Boots.TYPE:
+                    this.removeItem(this.boots);
+                    this.boots = item;
+                    break;
+                case Items.Armor.TYPE:
+                    this.removeItem(this.armor);
+                    this.armor = item;
                     break;
             }
 

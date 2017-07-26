@@ -1,15 +1,18 @@
 /// <reference path="../Item.ts"/>
 
 namespace Items {
-    export class Gloves extends Item {
+    export abstract class Gloves extends Item {
+        static readonly TYPE = 4;
 
-        constructor(game:Game) {
+        constructor(game: Game) {
             super(game);
+        }
 
-            this.name = 'Gloves';
-            this.mountType = 2;
-            this.mesh = this.game.characters.player.instance('Gloves', false);
-            this.mesh.visibility = 0;
+        /**
+         * @returns {number}
+         */
+        public getType() {
+            return Items.Gloves.TYPE;
         }
     }
 }

@@ -7,5 +7,12 @@ namespace Items {
         constructor(game:Game) {
             super(game);
         }
+
+        /**
+         * @returns {number}
+         */
+        public getType() {
+            return Items.Weapon.TYPE;
+        }
     }
 }

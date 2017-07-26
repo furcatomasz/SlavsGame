@@ -86,7 +86,7 @@ namespace GUI {
                 textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 result.addControl(textBlock);
 
-                let image = new BABYLON.GUI.Image('gui.popup.image.'+this.name, 'assets/Miniatures/'+item.name +'.png');
+                let image = new BABYLON.GUI.Image('gui.popup.image.'+this.name, 'assets/Miniatures/'+item.image +'.png');
                 image.height = 0.6;
 
                 image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;

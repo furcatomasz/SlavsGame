@@ -8,5 +8,11 @@ namespace Items {
             super(game);
         }
 
+        /**
+         * @returns {number}
+         */
+        public getType() {
+            return Items.Shield.TYPE;
+        }
     }
 }

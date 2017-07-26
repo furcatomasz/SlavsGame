@@ -903,11 +903,11 @@ var Character;
         }
         Inventory.prototype.initPlayerItems = function () {
             var sword = new Items.Weapons.Sword(this.game);
-            var shield = new Items.Shields.WoodShield(this.game);
-            var armor = new Items.Armor(this.game);
-            var helm = new Items.Helm(this.game);
-            var gloves = new Items.Gloves(this.game);
-            var boots = new Items.Boots(this.game);
+            var shield = new Items.Shields.BigWoodShield(this.game);
+            var armor = new Items.Armors.PrimaryArmor(this.game);
+            var helm = new Items.Helms.PrimaryHelm(this.game);
+            var gloves = new Items.Gloves.PrimaryGloves(this.game);
+            var boots = new Items.Boots.PrimaryBoots(this.game);
             this.items.push(sword);
             this.items.push(shield);
             this.items.push(armor);
@@ -951,14 +951,30 @@ var Character;
          * @param item
          */
         Inventory.prototype.setInInventory = function (item) {
-            switch (item.mountType) {
+            switch (item.getType()) {
                 case Items.Weapon.TYPE:
                     this.removeItem(this.weapon);
                     this.weapon = item;
                     break;
                 case Items.Shield.TYPE:
                     this.removeItem(this.shield);
-                    this.weapon = item;
+                    this.shield = item;
+                    break;
+                case Items.Helm.TYPE:
+                    this.removeItem(this.helm);
+                    this.helm = item;
+                    break;
+                case Items.Gloves.TYPE:
+                    this.removeItem(this.gloves);
+                    this.gloves = item;
+                    break;
+                case Items.Boots.TYPE:
+                    this.removeItem(this.boots);
+                    this.boots = item;
+                    break;
+                case Items.Armor.TYPE:
+                    this.removeItem(this.armor);
+                    this.armor = item;
                     break;
             }
             item.mesh.visibility = 1;
@@ -1139,6 +1155,7 @@ var Items;
         function Item(game) {
             this.game = game;
         }
+        Item.TYPE = 0;
         return Item;
     }());
     Items.Item = Item;
@@ -1707,7 +1724,7 @@ var GUI;
                 textBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
                 textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 result.addControl(textBlock);
-                var image = new BABYLON.GUI.Image('gui.popup.image.' + this_2.name, 'assets/Miniatures/' + item.name + '.png');
+                var image = new BABYLON.GUI.Image('gui.popup.image.' + this_2.name, 'assets/Miniatures/' + item.image + '.png');
                 image.height = 0.6;
                 image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
                 image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
@@ -1750,13 +1767,15 @@ var Items;
     var Armor = (function (_super) {
         __extends(Armor, _super);
         function Armor(game) {
-            var _this = _super.call(this, game) || this;
-            _this.name = 'Armor';
-            _this.mountType = 2;
-            _this.mesh = _this.game.characters.player.instance('Armor', false);
-            _this.mesh.visibility = 0;
-            return _this;
+            return _super.call(this, game) || this;
         }
+        /**
+         * @returns {number}
+         */
+        Armor.prototype.getType = function () {
+            return Items.Armor.TYPE;
+        };
+        Armor.TYPE = 6;
         return Armor;
     }(Items.Item));
     Items.Armor = Armor;
@@ -1764,16 +1783,39 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
+    var Armors;
+    (function (Armors) {
+        var PrimaryArmor = (function (_super) {
+            __extends(PrimaryArmor, _super);
+            function PrimaryArmor(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Armor';
+                _this.image = 'Armor';
+                _this.mountType = 2;
+                _this.mesh = _this.game.characters.player.instance('Armor', false);
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            return PrimaryArmor;
+        }(Items.Armor));
+        Armors.PrimaryArmor = PrimaryArmor;
+    })(Armors = Items.Armors || (Items.Armors = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
     var Boots = (function (_super) {
         __extends(Boots, _super);
         function Boots(game) {
-            var _this = _super.call(this, game) || this;
-            _this.name = 'Boots';
-            _this.mountType = 2;
-            _this.mesh = _this.game.characters.player.instance('Boots', false);
-            _this.mesh.visibility = 0;
-            return _this;
+            return _super.call(this, game) || this;
         }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        Boots.TYPE = 5;
         return Boots;
     }(Items.Item));
     Items.Boots = Boots;
@@ -1781,16 +1823,39 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
+    var Boots;
+    (function (Boots) {
+        var PrimaryBoots = (function (_super) {
+            __extends(PrimaryBoots, _super);
+            function PrimaryBoots(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Boots';
+                _this.image = 'Boots';
+                _this.mountType = 2;
+                _this.mesh = _this.game.characters.player.instance('Boots', false);
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            return PrimaryBoots;
+        }(Boots));
+        Boots.PrimaryBoots = PrimaryBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
     var Gloves = (function (_super) {
         __extends(Gloves, _super);
         function Gloves(game) {
-            var _this = _super.call(this, game) || this;
-            _this.name = 'Gloves';
-            _this.mountType = 2;
-            _this.mesh = _this.game.characters.player.instance('Gloves', false);
-            _this.mesh.visibility = 0;
-            return _this;
+            return _super.call(this, game) || this;
         }
+        /**
+         * @returns {number}
+         */
+        Gloves.prototype.getType = function () {
+            return Items.Gloves.TYPE;
+        };
+        Gloves.TYPE = 4;
         return Gloves;
     }(Items.Item));
     Items.Gloves = Gloves;
@@ -1798,19 +1863,63 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
+    var Gloves;
+    (function (Gloves) {
+        var PrimaryGloves = (function (_super) {
+            __extends(PrimaryGloves, _super);
+            function PrimaryGloves(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Gloves';
+                _this.image = 'Gloves';
+                _this.mountType = 2;
+                _this.mesh = _this.game.characters.player.instance('Gloves', false);
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            return PrimaryGloves;
+        }(Gloves));
+        Gloves.PrimaryGloves = PrimaryGloves;
+    })(Gloves = Items.Gloves || (Items.Gloves = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
     var Helm = (function (_super) {
         __extends(Helm, _super);
         function Helm(game) {
-            var _this = _super.call(this, game) || this;
-            _this.name = 'Helm';
-            _this.mountType = 2;
-            _this.mesh = _this.game.characters.player.instance('Helm', false);
-            _this.mesh.visibility = 0;
-            return _this;
+            return _super.call(this, game) || this;
         }
+        /**
+         * @returns {number}
+         */
+        Helm.prototype.getType = function () {
+            return Items.Helm.TYPE;
+        };
+        Helm.TYPE = 3;
         return Helm;
     }(Items.Item));
     Items.Helm = Helm;
+})(Items || (Items = {}));
+/// <reference path="Helm.ts"/>
+var Items;
+(function (Items) {
+    var Helms;
+    (function (Helms) {
+        var PrimaryHelm = (function (_super) {
+            __extends(PrimaryHelm, _super);
+            function PrimaryHelm(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Helm';
+                _this.image = 'Helm';
+                _this.mountType = 2;
+                _this.mesh = _this.game.characters.player.instance('Helm', false);
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            return PrimaryHelm;
+        }(Items.Helm));
+        Helms.PrimaryHelm = PrimaryHelm;
+    })(Helms = Items.Helms || (Items.Helms = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;
@@ -1820,6 +1929,12 @@ var Items;
         function Shield(game) {
             return _super.call(this, game) || this;
         }
+        /**
+         * @returns {number}
+         */
+        Shield.prototype.getType = function () {
+            return Items.Shield.TYPE;
+        };
         Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
@@ -1830,11 +1945,35 @@ var Items;
 (function (Items) {
     var Shields;
     (function (Shields) {
+        var BigWoodShield = (function (_super) {
+            __extends(BigWoodShield, _super);
+            function BigWoodShield(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Big Wood Shield';
+                _this.image = 'Shield';
+                _this.mountType = 1;
+                _this.mountBoneName = 'shield.bone';
+                _this.mesh = _this.game.items.shield.instance('Shield', false);
+                _this.mesh.visibility = 0;
+                _this.mesh.scaling = new BABYLON.Vector3(1, 2, 1);
+                return _this;
+            }
+            return BigWoodShield;
+        }(Items.Shield));
+        Shields.BigWoodShield = BigWoodShield;
+    })(Shields = Items.Shields || (Items.Shields = {}));
+})(Items || (Items = {}));
+/// <reference path="Shield.ts"/>
+var Items;
+(function (Items) {
+    var Shields;
+    (function (Shields) {
         var WoodShield = (function (_super) {
             __extends(WoodShield, _super);
             function WoodShield(game) {
                 var _this = _super.call(this, game) || this;
-                _this.name = 'Shield';
+                _this.name = 'Wood Shield';
+                _this.image = 'Shield';
                 _this.mountType = 1;
                 _this.mountBoneName = 'shield.bone';
                 _this.mesh = _this.game.items.shield.instance('Shield', false);
@@ -1854,6 +1993,12 @@ var Items;
         function Weapon(game) {
             return _super.call(this, game) || this;
         }
+        /**
+         * @returns {number}
+         */
+        Weapon.prototype.getType = function () {
+            return Items.Weapon.TYPE;
+        };
         Weapon.TYPE = 1;
         return Weapon;
     }(Items.Item));
@@ -1868,7 +2013,8 @@ var Items;
             __extends(BigSword, _super);
             function BigSword(game) {
                 var _this = _super.call(this, game) || this;
-                _this.name = 'Sword';
+                _this.name = 'Big Sword';
+                _this.image = 'Sword';
                 _this.mountType = 1;
                 _this.mountBoneName = 'weapon.bone';
                 _this.mesh = _this.game.items.sword.instance('Sword', false);
@@ -1895,6 +2041,7 @@ var Items;
             function Sword(game) {
                 var _this = _super.call(this, game) || this;
                 _this.name = 'Sword';
+                _this.image = 'Sword';
                 _this.mountType = 1;
                 _this.mountBoneName = 'weapon.bone';
                 _this.mesh = _this.game.items.sword.instance('Sword', false);

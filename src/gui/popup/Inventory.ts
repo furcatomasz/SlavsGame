@@ -3,7 +3,12 @@
 namespace GUI {
     export class Inventory extends Popup {
 
-        protected weaponImage;
+        protected weaponImage: GUI.Inventory.EquipBlock;
+        protected shieldImage: GUI.Inventory.EquipBlock;
+        protected armorImage: GUI.Inventory.EquipBlock;
+        protected glovesImage: GUI.Inventory.EquipBlock;
+        protected bootsImage: GUI.Inventory.EquipBlock;
+        protected helmImage: GUI.Inventory.EquipBlock;
 
         constructor(guiMain: GUI.Main) {
             super(guiMain);
@@ -49,28 +54,12 @@ namespace GUI {
         }
 
         protected showEquipedItems() {
-            let inventory = this.guiMain.player.inventory;
-
-            var panelItem = new BABYLON.GUI.Rectangle();
-            panelItem.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            panelItem.width = "6%";
-            panelItem.height = "20%";
-            panelItem.top = "-27%";
-            panelItem.left = "-22.5%";
-            panelItem.thickness = 0;
-            this.guiTexture.addControl(panelItem);
-
-            let image = this.createItemImage(inventory.weapon);
-            image.onPointerUpObservable.add(function () {
-                self.guiMain.game.player.inventory.umount(inventory.weapon);
-                if (self.weaponImage) {
-                    self.guiTexture.removeControl(self.weaponImage);
-                }
-            });
-            panelItem.addControl(image);
-
-            this.guiTexture.addControl(panelItem);
-            this.weaponImage = panelItem
+            this.weaponImage = new GUI.Inventory.Weapon(this);
+            this.shieldImage = new GUI.Inventory.Shield(this);
+            this.glovesImage = new GUI.Inventory.Gloves(this);
+            this.bootsImage = new GUI.Inventory.Boots(this);
+            this.armorImage = new GUI.Inventory.Armor(this);
+            this.helmImage = new GUI.Inventory.Helm(this);
         }
 
         protected showItems() {
@@ -91,11 +80,11 @@ namespace GUI {
 
                 let item = inventory.items[i];
 
-                if(i == 0) {
+                if (i == 0) {
                     top = -35;
-                } else if(i % 5 == 0) {
+                } else if (i % 5 == 0) {
                     left = -42;
-                    top = (30 * level)-35;
+                    top = (30 * level) - 35;
                     level++;
                 } else {
                     left += 20;
@@ -104,8 +93,8 @@ namespace GUI {
                 let result = new BABYLON.GUI.Button(name);
                 result.width = 0.20;
                 result.height = 0.3;
-                result.left = left+"%";
-                result.top = top+"%";
+                result.left = left + "%";
+                result.top = top + "%";
                 result.thickness = 0;
                 result.fontSize = '14';
 
@@ -122,39 +111,17 @@ namespace GUI {
 
                 result.onPointerUpObservable.add(function () {
                     self.guiMain.game.player.inventory.mount(item);
-                    if(self.weaponImage) {
-                        self.guiTexture.removeControl(self.weaponImage);
-                    }
-
-                    let panelItem = new BABYLON.GUI.Rectangle();
-                    panelItem.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-                    panelItem.width = "6%";
-                    panelItem.height = "20%";
-                    panelItem.top = "-27%";
-                    panelItem.left = "-22.5%";
-                    panelItem.thickness = 0;
-                    self.guiTexture.addControl(panelItem);
-
-                    let image = self.createItemImage(item);
-                    self.weaponImage = panelItem;
-                    panelItem.addControl(image);
-
-                    image.onPointerUpObservable.add(function () {
-                        self.guiMain.game.player.inventory.umount(inventory.weapon);
-                        if (self.weaponImage) {
-                            self.guiTexture.removeControl(self.weaponImage);
-                        }
-                    });
+                    self.onPointerUpItemImage(item);
                 });
             }
 
             this.guiTexture.addControl(panelItems);
 
-            window.addEventListener('resize', function(){
-                if(window.innerWidth > 1600) {
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 1600) {
                     panelItems.height = "45%";
                     panelItems.top = "26%";
-                } else if(window.innerWidth > 1200) {
+                } else if (window.innerWidth > 1200) {
                     panelItems.height = "30%";
                     panelItems.top = "20%";
                 } else {
@@ -167,8 +134,65 @@ namespace GUI {
             return this;
         }
 
-        protected createItemImage(item: Items.Item) {
-            let image = new BABYLON.GUI.Image('gui.popup.image.'+item.name, 'assets/Miniatures/'+item.image +'.png');
+        /**
+         * @param item
+         * @returns {GUI.Inventory}
+         */
+        protected onPointerUpItemImage(item: Items.Item) {
+            switch (item.getType()) {
+                case Items.Weapon.TYPE:
+                    if (this.weaponImage.block) {
+                        this.guiTexture.removeControl(this.weaponImage.block);
+                    }
+
+                    this.weaponImage = new GUI.Inventory.Weapon(this);
+                    break;
+                case Items.Shield.TYPE:
+                    if (this.shieldImage.block) {
+                        this.guiTexture.removeControl(this.shieldImage.block);
+                    }
+
+                    this.shieldImage = new GUI.Inventory.Shield(this);
+                    break;
+                case Items.Helm.TYPE:
+                    if (this.helmImage.block) {
+                        this.guiTexture.removeControl(this.helmImage.block);
+                    }
+
+                    this.helmImage = new GUI.Inventory.Helm(this);
+                    break;
+                case Items.Gloves.TYPE:
+                    if (this.glovesImage.block) {
+                        this.guiTexture.removeControl(this.glovesImage.block);
+                    }
+
+                    this.glovesImage = new GUI.Inventory.Gloves(this);
+                    break;
+                case Items.Boots.TYPE:
+                    if (this.bootsImage.block) {
+                        this.guiTexture.removeControl(this.bootsImage.block);
+                    }
+
+                    this.bootsImage = new GUI.Inventory.Boots(this);
+                    break;
+                case Items.Armor.TYPE:
+                    if (this.armorImage.block) {
+                        this.guiTexture.removeControl(this.armorImage.block);
+                    }
+
+                    this.armorImage = new GUI.Inventory.Armor(this);
+                    break;
+            }
+
+            return this;
+        }
+
+        /**
+         * @param item
+         * @returns {BABYLON.GUI.Image}
+         */
+        public createItemImage(item: Items.Item) {
+            let image = new BABYLON.GUI.Image('gui.popup.image.' + item.name, 'assets/Miniatures/' + item.image + '.png');
             image.height = 0.6;
 
             image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
@@ -177,6 +201,7 @@ namespace GUI {
             return image;
         }
 
+
         public initData() {
         }
-}
+    }

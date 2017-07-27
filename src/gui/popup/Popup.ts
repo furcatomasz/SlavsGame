@@ -3,11 +3,12 @@
 namespace GUI {
     export abstract class Popup {
 
+        public guiMain: GUI.Main;
+        public guiTexture: BABYLON.GUI.AdvancedDynamicTexture;
+
         protected name: string;
         protected imageUrl: string;
         protected position: number;
-        protected guiTexture: BABYLON.GUI.AdvancedDynamicTexture;
-        protected guiMain: GUI.Main;
         protected container: BABYLON.GUI.StackPanel;
         protected containerBackground: BABYLON.GUI.Image;
         protected buttonClose: BABYLON.GUI.Control;

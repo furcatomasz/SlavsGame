@@ -150,7 +150,6 @@ namespace Character {
         }
 
         public umount(item: Items.Item) {
-            console.log(1);
             this.equip(item, false);
 
             return this;

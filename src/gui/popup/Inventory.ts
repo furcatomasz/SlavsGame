@@ -10,6 +10,8 @@ namespace GUI {
         protected bootsImage: GUI.Inventory.EquipBlock;
         protected helmImage: GUI.Inventory.EquipBlock;
 
+        protected panelItems: BABYLON.GUI.Rectangle;
+
         constructor(guiMain: GUI.Main) {
             super(guiMain);
             this.name = 'Inventory';
@@ -38,6 +40,7 @@ namespace GUI {
                     self.close();
                     self.guiTexture.dispose();
                     self.buttonClose = null;
+                    self.guiMain.game.sceneManager.environment.ground.isPickable = true;
                 });
 
                 this.guiMain.registerBlockMoveCharacter(buttonClose);
@@ -50,6 +53,7 @@ namespace GUI {
         }
 
         public close() {
+            this.guiMain.inventoryOpened = false;
             this.guiTexture.removeControl(this.container);
         }
 
@@ -62,9 +66,18 @@ namespace GUI {
             this.helmImage = new GUI.Inventory.Helm(this);
         }
 
-        protected showItems() {
+        public showItems() {
             let self = this;
+            let inventory = this.guiMain.player.inventory;
+
+            if(this.panelItems) {
+                this.guiTexture.removeControl(this.panelItems);
+            }
+
+            let eqiupedItems = inventory.getEquipedItems();
+
             ////items
+            let itemCount = 0;
             let left = -42;
             let level = 1;
             let top = 0;
@@ -74,21 +87,34 @@ namespace GUI {
             panelItems.height = "45%";
             panelItems.top = "26%";
             panelItems.thickness = 0;
+            this.panelItems = panelItems; 
 
-            let inventory = this.guiMain.player.inventory;
             for (let i = 0; i < inventory.items.length; i++) {
 
+                let breakDisplayItem;
                 let item = inventory.items[i];
 
-                if (i == 0) {
+                for (let equipedItem of eqiupedItems) {
+                    if (equipedItem == item) {
+                        breakDisplayItem = true;
+                        break;
+                    }
+                }
+
+                if(breakDisplayItem) {
+                    continue;
+                }
+
+                if (itemCount == 0) {
                     top = -35;
-                } else if (i % 5 == 0) {
+                } else if (itemCount % 5 == 0) {
                     left = -42;
                     top = (30 * level) - 35;
                     level++;
                 } else {
                     left += 20;
                 }
+                itemCount++;
 
                 let result = new BABYLON.GUI.Button(name);
                 result.width = 0.20;
@@ -112,6 +138,7 @@ namespace GUI {
                 result.onPointerUpObservable.add(function () {
                     self.guiMain.game.player.inventory.mount(item);
                     self.onPointerUpItemImage(item);
+                    self.showItems();
                 });
             }
 

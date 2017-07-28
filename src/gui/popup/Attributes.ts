@@ -38,6 +38,7 @@ namespace GUI {
         }
 
         public close() {
+            this.guiMain.attributesOpened = false;
             this.guiTexture.removeControl(this.container);
         }
 

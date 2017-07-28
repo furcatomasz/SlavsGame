@@ -51,25 +51,23 @@ namespace Character {
             this.gloves = gloves;
             this.boots = boots;
 
-            let sword = new Items.Weapons.Sword(this.game);
-            this.items.push(sword);
+            let sword1 = new Items.Weapons.Sword(this.game);
+            this.items.push(sword1);
 
-            let sword = new Items.Weapons.BigSword(this.game);
-            this.items.push(sword);
+            let sword2 = new Items.Weapons.BigSword(this.game);
+            this.items.push(sword2);
 
-            let sword = new Items.Weapons.BigSword(this.game);
-            this.items.push(sword);
+            let sword3 = new Items.Weapons.BigSword(this.game);
+            this.items.push(sword3);
 
-            let sword = new Items.Shields.WoodShield(this.game);
-            this.items.push(sword);
+            let woodShield1 = new Items.Shields.WoodShield(this.game);
+            this.items.push(woodShield1);
 
-            let sword = new Items.Shields.WoodShield(this.game);
-            this.items.push(sword);
+            let woodShield2 = new Items.Shields.WoodShield(this.game);
+            this.items.push(woodShield2);
 
-            let sword = new Items.Weapons.Sword(this.game);
-            this.items.push(sword);
-
-
+            let sword4 = new Items.Weapons.Sword(this.game);
+            this.items.push(sword4);
 
         }
 
@@ -90,36 +88,47 @@ namespace Character {
             switch (item.getType()) {
                 case Items.Weapon.TYPE:
                     this.removeItem(this.weapon);
+                    this.weapon = null;
                     if (setItem) {
                         this.weapon = item;
                     }
                     break;
                 case Items.Shield.TYPE:
                     this.removeItem(this.shield);
+                    this.shield = null;
+
                     if (setItem) {
                         this.shield = item;
                     }
                     break;
                 case Items.Helm.TYPE:
                     this.removeItem(this.helm);
+                    this.helm = null;
+
                     if (setItem) {
                         this.helm = item;
                     }
                     break;
                 case Items.Gloves.TYPE:
                     this.removeItem(this.gloves);
+                    this.gloves = null;
+
                     if (setItem) {
                         this.gloves = item;
                     }
                     break;
                 case Items.Boots.TYPE:
                     this.removeItem(this.boots);
+                    this.boots = null;
+
                     if (setItem) {
                         this.boots = item;
                     }
                     break;
                 case Items.Armor.TYPE:
                     this.removeItem(this.armor);
+                    this.armor = null;
+
                     if (setItem) {
                         this.armor = item;
                     }
@@ -153,6 +162,22 @@ namespace Character {
             this.equip(item, false);
 
             return this;
+        }
+
+        /**
+         * @returns {Array}
+         */
+        public getEquipedItems(): Array<Items.Item> {
+            let equipedItems = [];
+
+            equipedItems.push(this.helm);
+            equipedItems.push(this.armor);
+            equipedItems.push(this.weapon);
+            equipedItems.push(this.shield);
+            equipedItems.push(this.gloves);
+            equipedItems.push(this.boots);
+
+            return equipedItems;
         }
     }
 }

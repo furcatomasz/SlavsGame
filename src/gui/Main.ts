@@ -8,7 +8,9 @@ namespace GUI {
         protected texture: BABYLON.GUI.AdvancedDynamicTexture;
 
         public inventory: GUI.Inventory;
+        public inventoryOpened: boolean;
         public attributes: GUI.Attributes;
+        public attributesOpened: boolean;
 
         protected buttonpanel: BABYLON.GUI.StackPanel;
 
@@ -40,7 +42,10 @@ namespace GUI {
 
             buttonPanel.addControl(button);
             button.onPointerUpObservable.add(function() {
-                self.inventory.open();
+                if(!self.inventoryOpened) {
+                    self.inventoryOpened = true;
+                    self.inventory.open();
+                }
             });
 
             this.registerBlockMoveCharacter(button);
@@ -59,7 +64,10 @@ namespace GUI {
             button.background = "black";
             this.buttonpanel.addControl(button);
             button.onPointerUpObservable.add(function() {
-                self.attributes.open();
+                if(!self.attributesOpened) {
+                    self.attributesOpened = true;
+                    self.attributes.open();
+                }
             });
 
             this.registerBlockMoveCharacter(button);

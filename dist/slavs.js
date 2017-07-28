@@ -926,18 +926,18 @@ var Character;
             this.helm = helm;
             this.gloves = gloves;
             this.boots = boots;
-            var sword = new Items.Weapons.Sword(this.game);
-            this.items.push(sword);
-            var sword = new Items.Weapons.BigSword(this.game);
-            this.items.push(sword);
-            var sword = new Items.Weapons.BigSword(this.game);
-            this.items.push(sword);
-            var sword = new Items.Shields.WoodShield(this.game);
-            this.items.push(sword);
-            var sword = new Items.Shields.WoodShield(this.game);
-            this.items.push(sword);
-            var sword = new Items.Weapons.Sword(this.game);
-            this.items.push(sword);
+            var sword1 = new Items.Weapons.Sword(this.game);
+            this.items.push(sword1);
+            var sword2 = new Items.Weapons.BigSword(this.game);
+            this.items.push(sword2);
+            var sword3 = new Items.Weapons.BigSword(this.game);
+            this.items.push(sword3);
+            var woodShield1 = new Items.Shields.WoodShield(this.game);
+            this.items.push(woodShield1);
+            var woodShield2 = new Items.Shields.WoodShield(this.game);
+            this.items.push(woodShield2);
+            var sword4 = new Items.Weapons.Sword(this.game);
+            this.items.push(sword4);
         };
         /**
          * @param item
@@ -955,36 +955,42 @@ var Character;
             switch (item.getType()) {
                 case Items.Weapon.TYPE:
                     this.removeItem(this.weapon);
+                    this.weapon = null;
                     if (setItem) {
                         this.weapon = item;
                     }
                     break;
                 case Items.Shield.TYPE:
                     this.removeItem(this.shield);
+                    this.shield = null;
                     if (setItem) {
                         this.shield = item;
                     }
                     break;
                 case Items.Helm.TYPE:
                     this.removeItem(this.helm);
+                    this.helm = null;
                     if (setItem) {
                         this.helm = item;
                     }
                     break;
                 case Items.Gloves.TYPE:
                     this.removeItem(this.gloves);
+                    this.gloves = null;
                     if (setItem) {
                         this.gloves = item;
                     }
                     break;
                 case Items.Boots.TYPE:
                     this.removeItem(this.boots);
+                    this.boots = null;
                     if (setItem) {
                         this.boots = item;
                     }
                     break;
                 case Items.Armor.TYPE:
                     this.removeItem(this.armor);
+                    this.armor = null;
                     if (setItem) {
                         this.armor = item;
                     }
@@ -1013,6 +1019,19 @@ var Character;
         Inventory.prototype.umount = function (item) {
             this.equip(item, false);
             return this;
+        };
+        /**
+         * @returns {Array}
+         */
+        Inventory.prototype.getEquipedItems = function () {
+            var equipedItems = [];
+            equipedItems.push(this.helm);
+            equipedItems.push(this.armor);
+            equipedItems.push(this.weapon);
+            equipedItems.push(this.shield);
+            equipedItems.push(this.gloves);
+            equipedItems.push(this.boots);
+            return equipedItems;
         };
         return Inventory;
     }());
@@ -1125,7 +1144,10 @@ var GUI;
             button.isPointerBlocker = true;
             buttonPanel.addControl(button);
             button.onPointerUpObservable.add(function () {
-                self.inventory.open();
+                if (!self.inventoryOpened) {
+                    self.inventoryOpened = true;
+                    self.inventory.open();
+                }
             });
             this.registerBlockMoveCharacter(button);
             return this;
@@ -1140,7 +1162,10 @@ var GUI;
             button.background = "black";
             this.buttonpanel.addControl(button);
             button.onPointerUpObservable.add(function () {
-                self.attributes.open();
+                if (!self.attributesOpened) {
+                    self.attributesOpened = true;
+                    self.attributes.open();
+                }
             });
             this.registerBlockMoveCharacter(button);
             return this;
@@ -1657,6 +1682,7 @@ var GUI;
             }
         };
         Attributes.prototype.close = function () {
+            this.guiMain.attributesOpened = false;
             this.guiTexture.removeControl(this.container);
         };
         Attributes.prototype.initData = function () {
@@ -1695,6 +1721,7 @@ var GUI;
                     self.close();
                     self.guiTexture.dispose();
                     self.buttonClose = null;
+                    self.guiMain.game.sceneManager.environment.ground.isPickable = true;
                 });
                 this.guiMain.registerBlockMoveCharacter(buttonClose);
                 this.guiTexture.addControl(buttonClose);
@@ -1703,6 +1730,7 @@ var GUI;
             return this;
         };
         Inventory.prototype.close = function () {
+            this.guiMain.inventoryOpened = false;
             this.guiTexture.removeControl(this.container);
         };
         Inventory.prototype.showEquipedItems = function () {
@@ -1715,7 +1743,13 @@ var GUI;
         };
         Inventory.prototype.showItems = function () {
             var self = this;
+            var inventory = this.guiMain.player.inventory;
+            if (this.panelItems) {
+                this.guiTexture.removeControl(this.panelItems);
+            }
+            var eqiupedItems = inventory.getEquipedItems();
             ////items
+            var itemCount = 0;
             var left = -42;
             var level = 1;
             var top = 0;
@@ -1725,13 +1759,24 @@ var GUI;
             panelItems.height = "45%";
             panelItems.top = "26%";
             panelItems.thickness = 0;
-            var inventory = this.guiMain.player.inventory;
+            this.panelItems = panelItems;
             var _loop_2 = function (i) {
+                var breakDisplayItem = void 0;
                 var item = inventory.items[i];
-                if (i == 0) {
+                for (var _i = 0, eqiupedItems_1 = eqiupedItems; _i < eqiupedItems_1.length; _i++) {
+                    var equipedItem = eqiupedItems_1[_i];
+                    if (equipedItem == item) {
+                        breakDisplayItem = true;
+                        break;
+                    }
+                }
+                if (breakDisplayItem) {
+                    return "continue";
+                }
+                if (itemCount == 0) {
                     top = -35;
                 }
-                else if (i % 5 == 0) {
+                else if (itemCount % 5 == 0) {
                     left = -42;
                     top = (30 * level) - 35;
                     level++;
@@ -1739,6 +1784,7 @@ var GUI;
                 else {
                     left += 20;
                 }
+                itemCount++;
                 var result = new BABYLON.GUI.Button(name);
                 result.width = 0.20;
                 result.height = 0.3;
@@ -1757,6 +1803,7 @@ var GUI;
                 result.onPointerUpObservable.add(function () {
                     self.guiMain.game.player.inventory.mount(item);
                     self.onPointerUpItemImage(item);
+                    self.showItems();
                 });
             };
             var this_2 = this;
@@ -2175,6 +2222,7 @@ var GUI;
                 image.onPointerUpObservable.add(function () {
                     self.inventory.guiMain.game.player.inventory.umount(self.item);
                     self.inventory.guiTexture.removeControl(self.block);
+                    self.inventory.showItems();
                 });
                 this.block.addControl(image);
                 return this;

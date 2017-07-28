@@ -46,6 +46,7 @@ namespace GUI.Inventory {
             image.onPointerUpObservable.add(function () {
                 self.inventory.guiMain.game.player.inventory.umount(self.item);
                 self.inventory.guiTexture.removeControl(self.block);
+                self.inventory.showItems();
             });
             this.block.addControl(image);
 

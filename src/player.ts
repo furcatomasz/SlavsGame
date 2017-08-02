@@ -18,7 +18,6 @@ class Player extends Character {
         this.isControllable = registerMoving;
 
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        //this.sfxHit = new BABYLON.Sound("CharacterHit", "/babel/Characters/Warrior/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
         this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
 
         let mesh = game.characters['player'].instance('Warrior', true);
@@ -28,8 +27,10 @@ class Player extends Character {
         this.mesh = mesh;
         this.game = game;
 
+        mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+        this.envCollisions();
+
         this.createItems();
-        //this.mount(this.items.shield, 'shield.bone');
 
         // this.guiCharacterName = new BABYLON.GUI.TextBlock();
         // this.guiCharacterName.text = this.name;
@@ -39,12 +40,8 @@ class Player extends Character {
 
         if(this.isControllable) {
             this.mesh.isPickable = false;
-            //let playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
-            //playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
-            //playerLight.specular = new BABYLON.Color3(1, 1, 1);
-            //playerLight.position.y = 64;
 
-            var playerLight = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 12, 0), game.getScene());
+            let playerLight = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 12, 0), game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             //playerLight.specular = new BABYLON.Color3(1, 1, 1);
             playerLight.intensity = 1;
@@ -184,20 +181,20 @@ class Player extends Character {
     }
 
     protected envCollisions() {
+        let self = this;
         let game = this.game;
-        if(game.controller.forward) {
-            for (var i = 0; i < game.sceneManager.environment.colliders.length; i++) {
-                var sceneMesh = game.sceneManager.environment.colliders[i];
-                if(game.getScene().isActiveMesh(sceneMesh)) {
-                    if (this.mesh.intersectsMesh(sceneMesh, true)) {
-                        game.controller.targetPoint = null;
-                        game.controller.ball.visibility = 0;
-                        game.controller.forward = false;
-                        this.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
-                        game.getScene().activeCamera.position = this.mesh.position;
-                    }
-                }
-            }
+
+        for (var i = 0; i < game.sceneManager.environment.colliders.length; i++) {
+            var sceneMesh = game.sceneManager.environment.colliders[i];
+            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+                {trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh},
+                function () {
+                    game.controller.targetPoint = null;
+                    game.controller.ball.visibility = 0;
+                    game.controller.forward = false;
+                    self.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
+                    game.getScene().activeCamera.position = self.mesh.position;
+                }));
         }
 
         return this;
@@ -217,7 +214,7 @@ class Player extends Character {
         let self = this;
         this.afterRender = function() {
             if (self.isControllable) {
-                self.weaponCollisions().envCollisions();
+                self.weaponCollisions();
                 self.registerMoving();
                 if(self.game.controller.forward) {
                     self.game.getScene().activeCamera.position = self.mesh.position;

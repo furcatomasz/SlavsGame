@@ -125,45 +125,6 @@ var Scene = (function () {
         scene.renderTargetsEnabled = false;
         return this;
     };
-    Scene.prototype.createGameGUI = function () {
-        var self = this;
-        // var dialogUser = new CASTORGUI.GUIPanel("Panel1", {w: 300, h: 50, x: 10, y: 20}, this.game.gui);
-        // dialogUser.setVisible(true);
-        // dialogUser.add(new CASTORGUI.GUIText("You", {size:15, text:"You", x: 10}, this.game.gui, true));
-        // var hpBar = new CASTORGUI.GUIProgress("hpbar_you", {w:280,h:20,x:10,y:20, value: 100}, this.game.gui);
-        // hpBar.setVisible(false);
-        // this.game.guiElements.hpBar = hpBar;
-        // dialogUser.add(hpBar);
-        //
-        // var dialogEnemy = new CASTORGUI.GUIPanel("Panel2", {w: 300, h: 50, x: 10, y: 100}, this.game.gui);
-        // dialogEnemy.setVisible(true);
-        // dialogEnemy.add(new CASTORGUI.GUIText("Enemy", {size:15, text:"Enemy", x: 10}, this.game.gui, true));
-        // var hpBarEnemy = new CASTORGUI.GUIProgress("hpbar_enemy", {w:280,h:20,x:10,y:20, value: 100}, this.game.gui);
-        // hpBarEnemy.setVisible(false);
-        // this.game.guiElements.hpBarEnemy = hpBarEnemy;
-        // dialogEnemy.add(hpBarEnemy);
-        //
-        // new CASTORGUI.GUIButton("gui.button.inventory", {x:15,y:155, value:"Inventory"}, this.game.gui, function() {
-        //     console.log('inwentory');
-        //     alert('Inwentory');
-        // });
-        //
-        // let sliderAttack = new CASTORGUI.GUISlider("gui.slider.attack", {x:100,y:185, min: 0, max: 200, value: 100}, this.game.gui, function(event: Event) {
-        //     self.game.player.attackSpeed = event.target.value;
-        // });
-        // new CASTORGUI.GUIText("attack.speed", {size:15, text:"Attack speed", x: 10, y:190, color: "white"}, this.game.gui, true)
-        //
-        // let sliderWalk = new CASTORGUI.GUISlider("gui.slider.walk", {x:100,y:220, min: 0, max: 200, value: 100}, this.game.gui, function(event: Event) {
-        //     self.game.player.walkSpeed = event.target.value;
-        // });
-        //
-        // new CASTORGUI.GUIText("walk.speed", {size:15, text:"Walk speed", x: 10, y:225, color: "white"}, this.game.gui, true)
-        //
-        //
-        // var dialog = new CASTORGUI.GUIPanel("Panel", {w: 400, h: 100, x: 15, y: (this.game.gui.getCanvasSize().height - 110)}, this.game.gui);
-        // dialog.setVisible(true);
-        // dialog.add(new CASTORGUI.GUIText("textDialog", {size:15, text:"Chat"}, this.game.gui, true));
-    };
     return Scene;
 }());
 /// <reference path="../../babel/Characters/Warrior/Warrior.d.ts"/>
@@ -418,15 +379,15 @@ var Player = (function (_super) {
         _this.blockChance = 50;
         _this.isControllable = registerMoving;
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        //this.sfxHit = new BABYLON.Sound("CharacterHit", "/babel/Characters/Warrior/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
         var mesh = game.characters['player'].instance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
         game.getScene().activeCamera.position = mesh.position;
         _this.mesh = mesh;
         _this.game = game;
+        mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+        _this.envCollisions();
         _this.createItems();
-        //this.mount(this.items.shield, 'shield.bone');
         // this.guiCharacterName = new BABYLON.GUI.TextBlock();
         // this.guiCharacterName.text = this.name;
         // this.guiCharacterName.paddingTop = -85;
@@ -434,10 +395,6 @@ var Player = (function (_super) {
         // this.guiCharacterName.linkWithMesh(this.mesh);
         if (_this.isControllable) {
             _this.mesh.isPickable = false;
-            //let playerLight = new BABYLON.SpotLight("playerLight", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, -1, 0), 1.2, 16, game.getScene());
-            //playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
-            //playerLight.specular = new BABYLON.Color3(1, 1, 1);
-            //playerLight.position.y = 64;
             var playerLight = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 12, 0), game.getScene());
             playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
             //playerLight.specular = new BABYLON.Color3(1, 1, 1);
@@ -561,20 +518,17 @@ var Player = (function (_super) {
         return this;
     };
     Player.prototype.envCollisions = function () {
+        var self = this;
         var game = this.game;
-        if (game.controller.forward) {
-            for (var i = 0; i < game.sceneManager.environment.colliders.length; i++) {
-                var sceneMesh = game.sceneManager.environment.colliders[i];
-                if (game.getScene().isActiveMesh(sceneMesh)) {
-                    if (this.mesh.intersectsMesh(sceneMesh, true)) {
-                        game.controller.targetPoint = null;
-                        game.controller.ball.visibility = 0;
-                        game.controller.forward = false;
-                        this.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
-                        game.getScene().activeCamera.position = this.mesh.position;
-                    }
-                }
-            }
+        for (var i = 0; i < game.sceneManager.environment.colliders.length; i++) {
+            var sceneMesh = game.sceneManager.environment.colliders[i];
+            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh }, function () {
+                game.controller.targetPoint = null;
+                game.controller.ball.visibility = 0;
+                game.controller.forward = false;
+                self.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
+                game.getScene().activeCamera.position = self.mesh.position;
+            }));
         }
         return this;
     };
@@ -589,7 +543,7 @@ var Player = (function (_super) {
         var self = this;
         this.afterRender = function () {
             if (self.isControllable) {
-                self.weaponCollisions().envCollisions();
+                self.weaponCollisions();
                 self.registerMoving();
                 if (self.game.controller.forward) {
                     self.game.getScene().activeCamera.position = self.mesh.position;

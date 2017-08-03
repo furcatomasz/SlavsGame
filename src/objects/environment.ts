@@ -56,8 +56,8 @@ class Environment {
             let fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
 
-            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-            sfxFireplace.attachToMesh(cone);
+            // var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            // sfxFireplace.attachToMesh(cone);
         }
 
         let plane = scene.getMeshByName("Entrace_city");

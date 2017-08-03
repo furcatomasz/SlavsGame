@@ -13,6 +13,7 @@ namespace Items.Weapons {
             this.mesh = this.game.items.sword.instance('Sword', false);
             this.mesh.visibility = 0;
             this.mesh.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+            this.damage = 10;
 
             this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", this.game.getScene(), null, {
                 loop: false,

@@ -23,11 +23,11 @@ namespace GUI {
             this.initTexture();
 
             let self = this;
-            this.guiTexture.addControl(this.container);
-            this.showItems();
-            this.showEquipedItems();
-
             if (!this.buttonClose) {
+                this.guiTexture.addControl(this.container);
+                this.showItems();
+                this.showEquipedItems();
+
                 let buttonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
                 buttonClose.color = "white";
                 buttonClose.background = "black";
@@ -54,7 +54,6 @@ namespace GUI {
 
         public close() {
             this.guiMain.inventoryOpened = false;
-            this.guiTexture.removeControl(this.container);
         }
 
         protected showEquipedItems() {

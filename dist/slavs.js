@@ -191,8 +191,8 @@ var Environment = (function () {
             smokeSystem.start();
             var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
-            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-            sfxFireplace.attachToMesh(cone);
+            // var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            // sfxFireplace.attachToMesh(cone);
         }
         var plane = scene.getMeshByName("Entrace_city");
         if (plane) {
@@ -1052,7 +1052,6 @@ var Character;
         };
         Statistics.prototype.getDamage = function () {
             var itemStatistics = this.getItemsStats();
-            console.log(itemStatistics);
             return this.damage + itemStatistics.damage;
         };
         Statistics.prototype.getArmor = function () {
@@ -1671,35 +1670,47 @@ var GUI;
             _this.name = 'Inventory';
             _this.imageUrl = "assets/gui/attrs.png";
             _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            _this.initTexture();
             return _this;
         }
         Attributes.prototype.open = function () {
             var self = this;
-            this.guiTexture.addControl(this.container);
+            this.initTexture();
             if (!this.buttonClose) {
-                var buttonClose_1 = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
-                buttonClose_1.color = "white";
-                buttonClose_1.background = "black";
-                buttonClose_1.width = "70px;";
-                buttonClose_1.height = "40px";
-                buttonClose_1.horizontalAlignment = this.position;
-                buttonClose_1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                buttonClose_1.onPointerUpObservable.add(function () {
+                this.guiTexture.addControl(this.container);
+                this.showText();
+                var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
+                buttonClose.color = "white";
+                buttonClose.background = "black";
+                buttonClose.width = "70px;";
+                buttonClose.height = "40px";
+                buttonClose.horizontalAlignment = this.position;
+                buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                buttonClose.onPointerUpObservable.add(function () {
                     self.close();
-                    self.guiTexture.removeControl(buttonClose_1);
+                    self.guiTexture.dispose();
                     self.buttonClose = null;
+                    self.guiMain.game.sceneManager.environment.ground.isPickable = true;
                 });
-                this.guiMain.registerBlockMoveCharacter(buttonClose_1);
-                this.guiTexture.addControl(buttonClose_1);
-                this.buttonClose = buttonClose_1;
+                this.guiMain.registerBlockMoveCharacter(buttonClose);
+                this.guiTexture.addControl(buttonClose);
+                this.buttonClose = buttonClose;
             }
         };
         Attributes.prototype.close = function () {
             this.guiMain.attributesOpened = false;
-            this.guiTexture.removeControl(this.container);
         };
-        Attributes.prototype.initData = function () {
+        Attributes.prototype.showText = function () {
+            var text1 = new BABYLON.GUI.TextBlock();
+            text1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            text1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            text1.text = 'Damage:' + this.guiMain.player.statistics.getDamage();
+            text1.color = "white";
+            // text1.fontSize = 24;
+            text1.top = "0%";
+            text1.width = "25%";
+            text1.height = "10%";
+            text1.top = "0%";
+            this.guiTexture.addControl(text1);
         };
         return Attributes;
     }(GUI.Popup));
@@ -1720,10 +1731,10 @@ var GUI;
         Inventory.prototype.open = function () {
             this.initTexture();
             var self = this;
-            this.guiTexture.addControl(this.container);
-            this.showItems();
-            this.showEquipedItems();
             if (!this.buttonClose) {
+                this.guiTexture.addControl(this.container);
+                this.showItems();
+                this.showEquipedItems();
                 var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
                 buttonClose.color = "white";
                 buttonClose.background = "black";
@@ -1745,7 +1756,6 @@ var GUI;
         };
         Inventory.prototype.close = function () {
             this.guiMain.inventoryOpened = false;
-            this.guiTexture.removeControl(this.container);
         };
         Inventory.prototype.showEquipedItems = function () {
             this.weaponImage = new GUI.Inventory.Weapon(this);
@@ -2160,6 +2170,7 @@ var Items;
                 _this.mesh = _this.game.items.sword.instance('Sword', false);
                 _this.mesh.visibility = 0;
                 _this.mesh.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+                _this.damage = 10;
                 _this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", _this.game.getScene(), null, {
                     loop: false,
                     autoplay: false
@@ -2186,6 +2197,7 @@ var Items;
                 _this.mountBoneName = 'weapon.bone';
                 _this.mesh = _this.game.items.sword.instance('Sword', false);
                 _this.mesh.visibility = 0;
+                _this.damage = 5;
                 _this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", _this.game.getScene(), null, {
                     loop: false,
                     autoplay: false

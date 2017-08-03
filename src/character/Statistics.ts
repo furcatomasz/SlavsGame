@@ -84,7 +84,6 @@ namespace Character {
 
         public getDamage() {
             let itemStatistics = this.getItemsStats();
-            console.log(itemStatistics);
 
             return this.damage + itemStatistics.damage;
         }

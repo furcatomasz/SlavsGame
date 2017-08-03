@@ -10,11 +10,8 @@ class Player extends Character {
     public constructor(game:Game, id, name, registerMoving: boolean) {
         this.id = id;
         this.name = name;
-        this.hp = 100;
-        this.attackSpeed = 100;
-        this.walkSpeed = 125;
-        this.damage = 10;
-        this.blockChance = 50;
+
+        this.statistics = new Character.Statistics(100, 100, 100, 10, 10, 125, 50, 100).setPlayer(this);
         this.isControllable = registerMoving;
 
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
@@ -29,14 +26,7 @@ class Player extends Character {
 
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         this.envCollisions();
-
         this.createItems();
-
-        // this.guiCharacterName = new BABYLON.GUI.TextBlock();
-        // this.guiCharacterName.text = this.name;
-        // this.guiCharacterName.paddingTop = -85;
-        // game.sceneManager.guiTexture.addControl(this.guiCharacterName);
-        // this.guiCharacterName.linkWithMesh(this.mesh);
 
         if(this.isControllable) {
             this.mesh.isPickable = false;
@@ -107,7 +97,7 @@ class Player extends Character {
      * Moving events
      */
     protected registerMoving() {
-        let walkSpeed = Character.WALK_SPEED * (this.walkSpeed / 100);
+        let walkSpeed = Character.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
         let game = this.game;
         let mesh = this.mesh;
 
@@ -164,8 +154,10 @@ class Player extends Character {
 
                         animationEnemty.createGUI();
                         animationEnemty.bloodParticles.start();
-                        let newValue = animationEnemty.hp - self.damage;
-                        animationEnemty.hp = (newValue);
+                        let newValue = animationEnemty.statistics.getHp() - self.statistics.getDamage();
+                        console.log(self.statistics, animationEnemty.statistics);
+                        console.log(newValue);
+                        animationEnemty.statistics.hp = (newValue);
                         animationEnemty.guiHp.value = newValue;
 
                         if (newValue <= 0) {

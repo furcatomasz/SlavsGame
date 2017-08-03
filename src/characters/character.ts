@@ -20,13 +20,7 @@ abstract class Character {
     public z:number;
 
     /** Character atuts */
-    public hp:number;
-    public hpMax:number;
-    public attackSpeed:number;
-    public damage:number;
-    public walkSpeed:number;
-    public blockChance:number;
-    public hitChange:number;
+    public statistics: Character.Statistics;
 
     protected game:Game;
     protected speed:number;
@@ -100,7 +94,7 @@ abstract class Character {
 
                 self.attackAnimation = true;
                 self.onHitStart();
-                self.animation = skeleton.beginAnimation(Character.ANIMATION_ATTACK, false, this.attackSpeed / 100, function () {
+                self.animation = skeleton.beginAnimation(Character.ANIMATION_ATTACK, false, this.statistics.getAttackSpeed() / 100, function () {
                     skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.attackAnimation = false;
@@ -146,7 +140,7 @@ abstract class Character {
             if (!this.animation) {
                 self.sfxWalk.play();
                 self.onWalkStart();
-                self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, loopAnimation, this.walkSpeed / 100, function () {
+                self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, loopAnimation, this.statistics.getWalkSpeed() / 100, function () {
                     skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();

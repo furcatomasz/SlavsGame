@@ -24,12 +24,12 @@ namespace GUI {
             this.guiTexture = this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
 
             let container = new BABYLON.GUI.StackPanel();
-            container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            container.horizontalAlignment = this.position;
             container.width = 0.33;
             container.height = 1;
             this.container = container;
 
-            let image = new BABYLON.GUI.Image('gui.popup.image.'+this.name, this.imageUrl);
+            let image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, this.imageUrl);
             image.horizontalAlignment = this.position;
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             image.width = 1;
@@ -46,6 +46,5 @@ namespace GUI {
 
         public abstract close()
 
-        public abstract initData();
     }
 }

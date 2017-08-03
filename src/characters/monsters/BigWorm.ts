@@ -11,17 +11,11 @@ class BigWorm extends Monster {
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
         mesh.scaling = new BABYLON.Vector3(2,2,2);
-        this.hp = 125;
-        this.hpMax = 125;
-        this.attackSpeed = 100;
-        this.walkSpeed = 50;
-        this.damage = 5;
-        this.blockChance = 50;
+        this.statistics = new Character.Statistics(125,125,100,5,10,50,0,100);
         this.id = serverKey;
         this.mesh = mesh;
         this.visibilityAreaSize = 10;
         this.attackAreaSize = 4;
-        this.hitChange = 100;
 
         //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
         this.sfxHit = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });

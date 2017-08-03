@@ -51,8 +51,8 @@ abstract class Monster extends Character {
 
         let hpSlider = new BABYLON.GUI.Slider();
         hpSlider.minimum = 0;
-        hpSlider.maximum = this.hpMax;
-        hpSlider.value = this.hp;
+        hpSlider.maximum = this.statistics.getHpMax();
+        hpSlider.value = this.statistics.getHp();
         hpSlider.width = "100%";
         hpSlider.height = "10px";
         hpSlider.thumbWidth = 0;
@@ -86,7 +86,7 @@ abstract class Monster extends Character {
 
     protected registerFunctionAfterRender() {
         let self = this;
-        let walkSpeed = Character.WALK_SPEED * (self.walkSpeed / 100);
+        let walkSpeed = Character.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
         let playerMesh = self.game.player.mesh;
 
         this.afterRender = function () {
@@ -113,18 +113,18 @@ abstract class Monster extends Character {
     }
 
     protected onHitEnd() {
-        if (Game.randomNumber(1, 100) <= this.hitChange) {
+        if (Game.randomNumber(1, 100) <= this.statistics.getHitChance()) {
 
-            if (!this.game.player.sfxHit.isPlaying) {
-                this.game.player.sfxHit.setVolume(2);
-                this.game.player.sfxHit.play();
-            }
+            // if (!this.game.player.sfxHit.isPlaying) {
+            //     this.game.player.sfxHit.setVolume(2);
+            //     this.game.player.sfxHit.play();
+            // }
 
             this.game.player.bloodParticles.start();
             let value = this.game.player.guiHp.value;
-            this.game.player.guiHp.value = (value - this.damage);
+            this.game.player.guiHp.value = (value - this.statistics.getDamage());
 
-            if (this.game.player.guiHp.value - this.damage < 0) {
+            if (this.game.player.guiHp.value - this.statistics.getDamage() < 0) {
                 alert('Padłeś');
                 window.location.reload();
             }

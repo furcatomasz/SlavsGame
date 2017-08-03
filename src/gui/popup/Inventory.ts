@@ -229,6 +229,4 @@ namespace GUI {
         }
 
 
-        public initData() {
-        }
     }

@@ -8,9 +8,9 @@ namespace Attributes {
                 this.damage += statistics.getDamage();
             }
 
-            // if (statistics.getArmor()) {
-            //     this.armor += statistics.getArmor();
-            // }
+            if (statistics.getArmor()) {
+                this.armor += statistics.getArmor();
+            }
 
         }
 

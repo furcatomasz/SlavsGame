@@ -21,6 +21,7 @@ namespace GUI {
 
         public open() {
             this.initTexture();
+            this.guiMain.inventoryOpened = true;
 
             let self = this;
             if (!this.buttonClose) {
@@ -38,9 +39,6 @@ namespace GUI {
 
                 buttonClose.onPointerUpObservable.add(function () {
                     self.close();
-                    self.guiTexture.dispose();
-                    self.buttonClose = null;
-                    self.guiMain.game.sceneManager.environment.ground.isPickable = true;
                 });
 
                 this.guiMain.registerBlockMoveCharacter(buttonClose);
@@ -54,6 +52,9 @@ namespace GUI {
 
         public close() {
             this.guiMain.inventoryOpened = false;
+            this.guiTexture.dispose();
+            this.buttonClose = null;
+            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
         }
 
         protected showEquipedItems() {
@@ -138,6 +139,9 @@ namespace GUI {
                     self.guiMain.game.player.inventory.mount(item);
                     self.onPointerUpItemImage(item);
                     self.showItems();
+                    if(self.guiMain.attributesOpened) {
+                        self.guiMain.attributes.refreshPopup();
+                    }
                 });
             }
 

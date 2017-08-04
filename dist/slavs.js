@@ -8,17 +8,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var Enemy = (function () {
-    function Enemy(game) {
-        //
-        //
-        //
-        //
-        //
-        //
-    }
-    return Enemy;
-}());
 /// <reference path="../game.ts"/>
 var Controller = (function () {
     function Controller(game) {
@@ -640,6 +629,151 @@ var Game = (function () {
     };
     return Game;
 }());
+var Character;
+(function (Character) {
+    var Inventory = (function () {
+        function Inventory(game, player) {
+            this.game = game;
+            this.player = player;
+            this.items = [];
+            this.initPlayerItems();
+        }
+        Inventory.prototype.initPlayerItems = function () {
+            var sword = new Items.Weapons.Sword(this.game);
+            var shield = new Items.Shields.BigWoodShield(this.game);
+            var armor = new Items.Armors.PrimaryArmor(this.game);
+            var helm = new Items.Helms.PrimaryHelm(this.game);
+            var gloves = new Items.Gloves.PrimaryGloves(this.game);
+            var boots = new Items.Boots.PrimaryBoots(this.game);
+            this.items.push(sword);
+            this.items.push(shield);
+            this.items.push(armor);
+            this.items.push(helm);
+            this.items.push(gloves);
+            this.items.push(boots);
+            this.mount(sword);
+            this.mount(shield);
+            this.mount(armor);
+            this.mount(helm);
+            this.mount(gloves);
+            this.mount(boots);
+            this.weapon = sword;
+            this.shield = shield;
+            this.armor = armor;
+            this.helm = helm;
+            this.gloves = gloves;
+            this.boots = boots;
+            var sword1 = new Items.Weapons.Sword(this.game);
+            this.items.push(sword1);
+            var sword2 = new Items.Weapons.BigSword(this.game);
+            this.items.push(sword2);
+            var sword3 = new Items.Weapons.BigSword(this.game);
+            this.items.push(sword3);
+            var woodShield1 = new Items.Shields.WoodShield(this.game);
+            this.items.push(woodShield1);
+            var woodShield2 = new Items.Shields.WoodShield(this.game);
+            this.items.push(woodShield2);
+            var sword4 = new Items.Weapons.Sword(this.game);
+            this.items.push(sword4);
+        };
+        /**
+         * @param item
+         */
+        Inventory.prototype.removeItem = function (item) {
+            if (item) {
+                item.mesh.visibility = 0;
+            }
+        };
+        /**
+         * @param item
+         * @param setItem
+         */
+        Inventory.prototype.equip = function (item, setItem) {
+            switch (item.getType()) {
+                case Items.Weapon.TYPE:
+                    this.removeItem(this.weapon);
+                    this.weapon = null;
+                    if (setItem) {
+                        this.weapon = item;
+                    }
+                    break;
+                case Items.Shield.TYPE:
+                    this.removeItem(this.shield);
+                    this.shield = null;
+                    if (setItem) {
+                        this.shield = item;
+                    }
+                    break;
+                case Items.Helm.TYPE:
+                    this.removeItem(this.helm);
+                    this.helm = null;
+                    if (setItem) {
+                        this.helm = item;
+                    }
+                    break;
+                case Items.Gloves.TYPE:
+                    this.removeItem(this.gloves);
+                    this.gloves = null;
+                    if (setItem) {
+                        this.gloves = item;
+                    }
+                    break;
+                case Items.Boots.TYPE:
+                    this.removeItem(this.boots);
+                    this.boots = null;
+                    if (setItem) {
+                        this.boots = item;
+                    }
+                    break;
+                case Items.Armor.TYPE:
+                    this.removeItem(this.armor);
+                    this.armor = null;
+                    if (setItem) {
+                        this.armor = item;
+                    }
+                    break;
+            }
+            if (setItem) {
+                item.mesh.visibility = 1;
+            }
+        };
+        /**
+         * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
+         * @param item
+         * @returns {AbstractCharacter.Inventory}
+         */
+        Inventory.prototype.mount = function (item) {
+            if (item.mountType == 1) {
+                this.player.mount(item.mesh, item.mountBoneName);
+            }
+            else if (item.mountType == 2) {
+                item.mesh.parent = this.player.mesh;
+                item.mesh.skeleton = this.player.mesh.skeleton;
+            }
+            this.equip(item, true);
+            return this;
+        };
+        Inventory.prototype.umount = function (item) {
+            this.equip(item, false);
+            return this;
+        };
+        /**
+         * @returns {Array}
+         */
+        Inventory.prototype.getEquipedItems = function () {
+            var equipedItems = [];
+            equipedItems.push(this.helm);
+            equipedItems.push(this.armor);
+            equipedItems.push(this.weapon);
+            equipedItems.push(this.shield);
+            equipedItems.push(this.gloves);
+            equipedItems.push(this.boots);
+            return equipedItems;
+        };
+        return Inventory;
+    }());
+    Character.Inventory = Inventory;
+})(Character || (Character = {}));
 /// <reference path="AbstractCharacter.ts"/>
 /// <reference path="../game.ts"/>
 var Player = (function (_super) {
@@ -837,151 +971,6 @@ var Player = (function (_super) {
     };
     return Player;
 }(AbstractCharacter));
-var Character;
-(function (Character) {
-    var Inventory = (function () {
-        function Inventory(game, player) {
-            this.game = game;
-            this.player = player;
-            this.items = [];
-            this.initPlayerItems();
-        }
-        Inventory.prototype.initPlayerItems = function () {
-            var sword = new Items.Weapons.Sword(this.game);
-            var shield = new Items.Shields.BigWoodShield(this.game);
-            var armor = new Items.Armors.PrimaryArmor(this.game);
-            var helm = new Items.Helms.PrimaryHelm(this.game);
-            var gloves = new Items.Gloves.PrimaryGloves(this.game);
-            var boots = new Items.Boots.PrimaryBoots(this.game);
-            this.items.push(sword);
-            this.items.push(shield);
-            this.items.push(armor);
-            this.items.push(helm);
-            this.items.push(gloves);
-            this.items.push(boots);
-            this.mount(sword);
-            this.mount(shield);
-            this.mount(armor);
-            this.mount(helm);
-            this.mount(gloves);
-            this.mount(boots);
-            this.weapon = sword;
-            this.shield = shield;
-            this.armor = armor;
-            this.helm = helm;
-            this.gloves = gloves;
-            this.boots = boots;
-            var sword1 = new Items.Weapons.Sword(this.game);
-            this.items.push(sword1);
-            var sword2 = new Items.Weapons.BigSword(this.game);
-            this.items.push(sword2);
-            var sword3 = new Items.Weapons.BigSword(this.game);
-            this.items.push(sword3);
-            var woodShield1 = new Items.Shields.WoodShield(this.game);
-            this.items.push(woodShield1);
-            var woodShield2 = new Items.Shields.WoodShield(this.game);
-            this.items.push(woodShield2);
-            var sword4 = new Items.Weapons.Sword(this.game);
-            this.items.push(sword4);
-        };
-        /**
-         * @param item
-         */
-        Inventory.prototype.removeItem = function (item) {
-            if (item) {
-                item.mesh.visibility = 0;
-            }
-        };
-        /**
-         * @param item
-         * @param setItem
-         */
-        Inventory.prototype.equip = function (item, setItem) {
-            switch (item.getType()) {
-                case Items.Weapon.TYPE:
-                    this.removeItem(this.weapon);
-                    this.weapon = null;
-                    if (setItem) {
-                        this.weapon = item;
-                    }
-                    break;
-                case Items.Shield.TYPE:
-                    this.removeItem(this.shield);
-                    this.shield = null;
-                    if (setItem) {
-                        this.shield = item;
-                    }
-                    break;
-                case Items.Helm.TYPE:
-                    this.removeItem(this.helm);
-                    this.helm = null;
-                    if (setItem) {
-                        this.helm = item;
-                    }
-                    break;
-                case Items.Gloves.TYPE:
-                    this.removeItem(this.gloves);
-                    this.gloves = null;
-                    if (setItem) {
-                        this.gloves = item;
-                    }
-                    break;
-                case Items.Boots.TYPE:
-                    this.removeItem(this.boots);
-                    this.boots = null;
-                    if (setItem) {
-                        this.boots = item;
-                    }
-                    break;
-                case Items.Armor.TYPE:
-                    this.removeItem(this.armor);
-                    this.armor = null;
-                    if (setItem) {
-                        this.armor = item;
-                    }
-                    break;
-            }
-            if (setItem) {
-                item.mesh.visibility = 1;
-            }
-        };
-        /**
-         * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
-         * @param item
-         * @returns {AbstractCharacter.Inventory}
-         */
-        Inventory.prototype.mount = function (item) {
-            if (item.mountType == 1) {
-                this.player.mount(item.mesh, item.mountBoneName);
-            }
-            else if (item.mountType == 2) {
-                item.mesh.parent = this.player.mesh;
-                item.mesh.skeleton = this.player.mesh.skeleton;
-            }
-            this.equip(item, true);
-            return this;
-        };
-        Inventory.prototype.umount = function (item) {
-            this.equip(item, false);
-            return this;
-        };
-        /**
-         * @returns {Array}
-         */
-        Inventory.prototype.getEquipedItems = function () {
-            var equipedItems = [];
-            equipedItems.push(this.helm);
-            equipedItems.push(this.armor);
-            equipedItems.push(this.weapon);
-            equipedItems.push(this.shield);
-            equipedItems.push(this.gloves);
-            equipedItems.push(this.boots);
-            return equipedItems;
-        };
-        return Inventory;
-    }());
-    Character.Inventory = Inventory;
-})(Character || (Character = {}));
 /// <reference path="Controller.ts"/>
 var Mouse = (function (_super) {
     __extends(Mouse, _super);
@@ -1090,7 +1079,6 @@ var GUI;
             buttonPanel.addControl(button);
             button.onPointerUpObservable.add(function () {
                 if (!self.inventoryOpened) {
-                    self.inventoryOpened = true;
                     self.inventory.open();
                 }
             });
@@ -1108,7 +1096,6 @@ var GUI;
             this.buttonpanel.addControl(button);
             button.onPointerUpObservable.add(function () {
                 if (!self.attributesOpened) {
-                    self.attributesOpened = true;
                     self.attributes.open();
                 }
             });
@@ -1454,6 +1441,144 @@ var MainMenu = (function (_super) {
     }
     return MainMenu;
 }(Scene));
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = (function () {
+        function AbstractStatistics(hp, hpMax, attackSpeed, damage, armor, walkSpeed, blockChance, hitChance) {
+            if (hp === void 0) { hp = 0; }
+            if (hpMax === void 0) { hpMax = 0; }
+            if (attackSpeed === void 0) { attackSpeed = 0; }
+            if (damage === void 0) { damage = 0; }
+            if (armor === void 0) { armor = 0; }
+            if (walkSpeed === void 0) { walkSpeed = 0; }
+            if (blockChance === void 0) { blockChance = 0; }
+            if (hitChance === void 0) { hitChance = 0; }
+            this.hp = hp;
+            this.hpMax = hpMax;
+            this.attackSpeed = attackSpeed;
+            this.damage = damage;
+            this.armor = armor;
+            this.walkSpeed = walkSpeed;
+            this.blockChance = blockChance;
+            this.hitChance = hitChance;
+        }
+        AbstractStatistics.prototype.getHp = function () {
+            return this.hp;
+        };
+        AbstractStatistics.prototype.getHpMax = function () {
+            return this.hpMax;
+        };
+        AbstractStatistics.prototype.getAttackSpeed = function () {
+            return this.attackSpeed;
+        };
+        AbstractStatistics.prototype.getWalkSpeed = function () {
+            return this.attackSpeed;
+        };
+        AbstractStatistics.prototype.getBlockChance = function () {
+            return this.blockChance;
+        };
+        AbstractStatistics.prototype.getHitChance = function () {
+            return this.hitChance;
+        };
+        AbstractStatistics.prototype.getDamage = function () {
+            return this.damage;
+        };
+        AbstractStatistics.prototype.getArmor = function () {
+            return this.armor;
+        };
+        return AbstractStatistics;
+    }());
+    Attributes.AbstractStatistics = AbstractStatistics;
+})(Attributes || (Attributes = {}));
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = Attributes.AbstractStatistics;
+    var CharacterStatistics = (function (_super) {
+        __extends(CharacterStatistics, _super);
+        function CharacterStatistics() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        CharacterStatistics.prototype.setPlayer = function (player) {
+            this.player = player;
+            return this;
+        };
+        CharacterStatistics.prototype.getItemsStats = function () {
+            var statistics = new Attributes.EquipStatistics();
+            if (this.player) {
+                var inventory = this.player.inventory;
+                var equipedItems = [];
+                equipedItems.push(inventory.helm);
+                equipedItems.push(inventory.gloves);
+                equipedItems.push(inventory.armor);
+                equipedItems.push(inventory.weapon);
+                equipedItems.push(inventory.shield);
+                equipedItems.push(inventory.boots);
+                for (var i = 0; i < equipedItems.length; i++) {
+                    var item = equipedItems[i];
+                    statistics.addStatisticsFromItem(item.statistics);
+                }
+            }
+            return statistics;
+        };
+        CharacterStatistics.prototype.getDamage = function () {
+            var equipStatistics = this.getItemsStats();
+            return this.damage + equipStatistics.getDamage();
+        };
+        CharacterStatistics.prototype.getArmor = function () {
+            var equipStatistics = this.getItemsStats();
+            return this.armor + equipStatistics.getArmor();
+        };
+        return CharacterStatistics;
+    }(AbstractStatistics));
+    Attributes.CharacterStatistics = CharacterStatistics;
+})(Attributes || (Attributes = {}));
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = Attributes.AbstractStatistics;
+    var EquipStatistics = (function (_super) {
+        __extends(EquipStatistics, _super);
+        function EquipStatistics() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        EquipStatistics.prototype.addStatisticsFromItem = function (statistics) {
+            if (statistics.getDamage()) {
+                this.damage += statistics.getDamage();
+            }
+            if (statistics.getArmor()) {
+                this.armor += statistics.getArmor();
+            }
+        };
+        return EquipStatistics;
+    }(AbstractStatistics));
+    Attributes.EquipStatistics = EquipStatistics;
+})(Attributes || (Attributes = {}));
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = Attributes.AbstractStatistics;
+    var ItemStatistics = (function (_super) {
+        __extends(ItemStatistics, _super);
+        function ItemStatistics() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        return ItemStatistics;
+    }(AbstractStatistics));
+    Attributes.ItemStatistics = ItemStatistics;
+})(Attributes || (Attributes = {}));
+/// <reference path="../game.ts"/>
+var Items;
+(function (Items) {
+    var Item = (function () {
+        /**
+         * @param game
+         */
+        function Item(game) {
+            this.game = game;
+        }
+        Item.TYPE = 0;
+        return Item;
+    }());
+    Items.Item = Item;
+})(Items || (Items = {}));
 /// <reference path="../../game.ts"/>
 /// <reference path="monster.ts"/>
 var BigWorm = (function (_super) {
@@ -1533,146 +1658,6 @@ var Worm = (function (_super) {
     };
     return Worm;
 }(Monster));
-var Attributes;
-(function (Attributes) {
-    var AbstractStatistics = (function () {
-        function AbstractStatistics(hp, hpMax, attackSpeed, damage, armor, walkSpeed, blockChance, hitChance) {
-            if (hp === void 0) { hp = 0; }
-            if (hpMax === void 0) { hpMax = 0; }
-            if (attackSpeed === void 0) { attackSpeed = 0; }
-            if (damage === void 0) { damage = 0; }
-            if (armor === void 0) { armor = 0; }
-            if (walkSpeed === void 0) { walkSpeed = 0; }
-            if (blockChance === void 0) { blockChance = 0; }
-            if (hitChance === void 0) { hitChance = 0; }
-            this.hp = hp;
-            this.hpMax = hpMax;
-            this.attackSpeed = attackSpeed;
-            this.damage = damage;
-            this.armor = armor;
-            this.walkSpeed = walkSpeed;
-            this.blockChance = blockChance;
-            this.hitChance = hitChance;
-        }
-        AbstractStatistics.prototype.getHp = function () {
-            return this.hp;
-        };
-        AbstractStatistics.prototype.getHpMax = function () {
-            return this.hpMax;
-        };
-        AbstractStatistics.prototype.getAttackSpeed = function () {
-            return this.attackSpeed;
-        };
-        AbstractStatistics.prototype.getWalkSpeed = function () {
-            return this.attackSpeed;
-        };
-        AbstractStatistics.prototype.getBlockChance = function () {
-            return this.blockChance;
-        };
-        AbstractStatistics.prototype.getHitChance = function () {
-            return this.hitChance;
-        };
-        AbstractStatistics.prototype.getDamage = function () {
-            return this.damage;
-        };
-        AbstractStatistics.prototype.getArmor = function () {
-            return this.armor;
-        };
-        return AbstractStatistics;
-    }());
-    Attributes.AbstractStatistics = AbstractStatistics;
-})(Attributes || (Attributes = {}));
-var Attributes;
-(function (Attributes) {
-    var AbstractStatistics = Attributes.AbstractStatistics;
-    var CharacterStatistics = (function (_super) {
-        __extends(CharacterStatistics, _super);
-        function CharacterStatistics() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        CharacterStatistics.prototype.setPlayer = function (player) {
-            this.player = player;
-            return this;
-        };
-        CharacterStatistics.prototype.getItemsStats = function () {
-            var statistics = new Attributes.EquipStatistics();
-            if (this.player) {
-                var inventory = this.player.inventory;
-                var equipedItems = [];
-                equipedItems.push(inventory.helm);
-                equipedItems.push(inventory.gloves);
-                equipedItems.push(inventory.armor);
-                equipedItems.push(inventory.weapon);
-                equipedItems.push(inventory.shield);
-                equipedItems.push(inventory.boots);
-                for (var i = 0; i < equipedItems.length; i++) {
-                    var item = equipedItems[i];
-                    if (item.statistics) {
-                        statistics.addStatisticsFromItem(item.statistics);
-                    }
-                }
-            }
-            return statistics;
-        };
-        CharacterStatistics.prototype.getDamage = function () {
-            var equipStatistics = this.getItemsStats();
-            return this.damage + equipStatistics.getDamage();
-        };
-        CharacterStatistics.prototype.getArmor = function () {
-            var equipStatistics = this.getItemsStats();
-            return this.armor + equipStatistics.getArmor();
-        };
-        return CharacterStatistics;
-    }(AbstractStatistics));
-    Attributes.CharacterStatistics = CharacterStatistics;
-})(Attributes || (Attributes = {}));
-var Attributes;
-(function (Attributes) {
-    var AbstractStatistics = Attributes.AbstractStatistics;
-    var EquipStatistics = (function (_super) {
-        __extends(EquipStatistics, _super);
-        function EquipStatistics() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        EquipStatistics.prototype.addStatisticsFromItem = function (statistics) {
-            if (statistics.getDamage()) {
-                this.damage += statistics.getDamage();
-            }
-            // if (statistics.getArmor()) {
-            //     this.armor += statistics.getArmor();
-            // }
-        };
-        return EquipStatistics;
-    }(AbstractStatistics));
-    Attributes.EquipStatistics = EquipStatistics;
-})(Attributes || (Attributes = {}));
-var Attributes;
-(function (Attributes) {
-    var AbstractStatistics = Attributes.AbstractStatistics;
-    var ItemStatistics = (function (_super) {
-        __extends(ItemStatistics, _super);
-        function ItemStatistics() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        return ItemStatistics;
-    }(AbstractStatistics));
-    Attributes.ItemStatistics = ItemStatistics;
-})(Attributes || (Attributes = {}));
-/// <reference path="../game.ts"/>
-var Items;
-(function (Items) {
-    var Item = (function () {
-        /**
-         * @param game
-         */
-        function Item(game) {
-            this.game = game;
-        }
-        Item.TYPE = 0;
-        return Item;
-    }());
-    Items.Item = Item;
-})(Items || (Items = {}));
 /// <reference path="../Main.ts"/>
 /// <reference path="../../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
 var GUI;
@@ -1701,6 +1686,10 @@ var GUI;
             this.containerBackground = image;
             return this;
         };
+        Popup.prototype.refreshPopup = function () {
+            this.close();
+            this.open();
+        };
         return Popup;
     }());
     GUI.Popup = Popup;
@@ -1719,6 +1708,7 @@ var GUI;
         }
         Attributes.prototype.open = function () {
             var self = this;
+            this.guiMain.attributesOpened = true;
             this.initTexture();
             if (!this.buttonClose) {
                 this.guiTexture.addControl(this.container);
@@ -1732,9 +1722,6 @@ var GUI;
                 buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
                 buttonClose.onPointerUpObservable.add(function () {
                     self.close();
-                    self.guiTexture.dispose();
-                    self.buttonClose = null;
-                    self.guiMain.game.sceneManager.environment.ground.isPickable = true;
                 });
                 this.guiMain.registerBlockMoveCharacter(buttonClose);
                 this.guiTexture.addControl(buttonClose);
@@ -1743,19 +1730,33 @@ var GUI;
         };
         Attributes.prototype.close = function () {
             this.guiMain.attributesOpened = false;
+            this.guiTexture.dispose();
+            this.buttonClose = null;
+            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
         };
         Attributes.prototype.showText = function () {
-            var text1 = new BABYLON.GUI.TextBlock();
-            text1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            text1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            text1.text = 'Damage:' + this.guiMain.player.statistics.getDamage();
-            text1.color = "white";
+            var textDamage = new BABYLON.GUI.TextBlock();
+            textDamage.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            textDamage.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            textDamage.text = 'Damage:' + this.guiMain.player.statistics.getDamage();
+            textDamage.color = "white";
             // text1.fontSize = 24;
-            text1.top = "0%";
-            text1.width = "25%";
-            text1.height = "10%";
-            text1.top = "0%";
-            this.guiTexture.addControl(text1);
+            textDamage.top = "0%";
+            textDamage.width = "25%";
+            textDamage.height = "10%";
+            textDamage.top = "0%";
+            var textArmor = new BABYLON.GUI.TextBlock();
+            textArmor.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            textArmor.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            textArmor.text = 'Armor:' + this.guiMain.player.statistics.getArmor();
+            textArmor.color = "white";
+            // text1.fontSize = 24;
+            textArmor.top = "0%";
+            textArmor.width = "25%";
+            textArmor.height = "10%";
+            textArmor.top = "10%";
+            this.guiTexture.addControl(textDamage);
+            this.guiTexture.addControl(textArmor);
         };
         return Attributes;
     }(GUI.Popup));
@@ -1775,6 +1776,7 @@ var GUI;
         }
         Inventory.prototype.open = function () {
             this.initTexture();
+            this.guiMain.inventoryOpened = true;
             var self = this;
             if (!this.buttonClose) {
                 this.guiTexture.addControl(this.container);
@@ -1789,9 +1791,6 @@ var GUI;
                 buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
                 buttonClose.onPointerUpObservable.add(function () {
                     self.close();
-                    self.guiTexture.dispose();
-                    self.buttonClose = null;
-                    self.guiMain.game.sceneManager.environment.ground.isPickable = true;
                 });
                 this.guiMain.registerBlockMoveCharacter(buttonClose);
                 this.guiTexture.addControl(buttonClose);
@@ -1801,6 +1800,9 @@ var GUI;
         };
         Inventory.prototype.close = function () {
             this.guiMain.inventoryOpened = false;
+            this.guiTexture.dispose();
+            this.buttonClose = null;
+            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
         };
         Inventory.prototype.showEquipedItems = function () {
             this.weaponImage = new GUI.Inventory.Weapon(this);
@@ -1873,6 +1875,9 @@ var GUI;
                     self.guiMain.game.player.inventory.mount(item);
                     self.onPointerUpItemImage(item);
                     self.showItems();
+                    if (self.guiMain.attributesOpened) {
+                        self.guiMain.attributes.refreshPopup();
+                    }
                 });
             };
             var this_2 = this;
@@ -1987,6 +1992,7 @@ var Items;
                 _this.name = 'Armor';
                 _this.image = 'Armor';
                 _this.mountType = 2;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
                 _this.mesh = _this.game.characters.player.instance('Armor', false);
                 _this.mesh.visibility = 0;
                 return _this;
@@ -2027,6 +2033,7 @@ var Items;
                 _this.name = 'Boots';
                 _this.image = 'Boots';
                 _this.mountType = 2;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
                 _this.mesh = _this.game.characters.player.instance('Boots', false);
                 _this.mesh.visibility = 0;
                 return _this;
@@ -2067,6 +2074,7 @@ var Items;
                 _this.name = 'Gloves';
                 _this.image = 'Gloves';
                 _this.mountType = 2;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
                 _this.mesh = _this.game.characters.player.instance('Gloves', false);
                 _this.mesh.visibility = 0;
                 return _this;
@@ -2107,6 +2115,7 @@ var Items;
                 _this.name = 'Helm';
                 _this.image = 'Helm';
                 _this.mountType = 2;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
                 _this.mesh = _this.game.characters.player.instance('Helm', false);
                 _this.mesh.visibility = 0;
                 return _this;
@@ -2148,6 +2157,7 @@ var Items;
                 _this.image = 'Shield';
                 _this.mountType = 1;
                 _this.mountBoneName = 'shield.bone';
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 10, 0, 0, 0);
                 _this.mesh = _this.game.items.shield.instance('Shield', false);
                 _this.mesh.visibility = 0;
                 _this.mesh.scaling = new BABYLON.Vector3(1, 2, 1);
@@ -2171,6 +2181,7 @@ var Items;
                 _this.image = 'Shield';
                 _this.mountType = 1;
                 _this.mountBoneName = 'shield.bone';
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
                 _this.mesh = _this.game.items.shield.instance('Shield', false);
                 _this.mesh.visibility = 0;
                 return _this;
@@ -2292,6 +2303,9 @@ var GUI;
                     self.inventory.guiMain.game.player.inventory.umount(self.item);
                     self.inventory.guiTexture.removeControl(self.block);
                     self.inventory.showItems();
+                    if (self.inventory.guiMain.attributesOpened) {
+                        self.inventory.guiMain.attributes.refreshPopup();
+                    }
                 });
                 this.block.addControl(image);
                 return this;

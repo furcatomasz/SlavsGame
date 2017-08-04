@@ -43,7 +43,6 @@ namespace GUI {
             buttonPanel.addControl(button);
             button.onPointerUpObservable.add(function() {
                 if(!self.inventoryOpened) {
-                    self.inventoryOpened = true;
                     self.inventory.open();
                 }
             });
@@ -65,7 +64,6 @@ namespace GUI {
             this.buttonpanel.addControl(button);
             button.onPointerUpObservable.add(function() {
                 if(!self.attributesOpened) {
-                    self.attributesOpened = true;
                     self.attributes.open();
                 }
             });

@@ -47,6 +47,9 @@ namespace GUI.Inventory {
                 self.inventory.guiMain.game.player.inventory.umount(self.item);
                 self.inventory.guiTexture.removeControl(self.block);
                 self.inventory.showItems();
+                if(self.inventory.guiMain.attributesOpened) {
+                    self.inventory.guiMain.attributes.refreshPopup();
+                }
             });
             this.block.addControl(image);
 

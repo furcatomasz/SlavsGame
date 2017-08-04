@@ -11,7 +11,7 @@ class BigWorm extends Monster {
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
         mesh.scaling = new BABYLON.Vector3(2,2,2);
-        this.statistics = new Character.Statistics(125,125,100,5,10,50,0,100);
+        this.statistics = new Attributes.CharacterStatistics(125,125,100,5,10,50,0,100);
         this.id = serverKey;
         this.mesh = mesh;
         this.visibilityAreaSize = 10;
@@ -36,7 +36,7 @@ class BigWorm extends Monster {
 
             if (!this.animation) {
                 self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
-                    skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                    skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });
 

@@ -1,6 +1,6 @@
-/// <reference path="../character.ts"/>
+/// <reference path="../AbstractCharacter.ts"/>
 
-abstract class Monster extends Character {
+abstract class Monster extends AbstractCharacter {
 
     protected visibilityArea: BABYLON.Mesh;
     protected target: string;
@@ -31,7 +31,7 @@ abstract class Monster extends Character {
 
         game.enemies[this.id] = this;
 
-        this.mesh.skeleton.beginAnimation(Character.ANIMATION_STAND, true);
+        this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         this.mesh.isPickable = false;
 
         super(name, game);
@@ -86,7 +86,7 @@ abstract class Monster extends Character {
 
     protected registerFunctionAfterRender() {
         let self = this;
-        let walkSpeed = Character.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
+        let walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
         let playerMesh = self.game.player.mesh;
 
         this.afterRender = function () {

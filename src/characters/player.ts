@@ -1,7 +1,7 @@
-/// <reference path="characters/character.ts"/>
-/// <reference path="game.ts"/>
+/// <reference path="AbstractCharacter.ts"/>
+/// <reference path="../game.ts"/>
 
-class Player extends Character {
+class Player extends AbstractCharacter {
 
     public guiExp: BABYLON.GUI.Slider;
     public walkSmoke: BABYLON.ParticleSystem;
@@ -11,7 +11,7 @@ class Player extends Character {
         this.id = id;
         this.name = name;
 
-        this.statistics = new Character.Statistics(100, 100, 100, 10, 10, 125, 50, 100).setPlayer(this);
+        this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 10, 10, 125, 50, 100).setPlayer(this);
         this.isControllable = registerMoving;
 
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
@@ -97,17 +97,17 @@ class Player extends Character {
      * Moving events
      */
     protected registerMoving() {
-        let walkSpeed = Character.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+        let walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
         let game = this.game;
         let mesh = this.mesh;
 
         if (game.controller.left) {
-            mesh.rotate(BABYLON.Axis.Y, -Character.ROTATION_SPEED, BABYLON.Space.LOCAL);
+            mesh.rotate(BABYLON.Axis.Y, -AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
             this.emitPosition();
         }
 
         if (game.controller.right) {
-            mesh.rotate(BABYLON.Axis.Y, Character.ROTATION_SPEED, BABYLON.Space.LOCAL);
+            mesh.rotate(BABYLON.Axis.Y, AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
             this.emitPosition();
         }
 
@@ -155,8 +155,6 @@ class Player extends Character {
                         animationEnemty.createGUI();
                         animationEnemty.bloodParticles.start();
                         let newValue = animationEnemty.statistics.getHp() - self.statistics.getDamage();
-                        console.log(self.statistics, animationEnemty.statistics);
-                        console.log(newValue);
                         animationEnemty.statistics.hp = (newValue);
                         animationEnemty.guiHp.value = newValue;
 

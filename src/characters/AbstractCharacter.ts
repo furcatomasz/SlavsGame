@@ -1,7 +1,7 @@
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 
-abstract class Character {
+abstract class AbstractCharacter {
 
     public static WALK_SPEED:number = 0.25;
     public static ROTATION_SPEED:number = 0.05;
@@ -20,7 +20,7 @@ abstract class Character {
     public z:number;
 
     /** Character atuts */
-    public statistics: Character.Statistics;
+    public statistics: Attributes.CharacterStatistics;
 
     protected game:Game;
     protected speed:number;
@@ -46,7 +46,7 @@ abstract class Character {
         this.game = game;
 
         let skeleton = this.mesh.skeleton;
-        skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+        skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
 
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
@@ -94,8 +94,8 @@ abstract class Character {
 
                 self.attackAnimation = true;
                 self.onHitStart();
-                self.animation = skeleton.beginAnimation(Character.ANIMATION_ATTACK, false, this.statistics.getAttackSpeed() / 100, function () {
-                    skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_ATTACK, false, this.statistics.getAttackSpeed() / 100, function () {
+                    skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.attackAnimation = false;
                     self.onHitEnd();
@@ -140,8 +140,8 @@ abstract class Character {
             if (!this.animation) {
                 self.sfxWalk.play();
                 self.onWalkStart();
-                self.animation = skeleton.beginAnimation(Character.ANIMATION_WALK, loopAnimation, this.statistics.getWalkSpeed() / 100, function () {
-                    skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, this.statistics.getWalkSpeed() / 100, function () {
+                    skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();
                     self.onWalkEnd();

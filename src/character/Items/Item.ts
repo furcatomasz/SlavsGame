@@ -11,8 +11,8 @@ namespace Items {
         public mountBoneName: string;
         public name:string;
         public image:string;
-        public damage:number;
-        public armor:number;
+
+        public statistics: Attributes.ItemStatistics;
 
         /** Sounds */
         public sfxHit:BABYLON.Sound;

@@ -143,7 +143,7 @@ namespace Character {
         /**
          * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
          * @param item
-         * @returns {Character.Inventory}
+         * @returns {AbstractCharacter.Inventory}
          */
         public mount(item: Items.Item) {
             if (item.mountType == 1) {

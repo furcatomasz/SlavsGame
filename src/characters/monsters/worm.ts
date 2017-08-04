@@ -10,7 +10,7 @@ class Worm extends Monster {
         mesh.visibility = true;
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
-        this.statistics = new Character.Statistics(50,50,100,3,10,50,0,100);
+        this.statistics = new Attributes.CharacterStatistics(50,50,100,3,10,50,0,100);
         this.id = serverKey;
         this.mesh = mesh;
         this.visibilityAreaSize = 30;
@@ -35,7 +35,7 @@ class Worm extends Monster {
 
             if (!this.animation) {
                 self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
-                    skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                    skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });
 

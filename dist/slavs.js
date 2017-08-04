@@ -254,17 +254,17 @@ var Simple = (function (_super) {
 }(Scene));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
-var Character = (function () {
-    function Character(name, game) {
+var AbstractCharacter = (function () {
+    function AbstractCharacter(name, game) {
         this.name = name;
         this.game = game;
         var skeleton = this.mesh.skeleton;
-        skeleton.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+        skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
         this.registerFunctionAfterRender();
         game.getScene().registerAfterRender(this.afterRender);
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
     }
-    Character.prototype.mount = function (mesh, boneName) {
+    AbstractCharacter.prototype.mount = function (mesh, boneName) {
         var boneIndice = -1;
         var meshCharacter = this.mesh;
         var skeleton = meshCharacter.skeleton;
@@ -285,7 +285,7 @@ var Character = (function () {
     /**
      * ANIMATIONS
      */
-    Character.prototype.runAnimationHit = function () {
+    AbstractCharacter.prototype.runAnimationHit = function () {
         if (!this.animation) {
             var self_1 = this;
             var childMesh = this.mesh;
@@ -296,8 +296,8 @@ var Character = (function () {
                 });
                 self_1.attackAnimation = true;
                 self_1.onHitStart();
-                self_1.animation = skeleton_1.beginAnimation(Character.ANIMATION_ATTACK, false, this.statistics.getAttackSpeed() / 100, function () {
-                    skeleton_1.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                self_1.animation = skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_ATTACK, false, this.statistics.getAttackSpeed() / 100, function () {
+                    skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self_1.animation = null;
                     self_1.attackAnimation = false;
                     self_1.onHitEnd();
@@ -308,7 +308,7 @@ var Character = (function () {
             }
         }
     };
-    Character.prototype.emitPosition = function () {
+    AbstractCharacter.prototype.emitPosition = function () {
         var rotation;
         if (this.game.client.socket) {
             if (this.mesh.rotationQuaternion) {
@@ -323,7 +323,7 @@ var Character = (function () {
             });
         }
     };
-    Character.prototype.runAnimationWalk = function (emit) {
+    AbstractCharacter.prototype.runAnimationWalk = function (emit) {
         var self = this;
         var childMesh = this.mesh;
         var loopAnimation = this.isControllable;
@@ -335,8 +335,8 @@ var Character = (function () {
             if (!this.animation) {
                 self.sfxWalk.play();
                 self.onWalkStart();
-                self.animation = skeleton_2.beginAnimation(Character.ANIMATION_WALK, loopAnimation, this.statistics.getWalkSpeed() / 100, function () {
-                    skeleton_2.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, this.statistics.getWalkSpeed() / 100, function () {
+                    skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();
                     self.onWalkEnd();
@@ -344,226 +344,27 @@ var Character = (function () {
             }
         }
     };
-    Character.prototype.isAnimationEnabled = function () {
+    AbstractCharacter.prototype.isAnimationEnabled = function () {
         return this.animation;
     };
     /** Events */
-    Character.prototype.onHitStart = function () { };
+    AbstractCharacter.prototype.onHitStart = function () { };
     ;
-    Character.prototype.onHitEnd = function () { };
+    AbstractCharacter.prototype.onHitEnd = function () { };
     ;
-    Character.prototype.onWalkStart = function () { };
+    AbstractCharacter.prototype.onWalkStart = function () { };
     ;
-    Character.prototype.onWalkEnd = function () { };
+    AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
-    Character.WALK_SPEED = 0.25;
-    Character.ROTATION_SPEED = 0.05;
-    Character.ANIMATION_WALK = 'Run';
-    Character.ANIMATION_STAND = 'stand';
-    Character.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    Character.ANIMATION_ATTACK = 'Attack';
-    return Character;
+    AbstractCharacter.WALK_SPEED = 0.25;
+    AbstractCharacter.ROTATION_SPEED = 0.05;
+    AbstractCharacter.ANIMATION_WALK = 'Run';
+    AbstractCharacter.ANIMATION_STAND = 'stand';
+    AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+    AbstractCharacter.ANIMATION_ATTACK = 'Attack';
+    return AbstractCharacter;
 }());
-/// <reference path="characters/character.ts"/>
-/// <reference path="game.ts"/>
-var Player = (function (_super) {
-    __extends(Player, _super);
-    function Player(game, id, name, registerMoving) {
-        var _this = this;
-        _this.id = id;
-        _this.name = name;
-        _this.statistics = new Character.Statistics(100, 100, 100, 10, 10, 125, 50, 100).setPlayer(_this);
-        _this.isControllable = registerMoving;
-        _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
-        var mesh = game.characters['player'].instance('Warrior', true);
-        mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-        game.getScene().activeCamera.position = mesh.position;
-        _this.mesh = mesh;
-        _this.game = game;
-        mesh.actionManager = new BABYLON.ActionManager(game.getScene());
-        _this.envCollisions();
-        _this.createItems();
-        if (_this.isControllable) {
-            _this.mesh.isPickable = false;
-            var playerLight = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 12, 0), game.getScene());
-            playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
-            //playerLight.specular = new BABYLON.Color3(1, 1, 1);
-            playerLight.intensity = 1;
-            playerLight.range = 40;
-            playerLight.parent = _this.mesh;
-            game.getScene().lights.push(playerLight);
-            var characterBottomPanel = new BABYLON.GUI.StackPanel();
-            characterBottomPanel.width = "50%";
-            characterBottomPanel.top = -10;
-            characterBottomPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            game.sceneManager.guiTexture.addControl(characterBottomPanel);
-            _this.guiPanel = characterBottomPanel;
-            var hpSlider = new BABYLON.GUI.Slider();
-            hpSlider.minimum = 0;
-            hpSlider.maximum = 100;
-            hpSlider.value = 90;
-            hpSlider.width = "100%";
-            hpSlider.height = "10px";
-            hpSlider.thumbWidth = 0;
-            hpSlider.barOffset = 0;
-            hpSlider.background = 'black';
-            hpSlider.color = "red";
-            hpSlider.borderColor = 'black';
-            _this.guiHp = hpSlider;
-            var expSlider = new BABYLON.GUI.Slider();
-            expSlider.minimum = 0;
-            expSlider.maximum = 100;
-            expSlider.value = 5;
-            expSlider.width = "100%";
-            expSlider.height = "10px";
-            expSlider.thumbWidth = 0;
-            expSlider.barOffset = 0;
-            expSlider.background = 'black';
-            expSlider.color = "blue";
-            expSlider.borderColor = 'black';
-            characterBottomPanel.addControl(hpSlider);
-            characterBottomPanel.addControl(expSlider);
-            game.gui = new GUI.Main(game, _this);
-            var attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
-                width: 4,
-                height: 0.1,
-                size: 4
-            }, game.getScene());
-            attackArea.parent = _this.mesh;
-            attackArea.visibility = 0;
-            attackArea.isPickable = false;
-            _this.attackArea = attackArea;
-        }
-        _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
-        _this = _super.call(this, name, game) || this;
-        return _this;
-    }
-    /**
-     * Moving events
-     */
-    Player.prototype.registerMoving = function () {
-        var walkSpeed = Character.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
-        var game = this.game;
-        var mesh = this.mesh;
-        if (game.controller.left) {
-            mesh.rotate(BABYLON.Axis.Y, -Character.ROTATION_SPEED, BABYLON.Space.LOCAL);
-            this.emitPosition();
-        }
-        if (game.controller.right) {
-            mesh.rotate(BABYLON.Axis.Y, Character.ROTATION_SPEED, BABYLON.Space.LOCAL);
-            this.emitPosition();
-        }
-        if (game.controller.forward) {
-            mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
-            this.runAnimationWalk(true);
-            return;
-        }
-        if (game.controller.back) {
-            mesh.translate(BABYLON.Axis.Z, walkSpeed, BABYLON.Space.LOCAL);
-            this.runAnimationWalk(true);
-            return;
-        }
-        ///stop move and start attack animation
-        if (this.animation && !this.attackAnimation) {
-            this.animation.stop();
-        }
-    };
-    /**
-     * Attack Collisions
-     *
-     * @returns {Player}
-     */
-    Player.prototype.weaponCollisions = function () {
-        var game = this.game;
-        var self = this;
-        if (this.attackArea && this.attackAnimation && !this.attackHit) {
-            this.attackHit = true;
-            var _loop_1 = function () {
-                enemy = game.enemies[i];
-                var enemyMesh = enemy.mesh;
-                if (this_1.attackArea.intersectsMesh(enemyMesh, false)) {
-                    var animationEnemty_1 = enemy;
-                    setTimeout(function () {
-                        if (!animationEnemty_1.sfxHit.isPlaying) {
-                            animationEnemty_1.sfxHit.setVolume(2);
-                            animationEnemty_1.sfxHit.play();
-                        }
-                        animationEnemty_1.createGUI();
-                        animationEnemty_1.bloodParticles.start();
-                        var newValue = animationEnemty_1.statistics.getHp() - self.statistics.getDamage();
-                        console.log(self.statistics, animationEnemty_1.statistics);
-                        console.log(newValue);
-                        animationEnemty_1.statistics.hp = (newValue);
-                        animationEnemty_1.guiHp.value = newValue;
-                        if (newValue <= 0) {
-                            animationEnemty_1.removeFromWorld();
-                            game.controller.attackPoint = null;
-                        }
-                    }, 300);
-                }
-            };
-            var this_1 = this, enemy;
-            for (var i = 0; i < game.enemies.length; i++) {
-                _loop_1();
-            }
-        }
-        return this;
-    };
-    Player.prototype.envCollisions = function () {
-        var self = this;
-        var game = this.game;
-        for (var i = 0; i < game.sceneManager.environment.colliders.length; i++) {
-            var sceneMesh = game.sceneManager.environment.colliders[i];
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh }, function () {
-                game.controller.targetPoint = null;
-                game.controller.ball.visibility = 0;
-                game.controller.forward = false;
-                self.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
-                game.getScene().activeCamera.position = self.mesh.position;
-            }));
-        }
-        return this;
-    };
-    Player.prototype.removeFromWorld = function () {
-        this.game.getScene().unregisterAfterRender(this.afterRender);
-        this.mesh.dispose();
-        //this.items.weapon.mesh.dispose();
-        //this.items.shield.mesh.dispose();
-        this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
-    };
-    Player.prototype.registerFunctionAfterRender = function () {
-        var self = this;
-        this.afterRender = function () {
-            if (self.isControllable) {
-                self.weaponCollisions();
-                self.registerMoving();
-                if (self.game.controller.forward) {
-                    self.game.getScene().activeCamera.position = self.mesh.position;
-                }
-            }
-        };
-    };
-    Player.prototype.createItems = function () {
-        this.inventory = new Character.Inventory(this.game, this);
-    };
-    Player.prototype.onHitStart = function () {
-        //this.items.weapon.sfxHit.play(0.3);
-    };
-    ;
-    Player.prototype.onHitEnd = function () {
-        this.attackHit = false;
-    };
-    ;
-    Player.prototype.onWalkStart = function () {
-        this.walkSmoke.start();
-    };
-    Player.prototype.onWalkEnd = function () {
-        this.walkSmoke.stop();
-    };
-    return Player;
-}(Character));
-/// <reference path="../character.ts"/>
+/// <reference path="../AbstractCharacter.ts"/>
 var Monster = (function (_super) {
     __extends(Monster, _super);
     function Monster(name, game) {
@@ -586,7 +387,7 @@ var Monster = (function (_super) {
         visivilityArea.isPickable = false;
         _this.visibilityArea = visivilityArea;
         game.enemies[_this.id] = _this;
-        _this.mesh.skeleton.beginAnimation(Character.ANIMATION_STAND, true);
+        _this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         _this.mesh.isPickable = false;
         _this = _super.call(this, name, game) || this;
         return _this;
@@ -634,7 +435,7 @@ var Monster = (function (_super) {
     };
     Monster.prototype.registerFunctionAfterRender = function () {
         var self = this;
-        var walkSpeed = Character.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
+        var walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
         var playerMesh = self.game.player.mesh;
         this.afterRender = function () {
             if (self.game.player && self.game.getScene().isActiveMesh(self.mesh) && (!self.target || self.target == self.game.player.id)) {
@@ -674,7 +475,7 @@ var Monster = (function (_super) {
         }
     };
     return Monster;
-}(Character));
+}(AbstractCharacter));
 /// <reference path="game.ts"/>
 /// <reference path="characters/monsters/monster.ts"/>
 var SocketIOClient = (function () {
@@ -839,6 +640,203 @@ var Game = (function () {
     };
     return Game;
 }());
+/// <reference path="AbstractCharacter.ts"/>
+/// <reference path="../game.ts"/>
+var Player = (function (_super) {
+    __extends(Player, _super);
+    function Player(game, id, name, registerMoving) {
+        var _this = this;
+        _this.id = id;
+        _this.name = name;
+        _this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 10, 10, 125, 50, 100).setPlayer(_this);
+        _this.isControllable = registerMoving;
+        _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
+        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
+        var mesh = game.characters['player'].instance('Warrior', true);
+        mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+        game.getScene().activeCamera.position = mesh.position;
+        _this.mesh = mesh;
+        _this.game = game;
+        mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+        _this.envCollisions();
+        _this.createItems();
+        if (_this.isControllable) {
+            _this.mesh.isPickable = false;
+            var playerLight = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 12, 0), game.getScene());
+            playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
+            //playerLight.specular = new BABYLON.Color3(1, 1, 1);
+            playerLight.intensity = 1;
+            playerLight.range = 40;
+            playerLight.parent = _this.mesh;
+            game.getScene().lights.push(playerLight);
+            var characterBottomPanel = new BABYLON.GUI.StackPanel();
+            characterBottomPanel.width = "50%";
+            characterBottomPanel.top = -10;
+            characterBottomPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            game.sceneManager.guiTexture.addControl(characterBottomPanel);
+            _this.guiPanel = characterBottomPanel;
+            var hpSlider = new BABYLON.GUI.Slider();
+            hpSlider.minimum = 0;
+            hpSlider.maximum = 100;
+            hpSlider.value = 90;
+            hpSlider.width = "100%";
+            hpSlider.height = "10px";
+            hpSlider.thumbWidth = 0;
+            hpSlider.barOffset = 0;
+            hpSlider.background = 'black';
+            hpSlider.color = "red";
+            hpSlider.borderColor = 'black';
+            _this.guiHp = hpSlider;
+            var expSlider = new BABYLON.GUI.Slider();
+            expSlider.minimum = 0;
+            expSlider.maximum = 100;
+            expSlider.value = 5;
+            expSlider.width = "100%";
+            expSlider.height = "10px";
+            expSlider.thumbWidth = 0;
+            expSlider.barOffset = 0;
+            expSlider.background = 'black';
+            expSlider.color = "blue";
+            expSlider.borderColor = 'black';
+            characterBottomPanel.addControl(hpSlider);
+            characterBottomPanel.addControl(expSlider);
+            game.gui = new GUI.Main(game, _this);
+            var attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
+                width: 4,
+                height: 0.1,
+                size: 4
+            }, game.getScene());
+            attackArea.parent = _this.mesh;
+            attackArea.visibility = 0;
+            attackArea.isPickable = false;
+            _this.attackArea = attackArea;
+        }
+        _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
+        _this = _super.call(this, name, game) || this;
+        return _this;
+    }
+    /**
+     * Moving events
+     */
+    Player.prototype.registerMoving = function () {
+        var walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+        var game = this.game;
+        var mesh = this.mesh;
+        if (game.controller.left) {
+            mesh.rotate(BABYLON.Axis.Y, -AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
+            this.emitPosition();
+        }
+        if (game.controller.right) {
+            mesh.rotate(BABYLON.Axis.Y, AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
+            this.emitPosition();
+        }
+        if (game.controller.forward) {
+            mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+            this.runAnimationWalk(true);
+            return;
+        }
+        if (game.controller.back) {
+            mesh.translate(BABYLON.Axis.Z, walkSpeed, BABYLON.Space.LOCAL);
+            this.runAnimationWalk(true);
+            return;
+        }
+        ///stop move and start attack animation
+        if (this.animation && !this.attackAnimation) {
+            this.animation.stop();
+        }
+    };
+    /**
+     * Attack Collisions
+     *
+     * @returns {Player}
+     */
+    Player.prototype.weaponCollisions = function () {
+        var game = this.game;
+        var self = this;
+        if (this.attackArea && this.attackAnimation && !this.attackHit) {
+            this.attackHit = true;
+            var _loop_1 = function () {
+                enemy = game.enemies[i];
+                var enemyMesh = enemy.mesh;
+                if (this_1.attackArea.intersectsMesh(enemyMesh, false)) {
+                    var animationEnemty_1 = enemy;
+                    setTimeout(function () {
+                        if (!animationEnemty_1.sfxHit.isPlaying) {
+                            animationEnemty_1.sfxHit.setVolume(2);
+                            animationEnemty_1.sfxHit.play();
+                        }
+                        animationEnemty_1.createGUI();
+                        animationEnemty_1.bloodParticles.start();
+                        var newValue = animationEnemty_1.statistics.getHp() - self.statistics.getDamage();
+                        animationEnemty_1.statistics.hp = (newValue);
+                        animationEnemty_1.guiHp.value = newValue;
+                        if (newValue <= 0) {
+                            animationEnemty_1.removeFromWorld();
+                            game.controller.attackPoint = null;
+                        }
+                    }, 300);
+                }
+            };
+            var this_1 = this, enemy;
+            for (var i = 0; i < game.enemies.length; i++) {
+                _loop_1();
+            }
+        }
+        return this;
+    };
+    Player.prototype.envCollisions = function () {
+        var self = this;
+        var game = this.game;
+        for (var i = 0; i < game.sceneManager.environment.colliders.length; i++) {
+            var sceneMesh = game.sceneManager.environment.colliders[i];
+            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh }, function () {
+                game.controller.targetPoint = null;
+                game.controller.ball.visibility = 0;
+                game.controller.forward = false;
+                self.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
+                game.getScene().activeCamera.position = self.mesh.position;
+            }));
+        }
+        return this;
+    };
+    Player.prototype.removeFromWorld = function () {
+        this.game.getScene().unregisterAfterRender(this.afterRender);
+        this.mesh.dispose();
+        //this.items.weapon.mesh.dispose();
+        //this.items.shield.mesh.dispose();
+        this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
+    };
+    Player.prototype.registerFunctionAfterRender = function () {
+        var self = this;
+        this.afterRender = function () {
+            if (self.isControllable) {
+                self.weaponCollisions();
+                self.registerMoving();
+                if (self.game.controller.forward) {
+                    self.game.getScene().activeCamera.position = self.mesh.position;
+                }
+            }
+        };
+    };
+    Player.prototype.createItems = function () {
+        this.inventory = new Character.Inventory(this.game, this);
+    };
+    Player.prototype.onHitStart = function () {
+        //this.items.weapon.sfxHit.play(0.3);
+    };
+    ;
+    Player.prototype.onHitEnd = function () {
+        this.attackHit = false;
+    };
+    ;
+    Player.prototype.onWalkStart = function () {
+        this.walkSmoke.start();
+    };
+    Player.prototype.onWalkEnd = function () {
+        this.walkSmoke.stop();
+    };
+    return Player;
+}(AbstractCharacter));
 var Character;
 (function (Character) {
     var Inventory = (function () {
@@ -950,7 +948,7 @@ var Character;
         /**
          * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
          * @param item
-         * @returns {Character.Inventory}
+         * @returns {AbstractCharacter.Inventory}
          */
         Inventory.prototype.mount = function (item) {
             if (item.mountType == 1) {
@@ -983,84 +981,6 @@ var Character;
         return Inventory;
     }());
     Character.Inventory = Inventory;
-})(Character || (Character = {}));
-var Character;
-(function (Character) {
-    var Statistics = (function () {
-        function Statistics(hp, hpMax, attackSpeed, damage, armor, walkSpeed, blockChance, hitChance) {
-            if (hp === void 0) { hp = 0; }
-            if (hpMax === void 0) { hpMax = 0; }
-            if (attackSpeed === void 0) { attackSpeed = 0; }
-            if (damage === void 0) { damage = 0; }
-            if (armor === void 0) { armor = 0; }
-            if (walkSpeed === void 0) { walkSpeed = 0; }
-            if (blockChance === void 0) { blockChance = 0; }
-            if (hitChance === void 0) { hitChance = 0; }
-            this.hp = hp;
-            this.hpMax = hpMax;
-            this.attackSpeed = attackSpeed;
-            this.damage = damage;
-            this.armor = armor;
-            this.walkSpeed = walkSpeed;
-            this.blockChance = blockChance;
-            this.hitChance = hitChance;
-        }
-        Statistics.prototype.setPlayer = function (player) {
-            this.player = player;
-            return this;
-        };
-        Statistics.prototype.getItemsStats = function () {
-            var statistics = new Character.Statistics();
-            if (this.player) {
-                var inventory = this.player.inventory;
-                var equipedItems = [];
-                equipedItems.push(inventory.helm);
-                equipedItems.push(inventory.gloves);
-                equipedItems.push(inventory.armor);
-                equipedItems.push(inventory.weapon);
-                equipedItems.push(inventory.shield);
-                equipedItems.push(inventory.boots);
-                for (var i = 0; i < equipedItems.length; i++) {
-                    var item = equipedItems[i];
-                    if (item.damage) {
-                        statistics.damage += item.damage;
-                    }
-                    if (item.armor) {
-                        statistics.armor += item.armor;
-                    }
-                }
-            }
-            return statistics;
-        };
-        Statistics.prototype.getHp = function () {
-            return this.hp;
-        };
-        Statistics.prototype.getHpMax = function () {
-            return this.hpMax;
-        };
-        Statistics.prototype.getAttackSpeed = function () {
-            return this.attackSpeed;
-        };
-        Statistics.prototype.getWalkSpeed = function () {
-            return this.attackSpeed;
-        };
-        Statistics.prototype.getBlockChance = function () {
-            return this.blockChance;
-        };
-        Statistics.prototype.getHitChance = function () {
-            return this.hitChance;
-        };
-        Statistics.prototype.getDamage = function () {
-            var itemStatistics = this.getItemsStats();
-            return this.damage + itemStatistics.damage;
-        };
-        Statistics.prototype.getArmor = function () {
-            var itemStatistics = this.getItemsStats();
-            return this.armor + itemStatistics.armor;
-        };
-        return Statistics;
-    }());
-    Character.Statistics = Statistics;
 })(Character || (Character = {}));
 /// <reference path="Controller.ts"/>
 var Mouse = (function (_super) {
@@ -1214,21 +1134,6 @@ var GUI;
     }());
     GUI.Main = Main;
 })(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-var Items;
-(function (Items) {
-    var Item = (function () {
-        /**
-         * @param game
-         */
-        function Item(game) {
-            this.game = game;
-        }
-        Item.TYPE = 0;
-        return Item;
-    }());
-    Items.Item = Item;
-})(Items || (Items = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var Particles;
@@ -1560,7 +1465,7 @@ var BigWorm = (function (_super) {
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
         mesh.scaling = new BABYLON.Vector3(2, 2, 2);
-        _this.statistics = new Character.Statistics(125, 125, 100, 5, 10, 50, 0, 100);
+        _this.statistics = new Attributes.CharacterStatistics(125, 125, 100, 5, 10, 50, 0, 100);
         _this.id = serverKey;
         _this.mesh = mesh;
         _this.visibilityAreaSize = 10;
@@ -1581,7 +1486,7 @@ var BigWorm = (function (_super) {
             }
             if (!this.animation) {
                 self.animation = skeleton_3.beginAnimation('Walk', loopAnimation, 1, function () {
-                    skeleton_3.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                    skeleton_3.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });
             }
@@ -1599,7 +1504,7 @@ var Worm = (function (_super) {
         mesh.visibility = true;
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
-        _this.statistics = new Character.Statistics(50, 50, 100, 3, 10, 50, 0, 100);
+        _this.statistics = new Attributes.CharacterStatistics(50, 50, 100, 3, 10, 50, 0, 100);
         _this.id = serverKey;
         _this.mesh = mesh;
         _this.visibilityAreaSize = 30;
@@ -1620,7 +1525,7 @@ var Worm = (function (_super) {
             }
             if (!this.animation) {
                 self.animation = skeleton_4.beginAnimation('Walk', loopAnimation, 1, function () {
-                    skeleton_4.beginAnimation(Character.ANIMATION_STAND_WEAPON, true);
+                    skeleton_4.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                 });
             }
@@ -1628,6 +1533,146 @@ var Worm = (function (_super) {
     };
     return Worm;
 }(Monster));
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = (function () {
+        function AbstractStatistics(hp, hpMax, attackSpeed, damage, armor, walkSpeed, blockChance, hitChance) {
+            if (hp === void 0) { hp = 0; }
+            if (hpMax === void 0) { hpMax = 0; }
+            if (attackSpeed === void 0) { attackSpeed = 0; }
+            if (damage === void 0) { damage = 0; }
+            if (armor === void 0) { armor = 0; }
+            if (walkSpeed === void 0) { walkSpeed = 0; }
+            if (blockChance === void 0) { blockChance = 0; }
+            if (hitChance === void 0) { hitChance = 0; }
+            this.hp = hp;
+            this.hpMax = hpMax;
+            this.attackSpeed = attackSpeed;
+            this.damage = damage;
+            this.armor = armor;
+            this.walkSpeed = walkSpeed;
+            this.blockChance = blockChance;
+            this.hitChance = hitChance;
+        }
+        AbstractStatistics.prototype.getHp = function () {
+            return this.hp;
+        };
+        AbstractStatistics.prototype.getHpMax = function () {
+            return this.hpMax;
+        };
+        AbstractStatistics.prototype.getAttackSpeed = function () {
+            return this.attackSpeed;
+        };
+        AbstractStatistics.prototype.getWalkSpeed = function () {
+            return this.attackSpeed;
+        };
+        AbstractStatistics.prototype.getBlockChance = function () {
+            return this.blockChance;
+        };
+        AbstractStatistics.prototype.getHitChance = function () {
+            return this.hitChance;
+        };
+        AbstractStatistics.prototype.getDamage = function () {
+            return this.damage;
+        };
+        AbstractStatistics.prototype.getArmor = function () {
+            return this.armor;
+        };
+        return AbstractStatistics;
+    }());
+    Attributes.AbstractStatistics = AbstractStatistics;
+})(Attributes || (Attributes = {}));
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = Attributes.AbstractStatistics;
+    var CharacterStatistics = (function (_super) {
+        __extends(CharacterStatistics, _super);
+        function CharacterStatistics() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        CharacterStatistics.prototype.setPlayer = function (player) {
+            this.player = player;
+            return this;
+        };
+        CharacterStatistics.prototype.getItemsStats = function () {
+            var statistics = new Attributes.EquipStatistics();
+            if (this.player) {
+                var inventory = this.player.inventory;
+                var equipedItems = [];
+                equipedItems.push(inventory.helm);
+                equipedItems.push(inventory.gloves);
+                equipedItems.push(inventory.armor);
+                equipedItems.push(inventory.weapon);
+                equipedItems.push(inventory.shield);
+                equipedItems.push(inventory.boots);
+                for (var i = 0; i < equipedItems.length; i++) {
+                    var item = equipedItems[i];
+                    if (item.statistics) {
+                        statistics.addStatisticsFromItem(item.statistics);
+                    }
+                }
+            }
+            return statistics;
+        };
+        CharacterStatistics.prototype.getDamage = function () {
+            var equipStatistics = this.getItemsStats();
+            return this.damage + equipStatistics.getDamage();
+        };
+        CharacterStatistics.prototype.getArmor = function () {
+            var equipStatistics = this.getItemsStats();
+            return this.armor + equipStatistics.getArmor();
+        };
+        return CharacterStatistics;
+    }(AbstractStatistics));
+    Attributes.CharacterStatistics = CharacterStatistics;
+})(Attributes || (Attributes = {}));
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = Attributes.AbstractStatistics;
+    var EquipStatistics = (function (_super) {
+        __extends(EquipStatistics, _super);
+        function EquipStatistics() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        EquipStatistics.prototype.addStatisticsFromItem = function (statistics) {
+            if (statistics.getDamage()) {
+                this.damage += statistics.getDamage();
+            }
+            // if (statistics.getArmor()) {
+            //     this.armor += statistics.getArmor();
+            // }
+        };
+        return EquipStatistics;
+    }(AbstractStatistics));
+    Attributes.EquipStatistics = EquipStatistics;
+})(Attributes || (Attributes = {}));
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = Attributes.AbstractStatistics;
+    var ItemStatistics = (function (_super) {
+        __extends(ItemStatistics, _super);
+        function ItemStatistics() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        return ItemStatistics;
+    }(AbstractStatistics));
+    Attributes.ItemStatistics = ItemStatistics;
+})(Attributes || (Attributes = {}));
+/// <reference path="../game.ts"/>
+var Items;
+(function (Items) {
+    var Item = (function () {
+        /**
+         * @param game
+         */
+        function Item(game) {
+            this.game = game;
+        }
+        Item.TYPE = 0;
+        return Item;
+    }());
+    Items.Item = Item;
+})(Items || (Items = {}));
 /// <reference path="../Main.ts"/>
 /// <reference path="../../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
 var GUI;
@@ -2170,7 +2215,7 @@ var Items;
                 _this.mesh = _this.game.items.sword.instance('Sword', false);
                 _this.mesh.visibility = 0;
                 _this.mesh.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
-                _this.damage = 10;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 10, 0, 0, 0, 0);
                 _this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", _this.game.getScene(), null, {
                     loop: false,
                     autoplay: false
@@ -2197,7 +2242,7 @@ var Items;
                 _this.mountBoneName = 'weapon.bone';
                 _this.mesh = _this.game.items.sword.instance('Sword', false);
                 _this.mesh.visibility = 0;
-                _this.damage = 5;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 5, 0, 0, 0, 0);
                 _this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", _this.game.getScene(), null, {
                     loop: false,
                     autoplay: false

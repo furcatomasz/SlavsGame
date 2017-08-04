@@ -26,7 +26,9 @@ namespace Attributes {
 
                 for (let i = 0; i < equipedItems.length; i++) {
                     let item = equipedItems[i];
-                    statistics.addStatisticsFromItem(item.statistics);
+                    if(item) {
+                        statistics.addStatisticsFromItem(item.statistics);
+                    }
                 }
             }
 

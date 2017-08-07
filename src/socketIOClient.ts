@@ -29,6 +29,7 @@ class SocketIOClient {
             game.remotePlayers = [];
             self.socket.emit('createPlayer', playerName);
             game.player = new Player(game, data.id, playerName, true);
+            document.dispatchEvent(game.events.playerConnected);
             self.updatePlayers().removePlayer().connectPlayer();
         });
 

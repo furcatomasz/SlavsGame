@@ -6,7 +6,7 @@ class Environment {
     bushes: Array<BABYLON.AbstractMesh>;
     colliders: Array<BABYLON.AbstractMesh>;
     entrace: BABYLON.AbstractMesh;
-    ground: BABYLON.Mesh;
+    ground: BABYLON.AbstractMesh;
 
     constructor(game:Game, scene: BABYLON.Scene) {
         let self = this;
@@ -29,8 +29,6 @@ class Environment {
             } else if (meshName.search("Fance") >= 0) {
                 this.colliders.push(sceneMesh);
             }
-
-            //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
 
         }
 
@@ -66,14 +64,6 @@ class Environment {
             plane.isPickable = false;
             let smokeSystem = new Particles.Entrace(game, plane).particleSystem;
             smokeSystem.start();
-
-            game.getScene().registerAfterRender(function() {
-                if(game.player && self.entrace) {
-                    if (game.player.mesh.intersectsMesh(self.entrace, true)) {
-                        game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-                    }
-                }
-            });
         }
         this.entrace = plane;
 

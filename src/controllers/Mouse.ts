@@ -2,14 +2,27 @@
 
 class Mouse extends Controller {
 
-
     public registerControls(scene: BABYLON.Scene) {
         let self = this;
         let clickTrigger = false;
         let ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
+        ball.actionManager = new BABYLON.ActionManager(scene);
         ball.isPickable = false;
         ball.visibility = 0;
         this.ball = ball;
+
+        document.addEventListener(Events.PLAYER_CONNECTED, function() {
+            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                parameter: self.game.player.mesh
+            }, function () {
+                if(!clickTrigger) {
+                    self.game.controller.forward = false;
+                    self.targetPoint = null;
+                    self.ball.visibility = 0;
+                }
+            }));
+        });
 
         scene.onPointerUp = function (evt, pickResult) {
             clickTrigger = false;
@@ -28,6 +41,7 @@ class Mouse extends Controller {
                     self.ball.visibility = 1;
                     self.game.player.mesh.lookAt(self.ball.position);
                     self.game.player.emitPosition();
+                    self.game.controller.forward = true;
                 }
                 if (self.game.player && pickedMesh.name.search('enemy_attackArea') >= 0) {
                     self.attackPoint = pickedMesh;
@@ -61,18 +75,6 @@ class Mouse extends Controller {
                         self.game.controller.forward = false;
                     } else {
                         self.game.controller.forward = true;
-                    }
-                }
-
-                if (self.targetPoint) {
-                    if (!self.game.player.mesh.intersectsPoint(self.targetPoint)) {
-                        self.game.controller.forward = true;
-                    } else {
-                        if(!clickTrigger) {
-                            self.game.controller.forward = false;
-                            self.targetPoint = null;
-                            self.ball.visibility = 0;
-                        }
                     }
                 }
             }

@@ -8,6 +8,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var Events = (function () {
+    function Events() {
+        this.playerConnected = new Event(Events.PLAYER_CONNECTED);
+    }
+    Events.PLAYER_CONNECTED = 'playerConnected';
+    return Events;
+}());
 /// <reference path="../game.ts"/>
 var Controller = (function () {
     function Controller(game) {
@@ -162,7 +169,6 @@ var Environment = (function () {
             else if (meshName.search("Fance") >= 0) {
                 this.colliders.push(sceneMesh);
             }
-            //game.sceneManager.shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
         for (var i = 0; i < this.trees.length; i++) {
             var meshTree = this.trees[i];
@@ -189,13 +195,6 @@ var Environment = (function () {
             plane.isPickable = false;
             var smokeSystem = new Particles.Entrace(game, plane).particleSystem;
             smokeSystem.start();
-            game.getScene().registerAfterRender(function () {
-                if (game.player && self.entrace) {
-                    if (game.player.mesh.intersectsMesh(self.entrace, true)) {
-                        game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-                    }
-                }
-            });
         }
         this.entrace = plane;
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -487,6 +486,7 @@ var SocketIOClient = (function () {
             game.remotePlayers = [];
             self.socket.emit('createPlayer', playerName);
             game.player = new Player(game, data.id, playerName, true);
+            document.dispatchEvent(game.events.playerConnected);
             self.updatePlayers().removePlayer().connectPlayer();
         });
         return this;
@@ -602,6 +602,7 @@ var Game = (function () {
         this.enemies = [];
         this.scenes = [];
         this.activeScene = null;
+        this.events = new Events();
         this.createScene().animate();
     }
     Game.prototype.getScene = function () {
@@ -931,7 +932,13 @@ var Player = (function (_super) {
                 game.getScene().activeCamera.position = self.mesh.position;
             }));
         }
-        return this;
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: game.sceneManager.environment.entrace
+        }, function () {
+            self.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+            return this;
+        }));
     };
     Player.prototype.removeFromWorld = function () {
         this.game.getScene().unregisterAfterRender(this.afterRender);
@@ -981,9 +988,22 @@ var Mouse = (function (_super) {
         var self = this;
         var clickTrigger = false;
         var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
+        ball.actionManager = new BABYLON.ActionManager(scene);
         ball.isPickable = false;
         ball.visibility = 0;
         this.ball = ball;
+        document.addEventListener(Events.PLAYER_CONNECTED, function () {
+            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                parameter: self.game.player.mesh
+            }, function () {
+                if (!clickTrigger) {
+                    self.game.controller.forward = false;
+                    self.targetPoint = null;
+                    self.ball.visibility = 0;
+                }
+            }));
+        });
         scene.onPointerUp = function (evt, pickResult) {
             clickTrigger = false;
         };
@@ -999,6 +1019,7 @@ var Mouse = (function (_super) {
                     self.ball.visibility = 1;
                     self.game.player.mesh.lookAt(self.ball.position);
                     self.game.player.emitPosition();
+                    self.game.controller.forward = true;
                 }
                 if (self.game.player && pickedMesh.name.search('enemy_attackArea') >= 0) {
                     self.attackPoint = pickedMesh;
@@ -1030,18 +1051,6 @@ var Mouse = (function (_super) {
                     }
                     else {
                         self.game.controller.forward = true;
-                    }
-                }
-                if (self.targetPoint) {
-                    if (!self.game.player.mesh.intersectsPoint(self.targetPoint)) {
-                        self.game.controller.forward = true;
-                    }
-                    else {
-                        if (!clickTrigger) {
-                            self.game.controller.forward = false;
-                            self.targetPoint = null;
-                            self.ball.visibility = 0;
-                        }
                     }
                 }
             }
@@ -2055,47 +2064,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Boots = (function (_super) {
-        __extends(Boots, _super);
-        function Boots(game) {
-            return _super.call(this, game) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
-        };
-        Boots.TYPE = 5;
-        return Boots;
-    }(Items.Item));
-    Items.Boots = Boots;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots;
-    (function (Boots) {
-        var PrimaryBoots = (function (_super) {
-            __extends(PrimaryBoots, _super);
-            function PrimaryBoots(game) {
-                var _this = _super.call(this, game) || this;
-                _this.name = 'Boots';
-                _this.image = 'Boots';
-                _this.mountType = 2;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = _this.game.characters.player.instance('Boots', false);
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            return PrimaryBoots;
-        }(Boots));
-        Boots.PrimaryBoots = PrimaryBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Gloves = (function (_super) {
         __extends(Gloves, _super);
         function Gloves(game) {
@@ -2133,6 +2101,47 @@ var Items;
         }(Gloves));
         Gloves.PrimaryGloves = PrimaryGloves;
     })(Gloves = Items.Gloves || (Items.Gloves = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots = (function (_super) {
+        __extends(Boots, _super);
+        function Boots(game) {
+            return _super.call(this, game) || this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        Boots.TYPE = 5;
+        return Boots;
+    }(Items.Item));
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var PrimaryBoots = (function (_super) {
+            __extends(PrimaryBoots, _super);
+            function PrimaryBoots(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Boots';
+                _this.image = 'Boots';
+                _this.mountType = 2;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.mesh = _this.game.characters.player.instance('Boots', false);
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            return PrimaryBoots;
+        }(Boots));
+        Boots.PrimaryBoots = PrimaryBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

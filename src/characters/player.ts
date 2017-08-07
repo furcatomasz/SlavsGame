@@ -187,7 +187,13 @@ class Player extends AbstractCharacter {
                 }));
         }
 
-        return this;
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: game.sceneManager.environment.entrace
+        }, function () {
+            self.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+            return this;
+        }));
     }
 
     public removeFromWorld() {

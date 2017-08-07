@@ -32,6 +32,11 @@ class Game {
      */
     public activeScene: number;
 
+    /**
+     * Events
+     */
+    public events: Events;
+
     constructor(canvasElement: HTMLCanvasElement) {
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
@@ -42,6 +47,7 @@ class Game {
         this.enemies = [];
         this.scenes = [];
         this.activeScene = null;
+        this.events = new Events();
 
         this.createScene().animate();
     }

@@ -14,12 +14,40 @@ class Environment {
         this.bushes = [];
         this.colliders = [];
 
+        ////LIGHT
+        let light = game.getScene().lights[0];
+        light.intensity = 0;
+
+        var keys = [];
+        keys.push({
+            frame: 0,
+            value: 0
+        });
+
+        keys.push({
+            frame: 30,
+            value: 1
+        });
+
+        keys.push({
+            frame: 60,
+            value: 0
+        });
+
+        var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 1,
+            BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+            BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+        animationBox.setKeys(keys);
+
+        light.animations = [];
+        light.animations.push(animationBox);
+        game.getScene().beginAnimation(light, 0, 60, true);
+
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
 
             if (meshName.search("Forest_ground") >= 0) {
-                sceneMesh.receiveShadows = true;
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
             } else if (meshName.search("Spruce") >= 0) {
@@ -54,8 +82,8 @@ class Environment {
             let fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
 
-            // var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-            // sfxFireplace.attachToMesh(cone);
+             var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+             sfxFireplace.attachToMesh(cone);
         }
 
         let plane = scene.getMeshByName("Entrace_city");

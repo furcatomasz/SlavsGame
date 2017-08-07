@@ -11,10 +11,12 @@ var __extends = (this && this.__extends) || (function () {
 var Events = (function () {
     function Events() {
         this.playerConnected = new Event(Events.PLAYER_CONNECTED);
+        this.factoryComplete = new Event(Events.FACTORY_COMPLETE);
     }
-    Events.PLAYER_CONNECTED = 'playerConnected';
     return Events;
 }());
+Events.PLAYER_CONNECTED = 'playerConnected';
+Events.FACTORY_COMPLETE = 'factoryComplete';
 /// <reference path="../game.ts"/>
 var Controller = (function () {
     function Controller(game) {
@@ -153,11 +155,31 @@ var Environment = (function () {
         this.trees = [];
         this.bushes = [];
         this.colliders = [];
+        ////LIGHT
+        var light = game.getScene().lights[0];
+        light.intensity = 0;
+        var keys = [];
+        keys.push({
+            frame: 0,
+            value: 0
+        });
+        keys.push({
+            frame: 30,
+            value: 1
+        });
+        keys.push({
+            frame: 60,
+            value: 0
+        });
+        var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 1, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+        animationBox.setKeys(keys);
+        light.animations = [];
+        light.animations.push(animationBox);
+        game.getScene().beginAnimation(light, 0, 60, true);
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
             if (meshName.search("Forest_ground") >= 0) {
-                sceneMesh.receiveShadows = true;
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
             }
@@ -186,8 +208,8 @@ var Environment = (function () {
             smokeSystem.start();
             var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
-            // var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-            // sfxFireplace.attachToMesh(cone);
+            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            sfxFireplace.attachToMesh(cone);
         }
         var plane = scene.getMeshByName("Entrace_city");
         if (plane) {
@@ -228,13 +250,17 @@ var Simple = (function (_super) {
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
-                scene.lights[0].intensity = 0;
-                //scene.lights[0].diffuse = new BABYLON.Color3(0.5, 0.5, 1);
                 self.environment = new Environment(game, scene);
                 new Characters(game, scene);
                 new Items(game, scene);
-                game.controller.registerControls(scene);
-                game.client.connect(serverUrl);
+                document.addEventListener(Events.FACTORY_COMPLETE, function () {
+                    game.controller.registerControls(scene);
+                    game.client.connect(serverUrl);
+                    document.addEventListener(Events.PLAYER_CONNECTED, function () {
+                        var npc = new NPC.Warrior(game);
+                    });
+                });
+                document.dispatchEvent(game.events.factoryComplete);
             });
         });
     };
@@ -246,11 +272,11 @@ var AbstractCharacter = (function () {
     function AbstractCharacter(name, game) {
         this.name = name;
         this.game = game;
-        var skeleton = this.mesh.skeleton;
-        skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+        this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
         this.registerFunctionAfterRender();
-        game.getScene().registerAfterRender(this.afterRender);
-        this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
+        if (this.afterRender) {
+            game.getScene().registerAfterRender(this.afterRender);
+        }
     }
     AbstractCharacter.prototype.mount = function (mesh, boneName) {
         var boneIndice = -1;
@@ -344,14 +370,14 @@ var AbstractCharacter = (function () {
     ;
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
-    AbstractCharacter.WALK_SPEED = 0.25;
-    AbstractCharacter.ROTATION_SPEED = 0.05;
-    AbstractCharacter.ANIMATION_WALK = 'Run';
-    AbstractCharacter.ANIMATION_STAND = 'stand';
-    AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    AbstractCharacter.ANIMATION_ATTACK = 'Attack';
     return AbstractCharacter;
 }());
+AbstractCharacter.WALK_SPEED = 0.25;
+AbstractCharacter.ROTATION_SPEED = 0.05;
+AbstractCharacter.ANIMATION_WALK = 'Run';
+AbstractCharacter.ANIMATION_STAND = 'stand';
+AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+AbstractCharacter.ANIMATION_ATTACK = 'Attack';
 /// <reference path="../AbstractCharacter.ts"/>
 var Monster = (function (_super) {
     __extends(Monster, _super);
@@ -377,6 +403,7 @@ var Monster = (function (_super) {
         game.enemies[_this.id] = _this;
         _this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         _this.mesh.isPickable = false;
+        _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
         return _this;
     }
@@ -792,6 +819,7 @@ var Player = (function (_super) {
         game.getScene().activeCamera.position = mesh.position;
         _this.mesh = mesh;
         _this.game = game;
+        _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         _this.envCollisions();
         _this.createItems();
@@ -1481,7 +1509,7 @@ var Attributes;
             return this.attackSpeed;
         };
         AbstractStatistics.prototype.getWalkSpeed = function () {
-            return this.attackSpeed;
+            return this.walkSpeed;
         };
         AbstractStatistics.prototype.getBlockChance = function () {
             return this.blockChance;
@@ -1585,9 +1613,9 @@ var Items;
         function Item(game) {
             this.game = game;
         }
-        Item.TYPE = 0;
         return Item;
     }());
+    Item.TYPE = 0;
     Items.Item = Item;
 })(Items || (Items = {}));
 /// <reference path="../../game.ts"/>
@@ -1669,6 +1697,76 @@ var Worm = (function (_super) {
     };
     return Worm;
 }(Monster));
+/// <reference path="../AbstractCharacter.ts"/>
+var NPC;
+(function (NPC) {
+    var AbstractNpc = (function (_super) {
+        __extends(AbstractNpc, _super);
+        function AbstractNpc(game, name) {
+            var _this = _super.call(this, name, game) || this;
+            var self = _this;
+            _this.mesh.actionManager = new BABYLON.ActionManager(_this.game.getScene());
+            _this.mesh.isPickable = true;
+            _this.createTooltip();
+            _this.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOverTrigger, self.box, 'scaling', new BABYLON.Vector3(2, 2, 2), 300));
+            _this.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOutTrigger, self.box, 'scaling', new BABYLON.Vector3(1, 1, 1), 300));
+            return _this;
+        }
+        AbstractNpc.prototype.removeFromWorld = function () {
+            this.mesh.dispose();
+            this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
+        };
+        AbstractNpc.prototype.registerFunctionAfterRender = function () {
+        };
+        AbstractNpc.prototype.createGUI = function () {
+        };
+        AbstractNpc.prototype.createTooltip = function () {
+            console.log(this);
+            var box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
+            box1.parent = this.mesh;
+            box1.position.y += 7;
+            var materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
+            materialBox.diffuseColor = new BABYLON.Color3(0, 1, 0);
+            box1.material = materialBox;
+            var keys = [];
+            keys.push({
+                frame: 0,
+                value: 0
+            });
+            keys.push({
+                frame: 30,
+                value: -2
+            });
+            var animationBox = new BABYLON.Animation("rotation", "rotation.y", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+            animationBox.setKeys(keys);
+            box1.animations = [];
+            box1.animations.push(animationBox);
+            this.box = box1;
+            this.game.getScene().beginAnimation(box1, 0, 30, true);
+        };
+        return AbstractNpc;
+    }(AbstractCharacter));
+    NPC.AbstractNpc = AbstractNpc;
+})(NPC || (NPC = {}));
+/// <reference path="AbstractNpc.ts"/>
+var NPC;
+(function (NPC) {
+    var Warrior = (function (_super) {
+        __extends(Warrior, _super);
+        function Warrior(game) {
+            var _this = this;
+            _this.name = 'NPC #Warrior';
+            var mesh = game.characters['player'].instance('Warrior', true);
+            mesh.position = new BABYLON.Vector3(-3, 0.1, 11);
+            mesh.lookAt(game.player.mesh.position);
+            _this.mesh = mesh;
+            _this = _super.call(this, game, name) || this;
+            return _this;
+        }
+        return Warrior;
+    }(NPC.AbstractNpc));
+    NPC.Warrior = Warrior;
+})(NPC || (NPC = {}));
 /// <reference path="../Main.ts"/>
 /// <reference path="../../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
 var GUI;
@@ -2034,9 +2132,9 @@ var Items;
         Armor.prototype.getType = function () {
             return Items.Armor.TYPE;
         };
-        Armor.TYPE = 6;
         return Armor;
     }(Items.Item));
+    Armor.TYPE = 6;
     Items.Armor = Armor;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2064,47 +2162,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Gloves = (function (_super) {
-        __extends(Gloves, _super);
-        function Gloves(game) {
-            return _super.call(this, game) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Gloves.prototype.getType = function () {
-            return Items.Gloves.TYPE;
-        };
-        Gloves.TYPE = 4;
-        return Gloves;
-    }(Items.Item));
-    Items.Gloves = Gloves;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Gloves;
-    (function (Gloves) {
-        var PrimaryGloves = (function (_super) {
-            __extends(PrimaryGloves, _super);
-            function PrimaryGloves(game) {
-                var _this = _super.call(this, game) || this;
-                _this.name = 'Gloves';
-                _this.image = 'Gloves';
-                _this.mountType = 2;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = _this.game.characters.player.instance('Gloves', false);
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            return PrimaryGloves;
-        }(Gloves));
-        Gloves.PrimaryGloves = PrimaryGloves;
-    })(Gloves = Items.Gloves || (Items.Gloves = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Boots = (function (_super) {
         __extends(Boots, _super);
         function Boots(game) {
@@ -2116,9 +2173,9 @@ var Items;
         Boots.prototype.getType = function () {
             return Items.Boots.TYPE;
         };
-        Boots.TYPE = 5;
         return Boots;
     }(Items.Item));
+    Boots.TYPE = 5;
     Items.Boots = Boots;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2146,6 +2203,47 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
+    var Gloves = (function (_super) {
+        __extends(Gloves, _super);
+        function Gloves(game) {
+            return _super.call(this, game) || this;
+        }
+        /**
+         * @returns {number}
+         */
+        Gloves.prototype.getType = function () {
+            return Items.Gloves.TYPE;
+        };
+        return Gloves;
+    }(Items.Item));
+    Gloves.TYPE = 4;
+    Items.Gloves = Gloves;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Gloves;
+    (function (Gloves) {
+        var PrimaryGloves = (function (_super) {
+            __extends(PrimaryGloves, _super);
+            function PrimaryGloves(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Gloves';
+                _this.image = 'Gloves';
+                _this.mountType = 2;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.mesh = _this.game.characters.player.instance('Gloves', false);
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            return PrimaryGloves;
+        }(Gloves));
+        Gloves.PrimaryGloves = PrimaryGloves;
+    })(Gloves = Items.Gloves || (Items.Gloves = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
     var Helm = (function (_super) {
         __extends(Helm, _super);
         function Helm(game) {
@@ -2157,9 +2255,9 @@ var Items;
         Helm.prototype.getType = function () {
             return Items.Helm.TYPE;
         };
-        Helm.TYPE = 3;
         return Helm;
     }(Items.Item));
+    Helm.TYPE = 3;
     Items.Helm = Helm;
 })(Items || (Items = {}));
 /// <reference path="Helm.ts"/>
@@ -2198,9 +2296,9 @@ var Items;
         Shield.prototype.getType = function () {
             return Items.Shield.TYPE;
         };
-        Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
+    Shield.TYPE = 2;
     Items.Shield = Shield;
 })(Items || (Items = {}));
 /// <reference path="Shield.ts"/>
@@ -2264,9 +2362,9 @@ var Items;
         Weapon.prototype.getType = function () {
             return Items.Weapon.TYPE;
         };
-        Weapon.TYPE = 1;
         return Weapon;
     }(Items.Item));
+    Weapon.TYPE = 1;
     Items.Weapon = Weapon;
 })(Items || (Items = {}));
 /// <reference path="Weapon.ts"/>

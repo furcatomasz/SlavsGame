@@ -44,14 +44,13 @@ abstract class AbstractCharacter {
     constructor(name:string, game:Game) {
         this.name = name;
         this.game = game;
-
-        let skeleton = this.mesh.skeleton;
-        skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+        this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
 
         this.registerFunctionAfterRender();
-        game.getScene().registerAfterRender(this.afterRender);
 
-        this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
+        if(this.afterRender) {
+            game.getScene().registerAfterRender(this.afterRender);
+        }
     }
 
     public mount(mesh, boneName) {

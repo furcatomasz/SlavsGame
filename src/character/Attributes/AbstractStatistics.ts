@@ -34,7 +34,7 @@ namespace Attributes {
         }
 
         public getWalkSpeed() {
-            return this.attackSpeed;
+            return this.walkSpeed;
         }
 
         public getBlockChance() {

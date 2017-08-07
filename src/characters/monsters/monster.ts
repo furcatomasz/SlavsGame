@@ -33,6 +33,7 @@ abstract class Monster extends AbstractCharacter {
 
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         this.mesh.isPickable = false;
+        this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
 
         super(name, game);
     }

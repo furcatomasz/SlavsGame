@@ -23,6 +23,7 @@ class Player extends AbstractCharacter {
 
         this.mesh = mesh;
         this.game = game;
+        this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
 
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         this.envCollisions();

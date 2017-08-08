@@ -13,10 +13,10 @@ var Events = (function () {
         this.playerConnected = new Event(Events.PLAYER_CONNECTED);
         this.factoryComplete = new Event(Events.FACTORY_COMPLETE);
     }
-    Events.PLAYER_CONNECTED = 'playerConnected';
-    Events.FACTORY_COMPLETE = 'factoryComplete';
     return Events;
 }());
+Events.PLAYER_CONNECTED = 'playerConnected';
+Events.FACTORY_COMPLETE = 'factoryComplete';
 /// <reference path="../game.ts"/>
 var Controller = (function () {
     function Controller(game) {
@@ -370,14 +370,14 @@ var AbstractCharacter = (function () {
     ;
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
-    AbstractCharacter.WALK_SPEED = 0.25;
-    AbstractCharacter.ROTATION_SPEED = 0.05;
-    AbstractCharacter.ANIMATION_WALK = 'Run';
-    AbstractCharacter.ANIMATION_STAND = 'stand';
-    AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    AbstractCharacter.ANIMATION_ATTACK = 'Attack';
     return AbstractCharacter;
 }());
+AbstractCharacter.WALK_SPEED = 0.25;
+AbstractCharacter.ROTATION_SPEED = 0.05;
+AbstractCharacter.ANIMATION_WALK = 'Run';
+AbstractCharacter.ANIMATION_STAND = 'stand';
+AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+AbstractCharacter.ANIMATION_ATTACK = 'Attack';
 /// <reference path="../AbstractCharacter.ts"/>
 var Monster = (function (_super) {
     __extends(Monster, _super);
@@ -1651,9 +1651,9 @@ var Items;
         function Item(game) {
             this.game = game;
         }
-        Item.TYPE = 0;
         return Item;
     }());
+    Item.TYPE = 0;
     Items.Item = Item;
 })(Items || (Items = {}));
 /// <reference path="../../game.ts"/>
@@ -1748,6 +1748,10 @@ var NPC;
             _this.createTooltip();
             _this.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOverTrigger, self.box, 'scaling', new BABYLON.Vector3(2, 2, 2), 300));
             _this.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOutTrigger, self.box, 'scaling', new BABYLON.Vector3(1, 1, 1), 300));
+            _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                var quest = new GUI.Quest(game.gui, new Quests.KillWorms(game));
+                quest.open();
+            }));
             return _this;
         }
         AbstractNpc.prototype.removeFromWorld = function () {
@@ -2157,6 +2161,116 @@ var GUI;
     }(GUI.Popup));
     GUI.Inventory = Inventory;
 })(GUI || (GUI = {}));
+/// <reference path="Popup.ts"/>
+var GUI;
+(function (GUI) {
+    var Quest = (function (_super) {
+        __extends(Quest, _super);
+        function Quest(guiMain, quest) {
+            var _this = _super.call(this, guiMain) || this;
+            _this.quest = quest;
+            _this.name = 'Quest';
+            _this.imageUrl = "assets/gui/attrs.png";
+            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            return _this;
+        }
+        Quest.prototype.open = function () {
+            var self = this;
+            this.guiMain.questOpened = true;
+            this.initTexture();
+            if (!this.buttonClose) {
+                this.guiTexture.addControl(this.container);
+                this.showText();
+                var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
+                buttonClose.color = "white";
+                buttonClose.background = "black";
+                buttonClose.width = "70px;";
+                buttonClose.height = "40px";
+                buttonClose.horizontalAlignment = this.position;
+                buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                buttonClose.onPointerUpObservable.add(function () {
+                    self.close();
+                });
+                this.guiMain.registerBlockMoveCharacter(buttonClose);
+                this.guiTexture.addControl(buttonClose);
+                this.buttonClose = buttonClose;
+            }
+        };
+        Quest.prototype.close = function () {
+            this.guiMain.questOpened = false;
+            this.guiTexture.dispose();
+            this.buttonClose = null;
+            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
+        };
+        Quest.prototype.showText = function () {
+            var title = new BABYLON.GUI.TextBlock();
+            title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            title.text = this.quest.title;
+            title.color = "white";
+            title.top = "0%";
+            title.width = "25%";
+            title.height = "10%";
+            title.fontSize = 36;
+            this.guiTexture.addControl(title);
+            var description = new BABYLON.GUI.TextBlock();
+            description.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            description.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            description.text = this.quest.description;
+            description.color = "white";
+            description.top = "5%";
+            description.width = "25%";
+            description.height = "20%";
+            description.fontSize = 24;
+            var awardTitle = new BABYLON.GUI.TextBlock();
+            awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            awardTitle.text = 'Award';
+            awardTitle.top = "45%";
+            awardTitle.width = "25%";
+            awardTitle.height = "20%";
+            awardTitle.color = "green";
+            awardTitle.fontSize = 36;
+            this.guiTexture.addControl(awardTitle);
+            var awardTitle = new BABYLON.GUI.TextBlock();
+            awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            awardTitle.text = this.quest.awards[0].award.name;
+            awardTitle.top = "50%";
+            awardTitle.width = "25%";
+            awardTitle.height = "20%";
+            awardTitle.color = "green";
+            awardTitle.fontSize = 24;
+            this.guiTexture.addControl(awardTitle);
+            var image = this.guiMain.inventory.createItemImage(this.quest.awards[0].award);
+            image.height = 0.4;
+            this.guiTexture.addControl(image);
+            this.guiTexture.addControl(description);
+            var requirementsTitle = new BABYLON.GUI.TextBlock();
+            requirementsTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            requirementsTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            requirementsTitle.text = 'Requirements';
+            requirementsTitle.top = "15%";
+            requirementsTitle.width = "25%";
+            requirementsTitle.height = "20%";
+            requirementsTitle.color = "red";
+            requirementsTitle.fontSize = 36;
+            this.guiTexture.addControl(requirementsTitle);
+            var requirementsTitle = new BABYLON.GUI.TextBlock();
+            requirementsTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            requirementsTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            requirementsTitle.text = 'Kill 5 worms';
+            requirementsTitle.top = "20%";
+            requirementsTitle.width = "25%";
+            requirementsTitle.height = "20%";
+            requirementsTitle.color = "white";
+            requirementsTitle.fontSize = 18;
+            this.guiTexture.addControl(requirementsTitle);
+        };
+        return Quest;
+    }(GUI.Popup));
+    GUI.Quest = Quest;
+})(GUI || (GUI = {}));
 var Quests;
 (function (Quests) {
     var Awards;
@@ -2184,7 +2298,7 @@ var Quests;
         function KillWorms(game) {
             var _this = _super.call(this, game) || this;
             _this.title = 'Worms';
-            _this.description = 'Kill aggressive monsters on this map.';
+            _this.description = 'Kill worms that penetrate nearby terrains.';
             _this.awards.push(new Quests.Awards.Item(new Items.Weapons.BigSword(game)));
             return _this;
         }
@@ -2223,9 +2337,9 @@ var Items;
         Armor.prototype.getType = function () {
             return Items.Armor.TYPE;
         };
-        Armor.TYPE = 6;
         return Armor;
     }(Items.Item));
+    Armor.TYPE = 6;
     Items.Armor = Armor;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2264,9 +2378,9 @@ var Items;
         Boots.prototype.getType = function () {
             return Items.Boots.TYPE;
         };
-        Boots.TYPE = 5;
         return Boots;
     }(Items.Item));
+    Boots.TYPE = 5;
     Items.Boots = Boots;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2305,9 +2419,9 @@ var Items;
         Gloves.prototype.getType = function () {
             return Items.Gloves.TYPE;
         };
-        Gloves.TYPE = 4;
         return Gloves;
     }(Items.Item));
+    Gloves.TYPE = 4;
     Items.Gloves = Gloves;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2346,9 +2460,9 @@ var Items;
         Helm.prototype.getType = function () {
             return Items.Helm.TYPE;
         };
-        Helm.TYPE = 3;
         return Helm;
     }(Items.Item));
+    Helm.TYPE = 3;
     Items.Helm = Helm;
 })(Items || (Items = {}));
 /// <reference path="Helm.ts"/>
@@ -2387,9 +2501,9 @@ var Items;
         Shield.prototype.getType = function () {
             return Items.Shield.TYPE;
         };
-        Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
+    Shield.TYPE = 2;
     Items.Shield = Shield;
 })(Items || (Items = {}));
 /// <reference path="Shield.ts"/>
@@ -2453,9 +2567,9 @@ var Items;
         Weapon.prototype.getType = function () {
             return Items.Weapon.TYPE;
         };
-        Weapon.TYPE = 1;
         return Weapon;
     }(Items.Item));
+    Weapon.TYPE = 1;
     Items.Weapon = Weapon;
 })(Items || (Items = {}));
 /// <reference path="Weapon.ts"/>

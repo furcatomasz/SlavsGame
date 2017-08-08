@@ -11,6 +11,8 @@ namespace GUI {
         public inventoryOpened: boolean;
         public attributes: GUI.Attributes;
         public attributesOpened: boolean;
+        public quest: GUI.Attributes;
+        public questOpened: boolean;
 
         protected buttonpanel: BABYLON.GUI.StackPanel;
 

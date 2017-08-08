@@ -27,6 +27,15 @@ namespace NPC {
                 300
             );
 
+            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+                BABYLON.ActionManager.OnPickTrigger,
+                function() {
+                    let quest = new GUI.Quest(game.gui, new Quests.KillWorms(game));
+                    quest.open();
+
+                })
+            );
+
         }
 
         public removeFromWorld() {

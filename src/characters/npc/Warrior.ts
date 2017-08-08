@@ -10,6 +10,8 @@ namespace NPC {
             mesh.lookAt(game.player.mesh.position);
             this.mesh = mesh;
 
+            this.quest = new Quests.KillWorms(game);
+
             super(game, name);
         }
 

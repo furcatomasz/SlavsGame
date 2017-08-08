@@ -9,6 +9,7 @@ abstract class Scene {
     public shadowGenerator: BABYLON.ShadowGenerator;
     public guiTexture: BABYLON.GUI.AdvancedDynamicTexture;
     public environment: Environment;
+    public activeQuests: Array<Quests.AbstractQuest>;
 
     protected setDefaults(game: Game) {
         this.game = game;

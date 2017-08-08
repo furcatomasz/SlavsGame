@@ -13,10 +13,10 @@ var Events = (function () {
         this.playerConnected = new Event(Events.PLAYER_CONNECTED);
         this.factoryComplete = new Event(Events.FACTORY_COMPLETE);
     }
+    Events.PLAYER_CONNECTED = 'playerConnected';
+    Events.FACTORY_COMPLETE = 'factoryComplete';
     return Events;
 }());
-Events.PLAYER_CONNECTED = 'playerConnected';
-Events.FACTORY_COMPLETE = 'factoryComplete';
 /// <reference path="../game.ts"/>
 var Controller = (function () {
     function Controller(game) {
@@ -370,14 +370,14 @@ var AbstractCharacter = (function () {
     ;
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
+    AbstractCharacter.WALK_SPEED = 0.25;
+    AbstractCharacter.ROTATION_SPEED = 0.05;
+    AbstractCharacter.ANIMATION_WALK = 'Run';
+    AbstractCharacter.ANIMATION_STAND = 'stand';
+    AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+    AbstractCharacter.ANIMATION_ATTACK = 'Attack';
     return AbstractCharacter;
 }());
-AbstractCharacter.WALK_SPEED = 0.25;
-AbstractCharacter.ROTATION_SPEED = 0.05;
-AbstractCharacter.ANIMATION_WALK = 'Run';
-AbstractCharacter.ANIMATION_STAND = 'stand';
-AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-AbstractCharacter.ANIMATION_ATTACK = 'Attack';
 /// <reference path="../AbstractCharacter.ts"/>
 var Monster = (function (_super) {
     __extends(Monster, _super);
@@ -1358,6 +1358,44 @@ var Particles;
     }(Particles.AbstractParticle));
     Particles.WalkSmoke = WalkSmoke;
 })(Particles || (Particles = {}));
+var Quests;
+(function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var AbstractAward = (function () {
+            function AbstractAward() {
+            }
+            return AbstractAward;
+        }());
+        Awards.AbstractAward = AbstractAward;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var AbstractRequirement = (function () {
+            function AbstractRequirement() {
+            }
+            return AbstractRequirement;
+        }());
+        Requirements.AbstractRequirement = AbstractRequirement;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+})(Quests || (Quests = {}));
+/// <reference path="awards/AbstractAward.ts"/>
+/// <reference path="requirements/AbstractRequirement.ts"/>
+var Quests;
+(function (Quests) {
+    var AbstractQuest = (function () {
+        function AbstractQuest(game) {
+            this.game = game;
+            this.awards = [];
+            this.requirements = [];
+        }
+        return AbstractQuest;
+    }());
+    Quests.AbstractQuest = AbstractQuest;
+})(Quests || (Quests = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../../babylon/ts/babylon.gui.d.ts"/>
 /// <reference path="Scene.ts"/>
@@ -1613,9 +1651,9 @@ var Items;
         function Item(game) {
             this.game = game;
         }
+        Item.TYPE = 0;
         return Item;
     }());
-    Item.TYPE = 0;
     Items.Item = Item;
 })(Items || (Items = {}));
 /// <reference path="../../game.ts"/>
@@ -1760,6 +1798,7 @@ var NPC;
             mesh.position = new BABYLON.Vector3(-3, 0.1, 11);
             mesh.lookAt(game.player.mesh.position);
             _this.mesh = mesh;
+            _this.quest = new Quests.KillWorms(game);
             _this = _super.call(this, game, name) || this;
             return _this;
         }
@@ -2118,6 +2157,58 @@ var GUI;
     }(GUI.Popup));
     GUI.Inventory = Inventory;
 })(GUI || (GUI = {}));
+var Quests;
+(function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var Item = (function (_super) {
+            __extends(Item, _super);
+            function Item(item) {
+                var _this = _super.call(this) || this;
+                _this.name = item.name;
+                _this.award = item;
+                return _this;
+            }
+            Item.prototype.getAward = function () {
+                console.log('get award' + this.award.name);
+            };
+            return Item;
+        }(Awards.AbstractAward));
+        Awards.Item = Item;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var KillWorms = (function (_super) {
+        __extends(KillWorms, _super);
+        function KillWorms(game) {
+            var _this = _super.call(this, game) || this;
+            _this.title = 'Worms';
+            _this.description = 'Kill aggressive monsters on this map.';
+            _this.awards.push(new Quests.Awards.Item(new Items.Weapons.BigSword(game)));
+            return _this;
+        }
+        return KillWorms;
+    }(Quests.AbstractQuest));
+    Quests.KillWorms = KillWorms;
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var Monster = (function (_super) {
+            __extends(Monster, _super);
+            function Monster(monster, count) {
+                var _this = _super.call(this) || this;
+                _this.name = 'Kill ' + count + ' ' + monster.name + '';
+                _this.requirement = monster;
+                return _this;
+            }
+            return Monster;
+        }(Requirements.AbstractRequirement));
+        Requirements.Monster = Monster;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+})(Quests || (Quests = {}));
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
@@ -2132,9 +2223,9 @@ var Items;
         Armor.prototype.getType = function () {
             return Items.Armor.TYPE;
         };
+        Armor.TYPE = 6;
         return Armor;
     }(Items.Item));
-    Armor.TYPE = 6;
     Items.Armor = Armor;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2173,9 +2264,9 @@ var Items;
         Boots.prototype.getType = function () {
             return Items.Boots.TYPE;
         };
+        Boots.TYPE = 5;
         return Boots;
     }(Items.Item));
-    Boots.TYPE = 5;
     Items.Boots = Boots;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2214,9 +2305,9 @@ var Items;
         Gloves.prototype.getType = function () {
             return Items.Gloves.TYPE;
         };
+        Gloves.TYPE = 4;
         return Gloves;
     }(Items.Item));
-    Gloves.TYPE = 4;
     Items.Gloves = Gloves;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2255,9 +2346,9 @@ var Items;
         Helm.prototype.getType = function () {
             return Items.Helm.TYPE;
         };
+        Helm.TYPE = 3;
         return Helm;
     }(Items.Item));
-    Helm.TYPE = 3;
     Items.Helm = Helm;
 })(Items || (Items = {}));
 /// <reference path="Helm.ts"/>
@@ -2296,9 +2387,9 @@ var Items;
         Shield.prototype.getType = function () {
             return Items.Shield.TYPE;
         };
+        Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
-    Shield.TYPE = 2;
     Items.Shield = Shield;
 })(Items || (Items = {}));
 /// <reference path="Shield.ts"/>
@@ -2362,9 +2453,9 @@ var Items;
         Weapon.prototype.getType = function () {
             return Items.Weapon.TYPE;
         };
+        Weapon.TYPE = 1;
         return Weapon;
     }(Items.Item));
-    Weapon.TYPE = 1;
     Items.Weapon = Weapon;
 })(Items || (Items = {}));
 /// <reference path="Weapon.ts"/>

@@ -3,6 +3,7 @@ namespace NPC {
     export abstract class AbstractNpc extends AbstractCharacter {
 
         protected box: BABYLON.AbstractMesh;
+        protected quest: Quests.AbstractQuest;
 
         public constructor(game:Game, name) {
             super(name, game);

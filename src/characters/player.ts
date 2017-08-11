@@ -26,7 +26,6 @@ class Player extends AbstractCharacter {
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
 
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
-        this.envCollisions();
         this.createItems();
 
         if(this.isControllable) {
@@ -157,8 +156,7 @@ class Player extends AbstractCharacter {
                         animationEnemty.bloodParticles.start();
                         let newValue = animationEnemty.statistics.getHp() - self.statistics.getDamage();
                         animationEnemty.statistics.hp = (newValue);
-                        animationEnemty.guiHp.value = newValue;
-
+                        this.game.gui.characterTopHp.hpBar.value = newValue;
                         if (newValue <= 0) {
                             animationEnemty.removeFromWorld();
                             game.controller.attackPoint = null;
@@ -169,32 +167,6 @@ class Player extends AbstractCharacter {
         }
 
         return this;
-    }
-
-    protected envCollisions() {
-        let self = this;
-        let game = this.game;
-
-        for (var i = 0; i < game.sceneManager.environment.colliders.length; i++) {
-            var sceneMesh = game.sceneManager.environment.colliders[i];
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-                {trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh},
-                function () {
-                    game.controller.targetPoint = null;
-                    game.controller.ball.visibility = 0;
-                    game.controller.forward = false;
-                    self.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
-                    game.getScene().activeCamera.position = self.mesh.position;
-                }));
-        }
-
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-            parameter: game.sceneManager.environment.entrace
-        }, function () {
-            self.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-            return this;
-        }));
     }
 
     public removeFromWorld() {

@@ -25,18 +25,12 @@ class Simple extends Scene {
                 self.environment = new Environment(game, scene);
                 new Characters(game, scene);
                 new Items(game, scene);
+                game.client.connect(serverUrl);
+                game.controller.registerControls(scene);
 
-                document.addEventListener(Events.FACTORY_COMPLETE, function () {
-                    game.controller.registerControls(scene);
-                    game.client.connect(serverUrl);
-
-                    document.addEventListener(Events.PLAYER_CONNECTED, function () {
-                        let npc = new NPC.Warrior(game);
-                    });
+                document.addEventListener(Events.PLAYER_CONNECTED, function () {
+                    let npc = new NPC.Warrior(game);
                 });
-
-                document.dispatchEvent(game.events.factoryComplete);
-
 
             });
         });

@@ -5,6 +5,7 @@ namespace GUI {
 
         public guiMain: GUI.Main;
         public guiTexture: BABYLON.GUI.AdvancedDynamicTexture;
+        public opened: boolean;
 
         protected name: string;
         protected imageUrl: string;

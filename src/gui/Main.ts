@@ -3,23 +3,24 @@
 namespace GUI {
     export class Main {
 
-        public game:Game;
-        public player:Player;
+        public game: Game;
+        public player: Player;
         protected texture: BABYLON.GUI.AdvancedDynamicTexture;
 
         public inventory: GUI.Inventory;
-        public inventoryOpened: boolean;
         public attributes: GUI.Attributes;
-        public attributesOpened: boolean;
-        public quest: GUI.Attributes;
-        public questOpened: boolean;
+        public quest: GUI.Quest;
+        public playerBottomPanel: GUI.PlayerBottomPanel;
+        public characterTopHp: GUI.ShowHp;
 
         protected buttonpanel: BABYLON.GUI.StackPanel;
 
-        constructor(game:Game, player: Player) {
+        constructor(game: Game, player: Player) {
             this.game = game;
             this.player = player;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
+            this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
+            this.characterTopHp = new GUI.ShowHp();
 
             this.initInventory().initAttributes();
         }
@@ -43,8 +44,8 @@ namespace GUI {
             button.isPointerBlocker = true;
 
             buttonPanel.addControl(button);
-            button.onPointerUpObservable.add(function() {
-                if(!self.inventoryOpened) {
+            button.onPointerUpObservable.add(function () {
+                if (!self.inventory.opened) {
                     self.inventory.open();
                 }
             });
@@ -64,8 +65,8 @@ namespace GUI {
             button.color = "white";
             button.background = "black";
             this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function() {
-                if(!self.attributesOpened) {
+            button.onPointerUpObservable.add(function () {
+                if (!self.attributes.opened) {
                     self.attributes.open();
                 }
             });
@@ -82,11 +83,11 @@ namespace GUI {
          */
         public registerBlockMoveCharacter(control: BABYLON.GUI.Control) {
             let self = this;
-            control.onPointerEnterObservable.add(function() {
+            control.onPointerEnterObservable.add(function () {
                 self.game.sceneManager.environment.ground.isPickable = false;
             });
 
-            control.onPointerOutObservable.add(function() {
+            control.onPointerOutObservable.add(function () {
                 self.game.sceneManager.environment.ground.isPickable = true;
             });
 

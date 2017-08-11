@@ -15,32 +15,30 @@ namespace GUI {
 
         public open() {
             let self = this;
-            this.guiMain.questOpened = true;
+            this.opened = true;
             this.initTexture();
 
-            if (!this.buttonClose) {
-                this.guiTexture.addControl(this.container);
-                this.showText();
-                let buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
-                buttonClose.color = "white";
-                buttonClose.background = "black";
-                buttonClose.width = "70px;";
-                buttonClose.height = "40px";
-                buttonClose.horizontalAlignment = this.position;
-                buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            this.guiTexture.addControl(this.container);
+            this.showText();
+            let buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
+            buttonClose.color = "white";
+            buttonClose.background = "black";
+            buttonClose.width = "70px;";
+            buttonClose.height = "40px";
+            buttonClose.horizontalAlignment = this.position;
+            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
-                buttonClose.onPointerUpObservable.add(function() {
-                    self.close();
-                });
+            buttonClose.onPointerUpObservable.add(function() {
+                self.close();
+            });
 
-                this.guiMain.registerBlockMoveCharacter(buttonClose);
-                this.guiTexture.addControl(buttonClose);
-                this.buttonClose = buttonClose;
-            }
+            this.guiMain.registerBlockMoveCharacter(buttonClose);
+            this.guiTexture.addControl(buttonClose);
+            this.buttonClose = buttonClose;
         }
 
         public close() {
-            this.guiMain.questOpened = false;
+            this.opened = false;
             this.guiTexture.dispose();
             this.buttonClose = null;
             this.guiMain.game.sceneManager.environment.ground.isPickable = true;

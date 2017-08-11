@@ -22,6 +22,17 @@ class Mouse extends Controller {
                     self.ball.visibility = 0;
                 }
             }));
+
+            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+                parameter: self.game.player.mesh
+            }, function () {
+                if(!clickTrigger) {
+                    self.game.controller.forward = false;
+                    self.targetPoint = null;
+                    self.ball.visibility = 0;
+                }
+            }));
         });
 
         scene.onPointerUp = function (evt, pickResult) {
@@ -80,6 +91,8 @@ class Mouse extends Controller {
             }
         });
     }
+
+    protected
 
 
 }

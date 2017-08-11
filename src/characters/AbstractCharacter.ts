@@ -36,11 +36,6 @@ abstract class AbstractCharacter {
 
     public bloodParticles: BABYLON.ParticleSystem;
 
-    /** GUI */
-    public guiCharacterName: BABYLON.GUI.TextBlock;
-    public guiPanel: BABYLON.GUI.Slider;
-    public guiHp: BABYLON.GUI.Slider;
-
     constructor(name:string, game:Game) {
         this.name = name;
         this.game = game;

@@ -88,18 +88,45 @@ class Environment {
 
         let plane = scene.getMeshByName("Entrace_city");
         if (plane) {
+            this.entrace = plane;
             plane.visibility = 0;
             plane.isPickable = false;
             let smokeSystem = new Particles.Entrace(game, plane).particleSystem;
             smokeSystem.start();
-        }
-        this.entrace = plane;
+
+            document.addEventListener(Events.PLAYER_CONNECTED, function() {
+                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: plane
+                }, function () {
+                    game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+                    return this;
+                }));
+            });
+
+            }
 
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
 
             sceneMesh.freezeWorldMatrix();
         }
+
+
+        document.addEventListener(Events.PLAYER_CONNECTED, function() {
+            for (let i = 0; i < self.colliders.length; i++) {
+                let sceneMesh = self.colliders[i];
+                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+                    {trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh},
+                    function () {
+                        game.controller.targetPoint = null;
+                        game.controller.ball.visibility = 0;
+                        game.controller.forward = false;
+                        game.player.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
+                        game.getScene().activeCamera.position = game.player.mesh.position;
+                    }));
+            }
+        });
 
         // var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
 

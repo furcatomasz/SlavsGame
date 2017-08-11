@@ -39,31 +39,7 @@ abstract class Monster extends AbstractCharacter {
     }
 
     public createGUI() {
-        if (this.guiPanel) {
-            this.game.sceneManager.guiTexture.removeControl(this.guiPanel);
-        }
-
-        let monsterPanel = new BABYLON.GUI.StackPanel();
-        monsterPanel.width = "25%";
-        monsterPanel.top = 10;
-        monsterPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        this.guiPanel = monsterPanel;
-        this.game.sceneManager.guiTexture.addControl(monsterPanel);
-
-        let hpSlider = new BABYLON.GUI.Slider();
-        hpSlider.minimum = 0;
-        hpSlider.maximum = this.statistics.getHpMax();
-        hpSlider.value = this.statistics.getHp();
-        hpSlider.width = "100%";
-        hpSlider.height = "10px";
-        hpSlider.thumbWidth = 0;
-        hpSlider.barOffset = 0;
-        hpSlider.background = 'black';
-        hpSlider.color = "red";
-        hpSlider.borderColor = 'black';
-        this.guiHp = hpSlider;
-
-        monsterPanel.addControl(hpSlider);
+        this.game.gui.characterTopHp.showHpCharacter(this);
     }
 
     public emitPosition() {
@@ -122,10 +98,12 @@ abstract class Monster extends AbstractCharacter {
             // }
 
             this.game.player.bloodParticles.start();
-            let value = this.game.player.guiHp.value;
-            this.game.player.guiHp.value = (value - this.statistics.getDamage());
+            let guiHp = this.game.gui.playerBottomPanel.hpBar;
+            let value = guiHp.value;
 
-            if (this.game.player.guiHp.value - this.statistics.getDamage() < 0) {
+            guiHp.value = (value - this.statistics.getDamage());
+
+            if (guiHp.value - this.statistics.getDamage() < 0) {
                 alert('Padłeś');
                 window.location.reload();
             }

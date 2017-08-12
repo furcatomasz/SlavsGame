@@ -38,10 +38,6 @@ abstract class Monster extends AbstractCharacter {
         super(name, game);
     }
 
-    public createGUI() {
-        this.game.gui.characterTopHp.showHpCharacter(this);
-    }
-
     public emitPosition() {
         if (this.game.client.socket) {
             this.game.client.socket.emit('updateEnemy', {

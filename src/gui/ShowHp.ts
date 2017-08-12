@@ -1,5 +1,5 @@
 /// <reference path="../game.ts"/>
-/// <reference path="../game.ts"/>
+/// <reference path="../characters/AbstractCharacter.ts"/>
 
 namespace GUI {
     export class ShowHp {
@@ -12,7 +12,7 @@ namespace GUI {
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("characterShowHp");
         }
 
-        public showHpCharacter(character: Character) {
+        public showHpCharacter(character: AbstractCharacter) {
             if (this.guiPanel) {
                 this.texture.removeControl(this.guiPanel);
             }

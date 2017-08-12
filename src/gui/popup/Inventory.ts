@@ -3,16 +3,16 @@
 namespace GUI {
     export class Inventory extends Popup {
 
-        protected weaponImage: GUI.Inventory.EquipBlock;
-        protected shieldImage: GUI.Inventory.EquipBlock;
-        protected armorImage: GUI.Inventory.EquipBlock;
-        protected glovesImage: GUI.Inventory.EquipBlock;
-        protected bootsImage: GUI.Inventory.EquipBlock;
-        protected helmImage: GUI.Inventory.EquipBlock;
+        protected weaponImage:GUI.Inventory.EquipBlock;
+        protected shieldImage:GUI.Inventory.EquipBlock;
+        protected armorImage:GUI.Inventory.EquipBlock;
+        protected glovesImage:GUI.Inventory.EquipBlock;
+        protected bootsImage:GUI.Inventory.EquipBlock;
+        protected helmImage:GUI.Inventory.EquipBlock;
 
-        protected panelItems: BABYLON.GUI.Rectangle;
+        protected panelItems:BABYLON.GUI.Rectangle;
 
-        constructor(guiMain: GUI.Main) {
+        constructor(guiMain:GUI.Main) {
             super(guiMain);
             this.name = 'Inventory';
             this.imageUrl = "assets/gui/inventory.png";
@@ -68,7 +68,7 @@ namespace GUI {
             let self = this;
             let inventory = this.guiMain.player.inventory;
 
-            if(this.panelItems) {
+            if (this.panelItems) {
                 this.guiTexture.removeControl(this.panelItems);
             }
 
@@ -85,7 +85,7 @@ namespace GUI {
             panelItems.height = "45%";
             panelItems.top = "26%";
             panelItems.thickness = 0;
-            this.panelItems = panelItems; 
+            this.panelItems = panelItems;
 
             for (let i = 0; i < inventory.items.length; i++) {
 
@@ -99,7 +99,7 @@ namespace GUI {
                     }
                 }
 
-                if(breakDisplayItem) {
+                if (breakDisplayItem) {
                     continue;
                 }
 
@@ -137,7 +137,7 @@ namespace GUI {
                     self.guiMain.game.player.inventory.mount(item);
                     self.onPointerUpItemImage(item);
                     self.showItems();
-                    if(self.guiMain.attributesOpened) {
+                    if (self.guiMain.attributesOpened) {
                         self.guiMain.attributes.refreshPopup();
                     }
                 });
@@ -166,7 +166,7 @@ namespace GUI {
          * @param item
          * @returns {GUI.Inventory}
          */
-        protected onPointerUpItemImage(item: Items.Item) {
+        protected onPointerUpItemImage(item:Items.Item) {
             switch (item.getType()) {
                 case Items.Weapon.TYPE:
                     if (this.weaponImage.block) {
@@ -219,7 +219,7 @@ namespace GUI {
          * @param item
          * @returns {BABYLON.GUI.Image}
          */
-        public createItemImage(item: Items.Item) {
+        public createItemImage(item:Items.Item) {
             let image = new BABYLON.GUI.Image('gui.popup.image.' + item.name, 'assets/Miniatures/' + item.image + '.png');
             image.height = 0.6;
 
@@ -231,3 +231,4 @@ namespace GUI {
 
 
     }
+}

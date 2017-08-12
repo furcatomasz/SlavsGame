@@ -1,5 +1,5 @@
 class Events {
-    static readonly PLAYER_CONNECTED = 'playerConnected';
+    static PLAYER_CONNECTED = 'playerConnected';
 
     public playerConnected: Event;
 

@@ -12,9 +12,9 @@ var Events = (function () {
     function Events() {
         this.playerConnected = new Event(Events.PLAYER_CONNECTED);
     }
-    Events.PLAYER_CONNECTED = 'playerConnected';
     return Events;
 }());
+Events.PLAYER_CONNECTED = 'playerConnected';
 /// <reference path="../game.ts"/>
 var Controller = (function () {
     function Controller(game) {
@@ -78,17 +78,6 @@ var Scene = (function () {
     }
     Scene.prototype.setDefaults = function (game) {
         this.game = game;
-        this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
-        return this;
-    };
-    Scene.prototype.setShadowGenerator = function (light) {
-        this.shadowGenerator = new BABYLON.ShadowGenerator(4096, light);
-        this.shadowGenerator.bias = -0.0000001;
-        this.shadowGenerator.setDarkness(0.5);
-        //this.shadowGenerator.forceBackFacesOnly = true;
-        //this.shadowGenerator.usePoissonSampling = true;
-        //this.shadowGenerator.useExponentialShadowMap = true;
-        //this.shadowGenerator.useBlurExponentialShadowMap = true;
         return this;
     };
     Scene.prototype.setCamera = function (scene) {
@@ -113,12 +102,12 @@ var Scene = (function () {
     Scene.prototype.optimizeScene = function (scene) {
         scene.collisionsEnabled = false;
         scene.fogEnabled = false;
-        scene.shadowsEnabled = false;
+        //scene.shadowsEnabled = false;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        scene.renderTargetsEnabled = false;
+        //scene.renderTargetsEnabled = false;
         return this;
     };
     return Scene;
@@ -155,11 +144,11 @@ var Environment = (function () {
         this.colliders = [];
         ////LIGHT
         var light = game.getScene().lights[0];
-        light.intensity = 0;
+        light.intensity = 1;
         var keys = [];
         keys.push({
             frame: 0,
-            value: 0
+            value: 0.75
         });
         keys.push({
             frame: 30,
@@ -167,19 +156,27 @@ var Environment = (function () {
         });
         keys.push({
             frame: 60,
-            value: 0
+            value: 0.75
         });
         var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 1, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
         animationBox.setKeys(keys);
         light.animations = [];
         light.animations.push(animationBox);
         game.getScene().beginAnimation(light, 0, 60, true);
+        var shadowGenerator = new BABYLON.ShadowGenerator(512, light);
+        //shadowGenerator.bias = -0.0000001;
+        //shadowGenerator.setDarkness(0.5);
+        shadowGenerator.useCloseExponentialShadowMap = true;
+        shadowGenerator.useBlurCloseExponentialShadowMap = true;
+        this.shadowGenerator = shadowGenerator;
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
             if (meshName.search("Forest_ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
+                sceneMesh.receiveShadows = true;
+                continue;
             }
             else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;
@@ -189,6 +186,7 @@ var Environment = (function () {
             else if (meshName.search("Fance") >= 0) {
                 this.colliders.push(sceneMesh);
             }
+            shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
         for (var i = 0; i < this.trees.length; i++) {
             var meshTree = this.trees[i];
@@ -248,6 +246,7 @@ var Environment = (function () {
 }());
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
+/// <reference path="../Events.ts"/>
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
@@ -386,14 +385,14 @@ var AbstractCharacter = (function () {
     ;
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
-    AbstractCharacter.WALK_SPEED = 0.25;
-    AbstractCharacter.ROTATION_SPEED = 0.05;
-    AbstractCharacter.ANIMATION_WALK = 'Run';
-    AbstractCharacter.ANIMATION_STAND = 'stand';
-    AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    AbstractCharacter.ANIMATION_ATTACK = 'Attack';
     return AbstractCharacter;
 }());
+AbstractCharacter.WALK_SPEED = 0.25;
+AbstractCharacter.ROTATION_SPEED = 0.05;
+AbstractCharacter.ANIMATION_WALK = 'Run';
+AbstractCharacter.ANIMATION_STAND = 'stand';
+AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+AbstractCharacter.ANIMATION_ATTACK = 'Attack';
 /// <reference path="../AbstractCharacter.ts"/>
 var Monster = (function (_super) {
     __extends(Monster, _super);
@@ -423,9 +422,6 @@ var Monster = (function (_super) {
         _this = _super.call(this, name, game) || this;
         return _this;
     }
-    Monster.prototype.createGUI = function () {
-        this.game.gui.characterTopHp.showHpCharacter(this);
-    };
     Monster.prototype.emitPosition = function () {
         if (this.game.client.socket) {
             this.game.client.socket.emit('updateEnemy', {
@@ -825,38 +821,8 @@ var Player = (function (_super) {
             playerLight.intensity = 1;
             playerLight.range = 40;
             playerLight.parent = _this.mesh;
+            _this.playerLight = playerLight;
             game.getScene().lights.push(playerLight);
-            var characterBottomPanel = new BABYLON.GUI.StackPanel();
-            characterBottomPanel.width = "50%";
-            characterBottomPanel.top = -10;
-            characterBottomPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            game.sceneManager.guiTexture.addControl(characterBottomPanel);
-            _this.guiPanel = characterBottomPanel;
-            var hpSlider = new BABYLON.GUI.Slider();
-            hpSlider.minimum = 0;
-            hpSlider.maximum = 100;
-            hpSlider.value = 90;
-            hpSlider.width = "100%";
-            hpSlider.height = "10px";
-            hpSlider.thumbWidth = 0;
-            hpSlider.barOffset = 0;
-            hpSlider.background = 'black';
-            hpSlider.color = "red";
-            hpSlider.borderColor = 'black';
-            _this.guiHp = hpSlider;
-            var expSlider = new BABYLON.GUI.Slider();
-            expSlider.minimum = 0;
-            expSlider.maximum = 100;
-            expSlider.value = 5;
-            expSlider.width = "100%";
-            expSlider.height = "10px";
-            expSlider.thumbWidth = 0;
-            expSlider.barOffset = 0;
-            expSlider.background = 'black';
-            expSlider.color = "blue";
-            expSlider.borderColor = 'black';
-            characterBottomPanel.addControl(hpSlider);
-            characterBottomPanel.addControl(expSlider);
             game.gui = new GUI.Main(game, _this);
             var attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
                 width: 4,
@@ -922,7 +888,7 @@ var Player = (function (_super) {
                             animationEnemty_1.sfxHit.setVolume(2);
                             animationEnemty_1.sfxHit.play();
                         }
-                        animationEnemty_1.createGUI();
+                        this.game.gui.characterTopHp.showHpCharacter(animationEnemty_1);
                         animationEnemty_1.bloodParticles.start();
                         var newValue = animationEnemty_1.statistics.getHp() - self.statistics.getDamage();
                         animationEnemty_1.statistics.hp = (newValue);
@@ -946,7 +912,6 @@ var Player = (function (_super) {
         this.mesh.dispose();
         //this.items.weapon.mesh.dispose();
         //this.items.shield.mesh.dispose();
-        this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
     };
     Player.prototype.registerFunctionAfterRender = function () {
         var self = this;
@@ -1150,14 +1115,13 @@ var GUI;
     var PlayerBottomPanel = (function () {
         function PlayerBottomPanel(game) {
             var self = this;
-            console.log(1);
             document.addEventListener(Events.PLAYER_CONNECTED, function () {
                 self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
                 var characterBottomPanel = new BABYLON.GUI.StackPanel();
                 characterBottomPanel.width = "50%";
                 characterBottomPanel.top = -10;
                 characterBottomPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                game.sceneManager.guiTexture.addControl(characterBottomPanel);
+                self.texture.addControl(characterBottomPanel);
                 self.guiPanel = characterBottomPanel;
                 var hpSlider = new BABYLON.GUI.Slider();
                 hpSlider.minimum = 0;
@@ -1192,7 +1156,7 @@ var GUI;
     GUI.PlayerBottomPanel = PlayerBottomPanel;
 })(GUI || (GUI = {}));
 /// <reference path="../game.ts"/>
-/// <reference path="../game.ts"/>
+/// <reference path="../characters/AbstractCharacter.ts"/>
 var GUI;
 (function (GUI) {
     var ShowHp = (function () {
@@ -1720,9 +1684,9 @@ var Items;
         function Item(game) {
             this.game = game;
         }
-        Item.TYPE = 0;
         return Item;
     }());
+    Item.TYPE = 0;
     Items.Item = Item;
 })(Items || (Items = {}));
 /// <reference path="../../game.ts"/>
@@ -1825,11 +1789,8 @@ var NPC;
         }
         AbstractNpc.prototype.removeFromWorld = function () {
             this.mesh.dispose();
-            this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
         };
         AbstractNpc.prototype.registerFunctionAfterRender = function () {
-        };
-        AbstractNpc.prototype.createGUI = function () {
         };
         AbstractNpc.prototype.createTooltip = function () {
             console.log(this);
@@ -2400,9 +2361,9 @@ var Items;
         Armor.prototype.getType = function () {
             return Items.Armor.TYPE;
         };
-        Armor.TYPE = 6;
         return Armor;
     }(Items.Item));
+    Armor.TYPE = 6;
     Items.Armor = Armor;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2441,9 +2402,9 @@ var Items;
         Boots.prototype.getType = function () {
             return Items.Boots.TYPE;
         };
-        Boots.TYPE = 5;
         return Boots;
     }(Items.Item));
+    Boots.TYPE = 5;
     Items.Boots = Boots;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2482,9 +2443,9 @@ var Items;
         Gloves.prototype.getType = function () {
             return Items.Gloves.TYPE;
         };
-        Gloves.TYPE = 4;
         return Gloves;
     }(Items.Item));
+    Gloves.TYPE = 4;
     Items.Gloves = Gloves;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2523,9 +2484,9 @@ var Items;
         Helm.prototype.getType = function () {
             return Items.Helm.TYPE;
         };
-        Helm.TYPE = 3;
         return Helm;
     }(Items.Item));
+    Helm.TYPE = 3;
     Items.Helm = Helm;
 })(Items || (Items = {}));
 /// <reference path="Helm.ts"/>
@@ -2564,9 +2525,9 @@ var Items;
         Shield.prototype.getType = function () {
             return Items.Shield.TYPE;
         };
-        Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
+    Shield.TYPE = 2;
     Items.Shield = Shield;
 })(Items || (Items = {}));
 /// <reference path="Shield.ts"/>
@@ -2630,9 +2591,9 @@ var Items;
         Weapon.prototype.getType = function () {
             return Items.Weapon.TYPE;
         };
-        Weapon.TYPE = 1;
         return Weapon;
     }(Items.Item));
+    Weapon.TYPE = 1;
     Items.Weapon = Weapon;
 })(Items || (Items = {}));
 /// <reference path="Weapon.ts"/>

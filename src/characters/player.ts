@@ -3,9 +3,9 @@
 
 class Player extends AbstractCharacter {
 
-    public guiExp: BABYLON.GUI.Slider;
     public walkSmoke: BABYLON.ParticleSystem;
     public inventory: Character.Inventory;
+    public playerLight: BABYLON.PointLight;
 
     public constructor(game:Game, id, name, registerMoving: boolean) {
         this.id = id;
@@ -37,42 +37,8 @@ class Player extends AbstractCharacter {
             playerLight.intensity = 1;
             playerLight.range = 40;
             playerLight.parent = this.mesh;
+            this.playerLight = playerLight;
             game.getScene().lights.push(playerLight);
-
-            let characterBottomPanel = new BABYLON.GUI.StackPanel();
-            characterBottomPanel.width = "50%";
-            characterBottomPanel.top = -10;
-            characterBottomPanel.verticalAlignment = 	BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            game.sceneManager.guiTexture.addControl(characterBottomPanel);
-            this.guiPanel = characterBottomPanel;
-
-            let hpSlider = new BABYLON.GUI.Slider();
-            hpSlider.minimum = 0;
-            hpSlider.maximum = 100;
-            hpSlider.value = 90;
-            hpSlider.width = "100%";
-            hpSlider.height = "10px";
-            hpSlider.thumbWidth = 0;
-            hpSlider.barOffset = 0;
-            hpSlider.background = 'black';
-            hpSlider.color = "red";
-            hpSlider.borderColor = 'black';
-            this.guiHp = hpSlider;
-
-            let expSlider = new BABYLON.GUI.Slider();
-            expSlider.minimum = 0;
-            expSlider.maximum = 100;
-            expSlider.value = 5;
-            expSlider.width = "100%";
-            expSlider.height = "10px";
-            expSlider.thumbWidth = 0;
-            expSlider.barOffset = 0;
-            expSlider.background = 'black';
-            expSlider.color = "blue";
-            expSlider.borderColor = 'black';
-
-            characterBottomPanel.addControl(hpSlider);
-            characterBottomPanel.addControl(expSlider);
 
             game.gui = new GUI.Main(game, this);
 
@@ -151,8 +117,7 @@ class Player extends AbstractCharacter {
                             animationEnemty.sfxHit.setVolume(2);
                             animationEnemty.sfxHit.play();
                         }
-
-                        animationEnemty.createGUI();
+                        this.game.gui.characterTopHp.showHpCharacter(animationEnemty);
                         animationEnemty.bloodParticles.start();
                         let newValue = animationEnemty.statistics.getHp() - self.statistics.getDamage();
                         animationEnemty.statistics.hp = (newValue);
@@ -174,7 +139,6 @@ class Player extends AbstractCharacter {
         this.mesh.dispose();
         //this.items.weapon.mesh.dispose();
         //this.items.shield.mesh.dispose();
-        this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
 
     }
 

@@ -17,7 +17,7 @@ namespace NPC {
                 'scaling',
                 new BABYLON.Vector3(2,2,2),
                 300
-            );
+            ));
 
             this.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(
                 BABYLON.ActionManager.OnPointerOutTrigger,
@@ -25,7 +25,7 @@ namespace NPC {
                 'scaling',
                 new BABYLON.Vector3(1,1,1),
                 300
-            );
+            ));
 
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger,
@@ -40,14 +40,10 @@ namespace NPC {
 
         public removeFromWorld() {
             this.mesh.dispose();
-            this.game.sceneManager.guiTexture.removeControl(this.guiCharacterName);
         }
 
 
         protected registerFunctionAfterRender() {
-        }
-
-        protected createGUI() {
         }
 
         public createTooltip() {

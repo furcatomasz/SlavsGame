@@ -1,5 +1,6 @@
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
+/// <reference path="../Events.ts"/>
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
@@ -30,6 +31,7 @@ class Simple extends Scene {
 
                 document.addEventListener(Events.PLAYER_CONNECTED, function () {
                     let npc = new NPC.Warrior(game);
+
                 });
 
             });

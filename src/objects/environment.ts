@@ -7,6 +7,7 @@ class Environment {
     colliders: Array<BABYLON.AbstractMesh>;
     entrace: BABYLON.AbstractMesh;
     ground: BABYLON.AbstractMesh;
+    shadowGenerator: BABYLON.ShadowGenerator;
 
     constructor(game:Game, scene: BABYLON.Scene) {
         let self = this;
@@ -16,12 +17,12 @@ class Environment {
 
         ////LIGHT
         let light = game.getScene().lights[0];
-        light.intensity = 0;
+        light.intensity = 1;
 
         var keys = [];
         keys.push({
             frame: 0,
-            value: 0
+            value: 0.75
         });
 
         keys.push({
@@ -31,7 +32,7 @@ class Environment {
 
         keys.push({
             frame: 60,
-            value: 0
+            value: 0.75
         });
 
         var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 1,
@@ -42,6 +43,12 @@ class Environment {
         light.animations = [];
         light.animations.push(animationBox);
         game.getScene().beginAnimation(light, 0, 60, true);
+        let shadowGenerator = new BABYLON.ShadowGenerator(512, light);
+        //shadowGenerator.bias = -0.0000001;
+        //shadowGenerator.setDarkness(0.5);
+        shadowGenerator.useCloseExponentialShadowMap = true;
+        shadowGenerator.useBlurCloseExponentialShadowMap = true;
+        this.shadowGenerator = shadowGenerator;
 
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
@@ -50,6 +57,9 @@ class Environment {
             if (meshName.search("Forest_ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
+                sceneMesh.receiveShadows = true;
+
+                continue;
             } else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;
                 this.trees.push(sceneMesh);
@@ -57,6 +67,8 @@ class Environment {
             } else if (meshName.search("Fance") >= 0) {
                 this.colliders.push(sceneMesh);
             }
+
+            shadowGenerator.getShadowMap().renderList.push(sceneMesh);
 
         }
 
@@ -108,7 +120,6 @@ class Environment {
 
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
-
             sceneMesh.freezeWorldMatrix();
         }
 

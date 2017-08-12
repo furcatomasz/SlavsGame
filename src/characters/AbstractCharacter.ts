@@ -155,8 +155,6 @@ abstract class AbstractCharacter {
 
     abstract registerFunctionAfterRender();
 
-    abstract createGUI();
-
     /** Events */
     protected onHitStart() {};
     protected onHitEnd() {};

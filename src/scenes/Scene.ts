@@ -13,19 +13,6 @@ abstract class Scene {
 
     protected setDefaults(game: Game) {
         this.game = game;
-        this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
-
-        return this;
-    }
-
-    public setShadowGenerator(light: BABYLON.IShadowLight) {
-        this.shadowGenerator = new BABYLON.ShadowGenerator(4096, light);
-        this.shadowGenerator.bias = -0.0000001;
-        this.shadowGenerator.setDarkness(0.5);
-        //this.shadowGenerator.forceBackFacesOnly = true;
-        //this.shadowGenerator.usePoissonSampling = true;
-        //this.shadowGenerator.useExponentialShadowMap = true;
-        //this.shadowGenerator.useBlurExponentialShadowMap = true;
 
         return this;
     }
@@ -54,12 +41,12 @@ abstract class Scene {
     public optimizeScene(scene: BABYLON.Scene) {
         scene.collisionsEnabled = false;
         scene.fogEnabled = false;
-        scene.shadowsEnabled = false;
+        //scene.shadowsEnabled = false;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        scene.renderTargetsEnabled = false;
+        //scene.renderTargetsEnabled = false;
         return this;
     }
     }

@@ -10,7 +10,6 @@ namespace GUI {
 
         constructor(game: Game) {
             let self = this;
-            console.log(1);
             document.addEventListener(Events.PLAYER_CONNECTED, function () {
                 self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
 
@@ -18,7 +17,7 @@ namespace GUI {
                 characterBottomPanel.width = "50%";
                 characterBottomPanel.top = -10;
                 characterBottomPanel.verticalAlignment = 	BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                game.sceneManager.guiTexture.addControl(characterBottomPanel);
+                self.texture.addControl(characterBottomPanel);
                 self.guiPanel = characterBottomPanel;
 
                 let hpSlider = new BABYLON.GUI.Slider();

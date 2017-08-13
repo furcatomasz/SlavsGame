@@ -25,6 +25,7 @@ class Simple extends Scene {
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
                 game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
+                game.factories['worm'] = new Factories.Worms(game, scene, assetsManager).initFactory();
                 assetsManager.onFinish = function (tasks) {
                     game.client.connect(serverUrl);
                     game.controller.registerControls(scene);

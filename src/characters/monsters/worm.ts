@@ -5,7 +5,7 @@ class Worm extends Monster {
 
     constructor(serverKey: number, name:string, game:Game, position: BABYLON.Vector3, rotationQuaternion: BABYLON.Quaternion) {
 
-        let mesh = game.characters['worm'].instance('Worm', true);
+        let mesh = game.factories['worm'].createInstance('Worm', true);
 
         mesh.visibility = true;
         mesh.position = position;
@@ -17,7 +17,7 @@ class Worm extends Monster {
         this.attackAreaSize = 6;
 
         //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        this.sfxHit = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
+        this.sfxHit = new BABYLON.Sound("WormWalk", "/assets/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
         super(name, game);
     }
 

@@ -14,7 +14,7 @@ class SocketIOClient {
         this.socket = io.connect(socketUrl, {player: this.game.player});
 
         this.playerConnected();
-        //this.showEnemies();
+        this.showEnemies();
     }
 
     /**

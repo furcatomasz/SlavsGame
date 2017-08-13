@@ -673,6 +673,7 @@ var Player = (function (_super) {
         var mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
         game.getScene().activeCamera.position = mesh.position;
+        mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         _this.mesh = mesh;
         _this.game = game;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
@@ -1151,14 +1152,14 @@ var EnvironmentSelectCharacter = (function () {
             smokeSystem.start();
             var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
-            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-            sfxFireplace.attachToMesh(cone);
+            //var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            //sfxFireplace.attachToMesh(cone);
         }
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             sceneMesh.freezeWorldMatrix();
         }
-        var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
+        //var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
     }
     return EnvironmentSelectCharacter;
 }());
@@ -2013,6 +2014,7 @@ var SelectCharacter;
             var _this = this;
             _this.name = 'Warrior';
             var mesh = game.factories['character'].createInstance('Warrior', true);
+            mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
             mesh.position = new BABYLON.Vector3(-3, 0.1, 11);
             _this.mesh = mesh;
             _this.inventory = new Character.Inventory(game, _this);

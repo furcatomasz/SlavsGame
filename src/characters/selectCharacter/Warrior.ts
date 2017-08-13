@@ -9,6 +9,8 @@ namespace SelectCharacter {
             this.name = 'Warrior';
 
             let mesh = game.factories['character'].createInstance('Warrior', true);
+            mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
+
             mesh.position = new BABYLON.Vector3(-3, 0.1, 11);
             this.mesh = mesh;
 

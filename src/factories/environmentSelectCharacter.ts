@@ -88,8 +88,8 @@ class EnvironmentSelectCharacter {
             let fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
 
-             var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-             sfxFireplace.attachToMesh(cone);
+             //var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+             //sfxFireplace.attachToMesh(cone);
         }
 
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -97,7 +97,7 @@ class EnvironmentSelectCharacter {
             sceneMesh.freezeWorldMatrix();
         }
 
-         var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
+         //var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
 
     }
 }

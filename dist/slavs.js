@@ -350,8 +350,8 @@ var Monster = (function (_super) {
             var value = guiHp.value;
             guiHp.value = (value - this.statistics.getDamage());
             if (guiHp.value - this.statistics.getDamage() < 0) {
-                alert('Padłeś');
-                window.location.reload();
+                this.game.getScene().stopAnimation(this.game.player.mesh.skeleton);
+                this.game.player.mesh.skeleton.beginAnimation('death');
             }
         }
     };
@@ -500,7 +500,7 @@ var Game = (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new SelectCharacter().initScene(this);
+        new Simple().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -681,13 +681,23 @@ var Player = (function (_super) {
         _this.createItems();
         if (_this.isControllable) {
             _this.mesh.isPickable = false;
-            var playerLight = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 12, 0), game.getScene());
-            playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
-            //playerLight.specular = new BABYLON.Color3(1, 1, 1);
-            playerLight.intensity = 1;
-            playerLight.range = 40;
+            //let playerLight = new BABYLON.PointLight("playerLightSpot", new BABYLON.Vector3(0, 5, 0), game.getScene());
+            var playerLight = new BABYLON.SpotLight("playerLightSpot", new BABYLON.Vector3(0, 25, 0), new BABYLON.Vector3(0, -1, 0), null, null, game.getScene());
+            playerLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+            playerLight.angle = 2;
+            playerLight.exponent = 15;
+            playerLight.intensity = 0.8;
             playerLight.parent = _this.mesh;
             _this.playerLight = playerLight;
+            //
+            //var playerLightPoint = new BABYLON.PointLight("pointLighPLayer",
+            //    new BABYLON.Vector3(0, 1, 0),
+            //    game.getScene());
+            //playerLightPoint.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+            //playerLightPoint.intensity = 0.3;
+            //playerLightPoint.parent = this.mesh;
+            //
+            //this.playerLight = playerLightPoint;
             game.getScene().lights.push(playerLight);
             game.gui = new GUI.Main(game, _this);
             var attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
@@ -985,40 +995,18 @@ var Environment = (function () {
         this.trees = [];
         this.bushes = [];
         this.colliders = [];
-        ////LIGHT
+        //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
         var light = game.getScene().lights[0];
-        light.intensity = 1;
-        var keys = [];
-        keys.push({
-            frame: 0,
-            value: 0.75
-        });
-        keys.push({
-            frame: 30,
-            value: 1
-        });
-        keys.push({
-            frame: 60,
-            value: 0.75
-        });
-        var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 1, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
-        animationBox.setKeys(keys);
-        light.animations = [];
-        light.animations.push(animationBox);
-        game.getScene().beginAnimation(light, 0, 60, true);
-        var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
-        //shadowGenerator.bias = -0.0000001;
-        //shadowGenerator.setDarkness(0.5);
-        //shadowGenerator.useCloseExponentialShadowMap = true;
-        //shadowGenerator.useBlurCloseExponentialShadowMap = true;
-        this.shadowGenerator = shadowGenerator;
+        light.intensity = 0;
+        //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+        //this.shadowGenerator = shadowGenerator;
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
             if (meshName.search("Forest_ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
-                sceneMesh.receiveShadows = true;
+                //sceneMesh.receiveShadows = true;
                 continue;
             }
             else if (meshName.search("Spruce") >= 0) {
@@ -1029,7 +1017,7 @@ var Environment = (function () {
             else if (meshName.search("Fance") >= 0) {
                 this.colliders.push(sceneMesh);
             }
-            shadowGenerator.getShadowMap().renderList.push(sceneMesh);
+            //shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
         for (var i = 0; i < this.trees.length; i++) {
             var meshTree = this.trees[i];
@@ -1043,6 +1031,10 @@ var Environment = (function () {
         }
         var cone = scene.getMeshByName("Fireplace");
         if (cone) {
+            var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 3, 0), scene);
+            fireplaceLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+            fireplaceLight.parent = cone;
+            fireplaceLight.range = 140;
             var smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
             smokeSystem.start();
             var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
@@ -1085,6 +1077,29 @@ var Environment = (function () {
         });
         // var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
     }
+    Environment.prototype.enableDayAndNight = function (game, light) {
+        light.intensity = 1;
+        var keys = [];
+        keys.push({
+            frame: 0,
+            value: 0.75
+        });
+        keys.push({
+            frame: 30,
+            value: 1
+        });
+        keys.push({
+            frame: 60,
+            value: 0.75
+        });
+        var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 1, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+        animationBox.setKeys(keys);
+        light.animations = [];
+        light.animations.push(animationBox);
+        game.getScene().beginAnimation(light, 0, 60, true);
+        return light;
+    };
+    ;
     return Environment;
 }());
 /// <reference path="../game.ts"/>
@@ -1094,7 +1109,7 @@ var EnvironmentSelectCharacter = (function () {
         ////LIGHT
         var light = game.getScene().lights[0];
         light.intensity = 0;
-        var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(1, 2, 1), scene);
+        var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 3, 0), scene);
         fireplaceLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
         //fireplaceLight.specular = new BABYLON.Color3(1, 1, 1);
         //
@@ -2629,46 +2644,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Boots = (function (_super) {
-        __extends(Boots, _super);
-        function Boots(game) {
-            return _super.call(this, game) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
-        };
-        return Boots;
-    }(Items.Item));
-    Boots.TYPE = 5;
-    Items.Boots = Boots;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots;
-    (function (Boots) {
-        var PrimaryBoots = (function (_super) {
-            __extends(PrimaryBoots, _super);
-            function PrimaryBoots(game) {
-                var _this = _super.call(this, game) || this;
-                _this.name = 'Boots';
-                _this.image = 'Boots';
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Boots');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            return PrimaryBoots;
-        }(Boots));
-        Boots.PrimaryBoots = PrimaryBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Gloves = (function (_super) {
         __extends(Gloves, _super);
         function Gloves(game) {
@@ -2705,6 +2680,46 @@ var Items;
         }(Gloves));
         Gloves.PrimaryGloves = PrimaryGloves;
     })(Gloves = Items.Gloves || (Items.Gloves = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots = (function (_super) {
+        __extends(Boots, _super);
+        function Boots(game) {
+            return _super.call(this, game) || this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        return Boots;
+    }(Items.Item));
+    Boots.TYPE = 5;
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var PrimaryBoots = (function (_super) {
+            __extends(PrimaryBoots, _super);
+            function PrimaryBoots(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Boots';
+                _this.image = 'Boots';
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.mesh = game.factories['character'].createInstance('Boots');
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            return PrimaryBoots;
+        }(Boots));
+        Boots.PrimaryBoots = PrimaryBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

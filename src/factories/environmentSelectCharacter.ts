@@ -10,7 +10,7 @@ class EnvironmentSelectCharacter {
         ////LIGHT
         let light = game.getScene().lights[0];
         light.intensity = 0;
-        var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(1, 2, 1), scene);
+        var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 3, 0), scene);
         fireplaceLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
         //fireplaceLight.specular = new BABYLON.Color3(1, 1, 1);
 

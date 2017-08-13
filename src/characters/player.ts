@@ -21,7 +21,6 @@ class Player extends AbstractCharacter {
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
         game.getScene().activeCamera.position = mesh.position;
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
-
         this.mesh = mesh;
         this.game = game;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
@@ -32,13 +31,28 @@ class Player extends AbstractCharacter {
         if(this.isControllable) {
             this.mesh.isPickable = false;
 
-            let playerLight = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 12, 0), game.getScene());
-            playerLight.diffuse = new BABYLON.Color3(1, 1, 1);
-            //playerLight.specular = new BABYLON.Color3(1, 1, 1);
-            playerLight.intensity = 1;
-            playerLight.range = 40;
+            //let playerLight = new BABYLON.PointLight("playerLightSpot", new BABYLON.Vector3(0, 5, 0), game.getScene());
+            var playerLight = new BABYLON.SpotLight("playerLightSpot",
+                new BABYLON.Vector3(0, 25, 0),
+                new BABYLON.Vector3(0, -1, 0),
+                null,
+                null,
+                game.getScene());
+            playerLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+            playerLight.angle = 2;
+            playerLight.exponent = 15;
+            playerLight.intensity = 0.8;
             playerLight.parent = this.mesh;
             this.playerLight = playerLight;
+            //
+            //var playerLightPoint = new BABYLON.PointLight("pointLighPLayer",
+            //    new BABYLON.Vector3(0, 1, 0),
+            //    game.getScene());
+            //playerLightPoint.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+            //playerLightPoint.intensity = 0.3;
+            //playerLightPoint.parent = this.mesh;
+            //
+            //this.playerLight = playerLightPoint;
             game.getScene().lights.push(playerLight);
 
             game.gui = new GUI.Main(game, this);

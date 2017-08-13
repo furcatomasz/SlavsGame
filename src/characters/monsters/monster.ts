@@ -100,8 +100,8 @@ abstract class Monster extends AbstractCharacter {
             guiHp.value = (value - this.statistics.getDamage());
 
             if (guiHp.value - this.statistics.getDamage() < 0) {
-                alert('Padłeś');
-                window.location.reload();
+                this.game.getScene().stopAnimation(this.game.player.mesh.skeleton);
+                this.game.player.mesh.skeleton.beginAnimation('death');
             }
         }
 

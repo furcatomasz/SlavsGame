@@ -7,7 +7,7 @@ class SelectCharacter extends Scene {
     initScene(game:Game) {
         let self = this;
 
-        BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
+        BABYLON.SceneLoader.Load("assets/scenes/Select_Map/", "Select_Map.babylon", game.engine, function (scene) {
             game.sceneManager = self;
             self
                 .setDefaults(game)

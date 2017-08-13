@@ -8,9 +8,8 @@ namespace Items.Gloves {
 
             this.name = 'Gloves';
             this.image = 'Gloves';
-            this.mountType = 2;
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-            this.mesh = this.game.characters.player.instance('Gloves', false);
+            this.mesh = game.factories['character'].createInstance('Gloves');
             this.mesh.visibility = 0;
         }
     }

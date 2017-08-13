@@ -17,10 +17,10 @@ class Player extends AbstractCharacter {
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
         this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
 
-        let mesh = game.characters['player'].instance('Warrior', true);
+        let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
         game.getScene().activeCamera.position = mesh.position;
-console.log(mesh);
+
         this.mesh = mesh;
         this.game = game;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;

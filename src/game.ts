@@ -16,8 +16,7 @@ class Game {
     /**
      * Invisible meshes
      */
-    public items;
-    public characters;
+    public factories: Array<Factories.AbstractFactory>;
 
     /**
      * Dynamic Collections
@@ -41,8 +40,7 @@ class Game {
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.controller = new Mouse(this);
         this.client = new SocketIOClient(this);
-        this.items = [];
-        this.characters = [];
+        this.factories = [];
         this.enemies = [];
         this.scenes = [];
         this.activeScene = null;

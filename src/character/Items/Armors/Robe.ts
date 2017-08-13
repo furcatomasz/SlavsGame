@@ -8,9 +8,8 @@ namespace Items.Armors {
 
             this.name = 'Robe';
             this.image = 'Armor';
-            this.mountType = 2;
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-            this.mesh = this.game.characters.player.instance('Warrior.001', false);
+            this.mesh = game.factories['character'].createInstance('Warrior.001');
             this.mesh.visibility = 0;
         }
     }

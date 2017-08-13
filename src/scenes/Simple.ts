@@ -18,22 +18,24 @@ class Simple extends Scene {
                 .optimizeScene(scene)
                 .setCamera(scene);
 
-             scene.debugLayer.show();
+            scene.debugLayer.show();
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
-
+            var assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
-                new Characters(game, scene);
-                game.client.connect(serverUrl);
-                game.controller.registerControls(scene);
-
+                game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
+                assetsManager.onFinish = function (tasks) {
+                    game.client.connect(serverUrl);
+                    game.controller.registerControls(scene);
+                }
+                assetsManager.load();
                 document.addEventListener(Events.PLAYER_CONNECTED, function () {
                     //let npc = new NPC.Warrior(game);
-
                 });
 
             });
+
         });
 
 

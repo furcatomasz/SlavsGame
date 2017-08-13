@@ -47,9 +47,5 @@ declare module Warrior{
         constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Shield);
     }
 
-    class Warrior_001 extends QI.Mesh {
-        constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Warrior_001);
-    }
-
     export function freshenShadowRenderLists(scene : BABYLON.Scene) : void;
 }

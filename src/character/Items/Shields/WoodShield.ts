@@ -8,10 +8,8 @@ namespace Items.Shields {
 
             this.name = 'Wood Shield';
             this.image = 'Shield';
-            this.mountType = 1;
-            this.mountBoneName = 'shield.bone';
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-            this.mesh = this.game.characters.player.instance('Shield', false);
+            this.mesh = game.factories['character'].createInstance('Shield');
             this.mesh.visibility = 0;
         }
     }

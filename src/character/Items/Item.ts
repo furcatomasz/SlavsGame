@@ -1,4 +1,3 @@
-/// <reference path="../game.ts"/>
 namespace Items {
     export abstract class Item {
         static readonly TYPE = 0;
@@ -7,8 +6,6 @@ namespace Items {
         public mesh:BABYLON.Mesh;
 
         /** Values */
-        public mountType: number;
-        public mountBoneName: string;
         public name:string;
         public image:string;
 

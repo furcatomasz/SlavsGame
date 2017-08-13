@@ -2,6 +2,7 @@
 /// <reference path="../../bower_components/babylonjs/dist/babylon.d.ts"/>
 /// <reference path="../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
 
+import Camera = BABYLON.Camera;
 abstract class Scene {
 
     protected game: Game;
@@ -26,6 +27,13 @@ abstract class Scene {
         camera.orthoRight = 15;
         camera.maxZ = 20;
         camera.minZ = -70;
+        this.setOrthoCameraHeights(camera);
+        scene.activeCamera = camera;
+
+        return this;
+    }
+
+    public setOrthoCameraHeights(camera: BABYLON.Camera) {
         var ratio = window.innerWidth / window.innerHeight;
         var zoom = camera.orthoTop;
         var newWidth = zoom * ratio;
@@ -33,9 +41,8 @@ abstract class Scene {
         camera.orthoRight = newWidth;
         camera.orthoBottom = -Math.abs(zoom);
         camera.rotation = new BABYLON.Vector3(0.751115, 0, 0);
-        scene.activeCamera = camera;
 
-        return this;
+        return camera;
     }
 
     public optimizeScene(scene: BABYLON.Scene) {

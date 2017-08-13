@@ -158,6 +158,7 @@ class Player extends AbstractCharacter {
 
     public createItems() {
         this.inventory = new Character.Inventory(this.game, this);
+        this.inventory.initPlayerItems();
     }
 
     protected onHitStart() {

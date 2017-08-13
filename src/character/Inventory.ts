@@ -1,7 +1,7 @@
 namespace Character {
     export class Inventory {
 
-        protected player:Player;
+        protected player:AbstractCharacter;
         protected game:Game;
 
         /** Equipt items */
@@ -14,12 +14,10 @@ namespace Character {
 
         public items:Array<Items.Item>;
 
-        constructor(game:Game, player:Player) {
+        constructor(game:Game, player:AbstractCharacter) {
             this.game = game;
             this.player = player;
             this.items = [];
-
-            this.initPlayerItems();
         }
 
         public initPlayerItems() {

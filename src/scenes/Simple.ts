@@ -18,19 +18,18 @@ class Simple extends Scene {
                 .optimizeScene(scene)
                 .setCamera(scene);
 
-            // scene.debugLayer.show();
+             scene.debugLayer.show();
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
 
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
                 new Characters(game, scene);
-                new Items(game, scene);
                 game.client.connect(serverUrl);
                 game.controller.registerControls(scene);
 
                 document.addEventListener(Events.PLAYER_CONNECTED, function () {
-                    let npc = new NPC.Warrior(game);
+                    //let npc = new NPC.Warrior(game);
 
                 });
 

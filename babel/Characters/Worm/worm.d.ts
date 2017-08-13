@@ -1,6 +1,6 @@
 declare module worm{
 
-    export function initScene(scene : BABYLON.Scene, resourcesRootDir : string = "./", positionOffset : BABYLON.Vector3 = null) : void;
+    export function initScene(scene : BABYLON.Scene, resourcesRootDir : string = "./", positionOffset? : BABYLON.Vector3, sceneTransitionName? : string, overriddenMillis? : number, overriddenSound? : BABYLON.Sound, options? : {}) : void;
     class MeshFactory implements TOWER_OF_BABEL.FactoryModule {
         constructor(_scene : BABYLON.Scene, materialsRootDir: string);
         getModuleName() : string;

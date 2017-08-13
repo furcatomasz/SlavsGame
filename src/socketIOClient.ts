@@ -57,7 +57,7 @@ class SocketIOClient {
                    if (enemyData.type == 'worm') {
                        new Worm(key, data.id, game, position, rotationQuaternion);
                    } else if (enemyData.type == 'bigWorm') {
-                       new BigWorm(key, data.id, game, position, rotationQuaternion);
+                       //new BigWorm(key, data.id, game, position, rotationQuaternion);
                    }
                }
            });

@@ -35,5 +35,21 @@ declare module Warrior{
         constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Helm);
     }
 
+    class Sword extends QI.Mesh {
+        constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Sword);
+    }
+
+    class Axe extends QI.Mesh {
+        constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Axe);
+    }
+
+    class Shield extends QI.Mesh {
+        constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Shield);
+    }
+
+    class Warrior_001 extends QI.Mesh {
+        constructor(name: string, scene: BABYLON.Scene, materialsRootDir: string = "./", source? : Warrior_001);
+    }
+
     export function freshenShadowRenderLists(scene : BABYLON.Scene) : void;
 }

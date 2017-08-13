@@ -20,7 +20,7 @@ class Player extends AbstractCharacter {
         let mesh = game.characters['player'].instance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
         game.getScene().activeCamera.position = mesh.position;
-
+console.log(mesh);
         this.mesh = mesh;
         this.game = game;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;

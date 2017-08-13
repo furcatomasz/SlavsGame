@@ -11,7 +11,7 @@ namespace Items.Shields {
             this.mountType = 1;
             this.mountBoneName = 'shield.bone';
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-            this.mesh = this.game.items.shield.instance('Shield', false);
+            this.mesh = this.game.characters.player.instance('Shield', false);
             this.mesh.visibility = 0;
         }
     }

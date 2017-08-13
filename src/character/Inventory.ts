@@ -24,7 +24,7 @@ namespace Character {
 
         public initPlayerItems() {
             let sword = new Items.Weapons.Sword(this.game);
-            let shield = new Items.Shields.BigWoodShield(this.game);
+            let shield = new Items.Shields.WoodShield(this.game);
             let armor = new Items.Armors.PrimaryArmor(this.game);
             let helm = new Items.Helms.PrimaryHelm(this.game);
             let gloves = new Items.Gloves.PrimaryGloves(this.game);
@@ -54,21 +54,17 @@ namespace Character {
             let sword1 = new Items.Weapons.Sword(this.game);
             this.items.push(sword1);
 
-            let sword2 = new Items.Weapons.BigSword(this.game);
-            this.items.push(sword2);
+            let axe2 = new Items.Weapons.Axe(this.game);
+            this.items.push(axe2);
 
-            let sword3 = new Items.Weapons.BigSword(this.game);
-            this.items.push(sword3);
-
-            let woodShield1 = new Items.Shields.WoodShield(this.game);
-            this.items.push(woodShield1);
-
-            let woodShield2 = new Items.Shields.WoodShield(this.game);
-            this.items.push(woodShield2);
+            let axe3 = new Items.Weapons.Axe(this.game);
+            this.items.push(axe3);
 
             let sword4 = new Items.Weapons.Sword(this.game);
             this.items.push(sword4);
 
+            let robe = new Items.Armors.Robe(this.game);
+            this.items.push(robe);
         }
 
         /**
@@ -146,12 +142,8 @@ namespace Character {
          * @returns {AbstractCharacter.Inventory}
          */
         public mount(item: Items.Item) {
-            if (item.mountType == 1) {
-                this.player.mount(item.mesh, item.mountBoneName);
-            } else if(item.mountType == 2) {
                 item.mesh.parent = this.player.mesh;
                 item.mesh.skeleton = this.player.mesh.skeleton;
-            }
 
             this.equip(item, true);
 

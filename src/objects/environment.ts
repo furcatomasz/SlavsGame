@@ -43,11 +43,11 @@ class Environment {
         light.animations = [];
         light.animations.push(animationBox);
         game.getScene().beginAnimation(light, 0, 60, true);
-        let shadowGenerator = new BABYLON.ShadowGenerator(512, light);
+        let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //shadowGenerator.bias = -0.0000001;
         //shadowGenerator.setDarkness(0.5);
-        shadowGenerator.useCloseExponentialShadowMap = true;
-        shadowGenerator.useBlurCloseExponentialShadowMap = true;
+        //shadowGenerator.useCloseExponentialShadowMap = true;
+        //shadowGenerator.useBlurCloseExponentialShadowMap = true;
         this.shadowGenerator = shadowGenerator;
 
         for (var i = 0; i < scene.meshes.length; i++) {

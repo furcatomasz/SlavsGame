@@ -18,7 +18,8 @@ class Player extends AbstractCharacter {
         this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
-        mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+        mesh.position = new BABYLON.Vector3(1, 0.1, 11);
+        mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
         game.getScene().activeCamera.position = mesh.position;
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         this.mesh = mesh;
@@ -30,6 +31,7 @@ class Player extends AbstractCharacter {
 
         if(this.isControllable) {
             this.mesh.isPickable = false;
+
 
             //let playerLight = new BABYLON.PointLight("playerLightSpot", new BABYLON.Vector3(0, 5, 0), game.getScene());
             var playerLight = new BABYLON.SpotLight("playerLightSpot",

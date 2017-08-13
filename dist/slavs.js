@@ -521,6 +521,96 @@ var Game = (function () {
     };
     return Game;
 }());
+/// <reference path="Controller.ts"/>
+var Mouse = (function (_super) {
+    __extends(Mouse, _super);
+    function Mouse() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Mouse.prototype.registerControls = function (scene) {
+        var self = this;
+        var clickTrigger = false;
+        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
+        ball.actionManager = new BABYLON.ActionManager(scene);
+        ball.isPickable = false;
+        ball.visibility = 0;
+        this.ball = ball;
+        document.addEventListener(Events.PLAYER_CONNECTED, function () {
+            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                parameter: self.game.player.mesh
+            }, function () {
+                if (!clickTrigger) {
+                    self.game.controller.forward = false;
+                    self.targetPoint = null;
+                    self.ball.visibility = 0;
+                }
+            }));
+            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+                parameter: self.game.player.mesh
+            }, function () {
+                if (!clickTrigger) {
+                    self.game.controller.forward = false;
+                    self.targetPoint = null;
+                    self.ball.visibility = 0;
+                }
+            }));
+        });
+        scene.onPointerUp = function (evt, pickResult) {
+            clickTrigger = false;
+        };
+        scene.onPointerDown = function (evt, pickResult) {
+            var pickedMesh = pickResult.pickedMesh;
+            clickTrigger = true;
+            if (pickedMesh) {
+                if (self.game.player && pickedMesh.name == 'Forest_ground') {
+                    self.attackPoint = null;
+                    self.targetPoint = pickResult.pickedPoint;
+                    self.targetPoint.y = 0;
+                    self.ball.position = self.targetPoint;
+                    self.ball.visibility = 1;
+                    self.game.player.mesh.lookAt(self.ball.position);
+                    self.game.player.emitPosition();
+                    self.game.controller.forward = true;
+                }
+                if (self.game.player && pickedMesh.name.search('enemy_attackArea') >= 0) {
+                    self.attackPoint = pickedMesh;
+                    self.game.player.mesh.lookAt(pickResult.pickedPoint);
+                    self.targetPoint = null;
+                    self.ball.visibility = 0;
+                }
+            }
+        };
+        scene.onPointerMove = function (evt, pickResult) {
+            if (clickTrigger) {
+                var pickedMesh = pickResult.pickedMesh;
+                if (pickedMesh && self.targetPoint) {
+                    if (self.game.player) {
+                        self.targetPoint = pickResult.pickedPoint;
+                        self.targetPoint.y = 0;
+                        self.ball.position = self.targetPoint;
+                        self.game.player.mesh.lookAt(self.ball.position);
+                    }
+                }
+            }
+        };
+        scene.registerBeforeRender(function () {
+            if (self.game.player) {
+                if (self.attackPoint) {
+                    if (self.game.player.mesh.intersectsMesh(self.attackPoint)) {
+                        self.game.player.runAnimationHit();
+                        self.game.controller.forward = false;
+                    }
+                    else {
+                        self.game.controller.forward = true;
+                    }
+                }
+            }
+        });
+    };
+    return Mouse;
+}(Controller));
 /// <reference path="AbstractCharacter.ts"/>
 /// <reference path="../game.ts"/>
 var Player = (function (_super) {
@@ -534,7 +624,8 @@ var Player = (function (_super) {
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
         var mesh = game.factories['character'].createInstance('Warrior', true);
-        mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+        mesh.position = new BABYLON.Vector3(1, 0.1, 11);
+        mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
         game.getScene().activeCamera.position = mesh.position;
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         _this.mesh = mesh;
@@ -684,96 +775,6 @@ var Player = (function (_super) {
     };
     return Player;
 }(AbstractCharacter));
-/// <reference path="Controller.ts"/>
-var Mouse = (function (_super) {
-    __extends(Mouse, _super);
-    function Mouse() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Mouse.prototype.registerControls = function (scene) {
-        var self = this;
-        var clickTrigger = false;
-        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
-        ball.actionManager = new BABYLON.ActionManager(scene);
-        ball.isPickable = false;
-        ball.visibility = 0;
-        this.ball = ball;
-        document.addEventListener(Events.PLAYER_CONNECTED, function () {
-            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                parameter: self.game.player.mesh
-            }, function () {
-                if (!clickTrigger) {
-                    self.game.controller.forward = false;
-                    self.targetPoint = null;
-                    self.ball.visibility = 0;
-                }
-            }));
-            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-                parameter: self.game.player.mesh
-            }, function () {
-                if (!clickTrigger) {
-                    self.game.controller.forward = false;
-                    self.targetPoint = null;
-                    self.ball.visibility = 0;
-                }
-            }));
-        });
-        scene.onPointerUp = function (evt, pickResult) {
-            clickTrigger = false;
-        };
-        scene.onPointerDown = function (evt, pickResult) {
-            var pickedMesh = pickResult.pickedMesh;
-            clickTrigger = true;
-            if (pickedMesh) {
-                if (self.game.player && pickedMesh.name == 'Forest_ground') {
-                    self.attackPoint = null;
-                    self.targetPoint = pickResult.pickedPoint;
-                    self.targetPoint.y = 0;
-                    self.ball.position = self.targetPoint;
-                    self.ball.visibility = 1;
-                    self.game.player.mesh.lookAt(self.ball.position);
-                    self.game.player.emitPosition();
-                    self.game.controller.forward = true;
-                }
-                if (self.game.player && pickedMesh.name.search('enemy_attackArea') >= 0) {
-                    self.attackPoint = pickedMesh;
-                    self.game.player.mesh.lookAt(pickResult.pickedPoint);
-                    self.targetPoint = null;
-                    self.ball.visibility = 0;
-                }
-            }
-        };
-        scene.onPointerMove = function (evt, pickResult) {
-            if (clickTrigger) {
-                var pickedMesh = pickResult.pickedMesh;
-                if (pickedMesh && self.targetPoint) {
-                    if (self.game.player) {
-                        self.targetPoint = pickResult.pickedPoint;
-                        self.targetPoint.y = 0;
-                        self.ball.position = self.targetPoint;
-                        self.game.player.mesh.lookAt(self.ball.position);
-                    }
-                }
-            }
-        };
-        scene.registerBeforeRender(function () {
-            if (self.game.player) {
-                if (self.attackPoint) {
-                    if (self.game.player.mesh.intersectsMesh(self.attackPoint)) {
-                        self.game.player.runAnimationHit();
-                        self.game.controller.forward = false;
-                    }
-                    else {
-                        self.game.controller.forward = true;
-                    }
-                }
-            }
-        });
-    };
-    return Mouse;
-}(Controller));
 var Character;
 (function (Character) {
     var Inventory = (function () {
@@ -1336,6 +1337,44 @@ var GUI;
     }());
     GUI.ShowHp = ShowHp;
 })(GUI || (GUI = {}));
+var Quests;
+(function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var AbstractAward = (function () {
+            function AbstractAward() {
+            }
+            return AbstractAward;
+        }());
+        Awards.AbstractAward = AbstractAward;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var AbstractRequirement = (function () {
+            function AbstractRequirement() {
+            }
+            return AbstractRequirement;
+        }());
+        Requirements.AbstractRequirement = AbstractRequirement;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+})(Quests || (Quests = {}));
+/// <reference path="awards/AbstractAward.ts"/>
+/// <reference path="requirements/AbstractRequirement.ts"/>
+var Quests;
+(function (Quests) {
+    var AbstractQuest = (function () {
+        function AbstractQuest(game) {
+            this.game = game;
+            this.awards = [];
+            this.requirements = [];
+        }
+        return AbstractQuest;
+    }());
+    Quests.AbstractQuest = AbstractQuest;
+})(Quests || (Quests = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var Particles;
@@ -1397,7 +1436,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         Entrace.prototype.initParticleSystem = function () {
-            var particleSystem = new BABYLON.ParticleSystem("particles", 1500, this.game.getScene());
+            var particleSystem = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
@@ -1409,7 +1448,7 @@ var Particles;
             particleSystem.maxSize = 0.5;
             particleSystem.minLifeTime = 0.3;
             particleSystem.maxLifeTime = 1.5;
-            particleSystem.emitRate = 1500;
+            particleSystem.emitRate = 2000;
             particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
             particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
             particleSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
@@ -1536,44 +1575,6 @@ var Particles;
     }(Particles.AbstractParticle));
     Particles.WalkSmoke = WalkSmoke;
 })(Particles || (Particles = {}));
-var Quests;
-(function (Quests) {
-    var Awards;
-    (function (Awards) {
-        var AbstractAward = (function () {
-            function AbstractAward() {
-            }
-            return AbstractAward;
-        }());
-        Awards.AbstractAward = AbstractAward;
-    })(Awards = Quests.Awards || (Quests.Awards = {}));
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var Requirements;
-    (function (Requirements) {
-        var AbstractRequirement = (function () {
-            function AbstractRequirement() {
-            }
-            return AbstractRequirement;
-        }());
-        Requirements.AbstractRequirement = AbstractRequirement;
-    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
-})(Quests || (Quests = {}));
-/// <reference path="awards/AbstractAward.ts"/>
-/// <reference path="requirements/AbstractRequirement.ts"/>
-var Quests;
-(function (Quests) {
-    var AbstractQuest = (function () {
-        function AbstractQuest(game) {
-            this.game = game;
-            this.awards = [];
-            this.requirements = [];
-        }
-        return AbstractQuest;
-    }());
-    Quests.AbstractQuest = AbstractQuest;
-})(Quests || (Quests = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../../babylon/ts/babylon.gui.d.ts"/>
 /// <reference path="Scene.ts"/>

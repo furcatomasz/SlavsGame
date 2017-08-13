@@ -1,6 +1,6 @@
 /// <reference path="../AbstractCharacter.ts"/>
 namespace SelectCharacter {
-    export class Warrior extends AbstractCharacter {
+    export class Bandit extends AbstractCharacter {
 
         protected inventory: Character.Inventory;
         protected skeletonAnimation;
@@ -10,20 +10,17 @@ namespace SelectCharacter {
 
             let mesh = game.factories['character'].createInstance('Warrior', true);
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
-            mesh.position = new BABYLON.Vector3(1, 0.1, 11);
-            mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
-
+            mesh.position = new BABYLON.Vector3(2, 0.1, 10);
+            mesh.rotation = new BABYLON.Vector3(0, 0.2, 0);
             this.mesh = mesh;
 
             this.inventory = new Character.Inventory(game, this);
 
-            let armor = new Items.Armors.PrimaryArmor(game);
-            let helm = new Items.Helms.PrimaryHelm(game);
+            let armor = new Items.Armors.Robe(game);
             let gloves = new Items.Gloves.PrimaryGloves(game);
             let boots = new Items.Boots.PrimaryBoots(game);
 
             this.inventory.mount(armor);
-            this.inventory.mount(helm);
             this.inventory.mount(gloves);
             this.inventory.mount(boots);
 

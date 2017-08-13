@@ -139,6 +139,7 @@ var Simple = (function (_super) {
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
                 game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
+                game.factories['worm'] = new Factories.Worms(game, scene, assetsManager).initFactory();
                 assetsManager.onFinish = function (tasks) {
                     game.client.connect(serverUrl);
                     game.controller.registerControls(scene);
@@ -363,7 +364,7 @@ var SocketIOClient = (function () {
     SocketIOClient.prototype.connect = function (socketUrl) {
         this.socket = io.connect(socketUrl, { player: this.game.player });
         this.playerConnected();
-        //this.showEnemies();
+        this.showEnemies();
     };
     /**
      * @returns {SocketIOClient}
@@ -666,7 +667,7 @@ var Player = (function (_super) {
         _this.name = name;
         _this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 10, 10, 125, 50, 100).setPlayer(_this);
         _this.isControllable = registerMoving;
-        _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/babel/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
+        _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
         var mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.position = new BABYLON.Vector3(3, 0.1, 0);
@@ -944,12 +945,29 @@ var Factories;
 /// <reference path="../game.ts"/>
 var Factories;
 (function (Factories) {
+    var Worms = (function (_super) {
+        __extends(Worms, _super);
+        function Worms(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'factory.worm';
+            _this.dir = 'assets/Characters/Worm/';
+            _this.fileName = 'worm.babylon';
+            return _this;
+        }
+        return Worms;
+    }(Factories.AbstractFactory));
+    Factories.Worms = Worms;
+})(Factories || (Factories = {}));
+/// <reference path="AbstractFactory.ts"/>
+/// <reference path="../game.ts"/>
+var Factories;
+(function (Factories) {
     var Characters = (function (_super) {
         __extends(Characters, _super);
         function Characters(game, scene, assetsManager) {
             var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'Warrior';
-            _this.dir = 'babel/Characters/Warrior/';
+            _this.taskName = 'factory.warrior';
+            _this.dir = 'assets/Characters/Warrior/';
             _this.fileName = 'Warrior.babylon';
             return _this;
         }
@@ -1726,7 +1744,7 @@ var BigWorm = (function (_super) {
     __extends(BigWorm, _super);
     function BigWorm(serverKey, name, game, position, rotationQuaternion) {
         var _this = this;
-        var mesh = game.characters['worm'].instance('Worm', true);
+        var mesh = game.factories['worm'].createInstance('Worm', true);
         mesh.visibility = true;
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
@@ -1737,7 +1755,7 @@ var BigWorm = (function (_super) {
         _this.visibilityAreaSize = 10;
         _this.attackAreaSize = 4;
         //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        _this.sfxHit = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
+        _this.sfxHit = new BABYLON.Sound("WormWalk", "/assets/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
         _this = _super.call(this, name, game) || this;
         return _this;
     }
@@ -1766,7 +1784,7 @@ var Worm = (function (_super) {
     __extends(Worm, _super);
     function Worm(serverKey, name, game, position, rotationQuaternion) {
         var _this = this;
-        var mesh = game.characters['worm'].instance('Worm', true);
+        var mesh = game.factories['worm'].createInstance('Worm', true);
         mesh.visibility = true;
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
@@ -1776,7 +1794,7 @@ var Worm = (function (_super) {
         _this.visibilityAreaSize = 30;
         _this.attackAreaSize = 6;
         //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        _this.sfxHit = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
+        _this.sfxHit = new BABYLON.Sound("WormWalk", "/assets/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
         _this = _super.call(this, name, game) || this;
         return _this;
     }

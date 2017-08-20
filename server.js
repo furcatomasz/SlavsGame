@@ -2,10 +2,13 @@ var io = require('socket.io')(3003);
 var remotePlayers = [];
 var enemies = [];
 // createEnemies(3, {min: 9, max: 5}, {min: 6, max: 6});
-createEnemies(1, {min: -2, max: -2}, {min: -30, max: -30}, 'worm');
-createEnemies(1, {min: -2, max: -2}, {min: -64, max: -64}, 'worm');
-createEnemies(1, {min: -8, max: -8}, {min: -72, max: -72}, 'worm');
-createEnemies(1, {min: 65, max: 65}, {min: -151, max: -151}, 'bigWorm');
+createEnemies(1, {min: -2, max: -2}, {min: -30, max: -30}, 'worm', 2);
+createEnemies(1, {min: -2, max: -2}, {min: -64, max: -64}, 'worm', 2);
+createEnemies(1, {min: -8, max: -8}, {min: -72, max: -72}, 'worm', 2);
+
+createEnemies(1, {min: -2, max: -2}, {min: -30, max: -30}, 'bandit', 3);
+createEnemies(1, {min: -2, max: -2}, {min: -64, max: -64}, 'bandit', 3);
+createEnemies(1, {min: -8, max: -8}, {min: -72, max: -72}, 'bandit', 3);
 io.on('connection', function (socket) {
     var player = {id: socket.id};
     socket.emit('clientConnected', player);
@@ -44,6 +47,8 @@ io.on('connection', function (socket) {
 
     });
 
+
+
     socket.on('disconnect', function () {
         remotePlayers.forEach(function (remotePlayer, key) {
             if (remotePlayer.id == player.id || remotePlayer == null) {
@@ -53,20 +58,31 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('removePlayer', player.id);
     });
 
+    socket.on('changeScene', function (enemyData) {
+        socket.emit('showEnemies', enemies[enemyData.sceneType]);
+
+    });
+
+    socket.on('refreshPlayer', function () {
+        socket.emit('refreshPlayer', player);
+    });
+
     ///Enemies
-    socket.emit('showEnemies', enemies);
     socket.on('updateEnemy', function (enemyData) {
-        enemies[enemyData.enemyKey].position = enemyData.position;
-        enemies[enemyData.enemyKey].rotation = enemyData.rotation;
-        enemies[enemyData.enemyKey].target = enemyData.target;
+
+        var enemy = enemies[enemyData.sceneType][enemyData.enemyKey];
+        enemy.position = enemyData.position;
+        enemy.rotation = enemyData.rotation;
+        enemy.target = enemyData.target;
         socket.broadcast.emit('showEnemies', enemies);
     });
 });
 
-function createEnemies(count, positionX, positionZ, type) {
+function createEnemies(count, positionX, positionZ, type, sceneType) {
     var enemy;
     for (var i = 0, len = count; i < len; i++) {
         enemy = {
+            id: randomNumber(0, 10000),
             position: {
                 x: randomNumber(positionX.min, positionX.max),
                 y: 0.3,
@@ -83,7 +99,11 @@ function createEnemies(count, positionX, positionZ, type) {
             type: type,
             target: false
         };
-        enemies.push(enemy);
+        if(sceneType in enemies == false) {
+            enemies[sceneType] = [];
+        }
+
+        enemies[sceneType].push(enemy);
     }
 }
 

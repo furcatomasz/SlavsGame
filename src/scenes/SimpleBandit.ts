@@ -2,13 +2,12 @@
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
 
-class Simple extends Scene {
+class SimpleBandit extends Scene {
 
-    static TYPE = 2;
+    static TYPE = 3;
 
     initScene(game:Game) {
         let self = this;
-        let serverUrl = window.location.hostname + ':3003';
         game.sceneManager = this;
 
         BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
@@ -17,26 +16,27 @@ class Simple extends Scene {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-            //scene.debugLayer.show();
+
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             var assetsManager = new BABYLON.AssetsManager(scene);
+
             scene.executeWhenReady(function () {
-                self.environment = new Environment(game, scene);
                 game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
                 game.factories['worm'] = new Factories.Worms(game, scene, assetsManager).initFactory();
-                assetsManager.onFinish = function (tasks) {
-                    game.client.connect(serverUrl);
-                    game.controller.registerControls(scene);
-                }
                 assetsManager.load();
-                document.addEventListener(Events.PLAYER_CONNECTED, function () {
+                self.environment = new Environment(game, scene);
+                game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
+                game.player.emitPosition();
+                assetsManager.onFinish = function (tasks) {
                     game.client.socket.emit('changeScene', {
-                        sceneType: Simple.TYPE,
+                        sceneType: SimpleBandit.TYPE,
                     });
-                    let npc = new NPC.Warrior(game);
 
-                });
+                    game.client.socket.emit('refreshPlayer');
+
+                    let npc = new NPC.Warrior(game);
+                }
 
             });
 
@@ -46,7 +46,6 @@ class Simple extends Scene {
     }
 
     public getType(): number {
-        return Simple.TYPE;
+        return SimpleBandit.TYPE;
     }
-
 }

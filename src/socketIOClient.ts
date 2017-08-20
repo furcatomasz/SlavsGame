@@ -14,7 +14,7 @@ class SocketIOClient {
         this.socket = io.connect(socketUrl, {player: this.game.player});
 
         this.playerConnected();
-        this.showEnemies();
+        this.showEnemies(game.activeScene);
     }
 
     /**
@@ -30,7 +30,7 @@ class SocketIOClient {
             self.socket.emit('createPlayer', playerName);
             game.player = new Player(game, data.id, playerName, true);
             document.dispatchEvent(game.events.playerConnected);
-            self.updatePlayers().removePlayer().connectPlayer();
+            self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
         });
 
         return this;
@@ -39,14 +39,32 @@ class SocketIOClient {
     /**
      * @returns {SocketIOClient}
      */
-    protected showEnemies() {
+    protected refreshPlayer() {
+        var game = this.game;
+        var playerName = Game.randomNumber(1,100);
+
+        this.socket.on('refreshPlayer', function (data) {
+            game.player.sfxWalk.stop();
+            game.player.mesh.actionManager.dispose();
+            game.player = new Player(game, data.id, playerName, true);
+            document.dispatchEvent(game.events.playerConnected);
+
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected showEnemies(scene: Scene) {
         var game = this.game;
 
         this.socket.on('showEnemies', function (data) {
            data.forEach(function (enemyData, key) {
                let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
                let rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
-               let enemy = game.enemies[key];
+               let enemy = game.enemies[data.id];
 
                if (enemy) {
                    enemy.target = enemyData.target;
@@ -58,6 +76,8 @@ class SocketIOClient {
                        new Worm(key, data.id, game, position, rotationQuaternion);
                    } else if (enemyData.type == 'bigWorm') {
                        new BigWorm(key, data.id, game, position, rotationQuaternion);
+                   } else if (enemyData.type == 'bandit') {
+                       new Bandit.Bandit(key, game, position, rotationQuaternion);
                    }
                }
            });

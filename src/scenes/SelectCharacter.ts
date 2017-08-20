@@ -4,6 +4,8 @@
 
 class SelectCharacter extends Scene {
 
+    static TYPE = 2;
+
     initScene(game:Game) {
         let self = this;
 
@@ -40,4 +42,6 @@ class SelectCharacter extends Scene {
 
     }
 
+    public getType() {
+    }
 }

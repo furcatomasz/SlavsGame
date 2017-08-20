@@ -110,7 +110,7 @@ namespace GUI {
             let requirementsTitle = new BABYLON.GUI.TextBlock();
             requirementsTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             requirementsTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            requirementsTitle.text = 'Kill 5 worms';
+            requirementsTitle.text = 'Kill all bandits';
             requirementsTitle.top = "20%";
             requirementsTitle.width = "25%";
             requirementsTitle.height = "20%";

@@ -67,7 +67,6 @@ namespace SelectCharacter {
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger,
                 function() {
-                    console.log(1);
                     new Simple().initScene(self.game);
                 })
             );

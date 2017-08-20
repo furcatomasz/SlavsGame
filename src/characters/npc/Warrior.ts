@@ -5,9 +5,11 @@ namespace NPC {
         public constructor(game:Game) {
             this.name = 'NPC #Warrior';
 
-            let mesh = game.characters['player'].instance('Warrior', true);
-            mesh.position = new BABYLON.Vector3(-3, 0.1, 11);
-            mesh.lookAt(game.player.mesh.position);
+            let mesh = game.factories['character'].createInstance('Warrior', true);
+            mesh.position = new BABYLON.Vector3(-6, 0, -0.5);
+            mesh.rotation = new BABYLON.Vector3(0, -1, 0);
+            mesh.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
+
             this.mesh = mesh;
 
             this.quest = new Quests.KillWorms(game);

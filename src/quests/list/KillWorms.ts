@@ -3,9 +3,9 @@ namespace Quests {
 
         constructor(game: Game) {
             super(game);
-            this.title = 'Worms';
-            this.description = 'Kill worms that penetrate nearby terrains.'
-            this.awards.push(new Quests.Awards.Item(new Items.Weapons.BigSword(game)));
+            this.title = 'Bandits';
+            this.description = 'Go to portal and kill all bandits.'
+            this.awards.push(new Quests.Awards.Item(new Items.Weapons.Sword(game)));
 
         }
     }

@@ -31,7 +31,7 @@ abstract class AbstractCharacter {
     protected attackHit: boolean;
     protected attackArea:BABYLON.Mesh;
 
-    protected sfxWalk: BABYLON.Sound;
+    public sfxWalk: BABYLON.Sound;
     protected sfxHit: BABYLON.Sound;
 
     public bloodParticles: BABYLON.ParticleSystem;

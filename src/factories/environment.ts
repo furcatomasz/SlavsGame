@@ -30,8 +30,6 @@ class Environment {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
                 //sceneMesh.receiveShadows = true;
-
-                continue;
             } else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;
                 this.trees.push(sceneMesh);
@@ -88,6 +86,8 @@ class Environment {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: plane
                 }, function () {
+
+                    new SimpleBandit().initScene(game);
                     game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
                     return this;
                 }));

@@ -47,7 +47,6 @@ namespace NPC {
         }
 
         public createTooltip() {
-            console.log(this);
             var box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
             box1.parent = this.mesh;
             box1.position.y += 7;

@@ -41,6 +41,7 @@ abstract class Monster extends AbstractCharacter {
     public emitPosition() {
         if (this.game.client.socket) {
             this.game.client.socket.emit('updateEnemy', {
+                sceneType: this.game.sceneManager.getType(),
                 enemyKey: this.id,
                 position: this.mesh.position,
                 rotation: this.mesh.rotationQuaternion,

@@ -4,21 +4,22 @@
 
 import Camera = BABYLON.Camera;
 abstract class Scene {
+    static TYPE = 0;
 
-    protected game: Game;
-    protected light: BABYLON.IShadowLight;
-    public shadowGenerator: BABYLON.ShadowGenerator;
-    public guiTexture: BABYLON.GUI.AdvancedDynamicTexture;
-    public environment: Environment;
-    public activeQuests: Array<Quests.AbstractQuest>;
+    protected game:Game;
+    protected light:BABYLON.IShadowLight;
+    public shadowGenerator:BABYLON.ShadowGenerator;
+    public guiTexture:BABYLON.GUI.AdvancedDynamicTexture;
+    public environment:Environment;
+    public activeQuests:Array<Quests.AbstractQuest>;
 
-    protected setDefaults(game: Game) {
+    protected setDefaults(game:Game) {
         this.game = game;
 
         return this;
     }
 
-    public setCamera(scene: BABYLON.Scene) {
+    public setCamera(scene:BABYLON.Scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
         camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
         camera.orthoTop = 18;
@@ -33,7 +34,7 @@ abstract class Scene {
         return this;
     }
 
-    public setOrthoCameraHeights(camera: BABYLON.Camera) {
+    public setOrthoCameraHeights(camera:BABYLON.Camera) {
         var ratio = window.innerWidth / window.innerHeight;
         var zoom = camera.orthoTop;
         var newWidth = zoom * ratio;
@@ -45,7 +46,7 @@ abstract class Scene {
         return camera;
     }
 
-    public optimizeScene(scene: BABYLON.Scene) {
+    public optimizeScene(scene:BABYLON.Scene) {
         scene.collisionsEnabled = false;
         scene.fogEnabled = false;
         //scene.shadowsEnabled = false;
@@ -56,4 +57,6 @@ abstract class Scene {
         //scene.renderTargetsEnabled = false;
         return this;
     }
-    }
+
+    public abstract getType();
+}

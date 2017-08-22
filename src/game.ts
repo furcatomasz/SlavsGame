@@ -36,10 +36,13 @@ class Game {
     public events: Events;
 
     constructor(canvasElement: HTMLCanvasElement) {
+        let serverUrl = window.location.hostname + ':3003';
+
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.controller = new Mouse(this);
         this.client = new SocketIOClient(this);
+        this.client.connect(serverUrl);
         this.factories = [];
         this.enemies = [];
         this.scenes = [];

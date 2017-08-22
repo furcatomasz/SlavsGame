@@ -11,7 +11,7 @@ class Player extends AbstractCharacter {
         this.id = id;
         this.name = name;
 
-        this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 10, 10, 525, 50, 100).setPlayer(this);
+        this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 10, 10, 125, 50, 100).setPlayer(this);
         this.isControllable = registerMoving;
 
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });

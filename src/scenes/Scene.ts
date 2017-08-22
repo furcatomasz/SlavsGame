@@ -58,5 +58,12 @@ abstract class Scene {
         return this;
     }
 
+    protected initFactories(scene: BABYLON.Scene, assetsManager: BABYLON.AssetsManager) {
+        this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
+        this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
+
+        return this;
+    }
+
     public abstract getType();
 }

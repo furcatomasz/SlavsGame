@@ -12,9 +12,9 @@ var Events = (function () {
     function Events() {
         this.playerConnected = new Event(Events.PLAYER_CONNECTED);
     }
+    Events.PLAYER_CONNECTED = 'playerConnected';
     return Events;
 }());
-Events.PLAYER_CONNECTED = 'playerConnected';
 /// <reference path="../game.ts"/>
 var Controller = (function () {
     function Controller(game) {
@@ -115,9 +115,14 @@ var Scene = (function () {
         //scene.renderTargetsEnabled = false;
         return this;
     };
+    Scene.prototype.initFactories = function (scene, assetsManager) {
+        this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
+        this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
+        return this;
+    };
+    Scene.TYPE = 0;
     return Scene;
 }());
-Scene.TYPE = 0;
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -128,7 +133,6 @@ var Simple = (function (_super) {
     }
     Simple.prototype.initScene = function (game) {
         var self = this;
-        var serverUrl = window.location.hostname + ':3003';
         game.sceneManager = this;
         BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
             game.sceneManager = self;
@@ -142,18 +146,19 @@ var Simple = (function (_super) {
             var assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
-                game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
-                game.factories['worm'] = new Factories.Worms(game, scene, assetsManager).initFactory();
+                self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
-                    game.client.connect(serverUrl);
                     game.controller.registerControls(scene);
+                    game.client.socket.emit('changeScenePre', {
+                        sceneType: Simple.TYPE
+                    });
                 };
                 assetsManager.load();
                 document.addEventListener(Events.PLAYER_CONNECTED, function () {
-                    game.client.socket.emit('changeScene', {
+                    var npc = new NPC.Warrior(game);
+                    game.client.socket.emit('changeScenePost', {
                         sceneType: Simple.TYPE
                     });
-                    var npc = new NPC.Warrior(game);
                 });
             });
         });
@@ -161,9 +166,9 @@ var Simple = (function (_super) {
     Simple.prototype.getType = function () {
         return Simple.TYPE;
     };
+    Simple.TYPE = 2;
     return Simple;
 }(Scene));
-Simple.TYPE = 2;
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var AbstractCharacter = (function () {
@@ -268,14 +273,14 @@ var AbstractCharacter = (function () {
     ;
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
+    AbstractCharacter.WALK_SPEED = 0.25;
+    AbstractCharacter.ROTATION_SPEED = 0.05;
+    AbstractCharacter.ANIMATION_WALK = 'Run';
+    AbstractCharacter.ANIMATION_STAND = 'stand';
+    AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+    AbstractCharacter.ANIMATION_ATTACK = 'Attack';
     return AbstractCharacter;
 }());
-AbstractCharacter.WALK_SPEED = 0.25;
-AbstractCharacter.ROTATION_SPEED = 0.05;
-AbstractCharacter.ANIMATION_WALK = 'Run';
-AbstractCharacter.ANIMATION_STAND = 'stand';
-AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-AbstractCharacter.ANIMATION_ATTACK = 'Attack';
 /// <reference path="../AbstractCharacter.ts"/>
 var Monster = (function (_super) {
     __extends(Monster, _super);
@@ -374,9 +379,9 @@ var SocketIOClient = (function () {
         this.game = game;
     }
     SocketIOClient.prototype.connect = function (socketUrl) {
-        this.socket = io.connect(socketUrl, { player: this.game.player });
+        this.socket = io.connect(socketUrl);
         this.playerConnected();
-        this.showEnemies(game.activeScene);
+        this.showEnemies();
     };
     /**
      * @returns {SocketIOClient}
@@ -388,8 +393,8 @@ var SocketIOClient = (function () {
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
             self.socket.emit('createPlayer', playerName);
-            game.player = new Player(game, data.id, playerName, true);
-            document.dispatchEvent(game.events.playerConnected);
+            // game.player = new Player(game, data.id, playerName, true);
+            // document.dispatchEvent(game.events.playerConnected);
             self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
         });
         return this;
@@ -400,9 +405,9 @@ var SocketIOClient = (function () {
     SocketIOClient.prototype.refreshPlayer = function () {
         var game = this.game;
         var playerName = Game.randomNumber(1, 100);
-        this.socket.on('refreshPlayer', function (data) {
-            game.player.sfxWalk.stop();
-            game.player.mesh.actionManager.dispose();
+        this.socket.on('showPlayer', function (data) {
+            // game.player.sfxWalk.stop();
+            // game.player.mesh.actionManager.dispose();
             game.player = new Player(game, data.id, playerName, true);
             document.dispatchEvent(game.events.playerConnected);
         });
@@ -411,7 +416,7 @@ var SocketIOClient = (function () {
     /**
      * @returns {SocketIOClient}
      */
-    SocketIOClient.prototype.showEnemies = function (scene) {
+    SocketIOClient.prototype.showEnemies = function () {
         var game = this.game;
         this.socket.on('showEnemies', function (data) {
             data.forEach(function (enemyData, key) {
@@ -442,21 +447,23 @@ var SocketIOClient = (function () {
     SocketIOClient.prototype.connectPlayer = function () {
         var game = this.game;
         this.socket.on('newPlayerConnected', function (data) {
-            data.forEach(function (socketRemotePlayer) {
-                var remotePlayerKey = null;
-                if (socketRemotePlayer.id !== game.player.id) {
-                    game.remotePlayers.forEach(function (remotePlayer, key) {
-                        if (remotePlayer.id == socketRemotePlayer.id) {
-                            remotePlayerKey = key;
-                            return;
+            if (game.player) {
+                data.forEach(function (socketRemotePlayer) {
+                    var remotePlayerKey = null;
+                    if (socketRemotePlayer.id !== game.player.id) {
+                        game.remotePlayers.forEach(function (remotePlayer, key) {
+                            if (remotePlayer.id == socketRemotePlayer.id) {
+                                remotePlayerKey = key;
+                                return;
+                            }
+                        });
+                        if (remotePlayerKey === null) {
+                            var player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
+                            game.remotePlayers.push(player);
                         }
-                    });
-                    if (remotePlayerKey === null) {
-                        var player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
-                        game.remotePlayers.push(player);
                     }
-                }
-            });
+                });
+            }
         });
         return this;
     };
@@ -512,10 +519,12 @@ var SocketIOClient = (function () {
 /// <reference path="socketIOClient.ts"/>
 var Game = (function () {
     function Game(canvasElement) {
+        var serverUrl = window.location.hostname + ':3003';
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.controller = new Mouse(this);
         this.client = new SocketIOClient(this);
+        this.client.connect(serverUrl);
         this.factories = [];
         this.enemies = [];
         this.scenes = [];
@@ -693,7 +702,7 @@ var Player = (function (_super) {
         var _this = this;
         _this.id = id;
         _this.name = name;
-        _this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 10, 10, 525, 50, 100).setPlayer(_this);
+        _this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 10, 10, 125, 50, 100).setPlayer(_this);
         _this.isControllable = registerMoving;
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
@@ -1081,7 +1090,6 @@ var Environment = (function () {
                     parameter: plane
                 }, function () {
                     new SimpleBandit().initScene(game);
-                    game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
                     return this;
                 }));
             });
@@ -1795,9 +1803,9 @@ var SelectCharacter = (function (_super) {
     };
     SelectCharacter.prototype.getType = function () {
     };
+    SelectCharacter.TYPE = 2;
     return SelectCharacter;
 }(Scene));
-SelectCharacter.TYPE = 2;
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -1819,28 +1827,31 @@ var SimpleBandit = (function (_super) {
             game.activeScene = sceneIndex - 1;
             var assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
-                game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
-                game.factories['worm'] = new Factories.Worms(game, scene, assetsManager).initFactory();
-                assetsManager.load();
                 self.environment = new Environment(game, scene);
-                game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-                game.player.emitPosition();
+                self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
-                    game.client.socket.emit('changeScene', {
+                    game.controller.registerControls(scene);
+                    game.client.socket.emit('changeScenePre', {
                         sceneType: SimpleBandit.TYPE
                     });
-                    game.client.socket.emit('refreshPlayer');
-                    var npc = new NPC.Warrior(game);
                 };
+                assetsManager.load();
+                document.addEventListener(Events.PLAYER_CONNECTED, function () {
+                    game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 11);
+                    game.player.emitPosition();
+                    game.client.socket.emit('changeScenePost', {
+                        sceneType: SimpleBandit.TYPE
+                    });
+                });
             });
         });
     };
     SimpleBandit.prototype.getType = function () {
         return SimpleBandit.TYPE;
     };
+    SimpleBandit.TYPE = 3;
     return SimpleBandit;
 }(Scene));
-SimpleBandit.TYPE = 3;
 var Attributes;
 (function (Attributes) {
     var AbstractStatistics = (function () {
@@ -1975,9 +1986,9 @@ var Items;
         function Item(game) {
             this.game = game;
         }
+        Item.TYPE = 0;
         return Item;
     }());
-    Item.TYPE = 0;
     Items.Item = Item;
 })(Items || (Items = {}));
 /// <reference path="../AbstractCharacter.ts"/>
@@ -2793,9 +2804,9 @@ var Items;
         Armor.prototype.getType = function () {
             return Items.Armor.TYPE;
         };
+        Armor.TYPE = 6;
         return Armor;
     }(Items.Item));
-    Armor.TYPE = 6;
     Items.Armor = Armor;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2854,9 +2865,9 @@ var Items;
         Boots.prototype.getType = function () {
             return Items.Boots.TYPE;
         };
+        Boots.TYPE = 5;
         return Boots;
     }(Items.Item));
-    Boots.TYPE = 5;
     Items.Boots = Boots;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2894,9 +2905,9 @@ var Items;
         Gloves.prototype.getType = function () {
             return Items.Gloves.TYPE;
         };
+        Gloves.TYPE = 4;
         return Gloves;
     }(Items.Item));
-    Gloves.TYPE = 4;
     Items.Gloves = Gloves;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2934,9 +2945,9 @@ var Items;
         Helm.prototype.getType = function () {
             return Items.Helm.TYPE;
         };
+        Helm.TYPE = 3;
         return Helm;
     }(Items.Item));
-    Helm.TYPE = 3;
     Items.Helm = Helm;
 })(Items || (Items = {}));
 /// <reference path="Helm.ts"/>
@@ -2974,9 +2985,9 @@ var Items;
         Shield.prototype.getType = function () {
             return Items.Shield.TYPE;
         };
+        Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
-    Shield.TYPE = 2;
     Items.Shield = Shield;
 })(Items || (Items = {}));
 /// <reference path="Shield.ts"/>
@@ -3038,9 +3049,9 @@ var Items;
         Weapon.prototype.getType = function () {
             return Items.Weapon.TYPE;
         };
+        Weapon.TYPE = 1;
         return Weapon;
     }(Items.Item));
-    Weapon.TYPE = 1;
     Items.Weapon = Weapon;
 })(Items || (Items = {}));
 /// <reference path="Weapon.ts"/>

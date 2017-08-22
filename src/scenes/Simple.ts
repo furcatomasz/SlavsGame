@@ -8,7 +8,6 @@ class Simple extends Scene {
 
     initScene(game:Game) {
         let self = this;
-        let serverUrl = window.location.hostname + ':3003';
         game.sceneManager = this;
 
         BABYLON.SceneLoader.Load("assets/scenes/map01/", "map01.babylon", game.engine, function (scene) {
@@ -23,19 +22,19 @@ class Simple extends Scene {
             var assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
-                game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
-                game.factories['worm'] = new Factories.Worms(game, scene, assetsManager).initFactory();
+                self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
-                    game.client.connect(serverUrl);
                     game.controller.registerControls(scene);
-                }
-                assetsManager.load();
-                document.addEventListener(Events.PLAYER_CONNECTED, function () {
-                    game.client.socket.emit('changeScene', {
+                    game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE,
                     });
+                };
+                assetsManager.load();
+                document.addEventListener(Events.PLAYER_CONNECTED, function () {
                     let npc = new NPC.Warrior(game);
-
+                    game.client.socket.emit('changeScenePost', {
+                        sceneType: Simple.TYPE,
+                    });
                 });
 
             });

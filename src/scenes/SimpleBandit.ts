@@ -19,24 +19,26 @@ class SimpleBandit extends Scene {
 
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
-            var assetsManager = new BABYLON.AssetsManager(scene);
+            let assetsManager = new BABYLON.AssetsManager(scene);
 
             scene.executeWhenReady(function () {
-                game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
-                game.factories['worm'] = new Factories.Worms(game, scene, assetsManager).initFactory();
-                assetsManager.load();
                 self.environment = new Environment(game, scene);
-                game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 0);
-                game.player.emitPosition();
+                self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
-                    game.client.socket.emit('changeScene', {
+                    game.controller.registerControls(scene);
+                    game.client.socket.emit('changeScenePre', {
                         sceneType: SimpleBandit.TYPE,
                     });
+                };
+                assetsManager.load();
+                document.addEventListener(Events.PLAYER_CONNECTED, function () {
+                    game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 11);
+                    game.player.emitPosition();
 
-                    game.client.socket.emit('refreshPlayer');
-
-                    let npc = new NPC.Warrior(game);
-                }
+                    game.client.socket.emit('changeScenePost', {
+                        sceneType: SimpleBandit.TYPE,
+                    });
+                });
 
             });
 

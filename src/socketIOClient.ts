@@ -11,16 +11,16 @@ class SocketIOClient {
     
     public connect(socketUrl: string)
     {
-        this.socket = io.connect(socketUrl, {player: this.game.player});
+        this.socket = io.connect(socketUrl);
 
         this.playerConnected();
-        this.showEnemies(game.activeScene);
+        this.showEnemies();
     }
 
     /**
      * @returns {SocketIOClient}
      */
-    protected playerConnected() {
+    public playerConnected() {
         var self = this;
         var game = this.game;
         var playerName = Game.randomNumber(1,100);
@@ -28,8 +28,8 @@ class SocketIOClient {
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
             self.socket.emit('createPlayer', playerName);
-            game.player = new Player(game, data.id, playerName, true);
-            document.dispatchEvent(game.events.playerConnected);
+            // game.player = new Player(game, data.id, playerName, true);
+            // document.dispatchEvent(game.events.playerConnected);
             self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
         });
 
@@ -43,9 +43,9 @@ class SocketIOClient {
         var game = this.game;
         var playerName = Game.randomNumber(1,100);
 
-        this.socket.on('refreshPlayer', function (data) {
-            game.player.sfxWalk.stop();
-            game.player.mesh.actionManager.dispose();
+        this.socket.on('showPlayer', function (data) {
+            // game.player.sfxWalk.stop();
+            // game.player.mesh.actionManager.dispose();
             game.player = new Player(game, data.id, playerName, true);
             document.dispatchEvent(game.events.playerConnected);
 
@@ -57,7 +57,7 @@ class SocketIOClient {
     /**
      * @returns {SocketIOClient}
      */
-    protected showEnemies(scene: Scene) {
+    public showEnemies() {
         var game = this.game;
 
         this.socket.on('showEnemies', function (data) {
@@ -90,25 +90,26 @@ class SocketIOClient {
         let game = this.game;
 
         this.socket.on('newPlayerConnected', function (data) {
-            data.forEach(function (socketRemotePlayer) {
-                let remotePlayerKey = null;
+            if(game.player) {
+                data.forEach(function (socketRemotePlayer) {
+                    let remotePlayerKey = null;
 
-                if (socketRemotePlayer.id !== game.player.id) {
-                    game.remotePlayers.forEach(function (remotePlayer, key) {
-                        if (remotePlayer.id == socketRemotePlayer.id) {
-                            remotePlayerKey = key;
-                            
-                            return;
+                    if (socketRemotePlayer.id !== game.player.id) {
+                        game.remotePlayers.forEach(function (remotePlayer, key) {
+                            if (remotePlayer.id == socketRemotePlayer.id) {
+                                remotePlayerKey = key;
+
+                                return;
+                            }
+                        });
+
+                        if (remotePlayerKey === null) {
+                            let player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
+                            game.remotePlayers.push(player);
                         }
-                    });
-
-                    if(remotePlayerKey === null) {
-                        let player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
-                        game.remotePlayers.push(player);
                     }
-                }
-            });
-
+                });
+            }
         });
 
         return this;

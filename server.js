@@ -31,7 +31,6 @@ io.on('connection', function (socket) {
         };
         remotePlayers.push(player);
 
-        socket.emit('newPlayerConnected', remotePlayers);
         socket.broadcast.emit('newPlayerConnected', remotePlayers);
 
         socket.on('moveTo', function (data) {
@@ -47,8 +46,6 @@ io.on('connection', function (socket) {
 
     });
 
-
-
     socket.on('disconnect', function () {
         remotePlayers.forEach(function (remotePlayer, key) {
             if (remotePlayer.id == player.id || remotePlayer == null) {
@@ -58,13 +55,13 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('removePlayer', player.id);
     });
 
-    socket.on('changeScene', function (enemyData) {
-        socket.emit('showEnemies', enemies[enemyData.sceneType]);
+    socket.on('changeScenePre', function () {
+        socket.emit('showPlayer', player);
 
     });
 
-    socket.on('refreshPlayer', function () {
-        socket.emit('refreshPlayer', player);
+    socket.on('changeScenePost', function (enemyData) {
+        socket.emit('showEnemies', enemies[enemyData.sceneType]);
     });
 
     ///Enemies

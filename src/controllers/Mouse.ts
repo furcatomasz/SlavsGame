@@ -11,29 +11,27 @@ class Mouse extends Controller {
         ball.visibility = 0;
         this.ball = ball;
 
-        document.addEventListener(Events.PLAYER_CONNECTED, function() {
-            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                parameter: self.game.player.mesh
-            }, function () {
-                if(!clickTrigger) {
-                    self.game.controller.forward = false;
-                    self.targetPoint = null;
-                    self.ball.visibility = 0;
-                }
-            }));
+        ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: self.game.player.mesh
+        }, function () {
+            if(!clickTrigger) {
+                self.game.controller.forward = false;
+                self.targetPoint = null;
+                self.ball.visibility = 0;
+            }
+        }));
 
-            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-                parameter: self.game.player.mesh
-            }, function () {
-                if(!clickTrigger) {
-                    self.game.controller.forward = false;
-                    self.targetPoint = null;
-                    self.ball.visibility = 0;
-                }
-            }));
-        });
+        ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+            parameter: self.game.player.mesh
+        }, function () {
+            if(!clickTrigger) {
+                self.game.controller.forward = false;
+                self.targetPoint = null;
+                self.ball.visibility = 0;
+            }
+        }));
 
         scene.onPointerUp = function (evt, pickResult) {
             clickTrigger = false;

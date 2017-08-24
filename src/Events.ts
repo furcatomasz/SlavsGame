@@ -1,6 +1,5 @@
 class Events {
     static PLAYER_CONNECTED = 'playerConnected';
-
     public playerConnected: Event;
 
     constructor() {

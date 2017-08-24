@@ -25,6 +25,7 @@ namespace GUI {
             buttonClose.background = "black";
             buttonClose.width = "70px;";
             buttonClose.height = "40px";
+            buttonClose.left = -60;
             buttonClose.horizontalAlignment = this.position;
             buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
@@ -32,9 +33,25 @@ namespace GUI {
                 self.close();
             });
 
-            this.guiMain.registerBlockMoveCharacter(buttonClose);
             this.guiTexture.addControl(buttonClose);
+            this.guiMain.registerBlockMoveCharacter(buttonClose);
             this.buttonClose = buttonClose;
+
+            let buttonAccept = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Accept");
+            buttonAccept.color = "white";
+            buttonAccept.background = "black";
+            buttonAccept.width = "70px;";
+            buttonAccept.height = "40px";
+            buttonAccept.left = 60;
+            buttonAccept.horizontalAlignment = this.position;
+            buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+
+            buttonAccept.onPointerUpObservable.add(function() {
+                self.close();
+            });
+
+            this.guiMain.registerBlockMoveCharacter(buttonAccept);
+            this.guiTexture.addControl(buttonAccept);
         }
 
         public close() {

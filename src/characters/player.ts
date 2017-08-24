@@ -15,7 +15,7 @@ class Player extends AbstractCharacter {
         this.isControllable = registerMoving;
 
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: false, autoplay: false });
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.position = new BABYLON.Vector3(1, 0.1, 11);
@@ -40,7 +40,7 @@ class Player extends AbstractCharacter {
                 null,
                 null,
                 game.getScene());
-            playerLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+            playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
             playerLight.angle = 2;
             playerLight.exponent = 15;
             playerLight.intensity = 0.8;

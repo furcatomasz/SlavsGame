@@ -59,7 +59,7 @@ class Environment {
         let cone = scene.getMeshByName("Fireplace");
         if (cone) {
             var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 3, 0), scene);
-            fireplaceLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+            fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
             fireplaceLight.parent = cone;
             fireplaceLight.range = 140;
 
@@ -81,7 +81,7 @@ class Environment {
             let smokeSystem = new Particles.Entrace(game, plane).particleSystem;
             smokeSystem.start();
 
-            document.addEventListener(Events.PLAYER_CONNECTED, function() {
+            let listener = function listener() {
                 game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: cone
@@ -90,7 +90,11 @@ class Environment {
                     new SimpleBandit().initScene(game);
                     return this;
                 }));
-            });
+
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+
+            document.addEventListener(Events.PLAYER_CONNECTED, listener);
 
             }
 
@@ -100,7 +104,7 @@ class Environment {
         }
 
 
-        document.addEventListener(Events.PLAYER_CONNECTED, function() {
+        let listener2 = function listener2 () {
             for (let i = 0; i < self.colliders.length; i++) {
                 let sceneMesh = self.colliders[i];
                 game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
@@ -113,7 +117,10 @@ class Environment {
                         game.getScene().activeCamera.position = game.player.mesh.position;
                     }));
             }
-        });
+
+            document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
+        };
+        document.addEventListener(Events.PLAYER_CONNECTED, listener2);
 
         // var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
 

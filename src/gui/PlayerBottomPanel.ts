@@ -1,4 +1,3 @@
-/// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 namespace GUI {
     export class PlayerBottomPanel {
@@ -10,7 +9,7 @@ namespace GUI {
 
         constructor(game: Game) {
             let self = this;
-            document.addEventListener(Events.PLAYER_CONNECTED, function () {
+            let listener = function listener() {
                 self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
 
                 let characterBottomPanel = new BABYLON.GUI.StackPanel();
@@ -48,7 +47,9 @@ namespace GUI {
 
                 characterBottomPanel.addControl(hpSlider);
                 characterBottomPanel.addControl(expSlider);
-            });
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
 
     }

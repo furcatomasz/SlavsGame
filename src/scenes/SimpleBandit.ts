@@ -25,20 +25,24 @@ class SimpleBandit extends Scene {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
-                    game.controller.registerControls(scene);
+                    // game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePre', {
                         sceneType: SimpleBandit.TYPE,
                     });
                 };
                 assetsManager.load();
-                document.addEventListener(Events.PLAYER_CONNECTED, function () {
+
+                let listener = function listener() {
                     game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 11);
                     game.player.emitPosition();
 
                     game.client.socket.emit('changeScenePost', {
                         sceneType: SimpleBandit.TYPE,
                     });
-                });
+
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
 
             });
 

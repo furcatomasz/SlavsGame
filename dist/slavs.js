@@ -148,18 +148,21 @@ var Simple = (function (_super) {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
-                    game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE
                     });
                 };
                 assetsManager.load();
-                document.addEventListener(Events.PLAYER_CONNECTED, function () {
+                var listener = function listener() {
+                    console.log('playerConnected');
+                    game.controller.registerControls(scene);
                     var npc = new NPC.Warrior(game);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Simple.TYPE
                     });
-                });
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
             });
         });
     };
@@ -705,7 +708,7 @@ var Player = (function (_super) {
         _this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 10, 10, 125, 50, 100).setPlayer(_this);
         _this.isControllable = registerMoving;
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/", game.getScene(), null, { loop: false, autoplay: false });
+        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: false, autoplay: false });
         var mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.position = new BABYLON.Vector3(1, 0.1, 11);
         mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
@@ -720,7 +723,7 @@ var Player = (function (_super) {
             _this.mesh.isPickable = false;
             //let playerLight = new BABYLON.PointLight("playerLightSpot", new BABYLON.Vector3(0, 5, 0), game.getScene());
             var playerLight = new BABYLON.SpotLight("playerLightSpot", new BABYLON.Vector3(0, 25, 0), new BABYLON.Vector3(0, -1, 0), null, null, game.getScene());
-            playerLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+            playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
             playerLight.angle = 2;
             playerLight.exponent = 15;
             playerLight.intensity = 0.8;
@@ -872,28 +875,26 @@ var Mouse = (function (_super) {
         ball.isPickable = false;
         ball.visibility = 0;
         this.ball = ball;
-        document.addEventListener(Events.PLAYER_CONNECTED, function () {
-            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                parameter: self.game.player.mesh
-            }, function () {
-                if (!clickTrigger) {
-                    self.game.controller.forward = false;
-                    self.targetPoint = null;
-                    self.ball.visibility = 0;
-                }
-            }));
-            ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-                parameter: self.game.player.mesh
-            }, function () {
-                if (!clickTrigger) {
-                    self.game.controller.forward = false;
-                    self.targetPoint = null;
-                    self.ball.visibility = 0;
-                }
-            }));
-        });
+        ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: self.game.player.mesh
+        }, function () {
+            if (!clickTrigger) {
+                self.game.controller.forward = false;
+                self.targetPoint = null;
+                self.ball.visibility = 0;
+            }
+        }));
+        ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+            parameter: self.game.player.mesh
+        }, function () {
+            if (!clickTrigger) {
+                self.game.controller.forward = false;
+                self.targetPoint = null;
+                self.ball.visibility = 0;
+            }
+        }));
         scene.onPointerUp = function (evt, pickResult) {
             clickTrigger = false;
         };
@@ -1067,7 +1068,7 @@ var Environment = (function () {
         var cone = scene.getMeshByName("Fireplace");
         if (cone) {
             var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 3, 0), scene);
-            fireplaceLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+            fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
             fireplaceLight.parent = cone;
             fireplaceLight.range = 140;
             var smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
@@ -1084,7 +1085,7 @@ var Environment = (function () {
             plane.isPickable = false;
             var smokeSystem = new Particles.Entrace(game, plane).particleSystem;
             smokeSystem.start();
-            document.addEventListener(Events.PLAYER_CONNECTED, function () {
+            var listener = function listener() {
                 game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: cone
@@ -1093,13 +1094,15 @@ var Environment = (function () {
                     new SimpleBandit().initScene(game);
                     return this;
                 }));
-            });
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             sceneMesh.freezeWorldMatrix();
         }
-        document.addEventListener(Events.PLAYER_CONNECTED, function () {
+        var listener2 = function listener2() {
             for (var i_1 = 0; i_1 < self.colliders.length; i_1++) {
                 var sceneMesh_1 = self.colliders[i_1];
                 game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh_1 }, function () {
@@ -1110,7 +1113,9 @@ var Environment = (function () {
                     game.getScene().activeCamera.position = game.player.mesh.position;
                 }));
             }
-        });
+            document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
+        };
+        document.addEventListener(Events.PLAYER_CONNECTED, listener2);
         // var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
     }
     Environment.prototype.enableDayAndNight = function (game, light) {
@@ -1289,14 +1294,13 @@ var GUI;
     }());
     GUI.Main = Main;
 })(GUI || (GUI = {}));
-/// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var GUI;
 (function (GUI) {
     var PlayerBottomPanel = (function () {
         function PlayerBottomPanel(game) {
             var self = this;
-            document.addEventListener(Events.PLAYER_CONNECTED, function () {
+            var listener = function listener() {
                 self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
                 var characterBottomPanel = new BABYLON.GUI.StackPanel();
                 characterBottomPanel.width = "50%";
@@ -1330,7 +1334,9 @@ var GUI;
                 self.expBar = expSlider;
                 characterBottomPanel.addControl(hpSlider);
                 characterBottomPanel.addControl(expSlider);
-            });
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
         return PlayerBottomPanel;
     }());
@@ -1831,19 +1837,21 @@ var SimpleBandit = (function (_super) {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
-                    game.controller.registerControls(scene);
+                    // game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePre', {
                         sceneType: SimpleBandit.TYPE
                     });
                 };
                 assetsManager.load();
-                document.addEventListener(Events.PLAYER_CONNECTED, function () {
+                var listener = function listener() {
                     game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 11);
                     game.player.emitPosition();
                     game.client.socket.emit('changeScenePost', {
                         sceneType: SimpleBandit.TYPE
                     });
-                });
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
             });
         });
     };
@@ -2655,14 +2663,28 @@ var GUI;
             buttonClose.background = "black";
             buttonClose.width = "70px;";
             buttonClose.height = "40px";
+            buttonClose.left = -60;
             buttonClose.horizontalAlignment = this.position;
             buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             buttonClose.onPointerUpObservable.add(function () {
                 self.close();
             });
-            this.guiMain.registerBlockMoveCharacter(buttonClose);
             this.guiTexture.addControl(buttonClose);
+            this.guiMain.registerBlockMoveCharacter(buttonClose);
             this.buttonClose = buttonClose;
+            var buttonAccept = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Accept");
+            buttonAccept.color = "white";
+            buttonAccept.background = "black";
+            buttonAccept.width = "70px;";
+            buttonAccept.height = "40px";
+            buttonAccept.left = 60;
+            buttonAccept.horizontalAlignment = this.position;
+            buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonAccept.onPointerUpObservable.add(function () {
+                self.close();
+            });
+            this.guiMain.registerBlockMoveCharacter(buttonAccept);
+            this.guiTexture.addControl(buttonAccept);
         };
         Quest.prototype.close = function () {
             this.opened = false;
@@ -3069,7 +3091,7 @@ var Items;
                 _this.mesh = game.factories['character'].createInstance('Axe');
                 _this.mesh.visibility = 0;
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 10, 0, 0, 0, 0);
-                _this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", _this.game.getScene(), null, {
+                _this.sfxHit = new BABYLON.Sound("Fire", "/assets/Characters/Warrior/hit.wav", _this.game.getScene(), null, {
                     loop: false,
                     autoplay: false
                 });
@@ -3094,7 +3116,7 @@ var Items;
                 _this.mesh = game.factories['character'].createInstance('Sword');
                 _this.mesh.visibility = 0;
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 5, 0, 0, 0, 0);
-                _this.sfxHit = new BABYLON.Sound("Fire", "/babel/Items/Sword/Sword.wav", _this.game.getScene(), null, {
+                _this.sfxHit = new BABYLON.Sound("Fire", "/assets/Characters/Warrior/hit.wav", _this.game.getScene(), null, {
                     loop: false,
                     autoplay: false
                 });

@@ -24,18 +24,25 @@ class Simple extends Scene {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
-                    game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE,
                     });
                 };
                 assetsManager.load();
-                document.addEventListener(Events.PLAYER_CONNECTED, function () {
+
+
+                let listener = function listener() {
+                    console.log('playerConnected');
+                    game.controller.registerControls(scene);
+
                     let npc = new NPC.Warrior(game);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Simple.TYPE,
                     });
-                });
+
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
 
             });
 
@@ -43,6 +50,7 @@ class Simple extends Scene {
 
 
     }
+
 
     public getType(): number {
         return Simple.TYPE;

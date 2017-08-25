@@ -22,6 +22,7 @@ class Game {
      * Dynamic Collections
      */
     public scenes: Array<BABYLON.Scene>;
+    public scenesDisposed: Array<BABYLON.Scene>;
     public remotePlayers: Array<Player>;
     public enemies: Array<Monster>;
 
@@ -46,6 +47,7 @@ class Game {
         this.factories = [];
         this.enemies = [];
         this.scenes = [];
+        this.scenesDisposed = [];
         this.activeScene = null;
         this.events = new Events();
 
@@ -67,6 +69,14 @@ class Game {
         this.engine.runRenderLoop(() => {
             if (this.activeScene != null) {
                 self.getScene().render();
+            }
+
+            if(self.scenesDisposed.length > 0) {
+                for (let i = 0; i < self.scenesDisposed.length; i++) {
+                    let sceneToDispose = self.scenesDisposed[i];
+                    sceneToDispose.dispose();
+                }
+                self.scenesDisposed = [];
             }
         });
 

@@ -166,7 +166,7 @@ class Player extends AbstractCharacter {
             if (self.isControllable) {
                 self.weaponCollisions();
                 self.registerMoving();
-                if(self.game.controller.forward) {
+                if(self.game.controller.forward && self.game.getScene()) {
                     self.game.getScene().activeCamera.position = self.mesh.position;
                 }
             }

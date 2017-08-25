@@ -141,9 +141,9 @@ var Simple = (function (_super) {
                 .optimizeScene(scene)
                 .setCamera(scene);
             //scene.debugLayer.show();
+            var assetsManager = new BABYLON.AssetsManager(scene);
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
-            var assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
@@ -154,7 +154,6 @@ var Simple = (function (_super) {
                 };
                 assetsManager.load();
                 var listener = function listener() {
-                    console.log('playerConnected');
                     game.controller.registerControls(scene);
                     var npc = new NPC.Warrior(game);
                     game.client.socket.emit('changeScenePost', {
@@ -336,7 +335,7 @@ var Monster = (function (_super) {
         var walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
         var playerMesh = self.game.player.mesh;
         this.afterRender = function () {
-            if (self.game.player && self.game.getScene().isActiveMesh(self.mesh) && (!self.target || self.target == self.game.player.id)) {
+            if (self.game.player && self.game.getScene() && self.game.getScene().isActiveMesh(self.mesh) && (!self.target || self.target == self.game.player.id)) {
                 if (self.visibilityArea.intersectsMesh(playerMesh, false)) {
                     self.mesh.lookAt(playerMesh.position);
                     self.target = self.game.player.id;
@@ -531,6 +530,7 @@ var Game = (function () {
         this.factories = [];
         this.enemies = [];
         this.scenes = [];
+        this.scenesDisposed = [];
         this.activeScene = null;
         this.events = new Events();
         this.createScene().animate();
@@ -548,6 +548,13 @@ var Game = (function () {
         this.engine.runRenderLoop(function () {
             if (_this.activeScene != null) {
                 self.getScene().render();
+            }
+            if (self.scenesDisposed.length > 0) {
+                for (var i = 0; i < self.scenesDisposed.length; i++) {
+                    var sceneToDispose = self.scenesDisposed[i];
+                    sceneToDispose.dispose();
+                }
+                self.scenesDisposed = [];
             }
         });
         window.addEventListener('resize', function () {
@@ -835,7 +842,7 @@ var Player = (function (_super) {
             if (self.isControllable) {
                 self.weaponCollisions();
                 self.registerMoving();
-                if (self.game.controller.forward) {
+                if (self.game.controller.forward && self.game.getScene()) {
                     self.game.getScene().activeCamera.position = self.mesh.position;
                 }
             }
@@ -1088,9 +1095,11 @@ var Environment = (function () {
             var listener = function listener() {
                 game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                    parameter: cone
+                    parameter: plane
                 }, function () {
-                    game.getScene().dispose();
+                    game.scenesDisposed.push(game.getScene());
+                    game.activeScene = null;
+                    game.controller.forward = false;
                     new SimpleBandit().initScene(game);
                     return this;
                 }));
@@ -1830,20 +1839,20 @@ var SimpleBandit = (function (_super) {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
+            var assetsManager = new BABYLON.AssetsManager(scene);
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
-            var assetsManager = new BABYLON.AssetsManager(scene);
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
-                    // game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePre', {
                         sceneType: SimpleBandit.TYPE
                     });
                 };
                 assetsManager.load();
                 var listener = function listener() {
+                    game.controller.registerControls(scene);
                     game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 11);
                     game.player.emitPosition();
                     game.client.socket.emit('changeScenePost', {

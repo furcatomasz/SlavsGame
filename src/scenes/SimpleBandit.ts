@@ -17,15 +17,14 @@ class SimpleBandit extends Scene {
                 .optimizeScene(scene)
                 .setCamera(scene);
 
+            let assetsManager = new BABYLON.AssetsManager(scene);
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
-            let assetsManager = new BABYLON.AssetsManager(scene);
 
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
-                    // game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePre', {
                         sceneType: SimpleBandit.TYPE,
                     });
@@ -33,6 +32,7 @@ class SimpleBandit extends Scene {
                 assetsManager.load();
 
                 let listener = function listener() {
+                    game.controller.registerControls(scene);
                     game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 11);
                     game.player.emitPosition();
 

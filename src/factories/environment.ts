@@ -84,9 +84,11 @@ class Environment {
             let listener = function listener() {
                 game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                    parameter: cone
+                    parameter: plane
                 }, function () {
-                    game.getScene().dispose();
+                    game.scenesDisposed.push(game.getScene());
+                    game.activeScene = null;
+                    game.controller.forward = false;
                     new SimpleBandit().initScene(game);
                     return this;
                 }));

@@ -5,16 +5,14 @@ class EnvironmentSelectCharacter {
     shadowGenerator: BABYLON.ShadowGenerator;
 
     constructor(game:Game, scene: BABYLON.Scene) {
-        let self = this;
-
         ////LIGHT
         let light = game.getScene().lights[0];
         light.intensity = 0;
-        var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 1, 0), scene);
-        fireplaceLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+        let fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 1, 0), scene);
+        fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
         fireplaceLight.range = 35;
 
-        var intensityAnimation = new BABYLON.Animation(
+        let intensityAnimation = new BABYLON.Animation(
             "mainLightIntensity",
             "intensity",
             50,
@@ -35,7 +33,7 @@ class EnvironmentSelectCharacter {
             }
         ]);
 
-        var colorAnimation = new BABYLON.Animation(
+        let colorAnimation = new BABYLON.Animation(
             "mainLightColor",
             "specular",
             50,
@@ -58,15 +56,13 @@ class EnvironmentSelectCharacter {
 
         fireplaceLight.animations = [];
         fireplaceLight.animations.push(intensityAnimation);
-        //fireplaceLight.animations.push(colorAnimation);
         game.getScene().beginAnimation(fireplaceLight, 0, 10, true);
-        //game.getScene().beginAnimation(fireplaceLight, 20, 30, true);
         let shadowGenerator = new BABYLON.ShadowGenerator(1024, fireplaceLight);
         this.shadowGenerator = shadowGenerator;
 
-        for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
-            var meshName = scene.meshes[i]['name'];
+        for (let i = 0; i < scene.meshes.length; i++) {
+            let sceneMesh = scene.meshes[i];
+            let meshName = scene.meshes[i]['name'];
 
             if (meshName.search("Forest_ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
@@ -87,17 +83,18 @@ class EnvironmentSelectCharacter {
             let fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
 
-             //var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-             //sfxFireplace.attachToMesh(cone);
+            let sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+             sfxFireplace.attachToMesh(cone);
         }
 
-        for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
+        for (let i = 0; i < scene.meshes.length; i++) {
+            let sceneMesh = scene.meshes[i];
             sceneMesh.freezeWorldMatrix();
         }
 
-        var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
-        var bowls = new BABYLON.Sound("Fire", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true });
+        new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.5 });
+        new BABYLON.Sound("Fire", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.4 });
+        new BABYLON.Sound("Fire", "assets/sounds/music/music001.mp3", scene, null, { loop: true, autoplay: true, volume: 0.9 });
 
     }
 }

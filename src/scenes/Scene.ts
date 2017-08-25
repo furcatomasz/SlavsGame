@@ -49,12 +49,10 @@ abstract class Scene {
     public optimizeScene(scene:BABYLON.Scene) {
         scene.collisionsEnabled = false;
         scene.fogEnabled = false;
-        //scene.shadowsEnabled = false;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        //scene.renderTargetsEnabled = false;
         return this;
     }
 
@@ -65,5 +63,14 @@ abstract class Scene {
         return this;
     }
 
+    public changeScene(newScene: Scene) {
+        this.game.scenesDisposed.push(this.game.getScene());
+        this.game.activeScene = null;
+        this.game.controller.forward = false;
+        newScene.initScene(this.game);
+    }
+
     public abstract getType();
+
+    public abstract initScene(game: Game);
 }

@@ -52,6 +52,7 @@ namespace SelectCharacter {
                     if(!self.skeletonAnimation) {
                         self.skeletonAnimation = self.mesh.skeleton.beginAnimation('Select', false, 1, function () {
                             self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                            self.skeletonAnimation = null;
                         });
                     }
                 })
@@ -60,14 +61,20 @@ namespace SelectCharacter {
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPointerOutTrigger,
                 function() {
-                    //self.game.getScene().stopAnimation(self.mesh.skeleton);
+                    if(!self.skeletonAnimation) {
+                        let animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
+                        self.skeletonAnimation = self.game.getScene().beginAnimation(self.mesh, animationSelectRange.to, animationSelectRange.from, false, -1, function() {
+                            self.mesh.skeleton.beginAnimation('Sit');
+                            self.skeletonAnimation = null;
+                        });
+                    }
                 })
             );
 
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger,
                 function() {
-                    new Simple().initScene(self.game);
+                    self.game.sceneManager.changeScene(new Simple());
                 })
             );
         }

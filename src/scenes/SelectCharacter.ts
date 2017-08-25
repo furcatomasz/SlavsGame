@@ -16,10 +16,9 @@ class SelectCharacter extends Scene {
                 .optimizeScene(scene)
                 .setCamera(scene); 
 
-            //scene.debugLayer.show();
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
-            var assetsManager = new BABYLON.AssetsManager(scene);
+            let assetsManager = new BABYLON.AssetsManager(scene);
             scene.activeCamera.maxZ = 200;
             scene.activeCamera.minZ = -200;
             scene.activeCamera.mode = BABYLON.Camera.PERSPECTIVE_CAMERA;
@@ -32,8 +31,7 @@ class SelectCharacter extends Scene {
                 game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
                 assetsManager.onFinish = function (tasks) {
                     new SelectCharacter.Warrior(game);
-
-                }
+                };
                 assetsManager.load();
             });
 

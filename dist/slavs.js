@@ -107,18 +107,22 @@ var Scene = (function () {
     Scene.prototype.optimizeScene = function (scene) {
         scene.collisionsEnabled = false;
         scene.fogEnabled = false;
-        //scene.shadowsEnabled = false;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        //scene.renderTargetsEnabled = false;
         return this;
     };
     Scene.prototype.initFactories = function (scene, assetsManager) {
         this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
         this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
         return this;
+    };
+    Scene.prototype.changeScene = function (newScene) {
+        this.game.scenesDisposed.push(this.game.getScene());
+        this.game.activeScene = null;
+        this.game.controller.forward = false;
+        newScene.initScene(this.game);
     };
     Scene.TYPE = 0;
     return Scene;
@@ -539,7 +543,7 @@ var Game = (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new Simple().initScene(this);
+        new SelectCharacter().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -1155,12 +1159,11 @@ var Environment = (function () {
 /// <reference path="../game.ts"/>
 var EnvironmentSelectCharacter = (function () {
     function EnvironmentSelectCharacter(game, scene) {
-        var self = this;
         ////LIGHT
         var light = game.getScene().lights[0];
         light.intensity = 0;
         var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 1, 0), scene);
-        fireplaceLight.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
+        fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
         fireplaceLight.range = 35;
         var intensityAnimation = new BABYLON.Animation("mainLightIntensity", "intensity", 50, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
         intensityAnimation.setKeys([
@@ -1194,9 +1197,7 @@ var EnvironmentSelectCharacter = (function () {
         ]);
         fireplaceLight.animations = [];
         fireplaceLight.animations.push(intensityAnimation);
-        //fireplaceLight.animations.push(colorAnimation);
         game.getScene().beginAnimation(fireplaceLight, 0, 10, true);
-        //game.getScene().beginAnimation(fireplaceLight, 20, 30, true);
         var shadowGenerator = new BABYLON.ShadowGenerator(1024, fireplaceLight);
         this.shadowGenerator = shadowGenerator;
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -1217,15 +1218,16 @@ var EnvironmentSelectCharacter = (function () {
             smokeSystem.start();
             var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
-            //var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-            //sfxFireplace.attachToMesh(cone);
+            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            sfxFireplace.attachToMesh(cone);
         }
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             sceneMesh.freezeWorldMatrix();
         }
-        var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
-        var bowls = new BABYLON.Sound("Fire", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true });
+        new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.5 });
+        new BABYLON.Sound("Fire", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.4 });
+        new BABYLON.Sound("Fire", "assets/sounds/music/music001.mp3", scene, null, { loop: true, autoplay: true, volume: 0.9 });
     }
     return EnvironmentSelectCharacter;
 }());
@@ -1798,7 +1800,6 @@ var SelectCharacter = (function (_super) {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-            //scene.debugLayer.show();
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             var assetsManager = new BABYLON.AssetsManager(scene);
@@ -2287,14 +2288,21 @@ var SelectCharacter;
                 if (!self.skeletonAnimation) {
                     self.skeletonAnimation = self.mesh.skeleton.beginAnimation('Select', false, 1, function () {
                         self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                        self.skeletonAnimation = null;
                     });
                 }
             }));
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-                //self.game.getScene().stopAnimation(self.mesh.skeleton);
+                if (!self.skeletonAnimation) {
+                    var animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
+                    self.skeletonAnimation = self.game.getScene().beginAnimation(self.mesh, animationSelectRange.to, animationSelectRange.from, false, -1, function () {
+                        self.mesh.skeleton.beginAnimation('Sit');
+                        self.skeletonAnimation = null;
+                    });
+                }
             }));
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                new Simple().initScene(self.game);
+                self.game.sceneManager.changeScene(new Simple());
             }));
         };
         return Warrior;

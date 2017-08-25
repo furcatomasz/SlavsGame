@@ -35,9 +35,6 @@ namespace SelectCharacter {
         removeFromWorld() {
         }
 
-        registerFunctionAfterRender() {
-        }
-
         protected registerActions() {
             let self = this;
             this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());

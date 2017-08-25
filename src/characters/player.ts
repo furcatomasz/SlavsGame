@@ -74,6 +74,7 @@ class Player extends AbstractCharacter {
         this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
 
         super(name, game);
+        this.registerFunctionAfterRender();
     }
 
     /**
@@ -152,7 +153,6 @@ class Player extends AbstractCharacter {
     }
 
     public removeFromWorld() {
-        this.game.getScene().unregisterAfterRender(this.afterRender);
         this.mesh.dispose();
         //this.items.weapon.mesh.dispose();
         //this.items.shield.mesh.dispose();
@@ -162,14 +162,14 @@ class Player extends AbstractCharacter {
 
     protected registerFunctionAfterRender() {
         let self = this;
-        this.afterRender = function() {
-            if (self.isControllable) {
+        if (self.isControllable) {
+            this.game.getScene().registerAfterRender(function () {
                 self.weaponCollisions();
                 self.registerMoving();
-                if(self.game.controller.forward && self.game.getScene()) {
+                if (self.game.controller.forward && self.game.getScene()) {
                     self.game.getScene().activeCamera.position = self.mesh.position;
                 }
-            }
+            });
         }
     }
 

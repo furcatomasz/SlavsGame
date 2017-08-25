@@ -30,12 +30,13 @@ abstract class Monster extends AbstractCharacter {
         this.visibilityArea = visivilityArea;
 
         game.enemies[this.id] = this;
-
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         this.mesh.isPickable = false;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
 
         super(name, game);
+
+        this.registerActions();
     }
 
     public emitPosition() {
@@ -51,39 +52,102 @@ abstract class Monster extends AbstractCharacter {
     }
 
     public removeFromWorld() {
-        this.game.getScene().unregisterAfterRender(this.afterRender);
         let self = this;
         self.visibilityArea.dispose();
         self.attackArea.dispose();
         self.mesh.dispose();
     }
 
-    protected registerFunctionAfterRender() {
+    protected registerActions() {
         let self = this;
+        let attackIsActive = false;
         let walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
-        let playerMesh = self.game.player.mesh;
+        let playerMesh = this.game.player.mesh;
+        this.visibilityArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
+        this.attackArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
+        this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
 
-        this.afterRender = function () {
-            if (self.game.player && self.game.getScene() && self.game.getScene().isActiveMesh(self.mesh) && (!self.target || self.target == self.game.player.id)) {
+        ///on visibility collision enter
+        this.visibilityArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: playerMesh
+        }, function () {
+            self.target = self.game.player.id;
+        }));
 
-                if (self.visibilityArea.intersectsMesh(playerMesh, false)) {
-                    self.mesh.lookAt(playerMesh.position);
-                    self.target = self.game.player.id;
+        ///on visibility collision exit
+        this.visibilityArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+            parameter: playerMesh
+        }, function () {
+            self.target = null;
+        }));
 
-                    if (self.attackArea.intersectsMesh(playerMesh, false)) {
-                        self.runAnimationHit();
-                    } else {
-                        self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
-                        self.runAnimationWalk(true);
-                    }
-                } else {
-                    if (self.target) {
-                        self.target = null;
-                        self.runAnimationWalk(true);
-                    }
-                }
+        ///on attack collision enter
+        this.attackArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: playerMesh
+        }, function () {
+            attackIsActive = true;
+        }));
+
+        ///on attack collision exit
+        this.attackArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+            parameter: playerMesh
+        }, function () {
+            attackIsActive = false;
+        }));
+
+        ///on attack player collision enter
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: playerMesh
+        }, function () {
+            console.log('test');
+            if(self.game.controller.attackPoint == this.mesh) {
+                self.game.player.runAnimationHit();
+                self.game.controller.forward = false;
             }
-        }
+        }));
+
+
+        //TODO: finish optimilazation
+        // ///on attack player collision exit
+        // this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+        //     trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+        //     parameter: playerMesh
+        // }, function () {
+        //     if(self.game.controller.attackPoint == this.mesh) {
+        //         self.game.controller.forward = true;
+        //     }
+        // }));
+
+
+        // scene.registerBeforeRender(function () {
+        //     if (self.game.player) {
+        //         if (self.attackPoint) {
+        //             if (self.game.player.mesh.intersectsMesh(self.attackPoint)) {
+        //                 self.game.player.runAnimationHit();
+        //                 self.game.controller.forward = false;
+        //             } else {
+        //                 self.game.controller.forward = true;
+        //             }
+        //         }
+        //     }
+        // });
+
+        this.game.getScene().registerBeforeRender(function() {
+            if(self.target) {
+                if(attackIsActive) {
+                    self.runAnimationHit();
+                    return;
+                }
+                self.mesh.lookAt(playerMesh.position);
+                self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+                self.runAnimationWalk(true);
+            }
+        });
     }
 
     protected onHitEnd() {

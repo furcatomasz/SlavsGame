@@ -40,12 +40,6 @@ abstract class AbstractCharacter {
         this.name = name;
         this.game = game;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-
-        this.registerFunctionAfterRender();
-
-        if(this.afterRender) {
-            game.getScene().registerAfterRender(this.afterRender);
-        }
     }
 
     public mount(mesh, boneName) {
@@ -152,8 +146,6 @@ abstract class AbstractCharacter {
     }
 
     abstract removeFromWorld();
-
-    abstract registerFunctionAfterRender();
 
     /** Events */
     protected onHitStart() {};

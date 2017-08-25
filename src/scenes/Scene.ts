@@ -15,7 +15,6 @@ abstract class Scene {
 
     protected setDefaults(game:Game) {
         this.game = game;
-
         return this;
     }
 

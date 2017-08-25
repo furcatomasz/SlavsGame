@@ -76,21 +76,8 @@ class Mouse extends Controller {
             }
         };
 
-        scene.registerBeforeRender(function () {
-            if (self.game.player) {
-                if (self.attackPoint) {
-                    if (self.game.player.mesh.intersectsMesh(self.attackPoint)) {
-                        self.game.player.runAnimationHit();
-                        self.game.controller.forward = false;
-                    } else {
-                        self.game.controller.forward = true;
-                    }
-                }
-            }
-        });
     }
 
-    protected
 
 
 }

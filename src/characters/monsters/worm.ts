@@ -23,26 +23,23 @@ class Worm extends Monster {
 
     public runAnimationWalk(emit:boolean):void {
         let self = this;
-        var childMesh = this.mesh;
         let loopAnimation = this.isControllable;
 
-        if (childMesh) {
-            let skeleton = childMesh.skeleton;
+        let skeleton = this.mesh.skeleton;
 
-            if (emit) {
-                this.emitPosition();
-            }
+        if (emit) {
+            this.emitPosition();
+        }
 
-            if (!this.animation) {
-                self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
-                    skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                    self.animation = null;
-                });
+        if (!this.animation) {
+            self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
+                skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                self.animation = null;
+            });
 
-
-            }
 
         }
+
     }
     
 }

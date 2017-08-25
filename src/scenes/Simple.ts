@@ -17,8 +17,7 @@ class Simple extends Scene {
                 .optimizeScene(scene)
                 .setCamera(scene);
             //scene.debugLayer.show();
-            
-            var assetsManager = new BABYLON.AssetsManager(scene);
+            let assetsManager = new BABYLON.AssetsManager(scene);
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
@@ -29,12 +28,12 @@ class Simple extends Scene {
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE,
                     });
+
                 };
                 assetsManager.load();
 
                 let listener = function listener() {
                     game.controller.registerControls(scene);
-
                     let npc = new NPC.Warrior(game);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Simple.TYPE,

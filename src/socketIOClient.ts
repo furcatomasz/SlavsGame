@@ -21,15 +21,13 @@ class SocketIOClient {
      * @returns {SocketIOClient}
      */
     public playerConnected() {
-        var self = this;
-        var game = this.game;
-        var playerName = Game.randomNumber(1,100);
+        let self = this;
+        let game = this.game;
+        let playerName = Game.randomNumber(1,100);
 
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
             self.socket.emit('createPlayer', playerName);
-            // game.player = new Player(game, data.id, playerName, true);
-            // document.dispatchEvent(game.events.playerConnected);
             self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
         });
 
@@ -40,12 +38,10 @@ class SocketIOClient {
      * @returns {SocketIOClient}
      */
     protected refreshPlayer() {
-        var game = this.game;
-        var playerName = Game.randomNumber(1,100);
+        let game = this.game;
+        let playerName = Game.randomNumber(1,100);
 
         this.socket.on('showPlayer', function (data) {
-            // game.player.sfxWalk.stop();
-            // game.player.mesh.actionManager.dispose();
             game.player = new Player(game, data.id, playerName, true);
             document.dispatchEvent(game.events.playerConnected);
 
@@ -58,7 +54,7 @@ class SocketIOClient {
      * @returns {SocketIOClient}
      */
     public showEnemies() {
-        var game = this.game;
+        let game = this.game;
 
         this.socket.on('showEnemies', function (data) {
            data.forEach(function (enemyData, key) {

@@ -66,7 +66,6 @@ io.on('connection', function (socket) {
 
     ///Enemies
     socket.on('updateEnemy', function (enemyData) {
-
         var enemy = enemies[enemyData.sceneType][enemyData.enemyKey];
         enemy.position = enemyData.position;
         enemy.rotation = enemyData.rotation;

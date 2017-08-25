@@ -42,10 +42,6 @@ namespace NPC {
             this.mesh.dispose();
         }
 
-
-        protected registerFunctionAfterRender() {
-        }
-
         public createTooltip() {
             var box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
             box1.parent = this.mesh;

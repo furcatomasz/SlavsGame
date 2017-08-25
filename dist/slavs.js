@@ -182,10 +182,6 @@ var AbstractCharacter = (function () {
         this.name = name;
         this.game = game;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-        this.registerFunctionAfterRender();
-        if (this.afterRender) {
-            game.getScene().registerAfterRender(this.afterRender);
-        }
     }
     AbstractCharacter.prototype.mount = function (mesh, boneName) {
         var boneIndice = -1;
@@ -314,6 +310,7 @@ var Monster = (function (_super) {
         _this.mesh.isPickable = false;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
+        _this.registerActions();
         return _this;
     }
     Monster.prototype.emitPosition = function () {
@@ -328,37 +325,91 @@ var Monster = (function (_super) {
         }
     };
     Monster.prototype.removeFromWorld = function () {
-        this.game.getScene().unregisterAfterRender(this.afterRender);
         var self = this;
         self.visibilityArea.dispose();
         self.attackArea.dispose();
         self.mesh.dispose();
     };
-    Monster.prototype.registerFunctionAfterRender = function () {
+    Monster.prototype.registerActions = function () {
         var self = this;
+        var attackIsActive = false;
         var walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
-        var playerMesh = self.game.player.mesh;
-        this.afterRender = function () {
-            if (self.game.player && self.game.getScene() && self.game.getScene().isActiveMesh(self.mesh) && (!self.target || self.target == self.game.player.id)) {
-                if (self.visibilityArea.intersectsMesh(playerMesh, false)) {
-                    self.mesh.lookAt(playerMesh.position);
-                    self.target = self.game.player.id;
-                    if (self.attackArea.intersectsMesh(playerMesh, false)) {
-                        self.runAnimationHit();
-                    }
-                    else {
-                        self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
-                        self.runAnimationWalk(true);
-                    }
-                }
-                else {
-                    if (self.target) {
-                        self.target = null;
-                        self.runAnimationWalk(true);
-                    }
-                }
+        var playerMesh = this.game.player.mesh;
+        this.visibilityArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
+        this.attackArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
+        this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
+        ///on visibility collision enter
+        this.visibilityArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: playerMesh
+        }, function () {
+            self.target = self.game.player.id;
+        }));
+        ///on visibility collision exit
+        this.visibilityArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+            parameter: playerMesh
+        }, function () {
+            self.target = null;
+        }));
+        ///on attack collision enter
+        this.attackArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: playerMesh
+        }, function () {
+            attackIsActive = true;
+        }));
+        ///on attack collision exit
+        this.attackArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+            parameter: playerMesh
+        }, function () {
+            attackIsActive = false;
+        }));
+        ///on attack player collision enter
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: playerMesh
+        }, function () {
+            console.log('test');
+            if (self.game.controller.attackPoint == this.mesh) {
+                self.game.player.runAnimationHit();
+                self.game.controller.forward = false;
             }
-        };
+        }));
+        //TODO: finish optimilazation
+        // ///on attack player collision exit
+        // this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+        //     trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+        //     parameter: playerMesh
+        // }, function () {
+        //     if(self.game.controller.attackPoint == this.mesh) {
+        //         self.game.controller.forward = true;
+        //     }
+        // }));
+        // scene.registerBeforeRender(function () {
+        //     if (self.game.player) {
+        //         if (self.attackPoint) {
+        //             if (self.game.player.mesh.intersectsMesh(self.attackPoint)) {
+        //                 self.game.player.runAnimationHit();
+        //                 self.game.controller.forward = false;
+        //             } else {
+        //                 self.game.controller.forward = true;
+        //             }
+        //         }
+        //     }
+        // });
+        this.game.getScene().registerBeforeRender(function () {
+            if (self.target) {
+                if (attackIsActive) {
+                    self.runAnimationHit();
+                    return;
+                }
+                self.mesh.lookAt(playerMesh.position);
+                self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+                self.runAnimationWalk(true);
+            }
+        });
     };
     Monster.prototype.onHitEnd = function () {
         if (Game.randomNumber(1, 100) <= this.statistics.getHitChance()) {
@@ -399,8 +450,6 @@ var SocketIOClient = (function () {
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
             self.socket.emit('createPlayer', playerName);
-            // game.player = new Player(game, data.id, playerName, true);
-            // document.dispatchEvent(game.events.playerConnected);
             self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
         });
         return this;
@@ -412,8 +461,6 @@ var SocketIOClient = (function () {
         var game = this.game;
         var playerName = Game.randomNumber(1, 100);
         this.socket.on('showPlayer', function (data) {
-            // game.player.sfxWalk.stop();
-            // game.player.mesh.actionManager.dispose();
             game.player = new Player(game, data.id, playerName, true);
             document.dispatchEvent(game.events.playerConnected);
         });
@@ -543,7 +590,7 @@ var Game = (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new SelectCharacter().initScene(this);
+        new Simple().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -763,6 +810,7 @@ var Player = (function (_super) {
         }
         _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
+        _this.registerFunctionAfterRender();
         return _this;
     }
     /**
@@ -835,22 +883,21 @@ var Player = (function (_super) {
         return this;
     };
     Player.prototype.removeFromWorld = function () {
-        this.game.getScene().unregisterAfterRender(this.afterRender);
         this.mesh.dispose();
         //this.items.weapon.mesh.dispose();
         //this.items.shield.mesh.dispose();
     };
     Player.prototype.registerFunctionAfterRender = function () {
         var self = this;
-        this.afterRender = function () {
-            if (self.isControllable) {
+        if (self.isControllable) {
+            this.game.getScene().registerAfterRender(function () {
                 self.weaponCollisions();
                 self.registerMoving();
                 if (self.game.controller.forward && self.game.getScene()) {
                     self.game.getScene().activeCamera.position = self.mesh.position;
                 }
-            }
-        };
+            });
+        }
     };
     Player.prototype.createItems = function () {
         this.inventory = new Character.Inventory(this.game, this);
@@ -944,19 +991,6 @@ var Mouse = (function (_super) {
                 }
             }
         };
-        scene.registerBeforeRender(function () {
-            if (self.game.player) {
-                if (self.attackPoint) {
-                    if (self.game.player.mesh.intersectsMesh(self.attackPoint)) {
-                        self.game.player.runAnimationHit();
-                        self.game.controller.forward = false;
-                    }
-                    else {
-                        self.game.controller.forward = true;
-                    }
-                }
-            }
-        });
     };
     return Mouse;
 }(Controller));
@@ -2108,19 +2142,16 @@ var Worm = (function (_super) {
     }
     Worm.prototype.runAnimationWalk = function (emit) {
         var self = this;
-        var childMesh = this.mesh;
         var loopAnimation = this.isControllable;
-        if (childMesh) {
-            var skeleton_4 = childMesh.skeleton;
-            if (emit) {
-                this.emitPosition();
-            }
-            if (!this.animation) {
-                self.animation = skeleton_4.beginAnimation('Walk', loopAnimation, 1, function () {
-                    skeleton_4.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                    self.animation = null;
-                });
-            }
+        var skeleton = this.mesh.skeleton;
+        if (emit) {
+            this.emitPosition();
+        }
+        if (!this.animation) {
+            self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
+                skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                self.animation = null;
+            });
         }
     };
     return Worm;
@@ -2146,8 +2177,6 @@ var NPC;
         }
         AbstractNpc.prototype.removeFromWorld = function () {
             this.mesh.dispose();
-        };
-        AbstractNpc.prototype.registerFunctionAfterRender = function () {
         };
         AbstractNpc.prototype.createTooltip = function () {
             var box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
@@ -2224,8 +2253,6 @@ var SelectCharacter;
         }
         Bandit.prototype.removeFromWorld = function () {
         };
-        Bandit.prototype.registerFunctionAfterRender = function () {
-        };
         Bandit.prototype.registerActions = function () {
             var self = this;
             this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
@@ -2277,8 +2304,6 @@ var SelectCharacter;
             return _this;
         }
         Warrior.prototype.removeFromWorld = function () {
-        };
-        Warrior.prototype.registerFunctionAfterRender = function () {
         };
         Warrior.prototype.registerActions = function () {
             var self = this;

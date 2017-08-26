@@ -75,23 +75,24 @@ abstract class AbstractCharacter {
 
             if (childMesh) {
                 let skeleton = childMesh.skeleton;
-
-                this.game.client.socket.emit('attack', {
-                    attack: true
-                });
-
-                self.attackAnimation = true;
-                self.onHitStart();
-                self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_ATTACK, false, this.statistics.getAttackSpeed() / 100, function () {
-                    skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                    self.animation = null;
-                    self.attackAnimation = false;
-                    self.onHitEnd();
-
-                    self.game.client.socket.emit('attack', {
-                        attack: false
+                if(skeleton) {
+                    this.game.client.socket.emit('attack', {
+                        attack: true
                     });
-                });
+
+                    self.attackAnimation = true;
+                    self.onHitStart();
+                    self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_ATTACK, false, this.statistics.getAttackSpeed() / 100, function () {
+                        skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                        self.animation = null;
+                        self.attackAnimation = false;
+                        self.onHitEnd();
+
+                        self.game.client.socket.emit('attack', {
+                            attack: false
+                        });
+                    });
+                }
             }
         }
     }

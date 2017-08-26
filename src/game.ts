@@ -59,7 +59,7 @@ class Game {
     }
 
     createScene(): Game {
-        new Simple().initScene(this);
+        new SelectCharacter().initScene(this);
 
         return this;
     }

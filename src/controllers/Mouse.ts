@@ -57,6 +57,7 @@ class Mouse extends Controller {
                     self.game.player.mesh.lookAt(pickResult.pickedPoint);
                     self.targetPoint = null;
                     self.ball.visibility = 0;
+                    self.game.controller.forward = true;
                 }
 
             }

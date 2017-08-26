@@ -11,10 +11,12 @@ var __extends = (this && this.__extends) || (function () {
 var Events = (function () {
     function Events() {
         this.playerConnected = new Event(Events.PLAYER_CONNECTED);
+        this.playerHitStart = new Event(Events.PLAYER_HIT_START);
     }
-    Events.PLAYER_CONNECTED = 'playerConnected';
     return Events;
 }());
+Events.PLAYER_CONNECTED = 'playerConnected';
+Events.PLAYER_HIT_START = 'playerHitStart';
 /// <reference path="../game.ts"/>
 var Controller = (function () {
     function Controller(game) {
@@ -124,9 +126,9 @@ var Scene = (function () {
         this.game.controller.forward = false;
         newScene.initScene(this.game);
     };
-    Scene.TYPE = 0;
     return Scene;
 }());
+Scene.TYPE = 0;
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -172,9 +174,9 @@ var Simple = (function (_super) {
     Simple.prototype.getType = function () {
         return Simple.TYPE;
     };
-    Simple.TYPE = 2;
     return Simple;
 }(Scene));
+Simple.TYPE = 2;
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var AbstractCharacter = (function () {
@@ -210,20 +212,22 @@ var AbstractCharacter = (function () {
             var childMesh = this.mesh;
             if (childMesh) {
                 var skeleton_1 = childMesh.skeleton;
-                this.game.client.socket.emit('attack', {
-                    attack: true
-                });
-                self_1.attackAnimation = true;
-                self_1.onHitStart();
-                self_1.animation = skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_ATTACK, false, this.statistics.getAttackSpeed() / 100, function () {
-                    skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                    self_1.animation = null;
-                    self_1.attackAnimation = false;
-                    self_1.onHitEnd();
-                    self_1.game.client.socket.emit('attack', {
-                        attack: false
+                if (skeleton_1) {
+                    this.game.client.socket.emit('attack', {
+                        attack: true
                     });
-                });
+                    self_1.attackAnimation = true;
+                    self_1.onHitStart();
+                    self_1.animation = skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_ATTACK, false, this.statistics.getAttackSpeed() / 100, function () {
+                        skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                        self_1.animation = null;
+                        self_1.attackAnimation = false;
+                        self_1.onHitEnd();
+                        self_1.game.client.socket.emit('attack', {
+                            attack: false
+                        });
+                    });
+                }
             }
         }
     };
@@ -275,14 +279,14 @@ var AbstractCharacter = (function () {
     ;
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
-    AbstractCharacter.WALK_SPEED = 0.25;
-    AbstractCharacter.ROTATION_SPEED = 0.05;
-    AbstractCharacter.ANIMATION_WALK = 'Run';
-    AbstractCharacter.ANIMATION_STAND = 'stand';
-    AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    AbstractCharacter.ANIMATION_ATTACK = 'Attack';
     return AbstractCharacter;
 }());
+AbstractCharacter.WALK_SPEED = 0.25;
+AbstractCharacter.ROTATION_SPEED = 0.05;
+AbstractCharacter.ANIMATION_WALK = 'Run';
+AbstractCharacter.ANIMATION_STAND = 'stand';
+AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+AbstractCharacter.ANIMATION_ATTACK = 'Attack';
 /// <reference path="../AbstractCharacter.ts"/>
 var Monster = (function (_super) {
     __extends(Monster, _super);
@@ -326,13 +330,11 @@ var Monster = (function (_super) {
     };
     Monster.prototype.removeFromWorld = function () {
         var self = this;
-        self.visibilityArea.dispose();
-        self.attackArea.dispose();
         self.mesh.dispose();
     };
     Monster.prototype.registerActions = function () {
         var self = this;
-        var attackIsActive = false;
+        var monsterAttackIsActive = false;
         var walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
         var playerMesh = this.game.player.mesh;
         this.visibilityArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
@@ -357,55 +359,26 @@ var Monster = (function (_super) {
             trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
             parameter: playerMesh
         }, function () {
-            attackIsActive = true;
+            monsterAttackIsActive = true;
         }));
         ///on attack collision exit
         this.attackArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
             trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
             parameter: playerMesh
         }, function () {
-            attackIsActive = false;
+            monsterAttackIsActive = false;
         }));
-        ///on attack player collision enter
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-            parameter: playerMesh
-        }, function () {
-            console.log('test');
-            if (self.game.controller.attackPoint == this.mesh) {
+        this.game.getScene().registerBeforeRender(function () {
+            if (self.game.controller.attackPoint && self.game.controller.attackPoint == self.attackArea) {
                 self.game.player.runAnimationHit();
                 self.game.controller.forward = false;
             }
-        }));
-        //TODO: finish optimilazation
-        // ///on attack player collision exit
-        // this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //     trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-        //     parameter: playerMesh
-        // }, function () {
-        //     if(self.game.controller.attackPoint == this.mesh) {
-        //         self.game.controller.forward = true;
-        //     }
-        // }));
-        // scene.registerBeforeRender(function () {
-        //     if (self.game.player) {
-        //         if (self.attackPoint) {
-        //             if (self.game.player.mesh.intersectsMesh(self.attackPoint)) {
-        //                 self.game.player.runAnimationHit();
-        //                 self.game.controller.forward = false;
-        //             } else {
-        //                 self.game.controller.forward = true;
-        //             }
-        //         }
-        //     }
-        // });
-        this.game.getScene().registerBeforeRender(function () {
             if (self.target) {
-                if (attackIsActive) {
+                self.mesh.lookAt(playerMesh.position);
+                if (monsterAttackIsActive) {
                     self.runAnimationHit();
                     return;
                 }
-                self.mesh.lookAt(playerMesh.position);
                 self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
                 self.runAnimationWalk(true);
             }
@@ -413,10 +386,6 @@ var Monster = (function (_super) {
     };
     Monster.prototype.onHitEnd = function () {
         if (Game.randomNumber(1, 100) <= this.statistics.getHitChance()) {
-            // if (!this.game.player.sfxHit.isPlaying) {
-            //     this.game.player.sfxHit.setVolume(2);
-            //     this.game.player.sfxHit.play();
-            // }
             this.game.player.bloodParticles.start();
             var guiHp = this.game.gui.playerBottomPanel.hpBar;
             var value = guiHp.value;
@@ -590,7 +559,7 @@ var Game = (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new Simple().initScene(this);
+        new SelectCharacter().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -975,6 +944,7 @@ var Mouse = (function (_super) {
                     self.game.player.mesh.lookAt(pickResult.pickedPoint);
                     self.targetPoint = null;
                     self.ball.visibility = 0;
+                    self.game.controller.forward = true;
                 }
             }
         };
@@ -1854,9 +1824,9 @@ var SelectCharacter = (function (_super) {
     };
     SelectCharacter.prototype.getType = function () {
     };
-    SelectCharacter.TYPE = 2;
     return SelectCharacter;
 }(Scene));
+SelectCharacter.TYPE = 2;
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -1902,9 +1872,9 @@ var SimpleBandit = (function (_super) {
     SimpleBandit.prototype.getType = function () {
         return SimpleBandit.TYPE;
     };
-    SimpleBandit.TYPE = 3;
     return SimpleBandit;
 }(Scene));
+SimpleBandit.TYPE = 3;
 var Attributes;
 (function (Attributes) {
     var AbstractStatistics = (function () {
@@ -2039,9 +2009,9 @@ var Items;
         function Item(game) {
             this.game = game;
         }
-        Item.TYPE = 0;
         return Item;
     }());
+    Item.TYPE = 0;
     Items.Item = Item;
 })(Items || (Items = {}));
 /// <reference path="../AbstractCharacter.ts"/>
@@ -2869,9 +2839,9 @@ var Items;
         Armor.prototype.getType = function () {
             return Items.Armor.TYPE;
         };
-        Armor.TYPE = 6;
         return Armor;
     }(Items.Item));
+    Armor.TYPE = 6;
     Items.Armor = Armor;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2919,46 +2889,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Boots = (function (_super) {
-        __extends(Boots, _super);
-        function Boots(game) {
-            return _super.call(this, game) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
-        };
-        Boots.TYPE = 5;
-        return Boots;
-    }(Items.Item));
-    Items.Boots = Boots;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots;
-    (function (Boots) {
-        var PrimaryBoots = (function (_super) {
-            __extends(PrimaryBoots, _super);
-            function PrimaryBoots(game) {
-                var _this = _super.call(this, game) || this;
-                _this.name = 'Boots';
-                _this.image = 'Boots';
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Boots');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            return PrimaryBoots;
-        }(Boots));
-        Boots.PrimaryBoots = PrimaryBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Gloves = (function (_super) {
         __extends(Gloves, _super);
         function Gloves(game) {
@@ -2970,9 +2900,9 @@ var Items;
         Gloves.prototype.getType = function () {
             return Items.Gloves.TYPE;
         };
-        Gloves.TYPE = 4;
         return Gloves;
     }(Items.Item));
+    Gloves.TYPE = 4;
     Items.Gloves = Gloves;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2999,6 +2929,46 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
+    var Boots = (function (_super) {
+        __extends(Boots, _super);
+        function Boots(game) {
+            return _super.call(this, game) || this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        return Boots;
+    }(Items.Item));
+    Boots.TYPE = 5;
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var PrimaryBoots = (function (_super) {
+            __extends(PrimaryBoots, _super);
+            function PrimaryBoots(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Boots';
+                _this.image = 'Boots';
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.mesh = game.factories['character'].createInstance('Boots');
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            return PrimaryBoots;
+        }(Boots));
+        Boots.PrimaryBoots = PrimaryBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
     var Helm = (function (_super) {
         __extends(Helm, _super);
         function Helm(game) {
@@ -3010,9 +2980,9 @@ var Items;
         Helm.prototype.getType = function () {
             return Items.Helm.TYPE;
         };
-        Helm.TYPE = 3;
         return Helm;
     }(Items.Item));
+    Helm.TYPE = 3;
     Items.Helm = Helm;
 })(Items || (Items = {}));
 /// <reference path="Helm.ts"/>
@@ -3050,9 +3020,9 @@ var Items;
         Shield.prototype.getType = function () {
             return Items.Shield.TYPE;
         };
-        Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
+    Shield.TYPE = 2;
     Items.Shield = Shield;
 })(Items || (Items = {}));
 /// <reference path="Shield.ts"/>
@@ -3114,9 +3084,9 @@ var Items;
         Weapon.prototype.getType = function () {
             return Items.Weapon.TYPE;
         };
-        Weapon.TYPE = 1;
         return Weapon;
     }(Items.Item));
+    Weapon.TYPE = 1;
     Items.Weapon = Weapon;
 })(Items || (Items = {}));
 /// <reference path="Weapon.ts"/>

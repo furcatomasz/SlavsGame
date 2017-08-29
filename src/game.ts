@@ -40,7 +40,7 @@ class Game {
         let serverUrl = window.location.hostname + ':3003';
 
         this.canvas = canvasElement;
-        this.engine = new BABYLON.Engine(this.canvas, true);
+        this.engine = new BABYLON.Engine(this.canvas, false);
         this.controller = new Mouse(this);
         this.client = new SocketIOClient(this);
         this.client.connect(serverUrl);

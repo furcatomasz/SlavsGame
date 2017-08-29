@@ -7,8 +7,8 @@ class EnvironmentSelectCharacter {
     constructor(game:Game, scene: BABYLON.Scene) {
         ////LIGHT
         let light = game.getScene().lights[0];
-        light.intensity = 0;
-        let fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 1, 0), scene);
+        light.dispose();
+        let fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 2.5, 0), scene);
         fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
         fireplaceLight.range = 35;
 
@@ -58,6 +58,7 @@ class EnvironmentSelectCharacter {
         fireplaceLight.animations.push(intensityAnimation);
         game.getScene().beginAnimation(fireplaceLight, 0, 10, true);
         let shadowGenerator = new BABYLON.ShadowGenerator(1024, fireplaceLight);
+        shadowGenerator.getShadowMap().refreshRate = 0;
         this.shadowGenerator = shadowGenerator;
 
         for (let i = 0; i < scene.meshes.length; i++) {

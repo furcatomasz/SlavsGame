@@ -124,7 +124,7 @@ class Environment {
         };
         document.addEventListener(Events.PLAYER_CONNECTED, listener2);
 
-        // var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
+        new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
 
     }
 

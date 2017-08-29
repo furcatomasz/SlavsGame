@@ -13,10 +13,10 @@ var Events = (function () {
         this.playerConnected = new Event(Events.PLAYER_CONNECTED);
         this.playerHitStart = new Event(Events.PLAYER_HIT_START);
     }
+    Events.PLAYER_CONNECTED = 'playerConnected';
+    Events.PLAYER_HIT_START = 'playerHitStart';
     return Events;
 }());
-Events.PLAYER_CONNECTED = 'playerConnected';
-Events.PLAYER_HIT_START = 'playerHitStart';
 /// <reference path="../game.ts"/>
 var Controller = (function () {
     function Controller(game) {
@@ -126,9 +126,9 @@ var Scene = (function () {
         this.game.controller.forward = false;
         newScene.initScene(this.game);
     };
+    Scene.TYPE = 0;
     return Scene;
 }());
-Scene.TYPE = 0;
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -146,7 +146,9 @@ var Simple = (function (_super) {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-            //scene.debugLayer.show();
+            // scene.debugLayer.show({
+            //     initialTab: 2
+            // });
             var assetsManager = new BABYLON.AssetsManager(scene);
             var sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
@@ -174,9 +176,9 @@ var Simple = (function (_super) {
     Simple.prototype.getType = function () {
         return Simple.TYPE;
     };
+    Simple.TYPE = 2;
     return Simple;
 }(Scene));
-Simple.TYPE = 2;
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var AbstractCharacter = (function () {
@@ -279,14 +281,14 @@ var AbstractCharacter = (function () {
     ;
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
+    AbstractCharacter.WALK_SPEED = 0.25;
+    AbstractCharacter.ROTATION_SPEED = 0.05;
+    AbstractCharacter.ANIMATION_WALK = 'Run';
+    AbstractCharacter.ANIMATION_STAND = 'stand';
+    AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+    AbstractCharacter.ANIMATION_ATTACK = 'Attack';
     return AbstractCharacter;
 }());
-AbstractCharacter.WALK_SPEED = 0.25;
-AbstractCharacter.ROTATION_SPEED = 0.05;
-AbstractCharacter.ANIMATION_WALK = 'Run';
-AbstractCharacter.ANIMATION_STAND = 'stand';
-AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-AbstractCharacter.ANIMATION_ATTACK = 'Attack';
 /// <reference path="../AbstractCharacter.ts"/>
 var Monster = (function (_super) {
     __extends(Monster, _super);
@@ -543,7 +545,7 @@ var Game = (function () {
     function Game(canvasElement) {
         var serverUrl = window.location.hostname + ':3003';
         this.canvas = canvasElement;
-        this.engine = new BABYLON.Engine(this.canvas, true);
+        this.engine = new BABYLON.Engine(this.canvas, false);
         this.controller = new Mouse(this);
         this.client = new SocketIOClient(this);
         this.client.connect(serverUrl);
@@ -1133,7 +1135,7 @@ var Environment = (function () {
             document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
         };
         document.addEventListener(Events.PLAYER_CONNECTED, listener2);
-        // var bowls = new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
+        new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
     }
     Environment.prototype.enableDayAndNight = function (game, light) {
         light.intensity = 1;
@@ -1165,8 +1167,8 @@ var EnvironmentSelectCharacter = (function () {
     function EnvironmentSelectCharacter(game, scene) {
         ////LIGHT
         var light = game.getScene().lights[0];
-        light.intensity = 0;
-        var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 1, 0), scene);
+        light.dispose();
+        var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 2.5, 0), scene);
         fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
         fireplaceLight.range = 35;
         var intensityAnimation = new BABYLON.Animation("mainLightIntensity", "intensity", 50, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
@@ -1203,6 +1205,7 @@ var EnvironmentSelectCharacter = (function () {
         fireplaceLight.animations.push(intensityAnimation);
         game.getScene().beginAnimation(fireplaceLight, 0, 10, true);
         var shadowGenerator = new BABYLON.ShadowGenerator(1024, fireplaceLight);
+        shadowGenerator.getShadowMap().refreshRate = 0;
         this.shadowGenerator = shadowGenerator;
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
@@ -1824,9 +1827,9 @@ var SelectCharacter = (function (_super) {
     };
     SelectCharacter.prototype.getType = function () {
     };
+    SelectCharacter.TYPE = 2;
     return SelectCharacter;
 }(Scene));
-SelectCharacter.TYPE = 2;
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -1872,9 +1875,9 @@ var SimpleBandit = (function (_super) {
     SimpleBandit.prototype.getType = function () {
         return SimpleBandit.TYPE;
     };
+    SimpleBandit.TYPE = 3;
     return SimpleBandit;
 }(Scene));
-SimpleBandit.TYPE = 3;
 var Attributes;
 (function (Attributes) {
     var AbstractStatistics = (function () {
@@ -2009,9 +2012,9 @@ var Items;
         function Item(game) {
             this.game = game;
         }
+        Item.TYPE = 0;
         return Item;
     }());
-    Item.TYPE = 0;
     Items.Item = Item;
 })(Items || (Items = {}));
 /// <reference path="../AbstractCharacter.ts"/>
@@ -2839,9 +2842,9 @@ var Items;
         Armor.prototype.getType = function () {
             return Items.Armor.TYPE;
         };
+        Armor.TYPE = 6;
         return Armor;
     }(Items.Item));
-    Armor.TYPE = 6;
     Items.Armor = Armor;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2889,46 +2892,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Gloves = (function (_super) {
-        __extends(Gloves, _super);
-        function Gloves(game) {
-            return _super.call(this, game) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Gloves.prototype.getType = function () {
-            return Items.Gloves.TYPE;
-        };
-        return Gloves;
-    }(Items.Item));
-    Gloves.TYPE = 4;
-    Items.Gloves = Gloves;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Gloves;
-    (function (Gloves) {
-        var PrimaryGloves = (function (_super) {
-            __extends(PrimaryGloves, _super);
-            function PrimaryGloves(game) {
-                var _this = _super.call(this, game) || this;
-                _this.name = 'Gloves';
-                _this.image = 'Gloves';
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Gloves');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            return PrimaryGloves;
-        }(Gloves));
-        Gloves.PrimaryGloves = PrimaryGloves;
-    })(Gloves = Items.Gloves || (Items.Gloves = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Boots = (function (_super) {
         __extends(Boots, _super);
         function Boots(game) {
@@ -2940,9 +2903,9 @@ var Items;
         Boots.prototype.getType = function () {
             return Items.Boots.TYPE;
         };
+        Boots.TYPE = 5;
         return Boots;
     }(Items.Item));
-    Boots.TYPE = 5;
     Items.Boots = Boots;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2969,6 +2932,46 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
+    var Gloves = (function (_super) {
+        __extends(Gloves, _super);
+        function Gloves(game) {
+            return _super.call(this, game) || this;
+        }
+        /**
+         * @returns {number}
+         */
+        Gloves.prototype.getType = function () {
+            return Items.Gloves.TYPE;
+        };
+        Gloves.TYPE = 4;
+        return Gloves;
+    }(Items.Item));
+    Items.Gloves = Gloves;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Gloves;
+    (function (Gloves) {
+        var PrimaryGloves = (function (_super) {
+            __extends(PrimaryGloves, _super);
+            function PrimaryGloves(game) {
+                var _this = _super.call(this, game) || this;
+                _this.name = 'Gloves';
+                _this.image = 'Gloves';
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.mesh = game.factories['character'].createInstance('Gloves');
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            return PrimaryGloves;
+        }(Gloves));
+        Gloves.PrimaryGloves = PrimaryGloves;
+    })(Gloves = Items.Gloves || (Items.Gloves = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
     var Helm = (function (_super) {
         __extends(Helm, _super);
         function Helm(game) {
@@ -2980,9 +2983,9 @@ var Items;
         Helm.prototype.getType = function () {
             return Items.Helm.TYPE;
         };
+        Helm.TYPE = 3;
         return Helm;
     }(Items.Item));
-    Helm.TYPE = 3;
     Items.Helm = Helm;
 })(Items || (Items = {}));
 /// <reference path="Helm.ts"/>
@@ -3020,9 +3023,9 @@ var Items;
         Shield.prototype.getType = function () {
             return Items.Shield.TYPE;
         };
+        Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
-    Shield.TYPE = 2;
     Items.Shield = Shield;
 })(Items || (Items = {}));
 /// <reference path="Shield.ts"/>
@@ -3084,9 +3087,9 @@ var Items;
         Weapon.prototype.getType = function () {
             return Items.Weapon.TYPE;
         };
+        Weapon.TYPE = 1;
         return Weapon;
     }(Items.Item));
-    Weapon.TYPE = 1;
     Items.Weapon = Weapon;
 })(Items || (Items = {}));
 /// <reference path="Weapon.ts"/>

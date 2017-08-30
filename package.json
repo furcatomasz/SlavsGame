@@ -1,0 +1,17 @@
+{
+  "name": "Slavs",
+  "version": "0.0.0",
+  "description": "Game server",
+  "dependencies": {
+    "browser-sync": "^2.18.13",
+    "child_process": "^1.0.2",
+    "express": "latest",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.2.2",
+    "http": "0.0.0",
+    "path": "^0.12.7",
+    "socket.io": "latest",
+    "typescript": "^2.4.2"
+  },
+  "author": "Tomasz Furca"
+}

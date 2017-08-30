@@ -2,6 +2,9 @@
 namespace Bandit {
     export class Bandit extends Monster {
 
+        static TYPE = 'bandit';
+
+
         protected inventory: Character.Inventory;
 
         public constructor(serverKey: number, game:Game, position: BABYLON.Vector3, rotationQuaternion: BABYLON.Quaternion) {

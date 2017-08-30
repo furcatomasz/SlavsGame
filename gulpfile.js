@@ -16,7 +16,7 @@ gulp.task('default', function () {
                 .pipe(gulp.dest('dist'));
         });
 
-    exec('node server.js');
+    // exec('node server/dist/server.js');
 
     browserSync.init({
         server: {
@@ -25,4 +25,18 @@ gulp.task('default', function () {
     });
 
     gulp.watch("dist/slavs.js").on("change", reload);
+});
+
+gulp.task('server', function () {
+    gulp
+        .watch(['server/**/*.ts'])
+        .on("change", function () {
+            return gulp.src('server/**/*.ts')
+                .pipe(ts({
+                    noImplicitAny: true,
+                    outFile: 'server.js'
+                }))
+                .pipe(gulp.dest('server/dist'));
+        });
+
 });

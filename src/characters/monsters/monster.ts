@@ -99,14 +99,14 @@ abstract class Monster extends AbstractCharacter {
 
         this.game.getScene().registerBeforeRender(function() {
             if(self.game.controller.attackPoint && self.game.controller.attackPoint == self.attackArea) {
-                self.game.player.runAnimationHit();
+                self.game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                 self.game.controller.forward = false;
             }
 
             if(self.target) {
                 self.mesh.lookAt(playerMesh.position);
                 if(monsterAttackIsActive) {
-                    self.runAnimationHit();
+                    self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                     return;
                 }
                 self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
@@ -117,8 +117,6 @@ abstract class Monster extends AbstractCharacter {
 
     protected onHitEnd() {
         if (Game.randomNumber(1, 100) <= this.statistics.getHitChance()) {
-
-            this.game.player.bloodParticles.start();
             let guiHp = this.game.gui.playerBottomPanel.hpBar;
             let value = guiHp.value;
 

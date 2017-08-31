@@ -20,6 +20,7 @@ class SimpleBandit extends Scene {
             let assetsManager = new BABYLON.AssetsManager(scene);
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
+            scene.actionManager = new BABYLON.ActionManager(scene);
 
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);

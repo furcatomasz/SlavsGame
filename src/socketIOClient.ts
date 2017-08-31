@@ -132,7 +132,7 @@ class SocketIOClient {
                 if (!player.isAnimationEnabled() && !updatedPlayer.attack) {
                     player.runAnimationWalk(false);
                 } else if (updatedPlayer.attack == true) {
-                    player.runAnimationHit();
+                    player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                 }
 
                 player.mesh.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);

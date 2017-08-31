@@ -16,9 +16,10 @@ class Simple extends Scene {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-            // scene.debugLayer.show({
-            //     initialTab: 2
-            // });
+             //scene.debugLayer.show({
+             //    initialTab: 2
+             //});
+            scene.actionManager = new BABYLON.ActionManager(scene);
             let assetsManager = new BABYLON.AssetsManager(scene);
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;

@@ -10,6 +10,7 @@ abstract class AbstractCharacter {
     public static ANIMATION_STAND:string = 'stand';
     public static ANIMATION_STAND_WEAPON:string = 'Stand_with_weapon';
     public static ANIMATION_ATTACK:string = 'Attack';
+    public static ANIMATION_SKILL_01:string = 'Skill01';
 
     public mesh:BABYLON.Mesh;
     public id:string;
@@ -68,7 +69,7 @@ abstract class AbstractCharacter {
     /**
      * ANIMATIONS
      */
-    public runAnimationHit():void {
+    public runAnimationHit(animation: string):void {
         if (!this.animation) {
             let self = this;
             var childMesh = this.mesh;
@@ -82,7 +83,7 @@ abstract class AbstractCharacter {
 
                     self.attackAnimation = true;
                     self.onHitStart();
-                    self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_ATTACK, false, this.statistics.getAttackSpeed() / 100, function () {
+                    self.animation = skeleton.beginAnimation(animation, false, this.statistics.getAttackSpeed() / 100, function () {
                         skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                         self.animation = null;
                         self.attackAnimation = false;

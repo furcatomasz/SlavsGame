@@ -63,7 +63,10 @@ abstract class Scene {
     }
 
     public changeScene(newScene: Scene) {
-        this.game.scenesDisposed.push(this.game.getScene());
+        let sceneToDispose = this.game.getScene();
+        setTimeout(function() {
+            sceneToDispose.dispose();
+        });
         this.game.activeScene = null;
         this.game.controller.forward = false;
         newScene.initScene(this.game);

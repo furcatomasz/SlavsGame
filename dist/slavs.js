@@ -121,7 +121,10 @@ var Scene = (function () {
         return this;
     };
     Scene.prototype.changeScene = function (newScene) {
-        this.game.scenesDisposed.push(this.game.getScene());
+        var sceneToDispose = this.game.getScene();
+        setTimeout(function () {
+            sceneToDispose.dispose();
+        });
         this.game.activeScene = null;
         this.game.controller.forward = false;
         newScene.initScene(this.game);
@@ -553,7 +556,6 @@ var Game = (function () {
         this.factories = [];
         this.enemies = [];
         this.scenes = [];
-        this.scenesDisposed = [];
         this.activeScene = null;
         this.events = new Events();
         this.createScene().animate();
@@ -571,13 +573,6 @@ var Game = (function () {
         this.engine.runRenderLoop(function () {
             if (_this.activeScene != null) {
                 self.getScene().render();
-            }
-            if (self.scenesDisposed.length > 0) {
-                for (var i = 0; i < self.scenesDisposed.length; i++) {
-                    var sceneToDispose = self.scenesDisposed[i];
-                    sceneToDispose.dispose();
-                }
-                self.scenesDisposed = [];
             }
         });
         window.addEventListener('resize', function () {

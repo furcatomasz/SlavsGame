@@ -13,10 +13,10 @@ var Events = (function () {
         this.playerConnected = new Event(Events.PLAYER_CONNECTED);
         this.playerHitStart = new Event(Events.PLAYER_HIT_START);
     }
+    Events.PLAYER_CONNECTED = 'playerConnected';
+    Events.PLAYER_HIT_START = 'playerHitStart';
     return Events;
 }());
-Events.PLAYER_CONNECTED = 'playerConnected';
-Events.PLAYER_HIT_START = 'playerHitStart';
 /// <reference path="../game.ts"/>
 var Controller = (function () {
     function Controller(game) {
@@ -126,9 +126,9 @@ var Scene = (function () {
         this.game.controller.forward = false;
         newScene.initScene(this.game);
     };
+    Scene.TYPE = 0;
     return Scene;
 }());
-Scene.TYPE = 0;
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -177,9 +177,9 @@ var Simple = (function (_super) {
     Simple.prototype.getType = function () {
         return Simple.TYPE;
     };
+    Simple.TYPE = 2;
     return Simple;
 }(Scene));
-Simple.TYPE = 2;
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var AbstractCharacter = (function () {
@@ -282,15 +282,15 @@ var AbstractCharacter = (function () {
     ;
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
+    AbstractCharacter.WALK_SPEED = 0.25;
+    AbstractCharacter.ROTATION_SPEED = 0.05;
+    AbstractCharacter.ANIMATION_WALK = 'Run';
+    AbstractCharacter.ANIMATION_STAND = 'stand';
+    AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
+    AbstractCharacter.ANIMATION_ATTACK = 'Attack';
+    AbstractCharacter.ANIMATION_SKILL_01 = 'Skill01';
     return AbstractCharacter;
 }());
-AbstractCharacter.WALK_SPEED = 0.25;
-AbstractCharacter.ROTATION_SPEED = 0.05;
-AbstractCharacter.ANIMATION_WALK = 'Run';
-AbstractCharacter.ANIMATION_STAND = 'stand';
-AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-AbstractCharacter.ANIMATION_ATTACK = 'Attack';
-AbstractCharacter.ANIMATION_SKILL_01 = 'Skill01';
 /// <reference path="../AbstractCharacter.ts"/>
 var Monster = (function (_super) {
     __extends(Monster, _super);
@@ -544,7 +544,7 @@ var SocketIOClient = (function () {
 /// <reference path="socketIOClient.ts"/>
 var Game = (function () {
     function Game(canvasElement) {
-        var serverUrl = window.location.hostname + ':3003';
+        var serverUrl = window.location.hostname + ':' + gameServerPort;
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, false);
         this.controller = new Mouse(this);
@@ -562,7 +562,7 @@ var Game = (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new Simple().initScene(this);
+        new SelectCharacter().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -581,7 +581,10 @@ var Game = (function () {
             }
         });
         window.addEventListener('resize', function () {
-            _this.engine.resize();
+            self.engine.resize();
+            if (self.getScene()) {
+                self.sceneManager.setOrthoCameraHeights(self.getScene().activeCamera);
+            }
         });
         return this;
     };
@@ -1265,7 +1268,7 @@ var GUI;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
             this.characterTopHp = new GUI.ShowHp();
-            this.initInventory().initAttributes();
+            this.initInventory().initAttributes().initFullscreen();
         }
         Main.prototype.initInventory = function () {
             var self = this;
@@ -1288,6 +1291,22 @@ var GUI;
                 if (!self.inventory.opened) {
                     self.inventory.open();
                 }
+            });
+            this.registerBlockMoveCharacter(button);
+            return this;
+        };
+        Main.prototype.initFullscreen = function () {
+            var self = this;
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Fullscreen");
+            button.width = 1;
+            button.height = "40px";
+            button.color = "white";
+            button.background = "black";
+            button.isPointerBlocker = true;
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                self.game.engine.switchFullscreen(false);
+                // self.game.engine.resize();
             });
             this.registerBlockMoveCharacter(button);
             return this;
@@ -1843,9 +1862,9 @@ var SelectCharacter = (function (_super) {
     };
     SelectCharacter.prototype.getType = function () {
     };
+    SelectCharacter.TYPE = 2;
     return SelectCharacter;
 }(Scene));
-SelectCharacter.TYPE = 2;
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -1892,9 +1911,9 @@ var SimpleBandit = (function (_super) {
     SimpleBandit.prototype.getType = function () {
         return SimpleBandit.TYPE;
     };
+    SimpleBandit.TYPE = 3;
     return SimpleBandit;
 }(Scene));
-SimpleBandit.TYPE = 3;
 var Attributes;
 (function (Attributes) {
     var AbstractStatistics = (function () {
@@ -2029,9 +2048,9 @@ var Items;
         function Item(game) {
             this.game = game;
         }
+        Item.TYPE = 0;
         return Item;
     }());
-    Item.TYPE = 0;
     Items.Item = Item;
 })(Items || (Items = {}));
 /// <reference path="../AbstractCharacter.ts"/>
@@ -2066,9 +2085,9 @@ var Bandit;
             _this = _super.call(this, name, game) || this;
             return _this;
         }
+        Bandit.TYPE = 'bandit';
         return Bandit;
     }(Monster));
-    Bandit.TYPE = 'bandit';
     Bandit_1.Bandit = Bandit;
 })(Bandit || (Bandit = {}));
 /// <reference path="../../game.ts"/>
@@ -2860,9 +2879,9 @@ var Items;
         Armor.prototype.getType = function () {
             return Items.Armor.TYPE;
         };
+        Armor.TYPE = 6;
         return Armor;
     }(Items.Item));
-    Armor.TYPE = 6;
     Items.Armor = Armor;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2921,9 +2940,9 @@ var Items;
         Boots.prototype.getType = function () {
             return Items.Boots.TYPE;
         };
+        Boots.TYPE = 5;
         return Boots;
     }(Items.Item));
-    Boots.TYPE = 5;
     Items.Boots = Boots;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2961,9 +2980,9 @@ var Items;
         Gloves.prototype.getType = function () {
             return Items.Gloves.TYPE;
         };
+        Gloves.TYPE = 4;
         return Gloves;
     }(Items.Item));
-    Gloves.TYPE = 4;
     Items.Gloves = Gloves;
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -3001,9 +3020,9 @@ var Items;
         Helm.prototype.getType = function () {
             return Items.Helm.TYPE;
         };
+        Helm.TYPE = 3;
         return Helm;
     }(Items.Item));
-    Helm.TYPE = 3;
     Items.Helm = Helm;
 })(Items || (Items = {}));
 /// <reference path="Helm.ts"/>
@@ -3041,9 +3060,9 @@ var Items;
         Shield.prototype.getType = function () {
             return Items.Shield.TYPE;
         };
+        Shield.TYPE = 2;
         return Shield;
     }(Items.Item));
-    Shield.TYPE = 2;
     Items.Shield = Shield;
 })(Items || (Items = {}));
 /// <reference path="Shield.ts"/>
@@ -3105,9 +3124,9 @@ var Items;
         Weapon.prototype.getType = function () {
             return Items.Weapon.TYPE;
         };
+        Weapon.TYPE = 1;
         return Weapon;
     }(Items.Item));
-    Weapon.TYPE = 1;
     Items.Weapon = Weapon;
 })(Items || (Items = {}));
 /// <reference path="Weapon.ts"/>

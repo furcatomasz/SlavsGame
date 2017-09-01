@@ -25,6 +25,8 @@ gulp.task('default', function () {
     });
 
     gulp.watch("dist/slavs.js").on("change", reload);
+
+    gulp.run('server');
 });
 
 gulp.task('server', function () {

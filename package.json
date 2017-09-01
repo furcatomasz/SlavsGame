@@ -9,6 +9,7 @@
     "gulp": "^3.9.1",
     "gulp-typescript": "^3.2.2",
     "http": "0.0.0",
+    "orm": "^3.2.4",
     "path": "^0.12.7",
     "socket.io": "latest",
     "typescript": "^2.4.2"

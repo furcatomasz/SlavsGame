@@ -3,6 +3,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
     <title>Slavs</title>
+    <script src="/bower_components/babylonjs/dist/babylon.js"></script>
+    <script src="/bower_components/babylonjs/dist/inspector/babylon.inspector.bundle.js"></script>
+    <script src="/bower_components/babylonjs/dist/gui/babylon.gui.min.js"></script>
+    <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
+    <script src="/dist/slavs.js"></script>
+    <script src="/dist/parameters.js"></script>
     <style>
         html, body {
             overflow: hidden;
@@ -13,20 +19,48 @@
             background-color: black;
         }
 
-        img {
-            width: 100%;
-            height: 100%;
-            touch-action: none;
+        div {
+            text-align: center;
+        }
+
+        .slavsLogo {
+            width: 25%;
+        }
+
+        .slavsLogo:fullscreen {
+            display: none;
         }
 
         #renderCanvas {
-            width: 50%;
-            height: 50%;
+            width: 60%;
             touch-action: none;
+            border: 5px solid white;
         }
+
+        :fullscreen #renderCanvas{
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            border: 0px solid white;
+        }
+
+
     </style>
 </head>
 <body>
-    <img src="/assets/logo.png">
+    <div>
+        <img src="/assets/logo.png" class="slavsLogo">
+    </div>
+    <div>
+        <canvas id="renderCanvas"></canvas>
+    </div>
+
+    <script>
+        if (BABYLON.Engine.isSupported()) {
+            var htmlElement = document.getElementById('renderCanvas');
+            document.getElementsByTagName("body")[0].setAttribute("oncontextmenu", "return false");
+            var game = new Game(htmlElement);
+        }
+    </script>
 </body>
 </html>

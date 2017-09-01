@@ -1,0 +1,1 @@
+var gameServerPort = 5000;

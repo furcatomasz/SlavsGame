@@ -41,7 +41,9 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
-server.listen(5000);
+var orm = require("orm");
+var config = require("./../../config.js");
+server.listen(config.server.port);
 var SlavsServer = (function () {
     function SlavsServer() {
         this.enemies = [];

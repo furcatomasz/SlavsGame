@@ -37,7 +37,7 @@ class Game {
     public events: Events;
 
     constructor(canvasElement: HTMLCanvasElement) {
-        let serverUrl = window.location.hostname + ':3003';
+        let serverUrl = window.location.hostname + ':'+gameServerPort;
 
         this.canvas = canvasElement;
         this.engine = new BABYLON.Engine(this.canvas, false);
@@ -59,7 +59,7 @@ class Game {
     }
 
     createScene(): Game {
-        new Simple().initScene(this);
+        new SelectCharacter().initScene(this);
 
         return this;
     }
@@ -82,7 +82,10 @@ class Game {
 
 
         window.addEventListener('resize', () => {
-            this.engine.resize();
+            self.engine.resize();
+            if(self.getScene()) {
+                self.sceneManager.setOrthoCameraHeights(self.getScene().activeCamera);
+            }
         });
 
         return this;

@@ -16,7 +16,7 @@ gulp.task('default', function () {
                 .pipe(gulp.dest('dist'));
         });
 
-     exec('node server.js');
+     // exec('node server/dist/server.js');
 
     browserSync.init({
         server: {

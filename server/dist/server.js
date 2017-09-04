@@ -37,12 +37,34 @@ var Server;
     }());
     Server.EnemyManager = EnemyManager;
 })(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var OrmManager = (function () {
+        function OrmManager(server, orm, config) {
+            this.server = server;
+            var self = this;
+            var ormPassword = (config.server.orm.password) ? ':' + config.server.orm.password + '' : '';
+            orm.connect('mysql://' + config.server.orm.username + '' + ormPassword + '@' + config.server.orm.host + '/' + config.server.orm.database + '', function (err, db) {
+                if (err)
+                    throw err;
+                self.structure = new Server.Orm.Structure(db);
+                db.sync(function (err) {
+                    if (err)
+                        throw err;
+                });
+                new Server.Orm.TestData(self);
+            });
+        }
+        return OrmManager;
+    }());
+    Server.OrmManager = OrmManager;
+})(Server || (Server = {}));
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var orm = require("orm");
-var config = require("./../../config.js");
+var config = require("./../config.js");
 server.listen(config.server.port);
 var SlavsServer = (function () {
     function SlavsServer() {
@@ -51,6 +73,7 @@ var SlavsServer = (function () {
         this.enemies = this.enemyManager.getEnemies();
         this.serverWebsocket = new Server.IO(this, io);
         this.serverFrontEnd = new Server.FrontEnd(this, app, express);
+        this.ormManager = new Server.OrmManager(this, orm, config);
     }
     return SlavsServer;
 }());
@@ -141,4 +164,87 @@ var Server;
         return IO;
     }());
     Server.IO = IO;
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Orm;
+    (function (Orm) {
+        var Structure = (function () {
+            function Structure(db) {
+                this.user = db.define("user", {
+                    email: String,
+                    password: String
+                });
+                this.player = db.define("player", {
+                    userId: Number,
+                    name: String,
+                    type: String,
+                    positionX: Number,
+                    positionY: Number,
+                    positionZ: Number
+                });
+                this.playerOnline = db.define("player_online", {
+                    playerId: Number,
+                    connectDate: Date,
+                    activityDate: Date
+                });
+                this.playerItems = db.define("player_items", {
+                    playerId: Number,
+                    itemId: Number,
+                    improvement: Number,
+                    equip: Number
+                });
+            }
+            return Structure;
+        }());
+        Orm.Structure = Structure;
+    })(Orm = Server.Orm || (Server.Orm = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Orm;
+    (function (Orm) {
+        var TestData = (function () {
+            function TestData(ormManager) {
+                this.ormManager = ormManager;
+                ormManager.structure.user.exists({ email: "furcatomasz@gmail.com" }, function (err, exists) {
+                    if (err)
+                        throw err;
+                    if (!exists) {
+                        ormManager.structure.user.create({ email: "furcatomasz@gmail.com" }, function (err) {
+                            if (err)
+                                throw err;
+                        });
+                    }
+                });
+                ormManager.structure.user.find({ email: "furcatomasz@gmail.com" }, function (err, user) {
+                    if (err)
+                        throw err;
+                    var userId = user[0].id;
+                    ormManager.structure.player.exists({ name: "Mietek" }, function (err, exists) {
+                        if (err)
+                            throw err;
+                        if (!exists) {
+                            ormManager.structure.player.create({ name: "Mietek", type: 1, userId: userId }, function (err) {
+                                if (err)
+                                    throw err;
+                            });
+                        }
+                    });
+                    ormManager.structure.player.exists({ name: "Tumek" }, function (err, exists) {
+                        if (err)
+                            throw err;
+                        if (!exists) {
+                            ormManager.structure.player.create({ name: "Tumek", type: 1, userId: userId }, function (err) {
+                                if (err)
+                                    throw err;
+                            });
+                        }
+                    });
+                });
+            }
+            return TestData;
+        }());
+        Orm.TestData = TestData;
+    })(Orm = Server.Orm || (Server.Orm = {}));
 })(Server || (Server = {}));

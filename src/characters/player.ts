@@ -38,7 +38,6 @@ class Player extends AbstractCharacter {
         if (this.isControllable) {
             this.mesh.isPickable = false;
 
-
             //let playerLight = new BABYLON.PointLight("playerLightSpot", new BABYLON.Vector3(0, 5, 0), game.getScene());
             var playerLight = new BABYLON.SpotLight("playerLightSpot",
                 new BABYLON.Vector3(0, 50, 0),
@@ -184,10 +183,14 @@ class Player extends AbstractCharacter {
                 self.weaponCollisions();
                 self.registerMoving();
                 if (self.game.controller.forward && self.game.getScene()) {
-                    self.game.getScene().activeCamera.position = self.mesh.position;
+                    self.refreshCameraPosition();
                 }
             });
         }
+    }
+
+    public refreshCameraPosition() {
+        this.game.getScene().activeCamera.position = this.mesh.position;
     }
 
     public createItems() {

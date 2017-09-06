@@ -16,6 +16,7 @@ namespace Server.Orm {
                 userId: Number,
                 name: String,
                 type: String,
+                scene: Number,
                 positionX: Number,
                 positionY: Number,
                 positionZ: Number,

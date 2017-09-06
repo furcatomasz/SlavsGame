@@ -6,34 +6,67 @@ namespace Server {
         constructor(server: SlavsServer, serverIO) {
 
             this.remotePlayers = [];
+            let self = this;
             let enemies = server.enemies;
             let remotePlayers = this.remotePlayers;
             this.server = server;
             serverIO.on('connection', function (socket) {
-                let player = {id: socket.id};
-                socket.emit('clientConnected', player);
+                let player = {
+                    id: socket.id,
+                    characters: [],
+                    activePlayer: null,
+                    lastPlayerUpdate: 0,
+                    p: {
+                        x: 3,
+                        y: 0.3,
+                        z: -10
+                    }, r: {
+                        x: 0,
+                        y: 0,
+                        z: 0,
+                        w: 0
+                    },
+                    attack: false,
+                    name: null,
+                };
+
+                server.ormManager.structure.user.find({ email: "furcatomasz@gmail.com" },
+                    function (err, user) {
+                        if (err) throw err;
+
+                        server.ormManager.structure.player.find({ userId: user[0].id }, function(error, players) {
+                            if (error) throw error;
+
+                            player.characters = players;
+                            socket.emit('clientConnected', player);
+                        });
+                    });
+
+                socket.on('selectCharacter', function (selectedCharacter) {
+                    player.activePlayer = selectedCharacter;
+                    socket.emit('characterSelected', player);
+                });
+
                 ///Player
                 socket.on('createPlayer', function (playerName) {
-                    player = {
-                        id: player.id,
-                        p: {
-                            x: 3,
-                            y: 0.3,
-                            z: -10
-                        }, r: {
-                            x: 0,
-                            y: 0,
-                            z: 0,
-                            w: 0
-                        },
-                        attack: false,
-                        name: playerName
-                    };
+                    player.name = playerName;
                     remotePlayers.push(player);
 
                     socket.broadcast.emit('newPlayerConnected', remotePlayers);
 
                     socket.on('moveTo', function (data) {
+                        if((player.lastPlayerUpdate+1) < new Date().getTime()/1000) {
+                            player.lastPlayerUpdate = new Date().getTime()/1000;
+                            let playerId = player.characters[player.activePlayer].id;
+                            self.server.ormManager.structure.player.get(playerId, 
+                                function (error, playerDatabase) {
+                                    playerDatabase.positionX = data.p.x;
+                                    playerDatabase.positionY = data.p.y;
+                                    playerDatabase.positionZ = data.p.z;
+                                    playerDatabase.save();
+                            });
+                        }
+
                         player.p = data.p;
                         player.r = data.r;
                         socket.broadcast.emit('updatePlayer', player);

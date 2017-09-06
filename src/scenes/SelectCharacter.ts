@@ -30,7 +30,11 @@ class SelectCharacter extends Scene {
                 new EnvironmentSelectCharacter(game, scene);
                 game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
                 assetsManager.onFinish = function (tasks) {
-                    new SelectCharacter.Warrior(game);
+                    let playerCharacters = self.game.client.characters;
+                    for (let i = 0; i < playerCharacters.length; i++) {
+                        new SelectCharacter.Warrior(game, i);
+                    }
+
                 };
                 assetsManager.load();
             });

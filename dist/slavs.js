@@ -408,6 +408,7 @@ var Monster = (function (_super) {
 /// <reference path="characters/monsters/monster.ts"/>
 var SocketIOClient = (function () {
     function SocketIOClient(game) {
+        this.characters = [];
         this.game = game;
     }
     SocketIOClient.prototype.connect = function (socketUrl) {
@@ -424,6 +425,7 @@ var SocketIOClient = (function () {
         var playerName = Game.randomNumber(1, 100);
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
+            self.characters = data.characters;
             self.socket.emit('createPlayer', playerName);
             self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
         });
@@ -437,6 +439,9 @@ var SocketIOClient = (function () {
         var playerName = Game.randomNumber(1, 100);
         this.socket.on('showPlayer', function (data) {
             game.player = new Player(game, data.id, playerName, true);
+            var activeCharacter = data.characters[data.activePlayer];
+            game.player.mesh.position = new BABYLON.Vector3(activeCharacter.positionX, activeCharacter.positionY, activeCharacter.positionZ);
+            game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
         });
         return this;
@@ -879,10 +884,13 @@ var Player = (function (_super) {
                 self.weaponCollisions();
                 self.registerMoving();
                 if (self.game.controller.forward && self.game.getScene()) {
-                    self.game.getScene().activeCamera.position = self.mesh.position;
+                    self.refreshCameraPosition();
                 }
             });
         }
+    };
+    Player.prototype.refreshCameraPosition = function () {
+        this.game.getScene().activeCamera.position = this.mesh.position;
     };
     Player.prototype.createItems = function () {
         this.inventory = new Character.Inventory(this.game, this);
@@ -1849,7 +1857,10 @@ var SelectCharacter = (function (_super) {
                 new EnvironmentSelectCharacter(game, scene);
                 game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
                 assetsManager.onFinish = function (tasks) {
-                    new SelectCharacter.Warrior(game);
+                    var playerCharacters = self.game.client.characters;
+                    for (var i = 0; i < playerCharacters.length; i++) {
+                        new SelectCharacter.Warrior(game, i);
+                    }
                 };
                 assetsManager.load();
             });
@@ -2286,13 +2297,22 @@ var SelectCharacter;
 (function (SelectCharacter) {
     var Warrior = (function (_super) {
         __extends(Warrior, _super);
-        function Warrior(game) {
+        function Warrior(game, place) {
             var _this = this;
             _this.name = 'Warrior';
+            _this.place = place;
             var mesh = game.factories['character'].createInstance('Warrior', true);
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
-            mesh.position = new BABYLON.Vector3(1, 0.1, 11);
-            mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
+            switch (place) {
+                case 0:
+                    mesh.position = new BABYLON.Vector3(-0.3, 0, 10.5);
+                    mesh.rotation = new BABYLON.Vector3(0, 0, 0);
+                    break;
+                case 1:
+                    mesh.position = new BABYLON.Vector3(2.7, 0, 10);
+                    mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
+                    break;
+            }
             _this.mesh = mesh;
             _this.inventory = new Character.Inventory(game, _this);
             var armor = new Items.Armors.PrimaryArmor(game);
@@ -2332,7 +2352,10 @@ var SelectCharacter;
                 }
             }));
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                self.game.sceneManager.changeScene(new Simple());
+                self.game.client.socket.emit('selectCharacter', self.place);
+                self.game.client.socket.on('characterSelected', function () {
+                    self.game.sceneManager.changeScene(new Simple());
+                });
             }));
         };
         return Warrior;

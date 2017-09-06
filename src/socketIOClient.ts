@@ -4,6 +4,7 @@
 class SocketIOClient {
     protected game:Game;
     public socket;
+    public characters = [];
 
     constructor(game:Game) {
         this.game = game;
@@ -27,6 +28,7 @@ class SocketIOClient {
 
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
+            self.characters = data.characters;
             self.socket.emit('createPlayer', playerName);
             self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
         });
@@ -43,6 +45,9 @@ class SocketIOClient {
 
         this.socket.on('showPlayer', function (data) {
             game.player = new Player(game, data.id, playerName, true);
+            let activeCharacter = data.characters[data.activePlayer];
+            game.player.mesh.position = new BABYLON.Vector3(activeCharacter.positionX, activeCharacter.positionY, activeCharacter.positionZ);
+            game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
 
         });

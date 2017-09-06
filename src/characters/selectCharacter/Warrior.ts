@@ -4,14 +4,25 @@ namespace SelectCharacter {
 
         protected inventory: Character.Inventory;
         protected skeletonAnimation;
+        protected place: Number;
 
-        public constructor(game:Game) {
+        public constructor(game:Game, place: Number) {
             this.name = 'Warrior';
+            this.place = place;
 
             let mesh = game.factories['character'].createInstance('Warrior', true);
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
-            mesh.position = new BABYLON.Vector3(1, 0.1, 11);
-            mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
+
+            switch (place) {
+                case 0:
+                    mesh.position = new BABYLON.Vector3(-0.3, 0, 10.5);
+                    mesh.rotation = new BABYLON.Vector3(0, 0, 0);
+                    break;
+                case 1:
+                    mesh.position = new BABYLON.Vector3(2.7, 0, 10);
+                    mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
+                    break;
+            }
 
             this.mesh = mesh;
 
@@ -71,7 +82,10 @@ namespace SelectCharacter {
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger,
                 function() {
-                    self.game.sceneManager.changeScene(new Simple());
+                    self.game.client.socket.emit('selectCharacter', self.place);
+                    self.game.client.socket.on('characterSelected', function() {
+                        self.game.sceneManager.changeScene(new Simple());
+                    })
                 })
             );
         }

@@ -5,6 +5,7 @@ class SocketIOClient {
     protected game:Game;
     public socket;
     public characters = [];
+    public lastRecivedEquip = [];
 
     constructor(game:Game) {
         this.game = game;
@@ -30,7 +31,20 @@ class SocketIOClient {
             game.remotePlayers = [];
             self.characters = data.characters;
             self.socket.emit('createPlayer', playerName);
-            self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
+            self.updatePlayers().removePlayer().connectPlayer().refreshPlayer().getCharacterEquip();
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected getCharacterEquip() {
+        let self = this;
+        this.socket.on('getEquip', function (items) {
+            self.lastRecivedEquip = items;
+            document.dispatchEvent(self.game.events.equipReceived);
         });
 
         return this;

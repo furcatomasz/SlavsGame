@@ -77,6 +77,27 @@ namespace Server {
                         socket.broadcast.emit('updatePlayer', player);
                     });
 
+                    socket.on('itemEquip', function (item) {
+                        let itemId = item.id;
+                        let equip = item.equip;
+                        self.server.ormManager.structure.playerItems.get(itemId,
+                            function (error, itemDatabase) {
+                                itemDatabase.equip = (equip) ? 1 : 0;
+                                itemDatabase.save();
+
+                                socket.emit('itemEquiped', itemDatabase);
+
+                            });
+                    });
+
+                    socket.on('getEquip', function (characterKey) {
+                        let playerId = player.characters[characterKey].id;
+                        self.server.ormManager.structure.playerItems.find({ playerId: playerId},
+                            function (error, itemsDatabase) {
+                                socket.emit('getEquip', itemsDatabase);
+                            });
+                    });
+
                 });
 
                 socket.on('disconnect', function () {

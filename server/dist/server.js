@@ -1,6 +1,6 @@
 var Server;
 (function (Server) {
-    var EnemyManager = (function () {
+    var EnemyManager = /** @class */ (function () {
         function EnemyManager() {
         }
         EnemyManager.prototype.createEnemy = function (position, type) {
@@ -39,10 +39,11 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var OrmManager = (function () {
+    var OrmManager = /** @class */ (function () {
         function OrmManager(server, orm, config) {
             this.server = server;
             var self = this;
+            console.log(config.server);
             var ormPassword = (config.server.orm.password) ? ':' + config.server.orm.password + '' : '';
             orm.connect('mysql://' + config.server.orm.username + '' + ormPassword + '@' + config.server.orm.host + '/' + config.server.orm.database + '', function (err, db) {
                 if (err)
@@ -51,8 +52,8 @@ var Server;
                 db.sync(function (err) {
                     if (err)
                         throw err;
+                    new Server.Orm.TestData(self);
                 });
-                new Server.Orm.TestData(self);
             });
         }
         return OrmManager;
@@ -66,7 +67,7 @@ var io = require('socket.io')(server);
 var orm = require("orm");
 var config = require("./../config.js");
 server.listen(config.server.port);
-var SlavsServer = (function () {
+var SlavsServer = /** @class */ (function () {
     function SlavsServer() {
         this.enemies = [];
         this.enemyManager = new Server.EnemyManager();
@@ -83,7 +84,7 @@ setTimeout(function () {
 var path = require('path');
 var Server;
 (function (Server) {
-    var FrontEnd = (function () {
+    var FrontEnd = /** @class */ (function () {
         function FrontEnd(server, expressApp, express) {
             this.server = server;
             expressApp.use('/bower_components', express.static(path.resolve(__dirname + '/../../bower_components')));
@@ -99,7 +100,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var IO = (function () {
+    var IO = /** @class */ (function () {
         function IO(server, serverIO) {
             this.remotePlayers = [];
             var self = this;
@@ -163,6 +164,21 @@ var Server;
                         player.attack = data.attack;
                         socket.broadcast.emit('updatePlayer', player);
                     });
+                    socket.on('itemEquip', function (item) {
+                        var itemId = item.id;
+                        var equip = item.equip;
+                        self.server.ormManager.structure.playerItems.get(itemId, function (error, itemDatabase) {
+                            itemDatabase.equip = (equip) ? 1 : 0;
+                            itemDatabase.save();
+                            socket.emit('itemEquiped', itemDatabase);
+                        });
+                    });
+                    socket.on('getEquip', function (characterKey) {
+                        var playerId = player.characters[characterKey].id;
+                        self.server.ormManager.structure.playerItems.find({ playerId: playerId }, function (error, itemsDatabase) {
+                            socket.emit('getEquip', itemsDatabase);
+                        });
+                    });
                 });
                 socket.on('disconnect', function () {
                     remotePlayers.forEach(function (remotePlayer, key) {
@@ -196,7 +212,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var Structure = (function () {
+        var Structure = /** @class */ (function () {
             function Structure(db) {
                 this.user = db.define("user", {
                     email: String,
@@ -232,7 +248,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var TestData = (function () {
+        var TestData = /** @class */ (function () {
             function TestData(ormManager) {
                 this.ormManager = ormManager;
                 ormManager.structure.user.exists({ email: "furcatomasz@gmail.com" }, function (err, exists) {

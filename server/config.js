@@ -1,8 +1,8 @@
 exports.server = {
     port: 5000,
     orm: {
-        username: 'root',
-        password: null,
+        username: 'slavs',
+        password: 'slavs1',
         host: 'localhost',
         database: 'slavs'
     }

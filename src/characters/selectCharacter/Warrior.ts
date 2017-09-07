@@ -26,6 +26,8 @@ namespace SelectCharacter {
 
             this.mesh = mesh;
 
+            game.client.socket.emit('getEquip', place);
+            let inventoryItems
             this.inventory = new Character.Inventory(game, this);
 
             let armor = new Items.Armors.PrimaryArmor(game);

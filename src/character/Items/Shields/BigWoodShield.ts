@@ -8,8 +8,7 @@ namespace Items.Shields {
 
             this.name = 'Big Wood Shield';
             this.image = 'Shield';
-            this.mountType = 1;
-            this.mountBoneName = 'shield.bone';
+            this.itemId = 6;
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 10, 0, 0, 0);
             this.mesh = this.game.characters.player.instance('Shield', false);
             this.mesh.visibility = 0;

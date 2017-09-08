@@ -8,6 +8,7 @@ namespace Items.Boots {
 
             this.name = 'Boots';
             this.image = 'Boots';
+            this.itemId = 3;
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
             this.mesh = game.factories['character'].createInstance('Boots');
             this.mesh.visibility = 0;

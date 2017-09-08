@@ -30,15 +30,31 @@ namespace Server {
                     name: null,
                 };
 
-                server.ormManager.structure.user.find({ email: "furcatomasz@gmail.com" },
+                server.ormManager.structure.user.find({email: "furcatomasz@gmail.com"},
                     function (err, user) {
                         if (err) throw err;
 
-                        server.ormManager.structure.player.find({ userId: user[0].id }, function(error, players) {
+                        server.ormManager.structure.player.find({userId: user[0].id}, function (error, players) {
                             if (error) throw error;
 
-                            player.characters = players;
-                            socket.emit('clientConnected', player);
+                            for (let i = 0; i < players.length; i++) {
+                                let playerDatabase = players[i];
+                                server.ormManager.structure.playerItems.find(
+                                    {playerId: playerDatabase.id},
+                                    function (error, playerItems) {
+                                        if (error) throw error;
+                                        playerDatabase.items = playerItems;
+                                    });
+                            }
+
+                            let clinetConnectInterval = setInterval(function(){
+                                if((i) == players.length) {
+                                    player.characters = players;
+                                    clearInterval(clinetConnectInterval);
+                                    socket.emit('clientConnected', player);
+                                }
+                            }, 1000);
+
                         });
                     });
 
@@ -55,16 +71,16 @@ namespace Server {
                     socket.broadcast.emit('newPlayerConnected', remotePlayers);
 
                     socket.on('moveTo', function (data) {
-                        if((player.lastPlayerUpdate+1) < new Date().getTime()/1000) {
-                            player.lastPlayerUpdate = new Date().getTime()/1000;
+                        if ((player.lastPlayerUpdate + 1) < new Date().getTime() / 1000) {
+                            player.lastPlayerUpdate = new Date().getTime() / 1000;
                             let playerId = player.characters[player.activePlayer].id;
-                            self.server.ormManager.structure.player.get(playerId, 
+                            self.server.ormManager.structure.player.get(playerId,
                                 function (error, playerDatabase) {
                                     playerDatabase.positionX = data.p.x;
                                     playerDatabase.positionY = data.p.y;
                                     playerDatabase.positionZ = data.p.z;
                                     playerDatabase.save();
-                            });
+                                });
                         }
 
                         player.p = data.p;
@@ -92,7 +108,7 @@ namespace Server {
 
                     socket.on('getEquip', function (characterKey) {
                         let playerId = player.characters[characterKey].id;
-                        self.server.ormManager.structure.playerItems.find({ playerId: playerId},
+                        self.server.ormManager.structure.playerItems.find({playerId: playerId},
                             function (error, itemsDatabase) {
                                 socket.emit('getEquip', itemsDatabase);
                             });

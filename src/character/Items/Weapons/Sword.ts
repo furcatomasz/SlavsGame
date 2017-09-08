@@ -8,6 +8,7 @@ namespace Items.Weapons {
 
             this.name = 'Sword';
             this.image = 'Sword';
+            this.itemId = 9;
             this.mesh = game.factories['character'].createInstance('Sword');
             this.mesh.visibility = 0;
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 5, 0, 0, 0, 0);

@@ -1,6 +1,6 @@
 var Server;
 (function (Server) {
-    var EnemyManager = /** @class */ (function () {
+    var EnemyManager = (function () {
         function EnemyManager() {
         }
         EnemyManager.prototype.createEnemy = function (position, type) {
@@ -39,7 +39,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var OrmManager = /** @class */ (function () {
+    var OrmManager = (function () {
         function OrmManager(server, orm, config) {
             this.server = server;
             var self = this;
@@ -67,7 +67,7 @@ var io = require('socket.io')(server);
 var orm = require("orm");
 var config = require("./../config.js");
 server.listen(config.server.port);
-var SlavsServer = /** @class */ (function () {
+var SlavsServer = (function () {
     function SlavsServer() {
         this.enemies = [];
         this.enemyManager = new Server.EnemyManager();
@@ -84,7 +84,7 @@ setTimeout(function () {
 var path = require('path');
 var Server;
 (function (Server) {
-    var FrontEnd = /** @class */ (function () {
+    var FrontEnd = (function () {
         function FrontEnd(server, expressApp, express) {
             this.server = server;
             expressApp.use('/bower_components', express.static(path.resolve(__dirname + '/../../bower_components')));
@@ -100,7 +100,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var IO = /** @class */ (function () {
+    var IO = (function () {
         function IO(server, serverIO) {
             this.remotePlayers = [];
             var self = this;
@@ -132,8 +132,24 @@ var Server;
                     server.ormManager.structure.player.find({ userId: user[0].id }, function (error, players) {
                         if (error)
                             throw error;
-                        player.characters = players;
-                        socket.emit('clientConnected', player);
+                        var _loop_1 = function (i) {
+                            var playerDatabase = players[i];
+                            server.ormManager.structure.playerItems.find({ playerId: playerDatabase.id }, function (error, playerItems) {
+                                if (error)
+                                    throw error;
+                                playerDatabase.items = playerItems;
+                            });
+                        };
+                        for (var i = 0; i < players.length; i++) {
+                            _loop_1(i);
+                        }
+                        var clinetConnectInterval = setInterval(function () {
+                            if ((i) == players.length) {
+                                player.characters = players;
+                                clearInterval(clinetConnectInterval);
+                                socket.emit('clientConnected', player);
+                            }
+                        }, 1000);
                     });
                 });
                 socket.on('selectCharacter', function (selectedCharacter) {
@@ -212,7 +228,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var Structure = /** @class */ (function () {
+        var Structure = (function () {
             function Structure(db) {
                 this.user = db.define("user", {
                     email: String,
@@ -248,7 +264,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var TestData = /** @class */ (function () {
+        var TestData = (function () {
             function TestData(ormManager) {
                 this.ormManager = ormManager;
                 ormManager.structure.user.exists({ email: "furcatomasz@gmail.com" }, function (err, exists) {
@@ -279,9 +295,33 @@ var Server;
                         if (err)
                             throw err;
                         if (!exists) {
-                            ormManager.structure.player.create({ name: "Tumek", type: 1, userId: userId }, function (err) {
+                            ormManager.structure.player.create({ name: "Tumek", type: 1, userId: userId }, function (err, insertedPlayer) {
                                 if (err)
                                     throw err;
+                                var insertedPlayerId = insertedPlayer.id;
+                                ormManager.structure.playerItems.create([
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 1,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 3,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 9,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                ], function (err) {
+                                    if (err)
+                                        throw err;
+                                });
                             });
                         }
                     });

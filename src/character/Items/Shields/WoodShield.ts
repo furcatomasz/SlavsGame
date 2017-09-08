@@ -8,6 +8,7 @@ namespace Items.Shields {
 
             this.name = 'Wood Shield';
             this.image = 'Shield';
+            this.itemId = 7;
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
             this.mesh = game.factories['character'].createInstance('Shield');
             this.mesh.visibility = 0;

@@ -1,8 +1,9 @@
 namespace Items {
     export abstract class Item {
-        static readonly TYPE = 0;
+        static readonly TYPE;
 
         protected game:Game;
+        public itemId: Number;
         public mesh:BABYLON.Mesh;
 
         /** Values */

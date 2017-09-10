@@ -20,65 +20,32 @@ namespace Character {
             this.items = [];
         }
 
-        public initPlayerItems() {
-            let sword = new Items.Weapons.Sword(this.game);
-            let shield = new Items.Shields.WoodShield(this.game);
-            let armor = new Items.Armors.PrimaryArmor(this.game);
-            let helm = new Items.Helms.PrimaryHelm(this.game);
-            let gloves = new Items.Gloves.PrimaryGloves(this.game);
-            let boots = new Items.Boots.PrimaryBoots(this.game);
-            
-            this.items.push(sword);
-            this.items.push(shield);
-            this.items.push(armor);
-            this.items.push(helm);
-            this.items.push(gloves);
-            this.items.push(boots);
-
-            this.mount(sword);
-            this.mount(shield);
-            this.mount(armor);
-            this.mount(helm);
-            this.mount(gloves);
-            this.mount(boots);
-
-            this.weapon = sword;
-            this.shield = shield;
-            this.armor = armor;
-            this.helm = helm;
-            this.gloves = gloves;
-            this.boots = boots;
-
-            let sword1 = new Items.Weapons.Sword(this.game);
-            this.items.push(sword1);
-
-            let axe2 = new Items.Weapons.Axe(this.game);
-            this.items.push(axe2);
-
-            let axe3 = new Items.Weapons.Axe(this.game);
-            this.items.push(axe3);
-
-            let sword4 = new Items.Weapons.Sword(this.game);
-            this.items.push(sword4);
-
-            let robe = new Items.Armors.Robe(this.game);
-            this.items.push(robe);
-        }
-
         /**
          * @param item
          */
         protected removeItem(item: Items.Item) {
             if(item) {
                 item.mesh.visibility = 0;
+
+                this.game.client.socket.emit('itemEquip', {
+                    id: item.databaseId,
+                    equip: false,
+                });
+
             }
         }
 
         /**
          * @param item
          * @param setItem
+         * @param emit
          */
-        protected equip(item: Items.Item, setItem: boolean) {
+        protected equip(item: Items.Item, setItem: boolean, emit: boolean) {
+            let emitData = {
+                id: item.databaseId,
+                equip: null,
+            };
+
             switch (item.getType()) {
                 case Items.Weapon.TYPE:
                     this.removeItem(this.weapon);
@@ -131,25 +98,39 @@ namespace Character {
 
             if(setItem) {
                 item.mesh.visibility = 1;
+                emitData.equip = true;
+            } else {
+                emitData.equip = false;
+            }
+
+            if(emit) {
+                this.game.client.socket.emit('itemEquip', emitData);
             }
         }
 
         /**
          * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
          * @param item
+         * @param emit
          * @returns {AbstractCharacter.Inventory}
          */
-        public mount(item: Items.Item) {
-                item.mesh.parent = this.player.mesh;
-                item.mesh.skeleton = this.player.mesh.skeleton;
+        public mount(item: Items.Item, emit: boolean = false) {
+            item.mesh.parent = this.player.mesh;
+            item.mesh.skeleton = this.player.mesh.skeleton;
 
-            this.equip(item, true);
+            this.equip(item, true, emit);
 
             return this;
         }
 
-        public umount(item: Items.Item) {
-            this.equip(item, false);
+        /**
+         *
+         * @param item
+         * @param emit
+         * @returns {Character.Inventory}
+         */
+        public umount(item: Items.Item, emit: boolean = false) {
+            this.equip(item, false, emit);
 
             return this;
         }

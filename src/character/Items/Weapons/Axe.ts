@@ -2,13 +2,14 @@
 
 namespace Items.Weapons {
     export class Axe extends Items.Weapon {
+        static ITEM_ID = 8;
 
-        constructor(game:Game) {
-            super(game);
+        constructor(game:Game, databaseId: Number) {
+            super(game, databaseId);
 
             this.name = 'Axe';
             this.image = 'BigSword';
-            this.itemId = 8;
+            this.itemId = Items.Weapons.Axe.ITEM_ID;
             this.mesh = game.factories['character'].createInstance('Axe');
             this.mesh.visibility = 0;
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 10, 0, 0, 0, 0);

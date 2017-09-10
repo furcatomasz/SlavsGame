@@ -2,15 +2,16 @@
 
 namespace Items.Shields {
     export class BigWoodShield extends Shield {
+        static ITEM_ID = 6;
 
-        constructor(game:Game) {
-            super(game);
+        constructor(game:Game, databaseId: Number) {
+            super(game, databaseId);
 
             this.name = 'Big Wood Shield';
             this.image = 'Shield';
-            this.itemId = 6;
+            this.itemId = Items.Shields.BigWoodShield.ITEM_ID;
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 10, 0, 0, 0);
-            this.mesh = this.game.characters.player.instance('Shield', false);
+            this.mesh = game.factories['character'].createInstance('Shield');
             this.mesh.visibility = 0;
             this.mesh.scaling = new BABYLON.Vector3(1, 2, 1);
         }

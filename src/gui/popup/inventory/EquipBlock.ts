@@ -44,7 +44,7 @@ namespace GUI.Inventory {
             let image = this.inventory.createItemImage(this.item);
             this.inventory.guiMain.registerBlockMoveCharacter(image);
             image.onPointerUpObservable.add(function () {
-                self.inventory.guiMain.game.player.inventory.umount(self.item);
+                self.inventory.guiMain.game.player.inventory.umount(self.item, true);
                 self.inventory.guiTexture.removeControl(self.block);
                 self.inventory.showItems();
                 if(self.inventory.guiMain.attributesOpened) {

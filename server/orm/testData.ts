@@ -23,8 +23,71 @@ namespace Server.Orm {
                     if (err) throw err;
 
                     if (!exists) {
-                        ormManager.structure.player.create({name: "Mietek", type: 1, userId: userId}, function (err) {
+                        ormManager.structure.player.create({name: "Mietek", type: 1, userId: userId},
+                            function (err, insertedPlayer) {
                             if (err) throw err;
+
+                                let insertedPlayerId = insertedPlayer.id;
+                                ormManager.structure.playerItems.create([
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 1,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 2,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 3,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 4,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 5,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 6,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 7,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 8,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 9,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+
+                                ], function (err) {
+                                    if (err) throw err;
+                                });
+
                         });
                     }
                 });
@@ -48,7 +111,43 @@ namespace Server.Orm {
                                     },
                                     {
                                         playerId: insertedPlayerId,
+                                        itemId: 2,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
                                         itemId: 3,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 4,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 5,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 6,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 7,
+                                        improvement: 0,
+                                        equip: 0,
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 8,
                                         improvement: 0,
                                         equip: 0,
                                     },
@@ -58,6 +157,7 @@ namespace Server.Orm {
                                         improvement: 0,
                                         equip: 0,
                                     },
+
                                 ], function (err) {
                                     if (err) throw err;
                                 });

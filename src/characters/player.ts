@@ -194,8 +194,19 @@ class Player extends AbstractCharacter {
     }
 
     public createItems() {
-        this.inventory = new Character.Inventory(this.game, this);
-        this.inventory.initPlayerItems();
+        let game = this.game;
+        this.inventory = new Character.Inventory(game, this);
+        let inventoryItems = game.client.characters[game.client.activePlayer].items;
+        let itemManager = new Items.ItemManager(game);
+        for (let i = 0; i < inventoryItems.length; i++) {
+            let itemDatabase = inventoryItems[i];
+            let item = itemManager.getItemUsingId(itemDatabase.itemId, itemDatabase.id);
+            this.inventory.items.push(item);
+
+            if(itemDatabase.equip) {
+                this.inventory.mount(item);
+            }
+        }
     }
 
     protected onHitStart() {

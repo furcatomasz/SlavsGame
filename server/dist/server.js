@@ -1,6 +1,6 @@
 var Server;
 (function (Server) {
-    var EnemyManager = (function () {
+    var EnemyManager = /** @class */ (function () {
         function EnemyManager() {
         }
         EnemyManager.prototype.createEnemy = function (position, type) {
@@ -39,7 +39,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var OrmManager = (function () {
+    var OrmManager = /** @class */ (function () {
         function OrmManager(server, orm, config) {
             this.server = server;
             var self = this;
@@ -67,7 +67,7 @@ var io = require('socket.io')(server);
 var orm = require("orm");
 var config = require("./../config.js");
 server.listen(config.server.port);
-var SlavsServer = (function () {
+var SlavsServer = /** @class */ (function () {
     function SlavsServer() {
         this.enemies = [];
         this.enemyManager = new Server.EnemyManager();
@@ -84,7 +84,7 @@ setTimeout(function () {
 var path = require('path');
 var Server;
 (function (Server) {
-    var FrontEnd = (function () {
+    var FrontEnd = /** @class */ (function () {
         function FrontEnd(server, expressApp, express) {
             this.server = server;
             expressApp.use('/bower_components', express.static(path.resolve(__dirname + '/../../bower_components')));
@@ -100,7 +100,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var IO = (function () {
+    var IO = /** @class */ (function () {
         function IO(server, serverIO) {
             this.remotePlayers = [];
             var self = this;
@@ -111,7 +111,7 @@ var Server;
                 var player = {
                     id: socket.id,
                     characters: [],
-                    activePlayer: null,
+                    activePlayer: 0,
                     lastPlayerUpdate: 0,
                     p: {
                         x: 3,
@@ -132,24 +132,23 @@ var Server;
                     server.ormManager.structure.player.find({ userId: user[0].id }, function (error, players) {
                         if (error)
                             throw error;
+                        var itteration = 0;
                         var _loop_1 = function (i) {
                             var playerDatabase = players[i];
                             server.ormManager.structure.playerItems.find({ playerId: playerDatabase.id }, function (error, playerItems) {
                                 if (error)
                                     throw error;
                                 playerDatabase.items = playerItems;
+                                itteration++;
+                                if (itteration == players.length) {
+                                    player.characters = players;
+                                    socket.emit('clientConnected', player);
+                                }
                             });
                         };
                         for (var i = 0; i < players.length; i++) {
                             _loop_1(i);
                         }
-                        var clinetConnectInterval = setInterval(function () {
-                            if ((i) == players.length) {
-                                player.characters = players;
-                                clearInterval(clinetConnectInterval);
-                                socket.emit('clientConnected', player);
-                            }
-                        }, 1000);
                     });
                 });
                 socket.on('selectCharacter', function (selectedCharacter) {
@@ -228,7 +227,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var Structure = (function () {
+        var Structure = /** @class */ (function () {
             function Structure(db) {
                 this.user = db.define("user", {
                     email: String,
@@ -264,7 +263,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var TestData = (function () {
+        var TestData = /** @class */ (function () {
             function TestData(ormManager) {
                 this.ormManager = ormManager;
                 ormManager.structure.user.exists({ email: "furcatomasz@gmail.com" }, function (err, exists) {
@@ -285,9 +284,69 @@ var Server;
                         if (err)
                             throw err;
                         if (!exists) {
-                            ormManager.structure.player.create({ name: "Mietek", type: 1, userId: userId }, function (err) {
+                            ormManager.structure.player.create({ name: "Mietek", type: 1, userId: userId }, function (err, insertedPlayer) {
                                 if (err)
                                     throw err;
+                                var insertedPlayerId = insertedPlayer.id;
+                                ormManager.structure.playerItems.create([
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 1,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 2,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 3,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 4,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 5,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 6,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 7,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 8,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 9,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                ], function (err) {
+                                    if (err)
+                                        throw err;
+                                });
                             });
                         }
                     });
@@ -308,7 +367,43 @@ var Server;
                                     },
                                     {
                                         playerId: insertedPlayerId,
+                                        itemId: 2,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
                                         itemId: 3,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 4,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 5,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 6,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 7,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        playerId: insertedPlayerId,
+                                        itemId: 8,
                                         improvement: 0,
                                         equip: 0
                                     },

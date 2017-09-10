@@ -2,10 +2,14 @@
 
 namespace Items {
     export abstract class Armor extends Item {
-        static readonly TYPE = 6;
+        static TYPE = 6;
 
-        constructor(game: Game) {
-            super(game);
+        /**
+         * @param game
+         * @param databaseId
+         */
+        constructor(game:Game, databaseId: Number) {
+            super(game, databaseId);
         }
 
         /**

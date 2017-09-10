@@ -2,10 +2,14 @@
 
 namespace Items {
     export abstract class Helm extends Item {
-        static readonly TYPE = 3;
+        static TYPE = 3;
 
-        constructor(game: Game) {
-            super(game);
+        /**
+         * @param game
+         * @param databaseId
+         */
+        constructor(game:Game, databaseId: Number) {
+            super(game, databaseId);
         }
 
         /**

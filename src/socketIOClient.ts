@@ -5,7 +5,7 @@ class SocketIOClient {
     protected game:Game;
     public socket;
     public characters = [];
-    public lastRecivedEquip = [];
+    public activePlayer = Number;
 
     constructor(game:Game) {
         this.game = game;
@@ -31,20 +31,7 @@ class SocketIOClient {
             game.remotePlayers = [];
             self.characters = data.characters;
             self.socket.emit('createPlayer', playerName);
-            self.updatePlayers().removePlayer().connectPlayer().refreshPlayer().getCharacterEquip();
-        });
-
-        return this;
-    }
-
-    /**
-     * @returns {SocketIOClient}
-     */
-    protected getCharacterEquip() {
-        let self = this;
-        this.socket.on('getEquip', function (items) {
-            self.lastRecivedEquip = items;
-            document.dispatchEvent(self.game.events.equipReceived);
+            self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
         });
 
         return this;
@@ -55,9 +42,11 @@ class SocketIOClient {
      */
     protected refreshPlayer() {
         let game = this.game;
+        let self = this;
         let playerName = Game.randomNumber(1,100);
 
         this.socket.on('showPlayer', function (data) {
+            self.activePlayer = data.activePlayer;
             game.player = new Player(game, data.id, playerName, true);
             let activeCharacter = data.characters[data.activePlayer];
             game.player.mesh.position = new BABYLON.Vector3(activeCharacter.positionX, activeCharacter.positionY, activeCharacter.positionZ);

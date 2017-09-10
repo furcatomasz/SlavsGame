@@ -14,7 +14,7 @@ namespace Server {
                 let player = {
                     id: socket.id,
                     characters: [],
-                    activePlayer: null,
+                    activePlayer: 0,
                     lastPlayerUpdate: 0,
                     p: {
                         x: 3,
@@ -36,6 +36,7 @@ namespace Server {
 
                         server.ormManager.structure.player.find({userId: user[0].id}, function (error, players) {
                             if (error) throw error;
+                            let itteration = 0;
 
                             for (let i = 0; i < players.length; i++) {
                                 let playerDatabase = players[i];
@@ -44,16 +45,13 @@ namespace Server {
                                     function (error, playerItems) {
                                         if (error) throw error;
                                         playerDatabase.items = playerItems;
+                                        itteration++;
+                                        if(itteration == players.length) {
+                                            player.characters = players;
+                                            socket.emit('clientConnected', player);
+                                        }
                                     });
                             }
-
-                            let clinetConnectInterval = setInterval(function(){
-                                if((i) == players.length) {
-                                    player.characters = players;
-                                    clearInterval(clinetConnectInterval);
-                                    socket.emit('clientConnected', player);
-                                }
-                            }, 1000);
 
                         });
                     });

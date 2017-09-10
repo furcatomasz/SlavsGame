@@ -134,7 +134,7 @@ namespace GUI {
                 panelItems.addControl(result);
 
                 result.onPointerUpObservable.add(function () {
-                    self.guiMain.game.player.inventory.mount(item);
+                    self.guiMain.game.player.inventory.mount(item, true);
                     self.onPointerUpItemImage(item);
                     self.showItems();
                     if (self.guiMain.attributesOpened) {

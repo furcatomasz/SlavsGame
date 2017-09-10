@@ -25,31 +25,29 @@ namespace SelectCharacter {
             }
 
             this.mesh = mesh;
-            let inventoryItems = game.client.characters[place].items;
-            let itemManager = new Items.ItemManager(game);
-            for (let i = 0; i < inventoryItems.length; i++) {
-                let item = inventoryItems[i];
-                console.log(itemManager.getItemUsingId(item.itemId));
-            }
-            this.inventory = new Character.Inventory(game, this);
-
-            let armor = new Items.Armors.PrimaryArmor(game);
-            let helm = new Items.Helms.PrimaryHelm(game);
-            let gloves = new Items.Gloves.PrimaryGloves(game);
-            let boots = new Items.Boots.PrimaryBoots(game);
-
-            this.inventory.mount(armor);
-            this.inventory.mount(helm);
-            this.inventory.mount(gloves);
-            this.inventory.mount(boots);
-
             super(name, game);
 
+            this.initPlayerInventory();
             this.mesh.skeleton.beginAnimation('Sit');
 
             this.registerActions();
         }
 
+        protected initPlayerInventory() {
+            let game = this.game;
+            this.inventory = new Character.Inventory(game, this);
+            let inventoryItems = game.client.characters[this.place].items;
+            let itemManager = new Items.ItemManager(game);
+            for (let i = 0; i < inventoryItems.length; i++) {
+                let itemDatabase = inventoryItems[i];
+                let item = itemManager.getItemUsingId(itemDatabase.itemId);
+                if(itemDatabase.equip) {
+                    if(item.getType() != 1 && item.getType() != 2) {
+                        this.inventory.mount(item);
+                    }
+                }
+            }
+        }
 
         removeFromWorld() {
         }

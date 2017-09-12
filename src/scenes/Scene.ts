@@ -8,6 +8,7 @@ abstract class Scene {
 
     protected game:Game;
     protected light:BABYLON.IShadowLight;
+    public pipeline: BABYLON.StandardRenderingPipeline;
     public shadowGenerator:BABYLON.ShadowGenerator;
     public guiTexture:BABYLON.GUI.AdvancedDynamicTexture;
     public environment:Environment;
@@ -46,12 +47,13 @@ abstract class Scene {
     }
 
     public optimizeScene(scene:BABYLON.Scene) {
-        scene.collisionsEnabled = false;
-        scene.fogEnabled = false;
-        scene.lensFlaresEnabled = false;
-        scene.probesEnabled = false;
-        scene.postProcessesEnabled = false;
-        scene.spritesEnabled = false;
+        //scene.collisionsEnabled = false;
+        //scene.fogEnabled = false;
+        //scene.lensFlaresEnabled = false;
+        //scene.probesEnabled = false;
+        //scene.postProcessesEnabled = false;
+        //scene.spritesEnabled = false;
+        scene.audioEnabled = false;
         return this;
     }
 

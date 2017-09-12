@@ -101,6 +101,8 @@ namespace Character {
                 emitData.equip = true;
             } else {
                 emitData.equip = false;
+
+                return;
             }
 
             if(emit) {

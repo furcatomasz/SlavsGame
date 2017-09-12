@@ -1,4 +1,5 @@
 namespace Items {
+    import Inventory = Character.Inventory;
     export class ItemManager {
 
         protected game:Game;
@@ -16,6 +17,24 @@ namespace Items {
          */
         public getItemUsingId(itemId:number, databaseId:number) {
             return this.getItem(itemId, databaseId);
+        }
+
+        /**
+         * @param inventoryItems
+         * @param inventory
+         */
+        public initItemsFromDatabaseOnCharacter(inventoryItems:Array, inventory:Inventory) {
+            let self = this;
+            inventory.items = [];
+
+            inventoryItems.forEach(function(itemDatabase) {
+                let item = self.getItemUsingId(itemDatabase.itemId, itemDatabase.id);
+                inventory.items.push(item);
+
+                if (itemDatabase.equip) {
+                    inventory.mount(item);
+                }
+            });
         }
 
         /**

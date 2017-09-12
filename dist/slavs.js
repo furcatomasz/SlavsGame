@@ -109,12 +109,13 @@ var Scene = /** @class */ (function () {
         return camera;
     };
     Scene.prototype.optimizeScene = function (scene) {
-        scene.collisionsEnabled = false;
-        scene.fogEnabled = false;
-        scene.lensFlaresEnabled = false;
-        scene.probesEnabled = false;
-        scene.postProcessesEnabled = false;
-        scene.spritesEnabled = false;
+        //scene.collisionsEnabled = false;
+        //scene.fogEnabled = false;
+        //scene.lensFlaresEnabled = false;
+        //scene.probesEnabled = false;
+        //scene.postProcessesEnabled = false;
+        //scene.spritesEnabled = false;
+        scene.audioEnabled = false;
         return this;
     };
     Scene.prototype.initFactories = function (scene, assetsManager) {
@@ -429,8 +430,12 @@ var SocketIOClient = /** @class */ (function () {
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
             self.characters = data.characters;
-            self.socket.emit('createPlayer', playerName);
-            self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
+            self
+                .updatePlayers()
+                .removePlayer()
+                .connectPlayer()
+                .refreshPlayer()
+                .refreshPlayerEquip();
         });
         return this;
     };
@@ -444,10 +449,28 @@ var SocketIOClient = /** @class */ (function () {
         this.socket.on('showPlayer', function (data) {
             self.activePlayer = data.activePlayer;
             game.player = new Player(game, data.id, playerName, true);
+            game.player.setItems(game.client.characters[game.client.activePlayer].items);
             var activeCharacter = data.characters[data.activePlayer];
             game.player.mesh.position = new BABYLON.Vector3(activeCharacter.positionX, activeCharacter.positionY, activeCharacter.positionZ);
             game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
+    SocketIOClient.prototype.refreshPlayerEquip = function () {
+        var game = this.game;
+        var self = this;
+        this.socket.on('updateEnemyEquip', function (playerUpdated) {
+            if (game.player) {
+                self.game.remotePlayers.forEach(function (socketRemotePlayer) {
+                    if (playerUpdated.id == socketRemotePlayer.id) {
+                        socketRemotePlayer.setItems(playerUpdated.characters[playerUpdated.activePlayer].items);
+                    }
+                });
+            }
         });
         return this;
     };
@@ -497,6 +520,7 @@ var SocketIOClient = /** @class */ (function () {
                         });
                         if (remotePlayerKey === null) {
                             var player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
+                            player.setItems(socketRemotePlayer.characters[socketRemotePlayer.activePlayer].items);
                             game.remotePlayers.push(player);
                         }
                     }
@@ -678,6 +702,7 @@ var Character;
             }
             else {
                 emitData.equip = false;
+                return;
             }
             if (emit) {
                 this.game.client.socket.emit('itemEquip', emitData);
@@ -751,7 +776,7 @@ var Player = /** @class */ (function (_super) {
         _this.game = game;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
-        _this.createItems();
+        _this.inventory = new Character.Inventory(game, _this);
         if (_this.isControllable) {
             _this.mesh.isPickable = false;
             //let playerLight = new BABYLON.PointLight("playerLightSpot", new BABYLON.Vector3(0, 5, 0), game.getScene());
@@ -886,18 +911,26 @@ var Player = /** @class */ (function (_super) {
     Player.prototype.refreshCameraPosition = function () {
         this.game.getScene().activeCamera.position = this.mesh.position;
     };
-    Player.prototype.createItems = function () {
+    /**
+     *
+     * @param inventoryItems
+     */
+    Player.prototype.setItems = function (inventoryItems) {
+        var self = this;
         var game = this.game;
-        this.inventory = new Character.Inventory(game, this);
-        var inventoryItems = game.client.characters[game.client.activePlayer].items;
         var itemManager = new Items.ItemManager(game);
-        for (var i = 0; i < inventoryItems.length; i++) {
-            var itemDatabase = inventoryItems[i];
-            var item = itemManager.getItemUsingId(itemDatabase.itemId, itemDatabase.id);
-            this.inventory.items.push(item);
-            if (itemDatabase.equip) {
-                this.inventory.mount(item);
-            }
+        if (this.inventory.items.length) {
+            var itemsProcessed_1 = 0;
+            this.inventory.items.forEach(function (item) {
+                item.mesh.dispose();
+                itemsProcessed_1++;
+                if (itemsProcessed_1 === self.inventory.items.length) {
+                    itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
+                }
+            });
+        }
+        else {
+            itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
         }
     };
     Player.prototype.onHitStart = function () {
@@ -2082,6 +2115,21 @@ var Items;
             return this.getItem(itemId, databaseId);
         };
         /**
+         * @param inventoryItems
+         * @param inventory
+         */
+        ItemManager.prototype.initItemsFromDatabaseOnCharacter = function (inventoryItems, inventory) {
+            var self = this;
+            inventory.items = [];
+            inventoryItems.forEach(function (itemDatabase) {
+                var item = self.getItemUsingId(itemDatabase.itemId, itemDatabase.id);
+                inventory.items.push(item);
+                if (itemDatabase.equip) {
+                    inventory.mount(item);
+                }
+            });
+        };
+        /**
          *
          * @param id
          * @param databaseId
@@ -2424,10 +2472,12 @@ var SelectCharacter;
                     });
                 }
             }));
+            var client = self.game.client;
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                self.game.client.socket.emit('selectCharacter', self.place);
-                self.game.client.socket.on('characterSelected', function () {
+                client.socket.emit('selectCharacter', self.place);
+                client.socket.on('characterSelected', function () {
                     self.game.sceneManager.changeScene(new Simple());
+                    client.socket.emit('createPlayer', client.characters[self.place].name);
                 });
             }));
         };

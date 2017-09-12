@@ -82,12 +82,15 @@ namespace SelectCharacter {
                 })
             );
 
+            let client = self.game.client;
+
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger,
                 function() {
-                    self.game.client.socket.emit('selectCharacter', self.place);
-                    self.game.client.socket.on('characterSelected', function() {
+                    client.socket.emit('selectCharacter', self.place);
+                    client.socket.on('characterSelected', function() {
                         self.game.sceneManager.changeScene(new Simple());
+                        client.socket.emit('createPlayer', client.characters[self.place].name);
                     })
                 })
             );

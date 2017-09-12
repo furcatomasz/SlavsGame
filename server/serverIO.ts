@@ -97,10 +97,15 @@ namespace Server {
                         self.server.ormManager.structure.playerItems.get(itemId,
                             function (error, itemDatabase) {
                                 itemDatabase.equip = (equip) ? 1 : 0;
-                                itemDatabase.save();
-
-                                socket.emit('itemEquiped', itemDatabase);
-
+                                itemDatabase.save(function() {
+                                    server.ormManager.structure.playerItems.find(
+                                        {playerId: player.characters[player.activePlayer].id},
+                                        function (error, playerItems) {
+                                            if (error) throw error;
+                                            player.characters[player.activePlayer].items = playerItems;
+                                            socket.broadcast.emit('updateEnemyEquip', player);
+                                        });
+                                });
                             });
                     });
 

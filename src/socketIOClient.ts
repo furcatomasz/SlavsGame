@@ -30,8 +30,12 @@ class SocketIOClient {
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
             self.characters = data.characters;
-            self.socket.emit('createPlayer', playerName);
-            self.updatePlayers().removePlayer().connectPlayer().refreshPlayer();
+            self
+                .updatePlayers()
+                .removePlayer()
+                .connectPlayer()
+                .refreshPlayer()
+                .refreshPlayerEquip();
         });
 
         return this;
@@ -48,11 +52,32 @@ class SocketIOClient {
         this.socket.on('showPlayer', function (data) {
             self.activePlayer = data.activePlayer;
             game.player = new Player(game, data.id, playerName, true);
+            game.player.setItems(game.client.characters[game.client.activePlayer].items);
             let activeCharacter = data.characters[data.activePlayer];
             game.player.mesh.position = new BABYLON.Vector3(activeCharacter.positionX, activeCharacter.positionY, activeCharacter.positionZ);
             game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
 
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected refreshPlayerEquip() {
+        let game = this.game;
+        let self = this;
+
+        this.socket.on('updateEnemyEquip', function (playerUpdated) {
+            if(game.player) {
+                self.game.remotePlayers.forEach(function (socketRemotePlayer) {
+                    if (playerUpdated.id == socketRemotePlayer.id) {
+                        socketRemotePlayer.setItems(playerUpdated.characters[playerUpdated.activePlayer].items);
+                    }
+                });
+            }
         });
 
         return this;
@@ -109,6 +134,8 @@ class SocketIOClient {
 
                         if (remotePlayerKey === null) {
                             let player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
+                            player.setItems(socketRemotePlayer.characters[socketRemotePlayer.activePlayer].items);
+
                             game.remotePlayers.push(player);
                         }
                     }

@@ -33,7 +33,7 @@ class Player extends AbstractCharacter {
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
 
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
-        this.createItems();
+        this.inventory = new Character.Inventory(game, this);
 
         if (this.isControllable) {
             this.mesh.isPickable = false;
@@ -193,19 +193,25 @@ class Player extends AbstractCharacter {
         this.game.getScene().activeCamera.position = this.mesh.position;
     }
 
-    public createItems() {
+    /**
+     *
+     * @param inventoryItems
+     */
+    public setItems(inventoryItems: Array) {
+        let self = this;
         let game = this.game;
-        this.inventory = new Character.Inventory(game, this);
-        let inventoryItems = game.client.characters[game.client.activePlayer].items;
         let itemManager = new Items.ItemManager(game);
-        for (let i = 0; i < inventoryItems.length; i++) {
-            let itemDatabase = inventoryItems[i];
-            let item = itemManager.getItemUsingId(itemDatabase.itemId, itemDatabase.id);
-            this.inventory.items.push(item);
-
-            if(itemDatabase.equip) {
-                this.inventory.mount(item);
-            }
+        if(this.inventory.items.length) {
+            let itemsProcessed = 0;
+            this.inventory.items.forEach(function(item) {
+                item.mesh.dispose();
+                itemsProcessed++;
+                if(itemsProcessed === self.inventory.items.length) {
+                    itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
+                }
+            });
+        } else {
+            itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
         }
     }
 

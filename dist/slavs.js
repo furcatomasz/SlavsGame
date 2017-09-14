@@ -632,14 +632,17 @@ var Character;
         }
         /**
          * @param item
+         * @param emit
          */
-        Inventory.prototype.removeItem = function (item) {
+        Inventory.prototype.removeItem = function (item, emit) {
             if (item) {
                 item.mesh.visibility = 0;
-                this.game.client.socket.emit('itemEquip', {
-                    id: item.databaseId,
-                    equip: false
-                });
+                if (emit) {
+                    this.game.client.socket.emit('itemEquip', {
+                        id: item.databaseId,
+                        equip: false
+                    });
+                }
             }
         };
         /**
@@ -654,42 +657,42 @@ var Character;
             };
             switch (item.getType()) {
                 case Items.Weapon.TYPE:
-                    this.removeItem(this.weapon);
+                    this.removeItem(this.weapon, emit);
                     this.weapon = null;
                     if (setItem) {
                         this.weapon = item;
                     }
                     break;
                 case Items.Shield.TYPE:
-                    this.removeItem(this.shield);
+                    this.removeItem(this.shield, emit);
                     this.shield = null;
                     if (setItem) {
                         this.shield = item;
                     }
                     break;
                 case Items.Helm.TYPE:
-                    this.removeItem(this.helm);
+                    this.removeItem(this.helm, emit);
                     this.helm = null;
                     if (setItem) {
                         this.helm = item;
                     }
                     break;
                 case Items.Gloves.TYPE:
-                    this.removeItem(this.gloves);
+                    this.removeItem(this.gloves, emit);
                     this.gloves = null;
                     if (setItem) {
                         this.gloves = item;
                     }
                     break;
                 case Items.Boots.TYPE:
-                    this.removeItem(this.boots);
+                    this.removeItem(this.boots, emit);
                     this.boots = null;
                     if (setItem) {
                         this.boots = item;
                     }
                     break;
                 case Items.Armor.TYPE:
-                    this.removeItem(this.armor);
+                    this.removeItem(this.armor, emit);
                     this.armor = null;
                     if (setItem) {
                         this.armor = item;

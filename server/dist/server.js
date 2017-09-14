@@ -214,6 +214,7 @@ var Server;
                 });
                 socket.on('changeScenePost', function (enemyData) {
                     socket.emit('showEnemies', enemies[enemyData.sceneType]);
+                    socket.emit('newPlayerConnected', remotePlayers);
                 });
                 ///Enemies
                 socket.on('updateEnemy', function (enemyData) {

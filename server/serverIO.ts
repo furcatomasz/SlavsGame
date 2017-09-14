@@ -135,6 +135,7 @@ namespace Server {
 
                 socket.on('changeScenePost', function (enemyData) {
                     socket.emit('showEnemies', enemies[enemyData.sceneType]);
+                    socket.emit('newPlayerConnected', remotePlayers);
                 });
 
                 ///Enemies

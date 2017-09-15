@@ -1,6 +1,6 @@
 var Server;
 (function (Server) {
-    var EnemyManager = (function () {
+    var EnemyManager = /** @class */ (function () {
         function EnemyManager() {
         }
         EnemyManager.prototype.createEnemy = function (position, type, itemsToDrop) {
@@ -24,7 +24,7 @@ var Server;
             var enemies = [];
             enemies[2] = [
                 this.createEnemy({ x: -2, y: 0, z: -30 }, 'worm', [9]),
-                this.createEnemy({ x: -2, y: 0, z: -64 }, 'worm', [7]),
+                this.createEnemy({ x: -2, y: 0, z: -64 }, 'worm', [1]),
                 this.createEnemy({ x: -8, y: 0, z: -72 }, 'worm', [8]),
             ];
             enemies[3] = [
@@ -40,7 +40,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var OrmManager = (function () {
+    var OrmManager = /** @class */ (function () {
         function OrmManager(server, orm, config) {
             this.server = server;
             var self = this;
@@ -68,7 +68,7 @@ var io = require('socket.io')(server);
 var orm = require("orm");
 var config = require("./../config.js");
 server.listen(config.server.port);
-var SlavsServer = (function () {
+var SlavsServer = /** @class */ (function () {
     function SlavsServer() {
         this.enemies = [];
         this.enemyManager = new Server.EnemyManager();
@@ -85,7 +85,7 @@ setTimeout(function () {
 var path = require('path');
 var Server;
 (function (Server) {
-    var FrontEnd = (function () {
+    var FrontEnd = /** @class */ (function () {
         function FrontEnd(server, expressApp, express) {
             this.server = server;
             expressApp.use('/bower_components', express.static(path.resolve(__dirname + '/../../bower_components')));
@@ -101,7 +101,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var IO = (function () {
+    var IO = /** @class */ (function () {
         function IO(server, serverIO) {
             this.remotePlayers = [];
             var self = this;
@@ -245,7 +245,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var Structure = (function () {
+        var Structure = /** @class */ (function () {
             function Structure(db) {
                 this.user = db.define("user", {
                     email: String,
@@ -281,7 +281,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var TestData = (function () {
+        var TestData = /** @class */ (function () {
             function TestData(ormManager) {
                 this.ormManager = ormManager;
                 ormManager.structure.user.exists({ email: "furcatomasz@gmail.com" }, function (err, exists) {

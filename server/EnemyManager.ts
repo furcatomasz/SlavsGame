@@ -23,7 +23,7 @@ namespace Server {
             let enemies = [];
             enemies[2] = [
                 this.createEnemy({x: -2, y: 0, z: -30}, 'worm', [9]),
-                this.createEnemy({x: -2, y: 0, z: -64}, 'worm', [7]),
+                this.createEnemy({x: -2, y: 0, z: -64}, 'worm', [1]),
                 this.createEnemy({x: -8, y: 0, z: -72}, 'worm', [8]),
             ];
             enemies[3] = [

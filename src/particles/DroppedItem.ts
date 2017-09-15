@@ -9,8 +9,8 @@ namespace Particles {
             fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
 
             fireSystem.emitter = this.emitter;
-            fireSystem.minEmitBox = new BABYLON.Vector3(-2, 0, -2);
-            fireSystem.maxEmitBox = new BABYLON.Vector3(2, 0, 0);
+            fireSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 0);
 
             fireSystem.color1 = new BABYLON.Color4(0, 0.5, 0, 1.0);
             fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);

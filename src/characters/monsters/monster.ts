@@ -52,6 +52,7 @@ abstract class Monster extends AbstractCharacter {
     }
 
     public removeFromWorld() {
+        this.game.client.socket.emit('enemyKill', this.id);
         let self = this;
         self.mesh.dispose();
     }

@@ -1,9 +1,9 @@
 var Server;
 (function (Server) {
-    var EnemyManager = /** @class */ (function () {
+    var EnemyManager = (function () {
         function EnemyManager() {
         }
-        EnemyManager.prototype.createEnemy = function (position, type) {
+        EnemyManager.prototype.createEnemy = function (position, type, itemsToDrop) {
             return {
                 id: 0,
                 position: position,
@@ -16,20 +16,21 @@ var Server;
                 hp: 100,
                 type: type,
                 target: false,
-                attack: false
+                attack: false,
+                itemsToDrop: itemsToDrop
             };
         };
         EnemyManager.prototype.getEnemies = function () {
             var enemies = [];
             enemies[2] = [
-                this.createEnemy({ x: -2, y: 0, z: -30 }, 'worm'),
-                this.createEnemy({ x: -2, y: 0, z: -64 }, 'worm'),
-                this.createEnemy({ x: -8, y: 0, z: -72 }, 'worm'),
+                this.createEnemy({ x: -2, y: 0, z: -30 }, 'worm', [9]),
+                this.createEnemy({ x: -2, y: 0, z: -64 }, 'worm', [7]),
+                this.createEnemy({ x: -8, y: 0, z: -72 }, 'worm', [8]),
             ];
             enemies[3] = [
-                this.createEnemy({ x: -2, y: 0, z: -30 }, 'bandit'),
-                this.createEnemy({ x: -2, y: 0, z: -64 }, 'bandit'),
-                this.createEnemy({ x: -8, y: 0, z: -72 }, 'bandit'),
+                this.createEnemy({ x: -2, y: 0, z: -30 }, 'bandit', [9]),
+                this.createEnemy({ x: -2, y: 0, z: -64 }, 'bandit', [9]),
+                this.createEnemy({ x: -8, y: 0, z: -72 }, 'bandit', [9]),
             ];
             return enemies;
         };
@@ -39,7 +40,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var OrmManager = /** @class */ (function () {
+    var OrmManager = (function () {
         function OrmManager(server, orm, config) {
             this.server = server;
             var self = this;
@@ -67,7 +68,7 @@ var io = require('socket.io')(server);
 var orm = require("orm");
 var config = require("./../config.js");
 server.listen(config.server.port);
-var SlavsServer = /** @class */ (function () {
+var SlavsServer = (function () {
     function SlavsServer() {
         this.enemies = [];
         this.enemyManager = new Server.EnemyManager();
@@ -84,7 +85,7 @@ setTimeout(function () {
 var path = require('path');
 var Server;
 (function (Server) {
-    var FrontEnd = /** @class */ (function () {
+    var FrontEnd = (function () {
         function FrontEnd(server, expressApp, express) {
             this.server = server;
             expressApp.use('/bower_components', express.static(path.resolve(__dirname + '/../../bower_components')));
@@ -100,7 +101,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var IO = /** @class */ (function () {
+    var IO = (function () {
         function IO(server, serverIO) {
             this.remotePlayers = [];
             var self = this;
@@ -112,6 +113,7 @@ var Server;
                     id: socket.id,
                     characters: [],
                     activePlayer: 0,
+                    activeScene: null,
                     lastPlayerUpdate: 0,
                     p: {
                         x: 3,
@@ -160,45 +162,45 @@ var Server;
                     player.name = playerName;
                     remotePlayers.push(player);
                     socket.broadcast.emit('newPlayerConnected', remotePlayers);
-                    socket.on('moveTo', function (data) {
-                        if ((player.lastPlayerUpdate + 1) < new Date().getTime() / 1000) {
-                            player.lastPlayerUpdate = new Date().getTime() / 1000;
-                            var playerId = player.characters[player.activePlayer].id;
-                            self.server.ormManager.structure.player.get(playerId, function (error, playerDatabase) {
-                                playerDatabase.positionX = data.p.x;
-                                playerDatabase.positionY = data.p.y;
-                                playerDatabase.positionZ = data.p.z;
-                                playerDatabase.save();
-                            });
-                        }
-                        player.p = data.p;
-                        player.r = data.r;
-                        socket.broadcast.emit('updatePlayer', player);
-                    });
-                    socket.on('attack', function (data) {
-                        player.attack = data.attack;
-                        socket.broadcast.emit('updatePlayer', player);
-                    });
-                    socket.on('itemEquip', function (item) {
-                        var itemId = item.id;
-                        var equip = item.equip;
-                        self.server.ormManager.structure.playerItems.get(itemId, function (error, itemDatabase) {
-                            itemDatabase.equip = (equip) ? 1 : 0;
-                            itemDatabase.save(function () {
-                                server.ormManager.structure.playerItems.find({ playerId: player.characters[player.activePlayer].id }, function (error, playerItems) {
-                                    if (error)
-                                        throw error;
-                                    player.characters[player.activePlayer].items = playerItems;
-                                    socket.broadcast.emit('updateEnemyEquip', player);
-                                });
+                });
+                socket.on('moveTo', function (data) {
+                    if ((player.lastPlayerUpdate + 1) < new Date().getTime() / 1000) {
+                        player.lastPlayerUpdate = new Date().getTime() / 1000;
+                        var playerId = player.characters[player.activePlayer].id;
+                        self.server.ormManager.structure.player.get(playerId, function (error, playerDatabase) {
+                            playerDatabase.positionX = data.p.x;
+                            playerDatabase.positionY = data.p.y;
+                            playerDatabase.positionZ = data.p.z;
+                            playerDatabase.save();
+                        });
+                    }
+                    player.p = data.p;
+                    player.r = data.r;
+                    socket.broadcast.emit('updatePlayer', player);
+                });
+                socket.on('attack', function (data) {
+                    player.attack = data.attack;
+                    socket.broadcast.emit('updatePlayer', player);
+                });
+                socket.on('itemEquip', function (item) {
+                    var itemId = item.id;
+                    var equip = item.equip;
+                    self.server.ormManager.structure.playerItems.get(itemId, function (error, itemDatabase) {
+                        itemDatabase.equip = (equip) ? 1 : 0;
+                        itemDatabase.save(function () {
+                            server.ormManager.structure.playerItems.find({ playerId: player.characters[player.activePlayer].id }, function (error, playerItems) {
+                                if (error)
+                                    throw error;
+                                player.characters[player.activePlayer].items = playerItems;
+                                socket.broadcast.emit('updateEnemyEquip', player);
                             });
                         });
                     });
-                    socket.on('getEquip', function (characterKey) {
-                        var playerId = player.characters[characterKey].id;
-                        self.server.ormManager.structure.playerItems.find({ playerId: playerId }, function (error, itemsDatabase) {
-                            socket.emit('getEquip', itemsDatabase);
-                        });
+                });
+                socket.on('getEquip', function (characterKey) {
+                    var playerId = player.characters[characterKey].id;
+                    self.server.ormManager.structure.playerItems.find({ playerId: playerId }, function (error, itemsDatabase) {
+                        socket.emit('getEquip', itemsDatabase);
                     });
                 });
                 socket.on('disconnect', function () {
@@ -213,6 +215,7 @@ var Server;
                     socket.emit('showPlayer', player);
                 });
                 socket.on('changeScenePost', function (enemyData) {
+                    player.activeScene = enemyData.sceneType;
                     socket.emit('showEnemies', enemies[enemyData.sceneType]);
                     socket.emit('newPlayerConnected', remotePlayers);
                 });
@@ -224,6 +227,14 @@ var Server;
                     enemy.target = enemyData.target;
                     socket.broadcast.emit('showEnemies', enemies);
                 });
+                socket.on('enemyKill', function (enemyKey) {
+                    var enemy = enemies[player.activeScene][enemyKey];
+                    console.log(enemy);
+                    socket.emit('showDroppedItem', {
+                        items: enemy.itemsToDrop[0],
+                        enemyId: enemyKey
+                    });
+                });
             });
         }
         return IO;
@@ -234,7 +245,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var Structure = /** @class */ (function () {
+        var Structure = (function () {
             function Structure(db) {
                 this.user = db.define("user", {
                     email: String,
@@ -270,7 +281,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var TestData = /** @class */ (function () {
+        var TestData = (function () {
             function TestData(ormManager) {
                 this.ormManager = ormManager;
                 ormManager.structure.user.exists({ email: "furcatomasz@gmail.com" }, function (err, exists) {

@@ -163,9 +163,6 @@ class Player extends AbstractCharacter {
 
     public removeFromWorld() {
         this.mesh.dispose();
-        //this.items.weapon.mesh.dispose();
-        //this.items.shield.mesh.dispose();
-
     }
 
 

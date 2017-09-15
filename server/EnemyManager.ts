@@ -1,7 +1,7 @@
 namespace Server {
     export class EnemyManager {
 
-        public createEnemy(position, type) {
+        public createEnemy(position, type, itemsToDrop) {
             return {
                 id: 0,
                 position: position,
@@ -14,21 +14,22 @@ namespace Server {
                 hp: 100,
                 type: type,
                 target: false,
-                attack: false
+                attack: false,
+                itemsToDrop: itemsToDrop
             };
         }
 
         public getEnemies() {
             let enemies = [];
             enemies[2] = [
-                this.createEnemy({x: -2, y: 0, z: -30}, 'worm'),
-                this.createEnemy({x: -2, y: 0, z: -64}, 'worm'),
-                this.createEnemy({x: -8, y: 0, z: -72}, 'worm'),
+                this.createEnemy({x: -2, y: 0, z: -30}, 'worm', [9]),
+                this.createEnemy({x: -2, y: 0, z: -64}, 'worm', [7]),
+                this.createEnemy({x: -8, y: 0, z: -72}, 'worm', [8]),
             ];
             enemies[3] = [
-                this.createEnemy({x: -2, y: 0, z: -30}, 'bandit'),
-                this.createEnemy({x: -2, y: 0, z: -64}, 'bandit'),
-                this.createEnemy({x: -8, y: 0, z: -72}, 'bandit'),
+                this.createEnemy({x: -2, y: 0, z: -30}, 'bandit', [9]),
+                this.createEnemy({x: -2, y: 0, z: -64}, 'bandit', [9]),
+                this.createEnemy({x: -8, y: 0, z: -72}, 'bandit', [9]),
             ];
 
             return enemies;

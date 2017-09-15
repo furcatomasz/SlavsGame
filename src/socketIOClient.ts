@@ -35,7 +35,8 @@ class SocketIOClient {
                 .removePlayer()
                 .connectPlayer()
                 .refreshPlayer()
-                .refreshPlayerEquip();
+                .refreshPlayerEquip()
+                .showDroppedItem();
         });
 
         return this;
@@ -78,6 +79,21 @@ class SocketIOClient {
                     }
                 });
             }
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected showDroppedItem() {
+        let game = this.game;
+        this.socket.on('showDroppedItem', function (data) {
+            let itemManager = new Items.ItemManager(game);
+            let item = itemManager.getItemUsingId(data.items, null);
+            let enemy = game.enemies[data.enemyId];
+            Items.DroppedItem.showItem(game, item, enemy);
         });
 
         return this;

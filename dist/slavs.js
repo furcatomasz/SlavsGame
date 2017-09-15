@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var Events = /** @class */ (function () {
+var Events = (function () {
     function Events() {
         this.playerConnected = new Event(Events.PLAYER_CONNECTED);
         this.equipReceived = new Event(Events.EQUIP_RECEIVED);
@@ -20,14 +20,14 @@ var Events = /** @class */ (function () {
     return Events;
 }());
 /// <reference path="../game.ts"/>
-var Controller = /** @class */ (function () {
+var Controller = (function () {
     function Controller(game) {
         this.game = game;
     }
     return Controller;
 }());
 /// <reference path="Controller.ts"/>
-var Keyboard = /** @class */ (function (_super) {
+var Keyboard = (function (_super) {
     __extends(Keyboard, _super);
     function Keyboard() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -78,7 +78,7 @@ var Keyboard = /** @class */ (function (_super) {
 /// <reference path="../../bower_components/babylonjs/dist/babylon.d.ts"/>
 /// <reference path="../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
 var Camera = BABYLON.Camera;
-var Scene = /** @class */ (function () {
+var Scene = (function () {
     function Scene() {
     }
     Scene.prototype.setDefaults = function (game) {
@@ -138,7 +138,7 @@ var Scene = /** @class */ (function () {
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
-var Simple = /** @class */ (function (_super) {
+var Simple = (function (_super) {
     __extends(Simple, _super);
     function Simple() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -188,7 +188,7 @@ var Simple = /** @class */ (function (_super) {
 }(Scene));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
-var AbstractCharacter = /** @class */ (function () {
+var AbstractCharacter = (function () {
     function AbstractCharacter(name, game) {
         this.name = name;
         this.game = game;
@@ -298,7 +298,7 @@ var AbstractCharacter = /** @class */ (function () {
     return AbstractCharacter;
 }());
 /// <reference path="../AbstractCharacter.ts"/>
-var Monster = /** @class */ (function (_super) {
+var Monster = (function (_super) {
     __extends(Monster, _super);
     function Monster(name, game) {
         var _this = this;
@@ -339,6 +339,7 @@ var Monster = /** @class */ (function (_super) {
         }
     };
     Monster.prototype.removeFromWorld = function () {
+        this.game.client.socket.emit('enemyKill', this.id);
         var self = this;
         self.mesh.dispose();
     };
@@ -409,7 +410,7 @@ var Monster = /** @class */ (function (_super) {
 }(AbstractCharacter));
 /// <reference path="game.ts"/>
 /// <reference path="characters/monsters/monster.ts"/>
-var SocketIOClient = /** @class */ (function () {
+var SocketIOClient = (function () {
     function SocketIOClient(game) {
         this.characters = [];
         this.activePlayer = Number;
@@ -435,7 +436,8 @@ var SocketIOClient = /** @class */ (function () {
                 .removePlayer()
                 .connectPlayer()
                 .refreshPlayer()
-                .refreshPlayerEquip();
+                .refreshPlayerEquip()
+                .showDroppedItem();
         });
         return this;
     };
@@ -471,6 +473,19 @@ var SocketIOClient = /** @class */ (function () {
                     }
                 });
             }
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
+    SocketIOClient.prototype.showDroppedItem = function () {
+        var game = this.game;
+        this.socket.on('showDroppedItem', function (data) {
+            var itemManager = new Items.ItemManager(game);
+            var item = itemManager.getItemUsingId(data.items, null);
+            var enemy = game.enemies[data.enemyId];
+            Items.DroppedItem.showItem(game, item, enemy);
         });
         return this;
     };
@@ -579,7 +594,7 @@ var SocketIOClient = /** @class */ (function () {
 /// <reference path="controllers/Keyboard.ts"/>
 /// <reference path="scenes/Simple.ts"/>
 /// <reference path="socketIOClient.ts"/>
-var Game = /** @class */ (function () {
+var Game = (function () {
     function Game(canvasElement) {
         var serverUrl = window.location.hostname + ':' + gameServerPort;
         this.canvas = canvasElement;
@@ -598,7 +613,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new SelectCharacter().initScene(this);
+        new Simple().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -624,7 +639,7 @@ var Game = /** @class */ (function () {
 }());
 var Character;
 (function (Character) {
-    var Inventory = /** @class */ (function () {
+    var Inventory = (function () {
         function Inventory(game, player) {
             this.game = game;
             this.player = player;
@@ -754,7 +769,7 @@ var Character;
 })(Character || (Character = {}));
 /// <reference path="AbstractCharacter.ts"/>
 /// <reference path="../game.ts"/>
-var Player = /** @class */ (function (_super) {
+var Player = (function (_super) {
     __extends(Player, _super);
     function Player(game, id, name, registerMoving) {
         var _this = this;
@@ -890,8 +905,6 @@ var Player = /** @class */ (function (_super) {
     };
     Player.prototype.removeFromWorld = function () {
         this.mesh.dispose();
-        //this.items.weapon.mesh.dispose();
-        //this.items.shield.mesh.dispose();
     };
     Player.prototype.registerFunctionAfterRender = function () {
         var self = this;
@@ -953,7 +966,7 @@ var Player = /** @class */ (function (_super) {
     return Player;
 }(AbstractCharacter));
 /// <reference path="Controller.ts"/>
-var Mouse = /** @class */ (function (_super) {
+var Mouse = (function (_super) {
     __extends(Mouse, _super);
     function Mouse() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -1031,7 +1044,7 @@ var Mouse = /** @class */ (function (_super) {
 /// <reference path="../game.ts"/>
 var Factories;
 (function (Factories) {
-    var AbstractFactory = /** @class */ (function () {
+    var AbstractFactory = (function () {
         function AbstractFactory(game, scene, assetsManager) {
             //let characterFactory = new Warrior.MeshFactory(scene, '/babel/Characters/Warrior');
             //game.characters['player'] = characterFactory;
@@ -1074,7 +1087,7 @@ var Factories;
 /// <reference path="../game.ts"/>
 var Factories;
 (function (Factories) {
-    var Worms = /** @class */ (function (_super) {
+    var Worms = (function (_super) {
         __extends(Worms, _super);
         function Worms(game, scene, assetsManager) {
             var _this = _super.call(this, game, scene, assetsManager) || this;
@@ -1091,7 +1104,7 @@ var Factories;
 /// <reference path="../game.ts"/>
 var Factories;
 (function (Factories) {
-    var Characters = /** @class */ (function (_super) {
+    var Characters = (function (_super) {
         __extends(Characters, _super);
         function Characters(game, scene, assetsManager) {
             var _this = _super.call(this, game, scene, assetsManager) || this;
@@ -1105,7 +1118,7 @@ var Factories;
     Factories.Characters = Characters;
 })(Factories || (Factories = {}));
 /// <reference path="../game.ts"/>
-var Environment = /** @class */ (function () {
+var Environment = (function () {
     function Environment(game, scene) {
         var self = this;
         this.trees = [];
@@ -1225,7 +1238,7 @@ var Environment = /** @class */ (function () {
     return Environment;
 }());
 /// <reference path="../game.ts"/>
-var EnvironmentSelectCharacter = /** @class */ (function () {
+var EnvironmentSelectCharacter = (function () {
     function EnvironmentSelectCharacter(game, scene) {
         ////LIGHT
         var light = game.getScene().lights[0];
@@ -1304,7 +1317,7 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
 /// <reference path="../game.ts"/>
 var GUI;
 (function (GUI) {
-    var Main = /** @class */ (function () {
+    var Main = (function () {
         function Main(game, player) {
             this.game = game;
             this.player = player;
@@ -1393,7 +1406,7 @@ var GUI;
 /// <reference path="../game.ts"/>
 var GUI;
 (function (GUI) {
-    var PlayerBottomPanel = /** @class */ (function () {
+    var PlayerBottomPanel = (function () {
         function PlayerBottomPanel(game) {
             var self = this;
             var listener = function listener() {
@@ -1442,7 +1455,7 @@ var GUI;
 /// <reference path="../characters/AbstractCharacter.ts"/>
 var GUI;
 (function (GUI) {
-    var ShowHp = /** @class */ (function () {
+    var ShowHp = (function () {
         function ShowHp() {
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("characterShowHp");
         }
@@ -1478,7 +1491,7 @@ var GUI;
 /// <reference path="../game.ts"/>
 var Particles;
 (function (Particles) {
-    var AbstractParticle = /** @class */ (function () {
+    var AbstractParticle = (function () {
         function AbstractParticle(game, emitter) {
             this.game = game;
             this.emitter = emitter;
@@ -1491,7 +1504,7 @@ var Particles;
 /// <reference path="AbstractParticle.ts"/>
 var Particles;
 (function (Particles) {
-    var Blood = /** @class */ (function (_super) {
+    var Blood = (function (_super) {
         __extends(Blood, _super);
         function Blood() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -1529,7 +1542,44 @@ var Particles;
 /// <reference path="AbstractParticle.ts"/>
 var Particles;
 (function (Particles) {
-    var Entrace = /** @class */ (function (_super) {
+    var DroppedItem = (function (_super) {
+        __extends(DroppedItem, _super);
+        function DroppedItem() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        DroppedItem.prototype.initParticleSystem = function () {
+            var fireSystem = new BABYLON.ParticleSystem("particles", 400, this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.emitter = this.emitter;
+            fireSystem.minEmitBox = new BABYLON.Vector3(-2, 0, -2);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(2, 0, 0);
+            fireSystem.color1 = new BABYLON.Color4(0, 0.5, 0, 1.0);
+            fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);
+            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            fireSystem.minSize = 0.2;
+            fireSystem.maxSize = 0.7;
+            fireSystem.minLifeTime = 0.2;
+            fireSystem.maxLifeTime = 0.4;
+            fireSystem.emitRate = 300;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 2, 0);
+            fireSystem.minAngularSpeed = -10;
+            fireSystem.maxAngularSpeed = Math.PI;
+            fireSystem.minEmitPower = 1;
+            fireSystem.maxEmitPower = 3;
+            fireSystem.updateSpeed = 0.007;
+            this.particleSystem = fireSystem;
+        };
+        return DroppedItem;
+    }(Particles.AbstractParticle));
+    Particles.DroppedItem = DroppedItem;
+})(Particles || (Particles = {}));
+/// <reference path="AbstractParticle.ts"/>
+var Particles;
+(function (Particles) {
+    var Entrace = (function (_super) {
         __extends(Entrace, _super);
         function Entrace() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -1566,7 +1616,7 @@ var Particles;
 /// <reference path="AbstractParticle.ts"/>
 var Particles;
 (function (Particles) {
-    var FireplaceFire = /** @class */ (function (_super) {
+    var FireplaceFire = (function (_super) {
         __extends(FireplaceFire, _super);
         function FireplaceFire() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -1603,7 +1653,7 @@ var Particles;
 /// <reference path="AbstractParticle.ts"/>
 var Particles;
 (function (Particles) {
-    var FireplaceSmoke = /** @class */ (function (_super) {
+    var FireplaceSmoke = (function (_super) {
         __extends(FireplaceSmoke, _super);
         function FireplaceSmoke() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -1640,7 +1690,7 @@ var Particles;
 /// <reference path="AbstractParticle.ts"/>
 var Particles;
 (function (Particles) {
-    var Fog = /** @class */ (function (_super) {
+    var Fog = (function (_super) {
         __extends(Fog, _super);
         function Fog() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -1677,7 +1727,7 @@ var Particles;
 /// <reference path="AbstractParticle.ts"/>
 var Particles;
 (function (Particles) {
-    var WalkSmoke = /** @class */ (function (_super) {
+    var WalkSmoke = (function (_super) {
         __extends(WalkSmoke, _super);
         function WalkSmoke() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -1715,7 +1765,7 @@ var Quests;
 (function (Quests) {
     var Awards;
     (function (Awards) {
-        var AbstractAward = /** @class */ (function () {
+        var AbstractAward = (function () {
             function AbstractAward() {
             }
             return AbstractAward;
@@ -1727,7 +1777,7 @@ var Quests;
 (function (Quests) {
     var Requirements;
     (function (Requirements) {
-        var AbstractRequirement = /** @class */ (function () {
+        var AbstractRequirement = (function () {
             function AbstractRequirement() {
             }
             return AbstractRequirement;
@@ -1739,7 +1789,7 @@ var Quests;
 /// <reference path="requirements/AbstractRequirement.ts"/>
 var Quests;
 (function (Quests) {
-    var AbstractQuest = /** @class */ (function () {
+    var AbstractQuest = (function () {
         function AbstractQuest(game) {
             this.game = game;
             this.awards = [];
@@ -1756,7 +1806,7 @@ var Quests;
 /// <reference path="../objects/characters.ts"/>
 /// <reference path="../objects/items.ts"/>
 /// <reference path="../objects/environment.ts"/>
-var MainMenu = /** @class */ (function (_super) {
+var MainMenu = (function (_super) {
     __extends(MainMenu, _super);
     function MainMenu(game) {
         var _this = _super.call(this, game) || this;
@@ -1872,7 +1922,7 @@ var MainMenu = /** @class */ (function (_super) {
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
-var SelectCharacter = /** @class */ (function (_super) {
+var SelectCharacter = (function (_super) {
     __extends(SelectCharacter, _super);
     function SelectCharacter() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -1914,7 +1964,7 @@ var SelectCharacter = /** @class */ (function (_super) {
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
-var SimpleBandit = /** @class */ (function (_super) {
+var SimpleBandit = (function (_super) {
     __extends(SimpleBandit, _super);
     function SimpleBandit() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -1962,7 +2012,7 @@ var SimpleBandit = /** @class */ (function (_super) {
 }(Scene));
 var Attributes;
 (function (Attributes) {
-    var AbstractStatistics = /** @class */ (function () {
+    var AbstractStatistics = (function () {
         function AbstractStatistics(hp, hpMax, attackSpeed, damage, armor, walkSpeed, blockChance, hitChance) {
             if (hp === void 0) { hp = 0; }
             if (hpMax === void 0) { hpMax = 0; }
@@ -2012,7 +2062,7 @@ var Attributes;
 var Attributes;
 (function (Attributes) {
     var AbstractStatistics = Attributes.AbstractStatistics;
-    var CharacterStatistics = /** @class */ (function (_super) {
+    var CharacterStatistics = (function (_super) {
         __extends(CharacterStatistics, _super);
         function CharacterStatistics() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -2056,7 +2106,7 @@ var Attributes;
 var Attributes;
 (function (Attributes) {
     var AbstractStatistics = Attributes.AbstractStatistics;
-    var EquipStatistics = /** @class */ (function (_super) {
+    var EquipStatistics = (function (_super) {
         __extends(EquipStatistics, _super);
         function EquipStatistics() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -2076,7 +2126,7 @@ var Attributes;
 var Attributes;
 (function (Attributes) {
     var AbstractStatistics = Attributes.AbstractStatistics;
-    var ItemStatistics = /** @class */ (function (_super) {
+    var ItemStatistics = (function (_super) {
         __extends(ItemStatistics, _super);
         function ItemStatistics() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -2087,7 +2137,25 @@ var Attributes;
 })(Attributes || (Attributes = {}));
 var Items;
 (function (Items) {
-    var Item = /** @class */ (function () {
+    var DroppedItem = (function () {
+        function DroppedItem() {
+        }
+        DroppedItem.showItem = function (game, item, enemy) {
+            item.mesh.position.x = enemy.mesh.position.x;
+            item.mesh.position.z = enemy.mesh.position.z;
+            item.mesh.position.y = 0;
+            item.mesh.rotation = new BABYLON.Vector3(0, 0, 0);
+            item.mesh.visibility = 1;
+            var particleSystem = new Particles.DroppedItem(game, item.mesh);
+            particleSystem.particleSystem.start();
+        };
+        return DroppedItem;
+    }());
+    Items.DroppedItem = DroppedItem;
+})(Items || (Items = {}));
+var Items;
+(function (Items) {
+    var Item = (function () {
         /**
          * @param game
          * @param databaseId
@@ -2104,7 +2172,7 @@ var Items;
 })(Items || (Items = {}));
 var Items;
 (function (Items) {
-    var ItemManager = /** @class */ (function () {
+    var ItemManager = (function () {
         function ItemManager(game) {
             this.game = game;
         }
@@ -2179,7 +2247,7 @@ var Items;
 /// <reference path="../AbstractCharacter.ts"/>
 var Bandit;
 (function (Bandit_1) {
-    var Bandit = /** @class */ (function (_super) {
+    var Bandit = (function (_super) {
         __extends(Bandit, _super);
         function Bandit(serverKey, game, position, rotationQuaternion) {
             var _this = this;
@@ -2215,7 +2283,7 @@ var Bandit;
 })(Bandit || (Bandit = {}));
 /// <reference path="../../game.ts"/>
 /// <reference path="monster.ts"/>
-var BigWorm = /** @class */ (function (_super) {
+var BigWorm = (function (_super) {
     __extends(BigWorm, _super);
     function BigWorm(serverKey, name, game, position, rotationQuaternion) {
         var _this = this;
@@ -2255,7 +2323,7 @@ var BigWorm = /** @class */ (function (_super) {
 }(Monster));
 /// <reference path="../../game.ts"/>
 /// <reference path="monster.ts"/>
-var Worm = /** @class */ (function (_super) {
+var Worm = (function (_super) {
     __extends(Worm, _super);
     function Worm(serverKey, name, game, position, rotationQuaternion) {
         var _this = this;
@@ -2292,7 +2360,7 @@ var Worm = /** @class */ (function (_super) {
 /// <reference path="../AbstractCharacter.ts"/>
 var NPC;
 (function (NPC) {
-    var AbstractNpc = /** @class */ (function (_super) {
+    var AbstractNpc = (function (_super) {
         __extends(AbstractNpc, _super);
         function AbstractNpc(game, name) {
             var _this = _super.call(this, name, game) || this;
@@ -2341,7 +2409,7 @@ var NPC;
 /// <reference path="AbstractNpc.ts"/>
 var NPC;
 (function (NPC) {
-    var Warrior = /** @class */ (function (_super) {
+    var Warrior = (function (_super) {
         __extends(Warrior, _super);
         function Warrior(game) {
             var _this = this;
@@ -2362,7 +2430,7 @@ var NPC;
 /// <reference path="../AbstractCharacter.ts"/>
 var SelectCharacter;
 (function (SelectCharacter) {
-    var Bandit = /** @class */ (function (_super) {
+    var Bandit = (function (_super) {
         __extends(Bandit, _super);
         function Bandit(game) {
             var _this = this;
@@ -2412,7 +2480,7 @@ var SelectCharacter;
 /// <reference path="../AbstractCharacter.ts"/>
 var SelectCharacter;
 (function (SelectCharacter) {
-    var Warrior = /** @class */ (function (_super) {
+    var Warrior = (function (_super) {
         __extends(Warrior, _super);
         function Warrior(game, place) {
             var _this = this;
@@ -2492,7 +2560,7 @@ var SelectCharacter;
 /// <reference path="../../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
 var GUI;
 (function (GUI) {
-    var Popup = /** @class */ (function () {
+    var Popup = (function () {
         function Popup(guiMain) {
             this.guiMain = guiMain;
         }
@@ -2527,7 +2595,7 @@ var GUI;
 /// <reference path="Popup.ts"/>
 var GUI;
 (function (GUI) {
-    var Attributes = /** @class */ (function (_super) {
+    var Attributes = (function (_super) {
         __extends(Attributes, _super);
         function Attributes(guiMain) {
             var _this = _super.call(this, guiMain) || this;
@@ -2641,7 +2709,7 @@ var GUI;
 /// <reference path="Popup.ts"/>
 var GUI;
 (function (GUI) {
-    var Inventory = /** @class */ (function (_super) {
+    var Inventory = (function (_super) {
         __extends(Inventory, _super);
         function Inventory(guiMain) {
             var _this = _super.call(this, guiMain) || this;
@@ -2838,7 +2906,7 @@ var GUI;
 /// <reference path="Popup.ts"/>
 var GUI;
 (function (GUI) {
-    var Quest = /** @class */ (function (_super) {
+    var Quest = (function (_super) {
         __extends(Quest, _super);
         function Quest(guiMain, quest) {
             var _this = _super.call(this, guiMain) || this;
@@ -2961,7 +3029,7 @@ var Quests;
 (function (Quests) {
     var Awards;
     (function (Awards) {
-        var Item = /** @class */ (function (_super) {
+        var Item = (function (_super) {
             __extends(Item, _super);
             function Item(item) {
                 var _this = _super.call(this) || this;
@@ -2979,7 +3047,7 @@ var Quests;
 })(Quests || (Quests = {}));
 var Quests;
 (function (Quests) {
-    var KillWorms = /** @class */ (function (_super) {
+    var KillWorms = (function (_super) {
         __extends(KillWorms, _super);
         function KillWorms(game) {
             var _this = _super.call(this, game) || this;
@@ -2996,7 +3064,7 @@ var Quests;
 (function (Quests) {
     var Requirements;
     (function (Requirements) {
-        var Monster = /** @class */ (function (_super) {
+        var Monster = (function (_super) {
             __extends(Monster, _super);
             function Monster(monster, count) {
                 var _this = _super.call(this) || this;
@@ -3012,7 +3080,7 @@ var Quests;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Armor = /** @class */ (function (_super) {
+    var Armor = (function (_super) {
         __extends(Armor, _super);
         /**
          * @param game
@@ -3037,7 +3105,7 @@ var Items;
 (function (Items) {
     var Armors;
     (function (Armors) {
-        var PrimaryArmor = /** @class */ (function (_super) {
+        var PrimaryArmor = (function (_super) {
             __extends(PrimaryArmor, _super);
             function PrimaryArmor(game, databaseId) {
                 var _this = _super.call(this, game, databaseId) || this;
@@ -3060,7 +3128,7 @@ var Items;
 (function (Items) {
     var Armors;
     (function (Armors) {
-        var Robe = /** @class */ (function (_super) {
+        var Robe = (function (_super) {
             __extends(Robe, _super);
             function Robe(game, databaseId) {
                 var _this = _super.call(this, game, databaseId) || this;
@@ -3081,7 +3149,7 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Boots = /** @class */ (function (_super) {
+    var Boots = (function (_super) {
         __extends(Boots, _super);
         /**
          * @param game
@@ -3106,7 +3174,7 @@ var Items;
 (function (Items) {
     var Boots;
     (function (Boots) {
-        var PrimaryBoots = /** @class */ (function (_super) {
+        var PrimaryBoots = (function (_super) {
             __extends(PrimaryBoots, _super);
             function PrimaryBoots(game, databaseId) {
                 var _this = _super.call(this, game, databaseId) || this;
@@ -3127,7 +3195,7 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Gloves = /** @class */ (function (_super) {
+    var Gloves = (function (_super) {
         __extends(Gloves, _super);
         /**
          * @param game
@@ -3152,7 +3220,7 @@ var Items;
 (function (Items) {
     var Gloves;
     (function (Gloves) {
-        var PrimaryGloves = /** @class */ (function (_super) {
+        var PrimaryGloves = (function (_super) {
             __extends(PrimaryGloves, _super);
             function PrimaryGloves(game, databaseId) {
                 var _this = _super.call(this, game, databaseId) || this;
@@ -3173,7 +3241,7 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Helm = /** @class */ (function (_super) {
+    var Helm = (function (_super) {
         __extends(Helm, _super);
         /**
          * @param game
@@ -3198,7 +3266,7 @@ var Items;
 (function (Items) {
     var Helms;
     (function (Helms) {
-        var PrimaryHelm = /** @class */ (function (_super) {
+        var PrimaryHelm = (function (_super) {
             __extends(PrimaryHelm, _super);
             function PrimaryHelm(game, databaseId) {
                 var _this = _super.call(this, game, databaseId) || this;
@@ -3219,7 +3287,7 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Shield = /** @class */ (function (_super) {
+    var Shield = (function (_super) {
         __extends(Shield, _super);
         /**
          * @param game
@@ -3244,7 +3312,7 @@ var Items;
 (function (Items) {
     var Shields;
     (function (Shields) {
-        var BigWoodShield = /** @class */ (function (_super) {
+        var BigWoodShield = (function (_super) {
             __extends(BigWoodShield, _super);
             function BigWoodShield(game, databaseId) {
                 var _this = _super.call(this, game, databaseId) || this;
@@ -3268,7 +3336,7 @@ var Items;
 (function (Items) {
     var Shields;
     (function (Shields) {
-        var WoodShield = /** @class */ (function (_super) {
+        var WoodShield = (function (_super) {
             __extends(WoodShield, _super);
             function WoodShield(game, databaseId) {
                 var _this = _super.call(this, game, databaseId) || this;
@@ -3289,7 +3357,7 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Weapon = /** @class */ (function (_super) {
+    var Weapon = (function (_super) {
         __extends(Weapon, _super);
         /**
          * @param game
@@ -3314,7 +3382,7 @@ var Items;
 (function (Items) {
     var Weapons;
     (function (Weapons) {
-        var Axe = /** @class */ (function (_super) {
+        var Axe = (function (_super) {
             __extends(Axe, _super);
             function Axe(game, databaseId) {
                 var _this = _super.call(this, game, databaseId) || this;
@@ -3341,7 +3409,7 @@ var Items;
 (function (Items) {
     var Weapons;
     (function (Weapons) {
-        var Sword = /** @class */ (function (_super) {
+        var Sword = (function (_super) {
             __extends(Sword, _super);
             function Sword(game, databaseId) {
                 var _this = _super.call(this, game, databaseId) || this;
@@ -3368,7 +3436,7 @@ var GUI;
 (function (GUI) {
     var Inventory;
     (function (Inventory) {
-        var EquipBlock = /** @class */ (function () {
+        var EquipBlock = (function () {
             function EquipBlock(inventory) {
                 this.inventory = inventory;
             }
@@ -3418,7 +3486,7 @@ var GUI;
 (function (GUI) {
     var Inventory;
     (function (Inventory) {
-        var Armor = /** @class */ (function (_super) {
+        var Armor = (function (_super) {
             __extends(Armor, _super);
             function Armor(inventory) {
                 var _this = _super.call(this, inventory) || this;
@@ -3440,7 +3508,7 @@ var GUI;
 (function (GUI) {
     var Inventory;
     (function (Inventory) {
-        var Boots = /** @class */ (function (_super) {
+        var Boots = (function (_super) {
             __extends(Boots, _super);
             function Boots(inventory) {
                 var _this = _super.call(this, inventory) || this;
@@ -3462,7 +3530,7 @@ var GUI;
 (function (GUI) {
     var Inventory;
     (function (Inventory) {
-        var Gloves = /** @class */ (function (_super) {
+        var Gloves = (function (_super) {
             __extends(Gloves, _super);
             function Gloves(inventory) {
                 var _this = _super.call(this, inventory) || this;
@@ -3484,7 +3552,7 @@ var GUI;
 (function (GUI) {
     var Inventory;
     (function (Inventory) {
-        var Helm = /** @class */ (function (_super) {
+        var Helm = (function (_super) {
             __extends(Helm, _super);
             function Helm(inventory) {
                 var _this = _super.call(this, inventory) || this;
@@ -3506,7 +3574,7 @@ var GUI;
 (function (GUI) {
     var Inventory;
     (function (Inventory) {
-        var Shield = /** @class */ (function (_super) {
+        var Shield = (function (_super) {
             __extends(Shield, _super);
             function Shield(inventory) {
                 var _this = _super.call(this, inventory) || this;
@@ -3528,7 +3596,7 @@ var GUI;
 (function (GUI) {
     var Inventory;
     (function (Inventory) {
-        var Weapon = /** @class */ (function (_super) {
+        var Weapon = (function (_super) {
             __extends(Weapon, _super);
             function Weapon(inventory) {
                 var _this = _super.call(this, inventory) || this;

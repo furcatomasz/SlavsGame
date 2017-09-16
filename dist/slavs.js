@@ -132,6 +132,73 @@ var Scene = /** @class */ (function () {
         this.game.controller.forward = false;
         newScene.initScene(this.game);
     };
+    Scene.prototype.defaultPipeline = function (scene) {
+        var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
+        defaultPipeline.bloomEnabled = false;
+        defaultPipeline.fxaaEnabled = false;
+        defaultPipeline.imageProcessingEnabled = false;
+        defaultPipeline.bloomWeight = 0.4;
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        //advancedTexture.layer.layerMask = 0x10000000;
+        var panel = new BABYLON.GUI.StackPanel();
+        panel.width = "500px";
+        panel.isVertical = true;
+        panel.paddingRight = "20px";
+        panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        advancedTexture.addControl(panel);
+        var addCheckbox = function (text, func, initialValue, left) {
+            var checkbox = new BABYLON.GUI.Checkbox();
+            checkbox.width = "20px";
+            checkbox.height = "20px";
+            checkbox.isChecked = initialValue;
+            checkbox.color = "green";
+            checkbox.onIsCheckedChangedObservable.add(function (value) {
+                func(value);
+            });
+            var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true });
+            header.height = "30px";
+            header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            if (left) {
+                header.left = left;
+            }
+            panel.addControl(header);
+        };
+        var addSlider = function (text, func, initialValue, min, max, left) {
+            var header = new BABYLON.GUI.TextBlock();
+            header.text = text;
+            header.height = "30px";
+            header.color = "white";
+            header.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            panel.addControl(header);
+            if (left) {
+                header.left = left;
+            }
+            var slider = new BABYLON.GUI.Slider();
+            slider.minimum = min;
+            slider.maximum = max;
+            slider.value = initialValue;
+            slider.height = "20px";
+            slider.color = "green";
+            slider.background = "white";
+            slider.onValueChangedObservable.add(function (value) {
+                func(value);
+            });
+            if (left) {
+                slider.paddingLeft = left;
+            }
+            panel.addControl(slider);
+        };
+        addCheckbox("fxaa", function (value) {
+            defaultPipeline.fxaaEnabled = value;
+        }, defaultPipeline.fxaaEnabled);
+        addCheckbox("bloom", function (value) {
+            defaultPipeline.bloomEnabled = value;
+        }, defaultPipeline.bloomEnabled);
+        addSlider("bloom weight", function (value) {
+            defaultPipeline.bloomWeight = value;
+        }, defaultPipeline.bloomWeight, 0, 2, "20px");
+    };
     Scene.TYPE = 0;
     return Scene;
 }());
@@ -177,165 +244,7 @@ var Simple = /** @class */ (function (_super) {
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
-                var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
-                defaultPipeline.bloomEnabled = false;
-                defaultPipeline.fxaaEnabled = false;
-                defaultPipeline.bloomWeight = 0.5;
-                defaultPipeline.cameraFov = scene.activeCamera.fov;
-                var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-                //advancedTexture.layer.layerMask = 0x10000000;
-                var panel = new BABYLON.GUI.StackPanel();
-                panel.width = "500px";
-                panel.isVertical = true;
-                panel.paddingRight = "20px";
-                panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-                panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-                advancedTexture.addControl(panel);
-                var addCheckbox = function (text, func, initialValue, left) {
-                    var checkbox = new BABYLON.GUI.Checkbox();
-                    checkbox.width = "20px";
-                    checkbox.height = "20px";
-                    checkbox.isChecked = initialValue;
-                    checkbox.color = "green";
-                    checkbox.onIsCheckedChangedObservable.add(function (value) {
-                        func(value);
-                    });
-                    var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true });
-                    header.height = "30px";
-                    header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    if (left) {
-                        header.left = left;
-                    }
-                    panel.addControl(header);
-                };
-                var addSlider = function (text, func, initialValue, min, max, left) {
-                    var header = new BABYLON.GUI.TextBlock();
-                    header.text = text;
-                    header.height = "30px";
-                    header.color = "white";
-                    header.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    panel.addControl(header);
-                    if (left) {
-                        header.left = left;
-                    }
-                    var slider = new BABYLON.GUI.Slider();
-                    slider.minimum = min;
-                    slider.maximum = max;
-                    slider.value = initialValue;
-                    slider.height = "20px";
-                    slider.color = "green";
-                    slider.background = "white";
-                    slider.onValueChangedObservable.add(function (value) {
-                        func(value);
-                    });
-                    if (left) {
-                        slider.paddingLeft = left;
-                    }
-                    panel.addControl(slider);
-                };
-                var addColorPicker = function (text, func, initialValue, left) {
-                    var header = new BABYLON.GUI.TextBlock();
-                    header.text = text;
-                    header.height = "30px";
-                    header.color = "white";
-                    header.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    panel.addControl(header);
-                    if (left) {
-                        header.left = left;
-                    }
-                    var colorPicker = new BABYLON.GUI.ColorPicker();
-                    colorPicker.value = initialValue;
-                    colorPicker.size = "100px";
-                    colorPicker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    colorPicker.onValueChangedObservable.add(function (value) {
-                        func(value);
-                    });
-                    if (left) {
-                        colorPicker.left = left;
-                    }
-                    panel.addControl(colorPicker);
-                };
-                var toneMappingEnabled = defaultPipeline.imageProcessing.toneMappingEnabled;
-                var vignetteEnabled = defaultPipeline.imageProcessing.vignetteEnabled;
-                var vignetteColor = defaultPipeline.imageProcessing.vignetteColor;
-                var vignetteWeight = defaultPipeline.imageProcessing.vignetteWeight;
-                var vignetteBlendMode = defaultPipeline.imageProcessing.vignetteBlendMode;
-                var colorCurvesEnabled = defaultPipeline.imageProcessing.colorCurvesEnabled;
-                var contrast = defaultPipeline.imageProcessing.contrast;
-                var exposure = defaultPipeline.imageProcessing.exposure;
-                var curve = new BABYLON.ColorCurves();
-                curve.globalHue = 200;
-                curve.globalDensity = 80;
-                curve.globalSaturation = 80;
-                curve.highlightsHue = 20;
-                curve.highlightsDensity = 80;
-                curve.highlightsSaturation = -80;
-                curve.shadowsHue = 2;
-                curve.shadowsDensity = 80;
-                curve.shadowsSaturation = 40;
-                defaultPipeline.imageProcessing.colorCurves = curve;
-                var rebindValues = function () {
-                    if (defaultPipeline.imageProcessing) {
-                        defaultPipeline.imageProcessing.toneMappingEnabled = toneMappingEnabled;
-                        defaultPipeline.imageProcessing.vignetteEnabled = vignetteEnabled;
-                        defaultPipeline.imageProcessing.vignetteWeight = vignetteWeight;
-                        defaultPipeline.imageProcessing.vignetteColor = vignetteColor;
-                        defaultPipeline.imageProcessing.vignetteBlendMode = vignetteBlendMode;
-                        defaultPipeline.imageProcessing.colorCurvesEnabled = colorCurvesEnabled;
-                        defaultPipeline.imageProcessing.contrast = contrast;
-                        defaultPipeline.imageProcessing.exposure = exposure;
-                        defaultPipeline.imageProcessing.colorCurves = curve;
-                    }
-                };
-                addCheckbox("fxaa", function (value) {
-                    defaultPipeline.fxaaEnabled = value;
-                    rebindValues();
-                }, defaultPipeline.fxaaEnabled);
-                addCheckbox("bloom", function (value) {
-                    defaultPipeline.bloomEnabled = value;
-                    rebindValues();
-                }, defaultPipeline.bloomEnabled);
-                addSlider("bloom weight", function (value) {
-                    defaultPipeline.bloomWeight = value;
-                }, defaultPipeline.bloomWeight, 0, 2, "20px");
-                addCheckbox("image processing", function (value) {
-                    defaultPipeline.imageProcessingEnabled = value;
-                    rebindValues();
-                }, defaultPipeline.imageProcessingEnabled);
-                addCheckbox("tone mapping", function (value) {
-                    defaultPipeline.imageProcessing.toneMappingEnabled = value;
-                    toneMappingEnabled = value;
-                }, toneMappingEnabled, "20px");
-                addCheckbox("vignette", function (value) {
-                    defaultPipeline.imageProcessing.vignetteEnabled = value;
-                    vignetteEnabled = value;
-                }, vignetteEnabled, "20px");
-                addCheckbox("vignette multiply", function (value) {
-                    var blendMode = value ? BABYLON.ImageProcessingConfiguration.VIGNETTEMODE_MULTIPLY : BABYLON.ImageProcessingConfiguration.VIGNETTEMODE_OPAQUE;
-                    defaultPipeline.imageProcessing.vignetteBlendMode = blendMode;
-                    vignetteBlendMode = blendMode;
-                }, vignetteBlendMode === BABYLON.ImageProcessingConfiguration.VIGNETTEMODE_MULTIPLY, "40px");
-                addColorPicker("vignette color", function (value) {
-                    defaultPipeline.imageProcessing.vignetteColor = value;
-                    vignetteColor = value;
-                }, vignetteColor, "40px");
-                addSlider("vignette weight", function (value) {
-                    defaultPipeline.imageProcessing.vignetteWeight = value;
-                    vignetteWeight = value;
-                }, vignetteWeight, 0, 10, "40px");
-                addCheckbox("color curves", function (value) {
-                    defaultPipeline.imageProcessing.colorCurvesEnabled = value;
-                    colorCurvesEnabled = value;
-                }, colorCurvesEnabled, "20px");
-                addSlider("camera contrast", function (value) {
-                    defaultPipeline.imageProcessing.contrast = value;
-                    contrast = value;
-                }, contrast, 0, 4, "20px");
-                addSlider("camera exposure", function (value) {
-                    defaultPipeline.imageProcessing.exposure = value;
-                    exposure = value;
-                    console.log(value);
-                }, exposure, 0, 4, "20px");
+                self.defaultPipeline(scene);
             });
         });
     };
@@ -596,6 +505,7 @@ var SocketIOClient = /** @class */ (function () {
                 .connectPlayer()
                 .refreshPlayer()
                 .refreshPlayerEquip()
+                .refreshEnemyEquip()
                 .showDroppedItem();
         });
         return this;
@@ -621,7 +531,7 @@ var SocketIOClient = /** @class */ (function () {
     /**
      * @returns {SocketIOClient}
      */
-    SocketIOClient.prototype.refreshPlayerEquip = function () {
+    SocketIOClient.prototype.refreshEnemyEquip = function () {
         var game = this.game;
         var self = this;
         this.socket.on('updateEnemyEquip', function (playerUpdated) {
@@ -638,13 +548,27 @@ var SocketIOClient = /** @class */ (function () {
     /**
      * @returns {SocketIOClient}
      */
+    SocketIOClient.prototype.refreshPlayerEquip = function () {
+        var game = this.game;
+        this.socket.on('updatePlayerEquip', function (items) {
+            game.player.removeItems();
+            game.player.setItems(items);
+            if (game.gui.inventory.opened) {
+                game.gui.inventory.refreshPopup();
+            }
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
     SocketIOClient.prototype.showDroppedItem = function () {
         var game = this.game;
         this.socket.on('showDroppedItem', function (data) {
             var itemManager = new Items.ItemManager(game);
             var item = itemManager.getItemUsingId(data.items, null);
             var enemy = game.enemies[data.enemyId];
-            Items.DroppedItem.showItem(game, item, enemy);
+            Items.DroppedItem.showItem(game, item, enemy, data.itemsKey);
         });
         return this;
     };
@@ -657,7 +581,7 @@ var SocketIOClient = /** @class */ (function () {
             data.forEach(function (enemyData, key) {
                 var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
                 var rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
-                var enemy = game.enemies[data.id];
+                var enemy = game.enemies[key];
                 if (enemy) {
                     enemy.target = enemyData.target;
                     enemy.mesh.position = position;
@@ -693,8 +617,10 @@ var SocketIOClient = /** @class */ (function () {
                             }
                         });
                         if (remotePlayerKey === null) {
+                            var activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
                             var player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
-                            player.setItems(socketRemotePlayer.characters[socketRemotePlayer.activePlayer].items);
+                            player.mesh.position = new BABYLON.Vector3(activePlayer.positionX, activePlayer.positionY, activePlayer.positionZ);
+                            player.setItems(activePlayer.items);
                             game.remotePlayers.push(player);
                         }
                     }
@@ -772,7 +698,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new Simple().initScene(this);
+        new SelectCharacter().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -945,9 +871,6 @@ var Player = /** @class */ (function (_super) {
             autoplay: false
         });
         var mesh = game.factories['character'].createInstance('Warrior', true);
-        mesh.position = new BABYLON.Vector3(1, 0.1, 11);
-        mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
-        game.getScene().activeCamera.position = mesh.position;
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         _this.mesh = mesh;
         _this.game = game;
@@ -1107,6 +1030,16 @@ var Player = /** @class */ (function (_super) {
         else {
             itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
         }
+    };
+    /**
+     * @returns {Player}
+     */
+    Player.prototype.removeItems = function () {
+        this.inventory.items.forEach(function (item) {
+            item.mesh.dispose();
+        });
+        this.inventory.items = [];
+        return this;
     };
     Player.prototype.onHitStart = function () {
         //this.items.weapon.sfxHit.play(0.3);
@@ -1341,10 +1274,7 @@ var Environment = /** @class */ (function () {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: plane
                 }, function () {
-                    game.scenesDisposed.push(game.getScene());
-                    game.activeScene = null;
-                    game.controller.forward = false;
-                    new SimpleBandit().initScene(game);
+                    game.sceneManager.changeScene(new SimpleBandit());
                     return this;
                 }));
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
@@ -2112,6 +2042,7 @@ var SelectCharacter = /** @class */ (function (_super) {
                     }
                 };
                 assetsManager.load();
+                self.defaultPipeline(scene);
             });
         });
     };
@@ -2160,6 +2091,7 @@ var SimpleBandit = /** @class */ (function (_super) {
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
+                self.defaultPipeline(scene);
             });
         });
     };
@@ -2299,7 +2231,7 @@ var Items;
     var DroppedItem = /** @class */ (function () {
         function DroppedItem() {
         }
-        DroppedItem.showItem = function (game, item, enemy) {
+        DroppedItem.showItem = function (game, item, enemy, itemDropKey) {
             var scene = game.getScene();
             item.mesh.position.x = enemy.mesh.position.x;
             item.mesh.position.z = enemy.mesh.position.z;
@@ -2315,6 +2247,7 @@ var Items;
                 item.mesh.renderOutline = true;
             }));
             item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                game.client.socket.emit('addDoppedItem', itemDropKey);
                 item.mesh.dispose();
             }));
             item.mesh.visibility = 1;
@@ -2720,7 +2653,7 @@ var SelectCharacter;
                 client.socket.emit('selectCharacter', self.place);
                 client.socket.on('characterSelected', function () {
                     self.game.sceneManager.changeScene(new Simple());
-                    client.socket.emit('createPlayer', client.characters[self.place].name);
+                    client.socket.emit('createPlayer');
                 });
             }));
         };
@@ -3459,6 +3392,76 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
+    var Shield = /** @class */ (function (_super) {
+        __extends(Shield, _super);
+        /**
+         * @param game
+         * @param databaseId
+         */
+        function Shield(game, databaseId) {
+            return _super.call(this, game, databaseId) || this;
+        }
+        /**
+         * @returns {number}
+         */
+        Shield.prototype.getType = function () {
+            return Items.Shield.TYPE;
+        };
+        Shield.TYPE = 2;
+        return Shield;
+    }(Items.Item));
+    Items.Shield = Shield;
+})(Items || (Items = {}));
+/// <reference path="Shield.ts"/>
+var Items;
+(function (Items) {
+    var Shields;
+    (function (Shields) {
+        var BigWoodShield = /** @class */ (function (_super) {
+            __extends(BigWoodShield, _super);
+            function BigWoodShield(game, databaseId) {
+                var _this = _super.call(this, game, databaseId) || this;
+                _this.name = 'Big Wood Shield';
+                _this.image = 'Shield';
+                _this.itemId = Items.Shields.BigWoodShield.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 10, 0, 0, 0);
+                _this.mesh = game.factories['character'].createInstance('Shield');
+                _this.mesh.visibility = 0;
+                _this.mesh.scaling = new BABYLON.Vector3(1, 2, 1);
+                return _this;
+            }
+            BigWoodShield.ITEM_ID = 6;
+            return BigWoodShield;
+        }(Items.Shield));
+        Shields.BigWoodShield = BigWoodShield;
+    })(Shields = Items.Shields || (Items.Shields = {}));
+})(Items || (Items = {}));
+/// <reference path="Shield.ts"/>
+var Items;
+(function (Items) {
+    var Shields;
+    (function (Shields) {
+        var WoodShield = /** @class */ (function (_super) {
+            __extends(WoodShield, _super);
+            function WoodShield(game, databaseId) {
+                var _this = _super.call(this, game, databaseId) || this;
+                _this.name = 'Wood Shield';
+                _this.image = 'Shield';
+                _this.itemId = Items.Shields.WoodShield.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.mesh = game.factories['character'].createInstance('Shield');
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            WoodShield.ITEM_ID = 7;
+            return WoodShield;
+        }(Items.Shield));
+        Shields.WoodShield = WoodShield;
+    })(Shields = Items.Shields || (Items.Shields = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
     var Weapon = /** @class */ (function (_super) {
         __extends(Weapon, _super);
         /**
@@ -3532,76 +3535,6 @@ var Items;
         }(Items.Weapon));
         Weapons.Sword = Sword;
     })(Weapons = Items.Weapons || (Items.Weapons = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Shield = /** @class */ (function (_super) {
-        __extends(Shield, _super);
-        /**
-         * @param game
-         * @param databaseId
-         */
-        function Shield(game, databaseId) {
-            return _super.call(this, game, databaseId) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Shield.prototype.getType = function () {
-            return Items.Shield.TYPE;
-        };
-        Shield.TYPE = 2;
-        return Shield;
-    }(Items.Item));
-    Items.Shield = Shield;
-})(Items || (Items = {}));
-/// <reference path="Shield.ts"/>
-var Items;
-(function (Items) {
-    var Shields;
-    (function (Shields) {
-        var BigWoodShield = /** @class */ (function (_super) {
-            __extends(BigWoodShield, _super);
-            function BigWoodShield(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Big Wood Shield';
-                _this.image = 'Shield';
-                _this.itemId = Items.Shields.BigWoodShield.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 10, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Shield');
-                _this.mesh.visibility = 0;
-                _this.mesh.scaling = new BABYLON.Vector3(1, 2, 1);
-                return _this;
-            }
-            BigWoodShield.ITEM_ID = 6;
-            return BigWoodShield;
-        }(Items.Shield));
-        Shields.BigWoodShield = BigWoodShield;
-    })(Shields = Items.Shields || (Items.Shields = {}));
-})(Items || (Items = {}));
-/// <reference path="Shield.ts"/>
-var Items;
-(function (Items) {
-    var Shields;
-    (function (Shields) {
-        var WoodShield = /** @class */ (function (_super) {
-            __extends(WoodShield, _super);
-            function WoodShield(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Wood Shield';
-                _this.image = 'Shield';
-                _this.itemId = Items.Shields.WoodShield.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Shield');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            WoodShield.ITEM_ID = 7;
-            return WoodShield;
-        }(Items.Shield));
-        Shields.WoodShield = WoodShield;
-    })(Shields = Items.Shields || (Items.Shields = {}));
 })(Items || (Items = {}));
 /// <reference path="../Inventory.ts"/>
 var GUI;

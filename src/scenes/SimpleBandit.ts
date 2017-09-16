@@ -45,6 +45,7 @@ class SimpleBandit extends Scene {
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
 
+                self.defaultPipeline(scene);
             });
 
         });

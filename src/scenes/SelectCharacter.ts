@@ -37,6 +37,7 @@ class SelectCharacter extends Scene {
 
                 };
                 assetsManager.load();
+                self.defaultPipeline(scene);
             });
 
         });

@@ -57,7 +57,7 @@ class Game {
     }
 
     createScene(): Game {
-        new SelectCharacter().initScene(this);
+        new Simple().initScene(this);
 
         return this;
     }

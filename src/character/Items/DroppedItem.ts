@@ -1,7 +1,7 @@
 namespace Items {
     export class DroppedItem {
 
-        public static showItem(game: Game, item: Item, enemy: AbstractCharacter) {
+        public static showItem(game: Game, item: Item, enemy: AbstractCharacter, itemDropKey: number) {
             let scene = game.getScene();
 
             item.mesh.position.x = enemy.mesh.position.x;
@@ -25,6 +25,7 @@ namespace Items {
 
             item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
                 function () {
+                    game.client.socket.emit('addDoppedItem', itemDropKey);
                     item.mesh.dispose();
                 }));
 

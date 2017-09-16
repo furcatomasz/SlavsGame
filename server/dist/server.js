@@ -112,6 +112,7 @@ var Server;
                 var player = {
                     id: socket.id,
                     characters: [],
+                    itemsDrop: [],
                     activePlayer: 0,
                     activeScene: null,
                     lastPlayerUpdate: 0,
@@ -197,6 +198,19 @@ var Server;
                         });
                     });
                 });
+                socket.on('addDoppedItem', function (itemsKey) {
+                    var playerId = player.characters[player.activePlayer].id;
+                    var itemId = player.itemsDrop[itemsKey];
+                    self.server.ormManager.structure.playerItems.create({
+                        playerId: playerId,
+                        itemId: itemId,
+                        improvement: 0,
+                        equip: 0
+                    }, function (error, addedItem) {
+                        player.characters[player.activePlayer].items.push(addedItem);
+                        socket.emit('updatePlayerEquip', player.characters[player.activePlayer].items);
+                    });
+                });
                 socket.on('getEquip', function (characterKey) {
                     var playerId = player.characters[characterKey].id;
                     self.server.ormManager.structure.playerItems.find({ playerId: playerId }, function (error, itemsDatabase) {
@@ -229,9 +243,11 @@ var Server;
                 });
                 socket.on('enemyKill', function (enemyKey) {
                     var enemy = enemies[player.activeScene][enemyKey];
-                    console.log(enemy);
+                    var enemyItem = enemy.itemsToDrop[0];
+                    var itemDropKey = player.itemsDrop.push(enemyItem) - 1;
                     socket.emit('showDroppedItem', {
-                        items: enemy.itemsToDrop[0],
+                        items: enemyItem,
+                        itemsKey: itemDropKey,
                         enemyId: enemyKey
                     });
                 });

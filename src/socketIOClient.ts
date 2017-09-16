@@ -36,6 +36,7 @@ class SocketIOClient {
                 .connectPlayer()
                 .refreshPlayer()
                 .refreshPlayerEquip()
+                .refreshEnemyEquip()
                 .showDroppedItem();
         });
 
@@ -67,7 +68,7 @@ class SocketIOClient {
     /**
      * @returns {SocketIOClient}
      */
-    protected refreshPlayerEquip() {
+    protected refreshEnemyEquip() {
         let game = this.game;
         let self = this;
 
@@ -87,13 +88,27 @@ class SocketIOClient {
     /**
      * @returns {SocketIOClient}
      */
+    protected refreshPlayerEquip() {
+        let game = this.game;
+
+        this.socket.on('updatePlayerEquip', function (items) {
+            game.player.removeItems();
+            game.player.setItems(items);
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
     protected showDroppedItem() {
         let game = this.game;
         this.socket.on('showDroppedItem', function (data) {
             let itemManager = new Items.ItemManager(game);
             let item = itemManager.getItemUsingId(data.items, null);
             let enemy = game.enemies[data.enemyId];
-            Items.DroppedItem.showItem(game, item, enemy);
+            Items.DroppedItem.showItem(game, item, enemy, data.itemsKey);
         });
 
         return this;

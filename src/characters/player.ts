@@ -212,6 +212,19 @@ class Player extends AbstractCharacter {
         }
     }
 
+    /**
+     * @returns {Player}
+     */
+    public removeItems() {
+        this.inventory.items.forEach(function(item) {
+            item.mesh.dispose();
+        });
+
+        this.inventory.items = [];
+
+        return this;
+    }
+
     protected onHitStart() {
         //this.items.weapon.sfxHit.play(0.3);
     };

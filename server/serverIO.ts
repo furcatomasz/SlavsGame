@@ -1,9 +1,9 @@
 namespace Server {
     export class IO {
-        protected server: SlavsServer;
+        protected server:SlavsServer;
         protected remotePlayers;
 
-        constructor(server: SlavsServer, serverIO) {
+        constructor(server:SlavsServer, serverIO) {
 
             this.remotePlayers = [];
             let self = this;
@@ -14,6 +14,7 @@ namespace Server {
                 let player = {
                     id: socket.id,
                     characters: [],
+                    itemsDrop: [],
                     activePlayer: 0,
                     activeScene: null,
                     lastPlayerUpdate: 0,
@@ -47,7 +48,7 @@ namespace Server {
                                         if (error) throw error;
                                         playerDatabase.items = playerItems;
                                         itteration++;
-                                        if(itteration == players.length) {
+                                        if (itteration == players.length) {
                                             player.characters = players;
                                             socket.emit('clientConnected', player);
                                         }
@@ -99,7 +100,7 @@ namespace Server {
                     self.server.ormManager.structure.playerItems.get(itemId,
                         function (error, itemDatabase) {
                             itemDatabase.equip = (equip) ? 1 : 0;
-                            itemDatabase.save(function() {
+                            itemDatabase.save(function () {
                                 server.ormManager.structure.playerItems.find(
                                     {playerId: player.characters[player.activePlayer].id},
                                     function (error, playerItems) {
@@ -108,6 +109,21 @@ namespace Server {
                                         socket.broadcast.emit('updateEnemyEquip', player);
                                     });
                             });
+                        });
+                });
+
+                socket.on('addDoppedItem', function (itemsKey) {
+                    let playerId = player.characters[player.activePlayer].id;
+                    let itemId = player.itemsDrop[itemsKey];
+                    self.server.ormManager.structure.playerItems.create({
+                            playerId: playerId,
+                            itemId: itemId,
+                            improvement: 0,
+                            equip: 0
+                        },
+                        function (error, addedItem) {
+                            player.characters[player.activePlayer].items.push(addedItem);
+                            socket.emit('updatePlayerEquip', player.characters[player.activePlayer].items);
                         });
                 });
 
@@ -151,9 +167,12 @@ namespace Server {
 
                 socket.on('enemyKill', function (enemyKey) {
                     let enemy = enemies[player.activeScene][enemyKey];
-                    console.log(enemy);
+                    let enemyItem = enemy.itemsToDrop[0];
+                    let itemDropKey = player.itemsDrop.push(enemyItem) - 1;
+
                     socket.emit('showDroppedItem', {
-                        items: enemy.itemsToDrop[0],
+                        items: enemyItem,
+                        itemsKey: itemDropKey,
                         enemyId: enemyKey
                     });
                 });

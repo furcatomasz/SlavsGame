@@ -437,6 +437,7 @@ var SocketIOClient = /** @class */ (function () {
                 .connectPlayer()
                 .refreshPlayer()
                 .refreshPlayerEquip()
+                .refreshEnemyEquip()
                 .showDroppedItem();
         });
         return this;
@@ -462,7 +463,7 @@ var SocketIOClient = /** @class */ (function () {
     /**
      * @returns {SocketIOClient}
      */
-    SocketIOClient.prototype.refreshPlayerEquip = function () {
+    SocketIOClient.prototype.refreshEnemyEquip = function () {
         var game = this.game;
         var self = this;
         this.socket.on('updateEnemyEquip', function (playerUpdated) {
@@ -479,13 +480,24 @@ var SocketIOClient = /** @class */ (function () {
     /**
      * @returns {SocketIOClient}
      */
+    SocketIOClient.prototype.refreshPlayerEquip = function () {
+        var game = this.game;
+        this.socket.on('updatePlayerEquip', function (items) {
+            game.player.removeItems();
+            game.player.setItems(items);
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
     SocketIOClient.prototype.showDroppedItem = function () {
         var game = this.game;
         this.socket.on('showDroppedItem', function (data) {
             var itemManager = new Items.ItemManager(game);
             var item = itemManager.getItemUsingId(data.items, null);
             var enemy = game.enemies[data.enemyId];
-            Items.DroppedItem.showItem(game, item, enemy);
+            Items.DroppedItem.showItem(game, item, enemy, data.itemsKey);
         });
         return this;
     };
@@ -613,7 +625,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new SelectCharacter().initScene(this);
+        new Simple().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -948,6 +960,16 @@ var Player = /** @class */ (function (_super) {
         else {
             itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
         }
+    };
+    /**
+     * @returns {Player}
+     */
+    Player.prototype.removeItems = function () {
+        this.inventory.items.forEach(function (item) {
+            item.mesh.dispose();
+        });
+        this.inventory.items = [];
+        return this;
     };
     Player.prototype.onHitStart = function () {
         //this.items.weapon.sfxHit.play(0.3);
@@ -2140,7 +2162,7 @@ var Items;
     var DroppedItem = /** @class */ (function () {
         function DroppedItem() {
         }
-        DroppedItem.showItem = function (game, item, enemy) {
+        DroppedItem.showItem = function (game, item, enemy, itemDropKey) {
             var scene = game.getScene();
             item.mesh.position.x = enemy.mesh.position.x;
             item.mesh.position.z = enemy.mesh.position.z;
@@ -2156,6 +2178,7 @@ var Items;
                 item.mesh.renderOutline = true;
             }));
             item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                game.client.socket.emit('addDoppedItem', itemDropKey);
                 item.mesh.dispose();
             }));
             item.mesh.visibility = 1;
@@ -3093,6 +3116,75 @@ var Quests;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
+    var Armor = /** @class */ (function (_super) {
+        __extends(Armor, _super);
+        /**
+         * @param game
+         * @param databaseId
+         */
+        function Armor(game, databaseId) {
+            return _super.call(this, game, databaseId) || this;
+        }
+        /**
+         * @returns {number}
+         */
+        Armor.prototype.getType = function () {
+            return Items.Armor.TYPE;
+        };
+        Armor.TYPE = 6;
+        return Armor;
+    }(Items.Item));
+    Items.Armor = Armor;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Armors;
+    (function (Armors) {
+        var PrimaryArmor = /** @class */ (function (_super) {
+            __extends(PrimaryArmor, _super);
+            function PrimaryArmor(game, databaseId) {
+                var _this = _super.call(this, game, databaseId) || this;
+                _this.name = 'Armor';
+                _this.image = 'Armor';
+                _this.itemId = Items.Armors.PrimaryArmor.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.mesh = game.factories['character'].createInstance('Armor');
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            PrimaryArmor.ITEM_ID = 1;
+            return PrimaryArmor;
+        }(Items.Armor));
+        Armors.PrimaryArmor = PrimaryArmor;
+    })(Armors = Items.Armors || (Items.Armors = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Armors;
+    (function (Armors) {
+        var Robe = /** @class */ (function (_super) {
+            __extends(Robe, _super);
+            function Robe(game, databaseId) {
+                var _this = _super.call(this, game, databaseId) || this;
+                _this.name = 'Robe';
+                _this.image = 'Armor';
+                _this.itemId = Items.Armors.Robe.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.mesh = game.factories['character'].createInstance('Warrior.001');
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            Robe.ITEM_ID = 2;
+            return Robe;
+        }(Items.Armor));
+        Armors.Robe = Robe;
+    })(Armors = Items.Armors || (Items.Armors = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
     var Boots = /** @class */ (function (_super) {
         __extends(Boots, _super);
         /**
@@ -3227,75 +3319,6 @@ var Items;
         }(Items.Helm));
         Helms.PrimaryHelm = PrimaryHelm;
     })(Helms = Items.Helms || (Items.Helms = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Armor = /** @class */ (function (_super) {
-        __extends(Armor, _super);
-        /**
-         * @param game
-         * @param databaseId
-         */
-        function Armor(game, databaseId) {
-            return _super.call(this, game, databaseId) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Armor.prototype.getType = function () {
-            return Items.Armor.TYPE;
-        };
-        Armor.TYPE = 6;
-        return Armor;
-    }(Items.Item));
-    Items.Armor = Armor;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Armors;
-    (function (Armors) {
-        var PrimaryArmor = /** @class */ (function (_super) {
-            __extends(PrimaryArmor, _super);
-            function PrimaryArmor(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Armor';
-                _this.image = 'Armor';
-                _this.itemId = Items.Armors.PrimaryArmor.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Armor');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            PrimaryArmor.ITEM_ID = 1;
-            return PrimaryArmor;
-        }(Items.Armor));
-        Armors.PrimaryArmor = PrimaryArmor;
-    })(Armors = Items.Armors || (Items.Armors = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Armors;
-    (function (Armors) {
-        var Robe = /** @class */ (function (_super) {
-            __extends(Robe, _super);
-            function Robe(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Robe';
-                _this.image = 'Armor';
-                _this.itemId = Items.Armors.Robe.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Warrior.001');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            Robe.ITEM_ID = 2;
-            return Robe;
-        }(Items.Armor));
-        Armors.Robe = Robe;
-    })(Armors = Items.Armors || (Items.Armors = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

@@ -112,6 +112,7 @@ var Server;
                 var player = {
                     id: socket.id,
                     characters: [],
+                    itemsDrop: [],
                     activePlayer: 0,
                     activeScene: null,
                     lastPlayerUpdate: 0,
@@ -125,8 +126,7 @@ var Server;
                         z: 0,
                         w: 0
                     },
-                    attack: false,
-                    name: null
+                    attack: false
                 };
                 server.ormManager.structure.user.find({ email: "furcatomasz@gmail.com" }, function (err, user) {
                     if (err)
@@ -155,11 +155,26 @@ var Server;
                 });
                 socket.on('selectCharacter', function (selectedCharacter) {
                     player.activePlayer = selectedCharacter;
+                    //let playerId = player.characters[selectedCharacter].id;
+                    //server.ormManager.structure.playerOnline.exists(
+                    //    {playerId: playerId},
+                    //    function (error, playerOnlineExists) {
+                    //        if (error) throw error;
+                    //        if (!playerOnlineExists) {
+                    //            self.server.ormManager.structure.playerOnline.create({
+                    //                playerId: playerId,
+                    //                connectDate: Date.now(),
+                    //                activityDate: Date.now(),
+                    //            }, function (error) {
+                    //                if (error) throw error;
+                    //            });
+                    //
+                    //        }
+                    //    });
                     socket.emit('characterSelected', player);
                 });
                 ///Player
-                socket.on('createPlayer', function (playerName) {
-                    player.name = playerName;
+                socket.on('createPlayer', function () {
                     remotePlayers.push(player);
                     socket.broadcast.emit('newPlayerConnected', remotePlayers);
                 });
@@ -197,6 +212,19 @@ var Server;
                         });
                     });
                 });
+                socket.on('addDoppedItem', function (itemsKey) {
+                    var playerId = player.characters[player.activePlayer].id;
+                    var itemId = player.itemsDrop[itemsKey];
+                    self.server.ormManager.structure.playerItems.create({
+                        playerId: playerId,
+                        itemId: itemId,
+                        improvement: 0,
+                        equip: 0
+                    }, function (error, addedItem) {
+                        player.characters[player.activePlayer].items.push(addedItem);
+                        socket.emit('updatePlayerEquip', player.characters[player.activePlayer].items);
+                    });
+                });
                 socket.on('getEquip', function (characterKey) {
                     var playerId = player.characters[characterKey].id;
                     self.server.ormManager.structure.playerItems.find({ playerId: playerId }, function (error, itemsDatabase) {
@@ -204,6 +232,12 @@ var Server;
                     });
                 });
                 socket.on('disconnect', function () {
+                    //if (player.activePlayer >= 0) {
+                    //    let playerId = player.characters[player.activePlayer].id;
+                    //    server.ormManager.structure.playerOnline
+                    //        .find({playerId: playerId})
+                    //        .remove();
+                    //}
                     remotePlayers.forEach(function (remotePlayer, key) {
                         if (remotePlayer.id == player.id || remotePlayer == null) {
                             remotePlayers.splice(key, 1);
@@ -214,24 +248,26 @@ var Server;
                 socket.on('changeScenePre', function () {
                     socket.emit('showPlayer', player);
                 });
-                socket.on('changeScenePost', function (enemyData) {
-                    player.activeScene = enemyData.sceneType;
-                    socket.emit('showEnemies', enemies[enemyData.sceneType]);
+                socket.on('changeScenePost', function (sceneData) {
+                    player.activeScene = sceneData.sceneType;
+                    socket.emit('showEnemies', enemies[sceneData.sceneType]);
                     socket.emit('newPlayerConnected', remotePlayers);
                 });
                 ///Enemies
                 socket.on('updateEnemy', function (enemyData) {
-                    var enemy = enemies[enemyData.sceneType][enemyData.enemyKey];
+                    var enemy = enemies[player.activeScene][enemyData.enemyKey];
                     enemy.position = enemyData.position;
                     enemy.rotation = enemyData.rotation;
                     enemy.target = enemyData.target;
-                    socket.broadcast.emit('showEnemies', enemies);
+                    socket.broadcast.emit('showEnemies', enemies[player.activeScene]);
                 });
                 socket.on('enemyKill', function (enemyKey) {
                     var enemy = enemies[player.activeScene][enemyKey];
-                    console.log(enemy);
+                    var enemyItem = enemy.itemsToDrop[0];
+                    var itemDropKey = player.itemsDrop.push(enemyItem) - 1;
                     socket.emit('showDroppedItem', {
-                        items: enemy.itemsToDrop[0],
+                        items: enemyItem,
+                        itemsKey: itemDropKey,
                         enemyId: enemyKey
                     });
                 });

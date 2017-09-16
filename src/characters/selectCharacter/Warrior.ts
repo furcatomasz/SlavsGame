@@ -90,7 +90,7 @@ namespace SelectCharacter {
                     client.socket.emit('selectCharacter', self.place);
                     client.socket.on('characterSelected', function() {
                         self.game.sceneManager.changeScene(new Simple());
-                        client.socket.emit('createPlayer', client.characters[self.place].name);
+                        client.socket.emit('createPlayer');
                     })
                 })
             );

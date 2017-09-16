@@ -94,6 +94,9 @@ class SocketIOClient {
         this.socket.on('updatePlayerEquip', function (items) {
             game.player.removeItems();
             game.player.setItems(items);
+            if(game.gui.inventory.opened) {
+                game.gui.inventory.refreshPopup();
+            }
         });
 
         return this;
@@ -121,10 +124,10 @@ class SocketIOClient {
         let game = this.game;
 
         this.socket.on('showEnemies', function (data) {
-           data.forEach(function (enemyData, key) {
+            data.forEach(function (enemyData, key) {
                let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
                let rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
-               let enemy = game.enemies[data.id];
+               let enemy = game.enemies[key];
 
                if (enemy) {
                    enemy.target = enemyData.target;
@@ -164,8 +167,10 @@ class SocketIOClient {
                         });
 
                         if (remotePlayerKey === null) {
+                            let activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
                             let player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
-                            player.setItems(socketRemotePlayer.characters[socketRemotePlayer.activePlayer].items);
+                            player.mesh.position = new BABYLON.Vector3(activePlayer.positionX, activePlayer.positionY, activePlayer.positionZ);
+                            player.setItems(activePlayer.items);
 
                             game.remotePlayers.push(player);
                         }

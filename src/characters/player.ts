@@ -24,9 +24,6 @@ class Player extends AbstractCharacter {
         });
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
-        mesh.position = new BABYLON.Vector3(1, 0.1, 11);
-        mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
-        game.getScene().activeCamera.position = mesh.position;
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         this.mesh = mesh;
         this.game = game;

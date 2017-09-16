@@ -485,6 +485,9 @@ var SocketIOClient = /** @class */ (function () {
         this.socket.on('updatePlayerEquip', function (items) {
             game.player.removeItems();
             game.player.setItems(items);
+            if (game.gui.inventory.opened) {
+                game.gui.inventory.refreshPopup();
+            }
         });
         return this;
     };
@@ -510,7 +513,7 @@ var SocketIOClient = /** @class */ (function () {
             data.forEach(function (enemyData, key) {
                 var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
                 var rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
-                var enemy = game.enemies[data.id];
+                var enemy = game.enemies[key];
                 if (enemy) {
                     enemy.target = enemyData.target;
                     enemy.mesh.position = position;
@@ -546,8 +549,10 @@ var SocketIOClient = /** @class */ (function () {
                             }
                         });
                         if (remotePlayerKey === null) {
+                            var activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
                             var player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
-                            player.setItems(socketRemotePlayer.characters[socketRemotePlayer.activePlayer].items);
+                            player.mesh.position = new BABYLON.Vector3(activePlayer.positionX, activePlayer.positionY, activePlayer.positionZ);
+                            player.setItems(activePlayer.items);
                             game.remotePlayers.push(player);
                         }
                     }
@@ -625,7 +630,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new Simple().initScene(this);
+        new SelectCharacter().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -798,9 +803,6 @@ var Player = /** @class */ (function (_super) {
             autoplay: false
         });
         var mesh = game.factories['character'].createInstance('Warrior', true);
-        mesh.position = new BABYLON.Vector3(1, 0.1, 11);
-        mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
-        game.getScene().activeCamera.position = mesh.position;
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         _this.mesh = mesh;
         _this.game = game;
@@ -1204,10 +1206,7 @@ var Environment = /** @class */ (function () {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: plane
                 }, function () {
-                    game.scenesDisposed.push(game.getScene());
-                    game.activeScene = null;
-                    game.controller.forward = false;
-                    new SimpleBandit().initScene(game);
+                    game.sceneManager.changeScene(new SimpleBandit());
                     return this;
                 }));
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
@@ -2584,7 +2583,7 @@ var SelectCharacter;
                 client.socket.emit('selectCharacter', self.place);
                 client.socket.on('characterSelected', function () {
                     self.game.sceneManager.changeScene(new Simple());
-                    client.socket.emit('createPlayer', client.characters[self.place].name);
+                    client.socket.emit('createPlayer');
                 });
             }));
         };

@@ -29,7 +29,6 @@ namespace Server {
                         w: 0
                     },
                     attack: false,
-                    name: null,
                 };
 
                 server.ormManager.structure.user.find({email: "furcatomasz@gmail.com"},
@@ -60,12 +59,30 @@ namespace Server {
 
                 socket.on('selectCharacter', function (selectedCharacter) {
                     player.activePlayer = selectedCharacter;
+
+                    //let playerId = player.characters[selectedCharacter].id;
+                    //server.ormManager.structure.playerOnline.exists(
+                    //    {playerId: playerId},
+                    //    function (error, playerOnlineExists) {
+                    //        if (error) throw error;
+                    //        if (!playerOnlineExists) {
+                    //            self.server.ormManager.structure.playerOnline.create({
+                    //                playerId: playerId,
+                    //                connectDate: Date.now(),
+                    //                activityDate: Date.now(),
+                    //            }, function (error) {
+                    //                if (error) throw error;
+                    //            });
+                    //
+                    //        }
+                    //    });
+
                     socket.emit('characterSelected', player);
+
                 });
 
                 ///Player
-                socket.on('createPlayer', function (playerName) {
-                    player.name = playerName;
+                socket.on('createPlayer', function () {
                     remotePlayers.push(player);
 
                     socket.broadcast.emit('newPlayerConnected', remotePlayers);
@@ -136,6 +153,13 @@ namespace Server {
                 });
 
                 socket.on('disconnect', function () {
+                    //if (player.activePlayer >= 0) {
+                    //    let playerId = player.characters[player.activePlayer].id;
+                    //    server.ormManager.structure.playerOnline
+                    //        .find({playerId: playerId})
+                    //        .remove();
+                    //}
+
                     remotePlayers.forEach(function (remotePlayer, key) {
                         if (remotePlayer.id == player.id || remotePlayer == null) {
                             remotePlayers.splice(key, 1);
@@ -149,20 +173,20 @@ namespace Server {
 
                 });
 
-                socket.on('changeScenePost', function (enemyData) {
-                    player.activeScene = enemyData.sceneType;
+                socket.on('changeScenePost', function (sceneData) {
+                    player.activeScene = sceneData.sceneType;
 
-                    socket.emit('showEnemies', enemies[enemyData.sceneType]);
+                    socket.emit('showEnemies', enemies[sceneData.sceneType]);
                     socket.emit('newPlayerConnected', remotePlayers);
                 });
 
                 ///Enemies
                 socket.on('updateEnemy', function (enemyData) {
-                    let enemy = enemies[enemyData.sceneType][enemyData.enemyKey];
+                    let enemy = enemies[player.activeScene][enemyData.enemyKey];
                     enemy.position = enemyData.position;
                     enemy.rotation = enemyData.rotation;
                     enemy.target = enemyData.target;
-                    socket.broadcast.emit('showEnemies', enemies);
+                    socket.broadcast.emit('showEnemies', enemies[player.activeScene]);
                 });
 
                 socket.on('enemyKill', function (enemyKey) {

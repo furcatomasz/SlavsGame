@@ -86,10 +86,7 @@ class Environment {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: plane
                 }, function () {
-                    game.scenesDisposed.push(game.getScene());
-                    game.activeScene = null;
-                    game.controller.forward = false;
-                    new SimpleBandit().initScene(game);
+                    game.sceneManager.changeScene(new SimpleBandit());
                     return this;
                 }));
 

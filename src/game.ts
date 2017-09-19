@@ -24,6 +24,7 @@ class Game {
     public scenes: Array<BABYLON.Scene>;
     public remotePlayers: Array<Player>;
     public enemies: Array<Monster>;
+    public quests: Array<Quests.AbstractQuest>;
 
     /**
      * States
@@ -45,6 +46,7 @@ class Game {
         this.client.connect(serverUrl);
         this.factories = [];
         this.enemies = [];
+        this.quests = [];
         this.scenes = [];
         this.activeScene = null;
         this.events = new Events();
@@ -57,7 +59,7 @@ class Game {
     }
 
     createScene(): Game {
-        new SelectCharacter().initScene(this);
+        new Simple().initScene(this);
 
         return this;
     }

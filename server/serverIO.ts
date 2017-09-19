@@ -35,27 +35,38 @@ namespace Server {
                     function (err, user) {
                         if (err) throw err;
 
-                        server.ormManager.structure.player.find({userId: user[0].id}, function (error, players) {
-                            if (error) throw error;
+                        server.ormManager.structure.player.find({user_id: user[0].id}, function (error, players) {
+                            if (error) throw error
                             let itteration = 0;
-
                             for (let i = 0; i < players.length; i++) {
                                 let playerDatabase = players[i];
-                                server.ormManager.structure.playerItems.find(
-                                    {playerId: playerDatabase.id},
-                                    function (error, playerItems) {
-                                        if (error) throw error;
-                                        playerDatabase.items = playerItems;
-                                        itteration++;
-                                        if (itteration == players.length) {
-                                            player.characters = players;
-                                            socket.emit('clientConnected', player);
-                                        }
-                                    });
+                                playerDatabase.getItems(function (error, items) {
+                                    playerDatabase.items = items;
+                                    itteration++;
+                                    if (itteration == players.length) {
+                                        player.characters = players;
+                                        socket.emit('clientConnected', player);
+                                    }
+                                });
                             }
 
                         });
                     });
+
+                socket.on('getQuests', function () {
+                    let emitData = {
+                        quests: server.quests,
+                        playerQuests: null,
+                        playerRequirements: null
+                    };
+                    player.characters[player.activePlayer].getActiveQuests(function (error, quests) {
+                        emitData.playerQuests = quests;
+                        player.characters[player.activePlayer].getQuestRequirements(function (error, requrements) {
+                            emitData.playerRequirements = requrements;
+                            socket.emit('quests', emitData);
+                        });
+                    });
+                });
 
                 socket.on('selectCharacter', function (selectedCharacter) {
                     player.activePlayer = selectedCharacter;
@@ -114,12 +125,15 @@ namespace Server {
                 socket.on('itemEquip', function (item) {
                     let itemId = item.id;
                     let equip = item.equip;
-                    self.server.ormManager.structure.playerItems.get(itemId,
+                    self.server.ormManager.structure.playerItems.find({
+                            itemId: itemId,
+                            player_id: player.characters[player.activePlayer].id
+                        },
                         function (error, itemDatabase) {
                             itemDatabase.equip = (equip) ? 1 : 0;
                             itemDatabase.save(function () {
                                 server.ormManager.structure.playerItems.find(
-                                    {playerId: player.characters[player.activePlayer].id},
+                                    {player_id: player.characters[player.activePlayer].id},
                                     function (error, playerItems) {
                                         if (error) throw error;
                                         player.characters[player.activePlayer].items = playerItems;
@@ -132,31 +146,34 @@ namespace Server {
                 socket.on('addDoppedItem', function (itemsKey) {
                     let playerId = player.characters[player.activePlayer].id;
                     let itemId = player.itemsDrop[itemsKey];
-                    self.server.ormManager.structure.playerItems.create({
-                            playerId: playerId,
-                            itemId: itemId,
-                            improvement: 0,
-                            equip: 0
-                        },
-                        function (error, addedItem) {
-                            player.characters[player.activePlayer].items.push(addedItem);
-                            socket.emit('updatePlayerEquip', player.characters[player.activePlayer].items);
-                        });
+
+                    if(itemId) {
+                        self.server.ormManager.structure.playerItems.create({
+                                player_id: playerId,
+                                itemId: itemId,
+                                improvement: 0,
+                                equip: 0
+                            },
+                            function (error, addedItem) {
+                                player.characters[player.activePlayer].items.push(addedItem);
+                                socket.emit('updatePlayerEquip', player.characters[player.activePlayer].items);
+                            });
+                    }
                 });
 
-                socket.on('getEquip', function (characterKey) {
-                    let playerId = player.characters[characterKey].id;
-                    self.server.ormManager.structure.playerItems.find({playerId: playerId},
-                        function (error, itemsDatabase) {
-                            socket.emit('getEquip', itemsDatabase);
-                        });
-                });
+                //socket.on('getEquip', function (characterKey) {
+                //    let playerId = player.characters[characterKey].id;
+                //    self.server.ormManager.structure.playerItems.find({player_id: playerId},
+                //        function (error, itemsDatabase) {
+                //            socket.emit('getEquip', itemsDatabase);
+                //        });
+                //});
 
                 socket.on('disconnect', function () {
                     //if (player.activePlayer >= 0) {
                     //    let playerId = player.characters[player.activePlayer].id;
                     //    server.ormManager.structure.playerOnline
-                    //        .find({playerId: playerId})
+                    //        .find({player_id: playerId})
                     //        .remove();
                     //}
 

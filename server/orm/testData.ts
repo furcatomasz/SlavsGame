@@ -23,62 +23,62 @@ namespace Server.Orm {
                     if (err) throw err;
 
                     if (!exists) {
-                        ormManager.structure.player.create({name: "Mietek", type: 1, userId: userId},
+                        ormManager.structure.player.create({name: "Mietek", type: 1, user_id: userId},
                             function (err, insertedPlayer) {
                             if (err) throw err;
 
                                 let insertedPlayerId = insertedPlayer.id;
                                 ormManager.structure.playerItems.create([
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 1,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 2,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 3,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 4,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 5,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 6,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 7,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 8,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 9,
                                         improvement: 0,
                                         equip: 0,
@@ -97,62 +97,62 @@ namespace Server.Orm {
 
                     if (!exists) {
                         ormManager.structure.player.create(
-                            {name: "Tumek", type: 1, userId: userId},
+                            {name: "Tumek", type: 1, user_id: userId},
                             function (err, insertedPlayer) {
                                 if (err) throw err;
 
                                 let insertedPlayerId = insertedPlayer.id;
                                 ormManager.structure.playerItems.create([
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 1,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 2,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 3,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 4,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 5,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 6,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 7,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 8,
                                         improvement: 0,
                                         equip: 0,
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 9,
                                         improvement: 0,
                                         equip: 0,

@@ -1,5 +1,6 @@
 namespace Quests.Awards {
     export class Item extends AbstractAward {
+        static AWARD_ID = 1;
 
         constructor(item: Items.Item) {
             super();

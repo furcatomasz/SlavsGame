@@ -75,19 +75,18 @@ abstract class Scene {
     }
 
     public defaultPipeline(scene: BABYLON.Scene) {
+        let self = this;
     var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
     defaultPipeline.bloomEnabled = false;
     defaultPipeline.fxaaEnabled = false;
     defaultPipeline.imageProcessingEnabled = false;
-    defaultPipeline.bloomWeight = 0.4;
+    defaultPipeline.bloomWeight = 0.3;
 
     var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    //advancedTexture.layer.layerMask = 0x10000000;
 
     var panel = new BABYLON.GUI.StackPanel();
-    panel.width = "500px";
+    panel.width = "200px";
     panel.isVertical = true;
-    panel.paddingRight = "20px";
     panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
     panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
     advancedTexture.addControl(panel)
@@ -101,7 +100,7 @@ abstract class Scene {
         checkbox.onIsCheckedChangedObservable.add(function(value) {
             func(value);
         });
-
+        self.game.gui.registerBlockMoveCharacter(checkbox);
         var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
         header.height = "30px";
         header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -113,35 +112,6 @@ abstract class Scene {
         panel.addControl(header);
     }
 
-    var addSlider = function(text, func, initialValue, min, max, left) {
-        var header = new BABYLON.GUI.TextBlock();
-        header.text = text;
-        header.height = "30px";
-        header.color = "white";
-        header.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        panel.addControl(header);
-        if (left) {
-            header.left = left;
-        }
-
-        var slider = new BABYLON.GUI.Slider();
-        slider.minimum = min;
-        slider.maximum = max;
-        slider.value = initialValue;
-        slider.height = "20px";
-        slider.color = "green";
-        slider.background = "white";
-        slider.onValueChangedObservable.add(function(value) {
-            func(value);
-        });
-
-        if (left) {
-            slider.paddingLeft = left;
-        }
-
-        panel.addControl(slider);
-    }
-
     addCheckbox("fxaa", function(value) {
         defaultPipeline.fxaaEnabled = value;
     }, defaultPipeline.fxaaEnabled );
@@ -149,10 +119,6 @@ abstract class Scene {
     addCheckbox("bloom", function(value) {
         defaultPipeline.bloomEnabled = value;
     }, defaultPipeline.bloomEnabled);
-
-    addSlider("bloom weight", function(value) {
-        defaultPipeline.bloomWeight = value;
-    }, defaultPipeline.bloomWeight, 0, 2, "20px");
 
 
 }

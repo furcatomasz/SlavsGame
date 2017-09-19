@@ -61,6 +61,24 @@ var Server;
     }());
     Server.OrmManager = OrmManager;
 })(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var QuestManager = /** @class */ (function () {
+        function QuestManager() {
+        }
+        QuestManager.prototype.getQuests = function () {
+            var quests = [];
+            quests[1] = new Server.Quests.Models.Quest(1, [
+                new Server.Quests.Models.ModelAward(1, 1)
+            ], [
+                new Server.Quests.Models.Requirement(1, 3)
+            ]);
+            return quests;
+        };
+        return QuestManager;
+    }());
+    Server.QuestManager = QuestManager;
+})(Server || (Server = {}));
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
@@ -71,8 +89,11 @@ server.listen(config.server.port);
 var SlavsServer = /** @class */ (function () {
     function SlavsServer() {
         this.enemies = [];
+        this.quests = [];
         this.enemyManager = new Server.EnemyManager();
+        this.questManager = new Server.QuestManager();
         this.enemies = this.enemyManager.getEnemies();
+        this.quests = this.questManager.getQuests();
         this.serverFrontEnd = new Server.FrontEnd(this, app, express);
         this.ormManager = new Server.OrmManager(this, orm, config);
         this.serverWebsocket = new Server.IO(this, io);
@@ -131,16 +152,14 @@ var Server;
                 server.ormManager.structure.user.find({ email: "furcatomasz@gmail.com" }, function (err, user) {
                     if (err)
                         throw err;
-                    server.ormManager.structure.player.find({ userId: user[0].id }, function (error, players) {
+                    server.ormManager.structure.player.find({ user_id: user[0].id }, function (error, players) {
                         if (error)
                             throw error;
                         var itteration = 0;
                         var _loop_1 = function (i) {
                             var playerDatabase = players[i];
-                            server.ormManager.structure.playerItems.find({ playerId: playerDatabase.id }, function (error, playerItems) {
-                                if (error)
-                                    throw error;
-                                playerDatabase.items = playerItems;
+                            playerDatabase.getItems(function (error, items) {
+                                playerDatabase.items = items;
                                 itteration++;
                                 if (itteration == players.length) {
                                     player.characters = players;
@@ -151,6 +170,20 @@ var Server;
                         for (var i = 0; i < players.length; i++) {
                             _loop_1(i);
                         }
+                    });
+                });
+                socket.on('getQuests', function () {
+                    var emitData = {
+                        quests: server.quests,
+                        playerQuests: null,
+                        playerRequirements: null
+                    };
+                    player.characters[player.activePlayer].getActiveQuests(function (error, quests) {
+                        emitData.playerQuests = quests;
+                        player.characters[player.activePlayer].getQuestRequirements(function (error, requrements) {
+                            emitData.playerRequirements = requrements;
+                            socket.emit('quests', emitData);
+                        });
                     });
                 });
                 socket.on('selectCharacter', function (selectedCharacter) {
@@ -200,10 +233,13 @@ var Server;
                 socket.on('itemEquip', function (item) {
                     var itemId = item.id;
                     var equip = item.equip;
-                    self.server.ormManager.structure.playerItems.get(itemId, function (error, itemDatabase) {
+                    self.server.ormManager.structure.playerItems.find({
+                        itemId: itemId,
+                        player_id: player.characters[player.activePlayer].id
+                    }, function (error, itemDatabase) {
                         itemDatabase.equip = (equip) ? 1 : 0;
                         itemDatabase.save(function () {
-                            server.ormManager.structure.playerItems.find({ playerId: player.characters[player.activePlayer].id }, function (error, playerItems) {
+                            server.ormManager.structure.playerItems.find({ player_id: player.characters[player.activePlayer].id }, function (error, playerItems) {
                                 if (error)
                                     throw error;
                                 player.characters[player.activePlayer].items = playerItems;
@@ -215,27 +251,30 @@ var Server;
                 socket.on('addDoppedItem', function (itemsKey) {
                     var playerId = player.characters[player.activePlayer].id;
                     var itemId = player.itemsDrop[itemsKey];
-                    self.server.ormManager.structure.playerItems.create({
-                        playerId: playerId,
-                        itemId: itemId,
-                        improvement: 0,
-                        equip: 0
-                    }, function (error, addedItem) {
-                        player.characters[player.activePlayer].items.push(addedItem);
-                        socket.emit('updatePlayerEquip', player.characters[player.activePlayer].items);
-                    });
+                    if (itemId) {
+                        self.server.ormManager.structure.playerItems.create({
+                            player_id: playerId,
+                            itemId: itemId,
+                            improvement: 0,
+                            equip: 0
+                        }, function (error, addedItem) {
+                            player.characters[player.activePlayer].items.push(addedItem);
+                            socket.emit('updatePlayerEquip', player.characters[player.activePlayer].items);
+                        });
+                    }
                 });
-                socket.on('getEquip', function (characterKey) {
-                    var playerId = player.characters[characterKey].id;
-                    self.server.ormManager.structure.playerItems.find({ playerId: playerId }, function (error, itemsDatabase) {
-                        socket.emit('getEquip', itemsDatabase);
-                    });
-                });
+                //socket.on('getEquip', function (characterKey) {
+                //    let playerId = player.characters[characterKey].id;
+                //    self.server.ormManager.structure.playerItems.find({player_id: playerId},
+                //        function (error, itemsDatabase) {
+                //            socket.emit('getEquip', itemsDatabase);
+                //        });
+                //});
                 socket.on('disconnect', function () {
                     //if (player.activePlayer >= 0) {
                     //    let playerId = player.characters[player.activePlayer].id;
                     //    server.ormManager.structure.playerOnline
-                    //        .find({playerId: playerId})
+                    //        .find({player_id: playerId})
                     //        .remove();
                     //}
                     remotePlayers.forEach(function (remotePlayer, key) {
@@ -288,7 +327,6 @@ var Server;
                     password: String
                 });
                 this.player = db.define("player", {
-                    userId: Number,
                     name: String,
                     type: String,
                     scene: Number,
@@ -296,16 +334,35 @@ var Server;
                     positionY: Number,
                     positionZ: Number
                 });
+                this.player.hasOne("user", this.player, {
+                    reverse: "players"
+                });
                 this.playerOnline = db.define("player_online", {
-                    playerId: Number,
                     connectDate: Date,
                     activityDate: Date
                 });
+                this.playerOnline.hasOne("player", this.player);
                 this.playerItems = db.define("player_items", {
-                    playerId: Number,
                     itemId: Number,
                     improvement: Number,
                     equip: Number
+                });
+                this.playerItems.hasOne("player", this.player, {
+                    reverse: "items"
+                });
+                this.playerQuest = db.define("player_quest", {
+                    questId: Number,
+                    date: Date
+                });
+                this.playerQuest.hasOne("player", this.player, {
+                    reverse: "activeQuests"
+                });
+                this.playerQuestRequirements = db.define("player_quest_requirements", {
+                    requirementId: Number,
+                    value: Number
+                });
+                this.playerQuestRequirements.hasOne("player", this.player, {
+                    reverse: "questRequirements"
                 });
             }
             return Structure;
@@ -338,61 +395,61 @@ var Server;
                         if (err)
                             throw err;
                         if (!exists) {
-                            ormManager.structure.player.create({ name: "Mietek", type: 1, userId: userId }, function (err, insertedPlayer) {
+                            ormManager.structure.player.create({ name: "Mietek", type: 1, user_id: userId }, function (err, insertedPlayer) {
                                 if (err)
                                     throw err;
                                 var insertedPlayerId = insertedPlayer.id;
                                 ormManager.structure.playerItems.create([
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 1,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 2,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 3,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 4,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 5,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 6,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 7,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 8,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 9,
                                         improvement: 0,
                                         equip: 0
@@ -408,61 +465,61 @@ var Server;
                         if (err)
                             throw err;
                         if (!exists) {
-                            ormManager.structure.player.create({ name: "Tumek", type: 1, userId: userId }, function (err, insertedPlayer) {
+                            ormManager.structure.player.create({ name: "Tumek", type: 1, user_id: userId }, function (err, insertedPlayer) {
                                 if (err)
                                     throw err;
                                 var insertedPlayerId = insertedPlayer.id;
                                 ormManager.structure.playerItems.create([
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 1,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 2,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 3,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 4,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 5,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 6,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 7,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 8,
                                         improvement: 0,
                                         equip: 0
                                     },
                                     {
-                                        playerId: insertedPlayerId,
+                                        player_id: insertedPlayerId,
                                         itemId: 9,
                                         improvement: 0,
                                         equip: 0
@@ -480,4 +537,56 @@ var Server;
         }());
         Orm.TestData = TestData;
     })(Orm = Server.Orm || (Server.Orm = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Quests;
+    (function (Quests) {
+        var Models;
+        (function (Models) {
+            var ModelAward = /** @class */ (function () {
+                function ModelAward(awardId, value) {
+                    this.awardId = awardId;
+                    this.value = value;
+                }
+                return ModelAward;
+            }());
+            Models.ModelAward = ModelAward;
+        })(Models = Quests.Models || (Quests.Models = {}));
+    })(Quests = Server.Quests || (Server.Quests = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Quests;
+    (function (Quests) {
+        var Models;
+        (function (Models) {
+            var Quest = /** @class */ (function () {
+                function Quest(questId, awards, requirements) {
+                    this.questId = questId;
+                    this.awards = awards;
+                    this.requirements = requirements;
+                }
+                return Quest;
+            }());
+            Models.Quest = Quest;
+        })(Models = Quests.Models || (Quests.Models = {}));
+    })(Quests = Server.Quests || (Server.Quests = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Quests;
+    (function (Quests) {
+        var Models;
+        (function (Models) {
+            var Requirement = /** @class */ (function () {
+                function Requirement(requirementId, value) {
+                    this.requirementId = requirementId;
+                    this.value = value;
+                }
+                return Requirement;
+            }());
+            Models.Requirement = Requirement;
+        })(Models = Quests.Models || (Quests.Models = {}));
+    })(Quests = Server.Quests || (Server.Quests = {}));
 })(Server || (Server = {}));

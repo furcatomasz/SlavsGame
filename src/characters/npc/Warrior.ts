@@ -12,7 +12,8 @@ namespace NPC {
 
             this.mesh = mesh;
 
-            this.quest = new Quests.KillWorms(game);
+            let questManager = new Quests.QuestManager(game);
+            this.quest = questManager.getQuestFromServerUsingQuestId(Quests.KillWorms.QUEST_ID);
 
             super(game, name);
         }

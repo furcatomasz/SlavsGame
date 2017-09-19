@@ -15,7 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "babylonjs": "^3.0.0",
+    "babylonjs": "^3.0",
     "socket.io-client": "^2"
   }
 }

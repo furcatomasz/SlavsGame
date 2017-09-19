@@ -3,17 +3,28 @@
 
 namespace Quests {
     export abstract class AbstractQuest {
+        static QUEST_ID = 0;
 
-        protected game: Game;
+        protected game:Game;
         public title;
         public description;
-        public awards: Array<Quests.Awards.AbstractAward>
-        public requirements: Array<Quests.Requirements.AbstractRequirement>
+        public awards:Array<Quests.Awards.AbstractAward>
+        public requirements:Array<Quests.Requirements.AbstractRequirement>
 
-        public constructor(game: Game) {
+        public constructor(game:Game) {
             this.game = game;
             this.awards = [];
             this.requirements = [];
         }
+
+        public setAwards(awards:Array) {
+            this.awards = awards;
+        }
+
+        public setRequirements(requirements:Array) {
+            this.requirements = requirements;
+        }
+
+        abstract getQuestId();
     }
 }

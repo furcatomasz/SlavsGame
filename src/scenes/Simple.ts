@@ -37,16 +37,16 @@ class Simple extends Scene {
 
                 let listener = function listener() {
                     game.controller.registerControls(scene);
-                    let npc = new NPC.Warrior(game);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Simple.TYPE,
                     });
+                    game.client.socket.emit('getQuests');
+
+                    self.defaultPipeline(scene);
 
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
-
-                self.defaultPipeline(scene);
             });
 
         });

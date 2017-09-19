@@ -9,6 +9,7 @@ namespace GUI {
 
         public inventory: GUI.Inventory;
         public attributes: GUI.Attributes;
+        public playerQuests: GUI.PlayerQuests;
         public quest: GUI.Quest;
         public playerBottomPanel: GUI.PlayerBottomPanel;
         public characterTopHp: GUI.ShowHp;
@@ -22,7 +23,11 @@ namespace GUI {
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
             this.characterTopHp = new GUI.ShowHp();
 
-            this.initInventory().initAttributes().initFullscreen();
+            this
+                .initInventory()
+                .initAttributes()
+                .initFullscreen()
+                .initQuests();
         }
 
         protected initInventory() {
@@ -69,6 +74,28 @@ namespace GUI {
             button.onPointerUpObservable.add(function () {
                 self.game.engine.switchFullscreen(false);
                 // self.game.engine.resize();
+            });
+
+            this.registerBlockMoveCharacter(button);
+
+            return this;
+        }
+
+        protected initQuests() {
+            let self = this;
+            this.playerQuests = new GUI.PlayerQuests(this);
+            let button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Quests");
+            button.width = 1;
+            button.height = "40px";
+            button.color = "white";
+            button.background = "black";
+            button.isPointerBlocker = true;
+
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.playerQuests.opened) {
+                    self.playerQuests.open();
+                }
             });
 
             this.registerBlockMoveCharacter(button);

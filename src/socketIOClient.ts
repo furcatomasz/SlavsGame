@@ -37,7 +37,33 @@ class SocketIOClient {
                 .refreshPlayer()
                 .refreshPlayerEquip()
                 .refreshEnemyEquip()
-                .showDroppedItem();
+                .showDroppedItem()
+                .showPlayerQuests();
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected showPlayerQuests() {
+        let game = this.game;
+        let questManager = new Quests.QuestManager(game);
+        this.socket.on('quests', function (data) {
+            game.quests = [];
+            data.playerQuests.forEach(function(playerQuest, key) {
+                data.quests.forEach(function(quest, key) {
+                    if(quest) {
+                        if (playerQuest.questId == quest.questId) {
+                            game.quests.push(questManager.transformQuestDatabaseDataToObject(quest));
+                        }
+                    }
+                });
+            });
+
+            let npc = new NPC.Warrior(game);
+
         });
 
         return this;

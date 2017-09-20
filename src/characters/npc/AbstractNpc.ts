@@ -4,38 +4,48 @@ namespace NPC {
 
         protected box: BABYLON.AbstractMesh;
         protected quest: Quests.AbstractQuest;
+        protected questId: number;
 
         public constructor(game:Game, name) {
             super(name, game);
             let self = this;
             this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
             this.mesh.isPickable = true;
-            this.createTooltip();
-            this.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(
-                BABYLON.ActionManager.OnPointerOverTrigger,
-                self.box,
-                'scaling',
-                new BABYLON.Vector3(2,2,2),
-                300
-            ));
 
-            this.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(
-                BABYLON.ActionManager.OnPointerOutTrigger,
-                self.box,
-                'scaling',
-                new BABYLON.Vector3(1,1,1),
-                300
-            ));
+            let listener = function listener() {
+                let questManager = new Quests.QuestManager(self.game);
+                self.quest = questManager.getQuestFromServerUsingQuestId(self.questId);
 
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-                BABYLON.ActionManager.OnPickTrigger,
-                function() {
-                    let quest = new GUI.Quest(game.gui, self.quest);
-                    quest.open();
+                if(self.quest) {
+                    self.createTooltip();
+                    self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(
+                        BABYLON.ActionManager.OnPointerOverTrigger,
+                        self.box,
+                        'scaling',
+                        new BABYLON.Vector3(2, 2, 2),
+                        300
+                    ));
 
-                })
-            );
+                    self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(
+                        BABYLON.ActionManager.OnPointerOutTrigger,
+                        self.box,
+                        'scaling',
+                        new BABYLON.Vector3(1, 1, 1),
+                        300
+                    ));
 
+                    self.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+                        BABYLON.ActionManager.OnPickTrigger,
+                        function () {
+                            let quest = new GUI.Quest(game.gui, self.quest);
+                            quest.open();
+
+                        })
+                    );
+                }
+                document.removeEventListener(Events.QUESTS_RECEIVED, listener);
+            };
+            document.addEventListener(Events.QUESTS_RECEIVED, listener);
         }
 
         public removeFromWorld() {

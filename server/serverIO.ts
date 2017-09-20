@@ -59,6 +59,7 @@ namespace Server {
                         playerQuests: null,
                         playerRequirements: null
                     };
+
                     player.characters[player.activePlayer].getActiveQuests(function (error, quests) {
                         emitData.playerQuests = quests;
                         player.characters[player.activePlayer].getQuestRequirements(function (error, requrements) {

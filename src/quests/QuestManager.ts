@@ -80,7 +80,6 @@ namespace Quests {
         public getQuestFromServerUsingQuestId(questId: number) {
             let quest = null;
             this.game.quests.forEach(function(gameQuest: Quests.AbstractQuest, key) {
-                console.log(gameQuest.getQuestId());
                 if(questId == gameQuest.getQuestId()) {
                     quest = gameQuest;
                 }

@@ -1,6 +1,6 @@
 var Server;
 (function (Server) {
-    var EnemyManager = /** @class */ (function () {
+    var EnemyManager = (function () {
         function EnemyManager() {
         }
         EnemyManager.prototype.createEnemy = function (position, type, itemsToDrop) {
@@ -40,7 +40,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var OrmManager = /** @class */ (function () {
+    var OrmManager = (function () {
         function OrmManager(server, orm, config) {
             this.server = server;
             var self = this;
@@ -63,7 +63,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var QuestManager = /** @class */ (function () {
+    var QuestManager = (function () {
         function QuestManager() {
         }
         QuestManager.prototype.getQuests = function () {
@@ -86,7 +86,7 @@ var io = require('socket.io')(server);
 var orm = require("orm");
 var config = require("./../config.js");
 server.listen(config.server.port);
-var SlavsServer = /** @class */ (function () {
+var SlavsServer = (function () {
     function SlavsServer() {
         this.enemies = [];
         this.quests = [];
@@ -106,7 +106,7 @@ setTimeout(function () {
 var path = require('path');
 var Server;
 (function (Server) {
-    var FrontEnd = /** @class */ (function () {
+    var FrontEnd = (function () {
         function FrontEnd(server, expressApp, express) {
             this.server = server;
             expressApp.use('/bower_components', express.static(path.resolve(__dirname + '/../../bower_components')));
@@ -122,7 +122,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var IO = /** @class */ (function () {
+    var IO = (function () {
         function IO(server, serverIO) {
             this.remotePlayers = [];
             var self = this;
@@ -320,7 +320,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var Structure = /** @class */ (function () {
+        var Structure = (function () {
             function Structure(db) {
                 this.user = db.define("user", {
                     email: String,
@@ -374,7 +374,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var TestData = /** @class */ (function () {
+        var TestData = (function () {
             function TestData(ormManager) {
                 this.ormManager = ormManager;
                 ormManager.structure.user.exists({ email: "furcatomasz@gmail.com" }, function (err, exists) {
@@ -544,7 +544,7 @@ var Server;
     (function (Quests) {
         var Models;
         (function (Models) {
-            var ModelAward = /** @class */ (function () {
+            var ModelAward = (function () {
                 function ModelAward(awardId, value) {
                     this.awardId = awardId;
                     this.value = value;
@@ -561,7 +561,7 @@ var Server;
     (function (Quests) {
         var Models;
         (function (Models) {
-            var Quest = /** @class */ (function () {
+            var Quest = (function () {
                 function Quest(questId, awards, requirements) {
                     this.questId = questId;
                     this.awards = awards;
@@ -579,7 +579,7 @@ var Server;
     (function (Quests) {
         var Models;
         (function (Models) {
-            var Requirement = /** @class */ (function () {
+            var Requirement = (function () {
                 function Requirement(requirementId, value) {
                     this.requirementId = requirementId;
                     this.value = value;

@@ -36,6 +36,7 @@ class Simple extends Scene {
                 assetsManager.load();
 
                 let listener = function listener() {
+                    let npc = new NPC.Warrior(game);
                     game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Simple.TYPE,

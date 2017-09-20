@@ -6,6 +6,7 @@ namespace Quests {
         static QUEST_ID = 0;
 
         protected game:Game;
+        public isActive: boolean;
         public title;
         public description;
         public awards:Array<Quests.Awards.AbstractAward>

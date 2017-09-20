@@ -2,17 +2,16 @@
 /// <reference path="characters/monsters/monster.ts"/>
 
 class SocketIOClient {
-    protected game:Game;
+    protected game: Game;
     public socket;
     public characters = [];
     public activePlayer = Number;
 
-    constructor(game:Game) {
+    constructor(game: Game) {
         this.game = game;
     }
-    
-    public connect(socketUrl: string)
-    {
+
+    public connect(socketUrl: string) {
         this.socket = io.connect(socketUrl);
 
         this.playerConnected();
@@ -25,7 +24,7 @@ class SocketIOClient {
     public playerConnected() {
         let self = this;
         let game = this.game;
-        let playerName = Game.randomNumber(1,100);
+        let playerName = Game.randomNumber(1, 100);
 
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
@@ -52,17 +51,29 @@ class SocketIOClient {
         let questManager = new Quests.QuestManager(game);
         this.socket.on('quests', function (data) {
             game.quests = [];
-            data.playerQuests.forEach(function(playerQuest, key) {
-                data.quests.forEach(function(quest, key) {
-                    if(quest) {
-                        if (playerQuest.questId == quest.questId) {
-                            game.quests.push(questManager.transformQuestDatabaseDataToObject(quest));
-                        }
+
+            let questPromise = new Promise(resolve => {
+                data.quests.forEach(function (quest, key) {
+                    if (quest) {
+                        let questObject = questManager.transformQuestDatabaseDataToObject(quest);
+                        data.playerQuests.forEach(function (playerQuest, key) {
+                            if (playerQuest.questId == quest.questId) {
+                                questObject.isActive = true;
+                            }
+
+                        });
+
+                        game.quests.push(questObject);
                     }
+                    resolve();
                 });
+
             });
 
-            let npc = new NPC.Warrior(game);
+            questPromise.then(function () {
+                document.dispatchEvent(game.events.questsReceived);
+                console.log(game.quests);
+            });
 
         });
 
@@ -75,7 +86,7 @@ class SocketIOClient {
     protected refreshPlayer() {
         let game = this.game;
         let self = this;
-        let playerName = Game.randomNumber(1,100);
+        let playerName = Game.randomNumber(1, 100);
 
         this.socket.on('showPlayer', function (data) {
             self.activePlayer = data.activePlayer;
@@ -99,7 +110,7 @@ class SocketIOClient {
         let self = this;
 
         this.socket.on('updateEnemyEquip', function (playerUpdated) {
-            if(game.player) {
+            if (game.player) {
                 self.game.remotePlayers.forEach(function (socketRemotePlayer) {
                     if (playerUpdated.id == socketRemotePlayer.id) {
                         socketRemotePlayer.setItems(playerUpdated.characters[playerUpdated.activePlayer].items);
@@ -120,7 +131,7 @@ class SocketIOClient {
         this.socket.on('updatePlayerEquip', function (items) {
             game.player.removeItems();
             game.player.setItems(items);
-            if(game.gui.inventory.opened) {
+            if (game.gui.inventory.opened) {
                 game.gui.inventory.refreshPopup();
             }
         });
@@ -151,25 +162,25 @@ class SocketIOClient {
 
         this.socket.on('showEnemies', function (data) {
             data.forEach(function (enemyData, key) {
-               let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
-               let rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
-               let enemy = game.enemies[key];
+                let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
+                let rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
+                let enemy = game.enemies[key];
 
-               if (enemy) {
-                   enemy.target = enemyData.target;
-                   enemy.mesh.position = position;
-                   enemy.mesh.rotationQuaternion = rotationQuaternion;
-                   enemy.runAnimationWalk(false);
-               } else {
-                   if (enemyData.type == 'worm') {
-                       new Worm(key, data.id, game, position, rotationQuaternion);
-                   } else if (enemyData.type == 'bigWorm') {
-                       new BigWorm(key, data.id, game, position, rotationQuaternion);
-                   } else if (enemyData.type == 'bandit') {
-                       new Bandit.Bandit(key, game, position, rotationQuaternion);
-                   }
-               }
-           });
+                if (enemy) {
+                    enemy.target = enemyData.target;
+                    enemy.mesh.position = position;
+                    enemy.mesh.rotationQuaternion = rotationQuaternion;
+                    enemy.runAnimationWalk(false);
+                } else {
+                    if (enemyData.type == 'worm') {
+                        new Worm(key, data.id, game, position, rotationQuaternion);
+                    } else if (enemyData.type == 'bigWorm') {
+                        new BigWorm(key, data.id, game, position, rotationQuaternion);
+                    } else if (enemyData.type == 'bandit') {
+                        new Bandit.Bandit(key, game, position, rotationQuaternion);
+                    }
+                }
+            });
         });
 
         return this;
@@ -179,7 +190,7 @@ class SocketIOClient {
         let game = this.game;
 
         this.socket.on('newPlayerConnected', function (data) {
-            if(game.player) {
+            if (game.player) {
                 data.forEach(function (socketRemotePlayer) {
                     let remotePlayerKey = null;
 

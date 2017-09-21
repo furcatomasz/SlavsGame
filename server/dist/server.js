@@ -1,6 +1,6 @@
 var Server;
 (function (Server) {
-    var EnemyManager = (function () {
+    var EnemyManager = /** @class */ (function () {
         function EnemyManager() {
         }
         EnemyManager.prototype.createEnemy = function (position, type, itemsToDrop) {
@@ -40,7 +40,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var OrmManager = (function () {
+    var OrmManager = /** @class */ (function () {
         function OrmManager(server, orm, config) {
             this.server = server;
             var self = this;
@@ -63,7 +63,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var QuestManager = (function () {
+    var QuestManager = /** @class */ (function () {
         function QuestManager() {
         }
         QuestManager.prototype.getQuests = function () {
@@ -86,7 +86,7 @@ var io = require('socket.io')(server);
 var orm = require("orm");
 var config = require("./../config.js");
 server.listen(config.server.port);
-var SlavsServer = (function () {
+var SlavsServer = /** @class */ (function () {
     function SlavsServer() {
         this.enemies = [];
         this.quests = [];
@@ -106,7 +106,7 @@ setTimeout(function () {
 var path = require('path');
 var Server;
 (function (Server) {
-    var FrontEnd = (function () {
+    var FrontEnd = /** @class */ (function () {
         function FrontEnd(server, expressApp, express) {
             this.server = server;
             expressApp.use('/bower_components', express.static(path.resolve(__dirname + '/../../bower_components')));
@@ -122,7 +122,7 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
-    var IO = (function () {
+    var IO = /** @class */ (function () {
         function IO(server, serverIO) {
             this.remotePlayers = [];
             var self = this;
@@ -158,12 +158,14 @@ var Server;
                                     var playerDatabase = players[i];
                                     playerDatabase.getItems(function (error, items) {
                                         playerDatabase.items = items;
+                                        if (i == players.length - 1) {
+                                            resolveitems();
+                                        }
                                     });
                                 };
                                 for (var i = 0; i < players.length; i++) {
                                     _loop_1(i);
                                 }
-                                resolveitems();
                             }).then(function () {
                                 resolveFind();
                             });
@@ -318,7 +320,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var Structure = (function () {
+        var Structure = /** @class */ (function () {
             function Structure(db) {
                 this.user = db.define("user", {
                     email: String,
@@ -372,7 +374,7 @@ var Server;
 (function (Server) {
     var Orm;
     (function (Orm) {
-        var TestData = (function () {
+        var TestData = /** @class */ (function () {
             function TestData(ormManager) {
                 this.ormManager = ormManager;
                 ormManager.structure.user.exists({ email: "furcatomasz@gmail.com" }, function (err, exists) {
@@ -542,7 +544,7 @@ var Server;
     (function (Quests) {
         var Models;
         (function (Models) {
-            var ModelAward = (function () {
+            var ModelAward = /** @class */ (function () {
                 function ModelAward(awardId, value) {
                     this.awardId = awardId;
                     this.value = value;
@@ -559,7 +561,7 @@ var Server;
     (function (Quests) {
         var Models;
         (function (Models) {
-            var Quest = (function () {
+            var Quest = /** @class */ (function () {
                 function Quest(questId, awards, requirements) {
                     this.questId = questId;
                     this.awards = awards;
@@ -577,7 +579,7 @@ var Server;
     (function (Quests) {
         var Models;
         (function (Models) {
-            var Requirement = (function () {
+            var Requirement = /** @class */ (function () {
                 function Requirement(requirementId, value) {
                     this.requirementId = requirementId;
                     this.value = value;

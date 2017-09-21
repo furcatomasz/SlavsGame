@@ -26,9 +26,10 @@ namespace SelectCharacter {
 
             this.mesh = mesh;
             super(name, game);
-
+console.log(1);
             this.initPlayerInventory();
             this.mesh.skeleton.beginAnimation('Sit');
+            console.log(1);
 
             this.registerActions();
         }
@@ -37,13 +38,15 @@ namespace SelectCharacter {
             let game = this.game;
             this.inventory = new Character.Inventory(game, this);
             let inventoryItems = game.client.characters[this.place].items;
-            let itemManager = new Items.ItemManager(game);
-            for (let i = 0; i < inventoryItems.length; i++) {
-                let itemDatabase = inventoryItems[i];
-                let item = itemManager.getItemUsingId(itemDatabase.itemId);
-                if(itemDatabase.equip) {
-                    if(item.getType() != 1 && item.getType() != 2) {
-                        this.inventory.mount(item);
+            if(inventoryItems) {
+                let itemManager = new Items.ItemManager(game);
+                for (let i = 0; i < inventoryItems.length; i++) {
+                    let itemDatabase = inventoryItems[i];
+                    let item = itemManager.getItemUsingId(itemDatabase.itemId);
+                    if (itemDatabase.equip) {
+                        if (item.getType() != 1 && item.getType() != 2) {
+                            this.inventory.mount(item);
+                        }
                     }
                 }
             }

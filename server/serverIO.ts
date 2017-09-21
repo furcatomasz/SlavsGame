@@ -30,7 +30,6 @@ namespace Server {
                     },
                     attack: false,
                 };
-
                 server.ormManager.structure.user.find({email: "furcatomasz@gmail.com"},
                     function (err, user) {
 
@@ -41,11 +40,14 @@ namespace Server {
                                     new Promise(function (resolveitems) {
                                         for (let i = 0; i < players.length; i++) {
                                             let playerDatabase = players[i];
+
                                             playerDatabase.getItems(function (error, items) {
                                                 playerDatabase.items = items;
+                                                if(i == players.length-1) {
+                                                    resolveitems();
+                                                }
                                             });
                                         }
-                                        resolveitems();
                                     }).then(function () {
                                         resolveFind();
                                     });

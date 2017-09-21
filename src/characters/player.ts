@@ -192,20 +192,22 @@ class Player extends AbstractCharacter {
      * @param inventoryItems
      */
     public setItems(inventoryItems: Array) {
-        let self = this;
-        let game = this.game;
-        let itemManager = new Items.ItemManager(game);
-        if(this.inventory.items.length) {
-            let itemsProcessed = 0;
-            this.inventory.items.forEach(function(item) {
-                item.mesh.dispose();
-                itemsProcessed++;
-                if(itemsProcessed === self.inventory.items.length) {
-                    itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
-                }
-            });
-        } else {
-            itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
+        if(inventoryItems) {
+            let self = this;
+            let game = this.game;
+            let itemManager = new Items.ItemManager(game);
+            if (this.inventory.items.length) {
+                let itemsProcessed = 0;
+                this.inventory.items.forEach(function (item) {
+                    item.mesh.dispose();
+                    itemsProcessed++;
+                    if (itemsProcessed === self.inventory.items.length) {
+                        itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
+                    }
+                });
+            } else {
+                itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
+            }
         }
     }
 

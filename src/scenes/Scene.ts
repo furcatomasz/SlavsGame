@@ -100,7 +100,9 @@ abstract class Scene {
         checkbox.onIsCheckedChangedObservable.add(function(value) {
             func(value);
         });
-        self.game.gui.registerBlockMoveCharacter(checkbox);
+        if(self.game.gui) {
+            self.game.gui.registerBlockMoveCharacter(checkbox);
+        }
         var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
         header.height = "30px";
         header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;

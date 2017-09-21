@@ -1,9 +1,9 @@
 namespace Server {
     export class IO {
-        protected server:SlavsServer;
+        protected server: SlavsServer;
         protected remotePlayers;
 
-        constructor(server:SlavsServer, serverIO) {
+        constructor(server: SlavsServer, serverIO) {
 
             this.remotePlayers = [];
             let self = this;
@@ -33,25 +33,29 @@ namespace Server {
 
                 server.ormManager.structure.user.find({email: "furcatomasz@gmail.com"},
                     function (err, user) {
-                        if (err) throw err;
 
-                        server.ormManager.structure.player.find({user_id: user[0].id}, function (error, players) {
-                            if (error) throw error
-                            let itteration = 0;
-                            for (let i = 0; i < players.length; i++) {
-                                let playerDatabase = players[i];
-                                playerDatabase.getItems(function (error, items) {
-                                    playerDatabase.items = items;
-                                    itteration++;
-                                    if (itteration == players.length) {
-                                        player.characters = players;
-                                        socket.emit('clientConnected', player);
-                                    }
+                        new Promise(function (resolveFind) {
+                            server.ormManager.structure.player.find({user_id: user[0].id},
+                                function (error, players) {
+                                    player.characters = players;
+                                    new Promise(function (resolveitems) {
+                                        for (let i = 0; i < players.length; i++) {
+                                            let playerDatabase = players[i];
+                                            playerDatabase.getItems(function (error, items) {
+                                                playerDatabase.items = items;
+                                            });
+                                        }
+                                        resolveitems();
+                                    }).then(function () {
+                                        resolveFind();
+                                    });
                                 });
-                            }
 
+                        }).then(function (resolve) {
+                            socket.emit('clientConnected', player);
                         });
                     });
+
 
                 socket.on('getQuests', function () {
                     let emitData = {
@@ -126,29 +130,29 @@ namespace Server {
                 socket.on('itemEquip', function (item) {
                     let itemId = item.id;
                     let equip = item.equip;
-                    self.server.ormManager.structure.playerItems.find({
-                            itemId: itemId,
-                            player_id: player.characters[player.activePlayer].id
-                        },
-                        function (error, itemDatabase) {
-                            itemDatabase.equip = (equip) ? 1 : 0;
-                            itemDatabase.save(function () {
-                                server.ormManager.structure.playerItems.find(
-                                    {player_id: player.characters[player.activePlayer].id},
-                                    function (error, playerItems) {
-                                        if (error) throw error;
-                                        player.characters[player.activePlayer].items = playerItems;
-                                        socket.broadcast.emit('updateEnemyEquip', player);
-                                    });
-                            });
+
+                    self.server.ormManager.structure.playerItems.oneAsync({
+                        id: itemId,
+                        player_id: player.characters[player.activePlayer].id
+                    }).then(function (itemDatabase) {
+                        itemDatabase.equip = (equip) ? 1 : 0;
+                        itemDatabase.saveAsync().then(function () {
+                            server.ormManager.structure.playerItems.findAsync(
+                                {player_id: player.characters[player.activePlayer].id}).then(
+                                function (playerItems) {
+                                    player.characters[player.activePlayer].items = playerItems;
+                                    socket.broadcast.emit('updateEnemyEquip', player);
+                                });
                         });
+                    });
+
                 });
 
                 socket.on('addDoppedItem', function (itemsKey) {
                     let playerId = player.characters[player.activePlayer].id;
                     let itemId = player.itemsDrop[itemsKey];
 
-                    if(itemId) {
+                    if (itemId) {
                         self.server.ormManager.structure.playerItems.create({
                                 player_id: playerId,
                                 itemId: itemId,

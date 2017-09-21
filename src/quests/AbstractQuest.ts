@@ -7,6 +7,8 @@ namespace Quests {
 
         protected game:Game;
         public isActive: boolean;
+        public isFinished: boolean;
+        public hasRequrementsFinished: boolean;
         public title;
         public description;
         public awards:Array<Quests.Awards.AbstractAward>
@@ -16,6 +18,7 @@ namespace Quests {
             this.game = game;
             this.awards = [];
             this.requirements = [];
+            this.hasRequrementsFinished = true;
         }
 
         public setAwards(awards:Array) {

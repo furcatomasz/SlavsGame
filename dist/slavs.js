@@ -494,7 +494,7 @@ var SocketIOClient = (function () {
         var questManager = new Quests.QuestManager(game);
         this.socket.on('quests', function (data) {
             game.quests = [];
-            var questPromise = new Promise(function (resolve) {
+            var questPromise = new Promise(function (resolve, reject) {
                 data.quests.forEach(function (quest, key) {
                     if (quest) {
                         var questObject_1 = questManager.transformQuestDatabaseDataToObject(quest);
@@ -510,7 +510,6 @@ var SocketIOClient = (function () {
             });
             questPromise.then(function () {
                 document.dispatchEvent(game.events.questsReceived);
-                console.log(game.quests);
             });
         });
         return this;
@@ -704,7 +703,7 @@ var Game = (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new Simple().initScene(this);
+        new SelectCharacter().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -1913,6 +1912,7 @@ var Quests;
             this.game = game;
             this.awards = [];
             this.requirements = [];
+            this.hasRequrementsFinished = true;
         }
         AbstractQuest.prototype.setAwards = function (awards) {
             this.awards = awards;
@@ -2591,7 +2591,7 @@ var NPC;
             var listener = function listener() {
                 var questManager = new Quests.QuestManager(self.game);
                 self.quest = questManager.getQuestFromServerUsingQuestId(self.questId);
-                if (self.quest) {
+                if (self.quest && !self.quest.isFinished) {
                     self.createTooltip();
                     self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOverTrigger, self.box, 'scaling', new BABYLON.Vector3(2, 2, 2), 300));
                     self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOutTrigger, self.box, 'scaling', new BABYLON.Vector3(1, 1, 1), 300));
@@ -2613,7 +2613,15 @@ var NPC;
             box1.parent = this.mesh;
             box1.position.y += 7;
             var materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
-            materialBox.diffuseColor = new BABYLON.Color3(0, 1, 0);
+            if (this.quest.isActive && !this.quest.hasRequrementsFinished) {
+                materialBox.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            }
+            else if (this.quest.isActive && this.quest.hasRequrementsFinished) {
+                materialBox.diffuseColor = new BABYLON.Color3(1, 1, 0);
+            }
+            else {
+                materialBox.diffuseColor = new BABYLON.Color3(0, 1, 0);
+            }
             box1.material = materialBox;
             var keys = [];
             keys.push({
@@ -3171,16 +3179,19 @@ var GUI;
             this.guiMain.game.sceneManager.environment.ground.isPickable = true;
         };
         PlayerQuests.prototype.showText = function () {
-            var textHeader = new BABYLON.GUI.TextBlock();
-            textHeader.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textHeader.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textHeader.text = 'Players quests';
-            textHeader.color = "white";
-            textHeader.top = "0%";
-            textHeader.width = "25%";
-            textHeader.height = "10%";
-            textHeader.top = "0%";
-            this.guiTexture.addControl(textHeader);
+            for (var _i = 0, _a = this.guiMain.game.quests; _i < _a.length; _i++) {
+                var quest = _a[_i];
+                var title = new BABYLON.GUI.TextBlock();
+                title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                title.text = quest.title;
+                title.color = "white";
+                title.top = "10%";
+                title.width = "25%";
+                title.height = "10%";
+                title.fontSize = 12;
+                this.guiTexture.addControl(title);
+            }
         };
         return PlayerQuests;
     }(GUI.Popup));

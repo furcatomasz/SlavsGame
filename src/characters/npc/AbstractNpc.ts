@@ -16,7 +16,7 @@ namespace NPC {
                 let questManager = new Quests.QuestManager(self.game);
                 self.quest = questManager.getQuestFromServerUsingQuestId(self.questId);
 
-                if(self.quest) {
+                if(self.quest && !self.quest.isFinished) {
                     self.createTooltip();
                     self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(
                         BABYLON.ActionManager.OnPointerOverTrigger,
@@ -57,7 +57,14 @@ namespace NPC {
             box1.parent = this.mesh;
             box1.position.y += 7;
             var materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
-            materialBox.diffuseColor = new BABYLON.Color3(0, 1, 0);
+            if(this.quest.isActive && !this.quest.hasRequrementsFinished) {
+                materialBox.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            } else if(this.quest.isActive && this.quest.hasRequrementsFinished) {
+                materialBox.diffuseColor = new BABYLON.Color3(1, 1, 0);
+            } else {
+                materialBox.diffuseColor = new BABYLON.Color3(0, 1, 0);
+            }
+
             box1.material = materialBox;
             var keys = [];
             keys.push({

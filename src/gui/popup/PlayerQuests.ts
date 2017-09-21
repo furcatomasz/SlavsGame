@@ -42,17 +42,21 @@ namespace GUI {
         }
 
         protected showText() {
-            let textHeader = new BABYLON.GUI.TextBlock();
-            textHeader.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textHeader.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textHeader.text = 'Players quests';
-            textHeader.color = "white";
-            textHeader.top = "0%";
-            textHeader.width = "25%";
-            textHeader.height = "10%";
-            textHeader.top = "0%";
+            for (let quest of this.guiMain.game.quests) {
 
-            this.guiTexture.addControl(textHeader);
+                let title = new BABYLON.GUI.TextBlock();
+                title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                title.text = quest.title;
+                title.color = "white";
+                title.top = "10%";
+                title.width = "25%";
+                title.height = "10%";
+                title.fontSize = 12;
+
+                this.guiTexture.addControl(title);
+            }
+
         }
 
     }

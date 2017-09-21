@@ -150,26 +150,26 @@ var Server;
                     attack: false
                 };
                 server.ormManager.structure.user.find({ email: "furcatomasz@gmail.com" }, function (err, user) {
-                    if (err)
-                        throw err;
-                    server.ormManager.structure.player.find({ user_id: user[0].id }, function (error, players) {
-                        if (error)
-                            throw error;
-                        var itteration = 0;
-                        var _loop_1 = function (i) {
-                            var playerDatabase = players[i];
-                            playerDatabase.getItems(function (error, items) {
-                                playerDatabase.items = items;
-                                itteration++;
-                                if (itteration == players.length) {
-                                    player.characters = players;
-                                    socket.emit('clientConnected', player);
+                    new Promise(function (resolveFind) {
+                        server.ormManager.structure.player.find({ user_id: user[0].id }, function (error, players) {
+                            player.characters = players;
+                            new Promise(function (resolveitems) {
+                                var _loop_1 = function (i) {
+                                    var playerDatabase = players[i];
+                                    playerDatabase.getItems(function (error, items) {
+                                        playerDatabase.items = items;
+                                    });
+                                };
+                                for (var i = 0; i < players.length; i++) {
+                                    _loop_1(i);
                                 }
+                                resolveitems();
+                            }).then(function () {
+                                resolveFind();
                             });
-                        };
-                        for (var i = 0; i < players.length; i++) {
-                            _loop_1(i);
-                        }
+                        });
+                    }).then(function (resolve) {
+                        socket.emit('clientConnected', player);
                     });
                 });
                 socket.on('getQuests', function () {
@@ -233,15 +233,13 @@ var Server;
                 socket.on('itemEquip', function (item) {
                     var itemId = item.id;
                     var equip = item.equip;
-                    self.server.ormManager.structure.playerItems.find({
-                        itemId: itemId,
+                    self.server.ormManager.structure.playerItems.oneAsync({
+                        id: itemId,
                         player_id: player.characters[player.activePlayer].id
-                    }, function (error, itemDatabase) {
+                    }).then(function (itemDatabase) {
                         itemDatabase.equip = (equip) ? 1 : 0;
-                        itemDatabase.save(function () {
-                            server.ormManager.structure.playerItems.find({ player_id: player.characters[player.activePlayer].id }, function (error, playerItems) {
-                                if (error)
-                                    throw error;
+                        itemDatabase.saveAsync().then(function () {
+                            server.ormManager.structure.playerItems.findAsync({ player_id: player.characters[player.activePlayer].id }).then(function (playerItems) {
                                 player.characters[player.activePlayer].items = playerItems;
                                 socket.broadcast.emit('updateEnemyEquip', player);
                             });

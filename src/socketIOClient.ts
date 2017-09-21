@@ -52,7 +52,7 @@ class SocketIOClient {
         this.socket.on('quests', function (data) {
             game.quests = [];
 
-            let questPromise = new Promise(resolve => {
+            let questPromise = new Promise(function(resolve , reject) {
                 data.quests.forEach(function (quest, key) {
                     if (quest) {
                         let questObject = questManager.transformQuestDatabaseDataToObject(quest);
@@ -72,7 +72,6 @@ class SocketIOClient {
 
             questPromise.then(function () {
                 document.dispatchEvent(game.events.questsReceived);
-                console.log(game.quests);
             });
 
         });

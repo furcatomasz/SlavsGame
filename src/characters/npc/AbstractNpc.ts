@@ -9,6 +9,8 @@ namespace NPC {
 
         public constructor(game:Game, name) {
             super(name, game);
+            game.npcs.push(this);
+
             let self = this;
             this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
             this.mesh.isPickable = true;
@@ -54,18 +56,23 @@ namespace NPC {
             this.tooltip.dispose();
         }
 
+        public refreshTooltipColor() {
+            if(this.quest.isActive && !this.quest.hasRequrementsFinished) {
+                this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            } else if(this.quest.isActive && this.quest.hasRequrementsFinished) {
+                this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
+            } else {
+                this.tooltip.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+            }
+
+            return this;
+        }
+
         public createTooltip() {
             let box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
             box1.parent = this.mesh;
             box1.position.y += 7;
             let materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
-            if(this.quest.isActive && !this.quest.hasRequrementsFinished) {
-                materialBox.diffuseColor = new BABYLON.Color3(1, 0, 0);
-            } else if(this.quest.isActive && this.quest.hasRequrementsFinished) {
-                materialBox.diffuseColor = new BABYLON.Color3(1, 1, 0);
-            } else {
-                materialBox.diffuseColor = new BABYLON.Color3(0, 1, 0);
-            }
 
             box1.material = materialBox;
             let keys = [];
@@ -90,6 +97,8 @@ namespace NPC {
             this.game.getScene().beginAnimation(box1, 0, 30, true);
 
             this.tooltip = box1;
+
+            this.refreshTooltipColor();
         }
     }
 }

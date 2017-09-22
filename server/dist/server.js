@@ -44,7 +44,6 @@ var Server;
         function OrmManager(server, orm, config) {
             this.server = server;
             var self = this;
-            console.log(config.server);
             var ormPassword = (config.server.orm.password) ? ':' + config.server.orm.password + '' : '';
             orm.connect('mysql://' + config.server.orm.username + '' + ormPassword + '@' + config.server.orm.host + '/' + config.server.orm.database + '', function (err, db) {
                 if (err)
@@ -149,6 +148,13 @@ var Server;
                     },
                     attack: false
                 };
+                ////CLEAR QUESTS
+                server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
+                    for (var _i = 0, playerQuests_1 = playerQuests; _i < playerQuests_1.length; _i++) {
+                        var playerQuest = playerQuests_1[_i];
+                        playerQuest.remove();
+                    }
+                });
                 server.ormManager.structure.user.find({ email: "furcatomasz@gmail.com" }, function (err, user) {
                     new Promise(function (resolveFind) {
                         server.ormManager.structure.player.find({ user_id: user[0].id }, function (error, players) {
@@ -201,7 +207,7 @@ var Server;
                                 date: 0,
                                 player_id: playerId
                             }).then(function (quest) {
-                                socket.emit('acceptedQuest', quest);
+                                socket.emit('refreshQuestsStatus', quest);
                             });
                         }
                     });

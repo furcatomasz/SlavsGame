@@ -30,6 +30,14 @@ namespace Server {
                     },
                     attack: false,
                 };
+
+                ////CLEAR QUESTS
+                server.ormManager.structure.playerQuest.allAsync().then(function(playerQuests) {
+                    for(let playerQuest of playerQuests) {
+                        playerQuest.remove();
+                    }
+                });
+
                 server.ormManager.structure.user.find({email: "furcatomasz@gmail.com"},
                     function (err, user) {
 
@@ -89,7 +97,7 @@ namespace Server {
                                 date: 0,
                                 player_id: playerId
                             }).then(function (quest) {
-                                socket.emit('acceptedQuest', quest);
+                                socket.emit('refreshQuestsStatus', quest);
                             });
                         }
                     });

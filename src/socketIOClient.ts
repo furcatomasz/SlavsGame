@@ -2,16 +2,16 @@
 /// <reference path="characters/monsters/monster.ts"/>
 
 class SocketIOClient {
-    protected game: Game;
+    protected game:Game;
     public socket;
     public characters = [];
     public activePlayer = Number;
 
-    constructor(game: Game) {
+    constructor(game:Game) {
         this.game = game;
     }
 
-    public connect(socketUrl: string) {
+    public connect(socketUrl:string) {
         this.socket = io.connect(socketUrl);
 
         this.playerConnected();
@@ -37,7 +37,8 @@ class SocketIOClient {
                 .refreshPlayerEquip()
                 .refreshEnemyEquip()
                 .showDroppedItem()
-                .showPlayerQuests();
+                .showPlayerQuests()
+                .refreshPlayerQuests();
         });
 
         return this;
@@ -52,7 +53,7 @@ class SocketIOClient {
         this.socket.on('quests', function (data) {
             game.quests = [];
 
-            let questPromise = new Promise(function(resolve , reject) {
+            let questPromise = new Promise(function (resolve, reject) {
                 data.quests.forEach(function (quest, key) {
                     if (quest) {
                         let questObject = questManager.transformQuestDatabaseDataToObject(quest);
@@ -76,6 +77,23 @@ class SocketIOClient {
 
         });
 
+        return this;
+    }
+
+    protected refreshPlayerQuests() {
+        let game = this.game;
+        this.socket.on('refreshQuestsStatus', function (quest) {
+            for (let gameQuest of game.quests) {
+                if (gameQuest.getQuestId() == quest.questId) {
+                    gameQuest.isActive = true;
+                    for(let npc of game.npcs) {
+                        npc.refreshTooltipColor();
+                    }
+                    
+                }
+            }
+        });
+        
         return this;
     }
 

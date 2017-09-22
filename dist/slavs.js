@@ -484,7 +484,8 @@ var SocketIOClient = /** @class */ (function () {
                 .refreshPlayerEquip()
                 .refreshEnemyEquip()
                 .showDroppedItem()
-                .showPlayerQuests();
+                .showPlayerQuests()
+                .refreshPlayerQuests();
         });
         return this;
     };
@@ -513,6 +514,22 @@ var SocketIOClient = /** @class */ (function () {
             questPromise.then(function () {
                 document.dispatchEvent(game.events.questsReceived);
             });
+        });
+        return this;
+    };
+    SocketIOClient.prototype.refreshPlayerQuests = function () {
+        var game = this.game;
+        this.socket.on('refreshQuestsStatus', function (quest) {
+            for (var _i = 0, _a = game.quests; _i < _a.length; _i++) {
+                var gameQuest = _a[_i];
+                if (gameQuest.getQuestId() == quest.questId) {
+                    gameQuest.isActive = true;
+                    for (var _b = 0, _c = game.npcs; _b < _c.length; _b++) {
+                        var npc = _c[_b];
+                        npc.refreshTooltipColor();
+                    }
+                }
+            }
         });
         return this;
     };
@@ -685,7 +702,6 @@ var SocketIOClient = /** @class */ (function () {
 /// <reference path="controllers/Keyboard.ts"/>
 /// <reference path="scenes/Simple.ts"/>
 /// <reference path="socketIOClient.ts"/>
-var AbstractNpc = NPC.AbstractNpc;
 var Game = /** @class */ (function () {
     function Game(canvasElement) {
         var serverUrl = window.location.hostname + ':' + gameServerPort;
@@ -2591,6 +2607,7 @@ var NPC;
         __extends(AbstractNpc, _super);
         function AbstractNpc(game, name) {
             var _this = _super.call(this, name, game) || this;
+            game.npcs.push(_this);
             var self = _this;
             _this.mesh.actionManager = new BABYLON.ActionManager(_this.game.getScene());
             _this.mesh.isPickable = true;
@@ -2615,20 +2632,23 @@ var NPC;
             this.mesh.dispose();
             this.tooltip.dispose();
         };
+        AbstractNpc.prototype.refreshTooltipColor = function () {
+            if (this.quest.isActive && !this.quest.hasRequrementsFinished) {
+                this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            }
+            else if (this.quest.isActive && this.quest.hasRequrementsFinished) {
+                this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
+            }
+            else {
+                this.tooltip.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+            }
+            return this;
+        };
         AbstractNpc.prototype.createTooltip = function () {
             var box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
             box1.parent = this.mesh;
             box1.position.y += 7;
             var materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
-            if (this.quest.isActive && !this.quest.hasRequrementsFinished) {
-                materialBox.diffuseColor = new BABYLON.Color3(1, 0, 0);
-            }
-            else if (this.quest.isActive && this.quest.hasRequrementsFinished) {
-                materialBox.diffuseColor = new BABYLON.Color3(1, 1, 0);
-            }
-            else {
-                materialBox.diffuseColor = new BABYLON.Color3(0, 1, 0);
-            }
             box1.material = materialBox;
             var keys = [];
             keys.push({
@@ -2646,6 +2666,7 @@ var NPC;
             this.box = box1;
             this.game.getScene().beginAnimation(box1, 0, 30, true);
             this.tooltip = box1;
+            this.refreshTooltipColor();
         };
         return AbstractNpc;
     }(AbstractCharacter));

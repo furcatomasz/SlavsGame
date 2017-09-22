@@ -77,8 +77,8 @@ abstract class Scene {
     public defaultPipeline(scene: BABYLON.Scene) {
         let self = this;
     var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
-    defaultPipeline.bloomEnabled = false;
-    defaultPipeline.fxaaEnabled = false;
+    defaultPipeline.bloomEnabled = true;
+    defaultPipeline.fxaaEnabled = true;
     defaultPipeline.imageProcessingEnabled = false;
     defaultPipeline.bloomWeight = 0.25;
 

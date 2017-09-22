@@ -15,9 +15,9 @@ class Environment {
         this.bushes = [];
         this.colliders = [];
 
-        //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
-        let light  = game.getScene().lights[0];
-        light.intensity = 1;
+        let light = this.enableDayAndNight(game, game.getScene().lights[0]);
+        //let light  = game.getScene().lights[0];
+        //light.intensity = 0;
 
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
@@ -47,7 +47,7 @@ class Environment {
 
              var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
              var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
-             var scaling = BABYLON.Matrix.Scaling(0.5, 0.5, 0.5);
+             var scaling = BABYLON.Matrix.Scaling(0.3, 0.3, 0.3);
 
              minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
              maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
@@ -112,7 +112,7 @@ class Environment {
                         game.controller.targetPoint = null;
                         game.controller.ball.visibility = 0;
                         game.controller.forward = false;
-                        game.player.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
+                        game.player.mesh.translate(BABYLON.Axis.Z, 0.35, BABYLON.Space.LOCAL);
                         game.getScene().activeCamera.position = game.player.mesh.position;
                     }));
             }
@@ -126,32 +126,41 @@ class Environment {
     }
 
     protected enableDayAndNight(game, light: BABYLON.Light): BABYLON.Light {
-        light.intensity = 1;
-
+        light.intensity = 0;
         var keys = [];
         keys.push({
             frame: 0,
-            value: 0.75
+            value: 0
         });
 
         keys.push({
-            frame: 30,
+            frame: 80,
+            value: 0
+        });
+
+        keys.push({
+            frame: 100,
             value: 1
         });
 
         keys.push({
-            frame: 60,
-            value: 0.75
+            frame: 180,
+            value: 1
         });
 
-        var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 1,
+        keys.push({
+            frame: 200,
+            value: 0
+        });
+
+        var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 10,
             BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-            BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+            BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
         animationBox.setKeys(keys);
 
         light.animations = [];
         light.animations.push(animationBox);
-        game.getScene().beginAnimation(light, 0, 60, true);
+        game.getScene().beginAnimation(light, 0, 200, true);
         return light;
     };
 }

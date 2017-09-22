@@ -140,7 +140,7 @@ var Scene = /** @class */ (function () {
         defaultPipeline.bloomEnabled = false;
         defaultPipeline.fxaaEnabled = false;
         defaultPipeline.imageProcessingEnabled = false;
-        defaultPipeline.bloomWeight = 0.3;
+        defaultPipeline.bloomWeight = 0.25;
         var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         var panel = new BABYLON.GUI.StackPanel();
         panel.width = "200px";
@@ -1243,9 +1243,9 @@ var Environment = /** @class */ (function () {
         this.trees = [];
         this.bushes = [];
         this.colliders = [];
-        //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
-        var light = game.getScene().lights[0];
-        light.intensity = 1;
+        var light = this.enableDayAndNight(game, game.getScene().lights[0]);
+        //let light  = game.getScene().lights[0];
+        //light.intensity = 0;
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -1270,7 +1270,7 @@ var Environment = /** @class */ (function () {
             var meshTree = this.trees[i];
             var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
             var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
-            var scaling = BABYLON.Matrix.Scaling(0.5, 0.5, 0.5);
+            var scaling = BABYLON.Matrix.Scaling(0.3, 0.3, 0.3);
             minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
             maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
             meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);
@@ -1319,7 +1319,7 @@ var Environment = /** @class */ (function () {
                     game.controller.targetPoint = null;
                     game.controller.ball.visibility = 0;
                     game.controller.forward = false;
-                    game.player.mesh.translate(BABYLON.Axis.Z, 0.5, BABYLON.Space.LOCAL);
+                    game.player.mesh.translate(BABYLON.Axis.Z, 0.35, BABYLON.Space.LOCAL);
                     game.getScene().activeCamera.position = game.player.mesh.position;
                 }));
             }
@@ -1329,25 +1329,33 @@ var Environment = /** @class */ (function () {
         new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
     }
     Environment.prototype.enableDayAndNight = function (game, light) {
-        light.intensity = 1;
+        light.intensity = 0;
         var keys = [];
         keys.push({
             frame: 0,
-            value: 0.75
+            value: 0
         });
         keys.push({
-            frame: 30,
+            frame: 80,
+            value: 0
+        });
+        keys.push({
+            frame: 100,
             value: 1
         });
         keys.push({
-            frame: 60,
-            value: 0.75
+            frame: 180,
+            value: 1
         });
-        var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 1, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+        keys.push({
+            frame: 200,
+            value: 0
+        });
+        var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 10, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
         animationBox.setKeys(keys);
         light.animations = [];
         light.animations.push(animationBox);
-        game.getScene().beginAnimation(light, 0, 60, true);
+        game.getScene().beginAnimation(light, 0, 200, true);
         return light;
     };
     ;
@@ -3653,76 +3661,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Shield = /** @class */ (function (_super) {
-        __extends(Shield, _super);
-        /**
-         * @param game
-         * @param databaseId
-         */
-        function Shield(game, databaseId) {
-            return _super.call(this, game, databaseId) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Shield.prototype.getType = function () {
-            return Items.Shield.TYPE;
-        };
-        Shield.TYPE = 2;
-        return Shield;
-    }(Items.Item));
-    Items.Shield = Shield;
-})(Items || (Items = {}));
-/// <reference path="Shield.ts"/>
-var Items;
-(function (Items) {
-    var Shields;
-    (function (Shields) {
-        var BigWoodShield = /** @class */ (function (_super) {
-            __extends(BigWoodShield, _super);
-            function BigWoodShield(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Big Wood Shield';
-                _this.image = 'Shield';
-                _this.itemId = Items.Shields.BigWoodShield.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 10, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Shield');
-                _this.mesh.visibility = 0;
-                _this.mesh.scaling = new BABYLON.Vector3(1, 2, 1);
-                return _this;
-            }
-            BigWoodShield.ITEM_ID = 6;
-            return BigWoodShield;
-        }(Items.Shield));
-        Shields.BigWoodShield = BigWoodShield;
-    })(Shields = Items.Shields || (Items.Shields = {}));
-})(Items || (Items = {}));
-/// <reference path="Shield.ts"/>
-var Items;
-(function (Items) {
-    var Shields;
-    (function (Shields) {
-        var WoodShield = /** @class */ (function (_super) {
-            __extends(WoodShield, _super);
-            function WoodShield(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Wood Shield';
-                _this.image = 'Shield';
-                _this.itemId = Items.Shields.WoodShield.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Shield');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            WoodShield.ITEM_ID = 7;
-            return WoodShield;
-        }(Items.Shield));
-        Shields.WoodShield = WoodShield;
-    })(Shields = Items.Shields || (Items.Shields = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Weapon = /** @class */ (function (_super) {
         __extends(Weapon, _super);
         /**
@@ -3796,6 +3734,76 @@ var Items;
         }(Items.Weapon));
         Weapons.Sword = Sword;
     })(Weapons = Items.Weapons || (Items.Weapons = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Shield = /** @class */ (function (_super) {
+        __extends(Shield, _super);
+        /**
+         * @param game
+         * @param databaseId
+         */
+        function Shield(game, databaseId) {
+            return _super.call(this, game, databaseId) || this;
+        }
+        /**
+         * @returns {number}
+         */
+        Shield.prototype.getType = function () {
+            return Items.Shield.TYPE;
+        };
+        Shield.TYPE = 2;
+        return Shield;
+    }(Items.Item));
+    Items.Shield = Shield;
+})(Items || (Items = {}));
+/// <reference path="Shield.ts"/>
+var Items;
+(function (Items) {
+    var Shields;
+    (function (Shields) {
+        var BigWoodShield = /** @class */ (function (_super) {
+            __extends(BigWoodShield, _super);
+            function BigWoodShield(game, databaseId) {
+                var _this = _super.call(this, game, databaseId) || this;
+                _this.name = 'Big Wood Shield';
+                _this.image = 'Shield';
+                _this.itemId = Items.Shields.BigWoodShield.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 10, 0, 0, 0);
+                _this.mesh = game.factories['character'].createInstance('Shield');
+                _this.mesh.visibility = 0;
+                _this.mesh.scaling = new BABYLON.Vector3(1, 2, 1);
+                return _this;
+            }
+            BigWoodShield.ITEM_ID = 6;
+            return BigWoodShield;
+        }(Items.Shield));
+        Shields.BigWoodShield = BigWoodShield;
+    })(Shields = Items.Shields || (Items.Shields = {}));
+})(Items || (Items = {}));
+/// <reference path="Shield.ts"/>
+var Items;
+(function (Items) {
+    var Shields;
+    (function (Shields) {
+        var WoodShield = /** @class */ (function (_super) {
+            __extends(WoodShield, _super);
+            function WoodShield(game, databaseId) {
+                var _this = _super.call(this, game, databaseId) || this;
+                _this.name = 'Wood Shield';
+                _this.image = 'Shield';
+                _this.itemId = Items.Shields.WoodShield.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.mesh = game.factories['character'].createInstance('Shield');
+                _this.mesh.visibility = 0;
+                return _this;
+            }
+            WoodShield.ITEM_ID = 7;
+            return WoodShield;
+        }(Items.Shield));
+        Shields.WoodShield = WoodShield;
+    })(Shields = Items.Shields || (Items.Shields = {}));
 })(Items || (Items = {}));
 /// <reference path="../Inventory.ts"/>
 var GUI;

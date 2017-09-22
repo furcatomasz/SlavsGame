@@ -80,7 +80,7 @@ abstract class Scene {
     defaultPipeline.bloomEnabled = false;
     defaultPipeline.fxaaEnabled = false;
     defaultPipeline.imageProcessingEnabled = false;
-    defaultPipeline.bloomWeight = 0.3;
+    defaultPipeline.bloomWeight = 0.25;
 
     var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 

@@ -18,7 +18,7 @@ namespace Quests {
             this.game = game;
             this.awards = [];
             this.requirements = [];
-            this.hasRequrementsFinished = true;
+            this.hasRequrementsFinished = false;
         }
 
         public setAwards(awards:Array) {

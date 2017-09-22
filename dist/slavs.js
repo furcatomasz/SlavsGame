@@ -685,6 +685,7 @@ var SocketIOClient = /** @class */ (function () {
 /// <reference path="controllers/Keyboard.ts"/>
 /// <reference path="scenes/Simple.ts"/>
 /// <reference path="socketIOClient.ts"/>
+var AbstractNpc = NPC.AbstractNpc;
 var Game = /** @class */ (function () {
     function Game(canvasElement) {
         var serverUrl = window.location.hostname + ':' + gameServerPort;
@@ -696,6 +697,7 @@ var Game = /** @class */ (function () {
         this.factories = [];
         this.enemies = [];
         this.quests = [];
+        this.npcs = [];
         this.scenes = [];
         this.activeScene = null;
         this.events = new Events();
@@ -1916,7 +1918,7 @@ var Quests;
             this.game = game;
             this.awards = [];
             this.requirements = [];
-            this.hasRequrementsFinished = true;
+            this.hasRequrementsFinished = false;
         }
         AbstractQuest.prototype.setAwards = function (awards) {
             this.awards = awards;
@@ -2600,7 +2602,7 @@ var NPC;
                     self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOverTrigger, self.box, 'scaling', new BABYLON.Vector3(2, 2, 2), 300));
                     self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOutTrigger, self.box, 'scaling', new BABYLON.Vector3(1, 1, 1), 300));
                     self.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                        var quest = new GUI.Quest(game.gui, self.quest);
+                        var quest = new GUI.Quest(game.gui, self.quest, self.mesh);
                         quest.open();
                     }));
                 }
@@ -2611,6 +2613,7 @@ var NPC;
         }
         AbstractNpc.prototype.removeFromWorld = function () {
             this.mesh.dispose();
+            this.tooltip.dispose();
         };
         AbstractNpc.prototype.createTooltip = function () {
             var box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
@@ -2642,6 +2645,7 @@ var NPC;
             box1.animations.push(animationBox);
             this.box = box1;
             this.game.getScene().beginAnimation(box1, 0, 30, true);
+            this.tooltip = box1;
         };
         return AbstractNpc;
     }(AbstractCharacter));
@@ -2741,10 +2745,8 @@ var SelectCharacter;
             }
             _this.mesh = mesh;
             _this = _super.call(this, name, game) || this;
-            console.log(1);
             _this.initPlayerInventory();
             _this.mesh.skeleton.beginAnimation('Sit');
-            console.log(1);
             _this.registerActions();
             return _this;
         }
@@ -2801,6 +2803,32 @@ var SelectCharacter;
     }(AbstractCharacter));
     SelectCharacter.Warrior = Warrior;
 })(SelectCharacter || (SelectCharacter = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var TooltipMesh = /** @class */ (function () {
+        function TooltipMesh(mesh, text) {
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("tooltip");
+            var rect1 = new BABYLON.GUI.Rectangle();
+            rect1.width = 0.4;
+            rect1.height = "40px";
+            rect1.cornerRadius = 20;
+            rect1.thickness = 2;
+            rect1.background = "black";
+            advancedTexture.addControl(rect1);
+            rect1.linkWithMesh(mesh);
+            rect1.linkOffsetY = -100;
+            var label = new BABYLON.GUI.TextBlock();
+            label.text = text;
+            rect1.addControl(label);
+            setTimeout(function () {
+                advancedTexture.dispose();
+            }, 2000);
+        }
+        return TooltipMesh;
+    }());
+    GUI.TooltipMesh = TooltipMesh;
+})(GUI || (GUI = {}));
 /// <reference path="../Main.ts"/>
 /// <reference path="../../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
 var GUI;
@@ -3210,9 +3238,10 @@ var GUI;
 (function (GUI) {
     var Quest = /** @class */ (function (_super) {
         __extends(Quest, _super);
-        function Quest(guiMain, quest) {
+        function Quest(guiMain, quest, mesh) {
             var _this = _super.call(this, guiMain) || this;
             _this.quest = quest;
+            _this.mesh = mesh;
             _this.name = 'Quest';
             _this.imageUrl = "assets/gui/attrs.png";
             _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
@@ -3220,6 +3249,10 @@ var GUI;
         }
         Quest.prototype.open = function () {
             var self = this;
+            if (self.quest.isActive && !self.quest.hasRequrementsFinished) {
+                new GUI.TooltipMesh(self.mesh, 'Quest requirements is not complete.');
+                return;
+            }
             this.opened = true;
             this.initTexture();
             this.guiTexture.addControl(this.container);
@@ -3247,6 +3280,7 @@ var GUI;
             buttonAccept.horizontalAlignment = this.position;
             buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             buttonAccept.onPointerUpObservable.add(function () {
+                self.guiMain.game.client.socket.emit('acceptQuest', { id: self.quest.getQuestId() });
                 self.close();
             });
             this.guiMain.registerBlockMoveCharacter(buttonAccept);

@@ -5,6 +5,7 @@ namespace NPC {
         protected box: BABYLON.AbstractMesh;
         protected quest: Quests.AbstractQuest;
         protected questId: number;
+        protected tooltip: BABYLON.AbstractMesh;
 
         public constructor(game:Game, name) {
             super(name, game);
@@ -37,7 +38,7 @@ namespace NPC {
                     self.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                         BABYLON.ActionManager.OnPickTrigger,
                         function () {
-                            let quest = new GUI.Quest(game.gui, self.quest);
+                            let quest = new GUI.Quest(game.gui, self.quest, self.mesh);
                             quest.open();
 
                         })
@@ -50,13 +51,14 @@ namespace NPC {
 
         public removeFromWorld() {
             this.mesh.dispose();
+            this.tooltip.dispose();
         }
 
         public createTooltip() {
-            var box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
+            let box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
             box1.parent = this.mesh;
             box1.position.y += 7;
-            var materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
+            let materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
             if(this.quest.isActive && !this.quest.hasRequrementsFinished) {
                 materialBox.diffuseColor = new BABYLON.Color3(1, 0, 0);
             } else if(this.quest.isActive && this.quest.hasRequrementsFinished) {
@@ -66,7 +68,7 @@ namespace NPC {
             }
 
             box1.material = materialBox;
-            var keys = [];
+            let keys = [];
             keys.push({
                 frame: 0,
                 value: 0
@@ -77,7 +79,7 @@ namespace NPC {
                 value: -2
             });
 
-            var animationBox = new BABYLON.Animation("rotation", "rotation.y", 30,
+            let animationBox = new BABYLON.Animation("rotation", "rotation.y", 30,
                 BABYLON.Animation.ANIMATIONTYPE_FLOAT,
                 BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
             animationBox.setKeys(keys);
@@ -86,6 +88,8 @@ namespace NPC {
             box1.animations.push(animationBox);
             this.box = box1;
             this.game.getScene().beginAnimation(box1, 0, 30, true);
+
+            this.tooltip = box1;
         }
     }
 }

@@ -26,10 +26,9 @@ namespace SelectCharacter {
 
             this.mesh = mesh;
             super(name, game);
-console.log(1);
+
             this.initPlayerInventory();
             this.mesh.skeleton.beginAnimation('Sit');
-            console.log(1);
 
             this.registerActions();
         }

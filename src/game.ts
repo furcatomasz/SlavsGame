@@ -3,6 +3,7 @@
 /// <reference path="scenes/Simple.ts"/>
 /// <reference path="socketIOClient.ts"/>
 
+import AbstractNpc = NPC.AbstractNpc;
 class Game {
 
     public sceneManager: Scene;
@@ -23,6 +24,7 @@ class Game {
      */
     public scenes: Array<BABYLON.Scene>;
     public remotePlayers: Array<Player>;
+    public npcs: Array<AbstractNpc>;
     public enemies: Array<Monster>;
     public quests: Array<Quests.AbstractQuest>;
 
@@ -47,6 +49,7 @@ class Game {
         this.factories = [];
         this.enemies = [];
         this.quests = [];
+        this.npcs = [];
         this.scenes = [];
         this.activeScene = null;
         this.events = new Events();

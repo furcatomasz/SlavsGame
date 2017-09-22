@@ -4,10 +4,12 @@ namespace GUI {
     export class Quest extends Popup {
 
         protected quest: Quests.AbstractQuest;
+        protected mesh: Quests.AbstractQuest;
 
-        constructor(guiMain: GUI.Main, quest: Quests.AbstractQuest) {
+        constructor(guiMain: GUI.Main, quest: Quests.AbstractQuest, mesh: BABYLON.AbstractMesh) {
             super(guiMain);
             this.quest = quest;
+            this.mesh = mesh;
             this.name = 'Quest';
             this.imageUrl = "assets/gui/attrs.png";
             this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
@@ -15,6 +17,12 @@ namespace GUI {
 
         public open() {
             let self = this;
+            if(self.quest.isActive && !self.quest.hasRequrementsFinished) {
+                new GUI.TooltipMesh(self.mesh, 'Quest requirements is not complete.');
+
+                return;
+            }
+
             this.opened = true;
             this.initTexture();
 
@@ -47,6 +55,7 @@ namespace GUI {
             buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
             buttonAccept.onPointerUpObservable.add(function() {
+                self.guiMain.game.client.socket.emit('acceptQuest', {id: self.quest.getQuestId()});
                 self.close();
             });
 

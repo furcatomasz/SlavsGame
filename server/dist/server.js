@@ -188,6 +188,24 @@ var Server;
                         });
                     });
                 });
+                socket.on('acceptQuest', function (quest) {
+                    var questId = quest.id;
+                    var playerId = player.characters[player.activePlayer].id;
+                    server.ormManager.structure.playerQuest.oneAsync({
+                        player_id: playerId,
+                        questId: questId
+                    }).then(function (quest) {
+                        if (!quest) {
+                            server.ormManager.structure.playerQuest.createAsync({
+                                questId: questId,
+                                date: 0,
+                                player_id: playerId
+                            }).then(function (quest) {
+                                socket.emit('acceptedQuest', quest);
+                            });
+                        }
+                    });
+                });
                 socket.on('selectCharacter', function (selectedCharacter) {
                     player.activePlayer = selectedCharacter;
                     //let playerId = player.characters[selectedCharacter].id;

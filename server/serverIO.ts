@@ -43,7 +43,7 @@ namespace Server {
 
                                             playerDatabase.getItems(function (error, items) {
                                                 playerDatabase.items = items;
-                                                if(i == players.length-1) {
+                                                if (i == players.length - 1) {
                                                     resolveitems();
                                                 }
                                             });
@@ -72,6 +72,26 @@ namespace Server {
                             emitData.playerRequirements = requrements;
                             socket.emit('quests', emitData);
                         });
+                    });
+                });
+
+                socket.on('acceptQuest', function (quest) {
+                    let questId = quest.id;
+                    let playerId = player.characters[player.activePlayer].id;
+
+                    server.ormManager.structure.playerQuest.oneAsync({
+                        player_id: playerId,
+                        questId: questId
+                    }).then(function (quest) {
+                        if (!quest) {
+                            server.ormManager.structure.playerQuest.createAsync({
+                                questId: questId,
+                                date: 0,
+                                player_id: playerId
+                            }).then(function (quest) {
+                                socket.emit('acceptedQuest', quest);
+                            });
+                        }
                     });
                 });
 

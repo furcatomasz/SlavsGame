@@ -12,12 +12,9 @@ namespace Factories {
         protected fileName: string;
 
         constructor(game:Game, scene:BABYLON.Scene, assetsManager:BABYLON.AssetsManager) {
-            //let characterFactory = new Warrior.MeshFactory(scene, '/babel/Characters/Warrior');
-            //game.characters['player'] = characterFactory;
             this.game = game;
             this.scene = scene;
             this.assetsManager = assetsManager;
-            let self = this;
         }
 
         public initFactory() {
@@ -25,8 +22,8 @@ namespace Factories {
             let meshTask = this.assetsManager.addMeshTask(this.taskName, null, this.dir, this.fileName);
             meshTask.onSuccess = function (task) {
                 self.loadedMeshes = task.loadedMeshes;
-                for (var i = 0; i < self.loadedMeshes.length; i++) {
-                    var loadedMesh = self.loadedMeshes[i];
+                for (let i = 0; i < self.loadedMeshes.length; i++) {
+                    let loadedMesh = self.loadedMeshes[i];
                     loadedMesh.visibility = 0;
                 }
             }
@@ -35,9 +32,9 @@ namespace Factories {
         }
         
         public createInstance(name: string, cloneSkeleton: boolean = false): BABYLON.AbstractMesh {
-            for (var i = 0; i < this.loadedMeshes.length; i++) {
-                var mesh = this.loadedMeshes[i];
-                    if(mesh.name == name) {
+            for (let i = 0; i < this.loadedMeshes.length; i++) {
+                let mesh = this.loadedMeshes[i];
+                if(mesh.name == name) {
                         let clonedMesh = mesh.clone('clone_'+name);
 
                         if(cloneSkeleton) {

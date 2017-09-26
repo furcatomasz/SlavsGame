@@ -123,6 +123,7 @@ var Scene = /** @class */ (function () {
     Scene.prototype.initFactories = function (scene, assetsManager) {
         this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
         this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
+        this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
         return this;
     };
     Scene.prototype.changeScene = function (newScene) {
@@ -219,6 +220,26 @@ var Simple = /** @class */ (function (_super) {
                     });
                     game.client.socket.emit('getQuests');
                     self.defaultPipeline(scene);
+                    var grain = self.game.factories['nature_grain'].createInstance('Grain.001');
+                    grain.position = new BABYLON.Vector3(4, 0, 4);
+                    var sphere = BABYLON.MeshBuilder.CreateSphere("s", {}, scene);
+                    sphere.position = new BABYLON.Vector3(4, 0, 4);
+                    // grain.scaling = new BABYLON.Vector3(3,3,3);
+                    var fact = 2;
+                    var SPS = new BABYLON.SolidParticleSystem("SPS", scene);
+                    var myPositionFunction = function (particle, i, s) {
+                        particle.position.x = (Math.random() - 0.5) * fact;
+                        particle.position.y = (Math.random() - 0.5) * fact;
+                        particle.position.z = (Math.random() - 0.5) * fact;
+                        // particle.rotation.x = Math.random() * 3.15;
+                        // particle.rotation.y = Math.random() * 3.15;
+                        // particle.rotation.z = Math.random() * 1.5;
+                        // particle.color = new BABYLON.Color4(particle.position.x / fact + 0.5, particle.position.y / fact + 0.5, particle.position.z / fact + 0.5, 1.0);
+                    };
+                    SPS.addShape(sphere, 2, { positionFunction: myPositionFunction });
+                    var mesh = SPS.buildMesh();
+                    SPS.initParticles();
+                    SPS.setParticles();
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -723,7 +744,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new SelectCharacter().initScene(this);
+        new Simple().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -1165,12 +1186,9 @@ var Factories;
 (function (Factories) {
     var AbstractFactory = /** @class */ (function () {
         function AbstractFactory(game, scene, assetsManager) {
-            //let characterFactory = new Warrior.MeshFactory(scene, '/babel/Characters/Warrior');
-            //game.characters['player'] = characterFactory;
             this.game = game;
             this.scene = scene;
             this.assetsManager = assetsManager;
-            var self = this;
         }
         AbstractFactory.prototype.initFactory = function () {
             var self = this;
@@ -1201,6 +1219,23 @@ var Factories;
         return AbstractFactory;
     }());
     Factories.AbstractFactory = AbstractFactory;
+})(Factories || (Factories = {}));
+/// <reference path="AbstractFactory.ts"/>
+/// <reference path="../game.ts"/>
+var Factories;
+(function (Factories) {
+    var Nature = /** @class */ (function (_super) {
+        __extends(Nature, _super);
+        function Nature(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'factory.nature.grain';
+            _this.dir = 'assets/Environment/grain/';
+            _this.fileName = 'Grain.babylon';
+            return _this;
+        }
+        return Nature;
+    }(Factories.AbstractFactory));
+    Factories.Nature = Nature;
 })(Factories || (Factories = {}));
 /// <reference path="AbstractFactory.ts"/>
 /// <reference path="../game.ts"/>

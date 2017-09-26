@@ -1,0 +1,35 @@
+{"producer":{"name":"Blender","version":"2.78 (sub 0)","exporter_version":"5.4.0","file":"Grain.babylon"},
+"autoClear":true,"clearColor":[0.0509,0.0509,0.0509],"ambientColor":[0,0,0],"gravity":[0,-9.81,0],
+"materials":[{"name":"Grain.Grain","id":"Grain.Grain","ambient":[0.8,0.8,0.8],"diffuse":[0.64,0.64,0.64],"specular":[0,0,0],"emissive":[0,0,0],"specularPower":50,"alpha":1,"backFaceCulling":false,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4, 
+"diffuseTexture":{"name":"Grain.png","level":1,"hasAlpha":1,"coordinatesMode":0,"uOffset":0,"vOffset":0,"uScale":1,"vScale":1,"uAng":0,"vAng":0,"wAng":0,"wrapU":1,"wrapV":1,"coordinatesIndex":0}}],
+"multiMaterials":[],
+"skeletons":[],
+"meshes":[{"name":"Grain.001","id":"Grain.001","materialId":"Grain.Grain","billboardMode":0,"position":[0,0,0],"rotation":[-1.5708,0,-0.0001],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"tags":""
+,"positions":[0.8018,0,-0.1606,-0.8018,0,5.1306,-0.8018,0,-0.1606,0.8018,0,5.1306]
+,"normals":[0,1,0,0,1,0,0,1,0,0,1,0]
+,"uvs":[0.3194,0,-0.0201,1,-0.0201,0,0.3194,1]
+,"indices":[0,1,2,0,3,1]
+,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":4,"indexStart":0,"indexCount":6}]
+,"animations":[{"dataType":1,"framePerSecond":24,"keys":[
+{"frame":0,"values":[-1.5708,0,0]},
+{"frame":40,"values":[-1.5708,0,-0.1088]},
+{"frame":100,"values":[-1.5708,0,0.1299]},
+{"frame":139,"values":[-1.5708,0,0]},
+{"frame":181,"values":[-1.5708,0,0]}],"loopBehavior":1,"name":"rotation animation","property":"rotation"},{"dataType":1,"framePerSecond":24,"keys":[
+{"frame":0,"values":[0,0,0]},
+{"frame":40,"values":[0,0,0]},
+{"frame":100,"values":[0,0,0]},
+{"frame":139,"values":[0,0,0]},
+{"frame":181,"values":[0,0,0]}],"loopBehavior":1,"name":"position animation","property":"position"},{"dataType":1,"framePerSecond":24,"keys":[
+{"frame":0,"values":[1,1,1]},
+{"frame":40,"values":[1,1,1]},
+{"frame":100,"values":[1,1,1]},
+{"frame":139,"values":[1,1,1]},
+{"frame":181,"values":[1,1,1]}],"loopBehavior":1,"name":"scaling animation","property":"scaling"}],"ranges":[{"name":"GrainAction.001","from":0,"to":181}]
+,"instances":[]}
+],
+"morphTargetManagers":[],
+"cameras":[],
+"lights":[],
+"shadowGenerators":[]
+}

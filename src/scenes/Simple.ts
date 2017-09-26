@@ -45,6 +45,29 @@ class Simple extends Scene {
 
                     self.defaultPipeline(scene);
 
+                    let grain = self.game.factories['nature_grain'].createInstance('Grain.001');
+                    grain.position = new BABYLON.Vector3(4,0,4);
+                    var sphere = BABYLON.MeshBuilder.CreateSphere("s", {}, scene);
+                    sphere.position = new BABYLON.Vector3(4,0,4);
+
+                    // grain.scaling = new BABYLON.Vector3(3,3,3);
+let fact = 2;
+                    let SPS = new BABYLON.SolidParticleSystem("SPS", scene);
+                    let myPositionFunction = function(particle, i, s) {
+                        particle.position.x = (Math.random() - 0.5) * fact;
+                        particle.position.y = (Math.random() - 0.5) * fact;
+                        particle.position.z = (Math.random() - 0.5) * fact;
+                        // particle.rotation.x = Math.random() * 3.15;
+                        // particle.rotation.y = Math.random() * 3.15;
+                        // particle.rotation.z = Math.random() * 1.5;
+                        // particle.color = new BABYLON.Color4(particle.position.x / fact + 0.5, particle.position.y / fact + 0.5, particle.position.z / fact + 0.5, 1.0);
+                    };
+
+                    SPS.addShape(sphere, 2, { positionFunction: myPositionFunction});
+                    let mesh = SPS.buildMesh();
+                    SPS.initParticles();
+                    SPS.setParticles();
+
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);

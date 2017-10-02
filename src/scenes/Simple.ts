@@ -44,7 +44,6 @@ class Simple extends Scene {
                     game.client.socket.emit('getQuests');
 
                     self.defaultPipeline(scene);
-
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);

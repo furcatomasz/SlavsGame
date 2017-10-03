@@ -220,26 +220,6 @@ var Simple = /** @class */ (function (_super) {
                     });
                     game.client.socket.emit('getQuests');
                     self.defaultPipeline(scene);
-                    var grain = self.game.factories['nature_grain'].createInstance('Grain.001');
-                    grain.position = new BABYLON.Vector3(4, 0, 4);
-                    var sphere = BABYLON.MeshBuilder.CreateSphere("s", {}, scene);
-                    sphere.position = new BABYLON.Vector3(4, 0, 4);
-                    // grain.scaling = new BABYLON.Vector3(3,3,3);
-                    var fact = 2;
-                    var SPS = new BABYLON.SolidParticleSystem("SPS", scene);
-                    var myPositionFunction = function (particle, i, s) {
-                        particle.position.x = (Math.random() - 0.5) * fact;
-                        particle.position.y = (Math.random() - 0.5) * fact;
-                        particle.position.z = (Math.random() - 0.5) * fact;
-                        // particle.rotation.x = Math.random() * 3.15;
-                        // particle.rotation.y = Math.random() * 3.15;
-                        // particle.rotation.z = Math.random() * 1.5;
-                        // particle.color = new BABYLON.Color4(particle.position.x / fact + 0.5, particle.position.y / fact + 0.5, particle.position.z / fact + 0.5, 1.0);
-                    };
-                    SPS.addShape(sphere, 2, { positionFunction: myPositionFunction });
-                    var mesh = SPS.buildMesh();
-                    SPS.initParticles();
-                    SPS.setParticles();
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -1904,6 +1884,35 @@ var Particles;
         return Fog;
     }(Particles.AbstractParticle));
     Particles.Fog = Fog;
+})(Particles || (Particles = {}));
+/// <reference path="AbstractParticle.ts"/>
+var Particles;
+(function (Particles) {
+    var GrainGenerator = /** @class */ (function () {
+        function GrainGenerator() {
+        }
+        GrainGenerator.prototype.generate = function (mainGrain, instances, offsetXMax, offsetZMax, animationName) {
+            if (instances === void 0) { instances = 1000; }
+            if (offsetXMax === void 0) { offsetXMax = 60; }
+            if (offsetZMax === void 0) { offsetZMax = 10; }
+            if (animationName === void 0) { animationName = 'ArmatureAction'; }
+            // let grain = self.game.factories['nature_grain'].createInstance('Grain', true);
+            // grain.scaling = new BABYLON.Vector3(1.3,1.3,1.3);
+            // grain.position = new BABYLON.Vector3(22.32,0,-103.46);
+            mainGrain.skeleton.beginAnimation(animationName, true);
+            for (var i = 0; i < instances; i++) {
+                var offsetX = (Math.random() - 0.5) * offsetXMax;
+                var offsetZ = (Math.random() - 0.5) * offsetZMax;
+                var instance = grain.createInstance("grainGenerator_" + i);
+                instance.parent = mainGrain;
+                instance.skeleton = mainGrain.skeleton;
+                instance.position.x = offsetX;
+                instance.position.z = offsetZ;
+            }
+        };
+        return GrainGenerator;
+    }());
+    Particles.GrainGenerator = GrainGenerator;
 })(Particles || (Particles = {}));
 /// <reference path="AbstractParticle.ts"/>
 var Particles;

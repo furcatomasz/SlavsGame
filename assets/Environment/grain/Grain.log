@@ -6,10 +6,12 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		inline textures:  false
 		texture directory:  F:\Slavs\Babylon\Nature\
 	Python World class constructor completed
-	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
-	processing begun of mesh:  Grain.001
-		animation processing begun
-			processing action GrainAction.001:  in[0 - 181], out[0 - 181]
+	processing begun of skeleton:  Armature, id:  0
+		processing begun of bone:  Bone, index:  0
+		processing begun of bone:  Bone.001, index:  1
+		processing action ArmatureAction:  in[0 - 158], out[0 - 158]
+		processing action GrainAction.001:  in[0 - 1], out[170 - 171]
+	processing begun of mesh:  Grain
 		processing begun of Standard material:  Grain
 			Diffuse texture found "Grain"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
@@ -20,7 +22,15 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  6
+		Skeleton stats:  
+			Total Influencers:  8
+			Avg # of influencers per vertex:  2
+			Highest # of influencers observed:  2, num vertices with this:  4
+			exported as 2 influencers
+			num skeletonWeights and skeletonIndices:  16
+	WARNING: The following camera not visible in scene thus ignored: Camera
+	WARNING: The following lamp not visible in scene thus ignored: Lamp
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.013 secs
+elapsed time:  0 min, 0.109 secs

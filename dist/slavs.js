@@ -226,6 +226,55 @@ var Simple = /** @class */ (function (_super) {
                         sceneType: Simple.TYPE
                     });
                     game.client.socket.emit('getQuests');
+                    var grain = game.factories['nature_grain'].createInstance('Grain', true);
+                    grain.position = new BABYLON.Vector3(66, 0, -105);
+                    grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
+                    var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
+                    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+                    var panel = new BABYLON.GUI.StackPanel();
+                    panel.width = "200px";
+                    panel.isVertical = true;
+                    panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                    panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+                    advancedTexture.addControl(panel);
+                    var checkbox = new BABYLON.GUI.Checkbox();
+                    checkbox.width = "20px";
+                    checkbox.height = "20px";
+                    checkbox.color = "red";
+                    checkbox.onIsCheckedChangedObservable.add(function (value) {
+                        if (value) {
+                            grain.skeleton.beginAnimation('ArmatureAction', true);
+                        }
+                        else {
+                            scene.stopAnimation(grain.skeleton);
+                        }
+                    });
+                    if (game.gui) {
+                        game.gui.registerBlockMoveCharacter(checkbox);
+                    }
+                    var header = BABYLON.GUI.Control.AddHeader(checkbox, 'Grain animation', "180px", { isHorizontal: true, controlFirst: true });
+                    header.height = "30px";
+                    header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    panel.addControl(header);
+                    var checkbox = new BABYLON.GUI.Checkbox();
+                    checkbox.width = "20px";
+                    checkbox.height = "20px";
+                    checkbox.color = "red";
+                    checkbox.onIsCheckedChangedObservable.add(function (value) {
+                        if (value) {
+                            grain.visibility = false;
+                        }
+                        else {
+                            grain.visibility = true;
+                        }
+                    });
+                    if (game.gui) {
+                        game.gui.registerBlockMoveCharacter(checkbox);
+                    }
+                    var header = BABYLON.GUI.Control.AddHeader(checkbox, 'Disable grain', "180px", { isHorizontal: true, controlFirst: true });
+                    header.height = "30px";
+                    header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    panel.addControl(header);
                     self.defaultPipeline(scene);
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
@@ -1265,9 +1314,9 @@ var Environment = /** @class */ (function () {
         this.trees = [];
         this.bushes = [];
         this.colliders = [];
-        var light = this.enableDayAndNight(game, game.getScene().lights[0]);
-        //let light  = game.getScene().lights[0];
-        //light.intensity = 0;
+        //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
+        var light = game.getScene().lights[0];
+        light.intensity = 1;
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -1899,23 +1948,20 @@ var Particles;
         function GrainGenerator() {
         }
         GrainGenerator.prototype.generate = function (mainGrain, instances, offsetXMax, offsetZMax, animationName) {
+            //mainGrain.skeleton.beginAnimation(animationName, true);
             if (instances === void 0) { instances = 1000; }
             if (offsetXMax === void 0) { offsetXMax = 60; }
             if (offsetZMax === void 0) { offsetZMax = 10; }
             if (animationName === void 0) { animationName = 'ArmatureAction'; }
-            // let grain = self.game.factories['nature_grain'].createInstance('Grain', true);
-            // grain.scaling = new BABYLON.Vector3(1.3,1.3,1.3);
-            // grain.position = new BABYLON.Vector3(22.32,0,-103.46);
-            mainGrain.skeleton.beginAnimation(animationName, true);
             for (var i = 0; i < instances; i++) {
                 var offsetX = (Math.random() - 0.5) * offsetXMax;
                 var offsetZ = (Math.random() - 0.5) * offsetZMax;
-                var instance = grain.createInstance("grainGenerator_" + i);
+                var instance = mainGrain.createInstance("grainGenerator_" + i);
                 instance.parent = mainGrain;
-                instance.skeleton = mainGrain.skeleton;
                 instance.position.x = offsetX;
                 instance.position.z = offsetZ;
             }
+            return this;
         };
         return GrainGenerator;
     }());

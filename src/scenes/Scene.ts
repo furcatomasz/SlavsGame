@@ -47,12 +47,12 @@ abstract class Scene {
     }
 
     public optimizeScene(scene:BABYLON.Scene) {
-        //scene.collisionsEnabled = false;
-        //scene.fogEnabled = false;
-        //scene.lensFlaresEnabled = false;
-        //scene.probesEnabled = false;
-        //scene.postProcessesEnabled = false;
-        //scene.spritesEnabled = false;
+        scene.collisionsEnabled = false;
+        scene.fogEnabled = false;
+        scene.lensFlaresEnabled = false;
+        scene.probesEnabled = false;
+        scene.postProcessesEnabled = false;
+        scene.spritesEnabled = false;
         scene.audioEnabled = false;
         return this;
     }
@@ -76,52 +76,52 @@ abstract class Scene {
     }
 
     public defaultPipeline(scene: BABYLON.Scene) {
-        let self = this;
-    var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
-    defaultPipeline.bloomEnabled = true;
-    defaultPipeline.fxaaEnabled = true;
-    defaultPipeline.imageProcessingEnabled = false;
-    defaultPipeline.bloomWeight = 0.25;
-
-    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-
-    var panel = new BABYLON.GUI.StackPanel();
-    panel.width = "200px";
-    panel.isVertical = true;
-    panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-    advancedTexture.addControl(panel)
-
-    var addCheckbox = function(text, func, initialValue, left) {
-        var checkbox = new BABYLON.GUI.Checkbox();
-        checkbox.width = "20px";
-        checkbox.height = "20px";
-        checkbox.isChecked = initialValue;
-        checkbox.color = "green";
-        checkbox.onIsCheckedChangedObservable.add(function(value) {
-            func(value);
-        });
-        if(self.game.gui) {
-            self.game.gui.registerBlockMoveCharacter(checkbox);
-        }
-        var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
-        header.height = "30px";
-        header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-
-        if (left) {
-            header.left = left;
-        }
-
-        panel.addControl(header);
-    }
-
-    addCheckbox("fxaa", function(value) {
-        defaultPipeline.fxaaEnabled = value;
-    }, defaultPipeline.fxaaEnabled );
-
-    addCheckbox("bloom", function(value) {
-        defaultPipeline.bloomEnabled = value;
-    }, defaultPipeline.bloomEnabled);
+    //    let self = this;
+    //var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
+    //defaultPipeline.bloomEnabled = true;
+    //defaultPipeline.fxaaEnabled = true;
+    //defaultPipeline.imageProcessingEnabled = false;
+    //defaultPipeline.bloomWeight = 0.25;
+    //
+    //var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    //
+    //var panel = new BABYLON.GUI.StackPanel();
+    //panel.width = "200px";
+    //panel.isVertical = true;
+    //panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    //panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    //advancedTexture.addControl(panel)
+    //
+    //var addCheckbox = function(text, func, initialValue, left) {
+    //    var checkbox = new BABYLON.GUI.Checkbox();
+    //    checkbox.width = "20px";
+    //    checkbox.height = "20px";
+    //    checkbox.isChecked = initialValue;
+    //    checkbox.color = "green";
+    //    checkbox.onIsCheckedChangedObservable.add(function(value) {
+    //        func(value);
+    //    });
+    //    if(self.game.gui) {
+    //        self.game.gui.registerBlockMoveCharacter(checkbox);
+    //    }
+    //    var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
+    //    header.height = "30px";
+    //    header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    //
+    //    if (left) {
+    //        header.left = left;
+    //    }
+    //
+    //    panel.addControl(header);
+    //}
+    //
+    //addCheckbox("fxaa", function(value) {
+    //    defaultPipeline.fxaaEnabled = value;
+    //}, defaultPipeline.fxaaEnabled );
+    //
+    //addCheckbox("bloom", function(value) {
+    //    defaultPipeline.bloomEnabled = value;
+    //}, defaultPipeline.bloomEnabled);
 
 
 }

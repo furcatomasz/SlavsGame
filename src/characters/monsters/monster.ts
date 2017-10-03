@@ -31,12 +31,36 @@ abstract class Monster extends AbstractCharacter {
 
         game.enemies[this.id] = this;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
-        this.mesh.isPickable = false;
+        //this.mesh.isPickable = false;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
 
         super(name, game);
 
         this.registerActions();
+
+        this.mesh.outlineColor = new BABYLON.Color3(0.3,0,0);
+        this.mesh.outlineWidth = 0.1;
+
+        let self = this;
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
+            function () {
+                self.mesh.renderOutline = false;
+            }));
+
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
+            function () {
+                self.mesh.renderOutline = true;
+            }));
+
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
+            function (pointer) {
+                game.controller.attackPoint = pointer.meshUnderPointer;
+                self.game.player.mesh.lookAt(pointer.meshUnderPointer.position);
+                game.controller.targetPoint = null;
+                game.controller.ball.visibility = 0;
+                //game.controller.forward = true;
+            }));
+
     }
 
     public emitPosition() {
@@ -66,12 +90,26 @@ abstract class Monster extends AbstractCharacter {
         this.attackArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
         this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
 
+        var func = function() {
+            if(self.target) {
+                self.mesh.lookAt(playerMesh.position);
+                if(monsterAttackIsActive) {
+                    self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+                    return;
+                }
+                self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+                self.runAnimationWalk(true);
+            }
+        };
+
         ///on visibility collision enter
         this.visibilityArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
             trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
             parameter: playerMesh
         }, function () {
             self.target = self.game.player.id;
+            self.game.getScene().registerBeforeRender(func);
+
         }));
 
         ///on visibility collision exit
@@ -80,6 +118,7 @@ abstract class Monster extends AbstractCharacter {
             parameter: playerMesh
         }, function () {
             self.target = null;
+            self.game.getScene().unregisterBeforeRender(func);
         }));
 
         ///on attack collision enter
@@ -98,22 +137,6 @@ abstract class Monster extends AbstractCharacter {
             monsterAttackIsActive = false;
         }));
 
-        this.game.getScene().registerBeforeRender(function() {
-            if(self.game.controller.attackPoint && self.game.controller.attackPoint == self.attackArea) {
-                self.game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
-                self.game.controller.forward = false;
-            }
-
-            if(self.target) {
-                self.mesh.lookAt(playerMesh.position);
-                if(monsterAttackIsActive) {
-                    self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
-                    return;
-                }
-                self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
-                self.runAnimationWalk(true);
-            }
-        });
     }
 
     protected onHitEnd() {

@@ -52,13 +52,6 @@ class Mouse extends Controller {
                     self.game.player.emitPosition();
                     self.game.controller.forward = true;
                 }
-                if (self.game.player && pickedMesh.name.search('enemy_attackArea') >= 0) {
-                    self.attackPoint = pickedMesh;
-                    self.game.player.mesh.lookAt(pickResult.pickedPoint);
-                    self.targetPoint = null;
-                    self.ball.visibility = 0;
-                    self.game.controller.forward = true;
-                }
 
             }
         };
@@ -77,6 +70,12 @@ class Mouse extends Controller {
             }
         };
 
+        scene.registerBeforeRender(function() {
+            if (self.attackPoint) {
+                self.game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+                self.forward = false;
+            }
+        });
     }
 
 

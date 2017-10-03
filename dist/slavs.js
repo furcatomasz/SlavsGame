@@ -333,6 +333,7 @@ var AbstractCharacter = /** @class */ (function () {
                         skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                         self_1.animation = null;
                         self_1.attackAnimation = false;
+                        self_1.game.controller.attackPoint = null;
                         self_1.onHitEnd();
                         self_1.game.client.socket.emit('attack', {
                             attack: false
@@ -423,10 +424,26 @@ var Monster = /** @class */ (function (_super) {
         _this.visibilityArea = visivilityArea;
         game.enemies[_this.id] = _this;
         _this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
-        _this.mesh.isPickable = false;
+        //this.mesh.isPickable = false;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
         _this.registerActions();
+        _this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
+        _this.mesh.outlineWidth = 0.1;
+        var self = _this;
+        _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+            self.mesh.renderOutline = false;
+        }));
+        _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+            self.mesh.renderOutline = true;
+        }));
+        _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function (pointer) {
+            game.controller.attackPoint = pointer.meshUnderPointer;
+            self.game.player.mesh.lookAt(pointer.meshUnderPointer.position);
+            game.controller.targetPoint = null;
+            game.controller.ball.visibility = 0;
+            //game.controller.forward = true;
+        }));
         return _this;
     }
     Monster.prototype.emitPosition = function () {
@@ -453,12 +470,24 @@ var Monster = /** @class */ (function (_super) {
         this.visibilityArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
         this.attackArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
         this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
+        var func = function () {
+            if (self.target) {
+                self.mesh.lookAt(playerMesh.position);
+                if (monsterAttackIsActive) {
+                    self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+                    return;
+                }
+                self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+                self.runAnimationWalk(true);
+            }
+        };
         ///on visibility collision enter
         this.visibilityArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
             trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
             parameter: playerMesh
         }, function () {
             self.target = self.game.player.id;
+            self.game.getScene().registerBeforeRender(func);
         }));
         ///on visibility collision exit
         this.visibilityArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
@@ -466,6 +495,7 @@ var Monster = /** @class */ (function (_super) {
             parameter: playerMesh
         }, function () {
             self.target = null;
+            self.game.getScene().unregisterBeforeRender(func);
         }));
         ///on attack collision enter
         this.attackArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
@@ -481,21 +511,6 @@ var Monster = /** @class */ (function (_super) {
         }, function () {
             monsterAttackIsActive = false;
         }));
-        this.game.getScene().registerBeforeRender(function () {
-            if (self.game.controller.attackPoint && self.game.controller.attackPoint == self.attackArea) {
-                self.game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
-                self.game.controller.forward = false;
-            }
-            if (self.target) {
-                self.mesh.lookAt(playerMesh.position);
-                if (monsterAttackIsActive) {
-                    self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
-                    return;
-                }
-                self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
-                self.runAnimationWalk(true);
-            }
-        });
     };
     Monster.prototype.onHitEnd = function () {
         if (Game.randomNumber(1, 100) <= this.statistics.getHitChance()) {
@@ -1192,13 +1207,6 @@ var Mouse = /** @class */ (function (_super) {
                     self.game.player.emitPosition();
                     self.game.controller.forward = true;
                 }
-                if (self.game.player && pickedMesh.name.search('enemy_attackArea') >= 0) {
-                    self.attackPoint = pickedMesh;
-                    self.game.player.mesh.lookAt(pickResult.pickedPoint);
-                    self.targetPoint = null;
-                    self.ball.visibility = 0;
-                    self.game.controller.forward = true;
-                }
             }
         };
         scene.onPointerMove = function (evt, pickResult) {
@@ -1214,6 +1222,12 @@ var Mouse = /** @class */ (function (_super) {
                 }
             }
         };
+        scene.registerBeforeRender(function () {
+            if (self.attackPoint) {
+                self.game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+                self.forward = false;
+            }
+        });
     };
     return Mouse;
 }(Controller));
@@ -1341,7 +1355,7 @@ var Environment = /** @class */ (function () {
             var meshTree = this.trees[i];
             var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
             var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
-            var scaling = BABYLON.Matrix.Scaling(0.3, 0.3, 0.3);
+            var scaling = BABYLON.Matrix.Scaling(0.3, 1, 0.3);
             minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
             maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
             meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);

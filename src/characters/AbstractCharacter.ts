@@ -87,6 +87,7 @@ abstract class AbstractCharacter {
                         skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                         self.animation = null;
                         self.attackAnimation = false;
+                        self.game.controller.attackPoint = null;
                         self.onHitEnd();
 
                         self.game.client.socket.emit('attack', {

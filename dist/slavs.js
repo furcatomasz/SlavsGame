@@ -14,11 +14,13 @@ var Events = /** @class */ (function () {
         this.equipReceived = new Event(Events.EQUIP_RECEIVED);
         this.playerHitStart = new Event(Events.PLAYER_HIT_START);
         this.questsReceived = new Event(Events.QUESTS_RECEIVED);
+        this.monsterKill = new Event(Events.MONSTER_KILL);
     }
     Events.PLAYER_CONNECTED = 'playerConnected';
     Events.EQUIP_RECEIVED = 'equipReceived';
     Events.PLAYER_HIT_START = 'playerHitStart';
     Events.QUESTS_RECEIVED = 'questsReceived';
+    Events.MONSTER_KILL = 'monsterKill';
     return Events;
 }());
 /// <reference path="../game.ts"/>
@@ -458,6 +460,7 @@ var Monster = /** @class */ (function (_super) {
         }
     };
     Monster.prototype.removeFromWorld = function () {
+        document.dispatchEvent(game.events.monsterKill);
         this.game.client.socket.emit('enemyKill', this.id);
         var self = this;
         self.mesh.dispose();
@@ -984,16 +987,6 @@ var Player = /** @class */ (function (_super) {
             playerLight.intensity = 0.8;
             playerLight.parent = _this.mesh;
             _this.playerLight = playerLight;
-            //
-            //var playerLightPoint = new BABYLON.PointLight("pointLighPLayer",
-            //    new BABYLON.Vector3(0, 1, 0),
-            //    game.getScene());
-            //playerLightPoint.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
-            //playerLightPoint.intensity = 0.3;
-            //playerLightPoint.parent = this.mesh;
-            //
-            //this.playerLight = playerLightPoint;
-            //game.getScene().lights.push(playerLight);
             game.gui = new GUI.Main(game, _this);
             var attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
                 width: 4,

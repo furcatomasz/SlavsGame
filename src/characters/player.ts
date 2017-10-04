@@ -48,16 +48,6 @@ class Player extends AbstractCharacter {
             playerLight.intensity = 0.8;
             playerLight.parent = this.mesh;
             this.playerLight = playerLight;
-            //
-            //var playerLightPoint = new BABYLON.PointLight("pointLighPLayer",
-            //    new BABYLON.Vector3(0, 1, 0),
-            //    game.getScene());
-            //playerLightPoint.diffuse = new BABYLON.Color4(1, 0.7, 0.3, 1);
-            //playerLightPoint.intensity = 0.3;
-            //playerLightPoint.parent = this.mesh;
-            //
-            //this.playerLight = playerLightPoint;
-            //game.getScene().lights.push(playerLight);
 
             game.gui = new GUI.Main(game, this);
 

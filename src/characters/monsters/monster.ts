@@ -136,6 +136,36 @@ abstract class Monster extends AbstractCharacter {
             monsterAttackIsActive = false;
         }));
 
+
+        ///MONSTER TO ATTACK
+        let monsterToAttackKey = null;
+        let monsterToAttackListener = function listener() {
+            if(self.statistics.getHp() > 0) {
+                self.game.gui.characterTopHp.showHpCharacter(self);
+                self.bloodParticles.start();
+                let newValue = self.statistics.getHp() - self.game.player.statistics.getDamage();
+                self.statistics.hp = (newValue);
+                self.game.gui.characterTopHp.hpBar.value = newValue;
+                if (newValue <= 0) {
+                    self.removeFromWorld();
+                    self.game.controller.attackPoint = null;
+                    document.removeEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
+                }
+            }
+        };
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: this.game.player.attackArea
+        }, function () {
+            document.addEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
+        }));
+
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+            parameter: this.game.player.attackArea
+        }, function () {
+            document.removeEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
+        }));
     }
 
     protected onHitEnd() {

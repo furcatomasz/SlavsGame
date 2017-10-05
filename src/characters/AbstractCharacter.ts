@@ -30,7 +30,7 @@ abstract class AbstractCharacter {
     protected isControllable:boolean;
     protected attackAnimation: boolean;
     protected attackHit: boolean;
-    protected attackArea:BABYLON.Mesh;
+    public attackArea:BABYLON.Mesh;
 
     public sfxWalk: BABYLON.Sound;
     protected sfxHit: BABYLON.Sound;

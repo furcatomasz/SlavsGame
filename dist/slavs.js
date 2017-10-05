@@ -14,11 +14,14 @@ var Events = /** @class */ (function () {
         this.equipReceived = new Event(Events.EQUIP_RECEIVED);
         this.playerHitStart = new Event(Events.PLAYER_HIT_START);
         this.questsReceived = new Event(Events.QUESTS_RECEIVED);
+        this.monsterToAttack = new Event(Events.MONSTER_TO_ATTACK);
+        //this.monsterToAttack = [];
     }
     Events.PLAYER_CONNECTED = 'playerConnected';
     Events.EQUIP_RECEIVED = 'equipReceived';
     Events.PLAYER_HIT_START = 'playerHitStart';
     Events.QUESTS_RECEIVED = 'questsReceived';
+    Events.MONSTER_TO_ATTACK = 'monsterToAttack';
     return Events;
 }());
 /// <reference path="../game.ts"/>
@@ -509,6 +512,34 @@ var Monster = /** @class */ (function (_super) {
             parameter: playerMesh
         }, function () {
             monsterAttackIsActive = false;
+        }));
+        ///MONSTER TO ATTACK
+        var monsterToAttackKey = null;
+        var monsterToAttackListener = function listener() {
+            if (self.statistics.getHp() > 0) {
+                self.game.gui.characterTopHp.showHpCharacter(self);
+                self.bloodParticles.start();
+                var newValue = self.statistics.getHp() - self.game.player.statistics.getDamage();
+                self.statistics.hp = (newValue);
+                self.game.gui.characterTopHp.hpBar.value = newValue;
+                if (newValue <= 0) {
+                    self.removeFromWorld();
+                    self.game.controller.attackPoint = null;
+                    document.removeEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
+                }
+            }
+        };
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: this.game.player.attackArea
+        }, function () {
+            document.addEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
+        }));
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+            parameter: this.game.player.attackArea
+        }, function () {
+            document.removeEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
         }));
     };
     Monster.prototype.onHitEnd = function () {
@@ -1026,12 +1057,13 @@ var Player = /** @class */ (function (_super) {
             _this.playerLight = playerLight;
             game.gui = new GUI.Main(game, _this);
             var attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
-                width: 4,
+                width: 3,
                 height: 0.1,
-                size: 4
+                size: 3
             }, game.getScene());
             attackArea.parent = _this.mesh;
             attackArea.visibility = 0;
+            attackArea.position.z = -2;
             attackArea.isPickable = false;
             _this.attackArea = attackArea;
             _this.experience = serverData.experience;
@@ -1074,46 +1106,6 @@ var Player = /** @class */ (function (_super) {
             }
         }
     };
-    /**
-     * Attack Collisions
-     *
-     * @returns {Player}
-     */
-    Player.prototype.weaponCollisions = function () {
-        var game = this.game;
-        var self = this;
-        if (this.attackArea && this.attackAnimation && !this.attackHit) {
-            this.attackHit = true;
-            var _loop_1 = function () {
-                enemy = game.enemies[i];
-                var enemyMesh = enemy.mesh;
-                if (this_1.attackArea.intersectsMesh(enemy.attackArea, false)) {
-                    var animationEnemty_1 = enemy;
-                    setTimeout(function () {
-                        if (animationEnemty_1.statistics.getHp() > 0) {
-                            if (!animationEnemty_1.sfxHit.isPlaying) {
-                                animationEnemty_1.sfxHit.play();
-                            }
-                            this.game.gui.characterTopHp.showHpCharacter(animationEnemty_1);
-                            animationEnemty_1.bloodParticles.start();
-                            var newValue = animationEnemty_1.statistics.getHp() - self.statistics.getDamage();
-                            animationEnemty_1.statistics.hp = (newValue);
-                            this.game.gui.characterTopHp.hpBar.value = newValue;
-                            if (newValue <= 0) {
-                                animationEnemty_1.removeFromWorld();
-                                game.controller.attackPoint = null;
-                            }
-                        }
-                    }, 300);
-                }
-            };
-            var this_1 = this, enemy;
-            for (var i = 0; i < game.enemies.length; i++) {
-                _loop_1();
-            }
-        }
-        return this;
-    };
     Player.prototype.removeFromWorld = function () {
         this.mesh.dispose();
     };
@@ -1127,7 +1119,6 @@ var Player = /** @class */ (function (_super) {
         }));
         if (self.isControllable) {
             this.game.getScene().registerAfterRender(function () {
-                self.weaponCollisions();
                 self.registerMoving();
                 if (self.game.controller.forward && self.game.getScene()) {
                     self.refreshCameraPosition();
@@ -1196,7 +1187,9 @@ var Player = /** @class */ (function (_super) {
         this.refreshExperienceInGui();
     };
     Player.prototype.onHitStart = function () {
-        //this.items.weapon.sfxHit.play(0.3);
+        setTimeout(function () {
+            document.dispatchEvent(this.game.events.monsterToAttack);
+        }, 300);
     };
     ;
     Player.prototype.onHitEnd = function () {
@@ -3296,7 +3289,7 @@ var GUI;
             panelItems.top = "26%";
             panelItems.thickness = 0;
             this.panelItems = panelItems;
-            var _loop_2 = function (i) {
+            var _loop_1 = function (i) {
                 var breakDisplayItem = void 0;
                 var item = inventory.items[i];
                 for (var _i = 0, eqiupedItems_1 = eqiupedItems; _i < eqiupedItems_1.length; _i++) {
@@ -3333,7 +3326,7 @@ var GUI;
                 textBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
                 textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 result.addControl(textBlock);
-                var image = this_2.createItemImage(item);
+                var image = this_1.createItemImage(item);
                 result.addControl(image);
                 panelItems.addControl(result);
                 result.onPointerUpObservable.add(function () {
@@ -3345,9 +3338,9 @@ var GUI;
                     }
                 });
             };
-            var this_2 = this;
+            var this_1 = this;
             for (var i = 0; i < inventory.items.length; i++) {
-                _loop_2(i);
+                _loop_1(i);
             }
             this.guiTexture.addControl(panelItems);
             window.addEventListener('resize', function () {

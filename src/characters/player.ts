@@ -56,12 +56,13 @@ class Player extends AbstractCharacter {
             game.gui = new GUI.Main(game, this);
 
             let attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
-                width: 4,
+                width: 3,
                 height: 0.1,
-                size: 4
+                size: 3
             }, game.getScene());
             attackArea.parent = this.mesh;
             attackArea.visibility = 0;
+            attackArea.position.z = -2;
             attackArea.isPickable = false;
 
             this.attackArea = attackArea;
@@ -114,46 +115,6 @@ class Player extends AbstractCharacter {
         }
     }
 
-    /**
-     * Attack Collisions
-     *
-     * @returns {Player}
-     */
-    protected weaponCollisions() {
-        let game = this.game;
-        let self = this;
-
-        if (this.attackArea && this.attackAnimation && !this.attackHit) {
-            this.attackHit = true;
-            for (var i = 0; i < game.enemies.length; i++) {
-                var enemy = game.enemies[i];
-                let enemyMesh = enemy.mesh;
-                if (this.attackArea.intersectsMesh(enemy.attackArea, false)) {
-                    let animationEnemty = enemy;
-                    setTimeout(function () {
-
-                        if(animationEnemty.statistics.getHp() > 0) {
-                            if (!animationEnemty.sfxHit.isPlaying) {
-                                animationEnemty.sfxHit.play();
-                            }
-                            this.game.gui.characterTopHp.showHpCharacter(animationEnemty);
-                            animationEnemty.bloodParticles.start();
-                            let newValue = animationEnemty.statistics.getHp() - self.statistics.getDamage();
-                            animationEnemty.statistics.hp = (newValue);
-                            this.game.gui.characterTopHp.hpBar.value = newValue;
-                            if (newValue <= 0) {
-                                animationEnemty.removeFromWorld();
-                                game.controller.attackPoint = null;
-                            }
-                        }
-                    }, 300);
-                }
-            }
-        }
-
-        return this;
-    }
-
     public removeFromWorld() {
         this.mesh.dispose();
     }
@@ -170,7 +131,6 @@ class Player extends AbstractCharacter {
 
         if (self.isControllable) {
             this.game.getScene().registerAfterRender(function () {
-                self.weaponCollisions();
                 self.registerMoving();
                 if (self.game.controller.forward && self.game.getScene()) {
                     self.refreshCameraPosition();
@@ -249,7 +209,9 @@ class Player extends AbstractCharacter {
     }
 
     protected onHitStart() {
-        //this.items.weapon.sfxHit.play(0.3);
+        setTimeout(function () {
+            document.dispatchEvent(this.game.events.monsterToAttack);
+        }, 300);
     };
 
     protected onHitEnd() {

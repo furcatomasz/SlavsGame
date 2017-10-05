@@ -17,6 +17,8 @@ namespace Server.Orm {
             this.player = db.define("player", {
                 name: String,
                 type: String,
+                lvl: Number,
+                experience: Number,
                 scene: Number,
                 positionX: Number,
                 positionY: Number,

@@ -3,7 +3,7 @@ var Server;
     var EnemyManager = /** @class */ (function () {
         function EnemyManager() {
         }
-        EnemyManager.prototype.createEnemy = function (position, type, itemsToDrop) {
+        EnemyManager.prototype.createEnemy = function (position, type, itemsToDrop, experience) {
             return {
                 id: 0,
                 position: position,
@@ -17,20 +17,21 @@ var Server;
                 type: type,
                 target: false,
                 attack: false,
-                itemsToDrop: itemsToDrop
+                itemsToDrop: itemsToDrop,
+                experience: experience
             };
         };
         EnemyManager.prototype.getEnemies = function () {
             var enemies = [];
             enemies[2] = [
-                this.createEnemy({ x: -2, y: 0, z: -30 }, 'worm', [9]),
-                this.createEnemy({ x: -2, y: 0, z: -64 }, 'worm', [1]),
-                this.createEnemy({ x: -8, y: 0, z: -72 }, 'worm', [8]),
+                this.createEnemy({ x: -2, y: 0, z: -30 }, 'worm', [9], 10),
+                this.createEnemy({ x: -2, y: 0, z: -64 }, 'worm', [1], 10),
+                this.createEnemy({ x: -8, y: 0, z: -72 }, 'worm', [8], 10),
             ];
             enemies[3] = [
-                this.createEnemy({ x: -2, y: 0, z: -30 }, 'bandit', [9]),
-                this.createEnemy({ x: -2, y: 0, z: -64 }, 'bandit', [9]),
-                this.createEnemy({ x: -8, y: 0, z: -72 }, 'bandit', [9]),
+                this.createEnemy({ x: -2, y: 0, z: -30 }, 'bandit', [9], 10),
+                this.createEnemy({ x: -2, y: 0, z: -64 }, 'bandit', [9], 10),
+                this.createEnemy({ x: -8, y: 0, z: -72 }, 'bandit', [9], 10),
             ];
             return enemies;
         };
@@ -328,10 +329,19 @@ var Server;
                     var enemy = enemies[player.activeScene][enemyKey];
                     var enemyItem = enemy.itemsToDrop[0];
                     var itemDropKey = player.itemsDrop.push(enemyItem) - 1;
+                    var earnedExperience = enemy.experience;
+                    var playerId = player.characters[player.activePlayer].id;
                     socket.emit('showDroppedItem', {
                         items: enemyItem,
                         itemsKey: itemDropKey,
                         enemyId: enemyKey
+                    });
+                    self.server.ormManager.structure.player.get(playerId, function (error, playerDatabase) {
+                        playerDatabase.experience += earnedExperience;
+                        playerDatabase.save();
+                        socket.emit('addExperience', {
+                            experience: earnedExperience
+                        });
                     });
                 });
             });
@@ -353,6 +363,8 @@ var Server;
                 this.player = db.define("player", {
                     name: String,
                     type: String,
+                    lvl: Number,
+                    experience: Number,
                     scene: Number,
                     positionX: Number,
                     positionY: Number,

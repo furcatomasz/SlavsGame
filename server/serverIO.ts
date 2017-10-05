@@ -245,12 +245,25 @@ namespace Server {
                     let enemy = enemies[player.activeScene][enemyKey];
                     let enemyItem = enemy.itemsToDrop[0];
                     let itemDropKey = player.itemsDrop.push(enemyItem) - 1;
+                    let earnedExperience = enemy.experience;
+                    let playerId = player.characters[player.activePlayer].id;
 
                     socket.emit('showDroppedItem', {
                         items: enemyItem,
                         itemsKey: itemDropKey,
                         enemyId: enemyKey
                     });
+
+                    self.server.ormManager.structure.player.get(playerId,
+                        function (error, playerDatabase) {
+                            playerDatabase.experience += earnedExperience;
+                            playerDatabase.save();
+
+                            socket.emit('addExperience', {
+                                experience: earnedExperience
+                            });
+                        });
+
                 });
             });
         }

@@ -22,7 +22,7 @@ namespace GUI {
                 let hpSlider = new BABYLON.GUI.Slider();
                 hpSlider.minimum = 0;
                 hpSlider.maximum = 100;
-                hpSlider.value = 90;
+                hpSlider.value = 100;
                 hpSlider.width = "100%";
                 hpSlider.height = "10px";
                 hpSlider.thumbWidth = 0;
@@ -35,14 +35,14 @@ namespace GUI {
                 let expSlider = new BABYLON.GUI.Slider();
                 expSlider.minimum = 0;
                 expSlider.maximum = 100;
-                expSlider.value = 5;
+                expSlider.value = game.player.getExperience(true);
                 expSlider.width = "100%";
-                expSlider.height = "10px";
+                expSlider.height = "20px";
                 expSlider.thumbWidth = 0;
                 expSlider.barOffset = 0;
                 expSlider.background = 'black';
                 expSlider.color = "blue";
-                expSlider.borderColor = 'black';
+                expSlider.borderColor = 'yellow';
                 self.expBar = expSlider;
 
                 characterBottomPanel.addControl(hpSlider);

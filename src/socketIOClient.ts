@@ -38,7 +38,22 @@ class SocketIOClient {
                 .refreshEnemyEquip()
                 .showDroppedItem()
                 .showPlayerQuests()
-                .refreshPlayerQuests();
+                .refreshPlayerQuests()
+                .addExperience();
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected addExperience() {
+        let game = this.game;
+        this.socket.on('addExperience', function (data) {
+            game.player.addExperience(data.experience);
+            game.gui.playerLogsPanel.addText('Earned '+data.experience+' experience.', 'yellow');
+
         });
 
         return this;
@@ -107,13 +122,14 @@ class SocketIOClient {
 
         this.socket.on('showPlayer', function (data) {
             self.activePlayer = data.activePlayer;
-            game.player = new Player(game, data.id, playerName, true);
-            game.player.setItems(game.client.characters[game.client.activePlayer].items);
+            let activeCharacter = self.characters[self.activePlayer];
+
+            game.player = new Player(game, data.id, playerName, true, activeCharacter);
+            game.player.setItems(activeCharacter.items);
             let activeCharacter = data.characters[data.activePlayer];
             game.player.mesh.position = new BABYLON.Vector3(activeCharacter.positionX, activeCharacter.positionY, activeCharacter.positionZ);
             game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
-
         });
 
         return this;

@@ -7,7 +7,11 @@ class Player extends AbstractCharacter {
     public inventory:Character.Inventory;
     public playerLight:BABYLON.PointLight;
 
-    public constructor(game:Game, id, name, registerMoving:boolean) {
+    protected experience: number;
+    protected lvl: number;
+
+    public constructor(game:Game, id, name, registerMoving:boolean, serverData: Array = []) {
+        let self = this;
         this.id = id;
         this.name = name;
 
@@ -61,6 +65,8 @@ class Player extends AbstractCharacter {
             attackArea.isPickable = false;
 
             this.attackArea = attackArea;
+            this.experience = serverData.experience;
+            this.lvl = 1;
         }
 
         this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
@@ -212,6 +218,34 @@ class Player extends AbstractCharacter {
         this.inventory.items = [];
 
         return this;
+    }
+
+    public refreshExperienceInGui() {
+        this.game.gui.playerBottomPanel.expBar.value = this.getExperience(true);
+    }
+
+    /**
+     *
+     * @param percentage
+     * @returns {number}
+     */
+    public getExperience(percentage: boolean = false) {
+        let lvls = Character.Lvls.getLvls();
+        let requiredToLvl = lvls[this.lvl];
+
+        if(this.experience < 1) {
+            return 0;
+        }
+
+        return (percentage) ?
+            ((this.experience * 100) / requiredToLvl) :
+            this.experience;
+    }
+
+    public addExperience(experince: number) {
+        this.experience += experince;
+
+        this.refreshExperienceInGui();
     }
 
     protected onHitStart() {

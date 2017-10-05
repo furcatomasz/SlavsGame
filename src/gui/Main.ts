@@ -12,6 +12,7 @@ namespace GUI {
         public playerQuests: GUI.PlayerQuests;
         public quest: GUI.Quest;
         public playerBottomPanel: GUI.PlayerBottomPanel;
+        public playerLogsPanel: GUI.PlayerLogsPanel;
         public characterTopHp: GUI.ShowHp;
 
         protected buttonpanel: BABYLON.GUI.StackPanel;
@@ -21,6 +22,7 @@ namespace GUI {
             this.player = player;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
+            this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
             this.characterTopHp = new GUI.ShowHp();
 
             this

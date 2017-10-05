@@ -14,13 +14,11 @@ var Events = /** @class */ (function () {
         this.equipReceived = new Event(Events.EQUIP_RECEIVED);
         this.playerHitStart = new Event(Events.PLAYER_HIT_START);
         this.questsReceived = new Event(Events.QUESTS_RECEIVED);
-        this.monsterKill = new Event(Events.MONSTER_KILL);
     }
     Events.PLAYER_CONNECTED = 'playerConnected';
     Events.EQUIP_RECEIVED = 'equipReceived';
     Events.PLAYER_HIT_START = 'playerHitStart';
     Events.QUESTS_RECEIVED = 'questsReceived';
-    Events.MONSTER_KILL = 'monsterKill';
     return Events;
 }());
 /// <reference path="../game.ts"/>
@@ -426,7 +424,6 @@ var Monster = /** @class */ (function (_super) {
         _this.visibilityArea = visivilityArea;
         game.enemies[_this.id] = _this;
         _this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
-        //this.mesh.isPickable = false;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
         _this.registerActions();
@@ -460,7 +457,6 @@ var Monster = /** @class */ (function (_super) {
         }
     };
     Monster.prototype.removeFromWorld = function () {
-        document.dispatchEvent(game.events.monsterKill);
         this.game.client.socket.emit('enemyKill', this.id);
         var self = this;
         self.mesh.dispose();
@@ -560,7 +556,19 @@ var SocketIOClient = /** @class */ (function () {
                 .refreshEnemyEquip()
                 .showDroppedItem()
                 .showPlayerQuests()
-                .refreshPlayerQuests();
+                .refreshPlayerQuests()
+                .addExperience();
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
+    SocketIOClient.prototype.addExperience = function () {
+        var game = this.game;
+        this.socket.on('addExperience', function (data) {
+            game.player.addExperience(data.experience);
+            game.gui.playerLogsPanel.addText('Earned ' + data.experience + ' experience.', 'yellow');
         });
         return this;
     };
@@ -617,8 +625,9 @@ var SocketIOClient = /** @class */ (function () {
         var playerName = Game.randomNumber(1, 100);
         this.socket.on('showPlayer', function (data) {
             self.activePlayer = data.activePlayer;
-            game.player = new Player(game, data.id, playerName, true);
-            game.player.setItems(game.client.characters[game.client.activePlayer].items);
+            var activeCharacter = self.characters[self.activePlayer];
+            game.player = new Player(game, data.id, playerName, true, activeCharacter);
+            game.player.setItems(activeCharacter.items);
             var activeCharacter = data.characters[data.activePlayer];
             game.player.mesh.position = new BABYLON.Vector3(activeCharacter.positionX, activeCharacter.positionY, activeCharacter.positionZ);
             game.player.refreshCameraPosition();
@@ -952,12 +961,40 @@ var Character;
     }());
     Character.Inventory = Inventory;
 })(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Lvls = /** @class */ (function () {
+        function Lvls() {
+        }
+        /**
+         * @returns {Array}
+         */
+        Lvls.getLvls = function () {
+            var lvls = [];
+            lvls[1] = 100;
+            lvls[2] = 200;
+            lvls[3] = 400;
+            lvls[4] = 800;
+            lvls[5] = 1600;
+            lvls[6] = 3200;
+            lvls[7] = 6400;
+            lvls[8] = 12800;
+            lvls[9] = 256000;
+            lvls[10] = 512000;
+            return lvls;
+        };
+        return Lvls;
+    }());
+    Character.Lvls = Lvls;
+})(Character || (Character = {}));
 /// <reference path="AbstractCharacter.ts"/>
 /// <reference path="../game.ts"/>
 var Player = /** @class */ (function (_super) {
     __extends(Player, _super);
-    function Player(game, id, name, registerMoving) {
+    function Player(game, id, name, registerMoving, serverData) {
+        if (serverData === void 0) { serverData = []; }
         var _this = this;
+        var self = _this;
         _this.id = id;
         _this.name = name;
         _this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 15, 10, 125, 50, 100).setPlayer(_this);
@@ -997,6 +1034,8 @@ var Player = /** @class */ (function (_super) {
             attackArea.visibility = 0;
             attackArea.isPickable = false;
             _this.attackArea = attackArea;
+            _this.experience = serverData.experience;
+            _this.lvl = 1;
         }
         _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
@@ -1132,6 +1171,29 @@ var Player = /** @class */ (function (_super) {
         });
         this.inventory.items = [];
         return this;
+    };
+    Player.prototype.refreshExperienceInGui = function () {
+        this.game.gui.playerBottomPanel.expBar.value = this.getExperience(true);
+    };
+    /**
+     *
+     * @param percentage
+     * @returns {number}
+     */
+    Player.prototype.getExperience = function (percentage) {
+        if (percentage === void 0) { percentage = false; }
+        var lvls = Character.Lvls.getLvls();
+        var requiredToLvl = lvls[this.lvl];
+        if (this.experience < 1) {
+            return 0;
+        }
+        return (percentage) ?
+            ((this.experience * 100) / requiredToLvl) :
+            this.experience;
+    };
+    Player.prototype.addExperience = function (experince) {
+        this.experience += experince;
+        this.refreshExperienceInGui();
     };
     Player.prototype.onHitStart = function () {
         //this.items.weapon.sfxHit.play(0.3);
@@ -1525,6 +1587,7 @@ var GUI;
             this.player = player;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
+            this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
             this.characterTopHp = new GUI.ShowHp();
             this
                 .initInventory()
@@ -1644,7 +1707,7 @@ var GUI;
                 var hpSlider = new BABYLON.GUI.Slider();
                 hpSlider.minimum = 0;
                 hpSlider.maximum = 100;
-                hpSlider.value = 90;
+                hpSlider.value = 100;
                 hpSlider.width = "100%";
                 hpSlider.height = "10px";
                 hpSlider.thumbWidth = 0;
@@ -1656,14 +1719,14 @@ var GUI;
                 var expSlider = new BABYLON.GUI.Slider();
                 expSlider.minimum = 0;
                 expSlider.maximum = 100;
-                expSlider.value = 5;
+                expSlider.value = game.player.getExperience(true);
                 expSlider.width = "100%";
-                expSlider.height = "10px";
+                expSlider.height = "20px";
                 expSlider.thumbWidth = 0;
                 expSlider.barOffset = 0;
                 expSlider.background = 'black';
                 expSlider.color = "blue";
-                expSlider.borderColor = 'black';
+                expSlider.borderColor = 'yellow';
                 self.expBar = expSlider;
                 characterBottomPanel.addControl(hpSlider);
                 characterBottomPanel.addControl(expSlider);
@@ -1674,6 +1737,58 @@ var GUI;
         return PlayerBottomPanel;
     }());
     GUI.PlayerBottomPanel = PlayerBottomPanel;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var PlayerLogsPanel = /** @class */ (function () {
+        function PlayerLogsPanel(game) {
+            this.texts = [];
+            var self = this;
+            var listener = function listener() {
+                self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameLogsUi");
+                var characterLogsPanel = new BABYLON.GUI.StackPanel();
+                characterLogsPanel.width = "15%";
+                characterLogsPanel.left = "1%";
+                characterLogsPanel.top = "-5%";
+                characterLogsPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                characterLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                self.texture.addControl(characterLogsPanel);
+                self.guiPanel = characterLogsPanel;
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        }
+        /**
+         * @param message
+         * @param color
+         */
+        PlayerLogsPanel.prototype.addText = function (message, color) {
+            if (color === void 0) { color = 'white'; }
+            var text = new BABYLON.GUI.TextBlock();
+            text.text = message;
+            text.color = color;
+            text.textWrapping = true;
+            text.height = "25px";
+            text.width = "100%";
+            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            text.fontSize = 14;
+            this.guiPanel.addControl(text);
+            this.texts.push(text);
+            this.removeOldText();
+        };
+        PlayerLogsPanel.prototype.removeOldText = function () {
+            if (this.texts.length >= GUI.PlayerLogsPanel.TEXT_COUNT) {
+                var textToDispose = this.texts.shift();
+                this.guiPanel.removeControl(textToDispose);
+                textToDispose = null;
+            }
+            return this;
+        };
+        PlayerLogsPanel.TEXT_COUNT = 6;
+        return PlayerLogsPanel;
+    }());
+    GUI.PlayerLogsPanel = PlayerLogsPanel;
 })(GUI || (GUI = {}));
 /// <reference path="../game.ts"/>
 /// <reference path="../characters/AbstractCharacter.ts"/>
@@ -2497,6 +2612,7 @@ var Items;
                 item.mesh.renderOutline = true;
             }));
             item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
                 game.client.socket.emit('addDoppedItem', itemDropKey);
                 item.mesh.dispose();
             }));
@@ -2691,6 +2807,7 @@ var Worm = /** @class */ (function (_super) {
         _this.mesh = mesh;
         _this.visibilityAreaSize = 30;
         _this.attackAreaSize = 6;
+        _this.experienceToWin = 10;
         //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
         _this.sfxHit = new BABYLON.Sound("WormWalk", "/assets/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
         _this = _super.call(this, name, game) || this;

@@ -6,7 +6,7 @@ abstract class Monster extends AbstractCharacter {
     protected target: string;
     protected visibilityAreaSize: number;
     protected attackAreaSize: number;
-
+    protected experienceToWin: number;
 
     constructor(name: string, game: Game) {
         let attackArea = BABYLON.MeshBuilder.CreateBox('enemy_attackArea', {
@@ -31,7 +31,6 @@ abstract class Monster extends AbstractCharacter {
 
         game.enemies[this.id] = this;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
-        //this.mesh.isPickable = false;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
 
         super(name, game);
@@ -76,7 +75,6 @@ abstract class Monster extends AbstractCharacter {
     }
 
     public removeFromWorld() {
-        document.dispatchEvent(game.events.monsterKill);
         this.game.client.socket.emit('enemyKill', this.id);
         let self = this;
         self.mesh.dispose();

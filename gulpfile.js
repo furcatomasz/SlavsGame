@@ -39,7 +39,7 @@ gulp.task('server', function () {
                 .pipe(gulp.dest('server/dist'));
         });
 
-    var gameServer =  exec('node server/dist/server.js');
+    //var gameServer =  exec('node server/dist/server.js');
     // gulp.watch("server/dist/server.js").on("change", function() {
     //     exec('kill '+gameServer.pid);
     //     gameServer =  exec('node server/dist/server.js');

@@ -25,6 +25,7 @@ namespace Items {
 
             item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
                 function () {
+                    game.gui.playerLogsPanel.addText(item.name+'  has been picked up.', 'green');
                     game.client.socket.emit('addDoppedItem', itemDropKey);
                     item.mesh.dispose();
                 }));

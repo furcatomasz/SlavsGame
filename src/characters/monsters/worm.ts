@@ -15,6 +15,7 @@ class Worm extends Monster {
         this.mesh = mesh;
         this.visibilityAreaSize = 30;
         this.attackAreaSize = 6;
+        this.experienceToWin = 10;
 
         //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
         this.sfxHit = new BABYLON.Sound("WormWalk", "/assets/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });

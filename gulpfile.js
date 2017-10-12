@@ -25,6 +25,7 @@ gulp.task('default', function () {
     gulp.watch("dist/slavs.js").on("change", reload);
 
     gulp.run('server');
+    gulp.run('shared');
 });
 
 gulp.task('server', function () {
@@ -44,5 +45,19 @@ gulp.task('server', function () {
     //     exec('kill '+gameServer.pid);
     //     gameServer =  exec('node server/dist/server.js');
     // });
+
+});
+
+gulp.task('shared', function () {
+    gulp
+        .watch(['shared/**/*.ts'])
+        .on("change", function () {
+            return gulp.src('shared/**/*.ts')
+                .pipe(ts({
+                    module: "commonjs",
+                    target: "es6"
+                }))
+                .pipe(gulp.dest('shared/'));
+        });
 
 });

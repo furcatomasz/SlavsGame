@@ -67,7 +67,8 @@ class Player extends AbstractCharacter {
 
             this.attackArea = attackArea;
             this.experience = serverData.experience;
-            this.lvl = 1;
+            console.log(serverData);
+            this.lvl = serverData.lvl;
         }
 
         this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
@@ -191,19 +192,29 @@ class Player extends AbstractCharacter {
      */
     public getExperience(percentage: boolean = false) {
         let lvls = Character.Lvls.getLvls();
-        let requiredToLvl = lvls[this.lvl];
+        let requiredToActualLvl = lvls[this.lvl];
+        let requiredToLvl = lvls[this.lvl + 1];
 
-        if(this.experience < 1) {
+        if (this.experience < 1) {
             return 0;
         }
 
-        return (percentage) ?
-            ((this.experience * 100) / requiredToLvl) :
-            this.experience;
+        let percentageValue = (this.lvl) ?
+            (((this.experience - requiredToActualLvl) * 100) / (requiredToLvl)) :
+            (((this.experience) * 100) / (requiredToLvl));
+
+        return (percentage) ? percentageValue : this.experience;
     }
 
     public addExperience(experince: number) {
         this.experience += experince;
+
+        this.refreshExperienceInGui();
+    }
+
+    public setNewLvl() {
+        this.lvl += 1;
+        this.game.gui.playerLogsPanel.addText('New lvl '+this.lvl+'', 'red');
 
         this.refreshExperienceInGui();
     }

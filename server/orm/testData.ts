@@ -23,7 +23,7 @@ namespace Server.Orm {
                     if (err) throw err;
 
                     if (!exists) {
-                        ormManager.structure.player.create({name: "Mietek", type: 1, user_id: userId},
+                        ormManager.structure.player.create({name: "Mietek", type: 1, user_id: userId, lvl: 0},
                             function (err, insertedPlayer) {
                             if (err) throw err;
 
@@ -97,7 +97,7 @@ namespace Server.Orm {
 
                     if (!exists) {
                         ormManager.structure.player.create(
-                            {name: "Tumek", type: 1, user_id: userId},
+                            {name: "Tumek", type: 1, user_id: userId, lvl: 0},
                             function (err, insertedPlayer) {
                                 if (err) throw err;
 

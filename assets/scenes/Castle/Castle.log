@@ -1,0 +1,724 @@
+Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used:
+		selected layers only:  false
+		flat shading entire scene:  false
+		inline textures:  false
+		texture directory:  F:\Slavs\Babylon\Maps\Castle\
+	Python World class constructor completed
+	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
+	processing begun of mesh:  Tower.009
+		processing begun of Standard material:  Material.004
+			Diffuse texture found "Texture.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.005
+		processing begun of Standard material:  Wooden_Wall
+			Diffuse texture found "Texture"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Godło
+			Diffuse texture found "Godło"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Roof
+			Diffuse texture found "Texture.009"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.007
+			Diffuse texture found "Texture.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#0
+		num positions      :  248
+		num normals        :  248
+		num uvs            :  496
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  528
+	processing begun of mesh:  Tower.056
+		mesh is an instance of :  Tower.009.  Processing halted.
+	processing begun of mesh:  Bush3.002
+		processing begun of Standard material:  Bush3.001
+			Diffuse texture found "Bush3.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  36
+		num normals        :  36
+		num uvs            :  72
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  54
+	processing begun of mesh:  Bush3.000
+		mesh is an instance of :  Bush3.002.  Processing halted.
+	processing begun of mesh:  Bush3.001
+		mesh is an instance of :  Bush3.002.  Processing halted.
+	processing begun of mesh:  Stall.001
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of Standard material:  Material.010
+		processing begun of Standard material:  Shield
+			Diffuse texture found "Texture.006"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.014
+		processing begun of Standard material:  Material.015
+		processing begun of multimaterial:  Castle.Multimaterial#1
+		num positions      :  116
+		num normals        :  116
+		num uvs            :  232
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  204
+	processing begun of mesh:  Barrel.005
+		processing begun of Standard material:  Barrel
+			Diffuse texture found "Texture.015"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  493
+		num normals        :  493
+		num uvs            :  986
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  750
+	processing begun of mesh:  Barrel.001
+		mesh is an instance of :  Barrel.005.  Processing halted.
+	processing begun of mesh:  Plane.057
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Material.004
+		processing begun of Standard material:  Material.006
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#2
+		num positions      :  133
+		num normals        :  133
+		num uvs            :  266
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  156
+	processing begun of mesh:  Tower.051
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#3
+		num positions      :  202
+		num normals        :  202
+		num uvs            :  404
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  240
+	processing begun of mesh:  Tower.044
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#4
+		num positions      :  193
+		num normals        :  193
+		num uvs            :  386
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  240
+	processing begun of mesh:  Tower.043
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#5
+		num positions      :  100
+		num normals        :  100
+		num uvs            :  200
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  120
+	processing begun of mesh:  Tower.055
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#6
+		num positions      :  51
+		num normals        :  51
+		num uvs            :  102
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Plane.056
+		mesh is an instance of :  Plane.057.  Processing halted.
+	processing begun of mesh:  Tower.054
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#7
+		num positions      :  56
+		num normals        :  56
+		num uvs            :  112
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  180
+	processing begun of mesh:  Ivy.001
+		processing begun of Standard material:  Ivy
+			Diffuse texture found "Texture.014"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  18
+		num normals        :  18
+		num uvs            :  36
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  48
+	processing begun of mesh:  Blackboard
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of Standard material:  Material.003
+			Diffuse texture found "Texture.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Castle.Multimaterial#8
+		num positions      :  64
+		num normals        :  64
+		num uvs            :  128
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  102
+	processing begun of mesh:  Stall
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#9
+		num positions      :  176
+		num normals        :  176
+		num uvs            :  352
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  216
+	processing begun of mesh:  Chest
+		processing begun of Standard material:  Chest
+			Diffuse texture found "Texture.013"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  71
+		num normals        :  71
+		num uvs            :  142
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  102
+	processing begun of mesh:  Plane.055
+		mesh is an instance of :  Plane.057.  Processing halted.
+	processing begun of mesh:  Tower.053
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of Standard material:  short_sword.001
+			Diffuse texture found "Texture.012"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Castle.Multimaterial#10
+		num positions      :  1294
+		num normals        :  1294
+		num uvs            :  2588
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2358
+	processing begun of mesh:  Tower.052
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#11
+		num positions      :  0
+		num normals        :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  0
+	processing begun of mesh:  Tower.050
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#12
+		num positions      :  8
+		num normals        :  8
+		num uvs            :  16
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  12
+	processing begun of mesh:  Tower.049
+		mesh is an instance of :  Tower.050.  Processing halted.
+	processing begun of mesh:  Tower.048
+		mesh is an instance of :  Tower.050.  Processing halted.
+	processing begun of mesh:  Tower.047
+		mesh is an instance of :  Tower.050.  Processing halted.
+	processing begun of mesh:  Tower.046
+		mesh is an instance of :  Tower.050.  Processing halted.
+	processing begun of mesh:  Tower.045
+		mesh is an instance of :  Tower.050.  Processing halted.
+	processing begun of mesh:  Plane.025
+		processing begun of Standard material:  Material.001
+			Diffuse texture found "Texture.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  289
+		num normals        :  289
+		num uvs            :  578
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1536
+	processing begun of mesh:  Plane.054
+		processing begun of Standard material:  Wather
+			Diffuse texture found "Texture.010"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+			Bump texture found "Texture.010"
+				Image texture found, type:  bumpTexture, mapped using: "UVMap"
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Tower.042
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#13
+		num positions      :  25
+		num normals        :  25
+		num uvs            :  50
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  30
+	processing begun of mesh:  Tower.041
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Plane.053
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Material.004
+		processing begun of Standard material:  Rpe
+		processing begun of multimaterial:  Castle.Multimaterial#14
+		num positions      :  464
+		num normals        :  464
+		num uvs            :  928
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  732
+	processing begun of mesh:  Tower.040
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Plane.052
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.051
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Tower.039
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Plane.050
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.049
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Tower.038
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.037
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Plane.048
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.047
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Tower.036
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.035
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.034
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Plane.046
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.045
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Tower.033
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.021
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.020
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Plane.032
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Tower.019
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.018
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.017
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Plane.031
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.030
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.029
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.028
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.027
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.044
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Tower.032
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.031
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.030
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Plane.043
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.042
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Tower.029
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.028
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Plane.041
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.040
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Tower.027
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Plane.039
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.038
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.037
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.036
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.035
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.034
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Plane.033
+		mesh is an instance of :  Plane.053.  Processing halted.
+	processing begun of mesh:  Tower.026
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.025
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.024
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.023
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.022
+		mesh is an instance of :  Tower.042.  Processing halted.
+	processing begun of mesh:  Tower.016
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#15
+		num positions      :  465
+		num normals        :  465
+		num uvs            :  930
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1098
+	processing begun of mesh:  Tower.015
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#16
+		num positions      :  24
+		num normals        :  24
+		num uvs            :  48
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  30
+	processing begun of mesh:  Tower.014
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#17
+		num positions      :  48
+		num normals        :  48
+		num uvs            :  96
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Tower.013
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#18
+		num positions      :  50
+		num normals        :  50
+		num uvs            :  100
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Tower.012
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#19
+		num positions      :  48
+		num normals        :  48
+		num uvs            :  96
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Tower.011
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#20
+		num positions      :  50
+		num normals        :  50
+		num uvs            :  100
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Plane.026
+		registered as also a user of material:  Roof
+		num positions      :  12
+		num normals        :  12
+		num uvs            :  24
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  15
+	processing begun of mesh:  Tower.010
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#21
+		num positions      :  76
+		num normals        :  76
+		num uvs            :  152
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  90
+	processing begun of mesh:  Tower.008
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#22
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  696
+	processing begun of mesh:  Tower.007
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#23
+		num positions      :  138
+		num normals        :  138
+		num uvs            :  276
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  696
+	processing begun of mesh:  Tower.006
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#24
+		num positions      :  8
+		num normals        :  8
+		num uvs            :  16
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  12
+	processing begun of mesh:  Tower.005
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#25
+		num positions      :  16
+		num normals        :  16
+		num uvs            :  32
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  24
+	processing begun of mesh:  Plane.024
+		registered as also a user of material:  Roof
+		num positions      :  12
+		num normals        :  12
+		num uvs            :  24
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  15
+	processing begun of mesh:  Tower.004
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of Standard material:  Rock
+		processing begun of multimaterial:  Castle.Multimaterial#26
+		num positions      :  96
+		num normals        :  96
+		num uvs            :  192
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  312
+	processing begun of mesh:  Tower.003
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#27
+		num positions      :  8
+		num normals        :  8
+		num uvs            :  16
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  12
+	processing begun of mesh:  Tower.002
+		mesh is an instance of :  Tower.050.  Processing halted.
+	processing begun of mesh:  Tower.001
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Castle.Multimaterial#28
+		num positions      :  452
+		num normals        :  452
+		num uvs            :  904
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1062
+	processing begun of mesh:  Godło.002
+		registered as also a user of material:  Godło
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Shield.001
+		registered as also a user of material:  Shield
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		registered as also a user of material:  Material.014
+		registered as also a user of material:  Material.015
+		processing begun of multimaterial:  Castle.Multimaterial#29
+		num positions      :  551
+		num normals        :  551
+		num uvs            :  1102
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1260
+	processing begun of mesh:  Anvil
+		processing begun of Standard material:  Material.002
+		processing begun of Standard material:  Material
+			Diffuse texture found "Texture.011"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Castle.Multimaterial#30
+		num positions      :  180
+		num normals        :  180
+		num uvs            :  360
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  504
+	processing begun of mesh:  Ivy
+		mesh is an instance of :  Ivy.001.  Processing halted.
+	WARNING: The following lamp not visible in scene thus ignored: Hemi Scene3
+	processing begun of light (POINT):  Sun.004
+	processing begun of light (POINT):  Sun.003
+	processing begun of light (POINT):  Sun.002
+	processing begun of light (SPOT):  Hemi
+	processing begun of light (POINT):  Sun.001
+	processing begun of light (POINT):  Sun
+========= Writing of scene file started =========
+========= Writing of scene file completed =========
+========= end of processing =========
+elapsed time:  0 min, 2.229 secs

@@ -39,7 +39,8 @@ class SocketIOClient {
                 .showDroppedItem()
                 .showPlayerQuests()
                 .refreshPlayerQuests()
-                .addExperience();
+                .addExperience()
+                .newLvl();
         });
 
         return this;
@@ -54,6 +55,18 @@ class SocketIOClient {
             game.player.addExperience(data.experience);
             game.gui.playerLogsPanel.addText('Earned '+data.experience+' experience.', 'yellow');
 
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected newLvl() {
+        let game = this.game;
+        this.socket.on('newLvl', function (data) {
+            game.player.setNewLvl();
         });
 
         return this;

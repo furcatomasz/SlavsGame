@@ -7,6 +7,7 @@ let config = require("./../config.js");
 
 server.listen(config.server.port);
 
+
 class SlavsServer {
 
     protected serverWebsocket: Server.IO;
@@ -16,9 +17,11 @@ class SlavsServer {
     public ormManager: Server.OrmManager;
     public enemies = [];
     public quests = [];
+    public gameModules: Server.GameModules;
 
     constructor() {
         this.enemyManager = new Server.EnemyManager();
+        this.gameModules = new Server.GameModules();
         this.questManager = new Server.QuestManager();
         this.enemies = this.enemyManager.getEnemies();
         this.quests = this.questManager.getQuests();

@@ -257,11 +257,17 @@ namespace Server {
                     self.server.ormManager.structure.player.get(playerId,
                         function (error, playerDatabase) {
                             playerDatabase.experience += earnedExperience;
-                            playerDatabase.save();
-
                             socket.emit('addExperience', {
                                 experience: earnedExperience
                             });
+                            let newLvl = (playerDatabase.lvl) ? playerDatabase.lvl+1 : 1;
+                            let requiredExperience = self.server.gameModules.characterLvls.getLvls()[newLvl];
+                            if(playerDatabase.experience >= requiredExperience) {
+                                playerDatabase.lvl += 1;
+                                socket.emit('newLvl');
+                            }
+
+                            playerDatabase.save();
                         });
 
                 });

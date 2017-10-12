@@ -39,6 +39,17 @@ var Server;
     }());
     Server.EnemyManager = EnemyManager;
 })(Server || (Server = {}));
+var CharacterLvls = require('./../../shared/CharacterLvls.js')["default"];
+var Server;
+(function (Server) {
+    var GameModules = /** @class */ (function () {
+        function GameModules() {
+            this.characterLvls = CharacterLvls;
+        }
+        return GameModules;
+    }());
+    Server.GameModules = GameModules;
+})(Server || (Server = {}));
 var Server;
 (function (Server) {
     var OrmManager = /** @class */ (function () {
@@ -91,6 +102,7 @@ var SlavsServer = /** @class */ (function () {
         this.enemies = [];
         this.quests = [];
         this.enemyManager = new Server.EnemyManager();
+        this.gameModules = new Server.GameModules();
         this.questManager = new Server.QuestManager();
         this.enemies = this.enemyManager.getEnemies();
         this.quests = this.questManager.getQuests();
@@ -338,10 +350,16 @@ var Server;
                     });
                     self.server.ormManager.structure.player.get(playerId, function (error, playerDatabase) {
                         playerDatabase.experience += earnedExperience;
-                        playerDatabase.save();
                         socket.emit('addExperience', {
                             experience: earnedExperience
                         });
+                        var newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
+                        var requiredExperience = self.server.gameModules.characterLvls.getLvls()[newLvl];
+                        if (playerDatabase.experience >= requiredExperience) {
+                            playerDatabase.lvl += 1;
+                            socket.emit('newLvl');
+                        }
+                        playerDatabase.save();
                     });
                 });
             });
@@ -431,7 +449,7 @@ var Server;
                         if (err)
                             throw err;
                         if (!exists) {
-                            ormManager.structure.player.create({ name: "Mietek", type: 1, user_id: userId }, function (err, insertedPlayer) {
+                            ormManager.structure.player.create({ name: "Mietek", type: 1, user_id: userId, lvl: 0 }, function (err, insertedPlayer) {
                                 if (err)
                                     throw err;
                                 var insertedPlayerId = insertedPlayer.id;
@@ -501,7 +519,7 @@ var Server;
                         if (err)
                             throw err;
                         if (!exists) {
-                            ormManager.structure.player.create({ name: "Tumek", type: 1, user_id: userId }, function (err, insertedPlayer) {
+                            ormManager.structure.player.create({ name: "Tumek", type: 1, user_id: userId, lvl: 0 }, function (err, insertedPlayer) {
                                 if (err)
                                     throw err;
                                 var insertedPlayerId = insertedPlayer.id;

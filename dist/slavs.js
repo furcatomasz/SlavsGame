@@ -588,7 +588,8 @@ var SocketIOClient = /** @class */ (function () {
                 .showDroppedItem()
                 .showPlayerQuests()
                 .refreshPlayerQuests()
-                .addExperience();
+                .addExperience()
+                .newLvl();
         });
         return this;
     };
@@ -600,6 +601,16 @@ var SocketIOClient = /** @class */ (function () {
         this.socket.on('addExperience', function (data) {
             game.player.addExperience(data.experience);
             game.gui.playerLogsPanel.addText('Earned ' + data.experience + ' experience.', 'yellow');
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
+    SocketIOClient.prototype.newLvl = function () {
+        var game = this.game;
+        this.socket.on('newLvl', function (data) {
+            game.player.setNewLvl();
         });
         return this;
     };
@@ -1067,7 +1078,8 @@ var Player = /** @class */ (function (_super) {
             attackArea.isPickable = false;
             _this.attackArea = attackArea;
             _this.experience = serverData.experience;
-            _this.lvl = 1;
+            console.log(serverData);
+            _this.lvl = serverData.lvl;
         }
         _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
@@ -1174,16 +1186,23 @@ var Player = /** @class */ (function (_super) {
     Player.prototype.getExperience = function (percentage) {
         if (percentage === void 0) { percentage = false; }
         var lvls = Character.Lvls.getLvls();
-        var requiredToLvl = lvls[this.lvl];
+        var requiredToActualLvl = lvls[this.lvl];
+        var requiredToLvl = lvls[this.lvl + 1];
         if (this.experience < 1) {
             return 0;
         }
-        return (percentage) ?
-            ((this.experience * 100) / requiredToLvl) :
-            this.experience;
+        var percentageValue = (this.lvl) ?
+            (((this.experience - requiredToActualLvl) * 100) / (requiredToLvl)) :
+            (((this.experience) * 100) / (requiredToLvl));
+        return (percentage) ? percentageValue : this.experience;
     };
     Player.prototype.addExperience = function (experince) {
         this.experience += experince;
+        this.refreshExperienceInGui();
+    };
+    Player.prototype.setNewLvl = function () {
+        this.lvl += 1;
+        this.game.gui.playerLogsPanel.addText('New lvl ' + this.lvl + '', 'red');
         this.refreshExperienceInGui();
     };
     Player.prototype.onHitStart = function () {
@@ -2246,6 +2265,58 @@ var Quests;
     }());
     Quests.QuestManager = QuestManager;
 })(Quests || (Quests = {}));
+/// <reference path="Scene.ts"/>
+/// <reference path="../game.ts"/>
+/// <reference path="../Events.ts"/>
+var Castle = /** @class */ (function (_super) {
+    __extends(Castle, _super);
+    function Castle() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Castle.prototype.initScene = function (game) {
+        var self = this;
+        game.sceneManager = this;
+        BABYLON.SceneLoader.Load("assets/scenes/Castle/", "Castle.babylon", game.engine, function (scene) {
+            game.sceneManager = self;
+            self
+                .setDefaults(game)
+                .optimizeScene(scene)
+                .setCamera(scene);
+            //scene.debugLayer.show({
+            //    initialTab: 2
+            //});
+            scene.actionManager = new BABYLON.ActionManager(scene);
+            var assetsManager = new BABYLON.AssetsManager(scene);
+            var sceneIndex = game.scenes.push(scene);
+            game.activeScene = sceneIndex - 1;
+            scene.executeWhenReady(function () {
+                self.environment = new Environment(game, scene);
+                self.initFactories(scene, assetsManager);
+                assetsManager.onFinish = function (tasks) {
+                    game.client.socket.emit('changeScenePre', {
+                        sceneType: Simple.TYPE
+                    });
+                };
+                assetsManager.load();
+                var listener = function listener() {
+                    console.log(2);
+                    game.controller.registerControls(scene);
+                    game.client.socket.emit('changeScenePost', {
+                        sceneType: Simple.TYPE
+                    });
+                    game.client.socket.emit('getQuests');
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            });
+        });
+    };
+    Castle.prototype.getType = function () {
+        return Simple.TYPE;
+    };
+    Castle.TYPE = 3;
+    return Castle;
+}(Scene));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../../babylon/ts/babylon.gui.d.ts"/>
 /// <reference path="Scene.ts"/>

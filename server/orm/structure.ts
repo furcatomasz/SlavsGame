@@ -3,6 +3,8 @@ namespace Server.Orm {
 
         public user;
         public player;
+        public playerSkills;
+        public playerAttributes;
         public playerOnline;
         public playerItems;
         public playerQuest;
@@ -19,15 +21,41 @@ namespace Server.Orm {
                 type: String,
                 lvl: Number,
                 experience: Number,
+                freeSkillPoints: Number,
+                freeAttributesPoints: Number,
                 scene: Number,
                 positionX: Number,
                 positionY: Number,
                 positionZ: Number,
             });
+
             this.player.hasOne("user", this.player, {
                 reverse : "players"
             });
 
+            this.playerAttributes = db.define("player_attributes", {
+                attackSpeed: Number,
+                defence: Number,
+                damage: Number,
+                health: Number,
+                critic: Number,
+                blockChance: Number,
+            });
+
+            this.playerAttributes.hasOne("player", this.player, {
+                reverse : "attributes"
+            });
+
+            this.playerSkills = db.define("player_skills", {
+                skillType: Number,
+                cooldown: Number,
+                damage: Number,
+                stock: Number,
+            });
+
+            this.playerSkills.hasOne("player", this.player, {
+                reverse : "skills"
+            });
 
             this.playerOnline = db.define("player_online", {
                 connectDate: Date,

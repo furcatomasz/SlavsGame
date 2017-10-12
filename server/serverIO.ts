@@ -264,6 +264,8 @@ namespace Server {
                             let requiredExperience = self.server.gameModules.characterLvls.getLvls()[newLvl];
                             if(playerDatabase.experience >= requiredExperience) {
                                 playerDatabase.lvl += 1;
+                                playerDatabase.freeAttributesPoints += 5;
+                                playerDatabase.freeSkillPoints += 1;
                                 socket.emit('newLvl');
                             }
 

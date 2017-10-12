@@ -122,16 +122,23 @@ namespace GUI {
                 result.thickness = 0;
                 result.fontSize = '14';
 
-                let textBlock = new BABYLON.GUI.TextBlock(i + "_guiImage", item.name);
-                textBlock.top = '-25%';
-                textBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                result.addControl(textBlock);
-
                 let image = this.createItemImage(item);
 
                 result.addControl(image);
                 panelItems.addControl(result);
+
+                let tooltipButton = null;
+                result.onPointerEnterObservable.add(function () {
+                    tooltipButton = new GUI.TooltipButton(result, item.name);
+                });
+
+                result.onPointerOutObservable.add(function () {
+                    result.children.forEach(function(value, key) {
+                       if(value.name == 'tooltip') {
+                           result.removeControl(value);
+                       }
+                    });
+                });
 
                 result.onPointerUpObservable.add(function () {
                     self.guiMain.game.player.inventory.mount(item, true);

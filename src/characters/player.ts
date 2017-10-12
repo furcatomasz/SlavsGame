@@ -67,7 +67,6 @@ class Player extends AbstractCharacter {
 
             this.attackArea = attackArea;
             this.experience = serverData.experience;
-            console.log(serverData);
             this.lvl = serverData.lvl;
         }
 
@@ -200,7 +199,7 @@ class Player extends AbstractCharacter {
         }
 
         let percentageValue = (this.lvl) ?
-            (((this.experience - requiredToActualLvl) * 100) / (requiredToLvl)) :
+            (((this.experience-requiredToActualLvl ) * 100) / (requiredToLvl-requiredToActualLvl)) :
             (((this.experience) * 100) / (requiredToLvl));
 
         return (percentage) ? percentageValue : this.experience;
@@ -215,6 +214,8 @@ class Player extends AbstractCharacter {
     public setNewLvl() {
         this.lvl += 1;
         this.game.gui.playerLogsPanel.addText('New lvl '+this.lvl+'', 'red');
+        this.game.gui.playerLogsPanel.addText('You got 5 attribute points', 'red');
+        this.game.gui.playerLogsPanel.addText('You got 1 skill point '+this.lvl+'', 'red');
 
         this.refreshExperienceInGui();
     }

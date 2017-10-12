@@ -22,8 +22,6 @@ namespace GUI {
             label.text = text;
             rect1.addControl(label);
 
-
-
             setTimeout(function() {
                 advancedTexture.dispose();
             }, 2000);

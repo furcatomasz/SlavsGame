@@ -1078,7 +1078,6 @@ var Player = /** @class */ (function (_super) {
             attackArea.isPickable = false;
             _this.attackArea = attackArea;
             _this.experience = serverData.experience;
-            console.log(serverData);
             _this.lvl = serverData.lvl;
         }
         _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
@@ -1192,7 +1191,7 @@ var Player = /** @class */ (function (_super) {
             return 0;
         }
         var percentageValue = (this.lvl) ?
-            (((this.experience - requiredToActualLvl) * 100) / (requiredToLvl)) :
+            (((this.experience - requiredToActualLvl) * 100) / (requiredToLvl - requiredToActualLvl)) :
             (((this.experience) * 100) / (requiredToLvl));
         return (percentage) ? percentageValue : this.experience;
     };
@@ -1203,6 +1202,8 @@ var Player = /** @class */ (function (_super) {
     Player.prototype.setNewLvl = function () {
         this.lvl += 1;
         this.game.gui.playerLogsPanel.addText('New lvl ' + this.lvl + '', 'red');
+        this.game.gui.playerLogsPanel.addText('You got 5 attribute points', 'red');
+        this.game.gui.playerLogsPanel.addText('You got 1 skill point ' + this.lvl + '', 'red');
         this.refreshExperienceInGui();
     };
     Player.prototype.onHitStart = function () {
@@ -2273,6 +2274,16 @@ var Castle = /** @class */ (function (_super) {
     function Castle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    Castle.prototype.setOrthoCameraHeights = function (camera) {
+        var ratio = window.innerWidth / window.innerHeight;
+        var zoom = camera.orthoTop;
+        var newWidth = zoom * ratio;
+        camera.orthoLeft = -Math.abs(newWidth);
+        camera.orthoRight = newWidth;
+        camera.orthoBottom = -Math.abs(zoom);
+        camera.rotation = new BABYLON.Vector3(0.751115, 0.5, 0);
+        return camera;
+    };
     Castle.prototype.initScene = function (game) {
         var self = this;
         game.sceneManager = this;
@@ -2282,9 +2293,9 @@ var Castle = /** @class */ (function (_super) {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-            //scene.debugLayer.show({
-            //    initialTab: 2
-            //});
+            scene.debugLayer.show({
+                initialTab: 2
+            });
             scene.actionManager = new BABYLON.ActionManager(scene);
             var assetsManager = new BABYLON.AssetsManager(scene);
             var sceneIndex = game.scenes.push(scene);
@@ -3117,6 +3128,28 @@ var SelectCharacter;
     }(AbstractCharacter));
     SelectCharacter.Warrior = Warrior;
 })(SelectCharacter || (SelectCharacter = {}));
+var GUI;
+(function (GUI) {
+    var TooltipButton = /** @class */ (function () {
+        function TooltipButton(baseControl, text) {
+            var rect1 = new BABYLON.GUI.Rectangle('tooltip');
+            rect1.top = '-25%';
+            rect1.width = 1;
+            rect1.height = "40px";
+            rect1.cornerRadius = 20;
+            rect1.thickness = 1;
+            rect1.background = "black";
+            baseControl.addControl(rect1);
+            var label = new BABYLON.GUI.TextBlock();
+            label.text = text;
+            rect1.addControl(label);
+            this.container = rect1;
+            this.label = label;
+        }
+        return TooltipButton;
+    }());
+    GUI.TooltipButton = TooltipButton;
+})(GUI || (GUI = {}));
 /// <reference path="../game.ts"/>
 var GUI;
 (function (GUI) {
@@ -3392,14 +3425,20 @@ var GUI;
                 result.top = top + "%";
                 result.thickness = 0;
                 result.fontSize = '14';
-                var textBlock = new BABYLON.GUI.TextBlock(i + "_guiImage", item.name);
-                textBlock.top = '-25%';
-                textBlock.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                result.addControl(textBlock);
                 var image = this_1.createItemImage(item);
                 result.addControl(image);
                 panelItems.addControl(result);
+                var tooltipButton = null;
+                result.onPointerEnterObservable.add(function () {
+                    tooltipButton = new GUI.TooltipButton(result, item.name);
+                });
+                result.onPointerOutObservable.add(function () {
+                    result.children.forEach(function (value, key) {
+                        if (value.name == 'tooltip') {
+                            result.removeControl(value);
+                        }
+                    });
+                });
                 result.onPointerUpObservable.add(function () {
                     self.guiMain.game.player.inventory.mount(item, true);
                     self.onPointerUpItemImage(item);

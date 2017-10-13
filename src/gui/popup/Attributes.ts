@@ -3,7 +3,7 @@
 namespace GUI {
     export class Attributes extends Popup {
 
-        constructor(guiMain: GUI.Main) {
+        constructor(guiMain:GUI.Main) {
             super(guiMain);
             this.name = 'Inventory';
             this.imageUrl = "assets/gui/attrs.png";
@@ -25,7 +25,7 @@ namespace GUI {
             buttonClose.horizontalAlignment = this.position;
             buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
-            buttonClose.onPointerUpObservable.add(function() {
+            buttonClose.onPointerUpObservable.add(function () {
                 self.close();
             });
 
@@ -42,84 +42,77 @@ namespace GUI {
         }
 
         protected showText() {
-            let textDamage = new BABYLON.GUI.TextBlock();
-            textDamage.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textDamage.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textDamage.text = 'Damage:'+this.guiMain.player.statistics.getDamage() ;
-            textDamage.color = "white";
-            textDamage.top = "0%";
-            textDamage.width = "25%";
-            textDamage.height = "10%";
-            textDamage.top = "0%";
+            let panel = new BABYLON.GUI.StackPanel('attributes.panel');
+            panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            panel.width = "32%";
+            panel.top = "5%";
 
-            let textArmor = new BABYLON.GUI.TextBlock();
-            textArmor.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textArmor.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textArmor.text = 'Armor:'+this.guiMain.player.statistics.getArmor() ;
-            textArmor.color = "white";
-            textArmor.top = "0%";
-            textArmor.width = "25%";
-            textArmor.height = "10%";
-            textArmor.top = "4%";
+            this.guiTexture.addControl(panel);
 
-            let textHP = new BABYLON.GUI.TextBlock();
-            textHP.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textHP.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textHP.text = 'HP:'+this.guiMain.player.statistics.getHp() ;
-            textHP.color = "white";
-            textHP.top = "0%";
-            textHP.width = "25%";
-            textHP.height = "10%";
-            textHP.top = "8%";
+            let textName = this.createText(this.guiMain.game.player.name);
+            textName.color = 'yellow';
+            textName.fontSize = 36;
+            panel.addControl(textName);
 
-            let textHitChance = new BABYLON.GUI.TextBlock();
-            textHitChance.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textHitChance.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textHitChance.text = 'Hit chance:'+this.guiMain.player.statistics.getHitChance() ;
-            textHitChance.color = "white";
-            textHitChance.top = "0%";
-            textHitChance.width = "25%";
-            textHitChance.height = "10%";
-            textHitChance.top = "12%";
+            let textName = this.createText(this.guiMain.game.player.lvl+' LVL');
+            textName.color = 'yellow';
+            textName.fontSize = 28;
+            panel.addControl(textName);
 
-            let textAttackSpeed = new BABYLON.GUI.TextBlock();
-            textAttackSpeed.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textAttackSpeed.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textAttackSpeed.text = 'Attack speed:'+this.guiMain.player.statistics.getAttackSpeed() ;
-            textAttackSpeed.color = "white";
-            textAttackSpeed.top = "0%";
-            textAttackSpeed.width = "25%";
-            textAttackSpeed.height = "10%";
-            textAttackSpeed.top = "16%";
+            let textName = this.createText('Attributes');
+            textName.color = 'green';
+            textName.fontSize = 36;
+            panel.addControl(textName);
 
-            let textWalkSpeed = new BABYLON.GUI.TextBlock();
-            textWalkSpeed.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textWalkSpeed.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textWalkSpeed.text = 'Walk speed:'+this.guiMain.player.statistics.getWalkSpeed() ;
-            textWalkSpeed.color = "white";
-            textWalkSpeed.top = "0%";
-            textWalkSpeed.width = "25%";
-            textWalkSpeed.height = "10%";
-            textWalkSpeed.top = "20%";
+            this.createAttribute(1, 'Damage:' + this.guiMain.player.statistics.getDamage(), panel);
+            this.createAttribute(2, 'Armor:' + this.guiMain.player.statistics.getArmor(), panel);
+            this.createAttribute(3, 'HP:' + this.guiMain.player.statistics.getHp(), panel);
+            this.createAttribute(4, 'Attack speed:' + this.guiMain.player.statistics.getAttackSpeed(), panel);
+            this.createAttribute(6, 'Block chance:' + this.guiMain.player.statistics.getBlockChance(), panel);
 
-            let textBlockChance = new BABYLON.GUI.TextBlock();
-            textBlockChance.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textBlockChance.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textBlockChance.text = 'Block chance:'+this.guiMain.player.statistics.getBlockChance() ;
-            textBlockChance.color = "white";
-            textBlockChance.top = "0%";
-            textBlockChance.width = "25%";
-            textBlockChance.height = "10%";
-            textBlockChance.top = "24%";
+            if (this.guiMain.game.player.freeAttributesPoints) {
+                let textAttributes = this.createText('You have ' + this.guiMain.game.player.freeAttributesPoints + ' free attribute points.');
+                textAttributes.color = 'red';
+                panel.addControl(textAttributes);
+            }
 
-            this.guiTexture.addControl(textDamage);
-            this.guiTexture.addControl(textHP);
-            this.guiTexture.addControl(textHitChance);
-            this.guiTexture.addControl(textAttackSpeed);
-            this.guiTexture.addControl(textWalkSpeed);
-            this.guiTexture.addControl(textBlockChance);
-            this.guiTexture.addControl(textArmor);
+            let textName = this.createText('Skills');
+            textName.color = 'green';
+            textName.fontSize = 36;
+            panel.addControl(textName);
         }
 
+        protected createText(text:string) {
+            let textBlock = new BABYLON.GUI.TextBlock();
+            textBlock.text = text;
+            textBlock.color = "white";
+            textBlock.width = "100%";
+            textBlock.height = "5%";
+
+            return textBlock;
+        }
+
+        protected createAttribute(type: number, text:string, control:BABYLON.GUI.StackPanel) {
+            let self = this;
+            if (this.guiMain.game.player.freeAttributesPoints) {
+                let button = BABYLON.GUI.Button.CreateImageButton("plus", text, "/assets/gui/plus.png");
+                button.height = "5%";
+                button.thickness = 0;
+                button.width = 0.3;
+                control.addControl(button);
+
+                button.onPointerUpObservable.add(function () {
+                    self.guiMain.game.client.socket.emit('addAttribute', {
+                        type: type
+                    });
+                });
+
+                this.guiMain.registerBlockMoveCharacter(button);
+            } else {
+                let textBlock = this.createText(text);
+                control.addControl(textBlock);
+            }
+        }
     }
 }

@@ -38,7 +38,6 @@ abstract class AbstractCharacter {
     public bloodParticles: BABYLON.ParticleSystem;
 
     constructor(name:string, game:Game) {
-        this.name = name;
         this.game = game;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
     }

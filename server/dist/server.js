@@ -168,30 +168,8 @@ var Server;
                         playerQuest.remove();
                     }
                 });
-                server.ormManager.structure.user.find({ email: "furcatomasz@gmail.com" }, function (err, user) {
-                    new Promise(function (resolveFind) {
-                        server.ormManager.structure.player.find({ user_id: user[0].id }, function (error, players) {
-                            player.characters = players;
-                            new Promise(function (resolveitems) {
-                                var _loop_1 = function (i) {
-                                    var playerDatabase = players[i];
-                                    playerDatabase.getItems(function (error, items) {
-                                        playerDatabase.items = items;
-                                        if (i == players.length - 1) {
-                                            resolveitems();
-                                        }
-                                    });
-                                };
-                                for (var i = 0; i < players.length; i++) {
-                                    _loop_1(i);
-                                }
-                            }).then(function () {
-                                resolveFind();
-                            });
-                        });
-                    }).then(function (resolve) {
-                        socket.emit('clientConnected', player);
-                    });
+                self.refreshPlayerData(player, socket, function () {
+                    socket.emit('clientConnected', player);
                 });
                 socket.on('getQuests', function () {
                     var emitData = {
@@ -300,6 +278,57 @@ var Server;
                         });
                     }
                 });
+                socket.on('addAttribute', function (attribute) {
+                    var type = attribute.type;
+                    self.server.ormManager.structure.player.oneAsync({
+                        id: player.characters[player.activePlayer].id
+                    }).then(function (playerDatabase) {
+                        if (playerDatabase.freeAttributesPoints) {
+                            self.server.ormManager.structure.playerAttributes
+                                .oneAsync({ player_id: playerDatabase.id })
+                                .then(function (attributes) {
+                                new Promise(function (resolveFind) {
+                                    if (!attributes) {
+                                        self.server.ormManager.structure.playerAttributes.create({ player_id: playerDatabase.id }, function (err, insertedAttributes) {
+                                            attributes = insertedAttributes;
+                                            resolveFind();
+                                        });
+                                    }
+                                    else {
+                                        resolveFind();
+                                    }
+                                }).then(function (resolve) {
+                                    switch (type) {
+                                        case 1:
+                                            attributes.damage += 1;
+                                            break;
+                                        case 2:
+                                            attributes.defence += 1;
+                                            break;
+                                        case 3:
+                                            attributes.health += 1;
+                                            break;
+                                        case 4:
+                                            attributes.attackSpeed += 1;
+                                            break;
+                                        case 5:
+                                            attributes.walkSpeed += 1;
+                                            break;
+                                        case 6:
+                                            attributes.blockChance += 1;
+                                            break;
+                                    }
+                                    attributes.save();
+                                    playerDatabase.freeAttributesPoints -= 1;
+                                    playerDatabase.save();
+                                    self.refreshPlayerData(player, socket, function () {
+                                        socket.emit('attributeAdded', player);
+                                    });
+                                });
+                            });
+                        }
+                    });
+                });
                 //socket.on('getEquip', function (characterKey) {
                 //    let playerId = player.characters[characterKey].id;
                 //    self.server.ormManager.structure.playerItems.find({player_id: playerId},
@@ -359,13 +388,41 @@ var Server;
                             playerDatabase.lvl += 1;
                             playerDatabase.freeAttributesPoints += 5;
                             playerDatabase.freeSkillPoints += 1;
-                            socket.emit('newLvl');
+                            socket.emit('newLvl', playerDatabase);
                         }
                         playerDatabase.save();
                     });
                 });
             });
         }
+        IO.prototype.refreshPlayerData = function (player, socket, callback) {
+            var server = this.server;
+            server.ormManager.structure.user.oneAsync({ email: "furcatomasz@gmail.com" }).then(function (user) {
+                server.ormManager.structure.player.findAsync({ user_id: user.id }).then(function (players) {
+                    player.characters = players;
+                    var _loop_1 = function (i) {
+                        var playerDatabase = players[i];
+                        server.ormManager.structure.playerItems
+                            .findAsync({ player_id: playerDatabase.id })
+                            .then(function (items) {
+                            playerDatabase.items = items;
+                            server.ormManager.structure.playerAttributes
+                                .oneAsync({ player_id: playerDatabase.id })
+                                .then(function (attributes) {
+                                playerDatabase.attributes = attributes;
+                                if (i == players.length - 1) {
+                                    callback();
+                                }
+                            });
+                        });
+                    };
+                    for (var i = 0; i < players.length; i++) {
+                        _loop_1(i);
+                    }
+                });
+            });
+        };
+        ;
         return IO;
     }());
     Server.IO = IO;

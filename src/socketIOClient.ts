@@ -24,7 +24,6 @@ class SocketIOClient {
     public playerConnected() {
         let self = this;
         let game = this.game;
-        let playerName = Game.randomNumber(1, 100);
 
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
@@ -40,7 +39,8 @@ class SocketIOClient {
                 .showPlayerQuests()
                 .refreshPlayerQuests()
                 .addExperience()
-                .newLvl();
+                .newLvl()
+                .attributeAdded();
         });
 
         return this;
@@ -63,9 +63,31 @@ class SocketIOClient {
     /**
      * @returns {SocketIOClient}
      */
+    protected attributeAdded() {
+        let game = this.game;
+        let self = this;
+        this.socket.on('attributeAdded', function (data) {
+            self.characters = data.characters;
+            game.player.freeAttributesPoints = self.characters[self.activePlayer].freeAttributesPoints;
+            let attributes = self.characters[self.activePlayer].attributes;
+            game.player.setCharacterStatistics(attributes);
+
+            game.gui.attributes.refreshPopup();
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
     protected newLvl() {
+        let self = this;
         let game = this.game;
         this.socket.on('newLvl', function (data) {
+            game.player.freeAttributesPoints = data.freeAttributesPoints;
+            game.gui.attributes.refreshPopup();
+
             game.player.setNewLvl();
         });
 

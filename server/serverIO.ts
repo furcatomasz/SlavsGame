@@ -4,7 +4,6 @@ namespace Server {
         protected remotePlayers;
 
         constructor(server: SlavsServer, serverIO) {
-
             this.remotePlayers = [];
             let self = this;
             let enemies = server.enemies;
@@ -38,34 +37,9 @@ namespace Server {
                     }
                 });
 
-                server.ormManager.structure.user.find({email: "furcatomasz@gmail.com"},
-                    function (err, user) {
-
-                        new Promise(function (resolveFind) {
-                            server.ormManager.structure.player.find({user_id: user[0].id},
-                                function (error, players) {
-                                    player.characters = players;
-                                    new Promise(function (resolveitems) {
-                                        for (let i = 0; i < players.length; i++) {
-                                            let playerDatabase = players[i];
-
-                                            playerDatabase.getItems(function (error, items) {
-                                                playerDatabase.items = items;
-                                                if (i == players.length - 1) {
-                                                    resolveitems();
-                                                }
-                                            });
-                                        }
-                                    }).then(function () {
-                                        resolveFind();
-                                    });
-                                });
-
-                        }).then(function (resolve) {
-                            socket.emit('clientConnected', player);
-                        });
-                    });
-
+                self.refreshPlayerData(player, socket, function() {
+                    socket.emit('clientConnected', player);
+                });
 
                 socket.on('getQuests', function () {
                     let emitData = {
@@ -196,6 +170,62 @@ namespace Server {
                     }
                 });
 
+                socket.on('addAttribute', function (attribute) {
+                    let type = attribute.type;
+
+                    self.server.ormManager.structure.player.oneAsync({
+                        id: player.characters[player.activePlayer].id,
+                    }).then(function (playerDatabase) {
+                        if(playerDatabase.freeAttributesPoints) {
+                            self.server.ormManager.structure.playerAttributes
+                                .oneAsync({player_id: playerDatabase.id})
+                                .then(function (attributes) {
+                                    new Promise(function (resolveFind) {
+                                        if (!attributes) {
+                                            self.server.ormManager.structure.playerAttributes.create({player_id: playerDatabase.id}, function (err, insertedAttributes) {
+                                                attributes = insertedAttributes;
+                                                resolveFind();
+                                            });
+                                        } else {
+                                            resolveFind();
+                                        }
+
+
+                                    }).then(function (resolve) {
+                                        switch (type) {
+                                            case 1:
+                                                attributes.damage += 1;
+                                                break;
+                                            case 2:
+                                                attributes.defence += 1;
+                                                break;
+                                            case 3:
+                                                attributes.health += 1;
+                                                break;
+                                            case 4:
+                                                attributes.attackSpeed += 1;
+                                                break;
+                                            case 5:
+                                                attributes.walkSpeed += 1;
+                                                break;
+                                            case 6:
+                                                attributes.blockChance += 1;
+                                                break;
+                                        }
+                                        attributes.save();
+                                        playerDatabase.freeAttributesPoints -= 1;
+                                        playerDatabase.save();
+
+                                        self.refreshPlayerData(player, socket, function() {
+                                            socket.emit('attributeAdded', player);
+                                        });
+
+                                    });
+                                });
+                        }
+                    });
+                });
+
                 //socket.on('getEquip', function (characterKey) {
                 //    let playerId = player.characters[characterKey].id;
                 //    self.server.ormManager.structure.playerItems.find({player_id: playerId},
@@ -266,7 +296,7 @@ namespace Server {
                                 playerDatabase.lvl += 1;
                                 playerDatabase.freeAttributesPoints += 5;
                                 playerDatabase.freeSkillPoints += 1;
-                                socket.emit('newLvl');
+                                socket.emit('newLvl', playerDatabase);
                             }
 
                             playerDatabase.save();
@@ -275,5 +305,37 @@ namespace Server {
                 });
             });
         }
+
+        protected refreshPlayerData(player, socket, callback) {
+            let server = this.server;
+            server.ormManager.structure.user.oneAsync({email: "furcatomasz@gmail.com"}).then(function (user) {
+                server.ormManager.structure.player.findAsync({user_id: user.id}).then(function (players) {
+                    player.characters = players;
+
+                    for (let i = 0; i < players.length; i++) {
+                        let playerDatabase = players[i];
+
+                        server.ormManager.structure.playerItems
+                            .findAsync({player_id: playerDatabase.id})
+                            .then(function (items) {
+                                playerDatabase.items = items;
+
+                                server.ormManager.structure.playerAttributes
+                                    .oneAsync({player_id: playerDatabase.id})
+                                    .then(function (attributes) {
+                                        playerDatabase.attributes = attributes;
+                                        if (i == players.length - 1) {
+                                            callback();
+                                        }
+                                    });
+                            });
+
+
+                    }
+
+                })
+
+            });
+        };
     }
 }

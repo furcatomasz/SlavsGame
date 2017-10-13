@@ -121,6 +121,7 @@ namespace GUI {
                 result.top = top + "%";
                 result.thickness = 0;
                 result.fontSize = '14';
+                this.guiMain.registerBlockMoveCharacter(result);
 
                 let image = this.createItemImage(item);
 
@@ -144,7 +145,7 @@ namespace GUI {
                     self.guiMain.game.player.inventory.mount(item, true);
                     self.onPointerUpItemImage(item);
                     self.showItems();
-                    if (self.guiMain.attributesOpened) {
+                    if (self.guiMain.attributes.opened) {
                         self.guiMain.attributes.refreshPopup();
                     }
                 });

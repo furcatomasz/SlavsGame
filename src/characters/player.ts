@@ -8,14 +8,16 @@ class Player extends AbstractCharacter {
     public playerLight:BABYLON.PointLight;
 
     protected experience: number;
-    protected lvl: number;
+    public lvl: number;
+    public freeAttributesPoints: number;
+    public freeSkillPoints: number;
 
     public constructor(game:Game, id, name, registerMoving:boolean, serverData: Array = []) {
         let self = this;
         this.id = id;
         this.name = name;
 
-        this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 15, 10, 125, 50, 100).setPlayer(this);
+        this.setCharacterStatistics(serverData.attributes);
         this.isControllable = registerMoving;
 
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, {
@@ -68,6 +70,9 @@ class Player extends AbstractCharacter {
             this.attackArea = attackArea;
             this.experience = serverData.experience;
             this.lvl = serverData.lvl;
+            this.freeAttributesPoints = serverData.freeAttributesPoints;
+            this.freeSkillPoints = serverData.freeSkillPoints;
+            this.name = serverData.name;
         }
 
         this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
@@ -75,6 +80,18 @@ class Player extends AbstractCharacter {
         super(name, game);
         this.registerFunctionAfterRender();
     }
+
+    protected setCharacterStatistics(attributes) {
+        this.statistics = new Attributes.CharacterStatistics(
+            100 + attributes.health * 5,
+            100 + attributes.health * 5,
+            100 + attributes.attackSpeed,
+            15 + attributes.damage * 5,
+            10 + attributes.defence * 5,
+            125,
+            50 + attributes.blockChance
+        ).setPlayer(this);
+    };
 
     /**
      * Moving events

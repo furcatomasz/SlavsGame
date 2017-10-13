@@ -44,8 +44,10 @@ namespace GUI {
         }
 
         public refreshPopup() {
-            this.close();
-            this.open();
+            if(this.opened) {
+                this.close();
+                this.open();
+            }
         }
 
         public abstract open();

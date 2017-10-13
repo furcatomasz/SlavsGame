@@ -232,52 +232,8 @@ var Simple = /** @class */ (function (_super) {
                     var grain = game.factories['nature_grain'].createInstance('Grain', true);
                     grain.position = new BABYLON.Vector3(66, 0, -105);
                     grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
+                    grain.skeleton.beginAnimation('ArmatureAction', true);
                     var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-                    var panel = new BABYLON.GUI.StackPanel();
-                    panel.width = "200px";
-                    panel.isVertical = true;
-                    panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-                    panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-                    advancedTexture.addControl(panel);
-                    var checkbox = new BABYLON.GUI.Checkbox();
-                    checkbox.width = "20px";
-                    checkbox.height = "20px";
-                    checkbox.color = "red";
-                    checkbox.onIsCheckedChangedObservable.add(function (value) {
-                        if (value) {
-                            grain.skeleton.beginAnimation('ArmatureAction', true);
-                        }
-                        else {
-                            scene.stopAnimation(grain.skeleton);
-                        }
-                    });
-                    if (game.gui) {
-                        game.gui.registerBlockMoveCharacter(checkbox);
-                    }
-                    var header = BABYLON.GUI.Control.AddHeader(checkbox, 'Grain animation', "180px", { isHorizontal: true, controlFirst: true });
-                    header.height = "30px";
-                    header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    panel.addControl(header);
-                    var checkbox = new BABYLON.GUI.Checkbox();
-                    checkbox.width = "20px";
-                    checkbox.height = "20px";
-                    checkbox.color = "red";
-                    checkbox.onIsCheckedChangedObservable.add(function (value) {
-                        if (value) {
-                            grain.visibility = false;
-                        }
-                        else {
-                            grain.visibility = true;
-                        }
-                    });
-                    if (game.gui) {
-                        game.gui.registerBlockMoveCharacter(checkbox);
-                    }
-                    var header = BABYLON.GUI.Control.AddHeader(checkbox, 'Disable grain', "180px", { isHorizontal: true, controlFirst: true });
-                    header.height = "30px";
-                    header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    panel.addControl(header);
                     self.defaultPipeline(scene);
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
@@ -295,7 +251,6 @@ var Simple = /** @class */ (function (_super) {
 /// <reference path="../game.ts"/>
 var AbstractCharacter = /** @class */ (function () {
     function AbstractCharacter(name, game) {
-        this.name = name;
         this.game = game;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
     }
@@ -574,7 +529,6 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.playerConnected = function () {
         var self = this;
         var game = this.game;
-        var playerName = Game.randomNumber(1, 100);
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
             self.characters = data.characters;
@@ -589,7 +543,8 @@ var SocketIOClient = /** @class */ (function () {
                 .showPlayerQuests()
                 .refreshPlayerQuests()
                 .addExperience()
-                .newLvl();
+                .newLvl()
+                .attributeAdded();
         });
         return this;
     };
@@ -607,9 +562,27 @@ var SocketIOClient = /** @class */ (function () {
     /**
      * @returns {SocketIOClient}
      */
+    SocketIOClient.prototype.attributeAdded = function () {
+        var game = this.game;
+        var self = this;
+        this.socket.on('attributeAdded', function (data) {
+            self.characters = data.characters;
+            game.player.freeAttributesPoints = self.characters[self.activePlayer].freeAttributesPoints;
+            var attributes = self.characters[self.activePlayer].attributes;
+            game.player.setCharacterStatistics(attributes);
+            game.gui.attributes.refreshPopup();
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
     SocketIOClient.prototype.newLvl = function () {
+        var self = this;
         var game = this.game;
         this.socket.on('newLvl', function (data) {
+            game.player.freeAttributesPoints = data.freeAttributesPoints;
+            game.gui.attributes.refreshPopup();
             game.player.setNewLvl();
         });
         return this;
@@ -1039,7 +1012,7 @@ var Player = /** @class */ (function (_super) {
         var self = _this;
         _this.id = id;
         _this.name = name;
-        _this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 15, 10, 125, 50, 100).setPlayer(_this);
+        _this.setCharacterStatistics(serverData.attributes);
         _this.isControllable = registerMoving;
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, {
             loop: true,
@@ -1079,12 +1052,19 @@ var Player = /** @class */ (function (_super) {
             _this.attackArea = attackArea;
             _this.experience = serverData.experience;
             _this.lvl = serverData.lvl;
+            _this.freeAttributesPoints = serverData.freeAttributesPoints;
+            _this.freeSkillPoints = serverData.freeSkillPoints;
+            _this.name = serverData.name;
         }
         _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
         _this.registerFunctionAfterRender();
         return _this;
     }
+    Player.prototype.setCharacterStatistics = function (attributes) {
+        this.statistics = new Attributes.CharacterStatistics(100 + attributes.health * 5, 100 + attributes.health * 5, 100 + attributes.attackSpeed, 15 + attributes.damage * 5, 10 + attributes.defence * 5, 125, 50 + attributes.blockChance).setPlayer(this);
+    };
+    ;
     /**
      * Moving events
      */
@@ -3205,8 +3185,10 @@ var GUI;
             return this;
         };
         Popup.prototype.refreshPopup = function () {
-            this.close();
-            this.open();
+            if (this.opened) {
+                this.close();
+                this.open();
+            }
         };
         return Popup;
     }());
@@ -3251,76 +3233,66 @@ var GUI;
             this.guiMain.game.sceneManager.environment.ground.isPickable = true;
         };
         Attributes.prototype.showText = function () {
-            var textDamage = new BABYLON.GUI.TextBlock();
-            textDamage.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textDamage.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textDamage.text = 'Damage:' + this.guiMain.player.statistics.getDamage();
-            textDamage.color = "white";
-            textDamage.top = "0%";
-            textDamage.width = "25%";
-            textDamage.height = "10%";
-            textDamage.top = "0%";
-            var textArmor = new BABYLON.GUI.TextBlock();
-            textArmor.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textArmor.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textArmor.text = 'Armor:' + this.guiMain.player.statistics.getArmor();
-            textArmor.color = "white";
-            textArmor.top = "0%";
-            textArmor.width = "25%";
-            textArmor.height = "10%";
-            textArmor.top = "4%";
-            var textHP = new BABYLON.GUI.TextBlock();
-            textHP.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textHP.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textHP.text = 'HP:' + this.guiMain.player.statistics.getHp();
-            textHP.color = "white";
-            textHP.top = "0%";
-            textHP.width = "25%";
-            textHP.height = "10%";
-            textHP.top = "8%";
-            var textHitChance = new BABYLON.GUI.TextBlock();
-            textHitChance.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textHitChance.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textHitChance.text = 'Hit chance:' + this.guiMain.player.statistics.getHitChance();
-            textHitChance.color = "white";
-            textHitChance.top = "0%";
-            textHitChance.width = "25%";
-            textHitChance.height = "10%";
-            textHitChance.top = "12%";
-            var textAttackSpeed = new BABYLON.GUI.TextBlock();
-            textAttackSpeed.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textAttackSpeed.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textAttackSpeed.text = 'Attack speed:' + this.guiMain.player.statistics.getAttackSpeed();
-            textAttackSpeed.color = "white";
-            textAttackSpeed.top = "0%";
-            textAttackSpeed.width = "25%";
-            textAttackSpeed.height = "10%";
-            textAttackSpeed.top = "16%";
-            var textWalkSpeed = new BABYLON.GUI.TextBlock();
-            textWalkSpeed.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textWalkSpeed.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textWalkSpeed.text = 'Walk speed:' + this.guiMain.player.statistics.getWalkSpeed();
-            textWalkSpeed.color = "white";
-            textWalkSpeed.top = "0%";
-            textWalkSpeed.width = "25%";
-            textWalkSpeed.height = "10%";
-            textWalkSpeed.top = "20%";
-            var textBlockChance = new BABYLON.GUI.TextBlock();
-            textBlockChance.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textBlockChance.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textBlockChance.text = 'Block chance:' + this.guiMain.player.statistics.getBlockChance();
-            textBlockChance.color = "white";
-            textBlockChance.top = "0%";
-            textBlockChance.width = "25%";
-            textBlockChance.height = "10%";
-            textBlockChance.top = "24%";
-            this.guiTexture.addControl(textDamage);
-            this.guiTexture.addControl(textHP);
-            this.guiTexture.addControl(textHitChance);
-            this.guiTexture.addControl(textAttackSpeed);
-            this.guiTexture.addControl(textWalkSpeed);
-            this.guiTexture.addControl(textBlockChance);
-            this.guiTexture.addControl(textArmor);
+            var panel = new BABYLON.GUI.StackPanel('attributes.panel');
+            panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            panel.width = "32%";
+            panel.top = "5%";
+            this.guiTexture.addControl(panel);
+            var textName = this.createText(this.guiMain.game.player.name);
+            textName.color = 'yellow';
+            textName.fontSize = 36;
+            panel.addControl(textName);
+            var textName = this.createText(this.guiMain.game.player.lvl + ' LVL');
+            textName.color = 'yellow';
+            textName.fontSize = 28;
+            panel.addControl(textName);
+            var textName = this.createText('Attributes');
+            textName.color = 'green';
+            textName.fontSize = 36;
+            panel.addControl(textName);
+            this.createAttribute(1, 'Damage:' + this.guiMain.player.statistics.getDamage(), panel);
+            this.createAttribute(2, 'Armor:' + this.guiMain.player.statistics.getArmor(), panel);
+            this.createAttribute(3, 'HP:' + this.guiMain.player.statistics.getHp(), panel);
+            this.createAttribute(4, 'Attack speed:' + this.guiMain.player.statistics.getAttackSpeed(), panel);
+            this.createAttribute(6, 'Block chance:' + this.guiMain.player.statistics.getBlockChance(), panel);
+            if (this.guiMain.game.player.freeAttributesPoints) {
+                var textAttributes = this.createText('You have ' + this.guiMain.game.player.freeAttributesPoints + ' free attribute points.');
+                textAttributes.color = 'red';
+                panel.addControl(textAttributes);
+            }
+            var textName = this.createText('Skills');
+            textName.color = 'green';
+            textName.fontSize = 36;
+            panel.addControl(textName);
+        };
+        Attributes.prototype.createText = function (text) {
+            var textBlock = new BABYLON.GUI.TextBlock();
+            textBlock.text = text;
+            textBlock.color = "white";
+            textBlock.width = "100%";
+            textBlock.height = "5%";
+            return textBlock;
+        };
+        Attributes.prototype.createAttribute = function (type, text, control) {
+            var self = this;
+            if (this.guiMain.game.player.freeAttributesPoints) {
+                var button = BABYLON.GUI.Button.CreateImageButton("plus", text, "/assets/gui/plus.png");
+                button.height = "5%";
+                button.thickness = 0;
+                button.width = 0.3;
+                control.addControl(button);
+                button.onPointerUpObservable.add(function () {
+                    self.guiMain.game.client.socket.emit('addAttribute', {
+                        type: type
+                    });
+                });
+                this.guiMain.registerBlockMoveCharacter(button);
+            }
+            else {
+                var textBlock = this.createText(text);
+                control.addControl(textBlock);
+            }
         };
         return Attributes;
     }(GUI.Popup));
@@ -3425,6 +3397,7 @@ var GUI;
                 result.top = top + "%";
                 result.thickness = 0;
                 result.fontSize = '14';
+                this_1.guiMain.registerBlockMoveCharacter(result);
                 var image = this_1.createItemImage(item);
                 result.addControl(image);
                 panelItems.addControl(result);
@@ -3443,7 +3416,7 @@ var GUI;
                     self.guiMain.game.player.inventory.mount(item, true);
                     self.onPointerUpItemImage(item);
                     self.showItems();
-                    if (self.guiMain.attributesOpened) {
+                    if (self.guiMain.attributes.opened) {
                         self.guiMain.attributes.refreshPopup();
                     }
                 });

@@ -1,5 +1,5 @@
 namespace Attributes {
-    export class AbstractStatistics {
+    export class  AbstractStatistics {
 
         protected hp: number;
         protected hpMax: number;

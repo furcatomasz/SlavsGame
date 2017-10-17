@@ -82,6 +82,16 @@ class Player extends AbstractCharacter {
     }
 
     protected setCharacterStatistics(attributes) {
+        if(!attributes) {
+            attributes = {
+                health: 0,
+                attackSpeed: 0,
+                defence: 0,
+                damage: 0,
+                blockChance: 0,
+            }
+        }
+
         this.statistics = new Attributes.CharacterStatistics(
             100 + attributes.health * 5,
             100 + attributes.health * 5,

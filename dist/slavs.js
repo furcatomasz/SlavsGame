@@ -234,6 +234,7 @@ var Simple = /** @class */ (function (_super) {
                     grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
                     grain.skeleton.beginAnimation('ArmatureAction', true);
                     var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
+                    self.game.gui.attributes.open();
                     self.defaultPipeline(scene);
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
@@ -1062,6 +1063,15 @@ var Player = /** @class */ (function (_super) {
         return _this;
     }
     Player.prototype.setCharacterStatistics = function (attributes) {
+        if (!attributes) {
+            attributes = {
+                health: 0,
+                attackSpeed: 0,
+                defence: 0,
+                damage: 0,
+                blockChance: 0
+            };
+        }
         this.statistics = new Attributes.CharacterStatistics(100 + attributes.health * 5, 100 + attributes.health * 5, 100 + attributes.attackSpeed, 15 + attributes.damage * 5, 10 + attributes.defence * 5, 125, 50 + attributes.blockChance).setPlayer(this);
     };
     ;
@@ -2770,43 +2780,46 @@ var Items;
     }());
     Items.ItemManager = ItemManager;
 })(Items || (Items = {}));
-/// <reference path="../AbstractCharacter.ts"/>
-var Bandit;
-(function (Bandit_1) {
-    var Bandit = /** @class */ (function (_super) {
-        __extends(Bandit, _super);
-        function Bandit(serverKey, game, position, rotationQuaternion) {
-            var _this = this;
-            _this.name = 'Bandit';
-            var mesh = game.factories['character'].createInstance('Warrior', true);
-            mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
-            mesh.position = position;
-            mesh.rotation = rotationQuaternion;
-            _this.mesh = mesh;
-            _this.statistics = new Attributes.CharacterStatistics(50, 50, 100, 3, 10, 100, 0, 100);
-            _this.id = serverKey;
-            _this.mesh = mesh;
-            _this.visibilityAreaSize = 30;
-            _this.attackAreaSize = 6;
-            _this.sfxHit = new BABYLON.Sound("WormWalk", "/assets/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
-            _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-            _this.inventory = new Character.Inventory(game, _this);
-            var armor = new Items.Armors.Robe(game);
-            var axe = new Items.Weapons.Axe(game);
-            var gloves = new Items.Gloves.PrimaryGloves(game);
-            var boots = new Items.Boots.PrimaryBoots(game);
-            _this.inventory.mount(armor);
-            _this.inventory.mount(gloves);
-            _this.inventory.mount(boots);
-            _this.inventory.mount(axe);
-            _this = _super.call(this, name, game) || this;
+var Skills;
+(function (Skills) {
+    var AbstractSkill = /** @class */ (function () {
+        function AbstractSkill(cooldown, damage, stock) {
+            if (cooldown === void 0) { cooldown = 0; }
+            if (damage === void 0) { damage = 0; }
+            if (stock === void 0) { stock = 0; }
+            this.cooldown = cooldown;
+            this.damage = damage;
+            this.stock = stock;
+        }
+        AbstractSkill.prototype.getImageUrl = function () {
+            return this.image;
+        };
+        AbstractSkill.TYPE = 0;
+        return AbstractSkill;
+    }());
+    Skills.AbstractSkill = AbstractSkill;
+})(Skills || (Skills = {}));
+var Skills;
+(function (Skills) {
+    var AbstractSkill = Skills.AbstractSkill;
+    var DoubleAttack = /** @class */ (function (_super) {
+        __extends(DoubleAttack, _super);
+        function DoubleAttack(cooldown, damage, stock) {
+            if (cooldown === void 0) { cooldown = 0; }
+            if (damage === void 0) { damage = 0; }
+            if (stock === void 0) { stock = 0; }
+            var _this = _super.call(this, cooldown, damage, stock) || this;
+            _this.image = '/assets/skills/skill01.png';
             return _this;
         }
-        Bandit.TYPE = 'bandit';
-        return Bandit;
-    }(Monster));
-    Bandit_1.Bandit = Bandit;
-})(Bandit || (Bandit = {}));
+        DoubleAttack.prototype.getType = function () {
+            return Skills.DoubleAttack.TYPE;
+        };
+        DoubleAttack.TYPE = 1;
+        return DoubleAttack;
+    }(AbstractSkill));
+    Skills.DoubleAttack = DoubleAttack;
+})(Skills || (Skills = {}));
 /// <reference path="../../game.ts"/>
 /// <reference path="monster.ts"/>
 var BigWorm = /** @class */ (function (_super) {
@@ -2977,6 +2990,43 @@ var NPC;
     }(NPC.AbstractNpc));
     NPC.Warrior = Warrior;
 })(NPC || (NPC = {}));
+/// <reference path="../AbstractCharacter.ts"/>
+var Bandit;
+(function (Bandit_1) {
+    var Bandit = /** @class */ (function (_super) {
+        __extends(Bandit, _super);
+        function Bandit(serverKey, game, position, rotationQuaternion) {
+            var _this = this;
+            _this.name = 'Bandit';
+            var mesh = game.factories['character'].createInstance('Warrior', true);
+            mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
+            mesh.position = position;
+            mesh.rotation = rotationQuaternion;
+            _this.mesh = mesh;
+            _this.statistics = new Attributes.CharacterStatistics(50, 50, 100, 3, 10, 100, 0, 100);
+            _this.id = serverKey;
+            _this.mesh = mesh;
+            _this.visibilityAreaSize = 30;
+            _this.attackAreaSize = 6;
+            _this.sfxHit = new BABYLON.Sound("WormWalk", "/assets/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
+            _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
+            _this.inventory = new Character.Inventory(game, _this);
+            var armor = new Items.Armors.Robe(game);
+            var axe = new Items.Weapons.Axe(game);
+            var gloves = new Items.Gloves.PrimaryGloves(game);
+            var boots = new Items.Boots.PrimaryBoots(game);
+            _this.inventory.mount(armor);
+            _this.inventory.mount(gloves);
+            _this.inventory.mount(boots);
+            _this.inventory.mount(axe);
+            _this = _super.call(this, name, game) || this;
+            return _this;
+        }
+        Bandit.TYPE = 'bandit';
+        return Bandit;
+    }(Monster));
+    Bandit_1.Bandit = Bandit;
+})(Bandit || (Bandit = {}));
 /// <reference path="../AbstractCharacter.ts"/>
 var SelectCharacter;
 (function (SelectCharacter) {
@@ -3171,7 +3221,7 @@ var GUI;
             this.guiTexture = this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
             var container = new BABYLON.GUI.StackPanel();
             container.horizontalAlignment = this.position;
-            container.width = 0.33;
+            container.width = 1;
             container.height = 1;
             this.container = container;
             var image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, this.imageUrl);
@@ -3241,14 +3291,17 @@ var GUI;
             this.guiTexture.addControl(panel);
             var textName = this.createText(this.guiMain.game.player.name);
             textName.color = 'yellow';
+            textName.height = '8%';
             textName.fontSize = 36;
             panel.addControl(textName);
             var textName = this.createText(this.guiMain.game.player.lvl + ' LVL');
             textName.color = 'yellow';
+            textName.height = '8%';
             textName.fontSize = 28;
             panel.addControl(textName);
             var textName = this.createText('Attributes');
             textName.color = 'green';
+            textName.height = '8%';
             textName.fontSize = 36;
             panel.addControl(textName);
             this.createAttribute(1, 'Damage:' + this.guiMain.player.statistics.getDamage(), panel);
@@ -3263,8 +3316,11 @@ var GUI;
             }
             var textName = this.createText('Skills');
             textName.color = 'green';
+            textName.height = '8%';
             textName.fontSize = 36;
             panel.addControl(textName);
+            var skillPanel = this.createSkill(new Skills.DoubleAttack(0, 0, 0));
+            panel.addControl(skillPanel);
         };
         Attributes.prototype.createText = function (text) {
             var textBlock = new BABYLON.GUI.TextBlock();
@@ -3273,6 +3329,29 @@ var GUI;
             textBlock.width = "100%";
             textBlock.height = "5%";
             return textBlock;
+        };
+        Attributes.prototype.createSkill = function (skill) {
+            var panelSkill = new BABYLON.GUI.StackPanel('attributes.panelSkill');
+            panelSkill.isVertical = true;
+            // let image = new BABYLON.GUI.Image("skill.image", skill.getImageUrl());
+            // image.width = 0.4;
+            // panelSkill.addControl(image);
+            var button = BABYLON.GUI.Button.CreateImageButton("plus", 'Damage', "/assets/gui/plus.png");
+            button.height = "5%";
+            button.thickness = 0;
+            button.width = 0.3;
+            panelSkill.addControl(button);
+            var button = BABYLON.GUI.Button.CreateImageButton("plus", 'Cooldown', "/assets/gui/plus.png");
+            button.height = "5%";
+            button.thickness = 0;
+            button.width = 0.3;
+            panelSkill.addControl(button);
+            var button = BABYLON.GUI.Button.CreateImageButton("plus", 'Stock', "/assets/gui/plus.png");
+            button.height = "5%";
+            button.thickness = 0;
+            button.width = 0.3;
+            panelSkill.addControl(button);
+            return panelSkill;
         };
         Attributes.prototype.createAttribute = function (type, text, control) {
             var self = this;

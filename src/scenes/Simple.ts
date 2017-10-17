@@ -49,7 +49,7 @@ class Simple extends Scene {
                     grain.skeleton.beginAnimation('ArmatureAction', true);
 
                     let grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-
+                    self.game.gui.attributes.open();
 
                     self.defaultPipeline(scene);
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);

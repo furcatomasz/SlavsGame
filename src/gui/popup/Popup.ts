@@ -26,7 +26,7 @@ namespace GUI {
 
             let container = new BABYLON.GUI.StackPanel();
             container.horizontalAlignment = this.position;
-            container.width = 0.33;
+            container.width = 1;
             container.height = 1;
             this.container = container;
 

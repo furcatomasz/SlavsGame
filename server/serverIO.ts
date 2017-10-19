@@ -226,6 +226,64 @@ namespace Server {
                     });
                 });
 
+                socket.on('learnSkill', function (skill) {
+                    let skillType = skill.skillType;
+                    let skillPowerType = skill.powerType;
+                    let isCreated = false;
+
+                    self.server.ormManager.structure.player.oneAsync({
+                        id: player.characters[player.activePlayer].id,
+                    }).then(function (playerDatabase) {
+                        if(playerDatabase.freeSkillPoints) {
+                            self.server.ormManager.structure.playerSkills
+                                .oneAsync({
+                                    player_id: playerDatabase.id,
+                                    skillType: skillType
+                                })
+                                .then(function (skillDatabase) {
+                                    new Promise(function (resolveFind) {
+                                        if (!skillDatabase) {
+                                            isCreated = true;
+                                            self.server.ormManager.structure.playerSkills.create({
+                                                player_id: playerDatabase.id,
+                                                skillType: skillType
+                                            }, function (err, insertedSkill) {
+                                                skillDatabase = insertedSkill;
+                                                resolveFind();
+                                            });
+                                        } else {
+                                            resolveFind();
+                                        }
+
+
+                                    }).then(function (resolve) {
+                                        if(!isCreated) {
+                                            switch (skillPowerType) {
+                                                case 1:
+                                                    skillDatabase.damage += 1;
+                                                    break;
+                                                case 2:
+                                                    skillDatabase.cooldown += 1;
+                                                    break;
+                                                case 3:
+                                                    skillDatabase.stock += 1;
+                                                    break;
+                                            }
+                                            skillDatabase.save();
+                                        }
+                                        playerDatabase.freeSkillPoints -= 1;
+                                        playerDatabase.save();
+
+                                        self.refreshPlayerData(player, socket, function() {
+                                            socket.emit('skillLearned', player);
+                                        });
+
+                                    });
+                                });
+                        }
+                    });
+                });
+
                 //socket.on('getEquip', function (characterKey) {
                 //    let playerId = player.characters[characterKey].id;
                 //    self.server.ormManager.structure.playerItems.find({player_id: playerId},
@@ -324,9 +382,17 @@ namespace Server {
                                     .oneAsync({player_id: playerDatabase.id})
                                     .then(function (attributes) {
                                         playerDatabase.attributes = attributes;
-                                        if (i == players.length - 1) {
-                                            callback();
-                                        }
+
+                                        server.ormManager.structure.playerSkills
+                                            .findAsync({player_id: playerDatabase.id})
+                                            .then(function (skills) {
+                                                playerDatabase.skills = skills;
+
+                                                if (i == players.length - 1) {
+                                                    callback();
+                                                }
+                                            });
+
                                     });
                             });
 

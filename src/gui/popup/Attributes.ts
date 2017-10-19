@@ -80,14 +80,6 @@ namespace GUI {
                 panel.addControl(textAttributes);
             }
 
-            let textName = this.createText('Skills');
-            textName.color = 'green';
-            textName.height = '8%';
-            textName.fontSize = 36;
-            panel.addControl(textName);
-
-            let skillPanel = this.createSkill(new Skills.DoubleAttack(0,0,0));
-            panel.addControl(skillPanel);
         }
 
         protected createText(text:string) {
@@ -98,35 +90,6 @@ namespace GUI {
             textBlock.height = "5%";
 
             return textBlock;
-        }
-
-        protected createSkill(skill: Skills.AbstractSkill) {
-            let panelSkill = new BABYLON.GUI.StackPanel('attributes.panelSkill');
-            panelSkill.isVertical = true;
-
-            // let image = new BABYLON.GUI.Image("skill.image", skill.getImageUrl());
-            // image.width = 0.4;
-            // panelSkill.addControl(image);
-
-            let button = BABYLON.GUI.Button.CreateImageButton("plus", 'Damage', "/assets/gui/plus.png");
-            button.height = "5%";
-            button.thickness = 0;
-            button.width = 0.3;
-            panelSkill.addControl(button);
-
-            let button = BABYLON.GUI.Button.CreateImageButton("plus", 'Cooldown', "/assets/gui/plus.png");
-            button.height = "5%";
-            button.thickness = 0;
-            button.width = 0.3;
-            panelSkill.addControl(button);
-
-            let button = BABYLON.GUI.Button.CreateImageButton("plus", 'Stock', "/assets/gui/plus.png");
-            button.height = "5%";
-            button.thickness = 0;
-            button.width = 0.3;
-            panelSkill.addControl(button);
-
-            return panelSkill;
         }
 
         protected createAttribute(type: number, text:string, control:BABYLON.GUI.StackPanel) {

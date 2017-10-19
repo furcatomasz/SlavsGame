@@ -1,10 +1,12 @@
-namespace Skills {
-    export class  AbstractSkill {
+namespace Character.Skills {
+    export abstract class  AbstractSkill {
         static TYPE = 0;
 
-        protected cooldown: number;
-        protected damage: number;
-        protected stock: number;
+        public cooldown: number;
+        public damage: number;
+        public stock: number;
+        public name: string;
+
         protected image: string;
 
         constructor(cooldown: number = 0, damage: number = 0, stock: number = 0) {

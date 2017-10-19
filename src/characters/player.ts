@@ -7,6 +7,7 @@ class Player extends AbstractCharacter {
     public inventory:Character.Inventory;
     public playerLight:BABYLON.PointLight;
 
+    public skills: Array;
     protected experience: number;
     public lvl: number;
     public freeAttributesPoints: number;
@@ -73,6 +74,7 @@ class Player extends AbstractCharacter {
             this.freeAttributesPoints = serverData.freeAttributesPoints;
             this.freeSkillPoints = serverData.freeSkillPoints;
             this.name = serverData.name;
+            this.setCharacterSkills(serverData.skills);
         }
 
         this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
@@ -81,7 +83,7 @@ class Player extends AbstractCharacter {
         this.registerFunctionAfterRender();
     }
 
-    protected setCharacterStatistics(attributes) {
+    public setCharacterStatistics(attributes) {
         if(!attributes) {
             attributes = {
                 health: 0,
@@ -101,6 +103,25 @@ class Player extends AbstractCharacter {
             125,
             50 + attributes.blockChance
         ).setPlayer(this);
+    };
+
+    public setCharacterSkills(skills) {
+        let skillManager = new Character.Skills.SkillsManager(this.game);
+        let self = this;
+        this.skills = [];
+
+        if(skills) {
+            skills.forEach(function(skill, key) {
+                let playerSkill = skillManager.getSkill(skill.skillType);
+                playerSkill.damage = (skill.damage) ? skill.damage : 0;
+                playerSkill.stock = (skill.stock) ? skill.stock : 0;
+                playerSkill.cooldown = (skill.cooldown) ? skill.cooldown : 0;
+                self.skills[playerSkill.getType()] = playerSkill;
+
+            });
+        }
+
+        return this;
     };
 
     /**

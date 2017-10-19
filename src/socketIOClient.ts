@@ -40,7 +40,8 @@ class SocketIOClient {
                 .refreshPlayerQuests()
                 .addExperience()
                 .newLvl()
-                .attributeAdded();
+                .attributeAdded()
+                .skillsLearned();
         });
 
         return this;
@@ -73,6 +74,23 @@ class SocketIOClient {
             game.player.setCharacterStatistics(attributes);
 
             game.gui.attributes.refreshPopup();
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected skillsLearned() {
+        let game = this.game;
+        let self = this;
+        this.socket.on('skillLearned', function (data) {
+            self.characters = data.characters;
+            game.player.freeSkillPoints = self.characters[self.activePlayer].freeSkillPoints;
+            game.player.setCharacterSkills(self.characters[self.activePlayer].skills);
+
+            game.gui.skills.refreshPopup();
         });
 
         return this;

@@ -52,16 +52,19 @@ namespace GUI {
 
             let textName = this.createText(this.guiMain.game.player.name);
             textName.color = 'yellow';
+            textName.height = '8%';
             textName.fontSize = 36;
             panel.addControl(textName);
 
             let textName = this.createText(this.guiMain.game.player.lvl+' LVL');
             textName.color = 'yellow';
+            textName.height = '8%';
             textName.fontSize = 28;
             panel.addControl(textName);
 
             let textName = this.createText('Attributes');
             textName.color = 'green';
+            textName.height = '8%';
             textName.fontSize = 36;
             panel.addControl(textName);
 
@@ -77,10 +80,6 @@ namespace GUI {
                 panel.addControl(textAttributes);
             }
 
-            let textName = this.createText('Skills');
-            textName.color = 'green';
-            textName.fontSize = 36;
-            panel.addControl(textName);
         }
 
         protected createText(text:string) {

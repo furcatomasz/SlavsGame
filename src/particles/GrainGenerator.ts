@@ -11,15 +11,18 @@ namespace Particles {
             animationName: string = 'ArmatureAction'
         ) {
             //mainGrain.skeleton.beginAnimation(animationName, true);
+            let meshesList = [];
             for (let i = 0; i < instances; i++) {
                 let offsetX = (Math.random() - 0.5) * offsetXMax;
                 let offsetZ = (Math.random() - 0.5) * offsetZMax;
-                let instance = mainGrain.createInstance("grainGenerator_" + i);
+                let instance = mainGrain.clone("grainGenerator_" + i, null, true);
                 instance.parent = mainGrain;
                 instance.position.x = offsetX;
                 instance.position.z = offsetZ;
-                instance.freezeWorldMatrix();
+                meshesList.push(instance);
             }
+
+            BABYLON.Mesh.MergeMeshes(meshesList);
 
             return this;
         }

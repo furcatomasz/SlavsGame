@@ -36,7 +36,7 @@ class Simple extends Scene {
 
                     grain.position = new BABYLON.Vector3(66, 0, -105);
                     grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
-                    grain.skeleton.beginAnimation('ArmatureAction', true);
+                    //grain.skeleton.beginAnimation('ArmatureAction', true);
 
                     let grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
                     self.octree = scene.createOrUpdateSelectionOctree();

@@ -223,7 +223,7 @@ var Simple = /** @class */ (function (_super) {
                     grain.getBoundingInfo().isLocked = true;
                     grain.position = new BABYLON.Vector3(66, 0, -105);
                     grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
-                    grain.skeleton.beginAnimation('ArmatureAction', true);
+                    //grain.skeleton.beginAnimation('ArmatureAction', true);
                     var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
                     self.octree = scene.createOrUpdateSelectionOctree();
                     game.client.socket.emit('changeScenePre', {
@@ -2148,15 +2148,17 @@ var Particles;
             if (offsetZMax === void 0) { offsetZMax = 10; }
             if (animationName === void 0) { animationName = 'ArmatureAction'; }
             //mainGrain.skeleton.beginAnimation(animationName, true);
+            var meshesList = [];
             for (var i = 0; i < instances; i++) {
                 var offsetX = (Math.random() - 0.5) * offsetXMax;
                 var offsetZ = (Math.random() - 0.5) * offsetZMax;
-                var instance = mainGrain.createInstance("grainGenerator_" + i);
+                var instance = mainGrain.clone("grainGenerator_" + i, null, true);
                 instance.parent = mainGrain;
                 instance.position.x = offsetX;
                 instance.position.z = offsetZ;
-                instance.freezeWorldMatrix();
+                meshesList.push(instance);
             }
+            BABYLON.Mesh.MergeMeshes(meshesList);
             return this;
         };
         return GrainGenerator;

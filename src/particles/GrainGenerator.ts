@@ -11,7 +11,6 @@ namespace Particles {
             animationName: string = 'ArmatureAction'
         ) {
             //mainGrain.skeleton.beginAnimation(animationName, true);
-
             for (let i = 0; i < instances; i++) {
                 let offsetX = (Math.random() - 0.5) * offsetXMax;
                 let offsetZ = (Math.random() - 0.5) * offsetZMax;
@@ -19,6 +18,7 @@ namespace Particles {
                 instance.parent = mainGrain;
                 instance.position.x = offsetX;
                 instance.position.z = offsetZ;
+                instance.freezeWorldMatrix();
             }
 
             return this;

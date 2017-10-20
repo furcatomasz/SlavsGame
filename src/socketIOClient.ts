@@ -266,9 +266,11 @@ class SocketIOClient {
                         newMonster =new Bandit.Bandit(key, game, position, rotationQuaternion);
                     }
                     if(newMonster) {
-                        game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
-                        game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
-                        game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
+                        if(game.sceneManager.octree) {
+                            game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
+                            game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
+                            game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
+                        }
                     }
                 }
             });

@@ -217,28 +217,31 @@ var Simple = /** @class */ (function (_super) {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
+                    var npc = new NPC.Warrior(game);
+                    var grain = game.factories['nature_grain'].createInstance('Grain', true);
+                    grain.material.freeze();
+                    grain.getBoundingInfo().isLocked = true;
+                    grain.position = new BABYLON.Vector3(66, 0, -105);
+                    grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
+                    grain.skeleton.beginAnimation('ArmatureAction', true);
+                    var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
+                    self.octree = scene.createOrUpdateSelectionOctree();
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE
                     });
                 };
                 assetsManager.load();
                 var listener = function listener() {
-                    var npc = new NPC.Warrior(game);
                     game.controller.registerControls(scene);
                     game.client.socket.emit('getQuests');
-                    var grain = game.factories['nature_grain'].createInstance('Grain', true);
-                    grain.position = new BABYLON.Vector3(66, 0, -105);
-                    grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
-                    grain.skeleton.beginAnimation('ArmatureAction', true);
-                    var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    //self.game.gui.skills.open();
                     self.defaultPipeline(scene);
-                    self.octree = scene.createOrUpdateSelectionOctree();
                     self.octree.dynamicContent.push(game.player.mesh);
                     self.octree.dynamicContent.push(game.player.attackArea);
                     self.octree.dynamicContent.push(game.controller.ball);
                     game.player.inventory.getEquipedItems().forEach(function (item) {
-                        self.octree.dynamicContent.push(item.mesh);
+                        if (item) {
+                            self.octree.dynamicContent.push(item.mesh);
+                        }
                     });
                     game.client.showEnemies();
                     game.client.socket.emit('changeScenePost', {
@@ -745,9 +748,11 @@ var SocketIOClient = /** @class */ (function () {
                         newMonster = new Bandit.Bandit(key, game, position, rotationQuaternion);
                     }
                     if (newMonster) {
-                        game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
-                        game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
-                        game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
+                        if (game.sceneManager.octree) {
+                            game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
+                            game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
+                            game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
+                        }
                     }
                 }
             });
@@ -1053,6 +1058,7 @@ var Player = /** @class */ (function (_super) {
         });
         var mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
+        mesh.alwaysSelectAsActiveMesh = true;
         _this.mesh = mesh;
         _this.game = game;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
@@ -1499,6 +1505,7 @@ var Environment = /** @class */ (function () {
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             sceneMesh.freezeWorldMatrix();
+            sceneMesh.getBoundingInfo().isLocked = true;
         }
         var listener2 = function listener2() {
             for (var i_1 = 0; i_1 < self.colliders.length; i_1++) {
@@ -2136,11 +2143,11 @@ var Particles;
         function GrainGenerator() {
         }
         GrainGenerator.prototype.generate = function (mainGrain, instances, offsetXMax, offsetZMax, animationName) {
-            //mainGrain.skeleton.beginAnimation(animationName, true);
             if (instances === void 0) { instances = 1000; }
             if (offsetXMax === void 0) { offsetXMax = 60; }
             if (offsetZMax === void 0) { offsetZMax = 10; }
             if (animationName === void 0) { animationName = 'ArmatureAction'; }
+            //mainGrain.skeleton.beginAnimation(animationName, true);
             for (var i = 0; i < instances; i++) {
                 var offsetX = (Math.random() - 0.5) * offsetXMax;
                 var offsetZ = (Math.random() - 0.5) * offsetZMax;
@@ -2148,6 +2155,7 @@ var Particles;
                 instance.parent = mainGrain;
                 instance.position.x = offsetX;
                 instance.position.z = offsetZ;
+                instance.freezeWorldMatrix();
             }
             return this;
         };
@@ -2799,6 +2807,7 @@ var Items;
                 if (self.game.sceneManager.octree) {
                     self.game.sceneManager.octree.dynamicContent.push(item.mesh);
                 }
+                item.mesh.alwaysSelectAsActiveMesh = true;
                 inventory.items.push(item);
                 if (itemDatabase.equip) {
                     inventory.mount(item);
@@ -3111,6 +3120,9 @@ var NPC;
             box1.position.y += 7;
             var materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
             box1.material = materialBox;
+            if (this.game.sceneManager.octree) {
+                this.game.sceneManager.octree.dynamicContent.push(box1);
+            }
             var keys = [];
             keys.push({
                 frame: 0,

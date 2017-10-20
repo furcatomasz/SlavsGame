@@ -28,35 +28,40 @@ class Simple extends Scene {
                 self.initFactories(scene, assetsManager);
 
                 assetsManager.onFinish = function (tasks) {
-                    game.client.socket.emit('changeScenePre', {
-                        sceneType: Simple.TYPE,
-                    });
-
-                };
-                assetsManager.load();
-
-                let listener = function listener() {
                     let npc = new NPC.Warrior(game);
-                    game.controller.registerControls(scene);
-
-                    game.client.socket.emit('getQuests');
 
                     let grain = game.factories['nature_grain'].createInstance('Grain', true);
+                    grain.material.freeze();
+                    grain.getBoundingInfo().isLocked = true;
+
                     grain.position = new BABYLON.Vector3(66, 0, -105);
                     grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
                     grain.skeleton.beginAnimation('ArmatureAction', true);
 
                     let grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    //self.game.gui.skills.open();
+                    self.octree = scene.createOrUpdateSelectionOctree();
+
+                    game.client.socket.emit('changeScenePre', {
+                        sceneType: Simple.TYPE,
+                    });
+                };
+                assetsManager.load();
+
+                let listener = function listener() {
+                    game.controller.registerControls(scene);
+
+                    game.client.socket.emit('getQuests');
 
                     self.defaultPipeline(scene);
-                    self.octree = scene.createOrUpdateSelectionOctree();
                     self.octree.dynamicContent.push(game.player.mesh);
                     self.octree.dynamicContent.push(game.player.attackArea);
                     self.octree.dynamicContent.push(game.controller.ball);
                     game.player.inventory.getEquipedItems().forEach(function (item) {
-                        self.octree.dynamicContent.push(item.mesh);
+                        if(item) {
+                            self.octree.dynamicContent.push(item.mesh);
+                        }
                     });
+
 
                     game.client.showEnemies();
 

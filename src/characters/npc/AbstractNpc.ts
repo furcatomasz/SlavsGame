@@ -75,6 +75,9 @@ namespace NPC {
             let materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
 
             box1.material = materialBox;
+            if(this.game.sceneManager.octree) {
+                this.game.sceneManager.octree.dynamicContent.push(box1);
+            }
             let keys = [];
             keys.push({
                 frame: 0,

@@ -32,6 +32,7 @@ class Player extends AbstractCharacter {
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
+        mesh.alwaysSelectAsActiveMesh = true;
         this.mesh = mesh;
         this.game = game;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;

@@ -100,6 +100,7 @@ class Environment {
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             sceneMesh.freezeWorldMatrix();
+            sceneMesh.getBoundingInfo().isLocked = true
         }
 
 

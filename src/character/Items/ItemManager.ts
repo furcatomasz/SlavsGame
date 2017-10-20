@@ -32,6 +32,7 @@ namespace Items {
                 if(self.game.sceneManager.octree) {
                     self.game.sceneManager.octree.dynamicContent.push(item.mesh);
                 }
+                item.mesh.alwaysSelectAsActiveMesh = true;
 
                 inventory.items.push(item);
 

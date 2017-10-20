@@ -16,9 +16,9 @@ class Simple extends Scene {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-             //scene.debugLayer.show({
-             //    initialTab: 2
-             //});
+            //scene.debugLayer.show({
+            //    initialTab: 2
+            //});
             scene.actionManager = new BABYLON.ActionManager(scene);
             let assetsManager = new BABYLON.AssetsManager(scene);
             let sceneIndex = game.scenes.push(scene);
@@ -26,7 +26,7 @@ class Simple extends Scene {
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
-                
+
                 assetsManager.onFinish = function (tasks) {
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE,
@@ -38,20 +38,31 @@ class Simple extends Scene {
                 let listener = function listener() {
                     let npc = new NPC.Warrior(game);
                     game.controller.registerControls(scene);
-                    game.client.socket.emit('changeScenePost', {
-                        sceneType: Simple.TYPE,
-                    });
+
                     game.client.socket.emit('getQuests');
 
                     let grain = game.factories['nature_grain'].createInstance('Grain', true);
-                    grain.position = new BABYLON.Vector3(66,0,-105);
-                    grain.scaling = new BABYLON.Vector3(1.3,1.3,1.3);
+                    grain.position = new BABYLON.Vector3(66, 0, -105);
+                    grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
                     grain.skeleton.beginAnimation('ArmatureAction', true);
 
                     let grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    self.game.gui.skills.open();
+                    //self.game.gui.skills.open();
 
                     self.defaultPipeline(scene);
+                    self.octree = scene.createOrUpdateSelectionOctree();
+                    self.octree.dynamicContent.push(game.player.mesh);
+                    self.octree.dynamicContent.push(game.player.attackArea);
+                    self.octree.dynamicContent.push(game.controller.ball);
+                    game.player.inventory.getEquipedItems().forEach(function (item) {
+                        self.octree.dynamicContent.push(item.mesh);
+                    });
+
+                    game.client.showEnemies();
+
+                    game.client.socket.emit('changeScenePost', {
+                        sceneType: Simple.TYPE,
+                    });
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -63,7 +74,7 @@ class Simple extends Scene {
     }
 
 
-    public getType(): number {
+    public getType():number {
         return Simple.TYPE;
     }
 

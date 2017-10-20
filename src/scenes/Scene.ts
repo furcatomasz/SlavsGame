@@ -13,6 +13,7 @@ abstract class Scene {
     public guiTexture:BABYLON.GUI.AdvancedDynamicTexture;
     public environment:Environment;
     public activeQuests:Array<Quests.AbstractQuest>;
+    public octree: BABYLON.Octree;
 
     protected setDefaults(game:Game) {
         this.game = game;

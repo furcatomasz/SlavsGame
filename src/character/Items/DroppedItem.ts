@@ -34,7 +34,9 @@ namespace Items {
             let particleSystem = new Particles.DroppedItem(game, item.mesh);
             particleSystem.particleSystem.start();
 
-
+            if(game.sceneManager.octree) {
+                game.sceneManager.octree.dynamicContent.push(item.mesh);
+            }
         }
     }
 }

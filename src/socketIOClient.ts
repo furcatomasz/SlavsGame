@@ -15,7 +15,6 @@ class SocketIOClient {
         this.socket = io.connect(socketUrl);
 
         this.playerConnected();
-        this.showEnemies();
     }
 
     /**
@@ -258,12 +257,18 @@ class SocketIOClient {
                     enemy.mesh.rotationQuaternion = rotationQuaternion;
                     enemy.runAnimationWalk(false);
                 } else {
+                    let newMonster;
                     if (enemyData.type == 'worm') {
-                        new Worm(key, data.id, game, position, rotationQuaternion);
+                        newMonster = new Worm(key, data.id, game, position, rotationQuaternion);
                     } else if (enemyData.type == 'bigWorm') {
-                        new BigWorm(key, data.id, game, position, rotationQuaternion);
+                        newMonster = new BigWorm(key, data.id, game, position, rotationQuaternion);
                     } else if (enemyData.type == 'bandit') {
-                        new Bandit.Bandit(key, game, position, rotationQuaternion);
+                        newMonster =new Bandit.Bandit(key, game, position, rotationQuaternion);
+                    }
+                    if(newMonster) {
+                        game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
+                        game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
+                        game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
                     }
                 }
             });

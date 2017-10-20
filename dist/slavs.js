@@ -225,17 +225,25 @@ var Simple = /** @class */ (function (_super) {
                 var listener = function listener() {
                     var npc = new NPC.Warrior(game);
                     game.controller.registerControls(scene);
-                    game.client.socket.emit('changeScenePost', {
-                        sceneType: Simple.TYPE
-                    });
                     game.client.socket.emit('getQuests');
                     var grain = game.factories['nature_grain'].createInstance('Grain', true);
                     grain.position = new BABYLON.Vector3(66, 0, -105);
                     grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
                     grain.skeleton.beginAnimation('ArmatureAction', true);
                     var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    self.game.gui.skills.open();
+                    //self.game.gui.skills.open();
                     self.defaultPipeline(scene);
+                    self.octree = scene.createOrUpdateSelectionOctree();
+                    self.octree.dynamicContent.push(game.player.mesh);
+                    self.octree.dynamicContent.push(game.player.attackArea);
+                    self.octree.dynamicContent.push(game.controller.ball);
+                    game.player.inventory.getEquipedItems().forEach(function (item) {
+                        self.octree.dynamicContent.push(item.mesh);
+                    });
+                    game.client.showEnemies();
+                    game.client.socket.emit('changeScenePost', {
+                        sceneType: Simple.TYPE
+                    });
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -326,7 +334,7 @@ var AbstractCharacter = /** @class */ (function () {
             if (emit) {
                 this.emitPosition();
             }
-            if (!this.animation) {
+            if (!this.animation && skeleton_2) {
                 self.sfxWalk.play();
                 self.onWalkStart();
                 self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, this.statistics.getWalkSpeed() / 100, function () {
@@ -522,7 +530,6 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.connect = function (socketUrl) {
         this.socket = io.connect(socketUrl);
         this.playerConnected();
-        this.showEnemies();
     };
     /**
      * @returns {SocketIOClient}
@@ -727,14 +734,20 @@ var SocketIOClient = /** @class */ (function () {
                     enemy.runAnimationWalk(false);
                 }
                 else {
+                    var newMonster = void 0;
                     if (enemyData.type == 'worm') {
-                        new Worm(key, data.id, game, position, rotationQuaternion);
+                        newMonster = new Worm(key, data.id, game, position, rotationQuaternion);
                     }
                     else if (enemyData.type == 'bigWorm') {
-                        new BigWorm(key, data.id, game, position, rotationQuaternion);
+                        newMonster = new BigWorm(key, data.id, game, position, rotationQuaternion);
                     }
                     else if (enemyData.type == 'bandit') {
-                        new Bandit.Bandit(key, game, position, rotationQuaternion);
+                        newMonster = new Bandit.Bandit(key, game, position, rotationQuaternion);
+                    }
+                    if (newMonster) {
+                        game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
+                        game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
+                        game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
                     }
                 }
             });
@@ -838,7 +851,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new SelectCharacter().initScene(this);
+        new Simple().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -2734,6 +2747,9 @@ var Items;
             item.mesh.visibility = 1;
             var particleSystem = new Particles.DroppedItem(game, item.mesh);
             particleSystem.particleSystem.start();
+            if (game.sceneManager.octree) {
+                game.sceneManager.octree.dynamicContent.push(item.mesh);
+            }
         };
         return DroppedItem;
     }());
@@ -2780,6 +2796,9 @@ var Items;
             inventory.items = [];
             inventoryItems.forEach(function (itemDatabase) {
                 var item = self.getItemUsingId(itemDatabase.itemId, itemDatabase.id);
+                if (self.game.sceneManager.octree) {
+                    self.game.sceneManager.octree.dynamicContent.push(item.mesh);
+                }
                 inventory.items.push(item);
                 if (itemDatabase.equip) {
                     inventory.mount(item);

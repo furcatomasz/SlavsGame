@@ -29,6 +29,10 @@ namespace Items {
 
             inventoryItems.forEach(function(itemDatabase) {
                 let item = self.getItemUsingId(itemDatabase.itemId, itemDatabase.id);
+                if(self.game.sceneManager.octree) {
+                    self.game.sceneManager.octree.dynamicContent.push(item.mesh);
+                }
+
                 inventory.items.push(item);
 
                 if (itemDatabase.equip) {

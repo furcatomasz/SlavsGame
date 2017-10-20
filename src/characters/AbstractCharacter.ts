@@ -127,7 +127,7 @@ abstract class AbstractCharacter {
                 this.emitPosition();
             }
 
-            if (!this.animation) {
+            if (!this.animation && skeleton) {
                 self.sfxWalk.play();
                 self.onWalkStart();
                 self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, this.statistics.getWalkSpeed() / 100, function () {

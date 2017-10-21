@@ -9,10 +9,12 @@ namespace Character.Skills {
 
         protected image: string;
 
-        constructor(cooldown: number = 0, damage: number = 0, stock: number = 0) {
+        constructor(game: Game, cooldown: number = 0, damage: number = 0, stock: number = 0) {
             this.cooldown = cooldown;
             this.damage = damage;
             this.stock = stock;
+            this.registerHotKey(game);
+            this.registerDefaults();
         }
 
         public getImageUrl() {
@@ -20,6 +22,10 @@ namespace Character.Skills {
         }
 
         public abstract getType();
+
+        protected abstract registerHotKey(game: Game);
+
+        protected abstract registerDefaults();
 
     }
 }

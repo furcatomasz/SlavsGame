@@ -15,7 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "babylonjs": "^3.0",
+    "babylonjs": "https://github.com/BabylonJS/Babylon.js.git#master",
     "socket.io-client": "^2"
   }
 }

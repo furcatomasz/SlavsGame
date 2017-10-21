@@ -14,10 +14,10 @@ namespace Character.Skills {
             let skill = null;
             switch (type) {
                 case Character.Skills.DoubleAttack.TYPE:
-                    skill = new Character.Skills.DoubleAttack();
+                    skill = new Character.Skills.DoubleAttack(this.game);
                     break;
                 case Character.Skills.Tornado.TYPE:
-                    skill = new Character.Skills.Tornado();
+                    skill = new Character.Skills.Tornado(this.game);
                     break;
             }
 

@@ -234,16 +234,8 @@ var Simple = /** @class */ (function (_super) {
                 var listener = function listener() {
                     game.controller.registerControls(scene);
                     game.client.socket.emit('getQuests');
-                    self.defaultPipeline(scene);
-                    self.octree.dynamicContent.push(game.player.mesh);
-                    self.octree.dynamicContent.push(game.player.attackArea);
-                    self.octree.dynamicContent.push(game.controller.ball);
-                    game.player.inventory.getEquipedItems().forEach(function (item) {
-                        if (item) {
-                            self.octree.dynamicContent.push(item.mesh);
-                        }
-                    });
                     game.client.showEnemies();
+                    //self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Simple.TYPE
                     });
@@ -287,7 +279,9 @@ var AbstractCharacter = /** @class */ (function () {
     /**
      * ANIMATIONS
      */
-    AbstractCharacter.prototype.runAnimationHit = function (animation) {
+    AbstractCharacter.prototype.runAnimationHit = function (animation, callbackStart, callbackEnd) {
+        if (callbackStart === void 0) { callbackStart = null; }
+        if (callbackEnd === void 0) { callbackEnd = null; }
         if (!this.animation) {
             var self_1 = this;
             var childMesh = this.mesh;
@@ -299,7 +293,13 @@ var AbstractCharacter = /** @class */ (function () {
                     });
                     self_1.attackAnimation = true;
                     self_1.onHitStart();
+                    if (callbackEnd) {
+                        callbackStart();
+                    }
                     self_1.animation = skeleton_1.beginAnimation(animation, false, this.statistics.getAttackSpeed() / 100, function () {
+                        if (callbackEnd) {
+                            callbackEnd();
+                        }
                         skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                         self_1.animation = null;
                         self_1.attackAnimation = false;
@@ -673,6 +673,17 @@ var SocketIOClient = /** @class */ (function () {
             game.player.mesh.position = new BABYLON.Vector3(activeCharacter.positionX, activeCharacter.positionY, activeCharacter.positionZ);
             game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
+            var octree = game.sceneManager.octree;
+            if (octree) {
+                octree.dynamicContent.push(game.player.mesh);
+                octree.dynamicContent.push(game.player.attackArea);
+                octree.dynamicContent.push(game.controller.ball);
+                game.player.inventory.getEquipedItems().forEach(function (item) {
+                    if (item) {
+                        game.sceneManager.octree.dynamicContent.push(item.mesh);
+                    }
+                });
+            }
         });
         return this;
     };
@@ -1163,12 +1174,6 @@ var Player = /** @class */ (function (_super) {
     };
     Player.prototype.registerFunctionAfterRender = function () {
         var self = this;
-        this.game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-            if (event.sourceEvent.key == 1) {
-                self.game.controller.attackPoint = null;
-                self.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01);
-            }
-        }));
         if (self.isControllable) {
             this.game.getScene().registerAfterRender(function () {
                 self.registerMoving();
@@ -2865,13 +2870,15 @@ var Character;
     var Skills;
     (function (Skills) {
         var AbstractSkill = /** @class */ (function () {
-            function AbstractSkill(cooldown, damage, stock) {
+            function AbstractSkill(game, cooldown, damage, stock) {
                 if (cooldown === void 0) { cooldown = 0; }
                 if (damage === void 0) { damage = 0; }
                 if (stock === void 0) { stock = 0; }
                 this.cooldown = cooldown;
                 this.damage = damage;
                 this.stock = stock;
+                this.registerHotKey(game);
+                this.registerDefaults();
             }
             AbstractSkill.prototype.getImageUrl = function () {
                 return this.image;
@@ -2888,17 +2895,33 @@ var Character;
     (function (Skills) {
         var DoubleAttack = /** @class */ (function (_super) {
             __extends(DoubleAttack, _super);
-            function DoubleAttack(cooldown, damage, stock) {
-                if (cooldown === void 0) { cooldown = 0; }
-                if (damage === void 0) { damage = 0; }
-                if (stock === void 0) { stock = 0; }
-                var _this = _super.call(this, cooldown, damage, stock) || this;
-                _this.image = '/assets/skills/skill01.png';
-                _this.name = 'Double attack';
-                return _this;
+            function DoubleAttack() {
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             DoubleAttack.prototype.getType = function () {
                 return Character.Skills.DoubleAttack.TYPE;
+            };
+            DoubleAttack.prototype.registerDefaults = function () {
+                this.image = '/assets/skills/skill01.png';
+                this.name = 'Double attack';
+            };
+            DoubleAttack.prototype.registerHotKey = function (game) {
+                var listener = function listener() {
+                    var effectEmitter = new Particles.DoubleAttack(game, game.player.mesh);
+                    effectEmitter.initParticleSystem();
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == 1) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
+                                effectEmitter.particleSystem.start();
+                            }, function () {
+                                effectEmitter.particleSystem.stop();
+                            });
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
             };
             DoubleAttack.TYPE = 1;
             return DoubleAttack;
@@ -2921,10 +2944,10 @@ var Character;
                 var skill = null;
                 switch (type) {
                     case Character.Skills.DoubleAttack.TYPE:
-                        skill = new Character.Skills.DoubleAttack();
+                        skill = new Character.Skills.DoubleAttack(this.game);
                         break;
                     case Character.Skills.Tornado.TYPE:
-                        skill = new Character.Skills.Tornado();
+                        skill = new Character.Skills.Tornado(this.game);
                         break;
                 }
                 return skill;
@@ -2940,17 +2963,33 @@ var Character;
     (function (Skills) {
         var Tornado = /** @class */ (function (_super) {
             __extends(Tornado, _super);
-            function Tornado(cooldown, damage, stock) {
-                if (cooldown === void 0) { cooldown = 0; }
-                if (damage === void 0) { damage = 0; }
-                if (stock === void 0) { stock = 0; }
-                var _this = _super.call(this, cooldown, damage, stock) || this;
-                _this.image = '/assets/skills/skill02.png';
-                _this.name = 'Tornado';
-                return _this;
+            function Tornado() {
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             Tornado.prototype.getType = function () {
                 return Character.Skills.Tornado.TYPE;
+            };
+            Tornado.prototype.registerDefaults = function () {
+                this.image = '/assets/skills/skill02.png';
+                this.name = 'Tornado';
+            };
+            Tornado.prototype.registerHotKey = function (game) {
+                var listener = function listener() {
+                    var effectEmitter = new Particles.Tornado(game, game.player.mesh);
+                    effectEmitter.initParticleSystem();
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == 2) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
+                                effectEmitter.particleSystem.start();
+                            }, function () {
+                                effectEmitter.particleSystem.stop();
+                            });
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
             };
             Tornado.TYPE = 2;
             return Tornado;
@@ -4023,6 +4062,78 @@ var GUI;
     }(GUI.Popup));
     GUI.Quest = Quest;
 })(GUI || (GUI = {}));
+var Particles;
+(function (Particles) {
+    var DoubleAttack = /** @class */ (function (_super) {
+        __extends(DoubleAttack, _super);
+        function DoubleAttack() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        DoubleAttack.prototype.initParticleSystem = function () {
+            var fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.emitter = this.emitter;
+            fireSystem.minEmitBox = new BABYLON.Vector3(-2, 0, -2);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(2, 4, 2);
+            fireSystem.color1 = new BABYLON.Color4(0, 0.5, 0, 1.0);
+            fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);
+            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            fireSystem.minSize = 0.2;
+            fireSystem.maxSize = 0.7;
+            fireSystem.minLifeTime = 0.2;
+            fireSystem.maxLifeTime = 0.4;
+            fireSystem.emitRate = 1000;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 2, 0);
+            fireSystem.minAngularSpeed = -10;
+            fireSystem.maxAngularSpeed = Math.PI;
+            fireSystem.minEmitPower = 1;
+            fireSystem.maxEmitPower = 3;
+            fireSystem.updateSpeed = 0.007;
+            this.particleSystem = fireSystem;
+        };
+        return DoubleAttack;
+    }(Particles.AbstractParticle));
+    Particles.DoubleAttack = DoubleAttack;
+})(Particles || (Particles = {}));
+var Particles;
+(function (Particles) {
+    var Tornado = /** @class */ (function (_super) {
+        __extends(Tornado, _super);
+        function Tornado() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Tornado.prototype.initParticleSystem = function () {
+            var fireSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.emitter = this.emitter;
+            fireSystem.minEmitBox = new BABYLON.Vector3(0, 3, 0);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(0, 3, 0);
+            fireSystem.color1 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
+            fireSystem.color2 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
+            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            fireSystem.minSize = 0.5;
+            fireSystem.maxSize = 1.5;
+            fireSystem.minLifeTime = 0.2;
+            fireSystem.maxLifeTime = 0.4;
+            fireSystem.emitRate = 100;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 0, -8);
+            fireSystem.minAngularSpeed = -10;
+            fireSystem.maxAngularSpeed = Math.PI;
+            fireSystem.minEmitPower = 1;
+            fireSystem.maxEmitPower = 3;
+            fireSystem.updateSpeed = 0.007;
+            this.particleSystem = fireSystem;
+        };
+        return Tornado;
+    }(Particles.AbstractParticle));
+    Particles.Tornado = Tornado;
+})(Particles || (Particles = {}));
 var Quests;
 (function (Quests) {
     var Awards;

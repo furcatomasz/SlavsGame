@@ -49,22 +49,10 @@ class Simple extends Scene {
 
                 let listener = function listener() {
                     game.controller.registerControls(scene);
-
                     game.client.socket.emit('getQuests');
-
-                    self.defaultPipeline(scene);
-                    self.octree.dynamicContent.push(game.player.mesh);
-                    self.octree.dynamicContent.push(game.player.attackArea);
-                    self.octree.dynamicContent.push(game.controller.ball);
-                    game.player.inventory.getEquipedItems().forEach(function (item) {
-                        if(item) {
-                            self.octree.dynamicContent.push(item.mesh);
-                        }
-                    });
-
-
                     game.client.showEnemies();
 
+                    //self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Simple.TYPE,
                     });

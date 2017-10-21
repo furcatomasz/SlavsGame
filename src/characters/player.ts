@@ -171,13 +171,6 @@ class Player extends AbstractCharacter {
 
     protected registerFunctionAfterRender() {
         let self = this;
-        this.game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-            if (event.sourceEvent.key == 1) {
-                self.game.controller.attackPoint = null;
-                self.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01);
-            }
-        }));
-
         if (self.isControllable) {
             this.game.getScene().registerAfterRender(function () {
                 self.registerMoving();

@@ -25,7 +25,7 @@ abstract class AbstractCharacter {
 
     protected game:Game;
     protected speed:number;
-    protected animation:BABYLON.Animatable;
+    public animation:BABYLON.Animatable;
     protected afterRender;
     protected isControllable:boolean;
     protected attackAnimation: boolean;
@@ -68,7 +68,7 @@ abstract class AbstractCharacter {
     /**
      * ANIMATIONS
      */
-    public runAnimationHit(animation: string):void {
+    public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null):void {
         if (!this.animation) {
             let self = this;
             var childMesh = this.mesh;
@@ -82,7 +82,13 @@ abstract class AbstractCharacter {
 
                     self.attackAnimation = true;
                     self.onHitStart();
+                    if(callbackEnd) {
+                        callbackStart();
+                    }
                     self.animation = skeleton.beginAnimation(animation, false, this.statistics.getAttackSpeed() / 100, function () {
+                        if(callbackEnd) {
+                            callbackEnd();
+                        }
                         skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                         self.animation = null;
                         self.attackAnimation = false;

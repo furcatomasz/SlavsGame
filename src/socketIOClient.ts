@@ -182,6 +182,18 @@ class SocketIOClient {
             game.player.mesh.position = new BABYLON.Vector3(activeCharacter.positionX, activeCharacter.positionY, activeCharacter.positionZ);
             game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
+
+            let octree = game.sceneManager.octree;
+            if(octree) {
+                octree.dynamicContent.push(game.player.mesh);
+                octree.dynamicContent.push(game.player.attackArea);
+                octree.dynamicContent.push(game.controller.ball);
+                game.player.inventory.getEquipedItems().forEach(function (item) {
+                    if (item) {
+                        game.sceneManager.octree.dynamicContent.push(item.mesh);
+                    }
+                });
+            }
         });
 
         return this;

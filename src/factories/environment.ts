@@ -97,14 +97,33 @@ class Environment {
 
             }
 
-        for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
-            sceneMesh.checkCollisions = true;
-            sceneMesh.showBoundingBox = true;
-            sceneMesh.ellipsoid = new BABYLON.Vector3(3, 3, 3);
+        for (var i = 0; i < this.colliders.length; i++) {
+            var sceneMesh = this.colliders[i];
+            if(sceneMesh.name.search("Forest_ground") < 0) {
+                var collider = BABYLON.Mesh.CreateBox("collider_box", 0, scene, false);
+                var modele = sceneMesh.getBoundingInfo();
+                collider.scaling = new BABYLON.Vector3(modele.boundingBox.maximum.x*1.5, modele.boundingBox.maximum.y, modele.boundingBox.maximum.z*1.5);
+                collider.parent = sceneMesh;
+                collider.material = new BABYLON.StandardMaterial("collidermat", scene);
+                collider.material.alpha = 0.3;
+                collider.checkCollisions = true;
 
-            // sceneMesh.freezeWorldMatrix();
-            // sceneMesh.getBoundingInfo().isLocked = true
+
+                //sceneMesh.ellipsoid = new BABYLON.Vector3(0.9, 0.45, 0.9);
+                //let bi = sceneMesh.getBoundingInfo();
+                //// console.log("bi: ", bi);
+                //
+                //let bb = bi.boundingBox;
+                //// console.log("bb: ", bb);
+                //
+                //sceneMesh.ellipsoid = bb.maximumWorld.subtract(bb.minimumWorld).scale(1);
+                //sceneMesh.ellipsoid = bb.maximumWorld.subtract(bb.minimumWorld).scale(1);
+                //sceneMesh.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
+                //sceneMesh.refreshBoundingInfo();
+
+                // sceneMesh.freezeWorldMatrix();
+                // sceneMesh.getBoundingInfo().isLocked = true
+            }
         }
 
 

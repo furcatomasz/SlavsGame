@@ -206,9 +206,9 @@ var Simple = /** @class */ (function (_super) {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-            //scene.debugLayer.show({
-            //    initialTab: 2
-            //});
+            scene.debugLayer.show({
+                initialTab: 2
+            });
             scene.actionManager = new BABYLON.ActionManager(scene);
             var assetsManager = new BABYLON.AssetsManager(scene);
             var sceneIndex = game.scenes.push(scene);
@@ -225,7 +225,7 @@ var Simple = /** @class */ (function (_super) {
                     grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
                     //grain.skeleton.beginAnimation('ArmatureAction', true);
                     var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    self.octree = scene.createOrUpdateSelectionOctree();
+                    //self.octree = scene.createOrUpdateSelectionOctree();
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE
                     });
@@ -361,7 +361,7 @@ var AbstractCharacter = /** @class */ (function () {
     ;
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
-    AbstractCharacter.WALK_SPEED = 0.25;
+    AbstractCharacter.WALK_SPEED = 1.8;
     AbstractCharacter.ROTATION_SPEED = 0.05;
     AbstractCharacter.ANIMATION_WALK = 'Run';
     AbstractCharacter.ANIMATION_STAND = 'stand';
@@ -1070,9 +1070,13 @@ var Player = /** @class */ (function (_super) {
         var mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
-        mesh.checkCollisions = true;
-        mesh.showBoundingBox = true;
-        mesh.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+        var collider = BABYLON.Mesh.CreateBox("collider_box", 0, game.getScene(), false);
+        var modele = mesh.getBoundingInfo();
+        collider.scaling = new BABYLON.Vector3(modele.boundingBox.maximum.x * 2, modele.boundingBox.maximum.y * 2, modele.boundingBox.maximum.z * 2);
+        collider.parent = mesh;
+        collider.material = new BABYLON.StandardMaterial("collidermat", game.getScene());
+        collider.material.alpha = 0.3;
+        collider.checkCollisions = true;
         _this.mesh = mesh;
         _this.game = game;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
@@ -1144,8 +1148,7 @@ var Player = /** @class */ (function (_super) {
      * Moving events
      */
     Player.prototype.registerMoving = function () {
-        // let walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
-        var speed = 4;
+        var walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
         var game = this.game;
         var mesh = this.mesh;
         var lastDistance = 1000;
@@ -1160,9 +1163,10 @@ var Player = /** @class */ (function (_super) {
                     rotation = mesh.rotationQuaternion.toEulerAngles();
                 }
                 rotation.negate();
-                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / speed, 0, -parseFloat(Math.cos(rotation.y)) / speed);
+                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                //forwards.y = 0;
                 mesh.moveWithCollisions(forwards);
-                mesh.position.y = 0;
+                //mesh.position.y = 0;
                 this.runAnimationWalk(true);
                 lastDistance = distanceToTargetPoint;
             }
@@ -1544,13 +1548,30 @@ var Environment = /** @class */ (function () {
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
-        for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
-            sceneMesh.checkCollisions = true;
-            sceneMesh.showBoundingBox = true;
-            sceneMesh.ellipsoid = new BABYLON.Vector3(3, 3, 3);
-            // sceneMesh.freezeWorldMatrix();
-            // sceneMesh.getBoundingInfo().isLocked = true
+        for (var i = 0; i < this.colliders.length; i++) {
+            var sceneMesh = this.colliders[i];
+            if (sceneMesh.name.search("Forest_ground") < 0) {
+                var collider = BABYLON.Mesh.CreateBox("collider_box", 0, scene, false);
+                var modele = sceneMesh.getBoundingInfo();
+                collider.scaling = new BABYLON.Vector3(modele.boundingBox.maximum.x * 1.5, modele.boundingBox.maximum.y, modele.boundingBox.maximum.z * 1.5);
+                collider.parent = sceneMesh;
+                collider.material = new BABYLON.StandardMaterial("collidermat", scene);
+                collider.material.alpha = 0.3;
+                collider.checkCollisions = true;
+                //sceneMesh.ellipsoid = new BABYLON.Vector3(0.9, 0.45, 0.9);
+                //let bi = sceneMesh.getBoundingInfo();
+                //// console.log("bi: ", bi);
+                //
+                //let bb = bi.boundingBox;
+                //// console.log("bb: ", bb);
+                //
+                //sceneMesh.ellipsoid = bb.maximumWorld.subtract(bb.minimumWorld).scale(1);
+                //sceneMesh.ellipsoid = bb.maximumWorld.subtract(bb.minimumWorld).scale(1);
+                //sceneMesh.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
+                //sceneMesh.refreshBoundingInfo();
+                // sceneMesh.freezeWorldMatrix();
+                // sceneMesh.getBoundingInfo().isLocked = true
+            }
         }
         // let listener2 = function listener2 () {
         //     for (let i = 0; i < self.colliders.length; i++) {

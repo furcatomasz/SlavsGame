@@ -29,6 +29,56 @@
 <body>
     <canvas id="renderCanvas" mut></canvas>
     <script>
+        BABYLON.Mesh.prototype.ellipsoidMesh = undefined;
+        BABYLON.Mesh.prototype.showEllipsoid = function(scene) {
+
+            if (!this.isEnabled()) return;
+console.log(2);
+            this.refreshBoundingInfo();
+
+            var sphere = BABYLON.MeshBuilder.CreateSphere("elli", {
+                    diameterX: this.ellipsoid.x * 2,
+                    diameterZ: this.ellipsoid.z * 2,
+                    diameterY: this.ellipsoid.y * 2
+                },
+                scene);
+
+//    sphere.position = this.position.add(this.ellipsoidOffset);
+//            sphere.position = this.getAbsolutePosition().add(this.ellipsoidOffset);
+            sphere.parent = this;
+            sphere.position = new BABYLON.Vector3(0, 0, 0)
+            this.ellipsoidMesh = sphere;
+            // sphere.showBoundingBox = true;
+            sphere.material = new BABYLON.StandardMaterial("collider", scene);
+            sphere.material.wireframe = true;
+            sphere.material.diffuseColor = BABYLON.Color3.Yellow();
+
+            // special barrel ellipsoid checks
+                sphere.material.diffuseColor = BABYLON.Color3.Green();
+                console.log("barrel.ellipsoid: ", this.ellipsoid)
+                var sbb = sphere.getBoundingInfo().boundingBox;
+                console.log("barrel sphere bb.maximum.scale(2): ", sbb.maximum.scale(2));
+
+            sphere.visibility = 1;
+            console.log(3);
+
+        }
+
+        BABYLON.Mesh.prototype.setEllipsoidPerBoundingBox = function(scene) {
+
+            var bi = this.getBoundingInfo();
+            // console.log("bi: ", bi);
+
+            var bb = bi.boundingBox;
+            // console.log("bb: ", bb);
+
+            // this.ellipsoid = bb.extendSizeWorld.scale(2);
+            // this.ellipsoid = bb.extendSize.scale(2);
+            this.ellipsoid = bb.maximumWorld.subtract(bb.minimumWorld).scale(2);
+
+            // this.ellipsoidOffset = new BABYLON.Vector3(0, bbxscaled.y/2, 0);
+            // this.ellipsoidOffset = bbxscaled;
+        }
         if (BABYLON.Engine.isSupported()) {
             var htmlElement = document.getElementById('renderCanvas');
             document.getElementsByTagName("body")[0].setAttribute("oncontextmenu", "return false");

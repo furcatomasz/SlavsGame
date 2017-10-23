@@ -33,9 +33,14 @@ class Player extends AbstractCharacter {
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
-        mesh.checkCollisions = true;
-        mesh.showBoundingBox = true;
-        mesh.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+        var collider = BABYLON.Mesh.CreateBox("collider_box", 0, game.getScene(), false);
+        var modele = mesh.getBoundingInfo();
+        collider.scaling = new BABYLON.Vector3(modele.boundingBox.maximum.x*2, modele.boundingBox.maximum.y*2, modele.boundingBox.maximum.z*2);
+        collider.parent = mesh;
+        collider.material = new BABYLON.StandardMaterial("collidermat", game.getScene());
+        collider.material.alpha = 0.3;
+        collider.checkCollisions = true;
+
         this.mesh = mesh;
         this.game = game;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
@@ -132,8 +137,7 @@ class Player extends AbstractCharacter {
      * Moving events
      */
     protected registerMoving() {
-        // let walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
-        let speed = 4;
+        let walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
         let game = this.game;
         let mesh = this.mesh;
         let lastDistance = 1000;
@@ -151,9 +155,10 @@ class Player extends AbstractCharacter {
                     rotation = mesh.rotationQuaternion.toEulerAngles();
                 }
                 rotation.negate();
-                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / speed, 0, -parseFloat(Math.cos(rotation.y)) / speed);
+                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                //forwards.y = 0;
                 mesh.moveWithCollisions(forwards);
-                mesh.position.y = 0;
+                //mesh.position.y = 0;
                 this.runAnimationWalk(true);
                 lastDistance = distanceToTargetPoint;
             }

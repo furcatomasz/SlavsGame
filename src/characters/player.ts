@@ -33,6 +33,9 @@ class Player extends AbstractCharacter {
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
+        mesh.checkCollisions = true;
+        mesh.showBoundingBox = true;
+        mesh.ellipsoid = new BABYLON.Vector3(1, 1, 1);
         this.mesh = mesh;
         this.game = game;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
@@ -129,39 +132,69 @@ class Player extends AbstractCharacter {
      * Moving events
      */
     protected registerMoving() {
-        let walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+        // let walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+        let speed = 4;
         let game = this.game;
         let mesh = this.mesh;
+        let lastDistance = 1000;
 
-        if(!this.attackAnimation) {
-            if (game.controller.left) {
-                mesh.rotate(BABYLON.Axis.Y, -AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
-                this.emitPosition();
-            }
+        if(self.game.controller.forward && !this.attackAnimation) {
+            let distanceToTargetPoint = BABYLON.Vector3.Distance(mesh.position, game.controller.targetPoint);
 
-            if (game.controller.right) {
-                mesh.rotate(BABYLON.Axis.Y, AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
-                this.emitPosition();
-            }
+            if (distanceToTargetPoint > 2) {
+                if (distanceToTargetPoint > lastDistance) {
+                    lastDistance = 1000;
+                }
 
-            if (game.controller.forward) {
-                mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+                let rotation = mesh.rotation;
+                if (mesh.rotationQuaternion) {
+                    rotation = mesh.rotationQuaternion.toEulerAngles();
+                }
+                rotation.negate();
+                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / speed, 0, -parseFloat(Math.cos(rotation.y)) / speed);
+                mesh.moveWithCollisions(forwards);
+                mesh.position.y = 0;
                 this.runAnimationWalk(true);
-
-                return;
-            }
-            if (game.controller.back) {
-                mesh.translate(BABYLON.Axis.Z, walkSpeed, BABYLON.Space.LOCAL);
-                this.runAnimationWalk(true);
-
-                return;
+                lastDistance = distanceToTargetPoint;
             }
 
             ///stop move and start attack animation
-            if (this.animation && !this.attackAnimation) {
-                this.animation.stop();
-            }
+            //     if (this.animation && !this.attackAnimation) {
+            //         this.animation.stop();
+            //     }
+        } else if(this.animation && !this.attackAnimation) {
+            this.animation.stop();
         }
+
+        // if(!this.attackAnimation) {
+        //     if (game.controller.left) {
+        //         mesh.rotate(BABYLON.Axis.Y, -AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
+        //         this.emitPosition();
+        //     }
+        //
+        //     if (game.controller.right) {
+        //         mesh.rotate(BABYLON.Axis.Y, AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
+        //         this.emitPosition();
+        //     }
+        //
+        //     if (game.controller.forward) {
+        //         mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+        //         this.runAnimationWalk(true);
+        //
+        //         return;
+        //     }
+        //     if (game.controller.back) {
+        //         mesh.translate(BABYLON.Axis.Z, walkSpeed, BABYLON.Space.LOCAL);
+        //         this.runAnimationWalk(true);
+        //
+        //         return;
+        //     }
+        //
+        //     ///stop move and start attack animation
+        //     if (this.animation && !this.attackAnimation) {
+        //         this.animation.stop();
+        //     }
+        // }
     }
 
     public removeFromWorld() {

@@ -48,7 +48,7 @@ abstract class Scene {
     }
 
     public optimizeScene(scene:BABYLON.Scene) {
-        scene.collisionsEnabled = false;
+        scene.collisionsEnabled = true;
         scene.fogEnabled = false;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;

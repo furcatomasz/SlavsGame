@@ -42,18 +42,18 @@ class Environment {
 
         }
 
-         for (var i = 0; i < this.trees.length; i++) {
-             var meshTree = this.trees[i];
-
-             var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
-             var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
-             var scaling = BABYLON.Matrix.Scaling(0.3, 1, 0.3);
-
-             minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
-             maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
-             meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);
-             meshTree.computeWorldMatrix(true);
-         }
+         // for (var i = 0; i < this.trees.length; i++) {
+         //     var meshTree = this.trees[i];
+         //
+         //     var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
+         //     var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
+         //     var scaling = BABYLON.Matrix.Scaling(0.3, 1, 0.3);
+         //
+         //     minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
+         //     maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
+         //     meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);
+         //     meshTree.computeWorldMatrix(true);
+         // }
 
 
         let cone = scene.getMeshByName("Fireplace");
@@ -99,28 +99,32 @@ class Environment {
 
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
-            sceneMesh.freezeWorldMatrix();
-            sceneMesh.getBoundingInfo().isLocked = true
+            sceneMesh.checkCollisions = true;
+            sceneMesh.showBoundingBox = true;
+            sceneMesh.ellipsoid = new BABYLON.Vector3(3, 3, 3);
+
+            // sceneMesh.freezeWorldMatrix();
+            // sceneMesh.getBoundingInfo().isLocked = true
         }
 
 
-        let listener2 = function listener2 () {
-            for (let i = 0; i < self.colliders.length; i++) {
-                let sceneMesh = self.colliders[i];
-                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-                    {trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh},
-                    function () {
-                        game.controller.targetPoint = null;
-                        game.controller.ball.visibility = 0;
-                        game.controller.forward = false;
-                        game.player.mesh.translate(BABYLON.Axis.Z, 0.35, BABYLON.Space.LOCAL);
-                        game.getScene().activeCamera.position = game.player.mesh.position;
-                    }));
-            }
-
-            document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
-        };
-        document.addEventListener(Events.PLAYER_CONNECTED, listener2);
+        // let listener2 = function listener2 () {
+        //     for (let i = 0; i < self.colliders.length; i++) {
+        //         let sceneMesh = self.colliders[i];
+        //         game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+        //             {trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh},
+        //             function () {
+        //                 game.controller.targetPoint = null;
+        //                 game.controller.ball.visibility = 0;
+        //                 game.controller.forward = false;
+        //                 game.player.mesh.translate(BABYLON.Axis.Z, 0.35, BABYLON.Space.LOCAL);
+        //                 game.getScene().activeCamera.position = game.player.mesh.position;
+        //             }));
+        //     }
+        //
+        //     document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
+        // };
+        // document.addEventListener(Events.PLAYER_CONNECTED, listener2);
 
         new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
 

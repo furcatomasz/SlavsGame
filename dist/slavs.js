@@ -114,7 +114,7 @@ var Scene = /** @class */ (function () {
         return camera;
     };
     Scene.prototype.optimizeScene = function (scene) {
-        scene.collisionsEnabled = false;
+        scene.collisionsEnabled = true;
         scene.fogEnabled = false;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
@@ -1070,6 +1070,9 @@ var Player = /** @class */ (function (_super) {
         var mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
+        mesh.checkCollisions = true;
+        mesh.showBoundingBox = true;
+        mesh.ellipsoid = new BABYLON.Vector3(1, 1, 1);
         _this.mesh = mesh;
         _this.game = game;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
@@ -1141,33 +1144,65 @@ var Player = /** @class */ (function (_super) {
      * Moving events
      */
     Player.prototype.registerMoving = function () {
-        var walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+        // let walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+        var speed = 4;
         var game = this.game;
         var mesh = this.mesh;
-        if (!this.attackAnimation) {
-            if (game.controller.left) {
-                mesh.rotate(BABYLON.Axis.Y, -AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
-                this.emitPosition();
-            }
-            if (game.controller.right) {
-                mesh.rotate(BABYLON.Axis.Y, AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
-                this.emitPosition();
-            }
-            if (game.controller.forward) {
-                mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+        var lastDistance = 1000;
+        if (self.game.controller.forward && !this.attackAnimation) {
+            var distanceToTargetPoint = BABYLON.Vector3.Distance(mesh.position, game.controller.targetPoint);
+            if (distanceToTargetPoint > 2) {
+                if (distanceToTargetPoint > lastDistance) {
+                    lastDistance = 1000;
+                }
+                var rotation = mesh.rotation;
+                if (mesh.rotationQuaternion) {
+                    rotation = mesh.rotationQuaternion.toEulerAngles();
+                }
+                rotation.negate();
+                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / speed, 0, -parseFloat(Math.cos(rotation.y)) / speed);
+                mesh.moveWithCollisions(forwards);
+                mesh.position.y = 0;
                 this.runAnimationWalk(true);
-                return;
-            }
-            if (game.controller.back) {
-                mesh.translate(BABYLON.Axis.Z, walkSpeed, BABYLON.Space.LOCAL);
-                this.runAnimationWalk(true);
-                return;
+                lastDistance = distanceToTargetPoint;
             }
             ///stop move and start attack animation
-            if (this.animation && !this.attackAnimation) {
-                this.animation.stop();
-            }
+            //     if (this.animation && !this.attackAnimation) {
+            //         this.animation.stop();
+            //     }
         }
+        else if (this.animation && !this.attackAnimation) {
+            this.animation.stop();
+        }
+        // if(!this.attackAnimation) {
+        //     if (game.controller.left) {
+        //         mesh.rotate(BABYLON.Axis.Y, -AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
+        //         this.emitPosition();
+        //     }
+        //
+        //     if (game.controller.right) {
+        //         mesh.rotate(BABYLON.Axis.Y, AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
+        //         this.emitPosition();
+        //     }
+        //
+        //     if (game.controller.forward) {
+        //         mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+        //         this.runAnimationWalk(true);
+        //
+        //         return;
+        //     }
+        //     if (game.controller.back) {
+        //         mesh.translate(BABYLON.Axis.Z, walkSpeed, BABYLON.Space.LOCAL);
+        //         this.runAnimationWalk(true);
+        //
+        //         return;
+        //     }
+        //
+        //     ///stop move and start attack animation
+        //     if (this.animation && !this.attackAnimation) {
+        //         this.animation.stop();
+        //     }
+        // }
     };
     Player.prototype.removeFromWorld = function () {
         this.mesh.dispose();
@@ -1465,16 +1500,18 @@ var Environment = /** @class */ (function () {
             }
             //shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
-        for (var i = 0; i < this.trees.length; i++) {
-            var meshTree = this.trees[i];
-            var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
-            var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
-            var scaling = BABYLON.Matrix.Scaling(0.3, 1, 0.3);
-            minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
-            maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
-            meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);
-            meshTree.computeWorldMatrix(true);
-        }
+        // for (var i = 0; i < this.trees.length; i++) {
+        //     var meshTree = this.trees[i];
+        //
+        //     var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
+        //     var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
+        //     var scaling = BABYLON.Matrix.Scaling(0.3, 1, 0.3);
+        //
+        //     minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
+        //     maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
+        //     meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);
+        //     meshTree.computeWorldMatrix(true);
+        // }
         var cone = scene.getMeshByName("Fireplace");
         if (cone) {
             var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 3, 0), scene);
@@ -1509,23 +1546,29 @@ var Environment = /** @class */ (function () {
         }
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
-            sceneMesh.freezeWorldMatrix();
-            sceneMesh.getBoundingInfo().isLocked = true;
+            sceneMesh.checkCollisions = true;
+            sceneMesh.showBoundingBox = true;
+            sceneMesh.ellipsoid = new BABYLON.Vector3(3, 3, 3);
+            // sceneMesh.freezeWorldMatrix();
+            // sceneMesh.getBoundingInfo().isLocked = true
         }
-        var listener2 = function listener2() {
-            for (var i_1 = 0; i_1 < self.colliders.length; i_1++) {
-                var sceneMesh_1 = self.colliders[i_1];
-                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh_1 }, function () {
-                    game.controller.targetPoint = null;
-                    game.controller.ball.visibility = 0;
-                    game.controller.forward = false;
-                    game.player.mesh.translate(BABYLON.Axis.Z, 0.35, BABYLON.Space.LOCAL);
-                    game.getScene().activeCamera.position = game.player.mesh.position;
-                }));
-            }
-            document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
-        };
-        document.addEventListener(Events.PLAYER_CONNECTED, listener2);
+        // let listener2 = function listener2 () {
+        //     for (let i = 0; i < self.colliders.length; i++) {
+        //         let sceneMesh = self.colliders[i];
+        //         game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+        //             {trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh},
+        //             function () {
+        //                 game.controller.targetPoint = null;
+        //                 game.controller.ball.visibility = 0;
+        //                 game.controller.forward = false;
+        //                 game.player.mesh.translate(BABYLON.Axis.Z, 0.35, BABYLON.Space.LOCAL);
+        //                 game.getScene().activeCamera.position = game.player.mesh.position;
+        //             }));
+        //     }
+        //
+        //     document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
+        // };
+        // document.addEventListener(Events.PLAYER_CONNECTED, listener2);
         new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
     }
     Environment.prototype.enableDayAndNight = function (game, light) {

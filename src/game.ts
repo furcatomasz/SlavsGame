@@ -5,6 +5,8 @@
 
 class Game {
 
+    static SHOW_COLLIDERS = 1;
+
     public sceneManager: Scene;
     public controller: Controller;
     public canvas: HTMLCanvasElement;

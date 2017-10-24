@@ -889,6 +889,7 @@ var Game = /** @class */ (function () {
     Game.randomNumber = function (minimum, maximum) {
         return Math.round(Math.random() * (maximum - minimum) + minimum);
     };
+    Game.SHOW_COLLIDERS = 1;
     return Game;
 }());
 var Character;
@@ -1070,13 +1071,7 @@ var Player = /** @class */ (function (_super) {
         var mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
-        var collider = BABYLON.Mesh.CreateBox("collider_box", 0, game.getScene(), false);
-        var modele = mesh.getBoundingInfo();
-        collider.scaling = new BABYLON.Vector3(modele.boundingBox.maximum.x * 2, modele.boundingBox.maximum.y * 2, modele.boundingBox.maximum.z * 2);
-        collider.parent = mesh;
-        collider.material = new BABYLON.StandardMaterial("collidermat", game.getScene());
-        collider.material.alpha = 0.3;
-        collider.checkCollisions = true;
+        Collisions.setCollider(game.getScene(), mesh);
         _this.mesh = mesh;
         _this.game = game;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
@@ -1423,6 +1418,29 @@ var Factories;
     }());
     Factories.AbstractFactory = AbstractFactory;
 })(Factories || (Factories = {}));
+var Collisions = /** @class */ (function () {
+    function Collisions() {
+    }
+    Collisions.setCollider = function (scene, parent, scalingSize) {
+        if (scalingSize === void 0) { scalingSize = new BABYLON.Vector3(2, 3, 2); }
+        var collider = BABYLON.Mesh.CreateBox('collider_box_of_' + parent.name, 0, scene, false);
+        var parentBoundBox = parent.getBoundingInfo();
+        collider.scaling = new BABYLON.Vector3(parentBoundBox.boundingBox.maximum.x * 2, parentBoundBox.boundingBox.maximum.y * 3, parentBoundBox.boundingBox.maximum.z * 2);
+        collider.parent = parent;
+        collider.isPickable = false;
+        if (Game.SHOW_COLLIDERS) {
+            collider.material = new BABYLON.StandardMaterial("collidermat", scene);
+            collider.material.alpha = 0.3;
+        }
+        else {
+            collider.visibility = 0;
+        }
+        collider.checkCollisions = true;
+        collider.freezeWorldMatrix();
+        return collider;
+    };
+    return Collisions;
+}());
 /// <reference path="AbstractFactory.ts"/>
 /// <reference path="../game.ts"/>
 var Factories;
@@ -1478,7 +1496,7 @@ var Factories;
 var Environment = /** @class */ (function () {
     function Environment(game, scene) {
         var self = this;
-        this.trees = [];
+        var trees = [];
         this.bushes = [];
         this.colliders = [];
         //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
@@ -1496,7 +1514,7 @@ var Environment = /** @class */ (function () {
             }
             else if (meshName.search("Spruce") >= 0) {
                 sceneMesh.isPickable = false;
-                this.trees.push(sceneMesh);
+                trees.push(sceneMesh);
                 this.colliders.push(sceneMesh);
             }
             else if (meshName.search("Fance") >= 0) {
@@ -1504,18 +1522,22 @@ var Environment = /** @class */ (function () {
             }
             //shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
-        // for (var i = 0; i < this.trees.length; i++) {
-        //     var meshTree = this.trees[i];
-        //
-        //     var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
-        //     var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
-        //     var scaling = BABYLON.Matrix.Scaling(0.3, 1, 0.3);
-        //
-        //     minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
-        //     maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
-        //     meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);
-        //     meshTree.computeWorldMatrix(true);
-        // }
+        for (var i = 0; i < trees.length; i++) {
+            var meshTree = trees[i];
+            var minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
+            var maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
+            var scaling = BABYLON.Matrix.Scaling(0.5, 1, 0.5);
+            minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
+            maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
+            meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);
+            meshTree.computeWorldMatrix(true);
+        }
+        trees = null;
+        ///Freeze world matrix all static meshes
+        for (var i = 0; i < scene.meshes.length; i++) {
+            scene.meshes[i].freezeWorldMatrix();
+        }
+        ////fireplace
         var cone = scene.getMeshByName("Fireplace");
         if (cone) {
             var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 3, 0), scene);
@@ -1526,9 +1548,13 @@ var Environment = /** @class */ (function () {
             smokeSystem.start();
             var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
-            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, {
+                loop: true,
+                autoplay: true
+            });
             sfxFireplace.attachToMesh(cone);
         }
+        ///portal to town
         var plane = scene.getMeshByName("Entrace_city");
         if (plane) {
             this.entrace = plane;
@@ -1548,48 +1574,11 @@ var Environment = /** @class */ (function () {
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
+        ///register colliders
         for (var i = 0; i < this.colliders.length; i++) {
             var sceneMesh = this.colliders[i];
-            if (sceneMesh.name.search("Forest_ground") < 0) {
-                var collider = BABYLON.Mesh.CreateBox("collider_box", 0, scene, false);
-                var modele = sceneMesh.getBoundingInfo();
-                collider.scaling = new BABYLON.Vector3(modele.boundingBox.maximum.x * 1.5, modele.boundingBox.maximum.y, modele.boundingBox.maximum.z * 1.5);
-                collider.parent = sceneMesh;
-                collider.material = new BABYLON.StandardMaterial("collidermat", scene);
-                collider.material.alpha = 0.3;
-                collider.checkCollisions = true;
-                //sceneMesh.ellipsoid = new BABYLON.Vector3(0.9, 0.45, 0.9);
-                //let bi = sceneMesh.getBoundingInfo();
-                //// console.log("bi: ", bi);
-                //
-                //let bb = bi.boundingBox;
-                //// console.log("bb: ", bb);
-                //
-                //sceneMesh.ellipsoid = bb.maximumWorld.subtract(bb.minimumWorld).scale(1);
-                //sceneMesh.ellipsoid = bb.maximumWorld.subtract(bb.minimumWorld).scale(1);
-                //sceneMesh.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
-                //sceneMesh.refreshBoundingInfo();
-                // sceneMesh.freezeWorldMatrix();
-                // sceneMesh.getBoundingInfo().isLocked = true
-            }
+            Collisions.setCollider(scene, sceneMesh);
         }
-        // let listener2 = function listener2 () {
-        //     for (let i = 0; i < self.colliders.length; i++) {
-        //         let sceneMesh = self.colliders[i];
-        //         game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-        //             {trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: sceneMesh},
-        //             function () {
-        //                 game.controller.targetPoint = null;
-        //                 game.controller.ball.visibility = 0;
-        //                 game.controller.forward = false;
-        //                 game.player.mesh.translate(BABYLON.Axis.Z, 0.35, BABYLON.Space.LOCAL);
-        //                 game.getScene().activeCamera.position = game.player.mesh.position;
-        //             }));
-        //     }
-        //
-        //     document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
-        // };
-        // document.addEventListener(Events.PLAYER_CONNECTED, listener2);
         new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
     }
     Environment.prototype.enableDayAndNight = function (game, light) {

@@ -33,13 +33,7 @@ class Player extends AbstractCharacter {
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
-        var collider = BABYLON.Mesh.CreateBox("collider_box", 0, game.getScene(), false);
-        var modele = mesh.getBoundingInfo();
-        collider.scaling = new BABYLON.Vector3(modele.boundingBox.maximum.x*2, modele.boundingBox.maximum.y*2, modele.boundingBox.maximum.z*2);
-        collider.parent = mesh;
-        collider.material = new BABYLON.StandardMaterial("collidermat", game.getScene());
-        collider.material.alpha = 0.3;
-        collider.checkCollisions = true;
+        Collisions.setCollider(game.getScene(), mesh);
 
         this.mesh = mesh;
         this.game = game;

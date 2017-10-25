@@ -16,9 +16,9 @@ class Simple extends Scene {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-            scene.debugLayer.show({
-                initialTab: 2
-            });
+            // scene.debugLayer.show({
+            //     initialTab: 2
+            // });
             scene.actionManager = new BABYLON.ActionManager(scene);
             let assetsManager = new BABYLON.AssetsManager(scene);
             let sceneIndex = game.scenes.push(scene);
@@ -39,7 +39,7 @@ class Simple extends Scene {
                     //grain.skeleton.beginAnimation('ArmatureAction', true);
 
                     let grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    //self.octree = scene.createOrUpdateSelectionOctree();
+                    // self.octree = scene.createOrUpdateSelectionOctree();
 
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE,

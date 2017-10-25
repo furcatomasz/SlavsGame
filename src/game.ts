@@ -5,7 +5,7 @@
 
 class Game {
 
-    static SHOW_COLLIDERS = 1;
+    static SHOW_COLLIDERS = 0;
 
     public sceneManager: Scene;
     public controller: Controller;

@@ -32,7 +32,7 @@ class Worm extends Monster {
             this.emitPosition();
         }
 
-        if (!this.animation) {
+        if (!this.animation && skeleton) {
             self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
                 skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                 self.animation = null;

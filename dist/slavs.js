@@ -206,9 +206,9 @@ var Simple = /** @class */ (function (_super) {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-            scene.debugLayer.show({
-                initialTab: 2
-            });
+            // scene.debugLayer.show({
+            //     initialTab: 2
+            // });
             scene.actionManager = new BABYLON.ActionManager(scene);
             var assetsManager = new BABYLON.AssetsManager(scene);
             var sceneIndex = game.scenes.push(scene);
@@ -225,7 +225,7 @@ var Simple = /** @class */ (function (_super) {
                     grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
                     //grain.skeleton.beginAnimation('ArmatureAction', true);
                     var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    //self.octree = scene.createOrUpdateSelectionOctree();
+                    // self.octree = scene.createOrUpdateSelectionOctree();
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE
                     });
@@ -397,6 +397,7 @@ var Monster = /** @class */ (function (_super) {
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
         _this.registerActions();
+        Collisions.setCollider(game.getScene(), _this.mesh, null, false);
         _this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
         _this.mesh.outlineWidth = 0.1;
         var self = _this;
@@ -411,7 +412,8 @@ var Monster = /** @class */ (function (_super) {
             self.game.player.mesh.lookAt(pointer.meshUnderPointer.position);
             game.controller.targetPoint = null;
             game.controller.ball.visibility = 0;
-            //game.controller.forward = true;
+            game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+            game.controller.forward = false;
         }));
         return _this;
     }
@@ -435,6 +437,7 @@ var Monster = /** @class */ (function (_super) {
         var self = this;
         var monsterAttackIsActive = false;
         var walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
+        var walkSpeed = 8;
         var playerMesh = this.game.player.mesh;
         this.visibilityArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
         this.attackArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
@@ -446,7 +449,14 @@ var Monster = /** @class */ (function (_super) {
                     self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                     return;
                 }
-                self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+                var rotation = self.mesh.rotation;
+                if (self.mesh.rotationQuaternion) {
+                    rotation = self.mesh.rotationQuaternion.toEulerAngles();
+                }
+                rotation.negate();
+                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                self.mesh.moveWithCollisions(forwards);
+                self.mesh.position.y = 0;
                 self.runAnimationWalk(true);
             }
         };
@@ -889,7 +899,7 @@ var Game = /** @class */ (function () {
     Game.randomNumber = function (minimum, maximum) {
         return Math.round(Math.random() * (maximum - minimum) + minimum);
     };
-    Game.SHOW_COLLIDERS = 1;
+    Game.SHOW_COLLIDERS = 0;
     return Game;
 }());
 var Character;
@@ -1071,7 +1081,7 @@ var Player = /** @class */ (function (_super) {
         var mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
-        Collisions.setCollider(game.getScene(), mesh);
+        // Collisions.setCollider(game.getScene(), mesh, null, false);
         _this.mesh = mesh;
         _this.game = game;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
@@ -1146,62 +1156,21 @@ var Player = /** @class */ (function (_super) {
         var walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
         var game = this.game;
         var mesh = this.mesh;
-        var lastDistance = 1000;
         if (self.game.controller.forward && !this.attackAnimation) {
-            var distanceToTargetPoint = BABYLON.Vector3.Distance(mesh.position, game.controller.targetPoint);
-            if (distanceToTargetPoint > 2) {
-                if (distanceToTargetPoint > lastDistance) {
-                    lastDistance = 1000;
-                }
-                var rotation = mesh.rotation;
-                if (mesh.rotationQuaternion) {
-                    rotation = mesh.rotationQuaternion.toEulerAngles();
-                }
-                rotation.negate();
-                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
-                //forwards.y = 0;
-                mesh.moveWithCollisions(forwards);
-                //mesh.position.y = 0;
-                this.runAnimationWalk(true);
-                lastDistance = distanceToTargetPoint;
+            var rotation = mesh.rotation;
+            if (mesh.rotationQuaternion) {
+                rotation = mesh.rotationQuaternion.toEulerAngles();
             }
-            ///stop move and start attack animation
-            //     if (this.animation && !this.attackAnimation) {
-            //         this.animation.stop();
-            //     }
+            rotation.negate();
+            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+            mesh.moveWithCollisions(forwards);
+            mesh.position.y = 0;
+            this.runAnimationWalk(true);
+            this.refreshCameraPosition();
         }
         else if (this.animation && !this.attackAnimation) {
             this.animation.stop();
         }
-        // if(!this.attackAnimation) {
-        //     if (game.controller.left) {
-        //         mesh.rotate(BABYLON.Axis.Y, -AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
-        //         this.emitPosition();
-        //     }
-        //
-        //     if (game.controller.right) {
-        //         mesh.rotate(BABYLON.Axis.Y, AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
-        //         this.emitPosition();
-        //     }
-        //
-        //     if (game.controller.forward) {
-        //         mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
-        //         this.runAnimationWalk(true);
-        //
-        //         return;
-        //     }
-        //     if (game.controller.back) {
-        //         mesh.translate(BABYLON.Axis.Z, walkSpeed, BABYLON.Space.LOCAL);
-        //         this.runAnimationWalk(true);
-        //
-        //         return;
-        //     }
-        //
-        //     ///stop move and start attack animation
-        //     if (this.animation && !this.attackAnimation) {
-        //         this.animation.stop();
-        //     }
-        // }
     };
     Player.prototype.removeFromWorld = function () {
         this.mesh.dispose();
@@ -1211,9 +1180,6 @@ var Player = /** @class */ (function (_super) {
         if (self.isControllable) {
             this.game.getScene().registerAfterRender(function () {
                 self.registerMoving();
-                if (self.game.controller.forward && self.game.getScene()) {
-                    self.refreshCameraPosition();
-                }
             });
         }
     };
@@ -1326,6 +1292,9 @@ var Mouse = /** @class */ (function (_super) {
                 self.game.controller.forward = false;
                 self.targetPoint = null;
                 self.ball.visibility = 0;
+                if (self.game.player.animation) {
+                    self.game.player.animation.stop();
+                }
             }
         }));
         ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
@@ -1336,6 +1305,9 @@ var Mouse = /** @class */ (function (_super) {
                 self.game.controller.forward = false;
                 self.targetPoint = null;
                 self.ball.visibility = 0;
+                if (self.game.player.animation) {
+                    self.game.player.animation.stop();
+                }
             }
         }));
         scene.onPointerUp = function (evt, pickResult) {
@@ -1370,12 +1342,6 @@ var Mouse = /** @class */ (function (_super) {
                 }
             }
         };
-        scene.registerBeforeRender(function () {
-            if (self.attackPoint) {
-                self.game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
-                self.forward = false;
-            }
-        });
     };
     return Mouse;
 }(Controller));
@@ -1421,8 +1387,9 @@ var Factories;
 var Collisions = /** @class */ (function () {
     function Collisions() {
     }
-    Collisions.setCollider = function (scene, parent, scalingSize) {
+    Collisions.setCollider = function (scene, parent, scalingSize, freezeInWorld) {
         if (scalingSize === void 0) { scalingSize = new BABYLON.Vector3(2, 3, 2); }
+        if (freezeInWorld === void 0) { freezeInWorld = true; }
         var collider = BABYLON.Mesh.CreateBox('collider_box_of_' + parent.name, 0, scene, false);
         var parentBoundBox = parent.getBoundingInfo();
         collider.scaling = new BABYLON.Vector3(parentBoundBox.boundingBox.maximum.x * 2, parentBoundBox.boundingBox.maximum.y * 3, parentBoundBox.boundingBox.maximum.z * 2);
@@ -1436,7 +1403,9 @@ var Collisions = /** @class */ (function () {
             collider.visibility = 0;
         }
         collider.checkCollisions = true;
-        collider.freezeWorldMatrix();
+        if (freezeInWorld) {
+            collider.freezeWorldMatrix();
+        }
         return collider;
     };
     return Collisions;
@@ -3155,7 +3124,7 @@ var Worm = /** @class */ (function (_super) {
         if (emit) {
             this.emitPosition();
         }
-        if (!this.animation) {
+        if (!this.animation && skeleton) {
             self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
                 skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                 self.animation = null;
@@ -4189,27 +4158,6 @@ var Particles;
 })(Particles || (Particles = {}));
 var Quests;
 (function (Quests) {
-    var Awards;
-    (function (Awards) {
-        var Item = /** @class */ (function (_super) {
-            __extends(Item, _super);
-            function Item(item) {
-                var _this = _super.call(this) || this;
-                _this.name = item.name;
-                _this.award = item;
-                return _this;
-            }
-            Item.prototype.getAward = function () {
-                console.log('get award' + this.award.name);
-            };
-            Item.AWARD_ID = 1;
-            return Item;
-        }(Awards.AbstractAward));
-        Awards.Item = Item;
-    })(Awards = Quests.Awards || (Quests.Awards = {}));
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
     var KillWorms = /** @class */ (function (_super) {
         __extends(KillWorms, _super);
         function KillWorms(game) {
@@ -4229,6 +4177,27 @@ var Quests;
         return KillWorms;
     }(Quests.AbstractQuest));
     Quests.KillWorms = KillWorms;
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var Item = /** @class */ (function (_super) {
+            __extends(Item, _super);
+            function Item(item) {
+                var _this = _super.call(this) || this;
+                _this.name = item.name;
+                _this.award = item;
+                return _this;
+            }
+            Item.prototype.getAward = function () {
+                console.log('get award' + this.award.name);
+            };
+            Item.AWARD_ID = 1;
+            return Item;
+        }(Awards.AbstractAward));
+        Awards.Item = Item;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
 })(Quests || (Quests = {}));
 var Quests;
 (function (Quests) {

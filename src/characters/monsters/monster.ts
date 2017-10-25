@@ -37,6 +37,7 @@ abstract class Monster extends AbstractCharacter {
 
         this.registerActions();
 
+        Collisions.setCollider(game.getScene(), this.mesh, null, false);
         this.mesh.outlineColor = new BABYLON.Color3(0.3,0,0);
         this.mesh.outlineWidth = 0.1;
 
@@ -57,7 +58,8 @@ abstract class Monster extends AbstractCharacter {
                 self.game.player.mesh.lookAt(pointer.meshUnderPointer.position);
                 game.controller.targetPoint = null;
                 game.controller.ball.visibility = 0;
-                //game.controller.forward = true;
+                game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+                game.controller.forward = false;
             }));
 
     }
@@ -84,6 +86,7 @@ abstract class Monster extends AbstractCharacter {
         let self = this;
         let monsterAttackIsActive = false;
         let walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
+        let walkSpeed = 8;
         let playerMesh = this.game.player.mesh;
         this.visibilityArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
         this.attackArea.actionManager = new BABYLON.ActionManager(this.game.getScene());
@@ -96,7 +99,16 @@ abstract class Monster extends AbstractCharacter {
                     self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                     return;
                 }
-                self.mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
+
+                let rotation = self.mesh.rotation;
+                if (self.mesh.rotationQuaternion) {
+                    rotation = self.mesh.rotationQuaternion.toEulerAngles();
+                }
+                rotation.negate();
+                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+
+                self.mesh.moveWithCollisions(forwards);
+                self.mesh.position.y = 0;
                 self.runAnimationWalk(true);
             }
         };

@@ -19,6 +19,9 @@ class Mouse extends Controller {
                 self.game.controller.forward = false;
                 self.targetPoint = null;
                 self.ball.visibility = 0;
+                if(self.game.player.animation) {
+                    self.game.player.animation.stop();
+                }
             }
         }));
 
@@ -30,6 +33,9 @@ class Mouse extends Controller {
                 self.game.controller.forward = false;
                 self.targetPoint = null;
                 self.ball.visibility = 0;
+                if(self.game.player.animation) {
+                    self.game.player.animation.stop();
+                }
             }
         }));
 
@@ -70,12 +76,6 @@ class Mouse extends Controller {
             }
         };
 
-        scene.registerBeforeRender(function() {
-            if (self.attackPoint) {
-                self.game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
-                self.forward = false;
-            }
-        });
     }
 
 

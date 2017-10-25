@@ -33,7 +33,7 @@ class Player extends AbstractCharacter {
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
-        Collisions.setCollider(game.getScene(), mesh);
+        // Collisions.setCollider(game.getScene(), mesh, null, false);
 
         this.mesh = mesh;
         this.game = game;
@@ -134,66 +134,23 @@ class Player extends AbstractCharacter {
         let walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
         let game = this.game;
         let mesh = this.mesh;
-        let lastDistance = 1000;
 
         if(self.game.controller.forward && !this.attackAnimation) {
-            let distanceToTargetPoint = BABYLON.Vector3.Distance(mesh.position, game.controller.targetPoint);
-
-            if (distanceToTargetPoint > 2) {
-                if (distanceToTargetPoint > lastDistance) {
-                    lastDistance = 1000;
-                }
-
-                let rotation = mesh.rotation;
-                if (mesh.rotationQuaternion) {
-                    rotation = mesh.rotationQuaternion.toEulerAngles();
-                }
-                rotation.negate();
-                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
-                //forwards.y = 0;
-                mesh.moveWithCollisions(forwards);
-                //mesh.position.y = 0;
-                this.runAnimationWalk(true);
-                lastDistance = distanceToTargetPoint;
+            let rotation = mesh.rotation;
+            if (mesh.rotationQuaternion) {
+                rotation = mesh.rotationQuaternion.toEulerAngles();
             }
+            rotation.negate();
+            let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+            mesh.moveWithCollisions(forwards);
+            mesh.position.y = 0;
 
-            ///stop move and start attack animation
-            //     if (this.animation && !this.attackAnimation) {
-            //         this.animation.stop();
-            //     }
+            this.runAnimationWalk(true);
+            this.refreshCameraPosition();
+
         } else if(this.animation && !this.attackAnimation) {
             this.animation.stop();
         }
-
-        // if(!this.attackAnimation) {
-        //     if (game.controller.left) {
-        //         mesh.rotate(BABYLON.Axis.Y, -AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
-        //         this.emitPosition();
-        //     }
-        //
-        //     if (game.controller.right) {
-        //         mesh.rotate(BABYLON.Axis.Y, AbstractCharacter.ROTATION_SPEED, BABYLON.Space.LOCAL);
-        //         this.emitPosition();
-        //     }
-        //
-        //     if (game.controller.forward) {
-        //         mesh.translate(BABYLON.Axis.Z, -walkSpeed, BABYLON.Space.LOCAL);
-        //         this.runAnimationWalk(true);
-        //
-        //         return;
-        //     }
-        //     if (game.controller.back) {
-        //         mesh.translate(BABYLON.Axis.Z, walkSpeed, BABYLON.Space.LOCAL);
-        //         this.runAnimationWalk(true);
-        //
-        //         return;
-        //     }
-        //
-        //     ///stop move and start attack animation
-        //     if (this.animation && !this.attackAnimation) {
-        //         this.animation.stop();
-        //     }
-        // }
     }
 
     public removeFromWorld() {
@@ -206,9 +163,6 @@ class Player extends AbstractCharacter {
         if (self.isControllable) {
             this.game.getScene().registerAfterRender(function () {
                 self.registerMoving();
-                if (self.game.controller.forward && self.game.getScene()) {
-                    self.refreshCameraPosition();
-                }
             });
         }
     }

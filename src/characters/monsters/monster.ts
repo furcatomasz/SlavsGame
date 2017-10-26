@@ -37,7 +37,10 @@ abstract class Monster extends AbstractCharacter {
 
         this.registerActions();
 
-        Collisions.setCollider(game.getScene(), this.mesh, null, false);
+        let collider = Collisions.setCollider(game.getScene(), this.mesh, null, false);
+        if(game.sceneManager.octree) {
+            game.sceneManager.octree.dynamicContent.push(collider);
+        }
         this.mesh.outlineColor = new BABYLON.Color3(0.3,0,0);
         this.mesh.outlineWidth = 0.1;
 

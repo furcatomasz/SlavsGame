@@ -14,7 +14,7 @@ class SelectCharacter extends Scene {
             self
                 .setDefaults(game)
                 .optimizeScene(scene)
-                .setCamera(scene); 
+                .setCamera(scene);
 
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;

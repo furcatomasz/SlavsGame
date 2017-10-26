@@ -14,7 +14,7 @@ namespace Items.Weapons {
             this.mesh.visibility = 0;
             this.statistics = new Attributes.ItemStatistics(0, 0, 0, 5, 0, 0, 0, 0);
 
-            this.sfxHit = new BABYLON.Sound("Fire", "/assets/Characters/Warrior/hit.wav", this.game.getScene(), null, {
+            this.sfxHit = new BABYLON.Sound("Fire", "/assets/Characters/Worm/hit.wav", this.game.getScene(), null, {
                 loop: false,
                 autoplay: false
             });

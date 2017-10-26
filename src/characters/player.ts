@@ -132,7 +132,6 @@ class Player extends AbstractCharacter {
      */
     protected registerMoving() {
         let walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
-        let game = this.game;
         let mesh = this.mesh;
 
         if(self.game.controller.forward && !this.attackAnimation) {
@@ -249,7 +248,10 @@ class Player extends AbstractCharacter {
     }
 
     protected onHitStart() {
+        let self = this;
         setTimeout(function () {
+            self.inventory.weapon.sfxHit.play();
+
             document.dispatchEvent(this.game.events.monsterToAttack);
         }, 300);
     };

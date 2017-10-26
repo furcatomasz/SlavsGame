@@ -54,7 +54,7 @@ abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        scene.audioEnabled = false;
+        //scene.audioEnabled = false;
         return this;
     }
 

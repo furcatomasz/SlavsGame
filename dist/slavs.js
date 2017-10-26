@@ -120,7 +120,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        scene.audioEnabled = false;
+        //scene.audioEnabled = false;
         return this;
     };
     Scene.prototype.initFactories = function (scene, assetsManager) {
@@ -206,9 +206,9 @@ var Simple = /** @class */ (function (_super) {
                 .setDefaults(game)
                 .optimizeScene(scene)
                 .setCamera(scene);
-            // scene.debugLayer.show({
-            //     initialTab: 2
-            // });
+            //scene.debugLayer.show({
+            //    initialTab: 2
+            //});
             scene.actionManager = new BABYLON.ActionManager(scene);
             var assetsManager = new BABYLON.AssetsManager(scene);
             var sceneIndex = game.scenes.push(scene);
@@ -225,7 +225,7 @@ var Simple = /** @class */ (function (_super) {
                     grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
                     //grain.skeleton.beginAnimation('ArmatureAction', true);
                     var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    // self.octree = scene.createOrUpdateSelectionOctree();
+                    self.octree = scene.createOrUpdateSelectionOctree();
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE
                     });
@@ -397,7 +397,10 @@ var Monster = /** @class */ (function (_super) {
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
         _this.registerActions();
-        Collisions.setCollider(game.getScene(), _this.mesh, null, false);
+        var collider = Collisions.setCollider(game.getScene(), _this.mesh, null, false);
+        if (game.sceneManager.octree) {
+            game.sceneManager.octree.dynamicContent.push(collider);
+        }
         _this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
         _this.mesh.outlineWidth = 0.1;
         var self = _this;
@@ -877,7 +880,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new Simple().initScene(this);
+        new SelectCharacter().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -1154,7 +1157,6 @@ var Player = /** @class */ (function (_super) {
      */
     Player.prototype.registerMoving = function () {
         var walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
-        var game = this.game;
         var mesh = this.mesh;
         if (self.game.controller.forward && !this.attackAnimation) {
             var rotation = mesh.rotation;
@@ -1253,7 +1255,9 @@ var Player = /** @class */ (function (_super) {
         this.refreshExperienceInGui();
     };
     Player.prototype.onHitStart = function () {
+        var self = this;
         setTimeout(function () {
+            self.inventory.weapon.sfxHit.play();
             document.dispatchEvent(this.game.events.monsterToAttack);
         }, 300);
     };
@@ -1468,9 +1472,9 @@ var Environment = /** @class */ (function () {
         var trees = [];
         this.bushes = [];
         this.colliders = [];
-        //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
-        var light = game.getScene().lights[0];
-        light.intensity = 1;
+        var light = this.enableDayAndNight(game, game.getScene().lights[0]);
+        //let light = game.getScene().lights[0];
+        //light.intensity = 1;
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -4158,6 +4162,27 @@ var Particles;
 })(Particles || (Particles = {}));
 var Quests;
 (function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var Item = /** @class */ (function (_super) {
+            __extends(Item, _super);
+            function Item(item) {
+                var _this = _super.call(this) || this;
+                _this.name = item.name;
+                _this.award = item;
+                return _this;
+            }
+            Item.prototype.getAward = function () {
+                console.log('get award' + this.award.name);
+            };
+            Item.AWARD_ID = 1;
+            return Item;
+        }(Awards.AbstractAward));
+        Awards.Item = Item;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
     var KillWorms = /** @class */ (function (_super) {
         __extends(KillWorms, _super);
         function KillWorms(game) {
@@ -4177,27 +4202,6 @@ var Quests;
         return KillWorms;
     }(Quests.AbstractQuest));
     Quests.KillWorms = KillWorms;
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var Awards;
-    (function (Awards) {
-        var Item = /** @class */ (function (_super) {
-            __extends(Item, _super);
-            function Item(item) {
-                var _this = _super.call(this) || this;
-                _this.name = item.name;
-                _this.award = item;
-                return _this;
-            }
-            Item.prototype.getAward = function () {
-                console.log('get award' + this.award.name);
-            };
-            Item.AWARD_ID = 1;
-            return Item;
-        }(Awards.AbstractAward));
-        Awards.Item = Item;
-    })(Awards = Quests.Awards || (Quests.Awards = {}));
 })(Quests || (Quests = {}));
 var Quests;
 (function (Quests) {
@@ -4532,7 +4536,7 @@ var Items;
                 _this.mesh = game.factories['character'].createInstance('Axe');
                 _this.mesh.visibility = 0;
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 10, 0, 0, 0, 0);
-                _this.sfxHit = new BABYLON.Sound("Fire", "/assets/Characters/Warrior/hit.wav", _this.game.getScene(), null, {
+                _this.sfxHit = new BABYLON.Sound("Fire", "/assets/Characters/Worm/hit.wav", _this.game.getScene(), null, {
                     loop: false,
                     autoplay: false
                 });
@@ -4559,7 +4563,7 @@ var Items;
                 _this.mesh = game.factories['character'].createInstance('Sword');
                 _this.mesh.visibility = 0;
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 5, 0, 0, 0, 0);
-                _this.sfxHit = new BABYLON.Sound("Fire", "/assets/Characters/Warrior/hit.wav", _this.game.getScene(), null, {
+                _this.sfxHit = new BABYLON.Sound("Fire", "/assets/Characters/Worm/hit.wav", _this.game.getScene(), null, {
                     loop: false,
                     autoplay: false
                 });

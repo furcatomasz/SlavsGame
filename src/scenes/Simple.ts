@@ -19,6 +19,13 @@ class Simple extends Scene {
              //scene.debugLayer.show({
              //    initialTab: 2
              //});
+            scene.fogMode = BABYLON.Scene.FOGMODE_LINEAR;
+            scene.fogColor = new BABYLON.Color3(0, 0, 0);
+            scene.fogDensity = 0.03;
+
+            //Only if LINEAR
+            scene.fogStart = 20.0;
+            scene.fogEnd = 60.0;
             scene.actionManager = new BABYLON.ActionManager(scene);
             let assetsManager = new BABYLON.AssetsManager(scene);
             let sceneIndex = game.scenes.push(scene);

@@ -115,7 +115,7 @@ var Scene = /** @class */ (function () {
     };
     Scene.prototype.optimizeScene = function (scene) {
         scene.collisionsEnabled = true;
-        scene.fogEnabled = false;
+        scene.fogEnabled = true;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
@@ -209,6 +209,12 @@ var Simple = /** @class */ (function (_super) {
             //scene.debugLayer.show({
             //    initialTab: 2
             //});
+            scene.fogMode = BABYLON.Scene.FOGMODE_LINEAR;
+            scene.fogColor = new BABYLON.Color3(0, 0, 0);
+            scene.fogDensity = 0.03;
+            //Only if LINEAR
+            scene.fogStart = 20.0;
+            scene.fogEnd = 60.0;
             scene.actionManager = new BABYLON.ActionManager(scene);
             var assetsManager = new BABYLON.AssetsManager(scene);
             var sceneIndex = game.scenes.push(scene);
@@ -880,7 +886,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new SelectCharacter().initScene(this);
+        new Simple().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {

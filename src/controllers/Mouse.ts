@@ -57,6 +57,11 @@ class Mouse extends Controller {
                     self.game.player.mesh.lookAt(self.ball.position);
                     self.game.player.emitPosition();
                     self.game.controller.forward = true;
+
+                    self.game.client.socket.emit('setTargetPoint', {
+                        position: self.targetPoint
+                    });
+
                 }
 
             }

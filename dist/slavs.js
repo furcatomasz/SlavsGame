@@ -341,7 +341,7 @@ var AbstractCharacter = /** @class */ (function () {
         if (childMesh) {
             var skeleton_2 = childMesh.skeleton;
             if (emit) {
-                this.emitPosition();
+                //this.emitPosition();
             }
             if (!this.animation && skeleton_2) {
                 self.sfxWalk.play();
@@ -829,15 +829,36 @@ var SocketIOClient = /** @class */ (function () {
                 }
             });
             if (remotePlayerKey != null) {
-                var player = game.remotePlayers[remotePlayerKey];
-                if (!player.isAnimationEnabled() && !updatedPlayer.attack) {
-                    player.runAnimationWalk(false);
+                var player_1 = game.remotePlayers[remotePlayerKey];
+                if (!player_1.isAnimationEnabled() && !updatedPlayer.attack) {
+                    player_1.runAnimationWalk(false);
                 }
                 else if (updatedPlayer.attack == true) {
-                    player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+                    player_1.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                 }
-                player.mesh.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
-                player.mesh.rotationQuaternion = new BABYLON.Quaternion(updatedPlayer.r.x, updatedPlayer.r.y, updatedPlayer.r.z, updatedPlayer.r.w);
+                if (updatedPlayer.targetPoint) {
+                    self.game.getScene().registerAfterRender(function () {
+                        var mesh = player_1.mesh;
+                        mesh.lookAt(updatedPlayer.targetPoint);
+                        if (player_1.mesh.intersectsPoint(updatedPlayer.targetPoint)) {
+                            self.game.getScene().unRegisterAfterRender(this);
+                        }
+                        else {
+                            var rotation = mesh.rotation;
+                            if (mesh.rotationQuaternion) {
+                                rotation = mesh.rotationQuaternion.toEulerAngles();
+                            }
+                            rotation.negate();
+                            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                            mesh.moveWithCollisions(forwards);
+                            mesh.position.y = 0;
+                            this.runAnimationWalk(false);
+                            this.refreshCameraPosition();
+                        }
+                    });
+                }
+                player_1.mesh.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
+                player_1.mesh.rotationQuaternion = new BABYLON.Quaternion(updatedPlayer.r.x, updatedPlayer.r.y, updatedPlayer.r.z, updatedPlayer.r.w);
             }
         });
         return this;
@@ -1336,6 +1357,9 @@ var Mouse = /** @class */ (function (_super) {
                     self.game.player.mesh.lookAt(self.ball.position);
                     self.game.player.emitPosition();
                     self.game.controller.forward = true;
+                    self.game.client.socket.emit('setTargetPoint', {
+                        position: self.targetPoint
+                    });
                 }
             }
         };

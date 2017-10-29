@@ -130,7 +130,7 @@ abstract class AbstractCharacter {
             let skeleton = childMesh.skeleton;
 
             if (emit) {
-                this.emitPosition();
+                //this.emitPosition();
             }
 
             if (!this.animation && skeleton) {

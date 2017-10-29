@@ -348,6 +348,28 @@ class SocketIOClient {
                     player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                 }
 
+                if(updatedPlayer.targetPoint) {
+                    self.game.getScene().registerAfterRender(function () {
+                        let mesh = player.mesh;
+                        mesh.lookAt(updatedPlayer.targetPoint);
+                        if (player.mesh.intersectsPoint(updatedPlayer.targetPoint)) {
+                            self.game.getScene().unRegisterAfterRender(this);
+                        } else {
+                            let rotation = mesh.rotation;
+                            if (mesh.rotationQuaternion) {
+                                rotation = mesh.rotationQuaternion.toEulerAngles();
+                            }
+                            rotation.negate();
+                            let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                            mesh.moveWithCollisions(forwards);
+                            mesh.position.y = 0;
+
+                            this.runAnimationWalk(false);
+                            this.refreshCameraPosition();
+                        }
+                    }
+                }
+
                 player.mesh.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
                 player.mesh.rotationQuaternion = new BABYLON.Quaternion(updatedPlayer.r.x, updatedPlayer.r.y, updatedPlayer.r.z, updatedPlayer.r.w);
             }

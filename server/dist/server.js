@@ -1,5 +1,25 @@
 var Server;
 (function (Server) {
+    var BabylonManager = /** @class */ (function () {
+        function BabylonManager(slavsServer) {
+            this.slavsServer = slavsServer;
+        }
+        BabylonManager.prototype.initEngine = function () {
+            this.engine = new BABYLON.NullEngine();
+            var scene = new BABYLON.Scene(this.engine);
+            this.scene = scene;
+            var light = new BABYLON.PointLight("Omni", new BABYLON.Vector3(20, 20, 100), scene);
+            var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
+            this.engine.runRenderLoop(function () {
+                scene.render();
+            });
+        };
+        return BabylonManager;
+    }());
+    Server.BabylonManager = BabylonManager;
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
     var EnemyManager = /** @class */ (function () {
         function EnemyManager() {
         }
@@ -96,6 +116,8 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var orm = require("orm");
 var config = require("./../config.js");
+var BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");
+var LOADERS = require("../../bower_components/babylonjs/dist/preview release/loaders/babylonjs.loaders");
 server.listen(config.server.port);
 var SlavsServer = /** @class */ (function () {
     function SlavsServer() {
@@ -107,6 +129,7 @@ var SlavsServer = /** @class */ (function () {
         this.enemies = this.enemyManager.getEnemies();
         this.quests = this.questManager.getQuests();
         this.serverFrontEnd = new Server.FrontEnd(this, app, express);
+        //this.babylonManager = new Server.BabylonManager(this);
         this.ormManager = new Server.OrmManager(this, orm, config);
         this.serverWebsocket = new Server.IO(this, io);
     }
@@ -149,6 +172,7 @@ var Server;
                     activePlayer: 0,
                     activeScene: null,
                     lastPlayerUpdate: 0,
+                    targetPoint: null,
                     p: {
                         x: 3,
                         y: 0.3,
@@ -241,6 +265,10 @@ var Server;
                     }
                     player.p = data.p;
                     player.r = data.r;
+                    socket.broadcast.emit('updatePlayer', player);
+                });
+                socket.on('setTargetPoint', function (targetPoint) {
+                    player.targetPoint = targetPoint.position;
                     socket.broadcast.emit('updatePlayer', player);
                 });
                 socket.on('attack', function (data) {

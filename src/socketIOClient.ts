@@ -329,7 +329,7 @@ class SocketIOClient {
      */
     protected updatePlayers() {
         var game = this.game;
-
+        let activeTargetPoints = [];
         this.socket.on('updatePlayer', function (updatedPlayer) {
             let remotePlayerKey = null;
             game.remotePlayers.forEach(function (remotePlayer, key) {
@@ -347,33 +347,56 @@ class SocketIOClient {
                 } else if (updatedPlayer.attack == true) {
                     player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                 }
+                if (updatedPlayer.targetPoint !== undefined) {
+                    if (activeTargetPoints[remotePlayerKey]) {
+                        self.game.getScene().unregisterAfterRender(activeTargetPoints[remotePlayerKey]);
+                    }
+                    activeTargetPoints[remotePlayerKey] = function () {
+                        if(updatedPlayer.targetPoint) {
+                            let mesh = player.mesh;
+                            let targetPoint = updatedPlayer.targetPoint;
+                            let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, targetPoint.y, targetPoint.z);
 
-                if(updatedPlayer.targetPoint) {
-                    self.game.getScene().registerAfterRender(function () {
-                        let mesh = player.mesh;
-                        mesh.lookAt(updatedPlayer.targetPoint);
-                        if (player.mesh.intersectsPoint(updatedPlayer.targetPoint)) {
-                            self.game.getScene().unRegisterAfterRender(this);
-                        } else {
-                            let rotation = mesh.rotation;
-                            if (mesh.rotationQuaternion) {
-                                rotation = mesh.rotationQuaternion.toEulerAngles();
+                            mesh.lookAt(targetPointVector3);
+                            if (player.mesh.intersectsPoint(targetPointVector3) {
+                                self.game.getScene().unregisterAfterRender(activeTargetPoints[remotePlayerKey]);
+                            } else {
+                                let rotation = mesh.rotation;
+                                if (mesh.rotationQuaternion) {
+                                    rotation = mesh.rotationQuaternion.toEulerAngles();
+                                }
+                                rotation.negate();
+                                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / player.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / player.getWalkSpeed());
+                                mesh.moveWithCollisions(forwards);
+                                mesh.position.y = 0;
+
+                                player.runAnimationWalk(false);
                             }
-                            rotation.negate();
-                            let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
-                            mesh.moveWithCollisions(forwards);
-                            mesh.position.y = 0;
-
-                            this.runAnimationWalk(false);
-                            this.refreshCameraPosition();
                         }
                     }
+
+                    self.game.getScene().registerAfterRender(activeTargetPoints[remotePlayerKey]);
                 }
+
+            }
+
+        });
+
+        this.socket.on('updatePlayerPosition', function (updatedPlayer) {
+            let remotePlayerKey = null;
+            game.remotePlayers.forEach(function (remotePlayer, key) {
+                if (remotePlayer.id == updatedPlayer.id) {
+                    remotePlayerKey = key;
+                    return;
+                }
+            });
+
+            if (remotePlayerKey != null) {
+                let player = game.remotePlayers[remotePlayerKey];
 
                 player.mesh.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
                 player.mesh.rotationQuaternion = new BABYLON.Quaternion(updatedPlayer.r.x, updatedPlayer.r.y, updatedPlayer.r.z, updatedPlayer.r.w);
             }
-
         });
 
         return this;

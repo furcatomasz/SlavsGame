@@ -105,7 +105,6 @@ namespace Server {
                 ///Player
                 socket.on('createPlayer', function () {
                     remotePlayers.push(player);
-
                     socket.broadcast.emit('newPlayerConnected', remotePlayers);
                 });
 
@@ -124,7 +123,7 @@ namespace Server {
 
                     player.p = data.p;
                     player.r = data.r;
-                    socket.broadcast.emit('updatePlayer', player);
+                    //socket.broadcast.emit('updatePlayerPosition', player);
                 });
 
                 socket.on('setTargetPoint', function (targetPoint) {

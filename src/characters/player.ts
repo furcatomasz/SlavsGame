@@ -31,6 +31,13 @@ class Player extends AbstractCharacter {
         });
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
+
+        mesh.skeleton.bones.forEach(function(bone) {
+            bone.animations.forEach(function(animation) {
+                animation.enableBlending = true;
+                animation.blendingSpeed = 0.2;
+            });
+        });
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
         // Collisions.setCollider(game.getScene(), mesh, null, false);
@@ -131,7 +138,7 @@ class Player extends AbstractCharacter {
      * Moving events
      */
     protected registerMoving() {
-        let walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+        let walkSpeed = this.getWalkSpeed();
         let mesh = this.mesh;
 
         if(self.game.controller.forward && !this.attackAnimation) {
@@ -151,6 +158,10 @@ class Player extends AbstractCharacter {
             this.animation.stop();
         }
     }
+
+    public getWalkSpeed() {
+        return AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+    };
 
     public removeFromWorld() {
         this.mesh.dispose();

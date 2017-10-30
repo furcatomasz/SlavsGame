@@ -129,9 +129,7 @@ abstract class AbstractCharacter {
         if (childMesh) {
             let skeleton = childMesh.skeleton;
 
-            if (emit) {
-                //this.emitPosition();
-            }
+
 
             if (!this.animation && skeleton) {
                 self.sfxWalk.play();
@@ -141,6 +139,9 @@ abstract class AbstractCharacter {
                     self.animation = null;
                     self.sfxWalk.stop();
                     self.onWalkEnd();
+                    if (emit) {
+                        self.emitPosition();
+                    }
                 });
 
 

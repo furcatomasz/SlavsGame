@@ -10,7 +10,13 @@ class Worm extends Monster {
         mesh.visibility = true;
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
-        this.statistics = new Attributes.CharacterStatistics(50,50,100,3,10,50,0,100);
+        mesh.skeleton.bones.forEach(function(bone) {
+            bone.animations.forEach(function(animation) {
+                animation.enableBlending = true;
+                animation.blendingSpeed = 0.3;
+            });
+        });
+        this.statistics = new Attributes.CharacterStatistics(80,80,100,3,10,40,0,100);
         this.id = serverKey;
         this.mesh = mesh;
         this.visibilityAreaSize = 30;

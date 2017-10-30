@@ -93,11 +93,11 @@ var Scene = /** @class */ (function () {
     Scene.prototype.setCamera = function (scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
         camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        camera.orthoTop = 18;
+        camera.orthoTop = 26;
         camera.orthoBottom = 0;
         camera.orthoLeft = -15;
         camera.orthoRight = 15;
-        camera.maxZ = 20;
+        camera.maxZ = 40;
         camera.minZ = -70;
         this.setOrthoCameraHeights(camera);
         scene.activeCamera = camera;
@@ -120,7 +120,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        //scene.audioEnabled = false;
+        scene.audioEnabled = false;
         return this;
     };
     Scene.prototype.initFactories = function (scene, assetsManager) {
@@ -222,6 +222,7 @@ var Simple = /** @class */ (function (_super) {
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
+                game.client.socket.emit('createPlayer');
                 assetsManager.onFinish = function (tasks) {
                     var npc = new NPC.Warrior(game);
                     var grain = game.factories['nature_grain'].createInstance('Grain', true);
@@ -231,7 +232,7 @@ var Simple = /** @class */ (function (_super) {
                     grain.scaling = new BABYLON.Vector3(1.3, 1.3, 1.3);
                     //grain.skeleton.beginAnimation('ArmatureAction', true);
                     var grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    self.octree = scene.createOrUpdateSelectionOctree();
+                    //self.octree = scene.createOrUpdateSelectionOctree();
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE
                     });
@@ -340,9 +341,6 @@ var AbstractCharacter = /** @class */ (function () {
         var loopAnimation = this.isControllable;
         if (childMesh) {
             var skeleton_2 = childMesh.skeleton;
-            if (emit) {
-                //this.emitPosition();
-            }
             if (!this.animation && skeleton_2) {
                 self.sfxWalk.play();
                 self.onWalkStart();
@@ -351,6 +349,9 @@ var AbstractCharacter = /** @class */ (function () {
                     self.animation = null;
                     self.sfxWalk.stop();
                     self.onWalkEnd();
+                    if (emit) {
+                        self.emitPosition();
+                    }
                 });
             }
         }
@@ -820,6 +821,7 @@ var SocketIOClient = /** @class */ (function () {
      */
     SocketIOClient.prototype.updatePlayers = function () {
         var game = this.game;
+        var activeTargetPoints = [];
         this.socket.on('updatePlayer', function (updatedPlayer) {
             var remotePlayerKey = null;
             game.remotePlayers.forEach(function (remotePlayer, key) {
@@ -836,29 +838,48 @@ var SocketIOClient = /** @class */ (function () {
                 else if (updatedPlayer.attack == true) {
                     player_1.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                 }
-                if (updatedPlayer.targetPoint) {
-                    self.game.getScene().registerAfterRender(function () {
-                        var mesh = player_1.mesh;
-                        mesh.lookAt(updatedPlayer.targetPoint);
-                        if (player_1.mesh.intersectsPoint(updatedPlayer.targetPoint)) {
-                            self.game.getScene().unRegisterAfterRender(this);
-                        }
-                        else {
-                            var rotation = mesh.rotation;
-                            if (mesh.rotationQuaternion) {
-                                rotation = mesh.rotationQuaternion.toEulerAngles();
+                if (updatedPlayer.targetPoint !== undefined) {
+                    if (activeTargetPoints[remotePlayerKey]) {
+                        self.game.getScene().unregisterAfterRender(activeTargetPoints[remotePlayerKey]);
+                    }
+                    activeTargetPoints[remotePlayerKey] = function () {
+                        if (updatedPlayer.targetPoint) {
+                            var mesh = player_1.mesh;
+                            var targetPoint = updatedPlayer.targetPoint;
+                            var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, targetPoint.y, targetPoint.z);
+                            mesh.lookAt(targetPointVector3);
+                            if (player_1.mesh.intersectsPoint(targetPointVector3)) {
+                                self.game.getScene().unregisterAfterRender(activeTargetPoints[remotePlayerKey]);
                             }
-                            rotation.negate();
-                            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
-                            mesh.moveWithCollisions(forwards);
-                            mesh.position.y = 0;
-                            this.runAnimationWalk(false);
-                            this.refreshCameraPosition();
+                            else {
+                                var rotation = mesh.rotation;
+                                if (mesh.rotationQuaternion) {
+                                    rotation = mesh.rotationQuaternion.toEulerAngles();
+                                }
+                                rotation.negate();
+                                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / player_1.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / player_1.getWalkSpeed());
+                                mesh.moveWithCollisions(forwards);
+                                mesh.position.y = 0;
+                                player_1.runAnimationWalk(false);
+                            }
                         }
-                    });
+                    };
+                    self.game.getScene().registerAfterRender(activeTargetPoints[remotePlayerKey]);
                 }
-                player_1.mesh.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
-                player_1.mesh.rotationQuaternion = new BABYLON.Quaternion(updatedPlayer.r.x, updatedPlayer.r.y, updatedPlayer.r.z, updatedPlayer.r.w);
+            }
+        });
+        this.socket.on('updatePlayerPosition', function (updatedPlayer) {
+            var remotePlayerKey = null;
+            game.remotePlayers.forEach(function (remotePlayer, key) {
+                if (remotePlayer.id == updatedPlayer.id) {
+                    remotePlayerKey = key;
+                    return;
+                }
+            });
+            if (remotePlayerKey != null) {
+                var player = game.remotePlayers[remotePlayerKey];
+                player.mesh.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
+                player.mesh.rotationQuaternion = new BABYLON.Quaternion(updatedPlayer.r.x, updatedPlayer.r.y, updatedPlayer.r.z, updatedPlayer.r.w);
             }
         });
         return this;
@@ -1109,6 +1130,12 @@ var Player = /** @class */ (function (_super) {
             autoplay: false
         });
         var mesh = game.factories['character'].createInstance('Warrior', true);
+        mesh.skeleton.bones.forEach(function (bone) {
+            bone.animations.forEach(function (animation) {
+                animation.enableBlending = true;
+                animation.blendingSpeed = 0.2;
+            });
+        });
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
         // Collisions.setCollider(game.getScene(), mesh, null, false);
@@ -1183,7 +1210,7 @@ var Player = /** @class */ (function (_super) {
      * Moving events
      */
     Player.prototype.registerMoving = function () {
-        var walkSpeed = AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+        var walkSpeed = this.getWalkSpeed();
         var mesh = this.mesh;
         if (self.game.controller.forward && !this.attackAnimation) {
             var rotation = mesh.rotation;
@@ -1201,6 +1228,10 @@ var Player = /** @class */ (function (_super) {
             this.animation.stop();
         }
     };
+    Player.prototype.getWalkSpeed = function () {
+        return AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+    };
+    ;
     Player.prototype.removeFromWorld = function () {
         this.mesh.dispose();
     };
@@ -1326,6 +1357,9 @@ var Mouse = /** @class */ (function (_super) {
                 if (self.game.player.animation) {
                     self.game.player.animation.stop();
                 }
+                self.game.client.socket.emit('setTargetPoint', {
+                    position: null
+                });
             }
         }));
         ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
@@ -1339,6 +1373,9 @@ var Mouse = /** @class */ (function (_super) {
                 if (self.game.player.animation) {
                     self.game.player.animation.stop();
                 }
+                self.game.client.socket.emit('setTargetPoint', {
+                    position: null
+                });
             }
         }));
         scene.onPointerUp = function (evt, pickResult) {
@@ -1372,6 +1409,9 @@ var Mouse = /** @class */ (function (_super) {
                         self.targetPoint.y = 0;
                         self.ball.position = self.targetPoint;
                         self.game.player.mesh.lookAt(self.ball.position);
+                        self.game.client.socket.emit('setTargetPoint', {
+                            position: self.targetPoint
+                        });
                     }
                 }
             }
@@ -1502,9 +1542,9 @@ var Environment = /** @class */ (function () {
         var trees = [];
         this.bushes = [];
         this.colliders = [];
-        var light = this.enableDayAndNight(game, game.getScene().lights[0]);
-        //let light = game.getScene().lights[0];
-        //light.intensity = 1;
+        //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
+        var light = game.getScene().lights[0];
+        light.intensity = 1;
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -1523,7 +1563,6 @@ var Environment = /** @class */ (function () {
             else if (meshName.search("Fance") >= 0) {
                 this.colliders.push(sceneMesh);
             }
-            //shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
         for (var i = 0; i < trees.length; i++) {
             var meshTree = trees[i];
@@ -3140,7 +3179,13 @@ var Worm = /** @class */ (function (_super) {
         mesh.visibility = true;
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
-        _this.statistics = new Attributes.CharacterStatistics(50, 50, 100, 3, 10, 50, 0, 100);
+        mesh.skeleton.bones.forEach(function (bone) {
+            bone.animations.forEach(function (animation) {
+                animation.enableBlending = true;
+                animation.blendingSpeed = 0.3;
+            });
+        });
+        _this.statistics = new Attributes.CharacterStatistics(80, 80, 100, 3, 10, 40, 0, 100);
         _this.id = serverKey;
         _this.mesh = mesh;
         _this.visibilityAreaSize = 30;

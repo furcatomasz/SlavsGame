@@ -14,9 +14,9 @@ class Environment {
         this.bushes = [];
         this.colliders = [];
 
-        let light = this.enableDayAndNight(game, game.getScene().lights[0]);
-        //let light = game.getScene().lights[0];
-        //light.intensity = 1;
+        //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
+        let light = game.getScene().lights[0];
+        light.intensity = 1;
 
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
@@ -37,7 +37,6 @@ class Environment {
                 this.colliders.push(sceneMesh);
             }
 
-            //shadowGenerator.getShadowMap().renderList.push(sceneMesh);
 
         }
 

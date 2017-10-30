@@ -33,6 +33,7 @@ class Simple extends Scene {
             scene.executeWhenReady(function () {
                 self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
+                game.client.socket.emit('createPlayer');
 
                 assetsManager.onFinish = function (tasks) {
                     let npc = new NPC.Warrior(game);
@@ -46,7 +47,7 @@ class Simple extends Scene {
                     //grain.skeleton.beginAnimation('ArmatureAction', true);
 
                     let grainGenerator = new Particles.GrainGenerator().generate(grain, 1000, 122, 15);
-                    self.octree = scene.createOrUpdateSelectionOctree();
+                    //self.octree = scene.createOrUpdateSelectionOctree();
 
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Simple.TYPE,

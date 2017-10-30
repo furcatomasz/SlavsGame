@@ -265,7 +265,7 @@ var Server;
                     }
                     player.p = data.p;
                     player.r = data.r;
-                    socket.broadcast.emit('updatePlayer', player);
+                    //socket.broadcast.emit('updatePlayerPosition', player);
                 });
                 socket.on('setTargetPoint', function (targetPoint) {
                     player.targetPoint = targetPoint.position;

@@ -23,11 +23,11 @@ abstract class Scene {
     public setCamera(scene:BABYLON.Scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
         camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        camera.orthoTop = 18;
+        camera.orthoTop = 26;
         camera.orthoBottom = 0;
         camera.orthoLeft = -15;
         camera.orthoRight = 15;
-        camera.maxZ = 20;
+        camera.maxZ = 40;
         camera.minZ = -70;
         this.setOrthoCameraHeights(camera);
         scene.activeCamera = camera;
@@ -54,7 +54,7 @@ abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        //scene.audioEnabled = false;
+        scene.audioEnabled = false;
         return this;
     }
 

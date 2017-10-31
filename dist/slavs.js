@@ -93,11 +93,11 @@ var Scene = /** @class */ (function () {
     Scene.prototype.setCamera = function (scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
         camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        camera.orthoTop = 26;
+        camera.orthoTop = 20;
         camera.orthoBottom = 0;
         camera.orthoLeft = -15;
         camera.orthoRight = 15;
-        camera.maxZ = 40;
+        camera.maxZ = 30;
         camera.minZ = -70;
         this.setOrthoCameraHeights(camera);
         scene.activeCamera = camera;
@@ -329,7 +329,7 @@ var AbstractCharacter = /** @class */ (function () {
             else {
                 rotation = new BABYLON.Quaternion(0, 0, 0, 0);
             }
-            this.game.client.socket.emit('moveTo', {
+            this.game.client.socket.emit('updatePlayerPosition', {
                 p: this.mesh.position,
                 r: rotation
             });
@@ -838,33 +838,31 @@ var SocketIOClient = /** @class */ (function () {
                 else if (updatedPlayer.attack == true) {
                     player_1.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                 }
-                if (updatedPlayer.targetPoint !== undefined) {
-                    if (activeTargetPoints[remotePlayerKey]) {
-                        self.game.getScene().unregisterAfterRender(activeTargetPoints[remotePlayerKey]);
-                    }
+                if (activeTargetPoints[remotePlayerKey] !== undefined) {
+                    self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                }
+                if (updatedPlayer.targetPoint) {
                     activeTargetPoints[remotePlayerKey] = function () {
-                        if (updatedPlayer.targetPoint) {
-                            var mesh = player_1.mesh;
-                            var targetPoint = updatedPlayer.targetPoint;
-                            var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, targetPoint.y, targetPoint.z);
-                            mesh.lookAt(targetPointVector3);
-                            if (player_1.mesh.intersectsPoint(targetPointVector3)) {
-                                self.game.getScene().unregisterAfterRender(activeTargetPoints[remotePlayerKey]);
+                        var mesh = player_1.mesh;
+                        var targetPoint = updatedPlayer.targetPoint;
+                        var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                        mesh.lookAt(targetPointVector3);
+                        if (player_1.mesh.intersectsPoint(targetPointVector3)) {
+                            self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                        }
+                        else {
+                            var rotation = mesh.rotation;
+                            if (mesh.rotationQuaternion) {
+                                rotation = mesh.rotationQuaternion.toEulerAngles();
                             }
-                            else {
-                                var rotation = mesh.rotation;
-                                if (mesh.rotationQuaternion) {
-                                    rotation = mesh.rotationQuaternion.toEulerAngles();
-                                }
-                                rotation.negate();
-                                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / player_1.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / player_1.getWalkSpeed());
-                                mesh.moveWithCollisions(forwards);
-                                mesh.position.y = 0;
-                                player_1.runAnimationWalk(false);
-                            }
+                            rotation.negate();
+                            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / player_1.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / player_1.getWalkSpeed());
+                            mesh.moveWithCollisions(forwards);
+                            mesh.position.y = 0;
+                            player_1.runAnimationWalk(false);
                         }
                     };
-                    self.game.getScene().registerAfterRender(activeTargetPoints[remotePlayerKey]);
+                    self.game.getScene().registerBeforeRender(activeTargetPoints[remotePlayerKey]);
                 }
             }
         });

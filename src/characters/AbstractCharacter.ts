@@ -114,7 +114,7 @@ abstract class AbstractCharacter {
                 rotation = new BABYLON.Quaternion(0, 0, 0, 0);
             }
 
-            this.game.client.socket.emit('moveTo', {
+            this.game.client.socket.emit('updatePlayerPosition', {
                 p: this.mesh.position,
                 r: rotation
             });

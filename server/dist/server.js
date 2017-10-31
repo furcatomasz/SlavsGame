@@ -252,7 +252,7 @@ var Server;
                     remotePlayers.push(player);
                     socket.broadcast.emit('newPlayerConnected', remotePlayers);
                 });
-                socket.on('moveTo', function (data) {
+                socket.on('updatePlayerPosition', function (data) {
                     if ((player.lastPlayerUpdate + 1) < new Date().getTime() / 1000) {
                         player.lastPlayerUpdate = new Date().getTime() / 1000;
                         var playerId = player.characters[player.activePlayer].id;
@@ -265,10 +265,10 @@ var Server;
                     }
                     player.p = data.p;
                     player.r = data.r;
-                    //socket.broadcast.emit('updatePlayerPosition', player);
                 });
                 socket.on('setTargetPoint', function (targetPoint) {
                     player.targetPoint = targetPoint.position;
+                    socket.broadcast.emit('updatePlayerPosition', player);
                     socket.broadcast.emit('updatePlayer', player);
                 });
                 socket.on('attack', function (data) {

@@ -347,35 +347,37 @@ class SocketIOClient {
                 } else if (updatedPlayer.attack == true) {
                     player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                 }
-                if (updatedPlayer.targetPoint !== undefined) {
-                    if (activeTargetPoints[remotePlayerKey]) {
-                        self.game.getScene().unregisterAfterRender(activeTargetPoints[remotePlayerKey]);
-                    }
+
+                if (activeTargetPoints[remotePlayerKey] !== undefined) {
+                    self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                }
+
+                if (updatedPlayer.targetPoint) {
                     activeTargetPoints[remotePlayerKey] = function () {
-                        if(updatedPlayer.targetPoint) {
-                            let mesh = player.mesh;
-                            let targetPoint = updatedPlayer.targetPoint;
-                            let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, targetPoint.y, targetPoint.z);
+                        let mesh = player.mesh;
+                        let targetPoint = updatedPlayer.targetPoint;
+                        let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
 
-                            mesh.lookAt(targetPointVector3);
-                            if (player.mesh.intersectsPoint(targetPointVector3) {
-                                self.game.getScene().unregisterAfterRender(activeTargetPoints[remotePlayerKey]);
-                            } else {
-                                let rotation = mesh.rotation;
-                                if (mesh.rotationQuaternion) {
-                                    rotation = mesh.rotationQuaternion.toEulerAngles();
-                                }
-                                rotation.negate();
-                                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / player.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / player.getWalkSpeed());
-                                mesh.moveWithCollisions(forwards);
-                                mesh.position.y = 0;
+                        mesh.lookAt(targetPointVector3);
+                        if (player.mesh.intersectsPoint(targetPointVector3)) {
+                            self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
 
-                                player.runAnimationWalk(false);
+                        } else {
+                            let rotation = mesh.rotation;
+                            if (mesh.rotationQuaternion) {
+                                rotation = mesh.rotationQuaternion.toEulerAngles();
                             }
+                            rotation.negate();
+                            let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / player.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / player.getWalkSpeed());
+                            mesh.moveWithCollisions(forwards);
+                            mesh.position.y = 0;
+
+                            player.runAnimationWalk(false);
                         }
+
                     }
 
-                    self.game.getScene().registerAfterRender(activeTargetPoints[remotePlayerKey]);
+                    self.game.getScene().registerBeforeRender(activeTargetPoints[remotePlayerKey]);
                 }
 
             }

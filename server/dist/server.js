@@ -268,7 +268,6 @@ var Server;
                 });
                 socket.on('setTargetPoint', function (targetPoint) {
                     player.targetPoint = targetPoint.position;
-                    socket.broadcast.emit('updatePlayerPosition', player);
                     socket.broadcast.emit('updatePlayer', player);
                 });
                 socket.on('attack', function (data) {

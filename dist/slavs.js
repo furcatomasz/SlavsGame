@@ -1355,8 +1355,10 @@ var Mouse = /** @class */ (function (_super) {
                 if (self.game.player.animation) {
                     self.game.player.animation.stop();
                 }
+                self.game.player.emitPosition();
                 self.game.client.socket.emit('setTargetPoint', {
-                    position: null
+                    position: null,
+                    playerPosition: self.game.player.mesh.position
                 });
             }
         }));
@@ -1371,8 +1373,10 @@ var Mouse = /** @class */ (function (_super) {
                 if (self.game.player.animation) {
                     self.game.player.animation.stop();
                 }
+                self.game.player.emitPosition();
                 self.game.client.socket.emit('setTargetPoint', {
-                    position: null
+                    position: null,
+                    playerPosition: self.game.player.mesh.position
                 });
             }
         }));
@@ -1390,8 +1394,8 @@ var Mouse = /** @class */ (function (_super) {
                     self.ball.position = self.targetPoint;
                     self.ball.visibility = 1;
                     self.game.player.mesh.lookAt(self.ball.position);
-                    self.game.player.emitPosition();
                     self.game.controller.forward = true;
+                    self.game.player.emitPosition();
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint
                     });
@@ -1407,8 +1411,10 @@ var Mouse = /** @class */ (function (_super) {
                         self.targetPoint.y = 0;
                         self.ball.position = self.targetPoint;
                         self.game.player.mesh.lookAt(self.ball.position);
+                        self.game.player.emitPosition();
                         self.game.client.socket.emit('setTargetPoint', {
-                            position: self.targetPoint
+                            position: self.targetPoint,
+                            playerPosition: self.game.player.mesh.position
                         });
                     }
                 }

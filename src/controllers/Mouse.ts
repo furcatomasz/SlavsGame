@@ -22,12 +22,6 @@ class Mouse extends Controller {
                 if(self.game.player.animation) {
                     self.game.player.animation.stop();
                 }
-
-                self.game.player.emitPosition();
-                self.game.client.socket.emit('setTargetPoint', {
-                    position: null,
-                    playerPosition: self.game.player.mesh.position
-                });
             }
         }));
 
@@ -42,12 +36,6 @@ class Mouse extends Controller {
                 if(self.game.player.animation) {
                     self.game.player.animation.stop();
                 }
-
-                self.game.player.emitPosition();
-                self.game.client.socket.emit('setTargetPoint', {
-                    position: null,
-                    playerPosition: self.game.player.mesh.position
-                });
             }
         }));
 
@@ -71,7 +59,9 @@ class Mouse extends Controller {
 
                     self.game.player.emitPosition();
                     self.game.client.socket.emit('setTargetPoint', {
-                        position: self.targetPoint
+                        position: self.targetPoint,
+                        isRunning: false,
+                        playerPosition: self.game.player.mesh.position
                     });
 
                 }
@@ -92,6 +82,7 @@ class Mouse extends Controller {
                         self.game.player.emitPosition();
                         self.game.client.socket.emit('setTargetPoint', {
                             position: self.targetPoint,
+                            isRunning: true,
                             playerPosition: self.game.player.mesh.position
                         });
                     }

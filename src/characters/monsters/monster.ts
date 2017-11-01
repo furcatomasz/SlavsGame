@@ -61,8 +61,13 @@ abstract class Monster extends AbstractCharacter {
                 self.game.player.mesh.lookAt(pointer.meshUnderPointer.position);
                 game.controller.targetPoint = null;
                 game.controller.ball.visibility = 0;
+                self.game.client.socket.emit('setTargetPoint', {
+                    position: null,
+                    playerPosition: self.game.player.mesh.position
+                });
                 game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
                 game.controller.forward = false;
+
             }));
 
     }
@@ -99,7 +104,7 @@ abstract class Monster extends AbstractCharacter {
             if(self.target) {
                 self.mesh.lookAt(playerMesh.position);
                 if(monsterAttackIsActive) {
-                    self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+                    self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, false);
                     return;
                 }
 

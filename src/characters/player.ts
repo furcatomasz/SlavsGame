@@ -138,10 +138,10 @@ class Player extends AbstractCharacter {
      * Moving events
      */
     protected registerMoving() {
-        let walkSpeed = this.getWalkSpeed();
-        let mesh = this.mesh;
-
         if(self.game.controller.forward && !this.attackAnimation) {
+            let walkSpeed = this.getWalkSpeed();
+            let mesh = this.mesh;
+
             let rotation = mesh.rotation;
             if (mesh.rotationQuaternion) {
                 rotation = mesh.rotationQuaternion.toEulerAngles();
@@ -160,7 +160,8 @@ class Player extends AbstractCharacter {
     }
 
     public getWalkSpeed() {
-        return AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+        let animationRatio = this.game.getScene().getAnimationRatio();
+        return AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100) / animationRatio;
     };
 
     public removeFromWorld() {

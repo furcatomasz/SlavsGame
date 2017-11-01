@@ -68,17 +68,25 @@ abstract class AbstractCharacter {
     /**
      * ANIMATIONS
      */
-    public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null):void {
-        if (!this.animation) {
+    public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null, emit: boolean = true):void {
+        if (this.animation && ! this.attackAnimation) {
+            this.animation.stop();
+        } else if (this.animation && this.attackAnimation) {
+            return;
+        }
+        
             let self = this;
             var childMesh = this.mesh;
 
             if (childMesh) {
                 let skeleton = childMesh.skeleton;
                 if(skeleton) {
-                    this.game.client.socket.emit('attack', {
-                        attack: true
-                    });
+                    if(emit) {
+                        this.game.client.socket.emit('attack', {
+                            attack: true,
+                            targetPoint: self.game.controller.attackPoint.position,
+                        });
+                    }
 
                     self.attackAnimation = true;
                     self.onHitStart();
@@ -95,13 +103,16 @@ abstract class AbstractCharacter {
                         self.game.controller.attackPoint = null;
                         self.onHitEnd();
 
-                        self.game.client.socket.emit('attack', {
-                            attack: false
-                        });
+                        if(emit) {
+                            self.game.client.socket.emit('attack', {
+                                attack: false,
+                                targetPoint: null,
+                            });
+                        }
                     });
                 }
             }
-        }
+
     }
 
     public emitPosition() {
@@ -123,13 +134,11 @@ abstract class AbstractCharacter {
 
     public runAnimationWalk(emit:boolean):void {
         let self = this;
-        var childMesh = this.mesh;
-        let loopAnimation = this.isControllable;
+        let childMesh = this.mesh;
+        let loopAnimation = true;
 
         if (childMesh) {
             let skeleton = childMesh.skeleton;
-
-
 
             if (!this.animation && skeleton) {
                 self.sfxWalk.play();

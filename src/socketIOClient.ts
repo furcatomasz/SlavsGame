@@ -342,25 +342,36 @@ class SocketIOClient {
             if (remotePlayerKey != null) {
                 let player = game.remotePlayers[remotePlayerKey];
 
-                if (!player.isAnimationEnabled() && !updatedPlayer.attack) {
-                    player.runAnimationWalk(false);
-                } else if (updatedPlayer.attack == true) {
-                    player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+                if (updatedPlayer.attack == true) {
+                    let mesh = player.mesh;
+                    let targetPoint = updatedPlayer.targetPoint;
+                    if(targetPoint) {
+                        let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                        mesh.lookAt(targetPointVector3);
+                    }
+                    player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, false);
+                    return;
                 }
 
                 if (activeTargetPoints[remotePlayerKey] !== undefined) {
                     self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                    if(player.animation) {
+                        player.animation.stop();
+                    }
                 }
 
                 if (updatedPlayer.targetPoint) {
-                    activeTargetPoints[remotePlayerKey] = function () {
-                        let mesh = player.mesh;
-                        let targetPoint = updatedPlayer.targetPoint;
-                        let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                    let mesh = player.mesh;
+                    let targetPoint = updatedPlayer.targetPoint;
+                    let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                    mesh.lookAt(targetPointVector3);
 
-                        mesh.lookAt(targetPointVector3);
+                    activeTargetPoints[remotePlayerKey] = function () {
                         if (player.mesh.intersectsPoint(targetPointVector3)) {
                             self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                            if(player.animation) {
+                                player.animation.stop();
+                            }
 
                         } else {
                             let rotation = mesh.rotation;

@@ -123,6 +123,7 @@ namespace Server {
 
                     player.p = data.p;
                     player.r = data.r;
+                    socket.broadcast.emit('updatePlayerPosition', player);
                 });
 
                 socket.on('setTargetPoint', function (targetPoint) {
@@ -132,6 +133,7 @@ namespace Server {
 
                 socket.on('attack', function (data) {
                     player.attack = data.attack;
+                    player.targetPoint = data.targetPoint;
                     socket.broadcast.emit('updatePlayer', player);
                 });
 

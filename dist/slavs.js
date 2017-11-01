@@ -286,37 +286,48 @@ var AbstractCharacter = /** @class */ (function () {
     /**
      * ANIMATIONS
      */
-    AbstractCharacter.prototype.runAnimationHit = function (animation, callbackStart, callbackEnd) {
+    AbstractCharacter.prototype.runAnimationHit = function (animation, callbackStart, callbackEnd, emit) {
         if (callbackStart === void 0) { callbackStart = null; }
         if (callbackEnd === void 0) { callbackEnd = null; }
-        if (!this.animation) {
-            var self_1 = this;
-            var childMesh = this.mesh;
-            if (childMesh) {
-                var skeleton_1 = childMesh.skeleton;
-                if (skeleton_1) {
+        if (emit === void 0) { emit = true; }
+        if (this.animation && !this.attackAnimation) {
+            this.animation.stop();
+        }
+        else if (this.animation && this.attackAnimation) {
+            return;
+        }
+        var self = this;
+        var childMesh = this.mesh;
+        if (childMesh) {
+            var skeleton_1 = childMesh.skeleton;
+            if (skeleton_1) {
+                if (emit) {
                     this.game.client.socket.emit('attack', {
-                        attack: true
-                    });
-                    self_1.attackAnimation = true;
-                    self_1.onHitStart();
-                    if (callbackEnd) {
-                        callbackStart();
-                    }
-                    self_1.animation = skeleton_1.beginAnimation(animation, false, this.statistics.getAttackSpeed() / 100, function () {
-                        if (callbackEnd) {
-                            callbackEnd();
-                        }
-                        skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                        self_1.animation = null;
-                        self_1.attackAnimation = false;
-                        self_1.game.controller.attackPoint = null;
-                        self_1.onHitEnd();
-                        self_1.game.client.socket.emit('attack', {
-                            attack: false
-                        });
+                        attack: true,
+                        targetPoint: self.game.controller.attackPoint.position
                     });
                 }
+                self.attackAnimation = true;
+                self.onHitStart();
+                if (callbackEnd) {
+                    callbackStart();
+                }
+                self.animation = skeleton_1.beginAnimation(animation, false, this.statistics.getAttackSpeed() / 100, function () {
+                    if (callbackEnd) {
+                        callbackEnd();
+                    }
+                    skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                    self.animation = null;
+                    self.attackAnimation = false;
+                    self.game.controller.attackPoint = null;
+                    self.onHitEnd();
+                    if (emit) {
+                        self.game.client.socket.emit('attack', {
+                            attack: false,
+                            targetPoint: null
+                        });
+                    }
+                });
             }
         }
     };
@@ -338,7 +349,7 @@ var AbstractCharacter = /** @class */ (function () {
     AbstractCharacter.prototype.runAnimationWalk = function (emit) {
         var self = this;
         var childMesh = this.mesh;
-        var loopAnimation = this.isControllable;
+        var loopAnimation = true;
         if (childMesh) {
             var skeleton_2 = childMesh.skeleton;
             if (!this.animation && skeleton_2) {
@@ -422,6 +433,10 @@ var Monster = /** @class */ (function (_super) {
             self.game.player.mesh.lookAt(pointer.meshUnderPointer.position);
             game.controller.targetPoint = null;
             game.controller.ball.visibility = 0;
+            self.game.client.socket.emit('setTargetPoint', {
+                position: null,
+                playerPosition: self.game.player.mesh.position
+            });
             game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
             game.controller.forward = false;
         }));
@@ -456,7 +471,7 @@ var Monster = /** @class */ (function (_super) {
             if (self.target) {
                 self.mesh.lookAt(playerMesh.position);
                 if (monsterAttackIsActive) {
-                    self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+                    self.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, false);
                     return;
                 }
                 var rotation = self.mesh.rotation;
@@ -832,33 +847,43 @@ var SocketIOClient = /** @class */ (function () {
             });
             if (remotePlayerKey != null) {
                 var player_1 = game.remotePlayers[remotePlayerKey];
-                if (!player_1.isAnimationEnabled() && !updatedPlayer.attack) {
-                    player_1.runAnimationWalk(false);
-                }
-                else if (updatedPlayer.attack == true) {
-                    player_1.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
+                if (updatedPlayer.attack == true) {
+                    var mesh = player_1.mesh;
+                    var targetPoint = updatedPlayer.targetPoint;
+                    if (targetPoint) {
+                        var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                        mesh.lookAt(targetPointVector3);
+                    }
+                    player_1.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, false);
+                    return;
                 }
                 if (activeTargetPoints[remotePlayerKey] !== undefined) {
                     self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                    if (player_1.animation) {
+                        player_1.animation.stop();
+                    }
                 }
                 if (updatedPlayer.targetPoint) {
+                    var mesh_1 = player_1.mesh;
+                    var targetPoint = updatedPlayer.targetPoint;
+                    var targetPointVector3_1 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                    mesh_1.lookAt(targetPointVector3_1);
                     activeTargetPoints[remotePlayerKey] = function () {
-                        var mesh = player_1.mesh;
-                        var targetPoint = updatedPlayer.targetPoint;
-                        var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                        mesh.lookAt(targetPointVector3);
-                        if (player_1.mesh.intersectsPoint(targetPointVector3)) {
+                        if (player_1.mesh.intersectsPoint(targetPointVector3_1)) {
                             self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                            if (player_1.animation) {
+                                player_1.animation.stop();
+                            }
                         }
                         else {
-                            var rotation = mesh.rotation;
-                            if (mesh.rotationQuaternion) {
-                                rotation = mesh.rotationQuaternion.toEulerAngles();
+                            var rotation = mesh_1.rotation;
+                            if (mesh_1.rotationQuaternion) {
+                                rotation = mesh_1.rotationQuaternion.toEulerAngles();
                             }
                             rotation.negate();
                             var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / player_1.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / player_1.getWalkSpeed());
-                            mesh.moveWithCollisions(forwards);
-                            mesh.position.y = 0;
+                            mesh_1.moveWithCollisions(forwards);
+                            mesh_1.position.y = 0;
                             player_1.runAnimationWalk(false);
                         }
                     };
@@ -1208,9 +1233,9 @@ var Player = /** @class */ (function (_super) {
      * Moving events
      */
     Player.prototype.registerMoving = function () {
-        var walkSpeed = this.getWalkSpeed();
-        var mesh = this.mesh;
         if (self.game.controller.forward && !this.attackAnimation) {
+            var walkSpeed = this.getWalkSpeed();
+            var mesh = this.mesh;
             var rotation = mesh.rotation;
             if (mesh.rotationQuaternion) {
                 rotation = mesh.rotationQuaternion.toEulerAngles();
@@ -1227,7 +1252,8 @@ var Player = /** @class */ (function (_super) {
         }
     };
     Player.prototype.getWalkSpeed = function () {
-        return AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100);
+        var animationRatio = this.game.getScene().getAnimationRatio();
+        return AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100) / animationRatio;
     };
     ;
     Player.prototype.removeFromWorld = function () {
@@ -1250,7 +1276,7 @@ var Player = /** @class */ (function (_super) {
      */
     Player.prototype.setItems = function (inventoryItems) {
         if (inventoryItems) {
-            var self_2 = this;
+            var self_1 = this;
             var game = this.game;
             var itemManager_1 = new Items.ItemManager(game);
             if (this.inventory.items.length) {
@@ -1258,13 +1284,13 @@ var Player = /** @class */ (function (_super) {
                 this.inventory.items.forEach(function (item) {
                     item.mesh.dispose();
                     itemsProcessed_1++;
-                    if (itemsProcessed_1 === self_2.inventory.items.length) {
-                        itemManager_1.initItemsFromDatabaseOnCharacter(inventoryItems, self_2.inventory);
+                    if (itemsProcessed_1 === self_1.inventory.items.length) {
+                        itemManager_1.initItemsFromDatabaseOnCharacter(inventoryItems, self_1.inventory);
                     }
                 });
             }
             else {
-                itemManager_1.initItemsFromDatabaseOnCharacter(inventoryItems, self_2.inventory);
+                itemManager_1.initItemsFromDatabaseOnCharacter(inventoryItems, self_1.inventory);
             }
         }
     };
@@ -1355,11 +1381,6 @@ var Mouse = /** @class */ (function (_super) {
                 if (self.game.player.animation) {
                     self.game.player.animation.stop();
                 }
-                self.game.player.emitPosition();
-                self.game.client.socket.emit('setTargetPoint', {
-                    position: null,
-                    playerPosition: self.game.player.mesh.position
-                });
             }
         }));
         ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
@@ -1373,11 +1394,6 @@ var Mouse = /** @class */ (function (_super) {
                 if (self.game.player.animation) {
                     self.game.player.animation.stop();
                 }
-                self.game.player.emitPosition();
-                self.game.client.socket.emit('setTargetPoint', {
-                    position: null,
-                    playerPosition: self.game.player.mesh.position
-                });
             }
         }));
         scene.onPointerUp = function (evt, pickResult) {
@@ -1397,7 +1413,9 @@ var Mouse = /** @class */ (function (_super) {
                     self.game.controller.forward = true;
                     self.game.player.emitPosition();
                     self.game.client.socket.emit('setTargetPoint', {
-                        position: self.targetPoint
+                        position: self.targetPoint,
+                        isRunning: false,
+                        playerPosition: self.game.player.mesh.position
                     });
                 }
             }
@@ -1414,6 +1432,7 @@ var Mouse = /** @class */ (function (_super) {
                         self.game.player.emitPosition();
                         self.game.client.socket.emit('setTargetPoint', {
                             position: self.targetPoint,
+                            isRunning: true,
                             playerPosition: self.game.player.mesh.position
                         });
                     }

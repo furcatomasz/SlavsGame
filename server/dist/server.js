@@ -173,6 +173,7 @@ var Server;
                     activeScene: null,
                     lastPlayerUpdate: 0,
                     targetPoint: null,
+                    isRunning: null,
                     p: {
                         x: 3,
                         y: 0.3,
@@ -269,12 +270,15 @@ var Server;
                 });
                 socket.on('setTargetPoint', function (targetPoint) {
                     player.targetPoint = targetPoint.position;
+                    player.isRunning = targetPoint.isRunning;
                     socket.broadcast.emit('updatePlayer', player);
+                    socket.emit('updatePlayer', player);
                 });
                 socket.on('attack', function (data) {
                     player.attack = data.attack;
                     player.targetPoint = data.targetPoint;
                     socket.broadcast.emit('updatePlayer', player);
+                    socket.emit('updatePlayer', player);
                 });
                 socket.on('itemEquip', function (item) {
                     var itemId = item.id;

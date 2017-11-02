@@ -430,15 +430,14 @@ var Monster = /** @class */ (function (_super) {
         }));
         _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function (pointer) {
             game.controller.attackPoint = pointer.meshUnderPointer;
-            self.game.player.mesh.lookAt(pointer.meshUnderPointer.position);
             game.controller.targetPoint = null;
             game.controller.ball.visibility = 0;
             self.game.client.socket.emit('setTargetPoint', {
                 position: null,
+                isRunning: false,
                 playerPosition: self.game.player.mesh.position
             });
             game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
-            game.controller.forward = false;
         }));
         return _this;
     }
@@ -865,7 +864,7 @@ var SocketIOClient = /** @class */ (function () {
             }
             if (activeTargetPoints[remotePlayerKey] !== undefined) {
                 self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
-                if (player.animation) {
+                if (player.animation && !updatedPlayer.isRunning) {
                     player.animation.stop();
                 }
             }
@@ -902,7 +901,6 @@ var SocketIOClient = /** @class */ (function () {
         });
         this.socket.on('updatePlayerPosition', function (updatedPlayer) {
             var remotePlayerKey = null;
-            console.log(game.remotePlayers, updatedPlayer);
             game.remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == updatedPlayer.id) {
                     remotePlayerKey = key;

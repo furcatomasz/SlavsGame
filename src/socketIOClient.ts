@@ -358,7 +358,7 @@ class SocketIOClient {
             }
             if (activeTargetPoints[remotePlayerKey] !== undefined) {
                 self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
-                if (player.animation) {
+                if (player.animation && !updatedPlayer.isRunning) {
                     player.animation.stop();
                 }
             }
@@ -404,7 +404,6 @@ class SocketIOClient {
 
         this.socket.on('updatePlayerPosition', function (updatedPlayer) {
             let remotePlayerKey = null;
-            console.log(game.remotePlayers, updatedPlayer);
             game.remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == updatedPlayer.id) {
                     remotePlayerKey = key;

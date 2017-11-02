@@ -58,15 +58,14 @@ abstract class Monster extends AbstractCharacter {
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
             function (pointer) {
                 game.controller.attackPoint = pointer.meshUnderPointer;
-                self.game.player.mesh.lookAt(pointer.meshUnderPointer.position);
                 game.controller.targetPoint = null;
                 game.controller.ball.visibility = 0;
                 self.game.client.socket.emit('setTargetPoint', {
                     position: null,
+                    isRunning: false,
                     playerPosition: self.game.player.mesh.position
                 });
                 game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
-                game.controller.forward = false;
 
             }));
 

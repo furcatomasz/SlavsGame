@@ -18,6 +18,7 @@ namespace Server {
                     activeScene: null,
                     lastPlayerUpdate: 0,
                     targetPoint: null,
+                    isRunning: null,
                     p: {
                         x: 3,
                         y: 0.3,
@@ -128,6 +129,7 @@ namespace Server {
 
                 socket.on('setTargetPoint', function (targetPoint) {
                     player.targetPoint = targetPoint.position;
+                    player.isRunning = targetPoint.isRunning;
                     socket.broadcast.emit('updatePlayer', player);
                     socket.emit('updatePlayer', player);
 

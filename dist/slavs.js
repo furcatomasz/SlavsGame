@@ -839,60 +839,70 @@ var SocketIOClient = /** @class */ (function () {
         var activeTargetPoints = [];
         this.socket.on('updatePlayer', function (updatedPlayer) {
             var remotePlayerKey = null;
+            var player = null;
             game.remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == updatedPlayer.id) {
                     remotePlayerKey = key;
                     return;
                 }
             });
-            if (remotePlayerKey != null) {
-                var player_1 = game.remotePlayers[remotePlayerKey];
-                if (updatedPlayer.attack == true) {
-                    var mesh = player_1.mesh;
-                    var targetPoint = updatedPlayer.targetPoint;
-                    if (targetPoint) {
-                        var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                        mesh.lookAt(targetPointVector3);
-                    }
-                    player_1.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, false);
-                    return;
+            if (remotePlayerKey == null) {
+                player = game.player;
+                remotePlayerKey = 99;
+            }
+            else {
+                player = game.remotePlayers[remotePlayerKey];
+            }
+            if (updatedPlayer.attack == true) {
+                var mesh = player.mesh;
+                var targetPoint = updatedPlayer.targetPoint;
+                if (targetPoint) {
+                    var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                    mesh.lookAt(targetPointVector3);
                 }
-                if (activeTargetPoints[remotePlayerKey] !== undefined) {
-                    self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
-                    if (player_1.animation) {
-                        player_1.animation.stop();
-                    }
+                player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, false);
+                return;
+            }
+            if (activeTargetPoints[remotePlayerKey] !== undefined) {
+                self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                if (player.animation) {
+                    player.animation.stop();
                 }
-                if (updatedPlayer.targetPoint) {
-                    var mesh_1 = player_1.mesh;
-                    var targetPoint = updatedPlayer.targetPoint;
-                    var targetPointVector3_1 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                    mesh_1.lookAt(targetPointVector3_1);
-                    activeTargetPoints[remotePlayerKey] = function () {
-                        if (player_1.mesh.intersectsPoint(targetPointVector3_1)) {
-                            self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
-                            if (player_1.animation) {
-                                player_1.animation.stop();
-                            }
+            }
+            if (updatedPlayer.targetPoint) {
+                var mesh_1 = player.mesh;
+                var targetPoint = updatedPlayer.targetPoint;
+                var targetPointVector3_1 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                mesh_1.lookAt(targetPointVector3_1);
+                activeTargetPoints[remotePlayerKey] = function () {
+                    if (player.mesh.intersectsPoint(targetPointVector3_1)) {
+                        self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                        if (player.isControllable) {
+                            game.controller.targetPoint = null;
+                            game.controller.ball.visibility = 0;
                         }
-                        else {
-                            var rotation = mesh_1.rotation;
-                            if (mesh_1.rotationQuaternion) {
-                                rotation = mesh_1.rotationQuaternion.toEulerAngles();
-                            }
-                            rotation.negate();
-                            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / player_1.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / player_1.getWalkSpeed());
-                            mesh_1.moveWithCollisions(forwards);
-                            mesh_1.position.y = 0;
-                            player_1.runAnimationWalk(false);
+                        if (player.animation) {
+                            player.animation.stop();
                         }
-                    };
-                    self.game.getScene().registerBeforeRender(activeTargetPoints[remotePlayerKey]);
-                }
+                    }
+                    else {
+                        var rotation = mesh_1.rotation;
+                        if (mesh_1.rotationQuaternion) {
+                            rotation = mesh_1.rotationQuaternion.toEulerAngles();
+                        }
+                        rotation.negate();
+                        var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / player.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / player.getWalkSpeed());
+                        mesh_1.moveWithCollisions(forwards);
+                        mesh_1.position.y = 0;
+                        player.runAnimationWalk(false);
+                    }
+                };
+                self.game.getScene().registerBeforeRender(activeTargetPoints[remotePlayerKey]);
             }
         });
         this.socket.on('updatePlayerPosition', function (updatedPlayer) {
             var remotePlayerKey = null;
+            console.log(game.remotePlayers, updatedPlayer);
             game.remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == updatedPlayer.id) {
                     remotePlayerKey = key;
@@ -1197,7 +1207,6 @@ var Player = /** @class */ (function (_super) {
         }
         _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
-        _this.registerFunctionAfterRender();
         return _this;
     }
     Player.prototype.setCharacterStatistics = function (attributes) {
@@ -1229,28 +1238,6 @@ var Player = /** @class */ (function (_super) {
         return this;
     };
     ;
-    /**
-     * Moving events
-     */
-    Player.prototype.registerMoving = function () {
-        if (self.game.controller.forward && !this.attackAnimation) {
-            var walkSpeed = this.getWalkSpeed();
-            var mesh = this.mesh;
-            var rotation = mesh.rotation;
-            if (mesh.rotationQuaternion) {
-                rotation = mesh.rotationQuaternion.toEulerAngles();
-            }
-            rotation.negate();
-            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
-            mesh.moveWithCollisions(forwards);
-            mesh.position.y = 0;
-            this.runAnimationWalk(true);
-            this.refreshCameraPosition();
-        }
-        else if (this.animation && !this.attackAnimation) {
-            this.animation.stop();
-        }
-    };
     Player.prototype.getWalkSpeed = function () {
         var animationRatio = this.game.getScene().getAnimationRatio();
         return AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100) / animationRatio;
@@ -1258,14 +1245,6 @@ var Player = /** @class */ (function (_super) {
     ;
     Player.prototype.removeFromWorld = function () {
         this.mesh.dispose();
-    };
-    Player.prototype.registerFunctionAfterRender = function () {
-        var self = this;
-        if (self.isControllable) {
-            this.game.getScene().registerAfterRender(function () {
-                self.registerMoving();
-            });
-        }
     };
     Player.prototype.refreshCameraPosition = function () {
         this.game.getScene().activeCamera.position = this.mesh.position;
@@ -1370,32 +1349,6 @@ var Mouse = /** @class */ (function (_super) {
         ball.isPickable = false;
         ball.visibility = 0;
         this.ball = ball;
-        ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-            parameter: self.game.player.mesh
-        }, function () {
-            if (!clickTrigger) {
-                self.game.controller.forward = false;
-                self.targetPoint = null;
-                self.ball.visibility = 0;
-                if (self.game.player.animation) {
-                    self.game.player.animation.stop();
-                }
-            }
-        }));
-        ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-            trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-            parameter: self.game.player.mesh
-        }, function () {
-            if (!clickTrigger) {
-                self.game.controller.forward = false;
-                self.targetPoint = null;
-                self.ball.visibility = 0;
-                if (self.game.player.animation) {
-                    self.game.player.animation.stop();
-                }
-            }
-        }));
         scene.onPointerUp = function (evt, pickResult) {
             clickTrigger = false;
         };
@@ -1409,8 +1362,6 @@ var Mouse = /** @class */ (function (_super) {
                     self.targetPoint.y = 0;
                     self.ball.position = self.targetPoint;
                     self.ball.visibility = 1;
-                    self.game.player.mesh.lookAt(self.ball.position);
-                    self.game.controller.forward = true;
                     self.game.player.emitPosition();
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint,
@@ -1428,7 +1379,6 @@ var Mouse = /** @class */ (function (_super) {
                         self.targetPoint = pickResult.pickedPoint;
                         self.targetPoint.y = 0;
                         self.ball.position = self.targetPoint;
-                        self.game.player.mesh.lookAt(self.ball.position);
                         self.game.player.emitPosition();
                         self.game.client.socket.emit('setTargetPoint', {
                             position: self.targetPoint,

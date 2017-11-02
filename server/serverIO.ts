@@ -129,12 +129,15 @@ namespace Server {
                 socket.on('setTargetPoint', function (targetPoint) {
                     player.targetPoint = targetPoint.position;
                     socket.broadcast.emit('updatePlayer', player);
+                    socket.emit('updatePlayer', player);
+
                 });
 
                 socket.on('attack', function (data) {
                     player.attack = data.attack;
                     player.targetPoint = data.targetPoint;
                     socket.broadcast.emit('updatePlayer', player);
+                    socket.emit('updatePlayer', player);
                 });
 
                 socket.on('itemEquip', function (item) {

@@ -11,34 +11,6 @@ class Mouse extends Controller {
         ball.visibility = 0;
         this.ball = ball;
 
-        ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-            parameter: self.game.player.mesh
-        }, function () {
-            if(!clickTrigger) {
-                self.game.controller.forward = false;
-                self.targetPoint = null;
-                self.ball.visibility = 0;
-                if(self.game.player.animation) {
-                    self.game.player.animation.stop();
-                }
-            }
-        }));
-
-        ball.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-            trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-            parameter: self.game.player.mesh
-        }, function () {
-            if(!clickTrigger) {
-                self.game.controller.forward = false;
-                self.targetPoint = null;
-                self.ball.visibility = 0;
-                if(self.game.player.animation) {
-                    self.game.player.animation.stop();
-                }
-            }
-        }));
-
         scene.onPointerUp = function (evt, pickResult) {
             clickTrigger = false;
         }
@@ -54,8 +26,6 @@ class Mouse extends Controller {
                     self.targetPoint.y = 0;
                     self.ball.position = self.targetPoint;
                     self.ball.visibility = 1;
-                    self.game.player.mesh.lookAt(self.ball.position);
-                    self.game.controller.forward = true;
 
                     self.game.player.emitPosition();
                     self.game.client.socket.emit('setTargetPoint', {
@@ -77,7 +47,6 @@ class Mouse extends Controller {
                         self.targetPoint = pickResult.pickedPoint;
                         self.targetPoint.y = 0;
                         self.ball.position = self.targetPoint;
-                        self.game.player.mesh.lookAt(self.ball.position);
 
                         self.game.player.emitPosition();
                         self.game.client.socket.emit('setTargetPoint', {

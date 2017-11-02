@@ -27,7 +27,7 @@ abstract class AbstractCharacter {
     protected speed:number;
     public animation:BABYLON.Animatable;
     protected afterRender;
-    protected isControllable:boolean;
+    public isControllable:boolean;
     protected attackAnimation: boolean;
     protected attackHit: boolean;
     public attackArea:BABYLON.Mesh;

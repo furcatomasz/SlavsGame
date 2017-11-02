@@ -90,7 +90,6 @@ class Player extends AbstractCharacter {
         this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
 
         super(name, game);
-        this.registerFunctionAfterRender();
     }
 
     public setCharacterStatistics(attributes) {
@@ -134,31 +133,6 @@ class Player extends AbstractCharacter {
         return this;
     };
 
-    /**
-     * Moving events
-     */
-    protected registerMoving() {
-        if(self.game.controller.forward && !this.attackAnimation) {
-            let walkSpeed = this.getWalkSpeed();
-            let mesh = this.mesh;
-
-            let rotation = mesh.rotation;
-            if (mesh.rotationQuaternion) {
-                rotation = mesh.rotationQuaternion.toEulerAngles();
-            }
-            rotation.negate();
-            let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
-            mesh.moveWithCollisions(forwards);
-            mesh.position.y = 0;
-
-            this.runAnimationWalk(true);
-            this.refreshCameraPosition();
-
-        } else if(this.animation && !this.attackAnimation) {
-            this.animation.stop();
-        }
-    }
-
     public getWalkSpeed() {
         let animationRatio = this.game.getScene().getAnimationRatio();
         return AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100) / animationRatio;
@@ -168,15 +142,6 @@ class Player extends AbstractCharacter {
         this.mesh.dispose();
     }
 
-
-    protected registerFunctionAfterRender() {
-        let self = this;
-        if (self.isControllable) {
-            this.game.getScene().registerAfterRender(function () {
-                self.registerMoving();
-            });
-        }
-    }
 
     public refreshCameraPosition() {
         this.game.getScene().activeCamera.position = this.mesh.position;

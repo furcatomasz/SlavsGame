@@ -60,13 +60,10 @@ abstract class Monster extends AbstractCharacter {
                 game.controller.attackPoint = pointer.meshUnderPointer;
                 game.controller.targetPoint = null;
                 game.controller.ball.visibility = 0;
-                self.game.client.socket.emit('setTargetPoint', {
-                    position: null,
-                    isRunning: false,
-                    playerPosition: self.game.player.mesh.position
+                game.client.socket.emit('attack', {
+                    attack: true,
+                    targetPoint: self.game.controller.attackPoint.position,
                 });
-                game.player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK);
-
             }));
 
     }

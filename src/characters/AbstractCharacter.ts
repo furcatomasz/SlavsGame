@@ -68,7 +68,7 @@ abstract class AbstractCharacter {
     /**
      * ANIMATIONS
      */
-    public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null, emit: boolean = true):void {
+    public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null):void {
         if (this.animation && ! this.attackAnimation) {
             this.animation.stop();
         } else if (this.animation && this.attackAnimation) {
@@ -81,12 +81,6 @@ abstract class AbstractCharacter {
             if (childMesh) {
                 let skeleton = childMesh.skeleton;
                 if(skeleton) {
-                    if(emit) {
-                        this.game.client.socket.emit('attack', {
-                            attack: true,
-                            targetPoint: self.game.controller.attackPoint.position,
-                        });
-                    }
 
                     self.attackAnimation = true;
                     self.onHitStart();
@@ -102,13 +96,6 @@ abstract class AbstractCharacter {
                         self.attackAnimation = false;
                         self.game.controller.attackPoint = null;
                         self.onHitEnd();
-
-                        if(emit) {
-                            self.game.client.socket.emit('attack', {
-                                attack: false,
-                                targetPoint: null,
-                            });
-                        }
                     });
                 }
             }

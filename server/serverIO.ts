@@ -128,6 +128,7 @@ namespace Server {
                 });
 
                 socket.on('setTargetPoint', function (targetPoint) {
+                    player.attack = null;
                     player.targetPoint = targetPoint.position;
                     player.isRunning = targetPoint.isRunning;
                     socket.broadcast.emit('updatePlayer', player);
@@ -138,6 +139,7 @@ namespace Server {
                 socket.on('attack', function (data) {
                     player.attack = data.attack;
                     player.targetPoint = data.targetPoint;
+                    player.isRunning = false;
                     socket.broadcast.emit('updatePlayer', player);
                     socket.emit('updatePlayer', player);
                 });

@@ -341,7 +341,7 @@ class SocketIOClient {
             });
             if (remotePlayerKey == null) {
                 player = game.player;
-                remotePlayerKey = 99;
+                remotePlayerKey = -1;
             } else {
                 player = game.remotePlayers[remotePlayerKey];
             }
@@ -353,7 +353,7 @@ class SocketIOClient {
                     let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
                     mesh.lookAt(targetPointVector3);
                 }
-                player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, false);
+                player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null);
                 return;
             }
             if (activeTargetPoints[remotePlayerKey] !== undefined) {

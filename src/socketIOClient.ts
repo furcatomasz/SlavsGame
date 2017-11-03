@@ -358,9 +358,6 @@ class SocketIOClient {
             }
             if (activeTargetPoints[remotePlayerKey] !== undefined) {
                 self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
-                if (player.animation && !updatedPlayer.isRunning) {
-                    player.animation.stop();
-                }
             }
 
             if (updatedPlayer.targetPoint) {

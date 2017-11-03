@@ -63,6 +63,7 @@ abstract class Monster extends AbstractCharacter {
                 game.client.socket.emit('attack', {
                     attack: true,
                     targetPoint: self.game.controller.attackPoint.position,
+                    rotation: self.game.controller.attackPoint.rotation,
                 });
             }));
 

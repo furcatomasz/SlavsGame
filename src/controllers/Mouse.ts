@@ -30,7 +30,6 @@ class Mouse extends Controller {
                     self.game.player.emitPosition();
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint,
-                        isRunning: false,
                         playerPosition: self.game.player.mesh.position
                     });
 
@@ -47,11 +46,8 @@ class Mouse extends Controller {
                         self.targetPoint = pickResult.pickedPoint;
                         self.targetPoint.y = 0;
                         self.ball.position = self.targetPoint;
-
-                        self.game.player.emitPosition();
                         self.game.client.socket.emit('setTargetPoint', {
                             position: self.targetPoint,
-                            isRunning: true,
                             playerPosition: self.game.player.mesh.position
                         });
                     }

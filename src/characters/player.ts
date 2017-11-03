@@ -32,12 +32,7 @@ class Player extends AbstractCharacter {
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
 
-        mesh.skeleton.bones.forEach(function(bone) {
-            bone.animations.forEach(function(animation) {
-                animation.enableBlending = true;
-                animation.blendingSpeed = 0.2;
-            });
-        });
+        mesh.skeleton.enableBlending(0.4);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.alwaysSelectAsActiveMesh = true;
         // Collisions.setCollider(game.getScene(), mesh, null, false);
@@ -52,7 +47,6 @@ class Player extends AbstractCharacter {
         if (this.isControllable) {
             this.mesh.isPickable = false;
 
-            //let playerLight = new BABYLON.PointLight("playerLightSpot", new BABYLON.Vector3(0, 5, 0), game.getScene());
             var playerLight = new BABYLON.SpotLight("playerLightSpot",
                 new BABYLON.Vector3(0, 50, 0),
                 new BABYLON.Vector3(0, -1, 0),

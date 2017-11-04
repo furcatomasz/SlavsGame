@@ -3,7 +3,7 @@
 
 abstract class AbstractCharacter {
 
-    public static WALK_SPEED:number = 1.8;
+    public static WALK_SPEED:number = 2.3;
     public static ROTATION_SPEED:number = 0.05;
 
     public static ANIMATION_WALK:string = 'Run';

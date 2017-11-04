@@ -1,0 +1,1359 @@
+Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used:
+		selected layers only:  false
+		flat shading entire scene:  false
+		inline textures:  false
+		texture directory:  F:\New Folder\Mountains\
+	Python World class constructor completed
+	processing begun of mesh:  Ground.001
+		processing begun of Standard material:  Gate
+			Diffuse texture found "Texture.043"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Round2
+			Diffuse texture found "Texture.044"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Market_place
+			Diffuse texture found "Texture.045"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Road1
+			Diffuse texture found "Texture.046"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Grass_seamless
+			Diffuse texture found "Texture.047"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Grass_sealmess_left
+			Diffuse texture found "Texture.048"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Grass_seamless_right
+			Diffuse texture found "Texture.049"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Dirt_seamless
+			Diffuse texture found "Dirt_seamless"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Round
+			Diffuse texture found "Texture.050"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Road
+			Diffuse texture found "Texture.051"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Mountains.Multimaterial#0
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Cube.008
+		processing begun of Standard material:  Perun.001
+			Diffuse texture found "Texture.042"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  205
+		num normals        :  205
+		num uvs            :  410
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  300
+	processing begun of mesh:  Perun
+		registered as also a user of material:  Perun.001
+		num positions      :  205
+		num normals        :  205
+		num uvs            :  410
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  300
+	processing begun of mesh:  dirt1.009
+		processing begun of Standard material:  Flowers
+			Diffuse texture found "Texture.041"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  dirt1.008
+		registered as also a user of material:  Flowers
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  dirt1.007
+		registered as also a user of material:  Flowers
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  dirt1.006
+		registered as also a user of material:  Flowers
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  dirt1.005
+		registered as also a user of material:  Flowers
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  dirt1.003
+		registered as also a user of material:  Flowers
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  dirt1.004
+		processing begun of Standard material:  dirt1
+			Diffuse texture found "dirt1"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material
+			Diffuse texture found "Texture.035"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Mountains.Multimaterial#1
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Forest_module.005
+		processing begun of Standard material:  Bush4.002
+			Diffuse texture found "Bush4.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  korona2.003
+			Diffuse texture found "korona2.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  root.003
+			Diffuse texture found "Texture.038"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Stone_small.004
+			Diffuse texture found "Tex.007"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Log.004
+			Diffuse texture found "Tex.010"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Huba.003
+			Diffuse texture found "Huba.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Log_old.003
+			Diffuse texture found "Log_old.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Ivy.004
+			Diffuse texture found "Texture.039"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Bush3.003
+			Diffuse texture found "Bush3.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Forest_seamless.001
+			Diffuse texture found "Texture.040"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Fern.001
+			Diffuse texture found "Fern.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Grass
+			Diffuse texture found "Grass"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of multimaterial:  Mountains.Multimaterial#2
+		num positions      :  24
+		num normals        :  24
+		num uvs            :  48
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  48
+	processing begun of mesh:  Forest_module.004
+		registered as also a user of material:  Bush4.002
+		registered as also a user of material:  korona2.003
+		registered as also a user of material:  root.003
+		registered as also a user of material:  Stone_small.004
+		registered as also a user of material:  Log.004
+		registered as also a user of material:  Huba.003
+		registered as also a user of material:  Log_old.003
+		registered as also a user of material:  Ivy.004
+		registered as also a user of material:  Bush3.003
+		registered as also a user of material:  Forest_seamless.001
+		registered as also a user of material:  Fern.001
+		registered as also a user of material:  Grass
+		processing begun of multimaterial:  Mountains.Multimaterial#3
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Forest_module.000
+		registered as also a user of material:  Bush4.002
+		registered as also a user of material:  korona2.003
+		registered as also a user of material:  root.003
+		registered as also a user of material:  Stone_small.004
+		registered as also a user of material:  Log.004
+		registered as also a user of material:  Huba.003
+		registered as also a user of material:  Log_old.003
+		registered as also a user of material:  Ivy.004
+		registered as also a user of material:  Bush3.003
+		registered as also a user of material:  Forest_seamless.001
+		registered as also a user of material:  Fern.001
+		registered as also a user of material:  Grass
+		processing begun of multimaterial:  Mountains.Multimaterial#4
+		num positions      :  474
+		num normals        :  474
+		num uvs            :  948
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1014
+	processing begun of mesh:  Forest_module.002
+		processing begun of Standard material:  Fern
+			Diffuse texture found "Fern"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Bush4.001
+			Diffuse texture found "Bush4.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  korona2.001
+			Diffuse texture found "korona2.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  root.001
+			Diffuse texture found "Texture.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Stone_small.002
+			Diffuse texture found "Tex.000"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Log.002
+			Diffuse texture found "Tex.006"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Huba.001
+			Diffuse texture found "Huba.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Log_old.001
+			Diffuse texture found "Log_old.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Ivy.003
+			Diffuse texture found "Texture.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Bush3.001
+			Diffuse texture found "Bush3.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Forest_seamless
+			Diffuse texture found "Texture.037"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Mountains.Multimaterial#5
+		num positions      :  13
+		num normals        :  13
+		num uvs            :  26
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  42
+	processing begun of mesh:  Forest_module.001
+		registered as also a user of material:  Fern
+		registered as also a user of material:  Bush4.001
+		registered as also a user of material:  korona2.001
+		registered as also a user of material:  root.001
+		registered as also a user of material:  Stone_small.002
+		registered as also a user of material:  Log.002
+		registered as also a user of material:  Huba.001
+		registered as also a user of material:  Log_old.001
+		registered as also a user of material:  Ivy.003
+		registered as also a user of material:  Bush3.001
+		registered as also a user of material:  Forest_seamless
+		processing begun of multimaterial:  Mountains.Multimaterial#6
+		num positions      :  13
+		num normals        :  13
+		num uvs            :  26
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  42
+	processing begun of mesh:  dirt1.002
+		processing begun of Standard material:  Material.003
+			Diffuse texture found "Texture.036"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  dirt1.001
+		registered as also a user of material:  Material.003
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  dirt1.000
+		registered as also a user of material:  Material.003
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  dirt1.061
+		registered as also a user of material:  dirt1
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  dirt1.027
+		registered as also a user of material:  dirt1
+		registered as also a user of material:  Material
+		processing begun of multimaterial:  Mountains.Multimaterial#7
+		num positions      :  204
+		num normals        :  204
+		num uvs            :  408
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  306
+	processing begun of mesh:  Larch.005
+		processing begun of Standard material:  Galaz
+			Diffuse texture found "Galaz"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  larch
+			Diffuse texture found "Texture.034"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Mountains.Multimaterial#8
+		num positions      :  152
+		num normals        :  152
+		num uvs            :  304
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  528
+	processing begun of mesh:  Larch.004
+		registered as also a user of material:  Galaz
+		registered as also a user of material:  larch
+		processing begun of multimaterial:  Mountains.Multimaterial#9
+		num positions      :  64
+		num normals        :  64
+		num uvs            :  128
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  246
+	processing begun of mesh:  Larch.000
+		registered as also a user of material:  Galaz
+		registered as also a user of material:  larch
+		processing begun of multimaterial:  Mountains.Multimaterial#10
+		num positions      :  152
+		num normals        :  152
+		num uvs            :  304
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  528
+	processing begun of mesh:  Mountains.013
+		processing begun of Standard material:  Material.001
+			Diffuse texture found "Texture"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Mountains.017
+		registered as also a user of material:  Material.001
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Mountains.010
+		processing begun of Standard material:  Material.006
+			Diffuse texture found "Texture.007"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Larch.001
+		registered as also a user of material:  Galaz
+		registered as also a user of material:  larch
+		processing begun of multimaterial:  Mountains.Multimaterial#11
+		num positions      :  169
+		num normals        :  169
+		num uvs            :  338
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  468
+	processing begun of mesh:  Larch.003
+		registered as also a user of material:  Galaz
+		registered as also a user of material:  larch
+		processing begun of multimaterial:  Mountains.Multimaterial#12
+		num positions      :  64
+		num normals        :  64
+		num uvs            :  128
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  246
+	processing begun of mesh:  Larch.002
+		registered as also a user of material:  Galaz
+		registered as also a user of material:  larch
+		processing begun of multimaterial:  Mountains.Multimaterial#13
+		num positions      :  152
+		num normals        :  152
+		num uvs            :  304
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  528
+	processing begun of mesh:  Cube.006
+		registered as also a user of material:  Material.001
+		num positions      :  37
+		num normals        :  37
+		num uvs            :  74
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  126
+	processing begun of mesh:  Cube.005
+		mesh is an instance of :  Cube.006.  Processing halted.
+	processing begun of mesh:  Cube.004
+		mesh is an instance of :  Cube.006.  Processing halted.
+	processing begun of mesh:  Cube.003
+		mesh is an instance of :  Cube.006.  Processing halted.
+	processing begun of mesh:  Cube.002
+		mesh is an instance of :  Cube.006.  Processing halted.
+	processing begun of mesh:  Cube.001
+		mesh is an instance of :  Cube.006.  Processing halted.
+	processing begun of mesh:  Cube
+		mesh is an instance of :  Cube.006.  Processing halted.
+	processing begun of mesh:  Mountains.003
+		registered as also a user of material:  Material.006
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Skeleton.005
+		processing begun of Standard material:  Material.013
+			Diffuse texture found "szkielet-1"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.014
+			Diffuse texture found "Texture.028"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+			Bump texture found "Texture.028"
+				Image texture found, type:  bumpTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.015
+		processing begun of Standard material:  Material.004
+			Diffuse texture found "Texture.004"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Windows
+			Diffuse texture found "Texture.016"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Wooden_Wall
+			Diffuse texture found "Texture.005"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Godło
+			Diffuse texture found "Godło"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Roof
+			Diffuse texture found "Texture.009"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.007
+			Diffuse texture found "Texture.006"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Material.008
+		processing begun of multimaterial:  Mountains.Multimaterial#14
+		num positions      :  113
+		num normals        :  113
+		num uvs            :  226
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  336
+	processing begun of mesh:  Skeleton.003
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		registered as also a user of material:  Material.015
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Windows
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Mountains.Multimaterial#15
+		num positions      :  113
+		num normals        :  113
+		num uvs            :  226
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  336
+	processing begun of mesh:  Skeleton.002
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		registered as also a user of material:  Material.015
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Windows
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Mountains.Multimaterial#16
+		num positions      :  113
+		num normals        :  113
+		num uvs            :  226
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  336
+	processing begun of mesh:  Mountains.016
+		registered as also a user of material:  Material.001
+		num positions      :  97
+		num normals        :  97
+		num uvs            :  194
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  294
+	processing begun of mesh:  Godło.001
+		processing begun of Standard material:  Godło.002
+			Diffuse texture found "Godło.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  12
+		num normals        :  12
+		num uvs            :  24
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  18
+	processing begun of mesh:  Skeleton.004
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		registered as also a user of material:  Material.015
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Windows
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Mountains.Multimaterial#17
+		num positions      :  125
+		num normals        :  125
+		num uvs            :  250
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  Skeleton.001
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		registered as also a user of material:  Material.015
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Windows
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Mountains.Multimaterial#18
+		num positions      :  125
+		num normals        :  125
+		num uvs            :  250
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  Plane
+		processing begun of Standard material:  Forest_ground1AO
+			Diffuse texture found "Forest_ground1AO"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Forest_Module1.011
+		processing begun of Standard material:  Bush4
+			Diffuse texture found "Bush4"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  korona2.002
+			Diffuse texture found "korona2.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  root.002
+			Diffuse texture found "Texture.000"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Stone_small.003
+			Diffuse texture found "Tex.008"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Log.003
+			Diffuse texture found "Tex.009"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Huba.002
+			Diffuse texture found "Huba.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Log_old.002
+			Diffuse texture found "Log_old.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Ivy.002
+			Diffuse texture found "Texture.027"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Bush3.002
+			Diffuse texture found "Bush3.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of multimaterial:  Mountains.Multimaterial#19
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Forest_Module1.010
+		registered as also a user of material:  Bush4
+		registered as also a user of material:  korona2.002
+		registered as also a user of material:  root.002
+		registered as also a user of material:  Stone_small.003
+		registered as also a user of material:  Log.003
+		registered as also a user of material:  Huba.002
+		registered as also a user of material:  Log_old.002
+		registered as also a user of material:  Ivy.002
+		registered as also a user of material:  Bush3.002
+		processing begun of multimaterial:  Mountains.Multimaterial#20
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Forest_Module1.009
+		registered as also a user of material:  Bush4
+		registered as also a user of material:  korona2.002
+		registered as also a user of material:  root.002
+		registered as also a user of material:  Stone_small.003
+		registered as also a user of material:  Log.003
+		registered as also a user of material:  Huba.002
+		registered as also a user of material:  Log_old.002
+		registered as also a user of material:  Ivy.002
+		registered as also a user of material:  Bush3.002
+		processing begun of multimaterial:  Mountains.Multimaterial#21
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Forest_Module1.006
+		registered as also a user of material:  Bush4
+		registered as also a user of material:  korona2.002
+		registered as also a user of material:  root.002
+		registered as also a user of material:  Stone_small.003
+		registered as also a user of material:  Log.003
+		registered as also a user of material:  Huba.002
+		registered as also a user of material:  Log_old.002
+		registered as also a user of material:  Ivy.002
+		registered as also a user of material:  Bush3.002
+		processing begun of multimaterial:  Mountains.Multimaterial#22
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Forest_Module1.005
+		registered as also a user of material:  Bush4
+		registered as also a user of material:  korona2.002
+		registered as also a user of material:  root.002
+		registered as also a user of material:  Stone_small.003
+		registered as also a user of material:  Log.003
+		registered as also a user of material:  Huba.002
+		registered as also a user of material:  Log_old.002
+		registered as also a user of material:  Ivy.002
+		registered as also a user of material:  Bush3.002
+		processing begun of multimaterial:  Mountains.Multimaterial#23
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Forest_Module1.001
+		registered as also a user of material:  Bush4
+		registered as also a user of material:  korona2.002
+		registered as also a user of material:  root.002
+		registered as also a user of material:  Stone_small.003
+		registered as also a user of material:  Log.003
+		registered as also a user of material:  Huba.002
+		registered as also a user of material:  Log_old.002
+		registered as also a user of material:  Ivy.002
+		registered as also a user of material:  Bush3.002
+		processing begun of multimaterial:  Mountains.Multimaterial#24
+		num positions      :  0
+		num normals        :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  0
+	processing begun of mesh:  Cylinder.002
+		processing begun of Standard material:  Box.001
+			Diffuse texture found "Texture.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Carriage.001
+			Diffuse texture found "Texture.025"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Shield
+			Diffuse texture found "Texture.024"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.012
+			Diffuse texture found "Texture.026"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Box
+			Diffuse texture found "Texture.021"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Carriage
+			Diffuse texture found "Carriage"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Rooster
+			Diffuse texture found "Texture.017"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  rooster1
+		processing begun of Standard material:  Rooster.001
+			Diffuse texture found "Texture.018"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Material.005
+		processing begun of Standard material:  Material.009
+			Diffuse texture found "Texture.010"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Windows.001
+			Diffuse texture found "Texture.011"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Wooden_Wall.001
+			Diffuse texture found "Texture.012"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Godło.001
+			Diffuse texture found "Godło.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Roof.001
+			Diffuse texture found "Texture.022"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.010
+			Diffuse texture found "Texture.023"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Material.011
+		processing begun of multimaterial:  Mountains.Multimaterial#25
+		num positions      :  822
+		num normals        :  822
+		num uvs            :  1644
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1407
+	processing begun of mesh:  Carriage.006
+		registered as also a user of material:  Carriage.001
+		registered as also a user of material:  Material.012
+		registered as also a user of material:  Shield
+		registered as also a user of material:  Carriage
+		registered as also a user of material:  Rooster
+		registered as also a user of material:  rooster1
+		registered as also a user of material:  Rooster.001
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Material.009
+		registered as also a user of material:  Windows.001
+		registered as also a user of material:  Wooden_Wall.001
+		registered as also a user of material:  Godło.001
+		registered as also a user of material:  Roof.001
+		registered as also a user of material:  Material.010
+		registered as also a user of material:  Material.011
+		processing begun of multimaterial:  Mountains.Multimaterial#26
+		num positions      :  64
+		num normals        :  64
+		num uvs            :  128
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  384
+	processing begun of mesh:  Cylinder.003
+		registered as also a user of material:  Box.001
+		registered as also a user of material:  Carriage.001
+		registered as also a user of material:  Shield
+		registered as also a user of material:  Material.012
+		registered as also a user of material:  Box
+		registered as also a user of material:  Carriage
+		registered as also a user of material:  Rooster
+		registered as also a user of material:  rooster1
+		registered as also a user of material:  Rooster.001
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Material.009
+		registered as also a user of material:  Windows.001
+		registered as also a user of material:  Wooden_Wall.001
+		registered as also a user of material:  Godło.001
+		registered as also a user of material:  Roof.001
+		registered as also a user of material:  Material.010
+		registered as also a user of material:  Material.011
+		processing begun of multimaterial:  Mountains.Multimaterial#27
+		num positions      :  821
+		num normals        :  821
+		num uvs            :  1642
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1407
+	processing begun of mesh:  Carriage.004
+		registered as also a user of material:  Carriage.001
+		registered as also a user of material:  Material.012
+		registered as also a user of material:  Shield
+		registered as also a user of material:  Carriage
+		registered as also a user of material:  Rooster
+		registered as also a user of material:  rooster1
+		registered as also a user of material:  Rooster.001
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Material.009
+		registered as also a user of material:  Windows.001
+		registered as also a user of material:  Wooden_Wall.001
+		registered as also a user of material:  Godło.001
+		registered as also a user of material:  Roof.001
+		registered as also a user of material:  Material.010
+		registered as also a user of material:  Material.011
+		processing begun of multimaterial:  Mountains.Multimaterial#28
+		num positions      :  261
+		num normals        :  261
+		num uvs            :  522
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  312
+	processing begun of mesh:  Carriage.003
+		registered as also a user of material:  Carriage.001
+		registered as also a user of material:  Shield
+		registered as also a user of material:  Material.012
+		processing begun of multimaterial:  Mountains.Multimaterial#29
+		num positions      :  164
+		num normals        :  164
+		num uvs            :  328
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  390
+	processing begun of mesh:  Carriage.001
+		registered as also a user of material:  Carriage.001
+		registered as also a user of material:  Material.012
+		registered as also a user of material:  Shield
+		processing begun of multimaterial:  Mountains.Multimaterial#30
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Chickencoop.000
+		registered as also a user of material:  Carriage
+		registered as also a user of material:  Rooster
+		registered as also a user of material:  rooster1
+		registered as also a user of material:  Rooster.001
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Material.009
+		registered as also a user of material:  Windows.001
+		registered as also a user of material:  Wooden_Wall.001
+		registered as also a user of material:  Godło.001
+		registered as also a user of material:  Roof.001
+		registered as also a user of material:  Material.010
+		registered as also a user of material:  Material.011
+		processing begun of multimaterial:  Mountains.Multimaterial#31
+		num positions      :  26
+		num normals        :  26
+		num uvs            :  52
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  30
+	processing begun of mesh:  Mountains.015
+		registered as also a user of material:  Material.006
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Mountains.002
+		registered as also a user of material:  Material.001
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Mountains.014
+		registered as also a user of material:  Material.006
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Mountains.012
+		registered as also a user of material:  Material.001
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Mountains.011
+		registered as also a user of material:  Material.001
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Mountains.000
+		registered as also a user of material:  Material.001
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Tower.001
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Windows
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Mountains.Multimaterial#32
+		num positions      :  123
+		num normals        :  123
+		num uvs            :  246
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  264
+	processing begun of mesh:  Ivy.004
+		processing begun of Standard material:  Ivy
+			Diffuse texture found "Texture.014"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  18
+		num normals        :  18
+		num uvs            :  36
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  48
+	processing begun of mesh:  Tower.000
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Windows
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Mountains.Multimaterial#33
+		num positions      :  123
+		num normals        :  123
+		num uvs            :  246
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  264
+	processing begun of mesh:  Cylinder.001
+		registered as also a user of material:  Box.001
+		num positions      :  71
+		num normals        :  71
+		num uvs            :  142
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  99
+	processing begun of mesh:  Cylinder.000
+		registered as also a user of material:  Box.001
+		num positions      :  71
+		num normals        :  71
+		num uvs            :  142
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  99
+	processing begun of mesh:  Ivy.003
+		registered as also a user of material:  Ivy
+		num positions      :  18
+		num normals        :  18
+		num uvs            :  36
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  48
+	processing begun of mesh:  Ivy.002
+		registered as also a user of material:  Ivy
+		num positions      :  18
+		num normals        :  18
+		num uvs            :  36
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  48
+	processing begun of mesh:  Ivy.001
+		registered as also a user of material:  Ivy
+		num positions      :  18
+		num normals        :  18
+		num uvs            :  36
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  48
+	processing begun of mesh:  Barrel.002
+		processing begun of Standard material:  Barrel
+			Diffuse texture found "Texture.015"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  102
+		num normals        :  102
+		num uvs            :  204
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  150
+	processing begun of mesh:  Tent_new.001
+		processing begun of Standard material:  Material.002
+		processing begun of Standard material:  Tent.001
+			Diffuse texture found "Tex.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Mountains.Multimaterial#34
+		num positions      :  86
+		num normals        :  86
+		num uvs            :  172
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  270
+		WARNING: # of 0 area faces found:  1
+	processing begun of mesh:  Barrel.000
+		registered as also a user of material:  Barrel
+		num positions      :  102
+		num normals        :  102
+		num uvs            :  204
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  150
+	processing begun of mesh:  Mountains.008
+		registered as also a user of material:  Material.001
+		num positions      :  32
+		num normals        :  32
+		num uvs            :  64
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  138
+	processing begun of mesh:  Mountains.004
+		registered as also a user of material:  Material.001
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Mountains.007
+		registered as also a user of material:  Material.001
+		num positions      :  8
+		num normals        :  8
+		num uvs            :  16
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  21
+	processing begun of mesh:  Mountains.006
+		registered as also a user of material:  Material.001
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Mountains.005
+		registered as also a user of material:  Material.001
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Mountains.001
+		registered as also a user of material:  Material.001
+		num positions      :  53
+		num normals        :  53
+		num uvs            :  106
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  243
+	processing begun of mesh:  Forest_ground1AO
+		registered as also a user of material:  Forest_ground1AO
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Birch-tree_Module
+		processing begun of Standard material:  Birch-tree
+			Diffuse texture found "Birch-tree"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  korona2.000
+			Diffuse texture found "korona2.000"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  root.000
+			Diffuse texture found "Texture.019"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Stone_small.001
+			Diffuse texture found "Tex.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Log.001
+			Diffuse texture found "Tex.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Huba
+			Diffuse texture found "Huba"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Log_old
+			Diffuse texture found "Log_old"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Ivy.001
+			Diffuse texture found "Texture.020"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  Bush3.000
+			Diffuse texture found "Bush3.000"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of multimaterial:  Mountains.Multimaterial#35
+		num positions      :  186
+		num normals        :  186
+		num uvs            :  372
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  Barrel.003
+		registered as also a user of material:  Barrel
+		num positions      :  102
+		num normals        :  102
+		num uvs            :  204
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  150
+	processing begun of mesh:  Box.001
+		registered as also a user of material:  Box
+		num positions      :  23
+		num normals        :  23
+		num uvs            :  46
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  30
+	processing begun of mesh:  Tent_new
+		registered as also a user of material:  Material.002
+		registered as also a user of material:  Tent.001
+		processing begun of multimaterial:  Mountains.Multimaterial#36
+		num positions      :  86
+		num normals        :  86
+		num uvs            :  172
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  270
+		WARNING: # of 0 area faces found:  1
+	processing begun of mesh:  Fireplace.001
+		processing begun of Standard material:  Stone_small
+			Diffuse texture found "Tex.004"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Log
+			Diffuse texture found "Tex.005"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Mountains.Multimaterial#37
+		num positions      :  420
+		num normals        :  420
+		num uvs            :  840
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  480
+	processing begun of mesh:  Fireplace
+		registered as also a user of material:  Stone_small
+		registered as also a user of material:  Log
+		processing begun of multimaterial:  Mountains.Multimaterial#38
+		num positions      :  719
+		num normals        :  719
+		num uvs            :  1438
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  954
+	WARNING: The following camera not visible in scene thus ignored: Camera
+	processing begun of mesh:  Chest
+		processing begun of Standard material:  Chest
+			Diffuse texture found "Texture.013"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  71
+		num normals        :  71
+		num uvs            :  142
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  102
+	processing begun of mesh:  Ivy
+		registered as also a user of material:  Ivy
+		num positions      :  18
+		num normals        :  18
+		num uvs            :  36
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  48
+	processing begun of mesh:  Cylinder.004
+		registered as also a user of material:  Box.001
+		num positions      :  71
+		num normals        :  71
+		num uvs            :  142
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  99
+	processing begun of mesh:  Chickencoop.001
+		registered as also a user of material:  Carriage
+		registered as also a user of material:  Rooster
+		registered as also a user of material:  rooster1
+		registered as also a user of material:  Rooster.001
+		registered as also a user of material:  Material.005
+		registered as also a user of material:  Material.009
+		registered as also a user of material:  Windows.001
+		registered as also a user of material:  Wooden_Wall.001
+		registered as also a user of material:  Godło.001
+		registered as also a user of material:  Roof.001
+		registered as also a user of material:  Material.010
+		registered as also a user of material:  Material.011
+		processing begun of multimaterial:  Mountains.Multimaterial#39
+		num positions      :  161
+		num normals        :  161
+		num uvs            :  322
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  216
+	processing begun of mesh:  Carriage
+		registered as also a user of material:  Carriage.001
+		registered as also a user of material:  Material.012
+		processing begun of multimaterial:  Mountains.Multimaterial#40
+		num positions      :  32
+		num normals        :  32
+		num uvs            :  64
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  48
+	processing begun of mesh:  Skeleton.010
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		registered as also a user of material:  Material.015
+		processing begun of multimaterial:  Mountains.Multimaterial#41
+		num positions      :  560
+		num normals        :  560
+		num uvs            :  1120
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1542
+	processing begun of mesh:  Skeleton.012
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		registered as also a user of material:  Material.015
+		registered as also a user of material:  Material.004
+		registered as also a user of material:  Windows
+		registered as also a user of material:  Wooden_Wall
+		registered as also a user of material:  Godło
+		registered as also a user of material:  Roof
+		registered as also a user of material:  Material.007
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  Mountains.Multimaterial#42
+		num positions      :  125
+		num normals        :  125
+		num uvs            :  250
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  396
+	processing begun of mesh:  Skeleton.014
+		registered as also a user of material:  Material.013
+		registered as also a user of material:  Material.014
+		registered as also a user of material:  Material.015
+		processing begun of multimaterial:  Mountains.Multimaterial#43
+		num positions      :  113
+		num normals        :  113
+		num uvs            :  226
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  336
+	processing begun of mesh:  Godło
+		registered as also a user of material:  Godło.002
+		num positions      :  12
+		num normals        :  12
+		num uvs            :  24
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  18
+	processing begun of mesh:  Hair
+		processing begun of Standard material:  Hair
+			Diffuse texture found "Texture.029"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.021
+		processing begun of multimaterial:  Mountains.Multimaterial#44
+		num positions      :  485
+		num normals        :  485
+		num uvs            :  970
+		num uvs2           :  0
+		num colors         :  1940
+		num indices        :  1032
+	processing begun of mesh:  larch
+		processing begun of Standard material:  larch.001
+			Diffuse texture found "larch"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Forest_module.003
+		registered as also a user of material:  Bush4.002
+		registered as also a user of material:  korona2.003
+		registered as also a user of material:  root.003
+		registered as also a user of material:  Stone_small.004
+		registered as also a user of material:  Log.004
+		registered as also a user of material:  Huba.003
+		registered as also a user of material:  Log_old.003
+		registered as also a user of material:  Ivy.004
+		registered as also a user of material:  Bush3.003
+		registered as also a user of material:  Forest_seamless.001
+		registered as also a user of material:  Fern.001
+		registered as also a user of material:  Grass
+		processing begun of multimaterial:  Mountains.Multimaterial#45
+		num positions      :  486
+		num normals        :  486
+		num uvs            :  972
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1032
+	processing begun of light (HEMI):  Sun
+	WARNING: The following lamp not visible in scene thus ignored: Lamp Day
+	WARNING: The following lamp not visible in scene thus ignored: Hemi Scene2
+	processing begun of light (SPOT):  Point.003
+	processing begun of light (SPOT):  Point.001
+	processing begun of light (SPOT):  Point.002
+	processing begun of light (POINT):  Point
+	WARNING: The following lamp not visible in scene thus ignored: Lamp Night
+========= Writing of scene file started =========
+========= Writing of scene file completed =========
+========= end of processing =========
+elapsed time:  0 min, 3.387 secs

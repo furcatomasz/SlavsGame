@@ -63,7 +63,7 @@ class Game {
     }
 
     createScene(): Game {
-        new Simple().initScene(this);
+        new Castle().initScene(this);
 
         return this;
     }

@@ -179,7 +179,7 @@ class SocketIOClient {
             game.player = new Player(game, data.id, playerName, true, activeCharacter);
             game.player.setItems(activeCharacter.items);
             let activeCharacter = data.characters[data.activePlayer];
-            game.player.mesh.position = new BABYLON.Vector3(activeCharacter.positionX, activeCharacter.positionY, activeCharacter.positionZ);
+            game.player.mesh.position = new BABYLON.Vector3(data.p.x, data.p.y, data.p.z);
             game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
 

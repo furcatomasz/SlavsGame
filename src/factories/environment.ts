@@ -15,8 +15,11 @@ class Environment {
         this.colliders = [];
 
         //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
-        let light = game.getScene().lights[0];
-        light.intensity = 1;
+        for (let i = 0; i < scene.lights.length; i++) {
+            let light = scene.lights[i];
+            light.intensity = (light.intensity/3);
+            //light.range = 47;
+        }
 
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
@@ -25,34 +28,15 @@ class Environment {
             let sceneMesh = scene.meshes[i];
             let meshName = scene.meshes[i]['name'];
 
-            if (meshName.search("Forest_ground") >= 0) {
+            if (meshName.search("Ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
                 //sceneMesh.receiveShadows = true;
-            } else if (meshName.search("Spruce") >= 0) {
-                sceneMesh.isPickable = false;
-                trees.push(sceneMesh);
-                this.colliders.push(sceneMesh);
-            } else if (meshName.search("Fance") >= 0) {
+            } else {
                 this.colliders.push(sceneMesh);
             }
 
-
         }
-
-        for (let i = 0; i < trees.length; i++) {
-            let meshTree = trees[i];
-
-            let minimum = meshTree.getBoundingInfo().boundingBox.minimum.clone();
-            let maximum = meshTree.getBoundingInfo().boundingBox.maximum.clone();
-            let scaling = BABYLON.Matrix.Scaling(0.5, 1, 0.5);
-
-            minimum = BABYLON.Vector3.TransformCoordinates(minimum, scaling);
-            maximum = BABYLON.Vector3.TransformCoordinates(maximum, scaling);
-            meshTree._boundingInfo = new BABYLON.BoundingInfo(minimum, maximum);
-            meshTree.computeWorldMatrix(true);
-        }
-        trees = null;
 
         ///Freeze world matrix all static meshes
         for (let i = 0; i < scene.meshes.length; i++) {
@@ -62,11 +46,6 @@ class Environment {
         ////fireplace
         let cone = scene.getMeshByName("Fireplace");
         if (cone) {
-            let fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 3, 0), scene);
-            fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-            fireplaceLight.parent = cone;
-            fireplaceLight.range = 140;
-
             let smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
             smokeSystem.start();
 
@@ -81,12 +60,12 @@ class Environment {
         }
 
         ///portal to town
-        let plane = scene.getMeshByName("Entrace_city");
+        let plane = scene.getMeshByName("Cave_entrace");
         if (plane) {
             this.entrace = plane;
             plane.visibility = 0;
             plane.isPickable = false;
-            let smokeSystem = new Particles.Entrace(game, plane).particleSystem;
+            let smokeSystem = new Particles.CaveEntrace(game, plane).particleSystem;
             smokeSystem.start();
 
             let listener = function listener() {
@@ -94,7 +73,7 @@ class Environment {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: plane
                 }, function () {
-                    game.sceneManager.changeScene(new SimpleBandit());
+                    game.sceneManager.changeScene(new Castle());
                     return this;
                 }));
 
@@ -102,7 +81,30 @@ class Environment {
             };
 
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        }
 
+        let plane = scene.getMeshByName("Castle_entrace");
+        console.log(plane);
+        if (plane) {
+            this.entrace = plane;
+            plane.visibility = 0;
+            plane.isPickable = false;
+            let smokeSystem = new Particles.CaveEntrace(game, plane).particleSystem;
+            smokeSystem.start();
+
+            let listener2 = function listener() {
+                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: plane
+                }, function () {
+                    game.sceneManager.changeScene(new Castle());
+                    return this;
+                }));
+
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
+            };
+
+            document.addEventListener(Events.PLAYER_CONNECTED, listener2);
         }
 
         ///register colliders

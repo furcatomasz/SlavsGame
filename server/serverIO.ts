@@ -110,17 +110,17 @@ namespace Server {
                 });
 
                 socket.on('updatePlayerPosition', function (data) {
-                    if ((player.lastPlayerUpdate + 1) < new Date().getTime() / 1000) {
-                        player.lastPlayerUpdate = new Date().getTime() / 1000;
-                        let playerId = player.characters[player.activePlayer].id;
-                        self.server.ormManager.structure.player.get(playerId,
-                            function (error, playerDatabase) {
-                                playerDatabase.positionX = data.p.x;
-                                playerDatabase.positionY = data.p.y;
-                                playerDatabase.positionZ = data.p.z;
-                                playerDatabase.save();
-                            });
-                    }
+                    //if ((player.lastPlayerUpdate + 1) < new Date().getTime() / 1000) {
+                    //    player.lastPlayerUpdate = new Date().getTime() / 1000;
+                    //    let playerId = player.characters[player.activePlayer].id;
+                    //    self.server.ormManager.structure.player.get(playerId,
+                    //        function (error, playerDatabase) {
+                    //            playerDatabase.positionX = data.p.x;
+                    //            playerDatabase.positionY = data.p.y;
+                    //            playerDatabase.positionZ = data.p.z;
+                    //            playerDatabase.save();
+                    //        });
+                    //}
 
                     player.p = data.p;
                     player.r = data.r;
@@ -321,7 +321,22 @@ namespace Server {
                     socket.broadcast.emit('removePlayer', player.id);
                 });
 
-                socket.on('changeScenePre', function () {
+                socket.on('changeScenePre', function (sceneData) {
+                    let sceneType = sceneData.sceneType;
+                    if(sceneType == 3) {
+                        player.p = {
+                            x: -73,
+                            y: 0,
+                            z: -4
+                        }
+                    } else if(sceneType == 2) {
+                        player.p = {
+                            x: 145,
+                            y: 0,
+                            z: -53
+                        }
+                    }
+
                     socket.emit('showPlayer', player);
 
                 });

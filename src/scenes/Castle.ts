@@ -6,52 +6,42 @@ class Castle extends Scene {
 
     static TYPE = 3;
 
-    public setOrthoCameraHeights(camera:BABYLON.Camera) {
-        var ratio = window.innerWidth / window.innerHeight;
-        var zoom = camera.orthoTop;
-        var newWidth = zoom * ratio;
-        camera.orthoLeft = -Math.abs(newWidth);
-        camera.orthoRight = newWidth;
-        camera.orthoBottom = -Math.abs(zoom);
-        camera.rotation = new BABYLON.Vector3(0.751115, 0.5, 0);
-
-        return camera;
-    }
-
     initScene(game:Game) {
         let self = this;
         game.sceneManager = this;
 
-        BABYLON.SceneLoader.Load("assets/scenes/Castle/", "Castle.babylon", game.engine, function (scene) {
+        BABYLON.SceneLoader.Load("assets/scenes/Castle/", "Castle1.1.babylon", game.engine, function (scene) {
             game.sceneManager = self;
             self
                 .setDefaults(game)
                 .optimizeScene(scene)
-                .setCamera(scene);
-             scene.debugLayer.show({
-                initialTab: 2
-             });
+                .setCamera(scene)
+                .setFog(scene)
+                .defaultPipeline(scene);
+
+            //scene.debugLayer.show({
+            //    initialTab: 2
+            // });
             scene.actionManager = new BABYLON.ActionManager(scene);
             let assetsManager = new BABYLON.AssetsManager(scene);
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
-                self.environment = new Environment(game, scene);
+                self.environment = new EnvironmentCastle(game, scene);
                 self.initFactories(scene, assetsManager);
                 
                 assetsManager.onFinish = function (tasks) {
                     game.client.socket.emit('changeScenePre', {
-                        sceneType: Simple.TYPE,
+                        sceneType: Castle.TYPE,
                     });
 
                 };
                 assetsManager.load();
 
                 let listener = function listener() {
-                    console.log(2); 
                     game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePost', {
-                        sceneType: Simple.TYPE,
+                        sceneType: Castle.TYPE,
                     });
                     game.client.socket.emit('getQuests');
 

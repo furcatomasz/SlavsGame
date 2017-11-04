@@ -35,6 +35,19 @@ abstract class Scene {
         return this;
     }
 
+    public setFog(scene) {
+        scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+        scene.fogMode = BABYLON.Scene.FOGMODE_LINEAR;
+        scene.fogColor = new BABYLON.Color3(0, 0, 0);
+        scene.fogDensity = 0.03;
+
+        //Only if LINEAR
+        scene.fogStart = 20.0;
+        scene.fogEnd = 60.0;
+
+        return this;
+    }
+
     public setOrthoCameraHeights(camera:BABYLON.Camera) {
         var ratio = window.innerWidth / window.innerHeight;
         var zoom = camera.orthoTop;
@@ -42,7 +55,7 @@ abstract class Scene {
         camera.orthoLeft = -Math.abs(newWidth);
         camera.orthoRight = newWidth;
         camera.orthoBottom = -Math.abs(zoom);
-        camera.rotation = new BABYLON.Vector3(0.751115, 0, 0);
+        camera.rotation = new BABYLON.Vector3(0.75, 0.75, 0);
 
         return camera;
     }
@@ -52,7 +65,7 @@ abstract class Scene {
         scene.fogEnabled = true;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
-        scene.postProcessesEnabled = false;
+        scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
         scene.audioEnabled = false;
         return this;
@@ -77,52 +90,52 @@ abstract class Scene {
     }
 
     public defaultPipeline(scene: BABYLON.Scene) {
-    //    let self = this;
-    //var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
-    //defaultPipeline.bloomEnabled = true;
-    //defaultPipeline.fxaaEnabled = true;
-    //defaultPipeline.imageProcessingEnabled = false;
-    //defaultPipeline.bloomWeight = 0.25;
-    //
-    //var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    //
-    //var panel = new BABYLON.GUI.StackPanel();
-    //panel.width = "200px";
-    //panel.isVertical = true;
-    //panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    //panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-    //advancedTexture.addControl(panel)
-    //
-    //var addCheckbox = function(text, func, initialValue, left) {
-    //    var checkbox = new BABYLON.GUI.Checkbox();
-    //    checkbox.width = "20px";
-    //    checkbox.height = "20px";
-    //    checkbox.isChecked = initialValue;
-    //    checkbox.color = "green";
-    //    checkbox.onIsCheckedChangedObservable.add(function(value) {
-    //        func(value);
-    //    });
-    //    if(self.game.gui) {
-    //        self.game.gui.registerBlockMoveCharacter(checkbox);
-    //    }
-    //    var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
-    //    header.height = "30px";
-    //    header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-    //
-    //    if (left) {
-    //        header.left = left;
-    //    }
-    //
-    //    panel.addControl(header);
-    //}
-    //
-    //addCheckbox("fxaa", function(value) {
-    //    defaultPipeline.fxaaEnabled = value;
-    //}, defaultPipeline.fxaaEnabled );
-    //
-    //addCheckbox("bloom", function(value) {
-    //    defaultPipeline.bloomEnabled = value;
-    //}, defaultPipeline.bloomEnabled);
+        let self = this;
+    var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
+    defaultPipeline.bloomEnabled = true;
+    defaultPipeline.fxaaEnabled = true;
+    defaultPipeline.imageProcessingEnabled = false;
+    defaultPipeline.bloomWeight = 0.15;
+
+    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+    var panel = new BABYLON.GUI.StackPanel();
+    panel.width = "200px";
+    panel.isVertical = true;
+    panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    advancedTexture.addControl(panel)
+
+    var addCheckbox = function(text, func, initialValue, left) {
+        var checkbox = new BABYLON.GUI.Checkbox();
+        checkbox.width = "20px";
+        checkbox.height = "20px";
+        checkbox.isChecked = initialValue;
+        checkbox.color = "green";
+        checkbox.onIsCheckedChangedObservable.add(function(value) {
+            func(value);
+        });
+        if(self.game.gui) {
+            self.game.gui.registerBlockMoveCharacter(checkbox);
+        }
+        var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
+        header.height = "30px";
+        header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+
+        if (left) {
+            header.left = left;
+        }
+
+        panel.addControl(header);
+    }
+
+    addCheckbox("fxaa", function(value) {
+        defaultPipeline.fxaaEnabled = value;
+    }, defaultPipeline.fxaaEnabled );
+
+    addCheckbox("bloom", function(value) {
+        defaultPipeline.bloomEnabled = value;
+    }, defaultPipeline.bloomEnabled);
 
 
 }

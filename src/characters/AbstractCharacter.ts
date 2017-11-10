@@ -68,7 +68,7 @@ abstract class AbstractCharacter {
     /**
      * ANIMATIONS
      */
-    public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null):void {
+    public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null, loop: boolean = false):void {
         if (this.animation && ! this.attackAnimation) {
             this.animation.stop();
         } else if (this.animation && this.attackAnimation) {
@@ -87,7 +87,7 @@ abstract class AbstractCharacter {
                     if(callbackEnd) {
                         callbackStart();
                     }
-                    self.animation = skeleton.beginAnimation(animation, false, this.statistics.getAttackSpeed() / 100, function () {
+                    self.animation = skeleton.beginAnimation(animation, loop, this.statistics.getAttackSpeed() / 100, function () {
                         if(callbackEnd) {
                             callbackEnd();
                         }

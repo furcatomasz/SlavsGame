@@ -29,6 +29,7 @@ class SocketIOClient {
             self.characters = data.characters;
             self
                 .updatePlayers()
+                .updateEnemies()
                 .removePlayer()
                 .connectPlayer()
                 .refreshPlayer()
@@ -287,6 +288,72 @@ class SocketIOClient {
                 }
             });
         });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected updateEnemies() {
+        var game = this.game;
+        let activeTargetPoints = [];
+        this.socket.on('updateEnemy', function (data) {
+            let updatedEnemy = data.enemy;
+            let enemyKey = data.enemyKey;
+            let enemy = game.enemies[enemyKey];
+
+            let mesh = enemy.mesh;
+            mesh.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
+            if (activeTargetPoints[enemyKey] !== undefined) {
+                self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
+            }
+
+            if (updatedEnemy.attack == true) {
+                enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, true);
+
+                return;
+            } else if (updatedEnemy.target) {
+                let targetMesh = null;
+                if(enemy.animation) {
+                    enemy.animation.stop();
+                }
+                game.remotePlayers.forEach(function (socketRemotePlayer) {
+                    if (updatedEnemy.target == socketRemotePlayer.id) {
+                        targetMesh = socketRemotePlayer.mesh;
+                    }
+                });
+
+                if(!targetMesh && game.player.id == updatedEnemy.target) {
+                    targetMesh = game.player.mesh;
+                }
+
+                if(targetMesh) {
+                    activeTargetPoints[enemyKey] = function () {
+                        mesh.lookAt(targetMesh.position);
+
+                        let rotation = mesh.rotation;
+                        if (mesh.rotationQuaternion) {
+                            rotation = mesh.rotationQuaternion.toEulerAngles();
+                        }
+                        rotation.negate();
+                        let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                        mesh.moveWithCollisions(forwards);
+                        mesh.position.y = 0;
+
+                        if(enemy.animation) {
+
+                        }
+                        enemy.runAnimationWalk(false);
+
+                    }
+
+                    self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
+                }
+            }
+
+
+        })
 
         return this;
     }

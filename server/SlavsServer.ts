@@ -2,6 +2,7 @@ let express = require('express');
 let app = express();
 let server = require('http').createServer(app);
 let io = require('socket.io')(server);
+let socketIOClient = require('socket.io-client');
 let orm = require("orm");
 let config = require("./../config.js");
 let BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");

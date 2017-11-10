@@ -2,17 +2,240 @@ var Server;
 (function (Server) {
     var BabylonManager = /** @class */ (function () {
         function BabylonManager(slavsServer) {
+            /* Game Data */
+            this.enemies = [];
+            this.players = [];
             this.slavsServer = slavsServer;
+            this.socket = socketIOClient.connect('http://127.0.0.1:' + config.server.port, { query: 'monsterServer=1' });
+            this.enemies = [];
+            this.players = [];
+            this.initEngine();
         }
         BabylonManager.prototype.initEngine = function () {
             this.engine = new BABYLON.NullEngine();
             var scene = new BABYLON.Scene(this.engine);
             this.scene = scene;
-            var light = new BABYLON.PointLight("Omni", new BABYLON.Vector3(20, 20, 100), scene);
             var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
+            this
+                .socketShowEnemies(scene)
+                .socketPlayerConnected(scene)
+                .socketUpdatePlayer(scene)
+                .removePlayer();
             this.engine.runRenderLoop(function () {
                 scene.render();
             });
+        };
+        /**
+         * @returns {SocketIOClient}
+         */
+        BabylonManager.prototype.socketShowEnemies = function (scene) {
+            var self = this;
+            this.socket.on('showEnemies', function (data) {
+                data.forEach(function (enemyData, key) {
+                    var enemy = self.enemies[key];
+                    if (!enemy) {
+                        var box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
+                        box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
+                        var visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
+                            width: 30,
+                            height: 1,
+                            size: 30
+                        }, scene);
+                        visibilityArea.parent = box;
+                        enemy = {
+                            mesh: box,
+                            haveTarget: false,
+                            activeTargetPoints: [],
+                            visibilityAreaMesh: visibilityArea
+                        };
+                        self.enemies[key] = enemy;
+                    }
+                });
+            });
+            return this;
+        };
+        BabylonManager.prototype.socketPlayerConnected = function (scene) {
+            var self = this;
+            this.socket.on('newPlayerConnected', function (data) {
+                console.log('connected new player');
+                data.forEach(function (socketRemotePlayer) {
+                    var remotePlayerKey = null;
+                    if (socketRemotePlayer.id !== self.socket.id) {
+                        self.players.forEach(function (remotePlayer, key) {
+                            if (remotePlayer.id == socketRemotePlayer.id) {
+                                remotePlayerKey = key;
+                                return;
+                            }
+                        });
+                        if (remotePlayerKey === null) {
+                            console.log('added new player to remote player array');
+                            var activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
+                            var box = BABYLON.Mesh.CreateBox(socketRemotePlayer.id, 3, scene, false);
+                            box.position = new BABYLON.Vector3(activePlayer.positionX, activePlayer.positionY, activePlayer.positionZ);
+                            box.actionManager = new BABYLON.ActionManager(scene);
+                            var remotePlayer = {
+                                id: socketRemotePlayer.id,
+                                mesh: box
+                            };
+                            self.players.push(remotePlayer);
+                            self.registerPlayerInEnemyActionManager(box);
+                        }
+                    }
+                });
+            });
+            return this;
+        };
+        /**
+         *
+         * @returns {SocketIOClient}
+         */
+        BabylonManager.prototype.removePlayer = function () {
+            var self = this;
+            this.socket.on('removePlayer', function (id) {
+                self.players.forEach(function (remotePlayer, key) {
+                    if (remotePlayer.id == id) {
+                        var player = self.players[key];
+                        //TODO: null engine bug
+                        player.mesh.actionManager.dispose();
+                        self.players.splice(key, 1);
+                    }
+                });
+            });
+            return this;
+        };
+        BabylonManager.prototype.registerPlayerInEnemyActionManager = function (playerMesh) {
+            var self = this;
+            this.enemies.forEach(function (enemy, key) {
+                enemy.activeTargetPoints[playerMesh.id] = function () {
+                    var mesh = enemy.mesh;
+                    console.log(key);
+                    mesh.lookAt(playerMesh.position);
+                    if (mesh.intersectsMesh(playerMesh)) {
+                        self.scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
+                    }
+                    var rotation = mesh.rotation;
+                    if (mesh.rotationQuaternion) {
+                        rotation = mesh.rotationQuaternion.toEulerAngles();
+                    }
+                    rotation.negate();
+                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                    mesh.moveWithCollisions(forwards);
+                    mesh.position.y = 0;
+                };
+                playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: enemy.mesh
+                }, function () {
+                    if (enemy.haveTarget) {
+                        self.socket.emit('setEnemyTarget', {
+                            enemyKey: key,
+                            position: enemy.mesh.position,
+                            target: playerMesh.id,
+                            attack: true
+                        });
+                        self.scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
+                        console.log('Box coliision enter: start attack' + playerMesh.id);
+                    }
+                }));
+                playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                    trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+                    parameter: enemy.mesh
+                }, function () {
+                    if (enemy.haveTarget) {
+                        self.socket.emit('setEnemyTarget', {
+                            enemyKey: key,
+                            position: enemy.mesh.position,
+                            target: playerMesh.id,
+                            attack: false
+                        });
+                        //self.scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
+                        console.log('Box coliision exit: stop attack' + playerMesh.id);
+                    }
+                }));
+                playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: enemy.visibilityAreaMesh
+                }, function () {
+                    if (!enemy.haveTarget) {
+                        self.socket.emit('setEnemyTarget', {
+                            enemyKey: key,
+                            position: enemy.mesh.position,
+                            target: playerMesh.id
+                        });
+                        enemy.haveTarget = true;
+                        self.scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
+                        self.scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
+                        console.log('coliision enter:' + playerMesh.id);
+                    }
+                }));
+                playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                    trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+                    parameter: enemy.visibilityAreaMesh
+                }, function () {
+                    if (enemy.haveTarget) {
+                        self.socket.emit('setEnemyTarget', {
+                            enemyKey: key,
+                            position: enemy.mesh.position,
+                            target: null
+                        });
+                        enemy.haveTarget = false;
+                        console.log('coliision exit:' + playerMesh.id);
+                    }
+                    self.scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
+                }));
+            });
+        };
+        BabylonManager.prototype.socketUpdatePlayer = function (scene) {
+            var self = this;
+            var activeTargetPoints = [];
+            this.socket.on('updatePlayer', function (updatedPlayer) {
+                var remotePlayerKey = null;
+                var player = null;
+                self.players.forEach(function (remotePlayer, key) {
+                    if (remotePlayer.id == updatedPlayer.id) {
+                        remotePlayerKey = key;
+                        return;
+                    }
+                });
+                if (remotePlayerKey != null) {
+                    player = self.players[remotePlayerKey].mesh;
+                    if (player) {
+                        if (updatedPlayer.attack == true) {
+                            console.log('playerAttack');
+                            return;
+                        }
+                        if (activeTargetPoints[remotePlayerKey] !== undefined) {
+                            scene.unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                        }
+                        if (updatedPlayer.targetPoint) {
+                            var mesh_1 = player;
+                            var targetPoint = updatedPlayer.targetPoint;
+                            var targetPointVector3_1 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                            mesh_1.lookAt(targetPointVector3_1);
+                            activeTargetPoints[remotePlayerKey] = function () {
+                                if (mesh_1.intersectsPoint(targetPointVector3_1)) {
+                                    //console.log('player intersect with target');
+                                    scene.unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                                }
+                                else {
+                                    var rotation = mesh_1.rotation;
+                                    if (mesh_1.rotationQuaternion) {
+                                        rotation = mesh_1.rotationQuaternion.toEulerAngles();
+                                    }
+                                    rotation.negate();
+                                    var animationRatio = scene.getAnimationRatio();
+                                    var walkSpeed = 2.3 * (125 / 100) / animationRatio;
+                                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                                    mesh_1.moveWithCollisions(forwards);
+                                    mesh_1.position.y = 0;
+                                }
+                            };
+                            scene.registerBeforeRender(activeTargetPoints[remotePlayerKey]);
+                        }
+                    }
+                }
+            });
+            return this;
         };
         return BabylonManager;
     }());
@@ -114,6 +337,7 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+var socketIOClient = require('socket.io-client');
 var orm = require("orm");
 var config = require("./../config.js");
 var BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");
@@ -165,6 +389,7 @@ var Server;
             var remotePlayers = this.remotePlayers;
             this.server = server;
             serverIO.on('connection', function (socket) {
+                var isMonsterServer = socket.handshake.query.monsterServer;
                 var player = {
                     id: socket.id,
                     characters: [],
@@ -186,16 +411,22 @@ var Server;
                     },
                     attack: false
                 };
-                ////CLEAR QUESTS
-                server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
-                    for (var _i = 0, playerQuests_1 = playerQuests; _i < playerQuests_1.length; _i++) {
-                        var playerQuest = playerQuests_1[_i];
-                        playerQuest.remove();
-                    }
-                });
-                self.refreshPlayerData(player, socket, function () {
-                    socket.emit('clientConnected', player);
-                });
+                if (!isMonsterServer) {
+                    ////CLEAR QUESTS
+                    server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
+                        for (var _i = 0, playerQuests_1 = playerQuests; _i < playerQuests_1.length; _i++) {
+                            var playerQuest = playerQuests_1[_i];
+                            playerQuest.remove();
+                        }
+                    });
+                    self.refreshPlayerData(player, socket, function () {
+                        socket.emit('clientConnected', player);
+                    });
+                }
+                else {
+                    player.activeScene = 2;
+                    socket.emit('showEnemies', enemies[player.activeScene]);
+                }
                 socket.on('getQuests', function () {
                     var emitData = {
                         quests: server.quests,
@@ -418,13 +649,6 @@ var Server;
                         }
                     });
                 });
-                //socket.on('getEquip', function (characterKey) {
-                //    let playerId = player.characters[characterKey].id;
-                //    self.server.ormManager.structure.playerItems.find({player_id: playerId},
-                //        function (error, itemsDatabase) {
-                //            socket.emit('getEquip', itemsDatabase);
-                //        });
-                //});
                 socket.on('disconnect', function () {
                     //if (player.activePlayer >= 0) {
                     //    let playerId = player.characters[player.activePlayer].id;
@@ -435,6 +659,15 @@ var Server;
                     remotePlayers.forEach(function (remotePlayer, key) {
                         if (remotePlayer.id == player.id || remotePlayer == null) {
                             remotePlayers.splice(key, 1);
+                        }
+                    });
+                    enemies.forEach(function (enemy, key) {
+                        if (enemy.target == player.id) {
+                            enemy.target = null;
+                            socket.broadcast.emit('updateEnemy', {
+                                enemy: enemy,
+                                enemyKey: key
+                            });
                         }
                     });
                     socket.broadcast.emit('removePlayer', player.id);
@@ -454,6 +687,12 @@ var Server;
                             y: 0,
                             z: -53
                         };
+                        //For tests
+                        player.p = {
+                            x: 35,
+                            y: 0,
+                            z: 8
+                        };
                     }
                     socket.emit('showPlayer', player);
                 });
@@ -463,6 +702,16 @@ var Server;
                     socket.emit('newPlayerConnected', remotePlayers);
                 });
                 ///Enemies
+                socket.on('setEnemyTarget', function (data) {
+                    var enemy = enemies[player.activeScene][data.enemyKey];
+                    enemy.position = data.position;
+                    enemy.target = data.target;
+                    enemy.attack = data.attack;
+                    socket.broadcast.emit('updateEnemy', {
+                        enemy: enemy,
+                        enemyKey: data.enemyKey
+                    });
+                });
                 socket.on('updateEnemy', function (enemyData) {
                     var enemy = enemies[player.activeScene][enemyData.enemyKey];
                     enemy.position = enemyData.position;

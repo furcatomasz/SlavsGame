@@ -2,7 +2,6 @@ namespace Server {
 
     export class BabylonManager {
 
-        protected slavsServer:SlavsServer;
         protected engine:BABYLON.NullEngine;
         protected scene:BABYLON.Scene;
         protected socket;
@@ -12,19 +11,19 @@ namespace Server {
         protected enemies = [];
         protected players = [];
 
-        constructor(slavsServer:SlavsServer) {
-            this.slavsServer = slavsServer;
-            this.socket = socketIOClient.connect('http://127.0.0.1:' + config.server.port, {query: 'monsterServer=1'});
+        constructor(canvas) {
+            this.socket = io.connect('http://127.0.0.1:' + 5000, {query: 'monsterServer=1'});
             this.enemies = [];
             this.players = [];
-            this.initEngine();
+            this.initEngine(canvas);
         }
 
-        public initEngine() {
-            this.engine = new BABYLON.NullEngine();
+        public initEngine(canvas) {
+            this.engine = new BABYLON.Engine(canvas);
             let scene = new BABYLON.Scene(this.engine);
             this.scene = scene;
             let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
+            camera.attachControl(canvas, true);
             this
                 .socketShowEnemies(scene)
                 .socketPlayerConnected(scene)
@@ -55,6 +54,7 @@ namespace Server {
                             height: 1,
                             size: 30
                         }, scene);
+                        visibilityArea.visibility = 0.5;
                         visibilityArea.parent = box;
 
                         enemy = {
@@ -140,9 +140,9 @@ namespace Server {
                     console.log(key                    );
                         mesh.lookAt(playerMesh.position);
 
-                        if(mesh.intersectsMesh(playerMesh)) {
-                            self.scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        }
+                        //if(mesh.intersectsMesh(playerMesh)) {
+                        //    self.scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
+                        //}
 
                         let rotation = mesh.rotation;
                         if (mesh.rotationQuaternion) {

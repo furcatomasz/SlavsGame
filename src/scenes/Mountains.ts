@@ -18,9 +18,9 @@ class Mountains extends Scene {
                 .setCamera(scene)
                 .setFog(scene)
                 .defaultPipeline(scene);
-             scene.debugLayer.show({
-                 initialTab: 2
-             });
+             //scene.debugLayer.show({
+             //    initialTab: 2
+             //});
 
             scene.actionManager = new BABYLON.ActionManager(scene);
             let assetsManager = new BABYLON.AssetsManager(scene);

@@ -10,6 +10,8 @@ namespace Server {
             let remotePlayers = this.remotePlayers;
             this.server = server;
             serverIO.on('connection', function (socket) {
+                let isMonsterServer = socket.handshake.query.monsterServer;
+
                 let player = {
                     id: socket.id,
                     characters: [],
@@ -32,16 +34,23 @@ namespace Server {
                     attack: false,
                 };
 
-                ////CLEAR QUESTS
-                server.ormManager.structure.playerQuest.allAsync().then(function(playerQuests) {
-                    for(let playerQuest of playerQuests) {
-                        playerQuest.remove();
-                    }
-                });
 
-                self.refreshPlayerData(player, socket, function() {
-                    socket.emit('clientConnected', player);
-                });
+                if(!isMonsterServer) {
+                    ////CLEAR QUESTS
+                    server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
+                        for (let playerQuest of playerQuests) {
+                            playerQuest.remove();
+                        }
+                    });
+
+                    self.refreshPlayerData(player, socket, function() {
+                        socket.emit('clientConnected', player);
+                    });
+                } else {
+                    player.activeScene = 2;
+                    socket.emit('showEnemies', enemies[player.activeScene]);
+                }
+
 
                 socket.on('getQuests', function () {
                     let emitData = {
@@ -297,14 +306,6 @@ namespace Server {
                     });
                 });
 
-                //socket.on('getEquip', function (characterKey) {
-                //    let playerId = player.characters[characterKey].id;
-                //    self.server.ormManager.structure.playerItems.find({player_id: playerId},
-                //        function (error, itemsDatabase) {
-                //            socket.emit('getEquip', itemsDatabase);
-                //        });
-                //});
-
                 socket.on('disconnect', function () {
                     //if (player.activePlayer >= 0) {
                     //    let playerId = player.characters[player.activePlayer].id;
@@ -316,6 +317,16 @@ namespace Server {
                     remotePlayers.forEach(function (remotePlayer, key) {
                         if (remotePlayer.id == player.id || remotePlayer == null) {
                             remotePlayers.splice(key, 1);
+                        }
+                    });
+
+                    enemies.forEach(function (enemy, key) {
+                        if (enemy.target == player.id) {
+                            enemy.target = null;
+                            socket.broadcast.emit('updateEnemy', {
+                                enemy: enemy,
+                                enemyKey: key
+                            });
                         }
                     });
                     socket.broadcast.emit('removePlayer', player.id);
@@ -335,6 +346,12 @@ namespace Server {
                             y: 0,
                             z: -53
                         }
+                        //For tests
+                        player.p = {
+                            x: 35,
+                            y: 0,
+                            z: 8
+                        }
                     }
 
                     socket.emit('showPlayer', player);
@@ -349,6 +366,18 @@ namespace Server {
                 });
 
                 ///Enemies
+                socket.on('setEnemyTarget', function (data) {
+                    let enemy = enemies[player.activeScene][data.enemyKey];
+                    enemy.position = data.position;
+                    enemy.target = data.target;
+                    enemy.attack = data.attack;
+                    socket.broadcast.emit('updateEnemy', {
+                        enemy: enemy,
+                        enemyKey: data.enemyKey
+                    });
+                });
+
+
                 socket.on('updateEnemy', function (enemyData) {
                     let enemy = enemies[player.activeScene][enemyData.enemyKey];
                     enemy.position = enemyData.position;

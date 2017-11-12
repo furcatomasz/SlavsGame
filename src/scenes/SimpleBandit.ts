@@ -35,7 +35,6 @@ class SimpleBandit extends Scene {
                 let listener = function listener() {
                     game.controller.registerControls(scene);
                     game.player.mesh.position = new BABYLON.Vector3(3, 0.1, 11);
-                    game.player.emitPosition();
 
                     game.client.socket.emit('changeScenePost', {
                         sceneType: SimpleBandit.TYPE,

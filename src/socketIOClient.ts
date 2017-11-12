@@ -268,7 +268,7 @@ class SocketIOClient {
                     enemy.target = enemyData.target;
                     enemy.mesh.position = position;
                     enemy.mesh.rotationQuaternion = rotationQuaternion;
-                    enemy.runAnimationWalk(false);
+                    enemy.runAnimationWalk();
                 } else {
                     let newMonster;
                     if (enemyData.type == 'worm') {
@@ -302,58 +302,58 @@ class SocketIOClient {
             let updatedEnemy = data.enemy;
             let enemyKey = data.enemyKey;
             let enemy = game.enemies[enemyKey];
-
-            let mesh = enemy.mesh;
-            mesh.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
-            if (activeTargetPoints[enemyKey] !== undefined) {
-                self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
-            }
-
-            if (updatedEnemy.attack == true) {
-                enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, true);
-
-                return;
-            } else if (updatedEnemy.target) {
-                let targetMesh = null;
-                if(enemy.animation) {
-                    enemy.animation.stop();
+            if(enemy) {
+                let mesh = enemy.mesh;
+                mesh.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
+                if (activeTargetPoints[enemyKey] !== undefined) {
+                    self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
                 }
-                game.remotePlayers.forEach(function (socketRemotePlayer) {
-                    if (updatedEnemy.target == socketRemotePlayer.id) {
-                        targetMesh = socketRemotePlayer.mesh;
+
+                if (updatedEnemy.attack == true) {
+                    enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, true);
+
+                    return;
+                } else if (updatedEnemy.target) {
+                    let targetMesh = null;
+                    if (enemy.animation) {
+                        enemy.animation.stop();
                     }
-                });
-
-                if(!targetMesh && game.player.id == updatedEnemy.target) {
-                    targetMesh = game.player.mesh;
-                }
-
-                if(targetMesh) {
-                    activeTargetPoints[enemyKey] = function () {
-                        mesh.lookAt(targetMesh.position);
-
-                        let rotation = mesh.rotation;
-                        if (mesh.rotationQuaternion) {
-                            rotation = mesh.rotationQuaternion.toEulerAngles();
+                    game.remotePlayers.forEach(function (socketRemotePlayer) {
+                        if (updatedEnemy.target == socketRemotePlayer.id) {
+                            targetMesh = socketRemotePlayer.mesh;
                         }
-                        rotation.negate();
-                        let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
-                        mesh.moveWithCollisions(forwards);
-                        mesh.position.y = 0;
+                    });
 
-                        if(enemy.animation) {
-
-                        }
-                        enemy.runAnimationWalk(false);
-
+                    if (!targetMesh && game.player.id == updatedEnemy.target) {
+                        targetMesh = game.player.mesh;
                     }
 
-                    self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
+                    if (targetMesh) {
+                        activeTargetPoints[enemyKey] = function () {
+                            mesh.lookAt(targetMesh.position);
+
+                            let rotation = mesh.rotation;
+                            if (mesh.rotationQuaternion) {
+                                rotation = mesh.rotationQuaternion.toEulerAngles();
+                            }
+                            rotation.negate();
+                            let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                            mesh.moveWithCollisions(forwards);
+                            mesh.position.y = 0;
+
+                            if (enemy.animation) {
+
+                            }
+                            enemy.runAnimationWalk();
+
+                        }
+
+                        self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
+                    }
                 }
             }
 
-
-        })
+        });
 
         return this;
     }
@@ -455,7 +455,7 @@ class SocketIOClient {
                         mesh.moveWithCollisions(forwards);
                         mesh.position.y = 0;
 
-                        player.runAnimationWalk(false);
+                        player.runAnimationWalk();
                     }
 
                 }
@@ -463,24 +463,6 @@ class SocketIOClient {
                 self.game.getScene().registerBeforeRender(activeTargetPoints[remotePlayerKey]);
             }
 
-
-        });
-
-        this.socket.on('updatePlayerPosition', function (updatedPlayer) {
-            let remotePlayerKey = null;
-            game.remotePlayers.forEach(function (remotePlayer, key) {
-                if (remotePlayer.id == updatedPlayer.id) {
-                    remotePlayerKey = key;
-                    return;
-                }
-            });
-
-            if (remotePlayerKey != null) {
-                let player = game.remotePlayers[remotePlayerKey];
-
-                player.mesh.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
-                player.mesh.rotationQuaternion = new BABYLON.Quaternion(updatedPlayer.r.x, updatedPlayer.r.y, updatedPlayer.r.z, updatedPlayer.r.w);
-            }
         });
 
         return this;

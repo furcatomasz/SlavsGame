@@ -29,7 +29,7 @@ class SlavsServer {
         this.enemies = this.enemyManager.getEnemies();
         this.quests = this.questManager.getQuests();
         this.serverFrontEnd = new Server.FrontEnd(this, app, express);
-        //this.babylonManager = new Server.BabylonManager(this);
+        this.babylonManager = new Server.BabylonManager(this);
         this.ormManager = new Server.OrmManager(this, orm, config);
         this.serverWebsocket = new Server.IO(this, io);
     }

@@ -1,28 +1,20 @@
-namespace Server {
-
-    export class BabylonManager {
-
-        protected engine:BABYLON.NullEngine;
-        protected scene:BABYLON.Scene;
-        protected socket;
-
-        /* Game Data */
-
-        protected enemies = [];
-        protected players = [];
-
-        constructor(canvas) {
-            this.socket = io.connect('http://127.0.0.1:' + 5000, {query: 'monsterServer=1'});
+var Server;
+(function (Server) {
+    var BabylonManager = /** @class */ (function () {
+        function BabylonManager(canvas) {
+            /* Game Data */
+            this.enemies = [];
+            this.players = [];
+            this.socket = io.connect('http://127.0.0.1:' + 5000, { query: 'monsterServer=1' });
             this.enemies = [];
             this.players = [];
             this.initEngine(canvas);
         }
-
-        public initEngine(canvas) {
+        BabylonManager.prototype.initEngine = function (canvas) {
             this.engine = new BABYLON.Engine(canvas);
-            let scene = new BABYLON.Scene(this.engine);
+            var scene = new BABYLON.Scene(this.engine);
             this.scene = scene;
-            let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
+            var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
             camera.attachControl(canvas, true);
             this
                 .socketShowEnemies(scene)
@@ -31,32 +23,26 @@ namespace Server {
                 .removePlayer();
             this.engine.runRenderLoop(function () {
                 scene.render();
-            })
-
-
-        }
-
-
+            });
+        };
         /**
          * @returns {SocketIOClient}
          */
-        public socketShowEnemies(scene:BABYLON.Scene) {
-            let self = this;
+        BabylonManager.prototype.socketShowEnemies = function (scene) {
+            var self = this;
             this.socket.on('showEnemies', function (data) {
                 data.forEach(function (enemyData, key) {
-                    let enemy = self.enemies[key];
+                    var enemy = self.enemies[key];
                     if (!enemy) {
-                        let box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
+                        var box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
                         box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
-
-                        let visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
+                        var visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
                             width: 30,
                             height: 1,
                             size: 30
                         }, scene);
                         visibilityArea.visibility = 0.5;
                         visibilityArea.parent = box;
-
                         enemy = {
                             mesh: box,
                             target: false,
@@ -67,36 +53,28 @@ namespace Server {
                     }
                 });
             });
-
             return this;
-        }
-
-        public socketPlayerConnected(scene:BABYLON.Scene) {
-            let self = this;
-
+        };
+        BabylonManager.prototype.socketPlayerConnected = function (scene) {
+            var self = this;
             this.socket.on('newPlayerConnected', function (data) {
                 console.log('connected new player');
                 data.forEach(function (socketRemotePlayer) {
-                    let remotePlayerKey = null;
-
+                    var remotePlayerKey = null;
                     if (socketRemotePlayer.id !== self.socket.id) {
                         self.players.forEach(function (remotePlayer, key) {
                             if (remotePlayer.id == socketRemotePlayer.id) {
                                 remotePlayerKey = key;
-
                                 return;
                             }
                         });
-
                         if (remotePlayerKey === null) {
                             console.log('added new player to remote player array');
-
-                            let activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
-                            let box = BABYLON.Mesh.CreateBox(socketRemotePlayer.id, 3, scene, false);
+                            var activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
+                            var box = BABYLON.Mesh.CreateBox(socketRemotePlayer.id, 3, scene, false);
                             box.position = new BABYLON.Vector3(0, -5, 0);
                             box.actionManager = new BABYLON.ActionManager(scene);
-
-                            let remotePlayer = {
+                            var remotePlayer = {
                                 id: socketRemotePlayer.id,
                                 mesh: box
                             };
@@ -106,25 +84,23 @@ namespace Server {
                     }
                 });
             });
-
             return this;
-        }
-
+        };
         /**
          *
          * @returns {SocketIOClient}
          */
-        protected removePlayer() {
-            let self = this;
+        BabylonManager.prototype.removePlayer = function () {
+            var self = this;
             this.socket.on('removePlayer', function (id) {
                 self.players.forEach(function (remotePlayer, key) {
                     if (remotePlayer.id == id) {
-                        let player = self.players[key];
+                        var player = self.players[key];
                         //TODO: null engine bug
-                        console.log('remove player '+id);
+                        console.log('remove player ' + id);
                         player.mesh.actionManager.dispose();
-                        self.enemies.forEach(function(enemy, key) {
-                            if(enemy.target == id) {
+                        self.enemies.forEach(function (enemy, key) {
+                            if (enemy.target == id) {
                                 enemy.target = false;
                             }
                             self.scene.unregisterBeforeRender(enemy.activeTargetPoints[id]);
@@ -134,34 +110,29 @@ namespace Server {
                     }
                 });
             });
-
             return this;
-        }
-        
-        protected registerPlayerInEnemyActionManager(playerMesh: BABYLON.AbstractMesh) {
-            let self = this;
-
-            this.enemies.forEach(function(enemy, key) {
+        };
+        BabylonManager.prototype.registerPlayerInEnemyActionManager = function (playerMesh) {
+            var self = this;
+            this.enemies.forEach(function (enemy, key) {
                 enemy.activeTargetPoints[playerMesh.id] = function () {
-                        let mesh = enemy.mesh;
-                        mesh.lookAt(playerMesh.position.clone());
-
-                        let rotation = mesh.rotation;
-                        if (mesh.rotationQuaternion) {
-                            rotation = mesh.rotationQuaternion.toEulerAngles();
-                        }
-                        rotation.negate();
-                        let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
-                        mesh.moveWithCollisions(forwards);
-                        mesh.position.y = 0;
+                    var mesh = enemy.mesh;
+                    mesh.lookAt(playerMesh.position.clone());
+                    var rotation = mesh.rotation;
+                    if (mesh.rotationQuaternion) {
+                        rotation = mesh.rotationQuaternion.toEulerAngles();
+                    }
+                    rotation.negate();
+                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                    mesh.moveWithCollisions(forwards);
+                    mesh.position.y = 0;
                 };
-
                 ////start attack
                 playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: enemy.mesh
                 }, function () {
-                    if(enemy.target) {
+                    if (enemy.target) {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
@@ -171,14 +142,13 @@ namespace Server {
                         self.scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                         console.log('Box coliision enter: start attack' + playerMesh.id);
                     }
-                });
-
+                }));
                 ////stop attack
                 playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                     trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
                     parameter: enemy.mesh
                 }, function () {
-                    if(enemy.target) {
+                    if (enemy.target) {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
@@ -188,14 +158,13 @@ namespace Server {
                         self.scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                         console.log('Box coliision exit: stop attack' + playerMesh.id);
                     }
-                });
-
+                }));
                 ///start following
                 playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                parameter: enemy.visibilityAreaMesh
-            }, function () {
-                    if(!enemy.target) {
+                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: enemy.visibilityAreaMesh
+                }, function () {
+                    if (!enemy.target) {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
@@ -206,14 +175,13 @@ namespace Server {
                         self.scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                         console.log('coliision enter:' + playerMesh.id);
                     }
-            }));
-
+                }));
                 ///stop following
                 playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-                parameter: enemy.visibilityAreaMesh
-            }, function () {
-                    if(enemy.target) {
+                    trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+                    parameter: enemy.visibilityAreaMesh
+                }, function () {
+                    if (enemy.target) {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
@@ -222,78 +190,64 @@ namespace Server {
                         enemy.target = false;
                         console.log('coliision exit:' + playerMesh.id);
                     }
-
                     self.scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                 }));
             });
-
-        }
-
-        public socketUpdatePlayer(scene:BABYLON.Scene) {
-            let self = this;
-            let activeTargetPoints = [];
+        };
+        BabylonManager.prototype.socketUpdatePlayer = function (scene) {
+            var self = this;
+            var activeTargetPoints = [];
             this.socket.on('updatePlayer', function (updatedPlayer) {
-                let remotePlayerKey = null;
-                let player = null;
-
+                var remotePlayerKey = null;
+                var player = null;
                 self.players.forEach(function (remotePlayer, key) {
                     if (remotePlayer.id == updatedPlayer.id) {
                         remotePlayerKey = key;
                         return;
                     }
                 });
-
                 if (remotePlayerKey != null) {
                     player = self.players[remotePlayerKey].mesh;
                     player.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
                     if (player) {
                         if (updatedPlayer.attack == true) {
                             console.log('playerAttack');
-
                             return;
                         }
-
                         if (activeTargetPoints[remotePlayerKey] !== undefined) {
                             scene.unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
                         }
-
                         if (updatedPlayer.targetPoint) {
-                            let mesh = player;
-                            let targetPoint = updatedPlayer.targetPoint;
-                            let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                            mesh.lookAt(targetPointVector3);
-
+                            var mesh_1 = player;
+                            var targetPoint = updatedPlayer.targetPoint;
+                            var targetPointVector3_1 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                            mesh_1.lookAt(targetPointVector3_1);
                             activeTargetPoints[remotePlayerKey] = function () {
-                                if (mesh.intersectsPoint(targetPointVector3)) {
+                                if (mesh_1.intersectsPoint(targetPointVector3_1)) {
                                     //console.log('player intersect with target');
                                     scene.unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
-                                } else {
-                                    let rotation = mesh.rotation;
-                                    if (mesh.rotationQuaternion) {
-                                        rotation = mesh.rotationQuaternion.toEulerAngles();
+                                }
+                                else {
+                                    var rotation = mesh_1.rotation;
+                                    if (mesh_1.rotationQuaternion) {
+                                        rotation = mesh_1.rotationQuaternion.toEulerAngles();
                                     }
                                     rotation.negate();
-                                    let animationRatio = scene.getAnimationRatio();
-                                    let walkSpeed = 2.3 * (125 / 100) / animationRatio;
-
-                                    let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
-                                    mesh.moveWithCollisions(forwards);
-                                    mesh.position.y = 0;
-
+                                    var animationRatio = scene.getAnimationRatio();
+                                    var walkSpeed = 2.3 * (125 / 100) / animationRatio;
+                                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                                    mesh_1.moveWithCollisions(forwards);
+                                    mesh_1.position.y = 0;
                                 }
-
-                            }
-
+                            };
                             scene.registerBeforeRender(activeTargetPoints[remotePlayerKey]);
                         }
                     }
                 }
             });
-
             return this;
-
-        }
-
-    }
-}
-
+        };
+        return BabylonManager;
+    }());
+    Server.BabylonManager = BabylonManager;
+})(Server || (Server = {}));

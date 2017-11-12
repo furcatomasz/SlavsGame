@@ -119,7 +119,7 @@ abstract class AbstractCharacter {
         }
     }
 
-    public runAnimationWalk(emit:boolean):void {
+    public runAnimationWalk():void {
         let self = this;
         let childMesh = this.mesh;
         let loopAnimation = true;
@@ -135,9 +135,6 @@ abstract class AbstractCharacter {
                     self.animation = null;
                     self.sfxWalk.stop();
                     self.onWalkEnd();
-                    if (emit) {
-                        self.emitPosition();
-                    }
                 });
 
 

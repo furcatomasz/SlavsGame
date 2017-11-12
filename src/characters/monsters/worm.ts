@@ -28,15 +28,11 @@ class Worm extends Monster {
         super(name, game);
     }
 
-    public runAnimationWalk(emit:boolean):void {
+    public runAnimationWalk():void {
         let self = this;
         let loopAnimation = this.isControllable;
 
         let skeleton = this.mesh.skeleton;
-
-        if (emit) {
-            this.emitPosition();
-        }
 
         if (!this.animation && skeleton) {
             self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {

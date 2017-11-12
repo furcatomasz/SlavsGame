@@ -27,7 +27,6 @@ class Mouse extends Controller {
                     self.ball.position = self.targetPoint;
                     self.ball.visibility = 1;
 
-                    self.game.player.emitPosition();
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint,
                         playerPosition: self.game.player.mesh.position

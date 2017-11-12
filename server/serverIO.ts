@@ -118,28 +118,11 @@ namespace Server {
                     socket.broadcast.emit('newPlayerConnected', remotePlayers);
                 });
 
-                socket.on('updatePlayerPosition', function (data) {
-                    //if ((player.lastPlayerUpdate + 1) < new Date().getTime() / 1000) {
-                    //    player.lastPlayerUpdate = new Date().getTime() / 1000;
-                    //    let playerId = player.characters[player.activePlayer].id;
-                    //    self.server.ormManager.structure.player.get(playerId,
-                    //        function (error, playerDatabase) {
-                    //            playerDatabase.positionX = data.p.x;
-                    //            playerDatabase.positionY = data.p.y;
-                    //            playerDatabase.positionZ = data.p.z;
-                    //            playerDatabase.save();
-                    //        });
-                    //}
-
-                    player.p = data.p;
-                    player.r = data.r;
-                    socket.broadcast.emit('updatePlayerPosition', player);
-                });
-
                 socket.on('setTargetPoint', function (targetPoint) {
                     player.attack = null;
                     player.targetPoint = targetPoint.position;
                     player.isRunning = targetPoint.isRunning;
+                    player.p = targetPoint.playerPosition;
                     socket.broadcast.emit('updatePlayer', player);
                     socket.emit('updatePlayer', player);
 

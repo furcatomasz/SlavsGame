@@ -22,17 +22,13 @@ class BigWorm extends Monster {
         super(name, game);
     }
 
-    public runAnimationWalk(emit:boolean):void {
+    public runAnimationWalk():void {
         let self = this;
         var childMesh = this.mesh;
         let loopAnimation = this.isControllable;
 
         if (childMesh) {
             let skeleton = childMesh.skeleton;
-
-            if (emit) {
-                this.emitPosition();
-            }
 
             if (!this.animation) {
                 self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {

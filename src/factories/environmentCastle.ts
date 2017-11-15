@@ -92,6 +92,13 @@ class EnvironmentCastle {
         //
         //new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, {loop: true, autoplay: true});
 
+        var plane = BABYLON.Mesh.CreateGround("waterMesh", 80, 30, 32, game.getScene(), false);
+        plane.visibility = 0;
+        plane.position.x = -110;
+        plane.position.y = -3;
+        plane.position.z = -4;
+        let fogParticleSystem = new Particles.Fog(game, plane);
+        fogParticleSystem.particleSystem.start();
     }
 
     protected enableDayAndNight(game, light:BABYLON.Light):BABYLON.Light {

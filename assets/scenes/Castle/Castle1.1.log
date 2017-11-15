@@ -1,13 +1,56 @@
-Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
+Exporter version: 5.4.2, Blender version: 2.78 (sub 0)
 ========= Conversion from Blender to Babylon.js =========
 	Scene settings used:
 		selected layers only:  true
 		flat shading entire scene:  false
 		inline textures:  false
-		texture directory:  F:\New Folder\
+		texture directory:  F:\Slavs\Babylon\Maps\Castle\
 	Python World class constructor completed
-	processing begun of camera (UniversalCamera):  Camera
+	processing begun of mesh:  Box.001
+		processing begun of Standard material:  Barrel
+			Diffuse texture found "Texture.015"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  104
+		num normals        :  104
+		num uvs            :  208
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  150
+	processing begun of mesh:  Ground
+		processing begun of Standard material:  Ground
+			Diffuse texture found "Ground"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Castle_exit
+		processing begun of Standard material:  Fire
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	WARNING: The following camera not visible in scene thus ignored: Camera
 	processing begun of mesh:  Tower.018
+		processing begun of Standard material:  Material.007
+			Diffuse texture found "Texture.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  123
+		num normals        :  123
+		num uvs            :  246
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  264
+	processing begun of mesh:  Ivy.000
+		processing begun of Standard material:  Ivy
+			Diffuse texture found "Texture.014"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
 		processing begun of Standard material:  Material.004
 			Diffuse texture found "Texture.001"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
@@ -26,35 +69,13 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		processing begun of Standard material:  Roof
 			Diffuse texture found "Texture.009"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of Standard material:  Material.007
-			Diffuse texture found "Texture.003"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		processing begun of Standard material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#0
-		num positions      :  123
-		num normals        :  123
-		num uvs            :  246
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  264
-	processing begun of mesh:  Ivy.000
-		processing begun of Standard material:  Ivy
-			Diffuse texture found "Texture.014"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
 		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
+		processing begun of Standard material:  Material.008
 		processing begun of Standard material:  Bush3.001
 			Diffuse texture found "Bush3.001"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		processing begun of multimaterial:  Castle1_1.Multimaterial#1
+		processing begun of multimaterial:  Castle1_1.Multimaterial#0
 		num positions      :  24
 		num normals        :  24
 		num uvs            :  48
@@ -63,13 +84,6 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num indices        :  30
 	processing begun of mesh:  Tower.017
 		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#2
 		num positions      :  25
 		num normals        :  25
 		num uvs            :  50
@@ -106,7 +120,7 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		registered as also a user of material:  Roof
 		registered as also a user of material:  Material.007
 		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#3
+		processing begun of multimaterial:  Castle1_1.Multimaterial#1
 		num positions      :  0
 		num normals        :  0
 		num uvs            :  0
@@ -114,14 +128,7 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num colors         :  0
 		num indices        :  0
 	processing begun of mesh:  Wall.001
-		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
 		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#4
 		num positions      :  8
 		num normals        :  8
 		num uvs            :  16
@@ -136,7 +143,7 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		processing begun of Standard material:  root.001
 			Diffuse texture found "Texture.000"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  Castle1_1.Multimaterial#5
+		processing begun of multimaterial:  Castle1_1.Multimaterial#2
 		num positions      :  172
 		num normals        :  172
 		num uvs            :  344
@@ -144,21 +151,13 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num colors         :  0
 		num indices        :  330
 	processing begun of mesh:  Barrel.005
-		processing begun of Standard material:  Barrel
-			Diffuse texture found "Texture.015"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  102
-		num normals        :  102
-		num uvs            :  204
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  150
+		mesh is an instance of :  Box.001.  Processing halted.
 	processing begun of mesh:  Tower.009
 		mesh is an instance of :  Tower.018.  Processing halted.
 	processing begun of mesh:  Tower.000
 		mesh is an instance of :  Tower.018.  Processing halted.
 	processing begun of mesh:  Fire.005
-		processing begun of Standard material:  Fire
+		registered as also a user of material:  Fire
 		num positions      :  8
 		num normals        :  8
 		num uvs            :  0
@@ -176,15 +175,7 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 	processing begun of mesh:  Fire
 		mesh is an instance of :  Fire.005.  Processing halted.
 	processing begun of mesh:  Tower.013
-		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
 		processing begun of Standard material:  Rock
-		processing begun of multimaterial:  Castle1_1.Multimaterial#6
 		num positions      :  46
 		num normals        :  46
 		num uvs            :  92
@@ -192,27 +183,17 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num colors         :  0
 		num indices        :  252
 	processing begun of mesh:  Cylinder.006
-		processing begun of Standard material:  Round
-			Diffuse texture found "Texture.031"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of Standard material:  Material.018
-			Diffuse texture found "Texture.023"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 		processing begun of Standard material:  Perun.001
 			Diffuse texture found "Texture.042"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		processing begun of multimaterial:  Castle1_1.Multimaterial#7
-		num positions      :  475
-		num normals        :  475
-		num uvs            :  950
+		num positions      :  460
+		num normals        :  460
+		num uvs            :  920
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  1230
-	processing begun of mesh:  Ground
-		processing begun of Standard material:  Gate
-			Diffuse texture found "Texture.034"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num indices        :  1182
+	processing begun of mesh:  Ground.002
 		processing begun of Standard material:  Round2
 			Diffuse texture found "Texture.028"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
@@ -231,14 +212,13 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		processing begun of Standard material:  Grass_seamless_right
 			Diffuse texture found "Texture.025"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of Standard material:  Dirt_seamless
-			Diffuse texture found "Dirt_seamless"
+		processing begun of Standard material:  Round
+			Diffuse texture found "Texture.031"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		registered as also a user of material:  Round
 		processing begun of Standard material:  Road
 			Diffuse texture found "Texture.032"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  Castle1_1.Multimaterial#8
+		processing begun of multimaterial:  Castle1_1.Multimaterial#3
 		num positions      :  60
 		num normals        :  60
 		num uvs            :  120
@@ -246,71 +226,35 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num colors         :  0
 		num indices        :  90
 	processing begun of mesh:  Mountains.000
-		processing begun of Standard material:  Material.021
-			Diffuse texture found "Texture.024"
+		processing begun of Standard material:  Material.018
+			Diffuse texture found "Texture.023"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  212
-		num normals        :  212
-		num uvs            :  424
+		num positions      :  210
+		num normals        :  210
+		num uvs            :  420
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  972
+		num indices        :  948
 	processing begun of mesh:  Box
 		processing begun of Standard material:  Box
 			Diffuse texture found "Texture.021"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		processing begun of Standard material:  Carriage
-			Diffuse texture found "Carriage"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		processing begun of Standard material:  Rooster
-			Diffuse texture found "Texture.017"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		processing begun of Standard material:  rooster1
-		processing begun of Standard material:  Rooster.001
-			Diffuse texture found "Texture.018"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		processing begun of Standard material:  Material.005
-		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		registered as also a user of material:  Barrel
-		processing begun of multimaterial:  Castle1_1.Multimaterial#9
-		num positions      :  725
-		num normals        :  725
-		num uvs            :  1450
+		num positions      :  628
+		num normals        :  628
+		num uvs            :  1256
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  963
+		num indices        :  813
 	processing begun of mesh:  Wall
 		mesh is an instance of :  Wall.001.  Processing halted.
 	processing begun of mesh:  Tower.062
-		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of Standard material:  short_sword.001
-			Diffuse texture found "Texture.012"
+		processing begun of Standard material:  sword_shield
+			Diffuse texture found "Texture.004"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of Standard material:  Shield
-			Diffuse texture found "Texture.006"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of Standard material:  Material.014
-		processing begun of Standard material:  Material.015
-		processing begun of multimaterial:  Castle1_1.Multimaterial#10
-		num positions      :  712
-		num normals        :  712
-		num uvs            :  1424
+		num positions      :  705
+		num normals        :  705
+		num uvs            :  1410
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  1350
@@ -324,41 +268,28 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  306
-	processing begun of mesh:  wolf
-		processing begun of Standard material:  Material.013
-		processing begun of Standard material:  Material.016
-		processing begun of multimaterial:  Castle1_1.Multimaterial#11
-		num positions      :  939
-		num normals        :  939
-		num uvs            :  1878
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  999
 	processing begun of mesh:  Ivy.003
-		registered as also a user of material:  Ivy
-		num positions      :  36
-		num normals        :  36
-		num uvs            :  72
+		registered as also a user of material:  Bush3.001
+		num positions      :  162
+		num normals        :  162
+		num uvs            :  324
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  96
+		num indices        :  348
 	processing begun of mesh:  Barrel.003
-		mesh is an instance of :  Barrel.005.  Processing halted.
+		mesh is an instance of :  Box.001.  Processing halted.
 	processing begun of mesh:  Plane.026
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#12
-		num positions      :  244
-		num normals        :  244
-		num uvs            :  488
+		processing begun of Standard material:  roof_wall_window
+			Diffuse texture found "Texture.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  243
+		num normals        :  243
+		num uvs            :  486
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  423
+		num indices        :  453
+		WARNING: # of 0 area faces found:  34
 	processing begun of mesh:  Tower.007
 		mesh is an instance of :  Wall.001.  Processing halted.
 	processing begun of mesh:  Barrel.000
@@ -376,30 +307,15 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 	processing begun of mesh:  Barrel.001
 		mesh is an instance of :  Barrel.000.  Processing halted.
 	processing begun of mesh:  Tower.043
-		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
 		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#13
-		num positions      :  402
-		num normals        :  402
-		num uvs            :  804
+		num positions      :  401
+		num normals        :  401
+		num uvs            :  802
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  492
 	processing begun of mesh:  Plane.056
 		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Material.004
-		processing begun of Standard material:  Material.006
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#14
 		num positions      :  133
 		num normals        :  133
 		num uvs            :  266
@@ -408,38 +324,11 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num indices        :  156
 	processing begun of mesh:  Tower.054
 		mesh is an instance of :  Tower.018.  Processing halted.
-	processing begun of mesh:  Ivy.001
-		registered as also a user of material:  Ivy
-		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		registered as also a user of material:  Bush3.001
-		processing begun of multimaterial:  Castle1_1.Multimaterial#15
-		num positions      :  126
-		num normals        :  126
-		num uvs            :  252
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  252
 	processing begun of mesh:  Blackboard
-		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
 		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of Standard material:  Material.003
-			Diffuse texture found "Texture.001"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  Castle1_1.Multimaterial#16
-		num positions      :  64
-		num normals        :  64
-		num uvs            :  128
+		num positions      :  66
+		num normals        :  66
+		num uvs            :  132
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  102
@@ -461,7 +350,7 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		registered as also a user of material:  Roof
 		registered as also a user of material:  Material.007
 		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#17
+		processing begun of multimaterial:  Castle1_1.Multimaterial#4
 		num positions      :  0
 		num normals        :  0
 		num uvs            :  0
@@ -470,17 +359,6 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num indices        :  0
 	processing begun of mesh:  Plane.053
 		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Material.004
-		processing begun of Standard material:  Rpe
-		processing begun of Standard material:  Stone_wall
-			Diffuse texture found "Texture.035"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#18
 		num positions      :  519
 		num normals        :  519
 		num uvs            :  1038
@@ -540,14 +418,10 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 	processing begun of mesh:  Plane.033
 		mesh is an instance of :  Plane.053.  Processing halted.
 	processing begun of mesh:  Tower.016
-		registered as also a user of material:  Material.004
 		registered as also a user of material:  Windows
 		registered as also a user of material:  Wooden_Wall
 		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#19
+		processing begun of multimaterial:  Castle1_1.Multimaterial#5
 		num positions      :  367
 		num normals        :  367
 		num uvs            :  734
@@ -566,7 +440,7 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		registered as also a user of material:  Roof
 		registered as also a user of material:  Material.007
 		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#20
+		processing begun of multimaterial:  Castle1_1.Multimaterial#6
 		num positions      :  0
 		num normals        :  0
 		num uvs            :  0
@@ -575,13 +449,6 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num indices        :  0
 	processing begun of mesh:  Tower.011
 		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#21
 		num positions      :  150
 		num normals        :  150
 		num uvs            :  300
@@ -590,13 +457,6 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num indices        :  180
 	processing begun of mesh:  Tower.010
 		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#22
 		num positions      :  25
 		num normals        :  25
 		num uvs            :  50
@@ -616,7 +476,7 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		registered as also a user of material:  Material.007
 		registered as also a user of material:  Material.008
 		registered as also a user of material:  Rock
-		processing begun of multimaterial:  Castle1_1.Multimaterial#23
+		processing begun of multimaterial:  Castle1_1.Multimaterial#7
 		num positions      :  0
 		num normals        :  0
 		num uvs            :  0
@@ -625,16 +485,9 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		num indices        :  0
 	processing begun of mesh:  Tower.001
 		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of multimaterial:  Castle1_1.Multimaterial#24
-		num positions      :  174
-		num normals        :  174
-		num uvs            :  348
+		num positions      :  173
+		num normals        :  173
+		num uvs            :  346
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  210
@@ -643,22 +496,16 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 		processing begun of Standard material:  Material
 			Diffuse texture found "Texture.011"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		registered as also a user of material:  Material.004
-		registered as also a user of material:  Windows
-		registered as also a user of material:  Wooden_Wall
-		registered as also a user of material:  Godło
-		registered as also a user of material:  Roof
-		registered as also a user of material:  Material.007
-		registered as also a user of material:  Material.008
-		processing begun of Standard material:  Material.010
-		registered as also a user of material:  Shield
-		registered as also a user of material:  Material.014
-		registered as also a user of material:  Material.015
-		registered as also a user of material:  short_sword.001
-		processing begun of multimaterial:  Castle1_1.Multimaterial#25
-		num positions      :  2119
-		num normals        :  2119
-		num uvs            :  4238
+		processing begun of Standard material:  Shield
+			Diffuse texture found "Texture.006"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  short_sword.001
+			Diffuse texture found "Texture.012"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Castle1_1.Multimaterial#8
+		num positions      :  2127
+		num normals        :  2127
+		num uvs            :  4254
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  4326
@@ -677,4 +524,4 @@ Exporter version: 5.4.0, Blender version: 2.78 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 2.66 secs
+elapsed time:  0 min, 2.587 secs

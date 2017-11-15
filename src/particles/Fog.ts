@@ -4,39 +4,46 @@ namespace Particles {
     export class Fog extends AbstractParticle {
 
         protected initParticleSystem() {
-            var smokeSystem = new BABYLON.ParticleSystem("particles", 250, this.game.getScene());
-            smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
-            smokeSystem.emitter = this.emitter;
-            smokeSystem.minEmitBox = new BABYLON.Vector3(0.5, 1.5, 2.5);
-            smokeSystem.maxEmitBox = new BABYLON.Vector3(-0.5, 1.5, -0.5);
+            var fog = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
+            fog.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
+            fog.emitter = this.emitter; // the starting object, the emitter
+            fog.minEmitBox = new BABYLON.Vector3(-25, 1, -50); // Starting all from
+            fog.maxEmitBox = new BABYLON.Vector3(25, -2, 50); // To...
 
-            smokeSystem.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
-            smokeSystem.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
-            smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            fog.color1 = new BABYLON.Color4(0.9, 0.9, 0.9, 0.1);
+            fog.color2 = new BABYLON.Color4(1, 1, 1, 0.15);
+            fog.colorDead = new BABYLON.Color4(0.9, 0.9, 0.9, 0.1);
 
-            smokeSystem.minSize = 2;
-            smokeSystem.maxSize = 4;
+            // Big particles === less particles.
+            fog.minSize = 8.0;
+            fog.maxSize = 12.0;
 
-            smokeSystem.minLifeTime = 4.5;
-            smokeSystem.maxLifeTime = 4.5;
+            // Different life spans to avoid the entire fog dying out at the same time.
+            fog.minLifeTime = 100;
+            fog.maxLifeTime = 250;
 
-            smokeSystem.emitRate = 250;
+            // High emit rate to spawn the fog fast.
+            fog.emitRate = 10000;
 
-            smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            // Blend mode : BLENDMODE_ONEONE, or BLENDMODE_STANDARD
+            fog.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
 
-            smokeSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            fog.gravity = new BABYLON.Vector3(0, 0, 0);
 
-            smokeSystem.direction1 = new BABYLON.Vector3(-4, 0, -4);
-            smokeSystem.direction2 = new BABYLON.Vector3(-4, 0, -4);
+            fog.direction1 = new BABYLON.Vector3(-.1, 0, -.1);
+            fog.direction2 = new BABYLON.Vector3(.1, 0, .1);
 
-            smokeSystem.minAngularSpeed = 50;
-            smokeSystem.maxAngularSpeed = Math.PI;
+            fog.minAngularSpeed = -1.5;
+            fog.maxAngularSpeed = 1.5;
 
-            smokeSystem.minEmitPower = 1.5;
-            smokeSystem.maxEmitPower = 1.5;
-            smokeSystem.updateSpeed = 0.005;
+            fog.minEmitPower = .5;
+            fog.maxEmitPower = 1;
 
-            this.particleSystem = smokeSystem;
+            // Low updateSpeed gives a more natural look and feel.
+            fog.updateSpeed = 0.0025;
+
+
+            this.particleSystem = fog;
         }
     }
 }

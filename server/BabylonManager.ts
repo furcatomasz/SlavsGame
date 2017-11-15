@@ -98,7 +98,8 @@ namespace Server {
 
                             let remotePlayer = {
                                 id: socketRemotePlayer.id,
-                                mesh: box
+                                mesh: box,
+                                registeredFunction: null,
                             };
                             self.players.push(remotePlayer);
                             self.registerPlayerInEnemyActionManager(box);
@@ -122,13 +123,17 @@ namespace Server {
                         let player = self.players[key];
                         //TODO: null engine bug
                         console.log('remove player '+id);
-                        player.mesh.actionManager.dispose();
                         self.enemies.forEach(function(enemy, key) {
                             if(enemy.target == id) {
                                 enemy.target = false;
                             }
                             self.scene.unregisterBeforeRender(enemy.activeTargetPoints[id]);
                         });
+
+                        if(player.registeredFunction) {
+                            self.scene.unregisterBeforeRender(player.registeredFunction);
+                        }
+
                         player.mesh.dispose();
                         self.players.splice(key, 1);
                     }
@@ -253,8 +258,8 @@ namespace Server {
                             return;
                         }
 
-                        if (activeTargetPoints[remotePlayerKey] !== undefined) {
-                            scene.unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                        if (self.players[remotePlayerKey].registeredFunction !== undefined) {
+                            scene.unregisterBeforeRender(self.players[remotePlayerKey].registeredFunction);
                         }
 
                         if (updatedPlayer.targetPoint) {
@@ -263,10 +268,10 @@ namespace Server {
                             let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
                             mesh.lookAt(targetPointVector3);
 
-                            activeTargetPoints[remotePlayerKey] = function () {
+                            self.players[remotePlayerKey].registeredFunction = function () {
                                 if (mesh.intersectsPoint(targetPointVector3)) {
-                                    //console.log('player intersect with target');
-                                    scene.unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                                    console.log('player intersect with target');
+                                    scene.unregisterBeforeRender(self.players[remotePlayerKey].registeredFunction);
                                 } else {
                                     let rotation = mesh.rotation;
                                     if (mesh.rotationQuaternion) {
@@ -284,7 +289,7 @@ namespace Server {
 
                             }
 
-                            scene.registerBeforeRender(activeTargetPoints[remotePlayerKey]);
+                            scene.registerBeforeRender(self.players[remotePlayerKey].registeredFunction);
                         }
                     }
                 }

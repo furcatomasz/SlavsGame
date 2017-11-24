@@ -24,6 +24,24 @@ var Events = /** @class */ (function () {
     Events.MONSTER_TO_ATTACK = 'monsterToAttack';
     return Events;
 }());
+/// <reference path="../shared/Character"/>
+var Modules = /** @class */ (function () {
+    function Modules() {
+    }
+    Modules.prototype.loadModules = function (callback) {
+        var self = this;
+        new Promise(function (modulesIsLoaded) {
+            require(["./../shared/Character"], function (CharacterModule) {
+                console.log(CharacterModule);
+                self.character = CharacterModule.Character;
+                modulesIsLoaded();
+            });
+        }).then(function (resolve) {
+            callback();
+        });
+    };
+    return Modules;
+}());
 /// <reference path="../game.ts"/>
 var Controller = /** @class */ (function () {
     function Controller(game) {
@@ -864,20 +882,24 @@ var SocketIOClient = /** @class */ (function () {
 /// <reference path="socketIOClient.ts"/>
 var Game = /** @class */ (function () {
     function Game(canvasElement) {
-        var serverUrl = window.location.hostname + ':' + gameServerPort;
-        this.canvas = canvasElement;
-        this.engine = new BABYLON.Engine(this.canvas, false, null, false);
-        this.controller = new Mouse(this);
-        this.client = new SocketIOClient(this);
-        this.client.connect(serverUrl);
-        this.factories = [];
-        this.enemies = [];
-        this.quests = [];
-        this.npcs = [];
-        this.scenes = [];
-        this.activeScene = null;
-        this.events = new Events();
-        this.createScene().animate();
+        var self = this;
+        this.modules = new Modules();
+        this.modules.loadModules(function () {
+            var serverUrl = window.location.hostname + ':' + gameServerPort;
+            self.canvas = canvasElement;
+            self.engine = new BABYLON.Engine(self.canvas, false, null, false);
+            self.controller = new Mouse(self);
+            self.client = new SocketIOClient(self);
+            self.client.connect(serverUrl);
+            self.factories = [];
+            self.enemies = [];
+            self.quests = [];
+            self.npcs = [];
+            self.scenes = [];
+            self.activeScene = null;
+            self.events = new Events();
+            self.createScene().animate();
+        });
     }
     Game.prototype.getScene = function () {
         return this.scenes[this.activeScene];
@@ -1180,12 +1202,7 @@ var Player = /** @class */ (function (_super) {
      */
     Player.prototype.getExperience = function (percentage) {
         if (percentage === void 0) { percentage = false; }
-        var CharacterModule = require(["./../../shared/Character"], function () {
-            console.log(CharacterModule);
-            console.log(CharacterModule);
-            var lvls = CharacterModule.Lvls.getLvls();
-            console.log(lvls);
-        });
+        var lvls = this.game.modules.character.getLvls();
         var requiredToActualLvl = lvls[this.lvl];
         var requiredToLvl = lvls[this.lvl + 1];
         if (this.experience < 1) {
@@ -1227,59 +1244,6 @@ var Player = /** @class */ (function (_super) {
     };
     return Player;
 }(AbstractCharacter));
-/// <reference path="Controller.ts"/>
-var Mouse = /** @class */ (function (_super) {
-    __extends(Mouse, _super);
-    function Mouse() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Mouse.prototype.registerControls = function (scene) {
-        var self = this;
-        var clickTrigger = false;
-        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
-        ball.actionManager = new BABYLON.ActionManager(scene);
-        ball.isPickable = false;
-        ball.visibility = 0;
-        this.ball = ball;
-        scene.onPointerUp = function (evt, pickResult) {
-            clickTrigger = false;
-        };
-        scene.onPointerDown = function (evt, pickResult) {
-            var pickedMesh = pickResult.pickedMesh;
-            clickTrigger = true;
-            if (pickedMesh) {
-                if (self.game.player && (pickedMesh.name == 'Ground' || pickedMesh.name == 'Ground.002')) {
-                    self.attackPoint = null;
-                    self.targetPoint = pickResult.pickedPoint;
-                    self.targetPoint.y = 0;
-                    self.ball.position = self.targetPoint;
-                    self.ball.visibility = 1;
-                    self.game.client.socket.emit('setTargetPoint', {
-                        position: self.targetPoint,
-                        playerPosition: self.game.player.mesh.position
-                    });
-                }
-            }
-        };
-        scene.onPointerMove = function (evt, pickResult) {
-            if (clickTrigger) {
-                var pickedMesh = pickResult.pickedMesh;
-                if (pickedMesh && self.targetPoint) {
-                    if (self.game.player) {
-                        self.targetPoint = pickResult.pickedPoint;
-                        self.targetPoint.y = 0;
-                        self.ball.position = self.targetPoint;
-                        self.game.client.socket.emit('setTargetPoint', {
-                            position: self.targetPoint,
-                            playerPosition: self.game.player.mesh.position
-                        });
-                    }
-                }
-            }
-        };
-    };
-    return Mouse;
-}(Controller));
 /// <reference path="../game.ts"/>
 var Factories;
 (function (Factories) {
@@ -1711,6 +1675,59 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
     }
     return EnvironmentSelectCharacter;
 }());
+/// <reference path="Controller.ts"/>
+var Mouse = /** @class */ (function (_super) {
+    __extends(Mouse, _super);
+    function Mouse() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Mouse.prototype.registerControls = function (scene) {
+        var self = this;
+        var clickTrigger = false;
+        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
+        ball.actionManager = new BABYLON.ActionManager(scene);
+        ball.isPickable = false;
+        ball.visibility = 0;
+        this.ball = ball;
+        scene.onPointerUp = function (evt, pickResult) {
+            clickTrigger = false;
+        };
+        scene.onPointerDown = function (evt, pickResult) {
+            var pickedMesh = pickResult.pickedMesh;
+            clickTrigger = true;
+            if (pickedMesh) {
+                if (self.game.player && (pickedMesh.name == 'Ground' || pickedMesh.name == 'Ground.002')) {
+                    self.attackPoint = null;
+                    self.targetPoint = pickResult.pickedPoint;
+                    self.targetPoint.y = 0;
+                    self.ball.position = self.targetPoint;
+                    self.ball.visibility = 1;
+                    self.game.client.socket.emit('setTargetPoint', {
+                        position: self.targetPoint,
+                        playerPosition: self.game.player.mesh.position
+                    });
+                }
+            }
+        };
+        scene.onPointerMove = function (evt, pickResult) {
+            if (clickTrigger) {
+                var pickedMesh = pickResult.pickedMesh;
+                if (pickedMesh && self.targetPoint) {
+                    if (self.game.player) {
+                        self.targetPoint = pickResult.pickedPoint;
+                        self.targetPoint.y = 0;
+                        self.ball.position = self.targetPoint;
+                        self.game.client.socket.emit('setTargetPoint', {
+                            position: self.targetPoint,
+                            playerPosition: self.game.player.mesh.position
+                        });
+                    }
+                }
+            }
+        };
+    };
+    return Mouse;
+}(Controller));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var GUI;

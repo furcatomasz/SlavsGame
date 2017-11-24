@@ -184,13 +184,7 @@ class Player extends AbstractCharacter {
      * @returns {number}
      */
     public getExperience(percentage: boolean = false) {
-        let CharacterModule = require(["./../../shared/Character"], function() {
-            console.log(CharacterModule);
-            console.log(CharacterModule);
-            let lvls = CharacterModule.Lvls.getLvls();
-            console.log(lvls);
-        });
-
+        let lvls = this.game.modules.character.getLvls();
         let requiredToActualLvl = lvls[this.lvl];
         let requiredToLvl = lvls[this.lvl + 1];
 

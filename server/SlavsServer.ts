@@ -7,6 +7,7 @@ let orm = require("orm");
 let config = require("./../config.js");
 let BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");
 let LOADERS = require("../../bower_components/babylonjs/dist/preview release/loaders/babylonjs.loaders");
+let requirejs = require('requirejs');
 server.listen(config.server.port);
 
 class SlavsServer {
@@ -22,15 +23,19 @@ class SlavsServer {
     public babylonManager: Server.BabylonManager;
 
     constructor() {
-        this.enemyManager = new Server.EnemyManager();
+        let self = this;
         this.gameModules = new Server.GameModules();
-        this.questManager = new Server.QuestManager();
-        this.enemies = this.enemyManager.getEnemies();
-        this.quests = this.questManager.getQuests();
-        this.serverFrontEnd = new Server.FrontEnd(this, app, express);
-        this.babylonManager = new Server.BabylonManager(this);
-        this.ormManager = new Server.OrmManager(this, orm, config);
-        this.serverWebsocket = new Server.IO(this, io);
+        this.gameModules.loadModules(function() {
+            self.enemyManager = new Server.EnemyManager();
+            self.questManager = new Server.QuestManager();
+            self.enemies = self.enemyManager.getEnemies();
+            self.quests = self.questManager.getQuests();
+            self.serverFrontEnd = new Server.FrontEnd(self, app, express);
+            self.babylonManager = new Server.BabylonManager(self);
+            self.ormManager = new Server.OrmManager(self, orm, config);
+            self.serverWebsocket = new Server.IO(self, io);
+        });
+        
     }
 
 }

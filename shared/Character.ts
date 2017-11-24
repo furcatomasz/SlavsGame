@@ -1,4 +1,4 @@
-export default class Character {
+export class Character {
 
     public static getCharacterSpeed() {
         return 2.3;

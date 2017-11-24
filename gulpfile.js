@@ -75,7 +75,7 @@ gulp.task('shared', function () {
         .on("change", function () {
             return gulp.src('shared/**/*.ts')
                 .pipe(ts({
-                    module: "commonjs",
+                    module: "amd",
                     target: "es6"
                 }))
                 .pipe(gulp.dest('shared/'));

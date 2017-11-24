@@ -8,6 +8,7 @@ class Game {
     static SHOW_COLLIDERS = 0;
 
     public sceneManager: Scene;
+    public modules: Modules;
     public controller: Controller;
     public canvas: HTMLCanvasElement;
     public engine: BABYLON.Engine;
@@ -40,22 +41,26 @@ class Game {
     public events: Events;
 
     constructor(canvasElement: HTMLCanvasElement) {
-        let serverUrl = window.location.hostname + ':'+gameServerPort;
+        let self = this;
+        this.modules = new Modules();
+        this.modules.loadModules(function() {
+            let serverUrl = window.location.hostname + ':'+gameServerPort;
 
-        this.canvas = canvasElement;
-        this.engine = new BABYLON.Engine(this.canvas, false, null, false);
-        this.controller = new Mouse(this);
-        this.client = new SocketIOClient(this);
-        this.client.connect(serverUrl);
-        this.factories = [];
-        this.enemies = [];
-        this.quests = [];
-        this.npcs = [];
-        this.scenes = [];
-        this.activeScene = null;
-        this.events = new Events();
+            self.canvas = canvasElement;
+            self.engine = new BABYLON.Engine(self.canvas, false, null, false);
+            self.controller = new Mouse(self);
+            self.client = new SocketIOClient(self);
+            self.client.connect(serverUrl);
+            self.factories = [];
+            self.enemies = [];
+            self.quests = [];
+            self.npcs = [];
+            self.scenes = [];
+            self.activeScene = null;
+            self.events = new Events();
 
-        this.createScene().animate();
+            self.createScene().animate();
+        });
     }
 
     getScene(): BABYLON.Scene {

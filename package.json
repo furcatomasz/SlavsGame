@@ -14,7 +14,8 @@
     "path": "^0.12.7",
     "socket.io": "^2.0.4",
     "socket.io-client": "latest",
-    "typescript": "^2.6.1"
+    "typescript": "^2.6.1",
+    "requirejs": "latest"
   },
   "author": "Tomasz Furca"
 }

@@ -1,12 +1,18 @@
-let Character = require('./../../shared/Character.js').default;
-
 namespace Server {
     export class GameModules {
         public character: Character;
-        public items;
 
-        constructor() {
-            this.character = Character;
+        loadModules(callback) {
+            let self = this;
+            new Promise(function (modulesIsLoaded) {
+                requirejs(["./../../shared/Character"], function (CharacterModule) {
+                    console.log(CharacterModule);
+                    self.character = CharacterModule.Character;
+                    modulesIsLoaded();
+                });
+            }).then(function (resolve) {
+                callback();
+            });
         }
     }
 }

@@ -389,7 +389,7 @@ namespace Server {
                                 experience: earnedExperience
                             });
                             let newLvl = (playerDatabase.lvl) ? playerDatabase.lvl+1 : 1;
-                            let requiredExperience = self.server.gameModules.characterLvls.getLvls()[newLvl];
+                            let requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
                             if(playerDatabase.experience >= requiredExperience) {
                                 playerDatabase.lvl += 1;
                                 playerDatabase.freeAttributesPoints += 5;

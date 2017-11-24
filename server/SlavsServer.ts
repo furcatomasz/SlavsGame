@@ -9,7 +9,6 @@ let BABYLON = require("../../bower_components/babylonjs/dist/preview release/bab
 let LOADERS = require("../../bower_components/babylonjs/dist/preview release/loaders/babylonjs.loaders");
 server.listen(config.server.port);
 
-
 class SlavsServer {
 
     protected serverWebsocket: Server.IO;

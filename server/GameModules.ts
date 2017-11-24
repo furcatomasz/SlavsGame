@@ -1,12 +1,12 @@
-let CharacterLvls = require('./../../shared/CharacterLvls.js').default;
+let Character = require('./../../shared/Character.js').default;
 
 namespace Server {
     export class GameModules {
-        public characterLvls: CharacterLvls;
+        public character: Character;
         public items;
 
         constructor() {
-            this.characterLvls = CharacterLvls;
+            this.character = Character;
         }
     }
 }

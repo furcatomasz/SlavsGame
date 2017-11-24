@@ -1,10 +1,13 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class CharacterLvls {
+export default class Character {
+
+    public static getCharacterSpeed() {
+        return 2.3;
+    }
+
     /**
      * @returns {Array}
      */
-    static getLvls() {
+    public static getLvls() {
         let lvls = [];
         lvls[1] = 100;
         lvls[2] = 200;
@@ -16,7 +19,7 @@ class CharacterLvls {
         lvls[8] = 12800;
         lvls[9] = 256000;
         lvls[10] = 512000;
+
         return lvls;
     }
 }
-exports.default = CharacterLvls;

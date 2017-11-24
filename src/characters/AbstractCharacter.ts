@@ -4,7 +4,6 @@
 abstract class AbstractCharacter {
 
     public static WALK_SPEED:number = 2.3;
-    public static ROTATION_SPEED:number = 0.05;
 
     public static ANIMATION_WALK:string = 'Run';
     public static ANIMATION_STAND:string = 'stand';
@@ -24,9 +23,7 @@ abstract class AbstractCharacter {
     public statistics: Attributes.CharacterStatistics;
 
     protected game:Game;
-    protected speed:number;
     public animation:BABYLON.Animatable;
-    protected afterRender;
     public isControllable:boolean;
     protected attackAnimation: boolean;
     protected attackHit: boolean;
@@ -42,32 +39,6 @@ abstract class AbstractCharacter {
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
     }
 
-    public mount(mesh, boneName) {
-        var boneIndice = -1;
-        var meshCharacter = this.mesh;
-        let skeleton = meshCharacter.skeleton;
-
-        for (var i = 0; i < skeleton.bones.length; i++) {
-            if (skeleton.bones[i].name == boneName) {
-                boneIndice = i;
-                break;
-            }
-        }
-        var bone = skeleton.bones[boneIndice];
-
-        mesh.attachToBone(bone, meshCharacter);
-        mesh.position = new BABYLON.Vector3(0, 0, 0);
-
-        bone.getRotationToRef(BABYLON.Space.WORLD, meshCharacter, mesh.rotation);
-        mesh.rotation = mesh.rotation.negate();
-        mesh.rotation.z = -mesh.rotation.z;
-
-    };
-
-
-    /**
-     * ANIMATIONS
-     */
     public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null, loop: boolean = false):void {
         if (this.animation && ! this.attackAnimation) {
             this.animation.stop();
@@ -102,23 +73,6 @@ abstract class AbstractCharacter {
 
     }
 
-    public emitPosition() {
-        let rotation;
-
-        if (this.game.client.socket) {
-            if (this.mesh.rotationQuaternion) {
-                rotation = this.mesh.rotationQuaternion;
-            } else {
-                rotation = new BABYLON.Quaternion(0, 0, 0, 0);
-            }
-
-            this.game.client.socket.emit('updatePlayerPosition', {
-                p: this.mesh.position,
-                r: rotation
-            });
-        }
-    }
-
     public runAnimationWalk():void {
         let self = this;
         let childMesh = this.mesh;
@@ -143,9 +97,6 @@ abstract class AbstractCharacter {
         }
     }
 
-    public isAnimationEnabled() {
-        return this.animation;
-    }
 
     abstract removeFromWorld();
 

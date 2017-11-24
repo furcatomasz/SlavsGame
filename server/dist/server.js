@@ -295,12 +295,12 @@ var Server;
     }());
     Server.EnemyManager = EnemyManager;
 })(Server || (Server = {}));
-var CharacterLvls = require('./../../shared/CharacterLvls.js')["default"];
+var Character = require('./../../shared/Character.js')["default"];
 var Server;
 (function (Server) {
     var GameModules = /** @class */ (function () {
         function GameModules() {
-            this.characterLvls = CharacterLvls;
+            this.character = Character;
         }
         return GameModules;
     }());
@@ -734,7 +734,7 @@ var Server;
                             experience: earnedExperience
                         });
                         var newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
-                        var requiredExperience = self.server.gameModules.characterLvls.getLvls()[newLvl];
+                        var requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
                         if (playerDatabase.experience >= requiredExperience) {
                             playerDatabase.lvl += 1;
                             playerDatabase.freeAttributesPoints += 5;

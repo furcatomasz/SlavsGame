@@ -1,6 +1,3 @@
-/// <reference path="AbstractCharacter.ts"/>
-/// <reference path="../game.ts"/>
-
 class Player extends AbstractCharacter {
 
     public walkSmoke:BABYLON.ParticleSystem;
@@ -187,7 +184,13 @@ class Player extends AbstractCharacter {
      * @returns {number}
      */
     public getExperience(percentage: boolean = false) {
-        let lvls = Character.Lvls.getLvls();
+        let CharacterModule = require(["./../../shared/Character"], function() {
+            console.log(CharacterModule);
+            console.log(CharacterModule);
+            let lvls = CharacterModule.Lvls.getLvls();
+            console.log(lvls);
+        });
+
         let requiredToActualLvl = lvls[this.lvl];
         let requiredToLvl = lvls[this.lvl + 1];
 

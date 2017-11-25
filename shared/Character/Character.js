@@ -1,15 +1,17 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    class Character {
-        static getCharacterSpeed() {
-            return 2.3;
+    exports.__esModule = true;
+    var Character = /** @class */ (function () {
+        function Character() {
         }
+        Character.getRealCharacterSpeed = function () {
+            return 2.3;
+        };
         /**
          * @returns {Array}
          */
-        static getLvls() {
-            let lvls = [];
+        Character.getLvls = function () {
+            var lvls = [];
             lvls[1] = 100;
             lvls[2] = 200;
             lvls[3] = 400;
@@ -21,7 +23,8 @@ define(["require", "exports"], function (require, exports) {
             lvls[9] = 256000;
             lvls[10] = 512000;
             return lvls;
-        }
-    }
+        };
+        return Character;
+    }());
     exports.Character = Character;
 });

@@ -5,11 +5,12 @@ namespace Items {
         static TYPE = 3;
 
         /**
-         * @param game
          * @param databaseId
          */
-        constructor(game:Game, databaseId: Number) {
-            super(game, databaseId);
+        constructor(databaseId: Number) {
+            this.type = Items.Helm.TYPE;
+
+            super(databaseId);
         }
 
         /**

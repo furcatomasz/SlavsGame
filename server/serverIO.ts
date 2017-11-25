@@ -11,30 +11,8 @@ namespace Server {
             this.server = server;
             serverIO.on('connection', function (socket) {
                 let isMonsterServer = socket.handshake.query.monsterServer;
-
-                let player = {
-                    id: socket.id,
-                    characters: [],
-                    itemsDrop: [],
-                    activePlayer: 0,
-                    activeScene: null,
-                    lastPlayerUpdate: 0,
-                    targetPoint: null,
-                    isRunning: null,
-                    p: {
-                        x: 3,
-                        y: 0.3,
-                        z: -10
-                    }, r: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                        w: 0
-                    },
-                    attack: false,
-                };
-
-
+                let player = new Player(socket.id);
+                player.activeCharacter = 1;
                 if(!isMonsterServer) {
                     ////CLEAR QUESTS
                     server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
@@ -43,7 +21,7 @@ namespace Server {
                         }
                     });
 
-                    self.refreshPlayerData(player, socket, function() {
+                    player.refreshPlayerData(server, function() {
                         socket.emit('clientConnected', player);
                     });
                 } else {
@@ -52,25 +30,25 @@ namespace Server {
                 }
 
 
-                socket.on('getQuests', function () {
-                    let emitData = {
-                        quests: server.quests,
-                        playerQuests: null,
-                        playerRequirements: null
-                    };
-
-                    player.characters[player.activePlayer].getActiveQuests(function (error, quests) {
-                        emitData.playerQuests = quests;
-                        player.characters[player.activePlayer].getQuestRequirements(function (error, requrements) {
-                            emitData.playerRequirements = requrements;
-                            socket.emit('quests', emitData);
-                        });
-                    });
-                });
+                //socket.on('getQuests', function () {
+                //    let emitData = {
+                //        quests: server.quests,
+                //        playerQuests: null,
+                //        playerRequirements: null
+                //    };
+                //
+                //    player.characters[player.activeCharacter].getActiveQuests(function (error, quests) {
+                //        emitData.playerQuests = quests;
+                //        player.characters[player.activeCharacter].getQuestRequirements(function (error, requrements) {
+                //            emitData.playerRequirements = requrements;
+                //            socket.emit('quests', emitData);
+                //        });
+                //    });
+                //});
 
                 socket.on('acceptQuest', function (quest) {
                     let questId = quest.id;
-                    let playerId = player.characters[player.activePlayer].id;
+                    let playerId = player.characters[player.activeCharacter].id;
 
                     server.ormManager.structure.playerQuest.oneAsync({
                         player_id: playerId,
@@ -89,7 +67,7 @@ namespace Server {
                 });
 
                 socket.on('selectCharacter', function (selectedCharacter) {
-                    player.activePlayer = selectedCharacter;
+                    player.activeCharacter = selectedCharacter;
 
                     //let playerId = player.characters[selectedCharacter].id;
                     //server.ormManager.structure.playerOnline.exists(
@@ -121,7 +99,6 @@ namespace Server {
                 socket.on('setTargetPoint', function (targetPoint) {
                     player.attack = null;
                     player.targetPoint = targetPoint.position;
-                    player.isRunning = targetPoint.isRunning;
                     player.p = targetPoint.playerPosition;
                     socket.broadcast.emit('updatePlayer', player);
                     socket.emit('updatePlayer', player);
@@ -131,7 +108,6 @@ namespace Server {
                 socket.on('attack', function (data) {
                     player.attack = data.attack;
                     player.targetPoint = data.targetPoint;
-                    player.isRunning = false;
                     socket.broadcast.emit('updatePlayer', player);
                     socket.emit('updatePlayer', player);
                 });
@@ -139,17 +115,16 @@ namespace Server {
                 socket.on('itemEquip', function (item) {
                     let itemId = item.id;
                     let equip = item.equip;
-
                     self.server.ormManager.structure.playerItems.oneAsync({
                         id: itemId,
-                        player_id: player.characters[player.activePlayer].id
+                        player_id: player.characters[player.activeCharacter].id
                     }).then(function (itemDatabase) {
-                        itemDatabase.equip = (equip) ? 1 : 0;
+                        itemDatabase.equip = (item.equip) ? 1 : 0;
                         itemDatabase.saveAsync().then(function () {
                             server.ormManager.structure.playerItems.findAsync(
-                                {player_id: player.characters[player.activePlayer].id}).then(
+                                {player_id: player.characters[player.activeCharacter].id}).then(
                                 function (playerItems) {
-                                    player.characters[player.activePlayer].items = playerItems;
+                                    player.characters[player.activeCharacter].items = playerItems;
                                     socket.broadcast.emit('updateEnemyEquip', player);
                                 });
                         });
@@ -158,7 +133,7 @@ namespace Server {
                 });
 
                 socket.on('addDoppedItem', function (itemsKey) {
-                    let playerId = player.characters[player.activePlayer].id;
+                    let playerId = player.characters[player.activeCharacter].id;
                     let itemId = player.itemsDrop[itemsKey];
 
                     if (itemId) {
@@ -169,8 +144,8 @@ namespace Server {
                                 equip: 0
                             },
                             function (error, addedItem) {
-                                player.characters[player.activePlayer].items.push(addedItem);
-                                socket.emit('updatePlayerEquip', player.characters[player.activePlayer].items);
+                                player.characters[player.activeCharacter].items.push(addedItem);
+                                socket.emit('updatePlayerEquip', player.characters[player.activeCharacter].items);
                             });
                     }
                 });
@@ -179,7 +154,7 @@ namespace Server {
                     let type = attribute.type;
 
                     self.server.ormManager.structure.player.oneAsync({
-                        id: player.characters[player.activePlayer].id,
+                        id: player.characters[player.activeCharacter].id,
                     }).then(function (playerDatabase) {
                         if(playerDatabase.freeAttributesPoints) {
                             self.server.ormManager.structure.playerAttributes
@@ -221,7 +196,7 @@ namespace Server {
                                         playerDatabase.freeAttributesPoints -= 1;
                                         playerDatabase.save();
 
-                                        self.refreshPlayerData(player, socket, function() {
+                                        player.refreshPlayerData(server, function() {
                                             socket.emit('attributeAdded', player);
                                         });
 
@@ -237,7 +212,7 @@ namespace Server {
                     let isCreated = false;
 
                     self.server.ormManager.structure.player.oneAsync({
-                        id: player.characters[player.activePlayer].id,
+                        id: player.characters[player.activeCharacter].id,
                     }).then(function (playerDatabase) {
                         if(playerDatabase.freeSkillPoints) {
                             self.server.ormManager.structure.playerSkills
@@ -279,7 +254,7 @@ namespace Server {
                                         playerDatabase.freeSkillPoints -= 1;
                                         playerDatabase.save();
 
-                                        self.refreshPlayerData(player, socket, function() {
+                                        player.refreshPlayerData(server, function() {
                                             socket.emit('skillLearned', player);
                                         });
 
@@ -290,8 +265,8 @@ namespace Server {
                 });
 
                 socket.on('disconnect', function () {
-                    //if (player.activePlayer >= 0) {
-                    //    let playerId = player.characters[player.activePlayer].id;
+                    //if (player.activeCharacter >= 0) {
+                    //    let playerId = player.characters[player.activeCharacter].id;
                     //    server.ormManager.structure.playerOnline
                     //        .find({player_id: playerId})
                     //        .remove();
@@ -361,20 +336,12 @@ namespace Server {
                 });
 
 
-                socket.on('updateEnemy', function (enemyData) {
-                    let enemy = enemies[player.activeScene][enemyData.enemyKey];
-                    enemy.position = enemyData.position;
-                    enemy.rotation = enemyData.rotation;
-                    enemy.target = enemyData.target;
-                    socket.broadcast.emit('showEnemies', enemies[player.activeScene]);
-                });
-
                 socket.on('enemyKill', function (enemyKey) {
                     let enemy = enemies[player.activeScene][enemyKey];
                     let enemyItem = enemy.itemsToDrop[0];
                     let itemDropKey = player.itemsDrop.push(enemyItem) - 1;
                     let earnedExperience = enemy.experience;
-                    let playerId = player.characters[player.activePlayer].id;
+                    let playerId = player.characters[player.activeCharacter].id;
 
                     socket.emit('showDroppedItem', {
                         items: enemyItem,
@@ -404,44 +371,5 @@ namespace Server {
             });
         }
 
-        protected refreshPlayerData(player, socket, callback) {
-            let server = this.server;
-            server.ormManager.structure.user.oneAsync({email: "furcatomasz@gmail.com"}).then(function (user) {
-                server.ormManager.structure.player.findAsync({user_id: user.id}).then(function (players) {
-                    player.characters = players;
-
-                    for (let i = 0; i < players.length; i++) {
-                        let playerDatabase = players[i];
-
-                        server.ormManager.structure.playerItems
-                            .findAsync({player_id: playerDatabase.id})
-                            .then(function (items) {
-                                playerDatabase.items = items;
-
-                                server.ormManager.structure.playerAttributes
-                                    .oneAsync({player_id: playerDatabase.id})
-                                    .then(function (attributes) {
-                                        playerDatabase.attributes = attributes;
-
-                                        server.ormManager.structure.playerSkills
-                                            .findAsync({player_id: playerDatabase.id})
-                                            .then(function (skills) {
-                                                playerDatabase.skills = skills;
-
-                                                if (i == players.length - 1) {
-                                                    callback();
-                                                }
-                                            });
-
-                                    });
-                            });
-
-
-                    }
-
-                })
-
-            });
-        };
     }
 }

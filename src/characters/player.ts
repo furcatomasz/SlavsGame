@@ -14,8 +14,8 @@ class Player extends AbstractCharacter {
         let self = this;
         this.id = id;
         this.name = name;
-
-        this.setCharacterStatistics(serverData.attributes);
+        this.game = game;
+        this.setCharacterStatistics(serverData.statistics);
         this.isControllable = registerMoving;
 
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, {
@@ -34,8 +34,8 @@ class Player extends AbstractCharacter {
         // Collisions.setCollider(game.getScene(), mesh, null, false);
 
         this.mesh = mesh;
-        this.game = game;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
+        this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
 
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         this.inventory = new Character.Inventory(game, this);
@@ -77,31 +77,11 @@ class Player extends AbstractCharacter {
             this.setCharacterSkills(serverData.skills);
         }
 
-        this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
-
         super(name, game);
     }
 
     public setCharacterStatistics(attributes) {
-        if(!attributes) {
-            attributes = {
-                health: 0,
-                attackSpeed: 0,
-                defence: 0,
-                damage: 0,
-                blockChance: 0,
-            }
-        }
-
-        this.statistics = new Attributes.CharacterStatistics(
-            100 + attributes.health * 5,
-            100 + attributes.health * 5,
-            100 + attributes.attackSpeed,
-            15 + attributes.damage * 5,
-            10 + attributes.defence * 5,
-            125,
-            50 + attributes.blockChance
-        ).setPlayer(this);
+        this.statistics = attributes;
     };
 
     public setCharacterSkills(skills) {
@@ -125,7 +105,8 @@ class Player extends AbstractCharacter {
 
     public getWalkSpeed() {
         let animationRatio = this.game.getScene().getAnimationRatio();
-        return AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100) / animationRatio;
+
+        return this.statistics.walkSpeed / animationRatio;
     };
 
     public removeFromWorld() {
@@ -216,11 +197,6 @@ class Player extends AbstractCharacter {
 
     protected onHitStart() {
         let self = this;
-        setTimeout(function () {
-            self.inventory.weapon.sfxHit.play();
-
-            document.dispatchEvent(this.game.events.monsterToAttack);
-        }, 300);
     };
 
     protected onHitEnd() {

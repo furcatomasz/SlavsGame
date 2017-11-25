@@ -1,3 +1,13 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Server;
 (function (Server) {
     var BabylonManager = /** @class */ (function () {
@@ -295,13 +305,25 @@ var Server;
     }());
     Server.EnemyManager = EnemyManager;
 })(Server || (Server = {}));
-var Character = require('./../../shared/Character.js')["default"];
 var Server;
 (function (Server) {
     var GameModules = /** @class */ (function () {
         function GameModules() {
-            this.character = Character;
         }
+        GameModules.prototype.loadModules = function (callback) {
+            var self = this;
+            new Promise(function (modulesIsLoaded) {
+                requirejs(["./../../shared/Character/Character"], function (CharacterModule) {
+                    self.character = CharacterModule.Character;
+                    requirejs(["./../../shared/Character/AttributesStatistics"], function (AttributesStatistics) {
+                        self.attributesStatistics = AttributesStatistics;
+                        modulesIsLoaded();
+                    });
+                });
+            }).then(function (resolve) {
+                callback();
+            });
+        };
         return GameModules;
     }());
     Server.GameModules = GameModules;
@@ -355,20 +377,24 @@ var orm = require("orm");
 var config = require("./../config.js");
 var BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");
 var LOADERS = require("../../bower_components/babylonjs/dist/preview release/loaders/babylonjs.loaders");
+var requirejs = require('requirejs');
 server.listen(config.server.port);
 var SlavsServer = /** @class */ (function () {
     function SlavsServer() {
         this.enemies = [];
         this.quests = [];
-        this.enemyManager = new Server.EnemyManager();
+        var self = this;
         this.gameModules = new Server.GameModules();
-        this.questManager = new Server.QuestManager();
-        this.enemies = this.enemyManager.getEnemies();
-        this.quests = this.questManager.getQuests();
-        this.serverFrontEnd = new Server.FrontEnd(this, app, express);
-        this.babylonManager = new Server.BabylonManager(this);
-        this.ormManager = new Server.OrmManager(this, orm, config);
-        this.serverWebsocket = new Server.IO(this, io);
+        this.gameModules.loadModules(function () {
+            self.enemyManager = new Server.EnemyManager();
+            self.questManager = new Server.QuestManager();
+            self.enemies = self.enemyManager.getEnemies();
+            self.quests = self.questManager.getQuests();
+            self.serverFrontEnd = new Server.FrontEnd(self, app, express);
+            self.babylonManager = new Server.BabylonManager(self);
+            self.ormManager = new Server.OrmManager(self, orm, config);
+            self.serverWebsocket = new Server.IO(self, io);
+        });
     }
     return SlavsServer;
 }());
@@ -403,27 +429,8 @@ var Server;
             this.server = server;
             serverIO.on('connection', function (socket) {
                 var isMonsterServer = socket.handshake.query.monsterServer;
-                var player = {
-                    id: socket.id,
-                    characters: [],
-                    itemsDrop: [],
-                    activePlayer: 0,
-                    activeScene: null,
-                    lastPlayerUpdate: 0,
-                    targetPoint: null,
-                    isRunning: null,
-                    p: {
-                        x: 3,
-                        y: 0.3,
-                        z: -10
-                    }, r: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                        w: 0
-                    },
-                    attack: false
-                };
+                var player = new Player(socket.id);
+                player.activeCharacter = 1;
                 if (!isMonsterServer) {
                     ////CLEAR QUESTS
                     server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
@@ -432,7 +439,7 @@ var Server;
                             playerQuest.remove();
                         }
                     });
-                    self.refreshPlayerData(player, socket, function () {
+                    player.refreshPlayerData(server, function () {
                         socket.emit('clientConnected', player);
                     });
                 }
@@ -440,23 +447,24 @@ var Server;
                     player.activeScene = 2;
                     socket.emit('showEnemies', enemies[player.activeScene]);
                 }
-                socket.on('getQuests', function () {
-                    var emitData = {
-                        quests: server.quests,
-                        playerQuests: null,
-                        playerRequirements: null
-                    };
-                    player.characters[player.activePlayer].getActiveQuests(function (error, quests) {
-                        emitData.playerQuests = quests;
-                        player.characters[player.activePlayer].getQuestRequirements(function (error, requrements) {
-                            emitData.playerRequirements = requrements;
-                            socket.emit('quests', emitData);
-                        });
-                    });
-                });
+                //socket.on('getQuests', function () {
+                //    let emitData = {
+                //        quests: server.quests,
+                //        playerQuests: null,
+                //        playerRequirements: null
+                //    };
+                //
+                //    player.characters[player.activeCharacter].getActiveQuests(function (error, quests) {
+                //        emitData.playerQuests = quests;
+                //        player.characters[player.activeCharacter].getQuestRequirements(function (error, requrements) {
+                //            emitData.playerRequirements = requrements;
+                //            socket.emit('quests', emitData);
+                //        });
+                //    });
+                //});
                 socket.on('acceptQuest', function (quest) {
                     var questId = quest.id;
-                    var playerId = player.characters[player.activePlayer].id;
+                    var playerId = player.characters[player.activeCharacter].id;
                     server.ormManager.structure.playerQuest.oneAsync({
                         player_id: playerId,
                         questId: questId
@@ -473,7 +481,7 @@ var Server;
                     });
                 });
                 socket.on('selectCharacter', function (selectedCharacter) {
-                    player.activePlayer = selectedCharacter;
+                    player.activeCharacter = selectedCharacter;
                     //let playerId = player.characters[selectedCharacter].id;
                     //server.ormManager.structure.playerOnline.exists(
                     //    {playerId: playerId},
@@ -500,7 +508,6 @@ var Server;
                 socket.on('setTargetPoint', function (targetPoint) {
                     player.attack = null;
                     player.targetPoint = targetPoint.position;
-                    player.isRunning = targetPoint.isRunning;
                     player.p = targetPoint.playerPosition;
                     socket.broadcast.emit('updatePlayer', player);
                     socket.emit('updatePlayer', player);
@@ -508,7 +515,6 @@ var Server;
                 socket.on('attack', function (data) {
                     player.attack = data.attack;
                     player.targetPoint = data.targetPoint;
-                    player.isRunning = false;
                     socket.broadcast.emit('updatePlayer', player);
                     socket.emit('updatePlayer', player);
                 });
@@ -517,19 +523,19 @@ var Server;
                     var equip = item.equip;
                     self.server.ormManager.structure.playerItems.oneAsync({
                         id: itemId,
-                        player_id: player.characters[player.activePlayer].id
+                        player_id: player.characters[player.activeCharacter].id
                     }).then(function (itemDatabase) {
-                        itemDatabase.equip = (equip) ? 1 : 0;
+                        itemDatabase.equip = (item.equip) ? 1 : 0;
                         itemDatabase.saveAsync().then(function () {
-                            server.ormManager.structure.playerItems.findAsync({ player_id: player.characters[player.activePlayer].id }).then(function (playerItems) {
-                                player.characters[player.activePlayer].items = playerItems;
+                            server.ormManager.structure.playerItems.findAsync({ player_id: player.characters[player.activeCharacter].id }).then(function (playerItems) {
+                                player.characters[player.activeCharacter].items = playerItems;
                                 socket.broadcast.emit('updateEnemyEquip', player);
                             });
                         });
                     });
                 });
                 socket.on('addDoppedItem', function (itemsKey) {
-                    var playerId = player.characters[player.activePlayer].id;
+                    var playerId = player.characters[player.activeCharacter].id;
                     var itemId = player.itemsDrop[itemsKey];
                     if (itemId) {
                         self.server.ormManager.structure.playerItems.create({
@@ -538,15 +544,15 @@ var Server;
                             improvement: 0,
                             equip: 0
                         }, function (error, addedItem) {
-                            player.characters[player.activePlayer].items.push(addedItem);
-                            socket.emit('updatePlayerEquip', player.characters[player.activePlayer].items);
+                            player.characters[player.activeCharacter].items.push(addedItem);
+                            socket.emit('updatePlayerEquip', player.characters[player.activeCharacter].items);
                         });
                     }
                 });
                 socket.on('addAttribute', function (attribute) {
                     var type = attribute.type;
                     self.server.ormManager.structure.player.oneAsync({
-                        id: player.characters[player.activePlayer].id
+                        id: player.characters[player.activeCharacter].id
                     }).then(function (playerDatabase) {
                         if (playerDatabase.freeAttributesPoints) {
                             self.server.ormManager.structure.playerAttributes
@@ -586,7 +592,7 @@ var Server;
                                     attributes.save();
                                     playerDatabase.freeAttributesPoints -= 1;
                                     playerDatabase.save();
-                                    self.refreshPlayerData(player, socket, function () {
+                                    player.refreshPlayerData(server, function () {
                                         socket.emit('attributeAdded', player);
                                     });
                                 });
@@ -599,7 +605,7 @@ var Server;
                     var skillPowerType = skill.powerType;
                     var isCreated = false;
                     self.server.ormManager.structure.player.oneAsync({
-                        id: player.characters[player.activePlayer].id
+                        id: player.characters[player.activeCharacter].id
                     }).then(function (playerDatabase) {
                         if (playerDatabase.freeSkillPoints) {
                             self.server.ormManager.structure.playerSkills
@@ -639,7 +645,7 @@ var Server;
                                     }
                                     playerDatabase.freeSkillPoints -= 1;
                                     playerDatabase.save();
-                                    self.refreshPlayerData(player, socket, function () {
+                                    player.refreshPlayerData(server, function () {
                                         socket.emit('skillLearned', player);
                                     });
                                 });
@@ -648,8 +654,8 @@ var Server;
                     });
                 });
                 socket.on('disconnect', function () {
-                    //if (player.activePlayer >= 0) {
-                    //    let playerId = player.characters[player.activePlayer].id;
+                    //if (player.activeCharacter >= 0) {
+                    //    let playerId = player.characters[player.activeCharacter].id;
                     //    server.ormManager.structure.playerOnline
                     //        .find({player_id: playerId})
                     //        .remove();
@@ -710,19 +716,12 @@ var Server;
                         enemyKey: data.enemyKey
                     });
                 });
-                socket.on('updateEnemy', function (enemyData) {
-                    var enemy = enemies[player.activeScene][enemyData.enemyKey];
-                    enemy.position = enemyData.position;
-                    enemy.rotation = enemyData.rotation;
-                    enemy.target = enemyData.target;
-                    socket.broadcast.emit('showEnemies', enemies[player.activeScene]);
-                });
                 socket.on('enemyKill', function (enemyKey) {
                     var enemy = enemies[player.activeScene][enemyKey];
                     var enemyItem = enemy.itemsToDrop[0];
                     var itemDropKey = player.itemsDrop.push(enemyItem) - 1;
                     var earnedExperience = enemy.experience;
-                    var playerId = player.characters[player.activePlayer].id;
+                    var playerId = player.characters[player.activeCharacter].id;
                     socket.emit('showDroppedItem', {
                         items: enemyItem,
                         itemsKey: itemDropKey,
@@ -746,39 +745,6 @@ var Server;
                 });
             });
         }
-        IO.prototype.refreshPlayerData = function (player, socket, callback) {
-            var server = this.server;
-            server.ormManager.structure.user.oneAsync({ email: "furcatomasz@gmail.com" }).then(function (user) {
-                server.ormManager.structure.player.findAsync({ user_id: user.id }).then(function (players) {
-                    player.characters = players;
-                    var _loop_1 = function (i) {
-                        var playerDatabase = players[i];
-                        server.ormManager.structure.playerItems
-                            .findAsync({ player_id: playerDatabase.id })
-                            .then(function (items) {
-                            playerDatabase.items = items;
-                            server.ormManager.structure.playerAttributes
-                                .oneAsync({ player_id: playerDatabase.id })
-                                .then(function (attributes) {
-                                playerDatabase.attributes = attributes;
-                                server.ormManager.structure.playerSkills
-                                    .findAsync({ player_id: playerDatabase.id })
-                                    .then(function (skills) {
-                                    playerDatabase.skills = skills;
-                                    if (i == players.length - 1) {
-                                        callback();
-                                    }
-                                });
-                            });
-                        });
-                    };
-                    for (var i = 0; i < players.length; i++) {
-                        _loop_1(i);
-                    }
-                });
-            });
-        };
-        ;
         return IO;
     }());
     Server.IO = IO;
@@ -1081,3 +1047,708 @@ var Server;
         })(Models = Quests.Models || (Quests.Models = {}));
     })(Quests = Server.Quests || (Server.Quests = {}));
 })(Server || (Server = {}));
+var Character = /** @class */ (function () {
+    function Character(id) {
+        this.id = id;
+        this.itemsDrop = [];
+        this.inventory = new Inventory();
+    }
+    Character.prototype.setItemsOnCharacter = function (items) {
+        var itemManager = new Items.ItemManager();
+        itemManager.initItemsFromDatabaseOnCharacter(items, this);
+        return this;
+    };
+    Character.prototype.calculateCharacterStatistics = function (attributes) {
+        if (!attributes) {
+            attributes = {
+                health: 0,
+                attackSpeed: 0,
+                defence: 0,
+                damage: 0,
+                blockChance: 0
+            };
+        }
+        this.statistics = new Attributes.CharacterStatistics(this, 100 + attributes.health * 5, 100 + attributes.health * 5, 100 + attributes.attackSpeed, 15 + attributes.damage * 5, 10 + attributes.defence * 5, (125 / 100) * 2.3, 50 + attributes.blockChance);
+        return this;
+    };
+    return Character;
+}());
+var Inventory = /** @class */ (function () {
+    function Inventory() {
+        this.items = [];
+    }
+    /**
+     * @param item
+     */
+    Inventory.prototype.removeItem = function (item) {
+        console.log('remove');
+    };
+    /**
+     * @param item
+     * @param setItem
+     */
+    Inventory.prototype.equip = function (item, setItem) {
+        switch (item.getType()) {
+            case Items.Weapon.TYPE:
+                this.removeItem(this.weapon);
+                this.weapon = null;
+                if (setItem) {
+                    this.weapon = item;
+                }
+                break;
+            case Items.Shield.TYPE:
+                this.removeItem(this.shield);
+                this.shield = null;
+                if (setItem) {
+                    this.shield = item;
+                }
+                break;
+            case Items.Helm.TYPE:
+                this.removeItem(this.helm);
+                this.helm = null;
+                if (setItem) {
+                    this.helm = item;
+                }
+                break;
+            case Items.Gloves.TYPE:
+                this.removeItem(this.gloves);
+                this.gloves = null;
+                if (setItem) {
+                    this.gloves = item;
+                }
+                break;
+            case Items.Boots.TYPE:
+                this.removeItem(this.boots);
+                this.boots = null;
+                if (setItem) {
+                    this.boots = item;
+                }
+                break;
+            case Items.Armor.TYPE:
+                this.removeItem(this.armor);
+                this.armor = null;
+                if (setItem) {
+                    this.armor = item;
+                }
+                break;
+        }
+    };
+    /**
+     * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
+     * @param item
+     * @returns {AbstractCharacter.Inventory}
+     */
+    Inventory.prototype.mount = function (item) {
+        this.equip(item, true);
+        return this;
+    };
+    /**
+     *
+     * @param item
+     * @returns {Character.Inventory}
+     */
+    Inventory.prototype.umount = function (item) {
+        this.equip(item, false);
+        return this;
+    };
+    return Inventory;
+}());
+var Player = /** @class */ (function () {
+    function Player(id) {
+        this.id = id;
+        this.characters = [];
+    }
+    Player.prototype.getActiveCharacter = function () {
+        return this.characters[this.activeCharacter];
+    };
+    Player.prototype.refreshPlayerData = function (server, callback) {
+        var self = this;
+        self.characters = [];
+        server.ormManager.structure.user.oneAsync({ email: "furcatomasz@gmail.com" }).then(function (user) {
+            server.ormManager.structure.player.findAsync({ user_id: user.id }).then(function (players) {
+                var _loop_1 = function (i) {
+                    var playerDatabase = players[i];
+                    server.ormManager.structure.playerItems
+                        .findAsync({ player_id: playerDatabase.id })
+                        .then(function (items) {
+                        playerDatabase.items = items;
+                        server.ormManager.structure.playerAttributes
+                            .oneAsync({ player_id: playerDatabase.id })
+                            .then(function (attributes) {
+                            playerDatabase.attributes = attributes;
+                            server.ormManager.structure.playerSkills
+                                .findAsync({ player_id: playerDatabase.id })
+                                .then(function (skills) {
+                                playerDatabase.skills = skills;
+                                if (i == players.length - 1) {
+                                    players.forEach(function (player) {
+                                        var character = new Character(player.id);
+                                        character
+                                            .setItemsOnCharacter(playerDatabase.items)
+                                            .calculateCharacterStatistics(playerDatabase.attributes);
+                                        self.characters.push(character);
+                                    });
+                                    callback();
+                                }
+                            });
+                        });
+                    });
+                };
+                for (var i = 0; i < players.length; i++) {
+                    _loop_1(i);
+                }
+            });
+        });
+    };
+    ;
+    return Player;
+}());
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = /** @class */ (function () {
+        function AbstractStatistics(hp, hpMax, attackSpeed, damage, armor, walkSpeed, blockChance, hitChance) {
+            if (hp === void 0) { hp = 0; }
+            if (hpMax === void 0) { hpMax = 0; }
+            if (attackSpeed === void 0) { attackSpeed = 0; }
+            if (damage === void 0) { damage = 0; }
+            if (armor === void 0) { armor = 0; }
+            if (walkSpeed === void 0) { walkSpeed = 0; }
+            if (blockChance === void 0) { blockChance = 0; }
+            if (hitChance === void 0) { hitChance = 0; }
+            this.hp = hp;
+            this.hpMax = hpMax;
+            this.attackSpeed = attackSpeed;
+            this.walkSpeed = walkSpeed;
+            this.blockChance = blockChance;
+            this.hitChance = hitChance;
+            this
+                .setArmor(armor)
+                .setDamage(damage);
+        }
+        AbstractStatistics.prototype.getHp = function () {
+            return this.hp;
+        };
+        AbstractStatistics.prototype.getHpMax = function () {
+            return this.hpMax;
+        };
+        AbstractStatistics.prototype.getAttackSpeed = function () {
+            return this.attackSpeed;
+        };
+        AbstractStatistics.prototype.getWalkSpeed = function () {
+            return this.walkSpeed;
+        };
+        AbstractStatistics.prototype.getBlockChance = function () {
+            return this.blockChance;
+        };
+        AbstractStatistics.prototype.getHitChance = function () {
+            return this.hitChance;
+        };
+        AbstractStatistics.prototype.getDamage = function () {
+            return this.damage;
+        };
+        AbstractStatistics.prototype.getArmor = function () {
+            return this.armor;
+        };
+        AbstractStatistics.prototype.setArmor = function (armor) {
+            this.armor = armor;
+            return this;
+        };
+        AbstractStatistics.prototype.setDamage = function (damage) {
+            this.damage = damage;
+            return this;
+        };
+        return AbstractStatistics;
+    }());
+    Attributes.AbstractStatistics = AbstractStatistics;
+})(Attributes || (Attributes = {}));
+var Attributes;
+(function (Attributes) {
+    var CharacterStatistics = /** @class */ (function (_super) {
+        __extends(CharacterStatistics, _super);
+        function CharacterStatistics() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        //protected character:Character;
+        //
+        //constructor(character:Character, hp:number = 0, hpMax:number = 0, attackSpeed:number = 0, damage:number = 0, armor:number = 0, walkSpeed:number = 0, blockChance:number = 0, hitChance:number = 0) {
+        //    super(hp, hpMax, attackSpeed, damage, armor, walkSpeed, blockChance, hitChance);
+        //    this.character = character;
+        //}
+        CharacterStatistics.prototype.getItemsStats = function () {
+            var statistics = new Attributes.EquipStatistics();
+            //if (this.character) {
+            //    let inventory = this.character.inventory;
+            //    let equipedItems = [];
+            //
+            //    equipedItems.push(inventory.helm);
+            //    equipedItems.push(inventory.gloves);
+            //    equipedItems.push(inventory.armor);
+            //    equipedItems.push(inventory.weapon);
+            //    equipedItems.push(inventory.shield);
+            //    equipedItems.push(inventory.boots);
+            //
+            //    for (let i = 0; i < equipedItems.length; i++) {
+            //        let item = equipedItems[i];
+            //        if (item) {
+            //            statistics.addStatisticsFromItem(item.statistics);
+            //        }
+            //    }
+            //}
+            return statistics;
+        };
+        CharacterStatistics.prototype.setDamage = function (damage) {
+            var equipStatistics = this.getItemsStats();
+            this.damage = damage + equipStatistics.getDamage();
+            return this;
+        };
+        CharacterStatistics.prototype.setArmor = function (armor) {
+            var equipStatistics = this.getItemsStats();
+            this.armor = armor + equipStatistics.getArmor();
+            return this;
+        };
+        return CharacterStatistics;
+    }(Attributes.AbstractStatistics));
+    Attributes.CharacterStatistics = CharacterStatistics;
+})(Attributes || (Attributes = {}));
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = Attributes.AbstractStatistics;
+    var EquipStatistics = /** @class */ (function (_super) {
+        __extends(EquipStatistics, _super);
+        function EquipStatistics() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        EquipStatistics.prototype.addStatisticsFromItem = function (statistics) {
+            if (statistics.getDamage()) {
+                this.damage += statistics.getDamage();
+            }
+            if (statistics.getArmor()) {
+                this.armor += statistics.getArmor();
+            }
+        };
+        return EquipStatistics;
+    }(AbstractStatistics));
+    Attributes.EquipStatistics = EquipStatistics;
+})(Attributes || (Attributes = {}));
+var Attributes;
+(function (Attributes) {
+    var AbstractStatistics = Attributes.AbstractStatistics;
+    var ItemStatistics = /** @class */ (function (_super) {
+        __extends(ItemStatistics, _super);
+        function ItemStatistics() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        return ItemStatistics;
+    }(AbstractStatistics));
+    Attributes.ItemStatistics = ItemStatistics;
+})(Attributes || (Attributes = {}));
+var Items;
+(function (Items) {
+    var Item = /** @class */ (function () {
+        function Item(databaseId) {
+            this.databaseId = databaseId;
+        }
+        Item.TYPE = 0;
+        Item.ITEM_ID = 0;
+        return Item;
+    }());
+    Items.Item = Item;
+})(Items || (Items = {}));
+var Items;
+(function (Items) {
+    var ItemManager = /** @class */ (function () {
+        function ItemManager() {
+        }
+        /**
+         *
+         * @param itemId
+         * @param databaseId
+         * @returns {null}
+         */
+        ItemManager.prototype.getItemUsingId = function (itemId, databaseId) {
+            return this.getItem(itemId, databaseId);
+        };
+        /**
+         *
+         * @param inventoryItems
+         * @param character
+         */
+        ItemManager.prototype.initItemsFromDatabaseOnCharacter = function (inventoryItems, character) {
+            var self = this;
+            var inventory = character.inventory;
+            inventory.items = [];
+            inventoryItems.forEach(function (itemDatabase) {
+                var item = self.getItemUsingId(itemDatabase.itemId, itemDatabase.id);
+                inventory.items.push(item);
+                if (itemDatabase.equip) {
+                    item.equip = itemDatabase.equip;
+                    inventory.mount(item);
+                }
+            });
+        };
+        /**
+         *
+         * @param id
+         * @param databaseId
+         * @returns Items.Item
+         */
+        ItemManager.prototype.getItem = function (id, databaseId) {
+            var item = null;
+            switch (id) {
+                case Items.Armors.Robe.ITEM_ID:
+                    item = new Items.Armors.Robe(databaseId);
+                    break;
+                case Items.Armors.PrimaryArmor.ITEM_ID:
+                    item = new Items.Armors.PrimaryArmor(databaseId);
+                    break;
+                case Items.Boots.PrimaryBoots.ITEM_ID:
+                    item = new Items.Boots.PrimaryBoots(databaseId);
+                    break;
+                case Items.Gloves.PrimaryGloves.ITEM_ID:
+                    item = new Items.Gloves.PrimaryGloves(databaseId);
+                    break;
+                case Items.Helms.PrimaryHelm.ITEM_ID:
+                    item = new Items.Helms.PrimaryHelm(databaseId);
+                    break;
+                case Items.Shields.WoodShield.ITEM_ID:
+                    item = new Items.Shields.WoodShield(databaseId);
+                    break;
+                case Items.Weapons.Axe.ITEM_ID:
+                    item = new Items.Weapons.Axe(databaseId);
+                    break;
+                case Items.Weapons.Sword.ITEM_ID:
+                    item = new Items.Weapons.Sword(databaseId);
+                    break;
+            }
+            return item;
+        };
+        return ItemManager;
+    }());
+    Items.ItemManager = ItemManager;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Armor = /** @class */ (function (_super) {
+        __extends(Armor, _super);
+        /**
+         * @param databaseId
+         */
+        function Armor(databaseId) {
+            var _this = this;
+            _this.type = Items.Armor.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Armor.prototype.getType = function () {
+            return Items.Armor.TYPE;
+        };
+        Armor.TYPE = 6;
+        return Armor;
+    }(Items.Item));
+    Items.Armor = Armor;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Armors;
+    (function (Armors) {
+        var PrimaryArmor = /** @class */ (function (_super) {
+            __extends(PrimaryArmor, _super);
+            function PrimaryArmor(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Armor';
+                _this.image = 'Armor';
+                _this.itemId = Items.Armors.PrimaryArmor.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Armor';
+                return _this;
+            }
+            PrimaryArmor.ITEM_ID = 1;
+            return PrimaryArmor;
+        }(Items.Armor));
+        Armors.PrimaryArmor = PrimaryArmor;
+    })(Armors = Items.Armors || (Items.Armors = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Armors;
+    (function (Armors) {
+        var Robe = /** @class */ (function (_super) {
+            __extends(Robe, _super);
+            function Robe(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Robe';
+                _this.image = 'Armor';
+                _this.itemId = Items.Armors.Robe.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Warrior.001';
+                return _this;
+            }
+            Robe.ITEM_ID = 2;
+            return Robe;
+        }(Items.Armor));
+        Armors.Robe = Robe;
+    })(Armors = Items.Armors || (Items.Armors = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots = /** @class */ (function (_super) {
+        __extends(Boots, _super);
+        /**
+         * @param databaseId
+         */
+        function Boots(databaseId) {
+            var _this = this;
+            _this.type = Items.Boots.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        Boots.TYPE = 5;
+        return Boots;
+    }(Items.Item));
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var PrimaryBoots = /** @class */ (function (_super) {
+            __extends(PrimaryBoots, _super);
+            function PrimaryBoots(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Boots';
+                _this.image = 'Boots';
+                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Boots';
+                return _this;
+            }
+            PrimaryBoots.ITEM_ID = 3;
+            return PrimaryBoots;
+        }(Boots));
+        Boots.PrimaryBoots = PrimaryBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Gloves = /** @class */ (function (_super) {
+        __extends(Gloves, _super);
+        /**
+         * @param databaseId
+         */
+        function Gloves(databaseId) {
+            var _this = this;
+            _this.type = Items.Gloves.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Gloves.prototype.getType = function () {
+            return Items.Gloves.TYPE;
+        };
+        Gloves.TYPE = 4;
+        return Gloves;
+    }(Items.Item));
+    Items.Gloves = Gloves;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Gloves;
+    (function (Gloves) {
+        var PrimaryGloves = /** @class */ (function (_super) {
+            __extends(PrimaryGloves, _super);
+            function PrimaryGloves(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Gloves';
+                _this.image = 'Gloves';
+                _this.itemId = Items.Gloves.PrimaryGloves.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Gloves';
+                return _this;
+            }
+            PrimaryGloves.ITEM_ID = 4;
+            return PrimaryGloves;
+        }(Gloves));
+        Gloves.PrimaryGloves = PrimaryGloves;
+    })(Gloves = Items.Gloves || (Items.Gloves = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Helm = /** @class */ (function (_super) {
+        __extends(Helm, _super);
+        /**
+         * @param databaseId
+         */
+        function Helm(databaseId) {
+            var _this = this;
+            _this.type = Items.Helm.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Helm.prototype.getType = function () {
+            return Items.Helm.TYPE;
+        };
+        Helm.TYPE = 3;
+        return Helm;
+    }(Items.Item));
+    Items.Helm = Helm;
+})(Items || (Items = {}));
+/// <reference path="Helm.ts"/>
+var Items;
+(function (Items) {
+    var Helms;
+    (function (Helms) {
+        var PrimaryHelm = /** @class */ (function (_super) {
+            __extends(PrimaryHelm, _super);
+            function PrimaryHelm(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Helm';
+                _this.image = 'Helm';
+                _this.itemId = Items.Helms.PrimaryHelm.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Helm';
+                return _this;
+            }
+            PrimaryHelm.ITEM_ID = 5;
+            return PrimaryHelm;
+        }(Items.Helm));
+        Helms.PrimaryHelm = PrimaryHelm;
+    })(Helms = Items.Helms || (Items.Helms = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Shield = /** @class */ (function (_super) {
+        __extends(Shield, _super);
+        /**
+         * @param databaseId
+         */
+        function Shield(databaseId) {
+            var _this = this;
+            _this.type = Items.Shield.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Shield.prototype.getType = function () {
+            return Items.Shield.TYPE;
+        };
+        Shield.TYPE = 2;
+        return Shield;
+    }(Items.Item));
+    Items.Shield = Shield;
+})(Items || (Items = {}));
+/// <reference path="Shield.ts"/>
+var Items;
+(function (Items) {
+    var Shields;
+    (function (Shields) {
+        var WoodShield = /** @class */ (function (_super) {
+            __extends(WoodShield, _super);
+            function WoodShield(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Wood Shield';
+                _this.image = 'Shield';
+                _this.itemId = Items.Shields.WoodShield.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Shield';
+                return _this;
+            }
+            WoodShield.ITEM_ID = 7;
+            return WoodShield;
+        }(Items.Shield));
+        Shields.WoodShield = WoodShield;
+    })(Shields = Items.Shields || (Items.Shields = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Weapon = /** @class */ (function (_super) {
+        __extends(Weapon, _super);
+        /**
+         * @param databaseId
+         */
+        function Weapon(databaseId) {
+            var _this = this;
+            _this.type = Items.Weapon.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Weapon.prototype.getType = function () {
+            return Items.Weapon.TYPE;
+        };
+        Weapon.TYPE = 1;
+        return Weapon;
+    }(Items.Item));
+    Items.Weapon = Weapon;
+})(Items || (Items = {}));
+/// <reference path="Weapon.ts"/>
+var Items;
+(function (Items) {
+    var Weapons;
+    (function (Weapons) {
+        var Axe = /** @class */ (function (_super) {
+            __extends(Axe, _super);
+            function Axe(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Axe';
+                _this.image = 'BigSword';
+                _this.itemId = Items.Weapons.Axe.ITEM_ID;
+                _this.meshName = 'Axe';
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 10, 0, 0, 0, 0);
+                return _this;
+            }
+            Axe.ITEM_ID = 8;
+            return Axe;
+        }(Items.Weapon));
+        Weapons.Axe = Axe;
+    })(Weapons = Items.Weapons || (Items.Weapons = {}));
+})(Items || (Items = {}));
+/// <reference path="Weapon.ts"/>
+var Items;
+(function (Items) {
+    var Weapons;
+    (function (Weapons) {
+        var Sword = /** @class */ (function (_super) {
+            __extends(Sword, _super);
+            function Sword(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Sword';
+                _this.image = 'Sword';
+                _this.itemId = Items.Weapons.Sword.ITEM_ID;
+                _this.meshName = 'Sword';
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 5, 0, 0, 0, 0);
+                return _this;
+            }
+            Sword.ITEM_ID = 9;
+            return Sword;
+        }(Items.Weapon));
+        Weapons.Sword = Sword;
+    })(Weapons = Items.Weapons || (Items.Weapons = {}));
+})(Items || (Items = {}));

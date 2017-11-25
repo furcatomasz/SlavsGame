@@ -14,11 +14,13 @@ namespace Attributes {
             this.hp = hp;
             this.hpMax = hpMax;
             this.attackSpeed = attackSpeed;
-            this.damage = damage;
-            this.armor = armor;
             this.walkSpeed = walkSpeed;
             this.blockChance = blockChance;
             this.hitChance = hitChance;
+
+            this
+                .setArmor(armor)
+                .setDamage(damage);
         }
 
         public getHp() {
@@ -51,6 +53,18 @@ namespace Attributes {
 
         public getArmor() {
             return this.armor;
+        }
+
+        protected setArmor(armor) {
+            this.armor = armor;
+
+            return this;
+        }
+
+        protected setDamage(damage) {
+            this.damage = damage;
+
+            return this;
         }
 
     }

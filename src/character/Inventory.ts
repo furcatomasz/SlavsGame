@@ -48,15 +48,15 @@ namespace Character {
                 equip: null,
             };
 
-            switch (item.getType()) {
-                case Items.Weapon.TYPE:
+            switch (item.type) {
+                case 1:
                     this.removeItem(this.weapon, emit);
                     this.weapon = null;
                     if (setItem) {
                         this.weapon = item;
                     }
                     break;
-                case Items.Shield.TYPE:
+                case 2:
                     this.removeItem(this.shield, emit);
                     this.shield = null;
 
@@ -64,7 +64,7 @@ namespace Character {
                         this.shield = item;
                     }
                     break;
-                case Items.Helm.TYPE:
+                case 3:
                     this.removeItem(this.helm, emit);
                     this.helm = null;
 
@@ -72,7 +72,7 @@ namespace Character {
                         this.helm = item;
                     }
                     break;
-                case Items.Gloves.TYPE:
+                case 4:
                     this.removeItem(this.gloves, emit);
                     this.gloves = null;
 
@@ -80,7 +80,7 @@ namespace Character {
                         this.gloves = item;
                     }
                     break;
-                case Items.Boots.TYPE:
+                case 5:
                     this.removeItem(this.boots, emit);
                     this.boots = null;
 
@@ -88,7 +88,7 @@ namespace Character {
                         this.boots = item;
                     }
                     break;
-                case Items.Armor.TYPE:
+                case 6:
                     this.removeItem(this.armor, emit);
                     this.armor = null;
 

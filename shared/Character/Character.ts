@@ -1,6 +1,6 @@
 export class Character {
 
-    public static getCharacterSpeed() {
+    public static getRealCharacterSpeed() {
         return 2.3;
     }
 

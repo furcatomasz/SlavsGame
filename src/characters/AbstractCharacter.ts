@@ -3,8 +3,6 @@
 
 abstract class AbstractCharacter {
 
-    public static WALK_SPEED:number = 2.3;
-
     public static ANIMATION_WALK:string = 'Run';
     public static ANIMATION_STAND:string = 'stand';
     public static ANIMATION_STAND_WEAPON:string = 'Stand_with_weapon';
@@ -84,7 +82,7 @@ abstract class AbstractCharacter {
             if (!this.animation && skeleton) {
                 self.sfxWalk.play();
                 self.onWalkStart();
-                self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, this.statistics.getWalkSpeed() / 100, function () {
+                self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.5, function () {
                     skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();

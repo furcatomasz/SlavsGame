@@ -24,17 +24,19 @@ var Events = /** @class */ (function () {
     Events.MONSTER_TO_ATTACK = 'monsterToAttack';
     return Events;
 }());
-/// <reference path="../shared/Character"/>
+/// <reference path="../shared/Character/Character"/>
 var Modules = /** @class */ (function () {
     function Modules() {
     }
     Modules.prototype.loadModules = function (callback) {
         var self = this;
         new Promise(function (modulesIsLoaded) {
-            require(["./../shared/Character"], function (CharacterModule) {
-                console.log(CharacterModule);
+            requirejs(["./../../shared/Character/Character"], function (CharacterModule) {
                 self.character = CharacterModule.Character;
-                modulesIsLoaded();
+                requirejs(["./../../shared/Character/AttributesStatistics"], function (loadedModule) {
+                    self.attributesStatistics = loadedModule.AttributesStatistics;
+                    modulesIsLoaded();
+                });
             });
         }).then(function (resolve) {
             callback();
@@ -330,7 +332,7 @@ var AbstractCharacter = /** @class */ (function () {
             if (!this.animation && skeleton_2) {
                 self.sfxWalk.play();
                 self.onWalkStart();
-                self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, this.statistics.getWalkSpeed() / 100, function () {
+                self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.5, function () {
                     skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();
@@ -348,7 +350,6 @@ var AbstractCharacter = /** @class */ (function () {
     ;
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
-    AbstractCharacter.WALK_SPEED = 2.3;
     AbstractCharacter.ANIMATION_WALK = 'Run';
     AbstractCharacter.ANIMATION_STAND = 'stand';
     AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
@@ -464,7 +465,7 @@ var Monster = /** @class */ (function (_super) {
 var SocketIOClient = /** @class */ (function () {
     function SocketIOClient(game) {
         this.characters = [];
-        this.activePlayer = Number;
+        this.activeCharacter = Number;
         this.game = game;
     }
     SocketIOClient.prototype.connect = function (socketUrl) {
@@ -517,8 +518,8 @@ var SocketIOClient = /** @class */ (function () {
         var self = this;
         this.socket.on('attributeAdded', function (data) {
             self.characters = data.characters;
-            game.player.freeAttributesPoints = self.characters[self.activePlayer].freeAttributesPoints;
-            var attributes = self.characters[self.activePlayer].attributes;
+            game.player.freeAttributesPoints = self.characters[self.activeCharacter].freeAttributesPoints;
+            var attributes = self.characters[self.activeCharacter].attributes;
             game.player.setCharacterStatistics(attributes);
             game.gui.attributes.refreshPopup();
         });
@@ -532,8 +533,8 @@ var SocketIOClient = /** @class */ (function () {
         var self = this;
         this.socket.on('skillLearned', function (data) {
             self.characters = data.characters;
-            game.player.freeSkillPoints = self.characters[self.activePlayer].freeSkillPoints;
-            game.player.setCharacterSkills(self.characters[self.activePlayer].skills);
+            game.player.freeSkillPoints = self.characters[self.activeCharacter].freeSkillPoints;
+            game.player.setCharacterSkills(self.characters[self.activeCharacter].skills);
             game.gui.skills.refreshPopup();
         });
         return this;
@@ -603,11 +604,12 @@ var SocketIOClient = /** @class */ (function () {
         var self = this;
         var playerName = Game.randomNumber(1, 100);
         this.socket.on('showPlayer', function (data) {
-            self.activePlayer = data.activePlayer;
-            var activeCharacter = self.characters[self.activePlayer];
+            console.log(data);
+            self.activeCharacter = data.activeCharacter;
+            var activeCharacter = self.characters[self.activeCharacter];
             game.player = new Player(game, data.id, playerName, true, activeCharacter);
-            game.player.setItems(activeCharacter.items);
-            var activeCharacter = data.characters[data.activePlayer];
+            game.player.setItems(activeCharacter.inventory.items);
+            var activeCharacter = data.characters[data.activeCharacter];
             game.player.mesh.position = new BABYLON.Vector3(data.p.x, data.p.y, data.p.z);
             game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
@@ -635,7 +637,7 @@ var SocketIOClient = /** @class */ (function () {
             if (game.player) {
                 self.game.remotePlayers.forEach(function (socketRemotePlayer) {
                     if (playerUpdated.id == socketRemotePlayer.id) {
-                        socketRemotePlayer.setItems(playerUpdated.characters[playerUpdated.activePlayer].items);
+                        socketRemotePlayer.setItems(playerUpdated.characters[playerUpdated.self.activeCharacter].items);
                     }
                 });
             }
@@ -674,38 +676,36 @@ var SocketIOClient = /** @class */ (function () {
      */
     SocketIOClient.prototype.showEnemies = function () {
         var game = this.game;
-        this.socket.on('showEnemies', function (data) {
-            data.forEach(function (enemyData, key) {
-                var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
-                var rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
-                var enemy = game.enemies[key];
-                if (enemy) {
-                    enemy.target = enemyData.target;
-                    enemy.mesh.position = position;
-                    enemy.mesh.rotationQuaternion = rotationQuaternion;
-                    enemy.runAnimationWalk();
-                }
-                else {
-                    var newMonster = void 0;
-                    if (enemyData.type == 'worm') {
-                        newMonster = new Worm(key, data.id, game, position, rotationQuaternion);
-                    }
-                    else if (enemyData.type == 'bigWorm') {
-                        newMonster = new BigWorm(key, data.id, game, position, rotationQuaternion);
-                    }
-                    else if (enemyData.type == 'bandit') {
-                        newMonster = new Bandit.Bandit(key, game, position, rotationQuaternion);
-                    }
-                    if (newMonster) {
-                        if (game.sceneManager.octree) {
-                            game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
-                            game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
-                            game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
-                        }
-                    }
-                }
-            });
-        });
+        //this.socket.on('showEnemies', function (data) {
+        //    data.forEach(function (enemyData, key) {
+        //        let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
+        //        let rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
+        //        let enemy = game.enemies[key];
+        //
+        //        if (enemy) {
+        //            enemy.target = enemyData.target;
+        //            enemy.mesh.position = position;
+        //            enemy.mesh.rotationQuaternion = rotationQuaternion;
+        //            enemy.runAnimationWalk();
+        //        } else {
+        //            let newMonster;
+        //            if (enemyData.type == 'worm') {
+        //                newMonster = new Worm(key, data.id, game, position, rotationQuaternion);
+        //            } else if (enemyData.type == 'bigWorm') {
+        //                newMonster = new BigWorm(key, data.id, game, position, rotationQuaternion);
+        //            } else if (enemyData.type == 'bandit') {
+        //                newMonster = new Bandit.Bandit(key, game, position, rotationQuaternion);
+        //            }
+        //            if (newMonster) {
+        //                if (game.sceneManager.octree) {
+        //                    game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
+        //                    game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
+        //                    game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
+        //                }
+        //            }
+        //        }
+        //    });
+        //});
         return this;
     };
     /**
@@ -777,7 +777,7 @@ var SocketIOClient = /** @class */ (function () {
                             }
                         });
                         if (remotePlayerKey === null) {
-                            var activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
+                            var activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activeCharacter];
                             var player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
                             player.mesh.position = new BABYLON.Vector3(activePlayer.positionX, activePlayer.positionY, activePlayer.positionZ);
                             player.setItems(activePlayer.items);
@@ -963,43 +963,43 @@ var Character;
                 id: item.databaseId,
                 equip: null
             };
-            switch (item.getType()) {
-                case Items.Weapon.TYPE:
+            switch (item.type) {
+                case 1:
                     this.removeItem(this.weapon, emit);
                     this.weapon = null;
                     if (setItem) {
                         this.weapon = item;
                     }
                     break;
-                case Items.Shield.TYPE:
+                case 2:
                     this.removeItem(this.shield, emit);
                     this.shield = null;
                     if (setItem) {
                         this.shield = item;
                     }
                     break;
-                case Items.Helm.TYPE:
+                case 3:
                     this.removeItem(this.helm, emit);
                     this.helm = null;
                     if (setItem) {
                         this.helm = item;
                     }
                     break;
-                case Items.Gloves.TYPE:
+                case 4:
                     this.removeItem(this.gloves, emit);
                     this.gloves = null;
                     if (setItem) {
                         this.gloves = item;
                     }
                     break;
-                case Items.Boots.TYPE:
+                case 5:
                     this.removeItem(this.boots, emit);
                     this.boots = null;
                     if (setItem) {
                         this.boots = item;
                     }
                     break;
-                case Items.Armor.TYPE:
+                case 6:
                     this.removeItem(this.armor, emit);
                     this.armor = null;
                     if (setItem) {
@@ -1068,7 +1068,8 @@ var Player = /** @class */ (function (_super) {
         var self = _this;
         _this.id = id;
         _this.name = name;
-        _this.setCharacterStatistics(serverData.attributes);
+        _this.game = game;
+        _this.setCharacterStatistics(serverData.statistics);
         _this.isControllable = registerMoving;
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, {
             loop: true,
@@ -1083,8 +1084,8 @@ var Player = /** @class */ (function (_super) {
         mesh.alwaysSelectAsActiveMesh = true;
         // Collisions.setCollider(game.getScene(), mesh, null, false);
         _this.mesh = mesh;
-        _this.game = game;
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
+        _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         _this.inventory = new Character.Inventory(game, _this);
         if (_this.isControllable) {
@@ -1114,21 +1115,11 @@ var Player = /** @class */ (function (_super) {
             _this.name = serverData.name;
             _this.setCharacterSkills(serverData.skills);
         }
-        _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
         return _this;
     }
     Player.prototype.setCharacterStatistics = function (attributes) {
-        if (!attributes) {
-            attributes = {
-                health: 0,
-                attackSpeed: 0,
-                defence: 0,
-                damage: 0,
-                blockChance: 0
-            };
-        }
-        this.statistics = new Attributes.CharacterStatistics(100 + attributes.health * 5, 100 + attributes.health * 5, 100 + attributes.attackSpeed, 15 + attributes.damage * 5, 10 + attributes.defence * 5, 125, 50 + attributes.blockChance).setPlayer(this);
+        this.statistics = attributes;
     };
     ;
     Player.prototype.setCharacterSkills = function (skills) {
@@ -1149,7 +1140,7 @@ var Player = /** @class */ (function (_super) {
     ;
     Player.prototype.getWalkSpeed = function () {
         var animationRatio = this.game.getScene().getAnimationRatio();
-        return AbstractCharacter.WALK_SPEED * (this.statistics.getWalkSpeed() / 100) / animationRatio;
+        return this.statistics.walkSpeed / animationRatio;
     };
     ;
     Player.prototype.removeFromWorld = function () {
@@ -1226,10 +1217,6 @@ var Player = /** @class */ (function (_super) {
     };
     Player.prototype.onHitStart = function () {
         var self = this;
-        setTimeout(function () {
-            self.inventory.weapon.sfxHit.play();
-            document.dispatchEvent(this.game.events.monsterToAttack);
-        }, 300);
     };
     ;
     Player.prototype.onHitEnd = function () {
@@ -1244,6 +1231,59 @@ var Player = /** @class */ (function (_super) {
     };
     return Player;
 }(AbstractCharacter));
+/// <reference path="Controller.ts"/>
+var Mouse = /** @class */ (function (_super) {
+    __extends(Mouse, _super);
+    function Mouse() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Mouse.prototype.registerControls = function (scene) {
+        var self = this;
+        var clickTrigger = false;
+        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
+        ball.actionManager = new BABYLON.ActionManager(scene);
+        ball.isPickable = false;
+        ball.visibility = 0;
+        this.ball = ball;
+        scene.onPointerUp = function (evt, pickResult) {
+            clickTrigger = false;
+        };
+        scene.onPointerDown = function (evt, pickResult) {
+            var pickedMesh = pickResult.pickedMesh;
+            clickTrigger = true;
+            if (pickedMesh) {
+                if (self.game.player && (pickedMesh.name == 'Ground' || pickedMesh.name == 'Ground.002')) {
+                    self.attackPoint = null;
+                    self.targetPoint = pickResult.pickedPoint;
+                    self.targetPoint.y = 0;
+                    self.ball.position = self.targetPoint;
+                    self.ball.visibility = 1;
+                    self.game.client.socket.emit('setTargetPoint', {
+                        position: self.targetPoint,
+                        playerPosition: self.game.player.mesh.position
+                    });
+                }
+            }
+        };
+        scene.onPointerMove = function (evt, pickResult) {
+            if (clickTrigger) {
+                var pickedMesh = pickResult.pickedMesh;
+                if (pickedMesh && self.targetPoint) {
+                    if (self.game.player) {
+                        self.targetPoint = pickResult.pickedPoint;
+                        self.targetPoint.y = 0;
+                        self.ball.position = self.targetPoint;
+                        self.game.client.socket.emit('setTargetPoint', {
+                            position: self.targetPoint,
+                            playerPosition: self.game.player.mesh.position
+                        });
+                    }
+                }
+            }
+        };
+    };
+    return Mouse;
+}(Controller));
 /// <reference path="../game.ts"/>
 var Factories;
 (function (Factories) {
@@ -1675,59 +1715,6 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
     }
     return EnvironmentSelectCharacter;
 }());
-/// <reference path="Controller.ts"/>
-var Mouse = /** @class */ (function (_super) {
-    __extends(Mouse, _super);
-    function Mouse() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Mouse.prototype.registerControls = function (scene) {
-        var self = this;
-        var clickTrigger = false;
-        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
-        ball.actionManager = new BABYLON.ActionManager(scene);
-        ball.isPickable = false;
-        ball.visibility = 0;
-        this.ball = ball;
-        scene.onPointerUp = function (evt, pickResult) {
-            clickTrigger = false;
-        };
-        scene.onPointerDown = function (evt, pickResult) {
-            var pickedMesh = pickResult.pickedMesh;
-            clickTrigger = true;
-            if (pickedMesh) {
-                if (self.game.player && (pickedMesh.name == 'Ground' || pickedMesh.name == 'Ground.002')) {
-                    self.attackPoint = null;
-                    self.targetPoint = pickResult.pickedPoint;
-                    self.targetPoint.y = 0;
-                    self.ball.position = self.targetPoint;
-                    self.ball.visibility = 1;
-                    self.game.client.socket.emit('setTargetPoint', {
-                        position: self.targetPoint,
-                        playerPosition: self.game.player.mesh.position
-                    });
-                }
-            }
-        };
-        scene.onPointerMove = function (evt, pickResult) {
-            if (clickTrigger) {
-                var pickedMesh = pickResult.pickedMesh;
-                if (pickedMesh && self.targetPoint) {
-                    if (self.game.player) {
-                        self.targetPoint = pickResult.pickedPoint;
-                        self.targetPoint.y = 0;
-                        self.ball.position = self.targetPoint;
-                        self.game.client.socket.emit('setTargetPoint', {
-                            position: self.targetPoint,
-                            playerPosition: self.game.player.mesh.position
-                        });
-                    }
-                }
-            }
-        };
-    };
-    return Mouse;
-}(Controller));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var GUI;
@@ -2863,180 +2850,17 @@ var SimpleBandit = /** @class */ (function (_super) {
     SimpleBandit.TYPE = 3;
     return SimpleBandit;
 }(Scene));
-var Attributes;
-(function (Attributes) {
-    var AbstractStatistics = /** @class */ (function () {
-        function AbstractStatistics(hp, hpMax, attackSpeed, damage, armor, walkSpeed, blockChance, hitChance) {
-            if (hp === void 0) { hp = 0; }
-            if (hpMax === void 0) { hpMax = 0; }
-            if (attackSpeed === void 0) { attackSpeed = 0; }
-            if (damage === void 0) { damage = 0; }
-            if (armor === void 0) { armor = 0; }
-            if (walkSpeed === void 0) { walkSpeed = 0; }
-            if (blockChance === void 0) { blockChance = 0; }
-            if (hitChance === void 0) { hitChance = 0; }
-            this.hp = hp;
-            this.hpMax = hpMax;
-            this.attackSpeed = attackSpeed;
-            this.damage = damage;
-            this.armor = armor;
-            this.walkSpeed = walkSpeed;
-            this.blockChance = blockChance;
-            this.hitChance = hitChance;
-        }
-        AbstractStatistics.prototype.getHp = function () {
-            return this.hp;
-        };
-        AbstractStatistics.prototype.getHpMax = function () {
-            return this.hpMax;
-        };
-        AbstractStatistics.prototype.getAttackSpeed = function () {
-            return this.attackSpeed;
-        };
-        AbstractStatistics.prototype.getWalkSpeed = function () {
-            return this.walkSpeed;
-        };
-        AbstractStatistics.prototype.getBlockChance = function () {
-            return this.blockChance;
-        };
-        AbstractStatistics.prototype.getHitChance = function () {
-            return this.hitChance;
-        };
-        AbstractStatistics.prototype.getDamage = function () {
-            return this.damage;
-        };
-        AbstractStatistics.prototype.getArmor = function () {
-            return this.armor;
-        };
-        return AbstractStatistics;
-    }());
-    Attributes.AbstractStatistics = AbstractStatistics;
-})(Attributes || (Attributes = {}));
-var Attributes;
-(function (Attributes) {
-    var AbstractStatistics = Attributes.AbstractStatistics;
-    var CharacterStatistics = /** @class */ (function (_super) {
-        __extends(CharacterStatistics, _super);
-        function CharacterStatistics() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        CharacterStatistics.prototype.setPlayer = function (player) {
-            this.player = player;
-            return this;
-        };
-        CharacterStatistics.prototype.getItemsStats = function () {
-            var statistics = new Attributes.EquipStatistics();
-            if (this.player) {
-                var inventory = this.player.inventory;
-                var equipedItems = [];
-                equipedItems.push(inventory.helm);
-                equipedItems.push(inventory.gloves);
-                equipedItems.push(inventory.armor);
-                equipedItems.push(inventory.weapon);
-                equipedItems.push(inventory.shield);
-                equipedItems.push(inventory.boots);
-                for (var i = 0; i < equipedItems.length; i++) {
-                    var item = equipedItems[i];
-                    if (item) {
-                        statistics.addStatisticsFromItem(item.statistics);
-                    }
-                }
-            }
-            return statistics;
-        };
-        CharacterStatistics.prototype.getDamage = function () {
-            var equipStatistics = this.getItemsStats();
-            return this.damage + equipStatistics.getDamage();
-        };
-        CharacterStatistics.prototype.getArmor = function () {
-            var equipStatistics = this.getItemsStats();
-            return this.armor + equipStatistics.getArmor();
-        };
-        return CharacterStatistics;
-    }(AbstractStatistics));
-    Attributes.CharacterStatistics = CharacterStatistics;
-})(Attributes || (Attributes = {}));
-var Attributes;
-(function (Attributes) {
-    var AbstractStatistics = Attributes.AbstractStatistics;
-    var EquipStatistics = /** @class */ (function (_super) {
-        __extends(EquipStatistics, _super);
-        function EquipStatistics() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        EquipStatistics.prototype.addStatisticsFromItem = function (statistics) {
-            if (statistics.getDamage()) {
-                this.damage += statistics.getDamage();
-            }
-            if (statistics.getArmor()) {
-                this.armor += statistics.getArmor();
-            }
-        };
-        return EquipStatistics;
-    }(AbstractStatistics));
-    Attributes.EquipStatistics = EquipStatistics;
-})(Attributes || (Attributes = {}));
-var Attributes;
-(function (Attributes) {
-    var AbstractStatistics = Attributes.AbstractStatistics;
-    var ItemStatistics = /** @class */ (function (_super) {
-        __extends(ItemStatistics, _super);
-        function ItemStatistics() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        return ItemStatistics;
-    }(AbstractStatistics));
-    Attributes.ItemStatistics = ItemStatistics;
-})(Attributes || (Attributes = {}));
-var Items;
-(function (Items) {
-    var DroppedItem = /** @class */ (function () {
-        function DroppedItem() {
-        }
-        DroppedItem.showItem = function (game, item, enemy, itemDropKey) {
-            var scene = game.getScene();
-            item.mesh.position.x = enemy.mesh.position.x;
-            item.mesh.position.z = enemy.mesh.position.z;
-            item.mesh.position.y = 0;
-            item.mesh.outlineColor = new BABYLON.Color3(0, 1, 0);
-            item.mesh.outlineWidth = 0.1;
-            item.mesh.rotation = new BABYLON.Vector3(0, 0, 0);
-            item.mesh.actionManager = new BABYLON.ActionManager(scene);
-            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-                item.mesh.renderOutline = false;
-            }));
-            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-                item.mesh.renderOutline = true;
-            }));
-            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
-                game.client.socket.emit('addDoppedItem', itemDropKey);
-                item.mesh.dispose();
-            }));
-            item.mesh.visibility = 1;
-            var particleSystem = new Particles.DroppedItem(game, item.mesh);
-            particleSystem.particleSystem.start();
-            if (game.sceneManager.octree) {
-                game.sceneManager.octree.dynamicContent.push(item.mesh);
-            }
-        };
-        return DroppedItem;
-    }());
-    Items.DroppedItem = DroppedItem;
-})(Items || (Items = {}));
 var Items;
 (function (Items) {
     var Item = /** @class */ (function () {
-        /**
-         * @param game
-         * @param databaseId
-         */
-        function Item(game, databaseId) {
-            this.game = game;
-            this.databaseId = databaseId;
+        function Item(game, itemData) {
+            this.name = itemData.name;
+            this.image = itemData.image;
+            this.databaseId = itemData.databaseId;
+            this.statistics = itemData.statistics;
+            this.mesh = game.factories['character'].createInstance(itemData.meshName);
+            this.mesh.visibility = 0;
         }
-        Item.TYPE = 0;
-        Item.ITEM_ID = 0;
         return Item;
     }());
     Items.Item = Item;
@@ -3048,15 +2872,6 @@ var Items;
             this.game = game;
         }
         /**
-         *
-         * @param itemId
-         * @param databaseId
-         * @returns Item|null
-         */
-        ItemManager.prototype.getItemUsingId = function (itemId, databaseId) {
-            return this.getItem(itemId, databaseId);
-        };
-        /**
          * @param inventoryItems
          * @param inventory
          */
@@ -3064,56 +2879,18 @@ var Items;
             var self = this;
             inventory.items = [];
             inventoryItems.forEach(function (itemDatabase) {
-                var item = self.getItemUsingId(itemDatabase.itemId, itemDatabase.id);
-                if (self.game.sceneManager.octree) {
-                    self.game.sceneManager.octree.dynamicContent.push(item.mesh);
-                }
-                item.mesh.alwaysSelectAsActiveMesh = true;
-                inventory.items.push(item);
-                if (itemDatabase.equip) {
-                    inventory.mount(item);
+                if (itemDatabase) {
+                    var item = new Items.Item(this.game, itemDatabase);
+                    if (self.game.sceneManager.octree) {
+                        self.game.sceneManager.octree.dynamicContent.push(item.mesh);
+                    }
+                    item.mesh.alwaysSelectAsActiveMesh = true;
+                    inventory.items.push(item);
+                    if (itemDatabase.equip) {
+                        inventory.mount(item);
+                    }
                 }
             });
-        };
-        /**
-         *
-         * @param id
-         * @param databaseId
-         * @returns Items.Item
-         */
-        ItemManager.prototype.getItem = function (id, databaseId) {
-            var game = this.game;
-            var item = null;
-            switch (id) {
-                case Items.Armors.Robe.ITEM_ID:
-                    item = new Items.Armors.Robe(game, databaseId);
-                    break;
-                case Items.Armors.PrimaryArmor.ITEM_ID:
-                    item = new Items.Armors.PrimaryArmor(game, databaseId);
-                    break;
-                case Items.Boots.PrimaryBoots.ITEM_ID:
-                    item = new Items.Boots.PrimaryBoots(game, databaseId);
-                    break;
-                case Items.Gloves.PrimaryGloves.ITEM_ID:
-                    item = new Items.Gloves.PrimaryGloves(game, databaseId);
-                    break;
-                case Items.Helms.PrimaryHelm.ITEM_ID:
-                    item = new Items.Helms.PrimaryHelm(game, databaseId);
-                    break;
-                case Items.Shields.BigWoodShield.ITEM_ID:
-                    item = new Items.Shields.BigWoodShield(game, databaseId);
-                    break;
-                case Items.Shields.WoodShield.ITEM_ID:
-                    item = new Items.Shields.WoodShield(game, databaseId);
-                    break;
-                case Items.Weapons.Axe.ITEM_ID:
-                    item = new Items.Weapons.Axe(game, databaseId);
-                    break;
-                case Items.Weapons.Sword.ITEM_ID:
-                    item = new Items.Weapons.Sword(game, databaseId);
-                    break;
-            }
-            return item;
         };
         return ItemManager;
     }());
@@ -3930,38 +3707,38 @@ var GUI;
          * @returns {GUI.Inventory}
          */
         Inventory.prototype.onPointerUpItemImage = function (item) {
-            switch (item.getType()) {
-                case Items.Weapon.TYPE:
+            switch (item.type) {
+                case 1:
                     if (this.weaponImage.block) {
                         this.guiTexture.removeControl(this.weaponImage.block);
                     }
                     this.weaponImage = new GUI.Inventory.Weapon(this);
                     break;
-                case Items.Shield.TYPE:
+                case 2:
                     if (this.shieldImage.block) {
                         this.guiTexture.removeControl(this.shieldImage.block);
                     }
                     this.shieldImage = new GUI.Inventory.Shield(this);
                     break;
-                case Items.Helm.TYPE:
+                case 3:
                     if (this.helmImage.block) {
                         this.guiTexture.removeControl(this.helmImage.block);
                     }
                     this.helmImage = new GUI.Inventory.Helm(this);
                     break;
-                case Items.Gloves.TYPE:
+                case 4:
                     if (this.glovesImage.block) {
                         this.guiTexture.removeControl(this.glovesImage.block);
                     }
                     this.glovesImage = new GUI.Inventory.Gloves(this);
                     break;
-                case Items.Boots.TYPE:
+                case 5:
                     if (this.bootsImage.block) {
                         this.guiTexture.removeControl(this.bootsImage.block);
                     }
                     this.bootsImage = new GUI.Inventory.Boots(this);
                     break;
-                case Items.Armor.TYPE:
+                case 6:
                     if (this.armorImage.block) {
                         this.guiTexture.removeControl(this.armorImage.block);
                     }
@@ -4449,360 +4226,6 @@ var Quests;
         Requirements.Monster = Monster;
     })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
 })(Quests || (Quests = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Armor = /** @class */ (function (_super) {
-        __extends(Armor, _super);
-        /**
-         * @param game
-         * @param databaseId
-         */
-        function Armor(game, databaseId) {
-            return _super.call(this, game, databaseId) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Armor.prototype.getType = function () {
-            return Items.Armor.TYPE;
-        };
-        Armor.TYPE = 6;
-        return Armor;
-    }(Items.Item));
-    Items.Armor = Armor;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Armors;
-    (function (Armors) {
-        var PrimaryArmor = /** @class */ (function (_super) {
-            __extends(PrimaryArmor, _super);
-            function PrimaryArmor(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Armor';
-                _this.image = 'Armor';
-                _this.itemId = Items.Armors.PrimaryArmor.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Armor');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            PrimaryArmor.ITEM_ID = 1;
-            return PrimaryArmor;
-        }(Items.Armor));
-        Armors.PrimaryArmor = PrimaryArmor;
-    })(Armors = Items.Armors || (Items.Armors = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Armors;
-    (function (Armors) {
-        var Robe = /** @class */ (function (_super) {
-            __extends(Robe, _super);
-            function Robe(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Robe';
-                _this.image = 'Armor';
-                _this.itemId = Items.Armors.Robe.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Warrior.001');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            Robe.ITEM_ID = 2;
-            return Robe;
-        }(Items.Armor));
-        Armors.Robe = Robe;
-    })(Armors = Items.Armors || (Items.Armors = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots = /** @class */ (function (_super) {
-        __extends(Boots, _super);
-        /**
-         * @param game
-         * @param databaseId
-         */
-        function Boots(game, databaseId) {
-            return _super.call(this, game, databaseId) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
-        };
-        Boots.TYPE = 5;
-        return Boots;
-    }(Items.Item));
-    Items.Boots = Boots;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots;
-    (function (Boots) {
-        var PrimaryBoots = /** @class */ (function (_super) {
-            __extends(PrimaryBoots, _super);
-            function PrimaryBoots(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Boots';
-                _this.image = 'Boots';
-                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Boots');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            PrimaryBoots.ITEM_ID = 3;
-            return PrimaryBoots;
-        }(Boots));
-        Boots.PrimaryBoots = PrimaryBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Gloves = /** @class */ (function (_super) {
-        __extends(Gloves, _super);
-        /**
-         * @param game
-         * @param databaseId
-         */
-        function Gloves(game, databaseId) {
-            return _super.call(this, game, databaseId) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Gloves.prototype.getType = function () {
-            return Items.Gloves.TYPE;
-        };
-        Gloves.TYPE = 4;
-        return Gloves;
-    }(Items.Item));
-    Items.Gloves = Gloves;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Gloves;
-    (function (Gloves) {
-        var PrimaryGloves = /** @class */ (function (_super) {
-            __extends(PrimaryGloves, _super);
-            function PrimaryGloves(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Gloves';
-                _this.image = 'Gloves';
-                _this.itemId = Items.Gloves.PrimaryGloves.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Gloves');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            PrimaryGloves.ITEM_ID = 4;
-            return PrimaryGloves;
-        }(Gloves));
-        Gloves.PrimaryGloves = PrimaryGloves;
-    })(Gloves = Items.Gloves || (Items.Gloves = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Helm = /** @class */ (function (_super) {
-        __extends(Helm, _super);
-        /**
-         * @param game
-         * @param databaseId
-         */
-        function Helm(game, databaseId) {
-            return _super.call(this, game, databaseId) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Helm.prototype.getType = function () {
-            return Items.Helm.TYPE;
-        };
-        Helm.TYPE = 3;
-        return Helm;
-    }(Items.Item));
-    Items.Helm = Helm;
-})(Items || (Items = {}));
-/// <reference path="Helm.ts"/>
-var Items;
-(function (Items) {
-    var Helms;
-    (function (Helms) {
-        var PrimaryHelm = /** @class */ (function (_super) {
-            __extends(PrimaryHelm, _super);
-            function PrimaryHelm(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Helm';
-                _this.image = 'Helm';
-                _this.itemId = Items.Helms.PrimaryHelm.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Helm');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            PrimaryHelm.ITEM_ID = 5;
-            return PrimaryHelm;
-        }(Items.Helm));
-        Helms.PrimaryHelm = PrimaryHelm;
-    })(Helms = Items.Helms || (Items.Helms = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Shield = /** @class */ (function (_super) {
-        __extends(Shield, _super);
-        /**
-         * @param game
-         * @param databaseId
-         */
-        function Shield(game, databaseId) {
-            return _super.call(this, game, databaseId) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Shield.prototype.getType = function () {
-            return Items.Shield.TYPE;
-        };
-        Shield.TYPE = 2;
-        return Shield;
-    }(Items.Item));
-    Items.Shield = Shield;
-})(Items || (Items = {}));
-/// <reference path="Shield.ts"/>
-var Items;
-(function (Items) {
-    var Shields;
-    (function (Shields) {
-        var BigWoodShield = /** @class */ (function (_super) {
-            __extends(BigWoodShield, _super);
-            function BigWoodShield(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Big Wood Shield';
-                _this.image = 'Shield';
-                _this.itemId = Items.Shields.BigWoodShield.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 10, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Shield');
-                _this.mesh.visibility = 0;
-                _this.mesh.scaling = new BABYLON.Vector3(1, 2, 1);
-                return _this;
-            }
-            BigWoodShield.ITEM_ID = 6;
-            return BigWoodShield;
-        }(Items.Shield));
-        Shields.BigWoodShield = BigWoodShield;
-    })(Shields = Items.Shields || (Items.Shields = {}));
-})(Items || (Items = {}));
-/// <reference path="Shield.ts"/>
-var Items;
-(function (Items) {
-    var Shields;
-    (function (Shields) {
-        var WoodShield = /** @class */ (function (_super) {
-            __extends(WoodShield, _super);
-            function WoodShield(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Wood Shield';
-                _this.image = 'Shield';
-                _this.itemId = Items.Shields.WoodShield.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.mesh = game.factories['character'].createInstance('Shield');
-                _this.mesh.visibility = 0;
-                return _this;
-            }
-            WoodShield.ITEM_ID = 7;
-            return WoodShield;
-        }(Items.Shield));
-        Shields.WoodShield = WoodShield;
-    })(Shields = Items.Shields || (Items.Shields = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Weapon = /** @class */ (function (_super) {
-        __extends(Weapon, _super);
-        /**
-         * @param game
-         * @param databaseId
-         */
-        function Weapon(game, databaseId) {
-            return _super.call(this, game, databaseId) || this;
-        }
-        /**
-         * @returns {number}
-         */
-        Weapon.prototype.getType = function () {
-            return Items.Weapon.TYPE;
-        };
-        Weapon.TYPE = 1;
-        return Weapon;
-    }(Items.Item));
-    Items.Weapon = Weapon;
-})(Items || (Items = {}));
-/// <reference path="Weapon.ts"/>
-var Items;
-(function (Items) {
-    var Weapons;
-    (function (Weapons) {
-        var Axe = /** @class */ (function (_super) {
-            __extends(Axe, _super);
-            function Axe(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Axe';
-                _this.image = 'BigSword';
-                _this.itemId = Items.Weapons.Axe.ITEM_ID;
-                _this.mesh = game.factories['character'].createInstance('Axe');
-                _this.mesh.visibility = 0;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 10, 0, 0, 0, 0);
-                _this.sfxHit = new BABYLON.Sound("Fire", "/assets/Characters/Worm/hit.wav", _this.game.getScene(), null, {
-                    loop: false,
-                    autoplay: false
-                });
-                return _this;
-            }
-            Axe.ITEM_ID = 8;
-            return Axe;
-        }(Items.Weapon));
-        Weapons.Axe = Axe;
-    })(Weapons = Items.Weapons || (Items.Weapons = {}));
-})(Items || (Items = {}));
-/// <reference path="Weapon.ts"/>
-var Items;
-(function (Items) {
-    var Weapons;
-    (function (Weapons) {
-        var Sword = /** @class */ (function (_super) {
-            __extends(Sword, _super);
-            function Sword(game, databaseId) {
-                var _this = _super.call(this, game, databaseId) || this;
-                _this.name = 'Sword';
-                _this.image = 'Sword';
-                _this.itemId = Items.Weapons.Sword.ITEM_ID;
-                _this.mesh = game.factories['character'].createInstance('Sword');
-                _this.mesh.visibility = 0;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 5, 0, 0, 0, 0);
-                _this.sfxHit = new BABYLON.Sound("Fire", "/assets/Characters/Worm/hit.wav", _this.game.getScene(), null, {
-                    loop: false,
-                    autoplay: false
-                });
-                return _this;
-            }
-            Sword.ITEM_ID = 9;
-            return Sword;
-        }(Items.Weapon));
-        Weapons.Sword = Sword;
-    })(Weapons = Items.Weapons || (Items.Weapons = {}));
-})(Items || (Items = {}));
 /// <reference path="../Inventory.ts"/>
 var GUI;
 (function (GUI) {

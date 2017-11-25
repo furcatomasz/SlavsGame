@@ -5,7 +5,7 @@ class SocketIOClient {
     protected game:Game;
     public socket;
     public characters = [];
-    public activePlayer = Number;
+    public activeCharacter = Number;
 
     constructor(game:Game) {
         this.game = game;
@@ -69,8 +69,8 @@ class SocketIOClient {
         let self = this;
         this.socket.on('attributeAdded', function (data) {
             self.characters = data.characters;
-            game.player.freeAttributesPoints = self.characters[self.activePlayer].freeAttributesPoints;
-            let attributes = self.characters[self.activePlayer].attributes;
+            game.player.freeAttributesPoints = self.characters[self.activeCharacter].freeAttributesPoints;
+            let attributes = self.characters[self.activeCharacter].attributes;
             game.player.setCharacterStatistics(attributes);
 
             game.gui.attributes.refreshPopup();
@@ -87,8 +87,8 @@ class SocketIOClient {
         let self = this;
         this.socket.on('skillLearned', function (data) {
             self.characters = data.characters;
-            game.player.freeSkillPoints = self.characters[self.activePlayer].freeSkillPoints;
-            game.player.setCharacterSkills(self.characters[self.activePlayer].skills);
+            game.player.freeSkillPoints = self.characters[self.activeCharacter].freeSkillPoints;
+            game.player.setCharacterSkills(self.characters[self.activeCharacter].skills);
 
             game.gui.skills.refreshPopup();
         });
@@ -174,12 +174,13 @@ class SocketIOClient {
         let playerName = Game.randomNumber(1, 100);
 
         this.socket.on('showPlayer', function (data) {
-            self.activePlayer = data.activePlayer;
-            let activeCharacter = self.characters[self.activePlayer];
+            console.log(data);
+            self.activeCharacter = data.activeCharacter;
+            let activeCharacter = self.characters[self.activeCharacter];
 
             game.player = new Player(game, data.id, playerName, true, activeCharacter);
-            game.player.setItems(activeCharacter.items);
-            let activeCharacter = data.characters[data.activePlayer];
+            game.player.setItems(activeCharacter.inventory.items);
+            let activeCharacter = data.characters[data.activeCharacter];
             game.player.mesh.position = new BABYLON.Vector3(data.p.x, data.p.y, data.p.z);
             game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
@@ -211,7 +212,7 @@ class SocketIOClient {
             if (game.player) {
                 self.game.remotePlayers.forEach(function (socketRemotePlayer) {
                     if (playerUpdated.id == socketRemotePlayer.id) {
-                        socketRemotePlayer.setItems(playerUpdated.characters[playerUpdated.activePlayer].items);
+                        socketRemotePlayer.setItems(playerUpdated.characters[playerUpdated.self.activeCharacter].items);
                     }
                 });
             }
@@ -258,36 +259,36 @@ class SocketIOClient {
     public showEnemies() {
         let game = this.game;
 
-        this.socket.on('showEnemies', function (data) {
-            data.forEach(function (enemyData, key) {
-                let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
-                let rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
-                let enemy = game.enemies[key];
-
-                if (enemy) {
-                    enemy.target = enemyData.target;
-                    enemy.mesh.position = position;
-                    enemy.mesh.rotationQuaternion = rotationQuaternion;
-                    enemy.runAnimationWalk();
-                } else {
-                    let newMonster;
-                    if (enemyData.type == 'worm') {
-                        newMonster = new Worm(key, data.id, game, position, rotationQuaternion);
-                    } else if (enemyData.type == 'bigWorm') {
-                        newMonster = new BigWorm(key, data.id, game, position, rotationQuaternion);
-                    } else if (enemyData.type == 'bandit') {
-                        newMonster = new Bandit.Bandit(key, game, position, rotationQuaternion);
-                    }
-                    if (newMonster) {
-                        if (game.sceneManager.octree) {
-                            game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
-                            game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
-                            game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
-                        }
-                    }
-                }
-            });
-        });
+        //this.socket.on('showEnemies', function (data) {
+        //    data.forEach(function (enemyData, key) {
+        //        let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
+        //        let rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
+        //        let enemy = game.enemies[key];
+        //
+        //        if (enemy) {
+        //            enemy.target = enemyData.target;
+        //            enemy.mesh.position = position;
+        //            enemy.mesh.rotationQuaternion = rotationQuaternion;
+        //            enemy.runAnimationWalk();
+        //        } else {
+        //            let newMonster;
+        //            if (enemyData.type == 'worm') {
+        //                newMonster = new Worm(key, data.id, game, position, rotationQuaternion);
+        //            } else if (enemyData.type == 'bigWorm') {
+        //                newMonster = new BigWorm(key, data.id, game, position, rotationQuaternion);
+        //            } else if (enemyData.type == 'bandit') {
+        //                newMonster = new Bandit.Bandit(key, game, position, rotationQuaternion);
+        //            }
+        //            if (newMonster) {
+        //                if (game.sceneManager.octree) {
+        //                    game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
+        //                    game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
+        //                    game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
+        //                }
+        //            }
+        //        }
+        //    });
+        //});
 
         return this;
     }
@@ -376,7 +377,7 @@ class SocketIOClient {
                         });
 
                         if (remotePlayerKey === null) {
-                            let activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
+                            let activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activeCharacter];
                             let player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
                             player.mesh.position = new BABYLON.Vector3(activePlayer.positionX, activePlayer.positionY, activePlayer.positionZ);
                             player.setItems(activePlayer.items);

@@ -175,43 +175,43 @@ namespace GUI {
          * @returns {GUI.Inventory}
          */
         protected onPointerUpItemImage(item:Items.Item) {
-            switch (item.getType()) {
-                case Items.Weapon.TYPE:
+            switch (item.type) {
+                case 1:
                     if (this.weaponImage.block) {
                         this.guiTexture.removeControl(this.weaponImage.block);
                     }
 
                     this.weaponImage = new GUI.Inventory.Weapon(this);
                     break;
-                case Items.Shield.TYPE:
+                case 2:
                     if (this.shieldImage.block) {
                         this.guiTexture.removeControl(this.shieldImage.block);
                     }
 
                     this.shieldImage = new GUI.Inventory.Shield(this);
                     break;
-                case Items.Helm.TYPE:
+                case 3:
                     if (this.helmImage.block) {
                         this.guiTexture.removeControl(this.helmImage.block);
                     }
 
                     this.helmImage = new GUI.Inventory.Helm(this);
                     break;
-                case Items.Gloves.TYPE:
+                case 4:
                     if (this.glovesImage.block) {
                         this.guiTexture.removeControl(this.glovesImage.block);
                     }
 
                     this.glovesImage = new GUI.Inventory.Gloves(this);
                     break;
-                case Items.Boots.TYPE:
+                case 5:
                     if (this.bootsImage.block) {
                         this.guiTexture.removeControl(this.bootsImage.block);
                     }
 
                     this.bootsImage = new GUI.Inventory.Boots(this);
                     break;
-                case Items.Armor.TYPE:
+                case 6:
                     if (this.armorImage.block) {
                         this.guiTexture.removeControl(this.armorImage.block);
                     }

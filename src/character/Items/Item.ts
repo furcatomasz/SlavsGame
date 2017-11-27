@@ -11,6 +11,7 @@ namespace Items {
         constructor(game:Game, itemData:Array) {
             this.name = itemData.name;
             this.image = itemData.image;
+            this.type = itemData.type;
             this.databaseId = itemData.databaseId;
             this.statistics = itemData.statistics;
             this.mesh = game.factories['character'].createInstance(itemData.meshName);

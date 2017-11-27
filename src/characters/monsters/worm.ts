@@ -10,17 +10,13 @@ class Worm extends Monster {
         mesh.visibility = true;
         mesh.position = position;
         mesh.rotation = rotationQuaternion;
-        mesh.skeleton.bones.forEach(function(bone) {
-            bone.animations.forEach(function(animation) {
-                animation.enableBlending = true;
-                animation.blendingSpeed = 0.3;
-            });
-        });
-        this.statistics = new Attributes.CharacterStatistics(80,80,100,3,10,40,0,100);
+
+        this.statistics = {
+            attackSpeed : 100
+        }
+
         this.id = serverKey;
         this.mesh = mesh;
-        this.visibilityAreaSize = 30;
-        this.attackAreaSize = 6;
         this.experienceToWin = 10;
 
         //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });

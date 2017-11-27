@@ -67,33 +67,31 @@ var Server;
         };
         BabylonManager.prototype.socketPlayerConnected = function (scene) {
             var self = this;
-            this.socket.on('newPlayerConnected', function (data) {
+            this.socket.on('newPlayerConnected', function (playerData) {
                 console.log('connected new player');
-                data.forEach(function (socketRemotePlayer) {
-                    var remotePlayerKey = null;
-                    if (socketRemotePlayer.id !== self.socket.id) {
-                        self.players.forEach(function (remotePlayer, key) {
-                            if (remotePlayer.id == socketRemotePlayer.id) {
-                                remotePlayerKey = key;
-                                return;
-                            }
-                        });
-                        if (remotePlayerKey === null) {
-                            console.log('added new player to remote player array');
-                            var activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
-                            var box = BABYLON.Mesh.CreateBox(socketRemotePlayer.id, 3, scene, false);
-                            box.position = new BABYLON.Vector3(0, -5, 0);
-                            box.actionManager = new BABYLON.ActionManager(scene);
-                            var remotePlayer = {
-                                id: socketRemotePlayer.id,
-                                mesh: box,
-                                registeredFunction: null
-                            };
-                            self.players.push(remotePlayer);
-                            self.registerPlayerInEnemyActionManager(box);
+                var remotePlayerKey = null;
+                if (playerData.id !== self.socket.id) {
+                    self.players.forEach(function (remotePlayer, key) {
+                        if (remotePlayer.id == playerData.id) {
+                            remotePlayerKey = key;
+                            return;
                         }
+                    });
+                    if (remotePlayerKey === null) {
+                        console.log('added new player to remote player array');
+                        var activePlayer = playerData.characters[playerData.activeCharacter];
+                        var box = BABYLON.Mesh.CreateBox(activePlayer.id, 3, scene, false);
+                        box.position = new BABYLON.Vector3(0, -5, 0);
+                        box.actionManager = new BABYLON.ActionManager(scene);
+                        var remotePlayer = {
+                            id: activePlayer.id,
+                            mesh: box,
+                            registeredFunction: null
+                        };
+                        self.players.push(remotePlayer);
+                        self.registerPlayerInEnemyActionManager(box);
                     }
-                });
+                }
             });
             return this;
         };
@@ -221,7 +219,7 @@ var Server;
                 });
                 if (remotePlayerKey != null) {
                     player = self.players[remotePlayerKey].mesh;
-                    player.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
+                    player.position = new BABYLON.Vector3(updatedPlayer.position.x, updatedPlayer.position.y, updatedPlayer.position.z);
                     if (player) {
                         if (updatedPlayer.attack == true) {
                             console.log('playerAttack');
@@ -389,7 +387,7 @@ var SlavsServer = /** @class */ (function () {
             self.enemies = self.enemyManager.getEnemies();
             self.quests = self.questManager.getQuests();
             self.serverFrontEnd = new Server.FrontEnd(self, app, express);
-            self.babylonManager = new Server.BabylonManager(self);
+            //self.babylonManager = new Server.BabylonManager(self);
             self.serverWebsocket = new Server.IO(self, io);
         });
     }
@@ -500,14 +498,15 @@ var Server;
                 ///Player
                 socket.on('createPlayer', function () {
                     remotePlayers.push(player);
-                    socket.broadcast.emit('newPlayerConnected', remotePlayers);
+                    socket.broadcast.emit('newPlayerConnected', player);
                 });
                 socket.on('setTargetPoint', function (targetPoint) {
-                    player.attack = null;
-                    player.targetPoint = targetPoint.position;
-                    player.p = targetPoint.playerPosition;
-                    socket.broadcast.emit('updatePlayer', player);
-                    socket.emit('updatePlayer', player);
+                    var character = player.getActiveCharacter();
+                    character.attack = null;
+                    character.targetPoint = targetPoint.position;
+                    character.position = targetPoint.playerPosition;
+                    socket.broadcast.emit('updatePlayer', character);
+                    socket.emit('updatePlayer', character);
                 });
                 socket.on('attack', function (data) {
                     player.attack = data.attack;
@@ -700,7 +699,6 @@ var Server;
                 socket.on('changeScenePost', function (sceneData) {
                     player.activeScene = sceneData.sceneType;
                     socket.emit('showEnemies', enemies[sceneData.sceneType]);
-                    socket.emit('newPlayerConnected', remotePlayers);
                 });
                 ///Enemies
                 socket.on('setEnemyTarget', function (data) {
@@ -1460,6 +1458,53 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
+    var Boots = /** @class */ (function (_super) {
+        __extends(Boots, _super);
+        /**
+         * @param databaseId
+         */
+        function Boots(databaseId) {
+            var _this = this;
+            _this.type = Items.Boots.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        Boots.TYPE = 5;
+        return Boots;
+    }(Items.Item));
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var PrimaryBoots = /** @class */ (function (_super) {
+            __extends(PrimaryBoots, _super);
+            function PrimaryBoots(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Boots';
+                _this.image = 'Boots';
+                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Boots';
+                return _this;
+            }
+            PrimaryBoots.ITEM_ID = 3;
+            return PrimaryBoots;
+        }(Boots));
+        Boots.PrimaryBoots = PrimaryBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
     var Armor = /** @class */ (function (_super) {
         __extends(Armor, _super);
         /**
@@ -1525,53 +1570,6 @@ var Items;
         }(Items.Armor));
         Armors.Robe = Robe;
     })(Armors = Items.Armors || (Items.Armors = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots = /** @class */ (function (_super) {
-        __extends(Boots, _super);
-        /**
-         * @param databaseId
-         */
-        function Boots(databaseId) {
-            var _this = this;
-            _this.type = Items.Boots.TYPE;
-            _this = _super.call(this, databaseId) || this;
-            return _this;
-        }
-        /**
-         * @returns {number}
-         */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
-        };
-        Boots.TYPE = 5;
-        return Boots;
-    }(Items.Item));
-    Items.Boots = Boots;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots;
-    (function (Boots) {
-        var PrimaryBoots = /** @class */ (function (_super) {
-            __extends(PrimaryBoots, _super);
-            function PrimaryBoots(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Boots';
-                _this.image = 'Boots';
-                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Boots';
-                return _this;
-            }
-            PrimaryBoots.ITEM_ID = 3;
-            return PrimaryBoots;
-        }(Boots));
-        Boots.PrimaryBoots = PrimaryBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

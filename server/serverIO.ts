@@ -93,15 +93,16 @@ namespace Server {
                 ///Player
                 socket.on('createPlayer', function () {
                     remotePlayers.push(player);
-                    socket.broadcast.emit('newPlayerConnected', remotePlayers);
+                    socket.broadcast.emit('newPlayerConnected', player);
                 });
 
                 socket.on('setTargetPoint', function (targetPoint) {
-                    player.attack = null;
-                    player.targetPoint = targetPoint.position;
-                    player.p = targetPoint.playerPosition;
-                    socket.broadcast.emit('updatePlayer', player);
-                    socket.emit('updatePlayer', player);
+                    let character = player.getActiveCharacter();
+                    character.attack = null;
+                    character.targetPoint = targetPoint.position;
+                    character.position = targetPoint.playerPosition;
+                    socket.broadcast.emit('updatePlayer', character);
+                    socket.emit('updatePlayer', character);
 
                 });
 
@@ -320,7 +321,6 @@ namespace Server {
                     player.activeScene = sceneData.sceneType;
 
                     socket.emit('showEnemies', enemies[sceneData.sceneType]);
-                    socket.emit('newPlayerConnected', remotePlayers);
                 });
 
                 ///Enemies

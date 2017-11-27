@@ -12,7 +12,7 @@ namespace Server {
             this.characters = [];
         }
 
-        public getActiveCharacter(): Character {
+        public getActiveCharacter(): Server.Character {
             return this.characters[this.activeCharacter];
         }
 

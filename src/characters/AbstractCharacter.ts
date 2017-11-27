@@ -13,12 +13,8 @@ abstract class AbstractCharacter {
     public id:string;
     public name:string;
 
-    public x:number;
-    public y:number;
-    public z:number;
-
     /** Character atuts */
-    public statistics: Attributes.CharacterStatistics;
+    public statistics;
 
     protected game:Game;
     public animation:BABYLON.Animatable;
@@ -56,7 +52,7 @@ abstract class AbstractCharacter {
                     if(callbackEnd) {
                         callbackStart();
                     }
-                    self.animation = skeleton.beginAnimation(animation, loop, this.statistics.getAttackSpeed() / 100, function () {
+                    self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
                         if(callbackEnd) {
                             callbackEnd();
                         }

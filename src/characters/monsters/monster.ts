@@ -52,7 +52,7 @@ abstract class Monster extends AbstractCharacter {
     protected registerActions() {
         let self = this;
         let monsterAttackIsActive = false;
-        let walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
+        //let walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
         let walkSpeed = 8;
         let playerMesh = this.game.player.mesh;
         this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());

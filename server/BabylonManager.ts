@@ -74,38 +74,36 @@ namespace Server {
         public socketPlayerConnected(scene:BABYLON.Scene) {
             let self = this;
 
-            this.socket.on('newPlayerConnected', function (data) {
+            this.socket.on('newPlayerConnected', function (playerData) {
                 console.log('connected new player');
-                data.forEach(function (socketRemotePlayer) {
-                    let remotePlayerKey = null;
 
-                    if (socketRemotePlayer.id !== self.socket.id) {
-                        self.players.forEach(function (remotePlayer, key) {
-                            if (remotePlayer.id == socketRemotePlayer.id) {
-                                remotePlayerKey = key;
+                let remotePlayerKey = null;
+                if (playerData.id !== self.socket.id) {
+                    self.players.forEach(function (remotePlayer, key) {
+                        if (remotePlayer.id == playerData.id) {
+                            remotePlayerKey = key;
 
-                                return;
-                            }
-                        });
-
-                        if (remotePlayerKey === null) {
-                            console.log('added new player to remote player array');
-
-                            let activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
-                            let box = BABYLON.Mesh.CreateBox(socketRemotePlayer.id, 3, scene, false);
-                            box.position = new BABYLON.Vector3(0, -5, 0);
-                            box.actionManager = new BABYLON.ActionManager(scene);
-
-                            let remotePlayer = {
-                                id: socketRemotePlayer.id,
-                                mesh: box,
-                                registeredFunction: null,
-                            };
-                            self.players.push(remotePlayer);
-                            self.registerPlayerInEnemyActionManager(box);
+                            return;
                         }
+                    });
+
+                    if (remotePlayerKey === null) {
+                        console.log('added new player to remote player array');
+
+                        let activePlayer = playerData.characters[playerData.activeCharacter];
+                        let box = BABYLON.Mesh.CreateBox(activePlayer.id, 3, scene, false);
+                        box.position = new BABYLON.Vector3(0, -5, 0);
+                        box.actionManager = new BABYLON.ActionManager(scene);
+
+                        let remotePlayer = {
+                            id: activePlayer.id,
+                            mesh: box,
+                            registeredFunction: null,
+                        };
+                        self.players.push(remotePlayer);
+                        self.registerPlayerInEnemyActionManager(box);
                     }
-                });
+                }
             });
 
             return this;
@@ -250,7 +248,7 @@ namespace Server {
 
                 if (remotePlayerKey != null) {
                     player = self.players[remotePlayerKey].mesh;
-                    player.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
+                    player.position = new BABYLON.Vector3(updatedPlayer.position.x, updatedPlayer.position.y, updatedPlayer.position.z);
                     if (player) {
                         if (updatedPlayer.attack == true) {
                             console.log('playerAttack');

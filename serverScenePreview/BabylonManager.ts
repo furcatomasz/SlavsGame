@@ -74,37 +74,36 @@ namespace Server {
         public socketPlayerConnected(scene:BABYLON.Scene) {
             let self = this;
 
-            this.socket.on('newPlayerConnected', function (data) {
+            this.socket.on('newPlayerConnected', function (playerData) {
                 console.log('connected new player');
-                data.forEach(function (socketRemotePlayer) {
-                    let remotePlayerKey = null;
 
-                    if (socketRemotePlayer.id !== self.socket.id) {
-                        self.players.forEach(function (remotePlayer, key) {
-                            if (remotePlayer.id == socketRemotePlayer.id) {
-                                remotePlayerKey = key;
+                let remotePlayerKey = null;
+                if (playerData.id !== self.socket.id) {
+                    self.players.forEach(function (remotePlayer, key) {
+                        if (remotePlayer.id == playerData.id) {
+                            remotePlayerKey = key;
 
-                                return;
-                            }
-                        });
-
-                        if (remotePlayerKey === null) {
-                            console.log('added new player to remote player array');
-
-                            let activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activePlayer];
-                            let box = BABYLON.Mesh.CreateBox(socketRemotePlayer.id, 3, scene, false);
-                            box.position = new BABYLON.Vector3(0, -5, 0);
-                            box.actionManager = new BABYLON.ActionManager(scene);
-
-                            let remotePlayer = {
-                                id: socketRemotePlayer.id,
-                                mesh: box
-                            };
-                            self.players.push(remotePlayer);
-                            self.registerPlayerInEnemyActionManager(box);
+                            return;
                         }
+                    });
+
+                    if (remotePlayerKey === null) {
+                        console.log('added new player to remote player array');
+
+                        let activePlayer = playerData.characters[playerData.activeCharacter];
+                        let box = BABYLON.Mesh.CreateBox(activePlayer.id, 3, scene, false);
+                        box.position = new BABYLON.Vector3(0, -5, 0);
+                        box.actionManager = new BABYLON.ActionManager(scene);
+
+                        let remotePlayer = {
+                            id: activePlayer.id,
+                            mesh: box,
+                            registeredFunction: null,
+                        };
+                        self.players.push(remotePlayer);
+                        self.registerPlayerInEnemyActionManager(box);
                     }
-                });
+                }
             });
 
             return this;
@@ -122,13 +121,17 @@ namespace Server {
                         let player = self.players[key];
                         //TODO: null engine bug
                         console.log('remove player '+id);
-                        player.mesh.actionManager.dispose();
                         self.enemies.forEach(function(enemy, key) {
                             if(enemy.target == id) {
                                 enemy.target = false;
                             }
                             self.scene.unregisterBeforeRender(enemy.activeTargetPoints[id]);
                         });
+
+                        if(player.registeredFunction) {
+                            self.scene.unregisterBeforeRender(player.registeredFunction);
+                        }
+
                         player.mesh.dispose();
                         self.players.splice(key, 1);
                     }
@@ -137,23 +140,23 @@ namespace Server {
 
             return this;
         }
-        
+
         protected registerPlayerInEnemyActionManager(playerMesh: BABYLON.AbstractMesh) {
             let self = this;
 
             this.enemies.forEach(function(enemy, key) {
                 enemy.activeTargetPoints[playerMesh.id] = function () {
-                        let mesh = enemy.mesh;
-                        mesh.lookAt(playerMesh.position.clone());
+                    let mesh = enemy.mesh;
+                    mesh.lookAt(playerMesh.position.clone());
 
-                        let rotation = mesh.rotation;
-                        if (mesh.rotationQuaternion) {
-                            rotation = mesh.rotationQuaternion.toEulerAngles();
-                        }
-                        rotation.negate();
-                        let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
-                        mesh.moveWithCollisions(forwards);
-                        mesh.position.y = 0;
+                    let rotation = mesh.rotation;
+                    if (mesh.rotationQuaternion) {
+                        rotation = mesh.rotationQuaternion.toEulerAngles();
+                    }
+                    rotation.negate();
+                    let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                    mesh.moveWithCollisions(forwards);
+                    mesh.position.y = 0;
                 };
 
                 ////start attack
@@ -192,9 +195,9 @@ namespace Server {
 
                 ///start following
                 playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                parameter: enemy.visibilityAreaMesh
-            }, function () {
+                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: enemy.visibilityAreaMesh
+                }, function () {
                     if(!enemy.target) {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
@@ -206,13 +209,13 @@ namespace Server {
                         self.scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                         console.log('coliision enter:' + playerMesh.id);
                     }
-            }));
+                }));
 
                 ///stop following
                 playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-                parameter: enemy.visibilityAreaMesh
-            }, function () {
+                    trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
+                    parameter: enemy.visibilityAreaMesh
+                }, function () {
                     if(enemy.target) {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
@@ -245,7 +248,7 @@ namespace Server {
 
                 if (remotePlayerKey != null) {
                     player = self.players[remotePlayerKey].mesh;
-                    player.position = new BABYLON.Vector3(updatedPlayer.p.x, updatedPlayer.p.y, updatedPlayer.p.z);
+                    player.position = new BABYLON.Vector3(updatedPlayer.position.x, updatedPlayer.position.y, updatedPlayer.position.z);
                     if (player) {
                         if (updatedPlayer.attack == true) {
                             console.log('playerAttack');
@@ -253,8 +256,8 @@ namespace Server {
                             return;
                         }
 
-                        if (activeTargetPoints[remotePlayerKey] !== undefined) {
-                            scene.unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                        if (self.players[remotePlayerKey].registeredFunction !== undefined) {
+                            scene.unregisterBeforeRender(self.players[remotePlayerKey].registeredFunction);
                         }
 
                         if (updatedPlayer.targetPoint) {
@@ -263,10 +266,10 @@ namespace Server {
                             let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
                             mesh.lookAt(targetPointVector3);
 
-                            activeTargetPoints[remotePlayerKey] = function () {
+                            self.players[remotePlayerKey].registeredFunction = function () {
                                 if (mesh.intersectsPoint(targetPointVector3)) {
-                                    //console.log('player intersect with target');
-                                    scene.unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
+                                    console.log('player intersect with target');
+                                    scene.unregisterBeforeRender(self.players[remotePlayerKey].registeredFunction);
                                 } else {
                                     let rotation = mesh.rotation;
                                     if (mesh.rotationQuaternion) {
@@ -284,7 +287,7 @@ namespace Server {
 
                             }
 
-                            scene.registerBeforeRender(activeTargetPoints[remotePlayerKey]);
+                            scene.registerBeforeRender(self.players[remotePlayerKey].registeredFunction);
                         }
                     }
                 }

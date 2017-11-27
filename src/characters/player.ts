@@ -27,7 +27,7 @@ class Player extends AbstractCharacter {
         });
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
-
+        mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
         mesh.skeleton.enableBlending(0.5);
         mesh.alwaysSelectAsActiveMesh = true;
         // Collisions.setCollider(game.getScene(), mesh, null, false);
@@ -38,6 +38,7 @@ class Player extends AbstractCharacter {
 
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         this.inventory = new Character.Inventory(game, this);
+        this.setItems(serverData.inventory.items);
 
         if (this.isControllable) {
             this.mesh.isPickable = false;
@@ -74,13 +75,14 @@ class Player extends AbstractCharacter {
             this.freeSkillPoints = serverData.freeSkillPoints;
             this.name = serverData.name;
             this.setCharacterSkills(serverData.skills);
+
+            this.refreshCameraPosition();
         }
 
         super(null, game);
     }
 
     public setCharacterStatistics(attributes) {
-        console.log(attributes);
         this.statistics = attributes;
     };
 

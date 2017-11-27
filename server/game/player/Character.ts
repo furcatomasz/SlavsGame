@@ -11,6 +11,7 @@ namespace Server {
         public position: BABYLON.Vector3;
         public itemsDrop;
         public targetPoint: string;
+        public attack: boolean;
         public inventory: Inventory;
         public statistics: Attributes.CharacterStatistics;
 

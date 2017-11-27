@@ -358,30 +358,17 @@ class SocketIOClient {
 
     protected connectPlayer() {
         let game = this.game;
-        let self = this;
         this.socket.on('newPlayerConnected', function (teamPlayer) {
             if (game.player) {
-                let remotePlayerKey = null;
+                let activePlayer = teamPlayer.characters[teamPlayer.activeCharacter];
 
-                if (teamPlayer.id !== self.connectionId) {
-                    game.remotePlayers.forEach(function (remotePlayer, key) {
-                        if (remotePlayer.id == self.connectionId) {
-                            remotePlayerKey = key;
+                let player = new Player(game, teamPlayer.id, false, activePlayer);
+                player.mesh.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
+                player.setItems(activePlayer.items);
 
-                            return;
-                        }
-                    });
-
-                    if (remotePlayerKey === null) {
-                        let activePlayer = teamPlayer.characters[teamPlayer.activeCharacter];
-                        let player = new Player(game, teamPlayer.id, false, activePlayer);
-                        player.mesh.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
-                        player.setItems(activePlayer.items);
-
-                        game.remotePlayers.push(player);
-                    }
-                }
+                game.remotePlayers.push(player);
             }
+            console.log(game.remotePlayers);
         });
 
         return this;
@@ -391,21 +378,23 @@ class SocketIOClient {
      * @returns {SocketIOClient}
      */
     protected updatePlayers() {
-        var game = this.game;
+        let self = this;
+        let game = this.game;
         let activeTargetPoints = [];
         this.socket.on('updatePlayer', function (updatedPlayer) {
             let remotePlayerKey = null;
             let player = null;
-            game.remotePlayers.forEach(function (remotePlayer, key) {
-                if (remotePlayer.id == updatedPlayer.id) {
-                    remotePlayerKey = key;
-                    return;
-                }
-            });
-            if (remotePlayerKey == null) {
+
+            if (updatedPlayer.connectionId == self.connectionId) {
                 player = game.player;
                 remotePlayerKey = -1;
             } else {
+                game.remotePlayers.forEach(function (remotePlayer, key) {
+                    if (remotePlayer.connectionId == updatedPlayer.connectionId) {
+                        remotePlayerKey = key;
+                        return;
+                    }
+                });
                 player = game.remotePlayers[remotePlayerKey];
             }
 

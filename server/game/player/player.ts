@@ -49,6 +49,7 @@ namespace Server {
                                                             .setFreeAttributesPoints(player.freeAttributesPoints)
                                                             .setFreeSkillPoints(player.freeSkillPoints)
                                                             .setLvl(player.lvl)
+                                                            .setConnectionId(self.id)
                                                             .setItemsOnCharacter(player.items)
                                                             .calculateCharacterStatistics(player.attributes);
 

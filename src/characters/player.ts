@@ -1,5 +1,7 @@
 class Player extends AbstractCharacter {
 
+    public connectionId:string;
+
     public walkSmoke:BABYLON.ParticleSystem;
     public inventory:Character.Inventory;
     public playerLight:BABYLON.PointLight;
@@ -15,6 +17,7 @@ class Player extends AbstractCharacter {
         this.game = game;
 
         this.setCharacterStatistics(serverData.statistics);
+        this.connectionId = serverData.connectionId;
         this.isControllable = registerMoving;
 
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, {

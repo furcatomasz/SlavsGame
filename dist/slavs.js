@@ -760,26 +760,15 @@ var SocketIOClient = /** @class */ (function () {
     };
     SocketIOClient.prototype.connectPlayer = function () {
         var game = this.game;
-        var self = this;
         this.socket.on('newPlayerConnected', function (teamPlayer) {
             if (game.player) {
-                var remotePlayerKey_1 = null;
-                if (teamPlayer.id !== self.connectionId) {
-                    game.remotePlayers.forEach(function (remotePlayer, key) {
-                        if (remotePlayer.id == self.connectionId) {
-                            remotePlayerKey_1 = key;
-                            return;
-                        }
-                    });
-                    if (remotePlayerKey_1 === null) {
-                        var activePlayer = teamPlayer.characters[teamPlayer.activeCharacter];
-                        var player = new Player(game, teamPlayer.id, false, activePlayer);
-                        player.mesh.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
-                        player.setItems(activePlayer.items);
-                        game.remotePlayers.push(player);
-                    }
-                }
+                var activePlayer = teamPlayer.characters[teamPlayer.activeCharacter];
+                var player = new Player(game, teamPlayer.id, false, activePlayer);
+                player.mesh.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
+                player.setItems(activePlayer.items);
+                game.remotePlayers.push(player);
             }
+            console.log(game.remotePlayers);
         });
         return this;
     };
@@ -787,22 +776,23 @@ var SocketIOClient = /** @class */ (function () {
      * @returns {SocketIOClient}
      */
     SocketIOClient.prototype.updatePlayers = function () {
+        var self = this;
         var game = this.game;
         var activeTargetPoints = [];
         this.socket.on('updatePlayer', function (updatedPlayer) {
             var remotePlayerKey = null;
             var player = null;
-            game.remotePlayers.forEach(function (remotePlayer, key) {
-                if (remotePlayer.id == updatedPlayer.id) {
-                    remotePlayerKey = key;
-                    return;
-                }
-            });
-            if (remotePlayerKey == null) {
+            if (updatedPlayer.connectionId == self.connectionId) {
                 player = game.player;
                 remotePlayerKey = -1;
             }
             else {
+                game.remotePlayers.forEach(function (remotePlayer, key) {
+                    if (remotePlayer.connectionId == updatedPlayer.connectionId) {
+                        remotePlayerKey = key;
+                        return;
+                    }
+                });
                 player = game.remotePlayers[remotePlayerKey];
             }
             if (updatedPlayer.attack == true) {
@@ -1063,6 +1053,7 @@ var Player = /** @class */ (function (_super) {
         _this.id = id;
         _this.game = game;
         _this.setCharacterStatistics(serverData.statistics);
+        _this.connectionId = serverData.connectionId;
         _this.isControllable = registerMoving;
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, {
             loop: true,

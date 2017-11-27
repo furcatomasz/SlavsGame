@@ -2,13 +2,14 @@ namespace Server {
     export class Character {
 
         public id: number;
+        public connectionId: string;
         public name: string;
         public skills: Array;
         public experience: number;
         public lvl: number;
         public freeAttributesPoints: number;
         public freeSkillPoints: number;
-        public position: BABYLON.Vector3;
+        public position;
         public itemsDrop;
         public targetPoint: string;
         public attack: boolean;
@@ -21,6 +22,11 @@ namespace Server {
             this.inventory = new Inventory();
         }
 
+        public setConnectionId(value: string) {
+            this.connectionId = value;
+
+            return this;
+        }
 
         public setName(value: string) {
             this.name = value;

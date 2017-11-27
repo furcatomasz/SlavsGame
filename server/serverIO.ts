@@ -93,6 +93,7 @@ namespace Server {
                 ///Player
                 socket.on('createPlayer', function () {
                     remotePlayers.push(player);
+                    player.getActiveCharacter().position = self.getDefaultPositionForScene(2);
                     socket.broadcast.emit('newPlayerConnected', player);
                 });
 
@@ -293,25 +294,7 @@ namespace Server {
 
                 socket.on('changeScenePre', function (sceneData) {
                     let sceneType = sceneData.sceneType;
-                    if(sceneType == 3) {
-                        player.getActiveCharacter().position = {
-                            x: -73,
-                            y: 0,
-                            z: -4
-                        }
-                    } else if(sceneType == 2) {
-                        player.getActiveCharacter().position = {
-                            x: 145,
-                            y: 0,
-                            z: -53
-                        }
-                        //For tests
-                        player.getActiveCharacter().position = {
-                            x: 35,
-                            y: 0,
-                            z: 8
-                        }
-                    }
+                    player.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
 
                     socket.emit('showPlayer', player);
 
@@ -370,6 +353,32 @@ namespace Server {
                 });
             });
         }
+
+        protected getDefaultPositionForScene(sceneType) {
+            let position = null
+            if (sceneType == 3) {
+                position = {
+                    x: -73,
+                    y: 0,
+                    z: -4
+                };
+            } else if (sceneType == 2) {
+                position = {
+                    x: 145,
+                    y: 0,
+                    z: -53
+                };
+                //For tests
+                position = {
+                    x: 35,
+                    y: 0,
+                    z: 8
+                };
+
+            }
+
+            return position;
+        };
 
     }
 }

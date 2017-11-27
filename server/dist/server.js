@@ -498,6 +498,7 @@ var Server;
                 ///Player
                 socket.on('createPlayer', function () {
                     remotePlayers.push(player);
+                    player.getActiveCharacter().position = self.getDefaultPositionForScene(2);
                     socket.broadcast.emit('newPlayerConnected', player);
                 });
                 socket.on('setTargetPoint', function (targetPoint) {
@@ -674,26 +675,7 @@ var Server;
                 });
                 socket.on('changeScenePre', function (sceneData) {
                     var sceneType = sceneData.sceneType;
-                    if (sceneType == 3) {
-                        player.getActiveCharacter().position = {
-                            x: -73,
-                            y: 0,
-                            z: -4
-                        };
-                    }
-                    else if (sceneType == 2) {
-                        player.getActiveCharacter().position = {
-                            x: 145,
-                            y: 0,
-                            z: -53
-                        };
-                        //For tests
-                        player.getActiveCharacter().position = {
-                            x: 35,
-                            y: 0,
-                            z: 8
-                        };
-                    }
+                    player.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
                     socket.emit('showPlayer', player);
                 });
                 socket.on('changeScenePost', function (sceneData) {
@@ -740,6 +722,31 @@ var Server;
                 });
             });
         }
+        IO.prototype.getDefaultPositionForScene = function (sceneType) {
+            var position = null;
+            if (sceneType == 3) {
+                position = {
+                    x: -73,
+                    y: 0,
+                    z: -4
+                };
+            }
+            else if (sceneType == 2) {
+                position = {
+                    x: 145,
+                    y: 0,
+                    z: -53
+                };
+                //For tests
+                position = {
+                    x: 35,
+                    y: 0,
+                    z: 8
+                };
+            }
+            return position;
+        };
+        ;
         return IO;
     }());
     Server.IO = IO;
@@ -1050,6 +1057,10 @@ var Server;
             this.itemsDrop = [];
             this.inventory = new Server.Inventory();
         }
+        Character.prototype.setConnectionId = function (value) {
+            this.connectionId = value;
+            return this;
+        };
         Character.prototype.setName = function (value) {
             this.name = value;
             return this;
@@ -1215,6 +1226,7 @@ var Server;
                                                 .setFreeAttributesPoints(player.freeAttributesPoints)
                                                 .setFreeSkillPoints(player.freeSkillPoints)
                                                 .setLvl(player.lvl)
+                                                .setConnectionId(self.id)
                                                 .setItemsOnCharacter(player.items)
                                                 .calculateCharacterStatistics(player.attributes);
                                             self.characters.push(character);
@@ -1458,53 +1470,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Boots = /** @class */ (function (_super) {
-        __extends(Boots, _super);
-        /**
-         * @param databaseId
-         */
-        function Boots(databaseId) {
-            var _this = this;
-            _this.type = Items.Boots.TYPE;
-            _this = _super.call(this, databaseId) || this;
-            return _this;
-        }
-        /**
-         * @returns {number}
-         */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
-        };
-        Boots.TYPE = 5;
-        return Boots;
-    }(Items.Item));
-    Items.Boots = Boots;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots;
-    (function (Boots) {
-        var PrimaryBoots = /** @class */ (function (_super) {
-            __extends(PrimaryBoots, _super);
-            function PrimaryBoots(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Boots';
-                _this.image = 'Boots';
-                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Boots';
-                return _this;
-            }
-            PrimaryBoots.ITEM_ID = 3;
-            return PrimaryBoots;
-        }(Boots));
-        Boots.PrimaryBoots = PrimaryBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Armor = /** @class */ (function (_super) {
         __extends(Armor, _super);
         /**
@@ -1570,6 +1535,53 @@ var Items;
         }(Items.Armor));
         Armors.Robe = Robe;
     })(Armors = Items.Armors || (Items.Armors = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots = /** @class */ (function (_super) {
+        __extends(Boots, _super);
+        /**
+         * @param databaseId
+         */
+        function Boots(databaseId) {
+            var _this = this;
+            _this.type = Items.Boots.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        Boots.TYPE = 5;
+        return Boots;
+    }(Items.Item));
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var PrimaryBoots = /** @class */ (function (_super) {
+            __extends(PrimaryBoots, _super);
+            function PrimaryBoots(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Boots';
+                _this.image = 'Boots';
+                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Boots';
+                return _this;
+            }
+            PrimaryBoots.ITEM_ID = 3;
+            return PrimaryBoots;
+        }(Boots));
+        Boots.PrimaryBoots = PrimaryBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

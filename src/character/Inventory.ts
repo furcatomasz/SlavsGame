@@ -28,6 +28,7 @@ namespace Character {
             if(item) {
                 item.mesh.visibility = 0;
 
+                //TODO: this should execute by server
                 if(emit) {
                     this.game.client.socket.emit('itemEquip', {
                         id: item.databaseId,

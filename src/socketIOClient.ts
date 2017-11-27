@@ -4,6 +4,7 @@
 class SocketIOClient {
     protected game:Game;
     public socket;
+    public connectionId;
     public characters = [];
     public activeCharacter = Number;
 
@@ -26,13 +27,14 @@ class SocketIOClient {
 
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
+            self.connectionId = data.id;
             self.characters = data.characters;
             self
                 .updatePlayers()
                 .updateEnemies()
                 .removePlayer()
                 .connectPlayer()
-                .refreshPlayer()
+                .showPlayer()
                 .refreshPlayerEquip()
                 .refreshEnemyEquip()
                 .showDroppedItem()
@@ -70,8 +72,8 @@ class SocketIOClient {
         this.socket.on('attributeAdded', function (data) {
             self.characters = data.characters;
             game.player.freeAttributesPoints = self.characters[self.activeCharacter].freeAttributesPoints;
-            let attributes = self.characters[self.activeCharacter].attributes;
-            game.player.setCharacterStatistics(attributes);
+            let statistics = self.characters[self.activeCharacter].statistics;
+            game.player.setCharacterStatistics(statistics);
 
             game.gui.attributes.refreshPopup();
         });
@@ -168,20 +170,19 @@ class SocketIOClient {
     /**
      * @returns {SocketIOClient}
      */
-    protected refreshPlayer() {
+    protected showPlayer() {
         let game = this.game;
         let self = this;
-        let playerName = Game.randomNumber(1, 100);
 
         this.socket.on('showPlayer', function (data) {
-            console.log(data);
+            self.characters = data.characters;
             self.activeCharacter = data.activeCharacter;
             let activeCharacter = self.characters[self.activeCharacter];
 
-            game.player = new Player(game, data.id, playerName, true, activeCharacter);
+            game.player = new Player(game, activeCharacter.id, true, activeCharacter);
             game.player.setItems(activeCharacter.inventory.items);
-            let activeCharacter = data.characters[data.activeCharacter];
-            game.player.mesh.position = new BABYLON.Vector3(data.p.x, data.p.y, data.p.z);
+
+            game.player.mesh.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);
             game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
 
@@ -361,13 +362,13 @@ class SocketIOClient {
 
     protected connectPlayer() {
         let game = this.game;
-
-        this.socket.on('newPlayerConnected', function (data) {
+        let self = this;
+        this.socket.on('newPlayerConnected', function (teamPlayers) {
             if (game.player) {
-                data.forEach(function (socketRemotePlayer) {
+                teamPlayers.forEach(function (teamPlayer) {
                     let remotePlayerKey = null;
 
-                    if (socketRemotePlayer.id !== game.player.id) {
+                    if (teamPlayer.id !== self.connectionId) {
                         game.remotePlayers.forEach(function (remotePlayer, key) {
                             if (remotePlayer.id == socketRemotePlayer.id) {
                                 remotePlayerKey = key;
@@ -377,9 +378,9 @@ class SocketIOClient {
                         });
 
                         if (remotePlayerKey === null) {
-                            let activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activeCharacter];
-                            let player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
-                            player.mesh.position = new BABYLON.Vector3(activePlayer.positionX, activePlayer.positionY, activePlayer.positionZ);
+                            let activePlayer = teamPlayer.characters[teamPlayer.activeCharacter];
+                            let player = new Player(game, teamPlayers.id, false);
+                            player.mesh.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
                             player.setItems(activePlayer.items);
 
                             game.remotePlayers.push(player);

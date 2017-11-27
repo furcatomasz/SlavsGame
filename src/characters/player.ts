@@ -10,11 +10,10 @@ class Player extends AbstractCharacter {
     public freeAttributesPoints: number;
     public freeSkillPoints: number;
 
-    public constructor(game:Game, id, name, registerMoving:boolean, serverData: Array = []) {
-        let self = this;
+    public constructor(game:Game, id, registerMoving:boolean, serverData: Array = []) {
         this.id = id;
-        this.name = name;
         this.game = game;
+
         this.setCharacterStatistics(serverData.statistics);
         this.isControllable = registerMoving;
 
@@ -77,10 +76,11 @@ class Player extends AbstractCharacter {
             this.setCharacterSkills(serverData.skills);
         }
 
-        super(name, game);
+        super(null, game);
     }
 
     public setCharacterStatistics(attributes) {
+        console.log(attributes);
         this.statistics = attributes;
     };
 

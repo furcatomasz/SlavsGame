@@ -68,11 +68,11 @@ namespace GUI {
             textName.fontSize = 36;
             panel.addControl(textName);
 
-            this.createAttribute(1, 'Damage:' + this.guiMain.player.statistics.getDamage(), panel);
-            this.createAttribute(2, 'Armor:' + this.guiMain.player.statistics.getArmor(), panel);
-            this.createAttribute(3, 'HP:' + this.guiMain.player.statistics.getHp(), panel);
-            this.createAttribute(4, 'Attack speed:' + this.guiMain.player.statistics.getAttackSpeed(), panel);
-            this.createAttribute(6, 'Block chance:' + this.guiMain.player.statistics.getBlockChance(), panel);
+            this.createAttribute(1, 'Damage:' + this.guiMain.player.statistics.damage, panel);
+            this.createAttribute(2, 'Armor:' + this.guiMain.player.statistics.armor, panel);
+            this.createAttribute(3, 'HP:' + this.guiMain.player.statistics.hp, panel);
+            this.createAttribute(4, 'Attack speed:' + this.guiMain.player.statistics.attackSpeed, panel);
+            this.createAttribute(6, 'Block chance:' + this.guiMain.player.statistics.blockChance, panel);
 
             if (this.guiMain.game.player.freeAttributesPoints) {
                 let textAttributes = this.createText('You have ' + this.guiMain.game.player.freeAttributesPoints + ' free attribute points.');

@@ -12,10 +12,10 @@
     "mysql": "^2.15.0",
     "orm": "^4.0.1",
     "path": "^0.12.7",
+    "requirejs": "^2.3.5",
     "socket.io": "^2.0.4",
     "socket.io-client": "latest",
-    "typescript": "^2.6.1",
-    "requirejs": "latest"
+    "typescript": "^2.6.1"
   },
   "author": "Tomasz Furca"
 }

@@ -24,6 +24,7 @@ class SlavsServer {
 
     constructor() {
         let self = this;
+        this.ormManager = new Server.OrmManager(self, orm, config);
         this.gameModules = new Server.GameModules();
         this.gameModules.loadModules(function() {
             self.enemyManager = new Server.EnemyManager();
@@ -32,7 +33,6 @@ class SlavsServer {
             self.quests = self.questManager.getQuests();
             self.serverFrontEnd = new Server.FrontEnd(self, app, express);
             self.babylonManager = new Server.BabylonManager(self);
-            self.ormManager = new Server.OrmManager(self, orm, config);
             self.serverWebsocket = new Server.IO(self, io);
         });
         

@@ -33,10 +33,7 @@ var Modules = /** @class */ (function () {
         new Promise(function (modulesIsLoaded) {
             requirejs(["./../../shared/Character/Character"], function (CharacterModule) {
                 self.character = CharacterModule.Character;
-                requirejs(["./../../shared/Character/AttributesStatistics"], function (loadedModule) {
-                    self.attributesStatistics = loadedModule.AttributesStatistics;
-                    modulesIsLoaded();
-                });
+                modulesIsLoaded();
             });
         }).then(function (resolve) {
             callback();
@@ -480,13 +477,14 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
+            self.connectionId = data.id;
             self.characters = data.characters;
             self
                 .updatePlayers()
                 .updateEnemies()
                 .removePlayer()
                 .connectPlayer()
-                .refreshPlayer()
+                .showPlayer()
                 .refreshPlayerEquip()
                 .refreshEnemyEquip()
                 .showDroppedItem()
@@ -519,8 +517,8 @@ var SocketIOClient = /** @class */ (function () {
         this.socket.on('attributeAdded', function (data) {
             self.characters = data.characters;
             game.player.freeAttributesPoints = self.characters[self.activeCharacter].freeAttributesPoints;
-            var attributes = self.characters[self.activeCharacter].attributes;
-            game.player.setCharacterStatistics(attributes);
+            var statistics = self.characters[self.activeCharacter].statistics;
+            game.player.setCharacterStatistics(statistics);
             game.gui.attributes.refreshPopup();
         });
         return this;
@@ -599,18 +597,16 @@ var SocketIOClient = /** @class */ (function () {
     /**
      * @returns {SocketIOClient}
      */
-    SocketIOClient.prototype.refreshPlayer = function () {
+    SocketIOClient.prototype.showPlayer = function () {
         var game = this.game;
         var self = this;
-        var playerName = Game.randomNumber(1, 100);
         this.socket.on('showPlayer', function (data) {
-            console.log(data);
+            self.characters = data.characters;
             self.activeCharacter = data.activeCharacter;
             var activeCharacter = self.characters[self.activeCharacter];
-            game.player = new Player(game, data.id, playerName, true, activeCharacter);
+            game.player = new Player(game, activeCharacter.id, true, activeCharacter);
             game.player.setItems(activeCharacter.inventory.items);
-            var activeCharacter = data.characters[data.activeCharacter];
-            game.player.mesh.position = new BABYLON.Vector3(data.p.x, data.p.y, data.p.z);
+            game.player.mesh.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);
             game.player.refreshCameraPosition();
             document.dispatchEvent(game.events.playerConnected);
             var octree = game.sceneManager.octree;
@@ -765,11 +761,12 @@ var SocketIOClient = /** @class */ (function () {
     };
     SocketIOClient.prototype.connectPlayer = function () {
         var game = this.game;
-        this.socket.on('newPlayerConnected', function (data) {
+        var self = this;
+        this.socket.on('newPlayerConnected', function (teamPlayers) {
             if (game.player) {
-                data.forEach(function (socketRemotePlayer) {
+                teamPlayers.forEach(function (teamPlayer) {
                     var remotePlayerKey = null;
-                    if (socketRemotePlayer.id !== game.player.id) {
+                    if (teamPlayer.id !== self.connectionId) {
                         game.remotePlayers.forEach(function (remotePlayer, key) {
                             if (remotePlayer.id == socketRemotePlayer.id) {
                                 remotePlayerKey = key;
@@ -777,9 +774,9 @@ var SocketIOClient = /** @class */ (function () {
                             }
                         });
                         if (remotePlayerKey === null) {
-                            var activePlayer = socketRemotePlayer.characters[socketRemotePlayer.activeCharacter];
-                            var player = new Player(game, socketRemotePlayer.id, socketRemotePlayer.name, false);
-                            player.mesh.position = new BABYLON.Vector3(activePlayer.positionX, activePlayer.positionY, activePlayer.positionZ);
+                            var activePlayer = teamPlayer.characters[teamPlayer.activeCharacter];
+                            var player = new Player(game, teamPlayers.id, false);
+                            player.mesh.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
                             player.setItems(activePlayer.items);
                             game.remotePlayers.push(player);
                         }
@@ -945,6 +942,7 @@ var Character;
         Inventory.prototype.removeItem = function (item, emit) {
             if (item) {
                 item.mesh.visibility = 0;
+                //TODO: this should execute by server
                 if (emit) {
                     this.game.client.socket.emit('itemEquip', {
                         id: item.databaseId,
@@ -1062,12 +1060,10 @@ var Character;
 })(Character || (Character = {}));
 var Player = /** @class */ (function (_super) {
     __extends(Player, _super);
-    function Player(game, id, name, registerMoving, serverData) {
+    function Player(game, id, registerMoving, serverData) {
         if (serverData === void 0) { serverData = []; }
         var _this = this;
-        var self = _this;
         _this.id = id;
-        _this.name = name;
         _this.game = game;
         _this.setCharacterStatistics(serverData.statistics);
         _this.isControllable = registerMoving;
@@ -1115,10 +1111,11 @@ var Player = /** @class */ (function (_super) {
             _this.name = serverData.name;
             _this.setCharacterSkills(serverData.skills);
         }
-        _this = _super.call(this, name, game) || this;
+        _this = _super.call(this, null, game) || this;
         return _this;
     }
     Player.prototype.setCharacterStatistics = function (attributes) {
+        console.log(attributes);
         this.statistics = attributes;
     };
     ;
@@ -3515,11 +3512,11 @@ var GUI;
             textName.height = '8%';
             textName.fontSize = 36;
             panel.addControl(textName);
-            this.createAttribute(1, 'Damage:' + this.guiMain.player.statistics.getDamage(), panel);
-            this.createAttribute(2, 'Armor:' + this.guiMain.player.statistics.getArmor(), panel);
-            this.createAttribute(3, 'HP:' + this.guiMain.player.statistics.getHp(), panel);
-            this.createAttribute(4, 'Attack speed:' + this.guiMain.player.statistics.getAttackSpeed(), panel);
-            this.createAttribute(6, 'Block chance:' + this.guiMain.player.statistics.getBlockChance(), panel);
+            this.createAttribute(1, 'Damage:' + this.guiMain.player.statistics.damage, panel);
+            this.createAttribute(2, 'Armor:' + this.guiMain.player.statistics.armor, panel);
+            this.createAttribute(3, 'HP:' + this.guiMain.player.statistics.hp, panel);
+            this.createAttribute(4, 'Attack speed:' + this.guiMain.player.statistics.attackSpeed, panel);
+            this.createAttribute(6, 'Block chance:' + this.guiMain.player.statistics.blockChance, panel);
             if (this.guiMain.game.player.freeAttributesPoints) {
                 var textAttributes = this.createText('You have ' + this.guiMain.game.player.freeAttributesPoints + ' free attribute points.');
                 textAttributes.color = 'red';

@@ -26,7 +26,7 @@ namespace Items {
             inventoryItems.forEach(function(itemDatabase) {
                 let item = self.getItemUsingId(itemDatabase.itemId, itemDatabase.id);
                 inventory.items.push(item);
-                
+
                 if (itemDatabase.equip) {
                     item.equip = itemDatabase.equip;
                     inventory.mount(item);

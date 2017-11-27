@@ -11,7 +11,7 @@ namespace Server {
             this.server = server;
             serverIO.on('connection', function (socket) {
                 let isMonsterServer = socket.handshake.query.monsterServer;
-                let player = new Player(socket.id);
+                let player = new Server.Player(socket.id);
                 player.activeCharacter = 1;
                 if(!isMonsterServer) {
                     ////CLEAR QUESTS
@@ -293,19 +293,19 @@ namespace Server {
                 socket.on('changeScenePre', function (sceneData) {
                     let sceneType = sceneData.sceneType;
                     if(sceneType == 3) {
-                        player.p = {
+                        player.getActiveCharacter().position = {
                             x: -73,
                             y: 0,
                             z: -4
                         }
                     } else if(sceneType == 2) {
-                        player.p = {
+                        player.getActiveCharacter().position = {
                             x: 145,
                             y: 0,
                             z: -53
                         }
                         //For tests
-                        player.p = {
+                        player.getActiveCharacter().position = {
                             x: 35,
                             y: 0,
                             z: 8

@@ -1,12 +1,20 @@
 /// <reference path="../AbstractCharacter.ts"/>
 
-abstract class Monster extends AbstractCharacter {
+class Monster extends AbstractCharacter {
 
     protected visibilityArea: BABYLON.Mesh;
     protected target: string;
     protected experienceToWin: number;
 
-    constructor(name: string, game: Game) {
+    constructor(game:Game, serverKey: number, serverData:Array) {
+        let meshName = serverData.meshName;
+        let mesh = game.factories['worm'].createInstance(meshName, true);
+
+        mesh.visibility = true;
+        mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
+        this.id = serverKey;
+        this.mesh = mesh;
+        this.statistics = serverKey.statistics;
         game.enemies[this.id] = this;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
@@ -40,6 +48,22 @@ abstract class Monster extends AbstractCharacter {
                     rotation: self.game.controller.attackPoint.rotation,
                 });
             }));
+
+    }
+
+    public runAnimationWalk():void {
+        let self = this;
+        let loopAnimation = this.isControllable;
+        let skeleton = this.mesh.skeleton;
+
+        if (!this.animation && skeleton) {
+            self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
+                skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                self.animation = null;
+            });
+
+
+        }
 
     }
 

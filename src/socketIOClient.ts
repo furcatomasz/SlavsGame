@@ -257,29 +257,22 @@ class SocketIOClient {
 
         this.socket.on('showEnemies', function (data) {
             data.forEach(function (enemyData, key) {
-                let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
-                let rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
                 let enemy = game.enemies[key];
+                console.log(enemyData);
 
                 if (enemy) {
+                    let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
+
                     enemy.target = enemyData.target;
                     enemy.mesh.position = position;
-                    enemy.mesh.rotationQuaternion = rotationQuaternion;
                     enemy.runAnimationWalk();
                 } else {
                     let newMonster;
-                    if (enemyData.type == 'worm') {
-                        newMonster = new Worm(key, data.id, game, position, rotationQuaternion);
-                    } else if (enemyData.type == 'bigWorm') {
-                        newMonster = new BigWorm(key, data.id, game, position, rotationQuaternion);
-                    } else if (enemyData.type == 'bandit') {
-                        newMonster = new Bandit.Bandit(key, game, position, rotationQuaternion);
-                    }
+                    newMonster = new Monster(game, key, enemyData);
+console.log(newMonster);
                     if (newMonster) {
                         if (game.sceneManager.octree) {
                             game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
-                            game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
-                            game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
                         }
                     }
                 }
@@ -399,6 +392,8 @@ class SocketIOClient {
             }
 
             if (updatedPlayer.attack == true) {
+                console.log(updatedPlayer);
+
                 let mesh = player.mesh;
                 let targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {

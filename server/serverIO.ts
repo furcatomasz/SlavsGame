@@ -108,10 +108,21 @@ namespace Server {
                 });
 
                 socket.on('attack', function (data) {
-                    player.attack = data.attack;
-                    player.targetPoint = data.targetPoint;
-                    socket.broadcast.emit('updatePlayer', player);
-                    socket.emit('updatePlayer', player);
+                    let activeCharacter = player.getActiveCharacter();
+
+                    activeCharacter.attack = data.attack;
+                    activeCharacter.targetPoint = data.targetPoint;
+
+                    enemies[player.activeScene].forEach(function(enemy) {
+                         enemy.availableAttacksFromCharacters.forEach(function(isAtacked, playerKey) {
+                            if(isAtacked === true) {
+                                console.log('attack player key'+playerKey);
+                            }
+                        });
+                    });
+
+                    socket.broadcast.emit('updatePlayer', activeCharacter);
+                    socket.emit('updatePlayer', activeCharacter);
                 });
 
                 socket.on('itemEquip', function (item) {
@@ -312,6 +323,8 @@ namespace Server {
                     enemy.position = data.position;
                     enemy.target = data.target;
                     enemy.attack = data.attack;
+                    enemy.availableAttacksFromCharacters[data.target] = data.attack;
+
                     socket.broadcast.emit('updateEnemy', {
                         enemy: enemy,
                         enemyKey: data.enemyKey

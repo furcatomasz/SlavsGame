@@ -307,6 +307,7 @@ var AbstractCharacter = /** @class */ (function () {
                 if (callbackEnd) {
                     callbackStart();
                 }
+                console.log(this.statistics);
                 self.animation = skeleton_1.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
                     if (callbackEnd) {
                         callbackEnd();
@@ -357,8 +358,15 @@ var AbstractCharacter = /** @class */ (function () {
 /// <reference path="../AbstractCharacter.ts"/>
 var Monster = /** @class */ (function (_super) {
     __extends(Monster, _super);
-    function Monster(name, game) {
+    function Monster(game, serverKey, serverData) {
         var _this = this;
+        var meshName = serverData.meshName;
+        var mesh = game.factories['worm'].createInstance(meshName, true);
+        mesh.visibility = true;
+        mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
+        _this.id = serverKey;
+        _this.mesh = mesh;
+        _this.statistics = serverKey.statistics;
         game.enemies[_this.id] = _this;
         _this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
@@ -385,6 +393,17 @@ var Monster = /** @class */ (function (_super) {
         }));
         return _this;
     }
+    Monster.prototype.runAnimationWalk = function () {
+        var self = this;
+        var loopAnimation = this.isControllable;
+        var skeleton = this.mesh.skeleton;
+        if (!this.animation && skeleton) {
+            self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
+                skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                self.animation = null;
+            });
+        }
+    };
     Monster.prototype.removeFromWorld = function () {
         this.game.client.socket.emit('enemyKill', this.id);
         var self = this;
@@ -670,31 +689,21 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         this.socket.on('showEnemies', function (data) {
             data.forEach(function (enemyData, key) {
-                var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
-                var rotationQuaternion = new BABYLON.Quaternion(enemyData.rotation.x, enemyData.rotation.y, enemyData.rotation.z, enemyData.rotation.w);
                 var enemy = game.enemies[key];
+                console.log(enemyData);
                 if (enemy) {
+                    var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
                     enemy.target = enemyData.target;
                     enemy.mesh.position = position;
-                    enemy.mesh.rotationQuaternion = rotationQuaternion;
                     enemy.runAnimationWalk();
                 }
                 else {
                     var newMonster = void 0;
-                    if (enemyData.type == 'worm') {
-                        newMonster = new Worm(key, data.id, game, position, rotationQuaternion);
-                    }
-                    else if (enemyData.type == 'bigWorm') {
-                        newMonster = new BigWorm(key, data.id, game, position, rotationQuaternion);
-                    }
-                    else if (enemyData.type == 'bandit') {
-                        newMonster = new Bandit.Bandit(key, game, position, rotationQuaternion);
-                    }
+                    newMonster = new Monster(game, key, enemyData);
+                    console.log(newMonster);
                     if (newMonster) {
                         if (game.sceneManager.octree) {
                             game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
-                            game.sceneManager.octree.dynamicContent.push(newMonster.attackArea);
-                            game.sceneManager.octree.dynamicContent.push(newMonster.visibilityArea);
                         }
                     }
                 }
@@ -796,6 +805,7 @@ var SocketIOClient = /** @class */ (function () {
                 player = game.remotePlayers[remotePlayerKey];
             }
             if (updatedPlayer.attack == true) {
+                console.log(updatedPlayer);
                 var mesh = player.mesh;
                 var targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {
@@ -3053,77 +3063,6 @@ var Bandit;
     }(Monster));
     Bandit_1.Bandit = Bandit;
 })(Bandit || (Bandit = {}));
-/// <reference path="../../game.ts"/>
-/// <reference path="monster.ts"/>
-var BigWorm = /** @class */ (function (_super) {
-    __extends(BigWorm, _super);
-    function BigWorm(serverKey, name, game, position, rotationQuaternion) {
-        var _this = this;
-        var mesh = game.factories['worm'].createInstance('Worm', true);
-        mesh.visibility = true;
-        mesh.position = position;
-        mesh.rotation = rotationQuaternion;
-        mesh.scaling = new BABYLON.Vector3(2, 2, 2);
-        _this.statistics = new Attributes.CharacterStatistics(125, 125, 100, 5, 10, 50, 0, 100);
-        _this.id = serverKey;
-        _this.mesh = mesh;
-        _this.visibilityAreaSize = 10;
-        _this.attackAreaSize = 4;
-        //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        _this.sfxHit = new BABYLON.Sound("WormWalk", "/assets/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
-        _this = _super.call(this, name, game) || this;
-        return _this;
-    }
-    BigWorm.prototype.runAnimationWalk = function () {
-        var self = this;
-        var childMesh = this.mesh;
-        var loopAnimation = this.isControllable;
-        if (childMesh) {
-            var skeleton_3 = childMesh.skeleton;
-            if (!this.animation) {
-                self.animation = skeleton_3.beginAnimation('Walk', loopAnimation, 1, function () {
-                    skeleton_3.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                    self.animation = null;
-                });
-            }
-        }
-    };
-    return BigWorm;
-}(Monster));
-/// <reference path="../../game.ts"/>
-/// <reference path="monster.ts"/>
-var Worm = /** @class */ (function (_super) {
-    __extends(Worm, _super);
-    function Worm(serverKey, name, game, position, rotationQuaternion) {
-        var _this = this;
-        var mesh = game.factories['worm'].createInstance('Worm', true);
-        mesh.visibility = true;
-        mesh.position = position;
-        mesh.rotation = rotationQuaternion;
-        _this.statistics = {
-            attackSpeed: 100
-        };
-        _this.id = serverKey;
-        _this.mesh = mesh;
-        _this.experienceToWin = 10;
-        //this.sfxWalk = new BABYLON.Sound("WormWalk", "/babel/Characters/Worm/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-        _this.sfxHit = new BABYLON.Sound("WormWalk", "/assets/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
-        _this = _super.call(this, name, game) || this;
-        return _this;
-    }
-    Worm.prototype.runAnimationWalk = function () {
-        var self = this;
-        var loopAnimation = this.isControllable;
-        var skeleton = this.mesh.skeleton;
-        if (!this.animation && skeleton) {
-            self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
-                skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                self.animation = null;
-            });
-        }
-    };
-    return Worm;
-}(Monster));
 /// <reference path="../AbstractCharacter.ts"/>
 var NPC;
 (function (NPC) {

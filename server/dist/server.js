@@ -267,35 +267,12 @@ var Server;
     var EnemyManager = /** @class */ (function () {
         function EnemyManager() {
         }
-        EnemyManager.prototype.createEnemy = function (position, type, itemsToDrop, experience) {
-            return {
-                id: 0,
-                position: position,
-                rotation: {
-                    x: 0,
-                    y: 0,
-                    z: 0,
-                    w: 0
-                },
-                hp: 100,
-                type: type,
-                target: false,
-                attack: false,
-                itemsToDrop: itemsToDrop,
-                experience: experience
-            };
-        };
         EnemyManager.prototype.getEnemies = function () {
             var enemies = [];
             enemies[2] = [
-                this.createEnemy({ x: -2, y: 0, z: -30 }, 'worm', [9], 10),
-                this.createEnemy({ x: -2, y: 0, z: -64 }, 'worm', [1], 10),
-                this.createEnemy({ x: -8, y: 0, z: -72 }, 'worm', [8], 10),
-            ];
-            enemies[3] = [
-                this.createEnemy({ x: -2, y: 0, z: -30 }, 'bandit', [9], 10),
-                this.createEnemy({ x: -2, y: 0, z: -64 }, 'bandit', [9], 10),
-                this.createEnemy({ x: -8, y: 0, z: -72 }, 'bandit', [9], 10),
+                new Worm(0, { x: -2, y: 0, z: -30 }, [9]),
+                new Worm(1, { x: -2, y: 0, z: -64 }, [9]),
+                new Worm(2, { x: -8, y: 0, z: -72 }, [9]),
             ];
             return enemies;
         };
@@ -510,10 +487,18 @@ var Server;
                     socket.emit('updatePlayer', character);
                 });
                 socket.on('attack', function (data) {
-                    player.attack = data.attack;
-                    player.targetPoint = data.targetPoint;
-                    socket.broadcast.emit('updatePlayer', player);
-                    socket.emit('updatePlayer', player);
+                    var activeCharacter = player.getActiveCharacter();
+                    activeCharacter.attack = data.attack;
+                    activeCharacter.targetPoint = data.targetPoint;
+                    enemies[player.activeScene].forEach(function (enemy) {
+                        enemy.availableAttacksFromCharacters.forEach(function (isAtacked, playerKey) {
+                            if (isAtacked === true) {
+                                console.log('attack player key' + playerKey);
+                            }
+                        });
+                    });
+                    socket.broadcast.emit('updatePlayer', activeCharacter);
+                    socket.emit('updatePlayer', activeCharacter);
                 });
                 socket.on('itemEquip', function (item) {
                     var itemId = item.id;
@@ -688,6 +673,7 @@ var Server;
                     enemy.position = data.position;
                     enemy.target = data.target;
                     enemy.attack = data.attack;
+                    enemy.availableAttacksFromCharacters[data.target] = data.attack;
                     socket.broadcast.emit('updateEnemy', {
                         enemy: enemy,
                         enemyKey: data.enemyKey
@@ -1049,6 +1035,31 @@ var Server;
         })(Models = Quests.Models || (Quests.Models = {}));
     })(Quests = Server.Quests || (Server.Quests = {}));
 })(Server || (Server = {}));
+var Monster = /** @class */ (function () {
+    function Monster(id, position, itemsToDrop) {
+        this.id = id;
+        this.position = position;
+        this.itemsDrop = itemsToDrop;
+        this.availableAttacksFromCharacters = [];
+    }
+    return Monster;
+}());
+var Worm = /** @class */ (function (_super) {
+    __extends(Worm, _super);
+    function Worm(id, position, itemsToDrop) {
+        var _this = _super.call(this, id, position, itemsToDrop) || this;
+        _this.name = 'Worm';
+        _this.type = 'worm';
+        _this.meshName = 'Worm';
+        _this.lvl = 1;
+        _this.experience = 10;
+        _this.attackAreaSize = 2;
+        _this.visibilityAreaSize = 10;
+        _this.statistics = new Attributes.CharacterStatistics(80, 80, 100, 3, 10, 40, 0, 100);
+        return _this;
+    }
+    return Worm;
+}(Monster));
 var Server;
 (function (Server) {
     var Character = /** @class */ (function () {

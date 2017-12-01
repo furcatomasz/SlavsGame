@@ -52,6 +52,8 @@ abstract class AbstractCharacter {
                     if(callbackEnd) {
                         callbackStart();
                     }
+                    
+                    console.log(this.statistics);
                     self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
                         if(callbackEnd) {
                             callbackEnd();

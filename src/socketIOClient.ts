@@ -240,10 +240,9 @@ class SocketIOClient {
     protected showDroppedItem() {
         let game = this.game;
         this.socket.on('showDroppedItem', function (data) {
-            let itemManager = new Items.ItemManager(game);
-            let item = itemManager.getItemUsingId(data.items, null);
+            let item = new Items.Item(game, data.item);
             let enemy = game.enemies[data.enemyId];
-            Items.DroppedItem.showItem(game, item, enemy, data.itemsKey);
+            Items.DroppedItem.showItem(game, item, enemy, data.itemKey);
         });
 
         return this;
@@ -258,7 +257,6 @@ class SocketIOClient {
         this.socket.on('showEnemies', function (data) {
             data.forEach(function (enemyData, key) {
                 let enemy = game.enemies[key];
-                console.log(enemyData);
 
                 if (enemy) {
                     let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
@@ -266,10 +264,10 @@ class SocketIOClient {
                     enemy.target = enemyData.target;
                     enemy.mesh.position = position;
                     enemy.runAnimationWalk();
-                } else {
+                } else if(enemyData.statistics.hp > 0) {
                     let newMonster;
                     newMonster = new Monster(game, key, enemyData);
-console.log(newMonster);
+
                     if (newMonster) {
                         if (game.sceneManager.octree) {
                             game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
@@ -292,9 +290,19 @@ console.log(newMonster);
             let updatedEnemy = data.enemy;
             let enemyKey = data.enemyKey;
             let enemy = game.enemies[enemyKey];
-            console.log(updatedEnemy);
+
             if(enemy) {
                 let mesh = enemy.mesh;
+
+                ///action when hp of monster is changed
+                if(enemy.statistics.hp != updatedEnemy.statistics.hp) {
+                    enemy.bloodParticles.start();
+                    enemy.statistics.hp = updatedEnemy.statistics.hp;
+                    if(enemy.statistics.hp <= 0) {
+                        enemy.removeFromWorld();
+                    }
+                }
+
                 mesh.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
                 if (activeTargetPoints[enemyKey] !== undefined) {
                     self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
@@ -361,7 +369,7 @@ console.log(newMonster);
 
                 game.remotePlayers.push(player);
             }
-            console.log(game.remotePlayers);
+
         });
 
         return this;
@@ -392,8 +400,6 @@ console.log(newMonster);
             }
 
             if (updatedPlayer.attack == true) {
-                console.log(updatedPlayer);
-
                 let mesh = player.mesh;
                 let targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {

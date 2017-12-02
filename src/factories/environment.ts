@@ -84,7 +84,7 @@ class Environment {
         }
 
         let plane = scene.getMeshByName("Castle_entrace");
-        console.log(plane);
+
         if (plane) {
             this.entrace = plane;
             plane.visibility = 0;

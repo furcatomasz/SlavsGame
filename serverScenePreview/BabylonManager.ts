@@ -26,6 +26,7 @@ namespace Server {
             camera.attachControl(canvas, true);
             this
                 .socketShowEnemies(scene)
+                .socketUpdateEnemy()
                 .socketPlayerConnected(scene)
                 .socketUpdatePlayer(scene)
                 .removePlayer();
@@ -36,6 +37,47 @@ namespace Server {
 
         }
 
+        /**
+         * @returns {SocketIOClient}
+         */
+        public socketUpdateEnemy() {
+            let self = this;
+            this.socket.on('updateEnemy', function (data) {
+                let remoteEnemy = data.enemy;
+                let remoteEnemyId = data.enemyKey;
+                let localEnemy = self.enemies[remoteEnemyId];
+                console.log('updateEnemy');
+                if (remoteEnemy.statistics.hp <= 0 && localEnemy) {
+
+                    if (localEnemy.activeTargetPoints.length > 0) {
+                        localEnemy.activeTargetPoints.forEach(function (activeTargetFunction) {
+                            console.log('unregister function');
+                            self.scene.unregisterBeforeRender(activeTargetFunction);
+                        });
+                        localEnemy.mesh.dispose();
+
+                        self.players.forEach(function(player) {
+                            var playerActionManager = player.mesh.actionManager;
+                            playerActionManager.actions.forEach(function(action, key) {
+                                if(action._triggerParameter == localEnemy.visibilityAreaMesh ||
+                                    action._triggerParameter == localEnemy.mesh)
+                                {
+                                    ///TODO: There should be unregister enemy triggers
+                                    console.log('deleted from action manager');
+                                    //setTimeout(function() {
+                                    //    delete playerActionManager.actions[key];
+                                    //});
+                                }
+                            });
+
+                        });
+
+                    }
+                }
+            });
+
+            return this;
+        }
 
         /**
          * @returns {SocketIOClient}
@@ -45,7 +87,7 @@ namespace Server {
             this.socket.on('showEnemies', function (data) {
                 data.forEach(function (enemyData, key) {
                     let enemy = self.enemies[key];
-                    if (!enemy) {
+                    if (enemyData.statistics.hp > 0 && !enemy) {
                         let box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
                         box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
 
@@ -97,6 +139,7 @@ namespace Server {
 
                         let remotePlayer = {
                             id: activePlayer.id,
+                            socketId: playerData.id,
                             mesh: box,
                             registeredFunction: null,
                         };
@@ -116,19 +159,22 @@ namespace Server {
         protected removePlayer() {
             let self = this;
             this.socket.on('removePlayer', function (id) {
+                console.log(id);
                 self.players.forEach(function (remotePlayer, key) {
-                    if (remotePlayer.id == id) {
+                    console.log(remotePlayer);
+
+                    if (remotePlayer.socketId == id) {
                         let player = self.players[key];
-                        //TODO: null engine bug
-                        console.log('remove player '+id);
-                        self.enemies.forEach(function(enemy, key) {
-                            if(enemy.target == id) {
+
+                        console.log('remove player ' + id);
+                        self.enemies.forEach(function (enemy, key) {
+                            if (enemy.target == id) {
                                 enemy.target = false;
                             }
                             self.scene.unregisterBeforeRender(enemy.activeTargetPoints[id]);
                         });
 
-                        if(player.registeredFunction) {
+                        if (player.registeredFunction) {
                             self.scene.unregisterBeforeRender(player.registeredFunction);
                         }
 
@@ -141,10 +187,9 @@ namespace Server {
             return this;
         }
 
-        protected registerPlayerInEnemyActionManager(playerMesh: BABYLON.AbstractMesh) {
+        protected registerPlayerInEnemyActionManager(playerMesh:BABYLON.AbstractMesh) {
             let self = this;
-
-            this.enemies.forEach(function(enemy, key) {
+            this.enemies.forEach(function (enemy, key) {
                 enemy.activeTargetPoints[playerMesh.id] = function () {
                     let mesh = enemy.mesh;
                     mesh.lookAt(playerMesh.position.clone());
@@ -164,7 +209,7 @@ namespace Server {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: enemy.mesh
                 }, function () {
-                    if(enemy.target) {
+                    if (!enemy.mesh._isDisposed && enemy.target) {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
@@ -181,7 +226,7 @@ namespace Server {
                     trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
                     parameter: enemy.mesh
                 }, function () {
-                    if(enemy.target) {
+                    if (!enemy.mesh._isDisposed && enemy.target) {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
@@ -198,7 +243,7 @@ namespace Server {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: enemy.visibilityAreaMesh
                 }, function () {
-                    if(!enemy.target) {
+                    if (!enemy.mesh._isDisposed && !enemy.target) {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
@@ -216,7 +261,7 @@ namespace Server {
                     trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
                     parameter: enemy.visibilityAreaMesh
                 }, function () {
-                    if(enemy.target) {
+                    if (!enemy.mesh._isDisposed && enemy.target) {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,

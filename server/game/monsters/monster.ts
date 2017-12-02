@@ -5,7 +5,7 @@ abstract class Monster {
     public experience:number;
     public lvl:number;
     public position;
-    public itemsDrop: Array;
+    public itemsToDrop: Array;
     public target:string;
     public attack:boolean;
     public type:string;
@@ -18,7 +18,7 @@ abstract class Monster {
     constructor(id, position, itemsToDrop:Array) {
         this.id = id;
         this.position = position;
-        this.itemsDrop = itemsToDrop;
+        this.itemsToDrop = itemsToDrop;
         this.availableAttacksFromCharacters = [];
     }
 

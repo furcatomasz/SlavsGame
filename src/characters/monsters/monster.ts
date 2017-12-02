@@ -2,11 +2,9 @@
 
 class Monster extends AbstractCharacter {
 
-    protected visibilityArea: BABYLON.Mesh;
-    protected target: string;
-    protected experienceToWin: number;
+    protected target:string;
 
-    constructor(game:Game, serverKey: number, serverData:Array) {
+    constructor(game:Game, serverKey:number, serverData:Array) {
         let meshName = serverData.meshName;
         let mesh = game.factories['worm'].createInstance(meshName, true);
 
@@ -14,27 +12,28 @@ class Monster extends AbstractCharacter {
         mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
         this.id = serverKey;
         this.mesh = mesh;
-        this.statistics = serverKey.statistics;
+        this.statistics = serverData.statistics;
         game.enemies[this.id] = this;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
 
         super(name, game);
 
-        this.registerActions();
-
-        this.mesh.outlineColor = new BABYLON.Color3(0.3,0,0);
+        this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
         this.mesh.outlineWidth = 0.1;
 
         let self = this;
+        this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
             function () {
                 self.mesh.renderOutline = false;
+                self.game.gui.characterTopHp.hideHpBar();
             }));
 
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
             function () {
                 self.mesh.renderOutline = true;
+                self.game.gui.characterTopHp.showHpCharacter(self);
             }));
 
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
@@ -61,87 +60,11 @@ class Monster extends AbstractCharacter {
                 skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                 self.animation = null;
             });
-
-
         }
-
     }
 
     public removeFromWorld() {
-        this.game.client.socket.emit('enemyKill', this.id);
-        let self = this;
-        self.mesh.dispose();
-    }
-
-    protected registerActions() {
-        let self = this;
-        let monsterAttackIsActive = false;
-        //let walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
-        let walkSpeed = 8;
-        let playerMesh = this.game.player.mesh;
-        this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
-
-        ///on attack collision enter
-        //this.attackArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-        //    parameter: playerMesh
-        //}, function () {
-        //    monsterAttackIsActive = true;
-        //}));
-        //
-        /////on attack collision exit
-        //this.attackArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //    trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-        //    parameter: playerMesh
-        //}, function () {
-        //    monsterAttackIsActive = false;
-        //}));
-        //
-        //
-        /////MONSTER TO ATTACK
-        //let monsterToAttackKey = null;
-        //let monsterToAttackListener = function listener() {
-        //    if(self.statistics.getHp() > 0) {
-        //        self.game.gui.characterTopHp.showHpCharacter(self);
-        //        self.bloodParticles.start();
-        //        let newValue = self.statistics.getHp() - self.game.player.statistics.getDamage();
-        //        self.statistics.hp = (newValue);
-        //        self.game.gui.characterTopHp.hpBar.value = newValue;
-        //        if (newValue <= 0) {
-        //            self.removeFromWorld();
-        //            self.game.controller.attackPoint = null;
-        //            document.removeEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
-        //        }
-        //    }
-        //};
-        //this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-        //    parameter: this.game.player.attackArea
-        //}, function () {
-        //    document.addEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
-        //}));
-        //
-        //this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //    trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-        //    parameter: this.game.player.attackArea
-        //}, function () {
-        //    document.removeEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
-        //}));
-    }
-
-    protected onHitEnd() {
-        if (Game.randomNumber(1, 100) <= this.statistics.getHitChance()) {
-            let guiHp = this.game.gui.playerBottomPanel.hpBar;
-            let value = guiHp.value;
-
-            guiHp.value = (value - this.statistics.getDamage());
-
-            if (guiHp.value - this.statistics.getDamage() < 0) {
-                this.game.getScene().stopAnimation(this.game.player.mesh.skeleton);
-                this.game.player.mesh.skeleton.beginAnimation('death');
-            }
-        }
-
+        this.mesh.dispose();
     }
 
 }

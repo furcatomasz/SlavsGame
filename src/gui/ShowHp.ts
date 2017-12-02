@@ -6,13 +6,13 @@ namespace GUI {
 
         public hpBar;
         public guiPanel;
-        protected texture: BABYLON.GUI.AdvancedDynamicTexture;
+        protected texture:BABYLON.GUI.AdvancedDynamicTexture;
 
         constructor() {
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("characterShowHp");
         }
 
-        public showHpCharacter(character: AbstractCharacter) {
+        public showHpCharacter(character:AbstractCharacter) {
             if (this.guiPanel) {
                 this.texture.removeControl(this.guiPanel);
             }
@@ -26,8 +26,8 @@ namespace GUI {
 
             let hpSlider = new BABYLON.GUI.Slider();
             hpSlider.minimum = 0;
-            hpSlider.maximum = character.statistics.getHpMax();
-            hpSlider.value = character.statistics.getHp();
+            hpSlider.maximum = character.statistics.hpMax;
+            hpSlider.value = character.statistics.hp;
             hpSlider.width = "100%";
             hpSlider.height = "10px";
             hpSlider.thumbWidth = 0;
@@ -38,6 +38,12 @@ namespace GUI {
             this.hpBar = hpSlider;
 
             characterPanel.addControl(hpSlider);
+        }
+
+        public hideHpBar() {
+            if (this.guiPanel) {
+                this.texture.removeControl(this.guiPanel);
+            }
         }
     }
 }

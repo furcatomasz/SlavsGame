@@ -113,10 +113,58 @@ namespace Server {
                     activeCharacter.attack = data.attack;
                     activeCharacter.targetPoint = data.targetPoint;
 
-                    enemies[player.activeScene].forEach(function(enemy) {
-                         enemy.availableAttacksFromCharacters.forEach(function(isAtacked, playerKey) {
+                    enemies[player.activeScene].forEach(function(enemy, enemyKey) {
+                         enemy.availableAttacksFromCharacters.forEach(function(isAtacked, characterId) {
                             if(isAtacked === true) {
-                                console.log('attack player key'+playerKey);
+                                self.remotePlayers.forEach(function (socketRemotePlayer) {
+                                    if(socketRemotePlayer.getActiveCharacter().id == characterId) {
+                                        let attackCharacter = socketRemotePlayer.getActiveCharacter();
+                                        let damage = attackCharacter.statistics.getDamage();
+                                        enemy.statistics.hp -= damage;
+                                        let emitObject = {
+                                            enemy: enemy,
+                                            enemyKey: enemyKey
+                                        };
+                                        socket.emit('updateEnemy', emitObject);
+                                        socket.broadcast.emit('updateEnemy', emitObject);
+
+                                        ///enemy is killed
+                                        if(enemy.statistics.hp <= 0) {
+                                            enemy.availableAttacksFromCharacters = [];
+                                            let enemyItem = enemy.itemsToDrop[0];
+                                            let itemDropKey = player.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
+                                            let earnedExperience = enemy.experience;
+                                            let playerId = player.getActiveCharacter().id;
+                                            let itemManager = new Items.ItemManager();
+                                            let item = itemManager.getItemUsingId(enemyItem, 0);
+                                            socket.emit('showDroppedItem', {
+                                                item: item,
+                                                itemKey: itemDropKey,
+                                                enemyId: enemyKey
+                                            });
+
+                                            self.server.ormManager.structure.player.get(playerId,
+                                                function (error, playerDatabase) {
+                                                    playerDatabase.experience += earnedExperience;
+                                                    socket.emit('addExperience', {
+                                                        experience: earnedExperience
+                                                    });
+                                                    let newLvl = (playerDatabase.lvl) ? playerDatabase.lvl+1 : 1;
+                                                    let requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
+                                                    if(playerDatabase.experience >= requiredExperience) {
+                                                        playerDatabase.lvl += 1;
+                                                        playerDatabase.freeAttributesPoints += 5;
+                                                        playerDatabase.freeSkillPoints += 1;
+                                                        socket.emit('newLvl', playerDatabase);
+                                                    }
+
+                                                    playerDatabase.save();
+                                                });
+                                        }
+
+                                        console.log('Attack character ID:'+characterId+' on enemy with dmg'+damage);
+                                    }
+                                });
                             }
                         });
                     });
@@ -147,7 +195,9 @@ namespace Server {
 
                 socket.on('addDoppedItem', function (itemsKey) {
                     let playerId = player.characters[player.activeCharacter].id;
-                    let itemId = player.itemsDrop[itemsKey];
+                    let itemId = player.getActiveCharacter().itemsDrop[itemsKey];
+                    let itemManager = new Items.ItemManager();
+                    let item = itemManager.getItemUsingId(itemId, 0);
 
                     if (itemId) {
                         self.server.ormManager.structure.playerItems.create({
@@ -157,8 +207,8 @@ namespace Server {
                                 equip: 0
                             },
                             function (error, addedItem) {
-                                player.characters[player.activeCharacter].items.push(addedItem);
-                                socket.emit('updatePlayerEquip', player.characters[player.activeCharacter].items);
+                                player.getActiveCharacter().inventory.items.push(item);
+                                socket.emit('updatePlayerEquip', player.getActiveCharacter().inventory.items);
                             });
                     }
                 });
@@ -331,39 +381,6 @@ namespace Server {
                     });
                 });
 
-
-                socket.on('enemyKill', function (enemyKey) {
-                    let enemy = enemies[player.activeScene][enemyKey];
-                    let enemyItem = enemy.itemsToDrop[0];
-                    let itemDropKey = player.itemsDrop.push(enemyItem) - 1;
-                    let earnedExperience = enemy.experience;
-                    let playerId = player.characters[player.activeCharacter].id;
-
-                    socket.emit('showDroppedItem', {
-                        items: enemyItem,
-                        itemsKey: itemDropKey,
-                        enemyId: enemyKey
-                    });
-
-                    self.server.ormManager.structure.player.get(playerId,
-                        function (error, playerDatabase) {
-                            playerDatabase.experience += earnedExperience;
-                            socket.emit('addExperience', {
-                                experience: earnedExperience
-                            });
-                            let newLvl = (playerDatabase.lvl) ? playerDatabase.lvl+1 : 1;
-                            let requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
-                            if(playerDatabase.experience >= requiredExperience) {
-                                playerDatabase.lvl += 1;
-                                playerDatabase.freeAttributesPoints += 5;
-                                playerDatabase.freeSkillPoints += 1;
-                                socket.emit('newLvl', playerDatabase);
-                            }
-
-                            playerDatabase.save();
-                        });
-
-                });
             });
         }
 

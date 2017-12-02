@@ -307,7 +307,6 @@ var AbstractCharacter = /** @class */ (function () {
                 if (callbackEnd) {
                     callbackStart();
                 }
-                console.log(this.statistics);
                 self.animation = skeleton_1.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
                     if (callbackEnd) {
                         callbackEnd();
@@ -366,20 +365,22 @@ var Monster = /** @class */ (function (_super) {
         mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
         _this.id = serverKey;
         _this.mesh = mesh;
-        _this.statistics = serverKey.statistics;
+        _this.statistics = serverData.statistics;
         game.enemies[_this.id] = _this;
         _this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
-        _this.registerActions();
         _this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
         _this.mesh.outlineWidth = 0.1;
         var self = _this;
+        _this.mesh.actionManager = new BABYLON.ActionManager(_this.game.getScene());
         _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
             self.mesh.renderOutline = false;
+            self.game.gui.characterTopHp.hideHpBar();
         }));
         _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
             self.mesh.renderOutline = true;
+            self.game.gui.characterTopHp.showHpCharacter(self);
         }));
         _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function (pointer) {
             game.controller.attackPoint = pointer.meshUnderPointer;
@@ -405,74 +406,7 @@ var Monster = /** @class */ (function (_super) {
         }
     };
     Monster.prototype.removeFromWorld = function () {
-        this.game.client.socket.emit('enemyKill', this.id);
-        var self = this;
-        self.mesh.dispose();
-    };
-    Monster.prototype.registerActions = function () {
-        var self = this;
-        var monsterAttackIsActive = false;
-        //let walkSpeed = AbstractCharacter.WALK_SPEED * (self.statistics.getWalkSpeed() / 100);
-        var walkSpeed = 8;
-        var playerMesh = this.game.player.mesh;
-        this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
-        ///on attack collision enter
-        //this.attackArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-        //    parameter: playerMesh
-        //}, function () {
-        //    monsterAttackIsActive = true;
-        //}));
-        //
-        /////on attack collision exit
-        //this.attackArea.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //    trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-        //    parameter: playerMesh
-        //}, function () {
-        //    monsterAttackIsActive = false;
-        //}));
-        //
-        //
-        /////MONSTER TO ATTACK
-        //let monsterToAttackKey = null;
-        //let monsterToAttackListener = function listener() {
-        //    if(self.statistics.getHp() > 0) {
-        //        self.game.gui.characterTopHp.showHpCharacter(self);
-        //        self.bloodParticles.start();
-        //        let newValue = self.statistics.getHp() - self.game.player.statistics.getDamage();
-        //        self.statistics.hp = (newValue);
-        //        self.game.gui.characterTopHp.hpBar.value = newValue;
-        //        if (newValue <= 0) {
-        //            self.removeFromWorld();
-        //            self.game.controller.attackPoint = null;
-        //            document.removeEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
-        //        }
-        //    }
-        //};
-        //this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-        //    parameter: this.game.player.attackArea
-        //}, function () {
-        //    document.addEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
-        //}));
-        //
-        //this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //    trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
-        //    parameter: this.game.player.attackArea
-        //}, function () {
-        //    document.removeEventListener(Events.MONSTER_TO_ATTACK, monsterToAttackListener);
-        //}));
-    };
-    Monster.prototype.onHitEnd = function () {
-        if (Game.randomNumber(1, 100) <= this.statistics.getHitChance()) {
-            var guiHp = this.game.gui.playerBottomPanel.hpBar;
-            var value = guiHp.value;
-            guiHp.value = (value - this.statistics.getDamage());
-            if (guiHp.value - this.statistics.getDamage() < 0) {
-                this.game.getScene().stopAnimation(this.game.player.mesh.skeleton);
-                this.game.player.mesh.skeleton.beginAnimation('death');
-            }
-        }
+        this.mesh.dispose();
     };
     return Monster;
 }(AbstractCharacter));
@@ -675,10 +609,9 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.showDroppedItem = function () {
         var game = this.game;
         this.socket.on('showDroppedItem', function (data) {
-            var itemManager = new Items.ItemManager(game);
-            var item = itemManager.getItemUsingId(data.items, null);
+            var item = new Items.Item(game, data.item);
             var enemy = game.enemies[data.enemyId];
-            Items.DroppedItem.showItem(game, item, enemy, data.itemsKey);
+            Items.DroppedItem.showItem(game, item, enemy, data.itemKey);
         });
         return this;
     };
@@ -690,17 +623,15 @@ var SocketIOClient = /** @class */ (function () {
         this.socket.on('showEnemies', function (data) {
             data.forEach(function (enemyData, key) {
                 var enemy = game.enemies[key];
-                console.log(enemyData);
                 if (enemy) {
                     var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
                     enemy.target = enemyData.target;
                     enemy.mesh.position = position;
                     enemy.runAnimationWalk();
                 }
-                else {
+                else if (enemyData.statistics.hp > 0) {
                     var newMonster = void 0;
                     newMonster = new Monster(game, key, enemyData);
-                    console.log(newMonster);
                     if (newMonster) {
                         if (game.sceneManager.octree) {
                             game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
@@ -721,9 +652,16 @@ var SocketIOClient = /** @class */ (function () {
             var updatedEnemy = data.enemy;
             var enemyKey = data.enemyKey;
             var enemy = game.enemies[enemyKey];
-            console.log(updatedEnemy);
             if (enemy) {
                 var mesh_1 = enemy.mesh;
+                ///action when hp of monster is changed
+                if (enemy.statistics.hp != updatedEnemy.statistics.hp) {
+                    enemy.bloodParticles.start();
+                    enemy.statistics.hp = updatedEnemy.statistics.hp;
+                    if (enemy.statistics.hp <= 0) {
+                        enemy.removeFromWorld();
+                    }
+                }
                 mesh_1.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
                 if (activeTargetPoints[enemyKey] !== undefined) {
                     self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
@@ -777,7 +715,6 @@ var SocketIOClient = /** @class */ (function () {
                 player.setItems(activePlayer.items);
                 game.remotePlayers.push(player);
             }
-            console.log(game.remotePlayers);
         });
         return this;
     };
@@ -805,7 +742,6 @@ var SocketIOClient = /** @class */ (function () {
                 player = game.remotePlayers[remotePlayerKey];
             }
             if (updatedPlayer.attack == true) {
-                console.log(updatedPlayer);
                 var mesh = player.mesh;
                 var targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {
@@ -1462,7 +1398,6 @@ var Environment = /** @class */ (function () {
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
         var plane = scene.getMeshByName("Castle_entrace");
-        console.log(plane);
         if (plane) {
             this.entrace = plane;
             plane.visibility = 0;
@@ -1963,8 +1898,8 @@ var GUI;
             this.texture.addControl(characterPanel);
             var hpSlider = new BABYLON.GUI.Slider();
             hpSlider.minimum = 0;
-            hpSlider.maximum = character.statistics.getHpMax();
-            hpSlider.value = character.statistics.getHp();
+            hpSlider.maximum = character.statistics.hpMax;
+            hpSlider.value = character.statistics.hp;
             hpSlider.width = "100%";
             hpSlider.height = "10px";
             hpSlider.thumbWidth = 0;
@@ -1974,6 +1909,11 @@ var GUI;
             hpSlider.borderColor = 'black';
             this.hpBar = hpSlider;
             characterPanel.addControl(hpSlider);
+        };
+        ShowHp.prototype.hideHpBar = function () {
+            if (this.guiPanel) {
+                this.texture.removeControl(this.guiPanel);
+            }
         };
         return ShowHp;
     }());
@@ -2847,6 +2787,42 @@ var SimpleBandit = /** @class */ (function (_super) {
     SimpleBandit.TYPE = 3;
     return SimpleBandit;
 }(Scene));
+var Items;
+(function (Items) {
+    var DroppedItem = /** @class */ (function () {
+        function DroppedItem() {
+        }
+        DroppedItem.showItem = function (game, item, enemy, itemDropKey) {
+            var scene = game.getScene();
+            item.mesh.position.x = enemy.mesh.position.x;
+            item.mesh.position.z = enemy.mesh.position.z;
+            item.mesh.position.y = 0;
+            item.mesh.outlineColor = new BABYLON.Color3(0, 1, 0);
+            item.mesh.outlineWidth = 0.1;
+            item.mesh.rotation = new BABYLON.Vector3(0, 0, 0);
+            item.mesh.actionManager = new BABYLON.ActionManager(scene);
+            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+                item.mesh.renderOutline = false;
+            }));
+            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+                item.mesh.renderOutline = true;
+            }));
+            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
+                game.client.socket.emit('addDoppedItem', itemDropKey);
+                item.mesh.dispose();
+            }));
+            item.mesh.visibility = 1;
+            var particleSystem = new Particles.DroppedItem(game, item.mesh);
+            particleSystem.particleSystem.start();
+            if (game.sceneManager.octree) {
+                game.sceneManager.octree.dynamicContent.push(item.mesh);
+            }
+        };
+        return DroppedItem;
+    }());
+    Items.DroppedItem = DroppedItem;
+})(Items || (Items = {}));
 var Items;
 (function (Items) {
     var Item = /** @class */ (function () {

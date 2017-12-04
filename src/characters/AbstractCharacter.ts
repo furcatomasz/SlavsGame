@@ -27,10 +27,22 @@ abstract class AbstractCharacter {
     protected sfxHit: BABYLON.Sound;
 
     public bloodParticles: BABYLON.ParticleSystem;
+    public meshCharacterTexture: BABYLON.AbstractMesh;
+    public meshAdvancedTexture: BABYLON.AbstractMesh;
 
     constructor(name:string, game:Game) {
         this.game = game;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+
+        let plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 4, height: 6}, game.getScene());
+        let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
+
+        plane.isPickable = false;
+        plane.parent = this.mesh;
+        plane.position.y = 2;
+        plane.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
+        this.meshCharacterTexture = plane;
+        this.meshAdvancedTexture = advancedTexture;
     }
 
     public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null, loop: boolean = false):void {

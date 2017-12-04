@@ -296,8 +296,35 @@ class SocketIOClient {
 
                 ///action when hp of monster is changed
                 if(enemy.statistics.hp != updatedEnemy.statistics.hp) {
+                    let damage = (enemy.statistics.hp-updatedEnemy.statistics.hp);
                     setTimeout(function() {
+
                         enemy.bloodParticles.start();
+
+                        let label = new BABYLON.GUI.TextBlock();
+                        label.text = '-'+damage+'';
+                        label.width = 1;
+                        label.height = 1;
+                        label.color = 'red';
+                        label.fontSize = 140;
+                        let paddingTop = 0;
+                        let alpha = 1;
+                        let animateText = function() {
+                            label.top = paddingTop;
+                            label.alpha = alpha;
+                            alpha -= (2/100);
+                            if(alpha < 0) {
+                                alpha = 0;
+                            }
+                            paddingTop -= 4;
+                        }
+                        enemy.meshAdvancedTexture.addControl(label);
+                        game.getScene().registerAfterRender(animateText);
+                        setTimeout(function() {
+                            game.getScene().unregisterAfterRender(animateText);
+                            enemy.meshAdvancedTexture.removeControl(label);
+                        }, 1000);
+
                     }, 300);
                     enemy.statistics.hp = updatedEnemy.statistics.hp;
                     if(enemy.statistics.hp <= 0) {

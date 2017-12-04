@@ -107,7 +107,7 @@ var Server;
                         console.log('added new player to remote player array');
                         var activePlayer = playerData.characters[playerData.activeCharacter];
                         var box = BABYLON.Mesh.CreateBox(activePlayer.id, 3, scene, false);
-                        box.position = new BABYLON.Vector3(0, -5, 0);
+                        box.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
                         box.actionManager = new BABYLON.ActionManager(scene);
                         var remotePlayer = {
                             id: activePlayer.id,
@@ -247,7 +247,6 @@ var Server;
                 });
                 if (remotePlayerKey != null) {
                     player = self.players[remotePlayerKey].mesh;
-                    player.position = new BABYLON.Vector3(updatedPlayer.position.x, updatedPlayer.position.y, updatedPlayer.position.z);
                     if (player) {
                         if (updatedPlayer.attack == true) {
                             console.log('playerAttack');
@@ -264,7 +263,23 @@ var Server;
                             self.players[remotePlayerKey].registeredFunction = function () {
                                 if (mesh_1.intersectsPoint(targetPointVector3_1)) {
                                     console.log('player intersect with target');
-                                    scene.unregisterBeforeRender(self.players[remotePlayerKey].registeredFunction);
+                                    var remotePlayer = self.players[remotePlayerKey];
+                                    scene.unregisterBeforeRender(remotePlayer.registeredFunction);
+                                    self.socket.emit('updatePlayerPosition', {
+                                        playerSocketId: remotePlayer.socketId,
+                                        position: player.position
+                                    });
+                                    /*
+
+                                     socket.on('setTargetPoint', function (targetPoint) {
+                                     let character = player.getActiveCharacter();
+                                     character.attack = null;
+                                     character.targetPoint = targetPoint.position;
+                                     socket.broadcast.emit('updatePlayer', character);
+                                     socket.emit('updatePlayer', character);
+                                     });
+
+                                     */
                                 }
                                 else {
                                     var rotation = mesh_1.rotation;

@@ -656,7 +656,9 @@ var SocketIOClient = /** @class */ (function () {
                 var mesh_1 = enemy.mesh;
                 ///action when hp of monster is changed
                 if (enemy.statistics.hp != updatedEnemy.statistics.hp) {
-                    enemy.bloodParticles.start();
+                    setTimeout(function () {
+                        enemy.bloodParticles.start();
+                    }, 300);
                     enemy.statistics.hp = updatedEnemy.statistics.hp;
                     if (enemy.statistics.hp <= 0) {
                         enemy.removeFromWorld();
@@ -668,7 +670,6 @@ var SocketIOClient = /** @class */ (function () {
                 }
                 if (updatedEnemy.attack == true) {
                     enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, true);
-                    return;
                 }
                 else if (updatedEnemy.target) {
                     var targetMesh_1 = null;
@@ -701,6 +702,9 @@ var SocketIOClient = /** @class */ (function () {
                         self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
                     }
                 }
+                setTimeout(function () {
+                    self.game.gui.characterTopHp.refreshPanel();
+                }, 300);
             }
         });
         return this;
@@ -1890,6 +1894,7 @@ var GUI;
             if (this.guiPanel) {
                 this.texture.removeControl(this.guiPanel);
             }
+            this.character = character;
             var characterPanel = new BABYLON.GUI.StackPanel();
             characterPanel.width = "25%";
             characterPanel.top = 10;
@@ -1909,6 +1914,10 @@ var GUI;
             hpSlider.borderColor = 'black';
             this.hpBar = hpSlider;
             characterPanel.addControl(hpSlider);
+        };
+        ShowHp.prototype.refreshPanel = function () {
+            console.log(this.character);
+            this.hpBar.value = this.character.statistics.hp;
         };
         ShowHp.prototype.hideHpBar = function () {
             if (this.guiPanel) {

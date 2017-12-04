@@ -7,6 +7,7 @@ namespace GUI {
         public hpBar;
         public guiPanel;
         protected texture:BABYLON.GUI.AdvancedDynamicTexture;
+        protected character: AbstractCharacter
 
         constructor() {
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("characterShowHp");
@@ -17,6 +18,7 @@ namespace GUI {
                 this.texture.removeControl(this.guiPanel);
             }
 
+            this.character = character;
             let characterPanel = new BABYLON.GUI.StackPanel();
             characterPanel.width = "25%";
             characterPanel.top = 10;
@@ -38,6 +40,12 @@ namespace GUI {
             this.hpBar = hpSlider;
 
             characterPanel.addControl(hpSlider);
+        }
+
+        public refreshPanel() {
+            console.log(this.character);
+
+            this.hpBar.value = this.character.statistics.hp;
         }
 
         public hideHpBar() {

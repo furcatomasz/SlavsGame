@@ -32,7 +32,7 @@ class SlavsServer {
             self.enemies = self.enemyManager.getEnemies();
             self.quests = self.questManager.getQuests();
             self.serverFrontEnd = new Server.FrontEnd(self, app, express);
-            //self.babylonManager = new Server.BabylonManager(self);
+            self.babylonManager = new Server.BabylonManager(self);
             self.serverWebsocket = new Server.IO(self, io);
         });
         

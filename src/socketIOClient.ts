@@ -296,7 +296,9 @@ class SocketIOClient {
 
                 ///action when hp of monster is changed
                 if(enemy.statistics.hp != updatedEnemy.statistics.hp) {
-                    enemy.bloodParticles.start();
+                    setTimeout(function() {
+                        enemy.bloodParticles.start();
+                    }, 300);
                     enemy.statistics.hp = updatedEnemy.statistics.hp;
                     if(enemy.statistics.hp <= 0) {
                         enemy.removeFromWorld();
@@ -310,8 +312,6 @@ class SocketIOClient {
 
                 if (updatedEnemy.attack == true) {
                     enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, true);
-
-                    return;
                 } else if (updatedEnemy.target) {
                     let targetMesh = null;
                     if (enemy.animation) {
@@ -350,8 +350,12 @@ class SocketIOClient {
                         self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
                     }
                 }
-            }
 
+                setTimeout(function() {
+                    self.game.gui.characterTopHp.refreshPanel();
+
+                }, 300);
+            }
         });
 
         return this;

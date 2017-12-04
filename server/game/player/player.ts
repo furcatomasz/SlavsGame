@@ -6,6 +6,7 @@ namespace Server {
         public activeCharacter: number;
         public activeScene: number;
         public lastPlayerUpdate: number;
+        public lastPlayerAttack: number;
 
         public constructor(id) {
             this.id = id;

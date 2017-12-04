@@ -27,6 +27,20 @@ namespace Server {
                 } else {
                     player.activeScene = 2;
                     socket.emit('showEnemies', enemies[player.activeScene]);
+
+                    socket.on('updatePlayerPosition', function (updatedPlayer) {
+                        self.remotePlayers.forEach(function(remotePlayer, remotePlayerKey) {
+                           if(remotePlayer.id == updatedPlayer.playerSocketId) {
+                               console.log('updatedPlayerPosition');
+                               let remotePlayer = self.remotePlayers[remotePlayerKey];
+                               remotePlayer.getActiveCharacter().position = updatedPlayer.position;
+
+                               socket.broadcast.emit('updatePlayer', remotePlayer);
+                               return;
+                           }
+                        });
+                    });
+
                 }
 
 
@@ -101,13 +115,17 @@ namespace Server {
                     let character = player.getActiveCharacter();
                     character.attack = null;
                     character.targetPoint = targetPoint.position;
-                    character.position = targetPoint.playerPosition;
                     socket.broadcast.emit('updatePlayer', character);
                     socket.emit('updatePlayer', character);
-
                 });
 
                 socket.on('attack', function (data) {
+
+                    if(player.lastPlayerAttack > new Date().getTime()-1000) {
+                        return;
+                    }
+                    player.lastPlayerAttack = new Date().getTime();
+
                     let activeCharacter = player.getActiveCharacter();
 
                     activeCharacter.attack = data.attack;
@@ -116,15 +134,15 @@ namespace Server {
                     enemies[player.activeScene].forEach(function(enemy, enemyKey) {
                          enemy.availableAttacksFromCharacters.forEach(function(isAtacked, characterId) {
                             if(isAtacked === true) {
-                                self.remotePlayers.forEach(function (socketRemotePlayer) {
-                                    if(socketRemotePlayer.getActiveCharacter().id == characterId) {
-                                        let attackCharacter = socketRemotePlayer.getActiveCharacter();
+                                    if(activeCharacter.id == characterId) {
+                                        let attackCharacter = activeCharacter;
                                         let damage = attackCharacter.statistics.getDamage();
                                         enemy.statistics.hp -= damage;
                                         let emitObject = {
                                             enemy: enemy,
                                             enemyKey: enemyKey
                                         };
+                                        console.log('updateEnemyAttack');
                                         socket.emit('updateEnemy', emitObject);
                                         socket.broadcast.emit('updateEnemy', emitObject);
 
@@ -164,7 +182,6 @@ namespace Server {
 
                                         console.log('Attack character ID:'+characterId+' on enemy with dmg'+damage);
                                     }
-                                });
                             }
                         });
                     });

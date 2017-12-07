@@ -306,7 +306,7 @@ class SocketIOClient {
                         label.width = 1;
                         label.height = 1;
                         label.color = 'red';
-                        label.fontSize = 140;
+                        label.fontSize = 160;
                         let paddingTop = 0;
                         let alpha = 1;
                         let animateText = function() {
@@ -316,7 +316,7 @@ class SocketIOClient {
                             if(alpha < 0) {
                                 alpha = 0;
                             }
-                            paddingTop -= 4;
+                            paddingTop -= 5;
                         }
                         enemy.meshAdvancedTexture.addControl(label);
                         game.getScene().registerAfterRender(animateText);
@@ -338,7 +338,7 @@ class SocketIOClient {
                 }
 
                 if (updatedEnemy.attack == true) {
-                    enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, true);
+                    enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, true);
                 } else if (updatedEnemy.target) {
                     let targetMesh = null;
                     if (enemy.animation) {
@@ -437,7 +437,9 @@ class SocketIOClient {
                     let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
                     mesh.lookAt(targetPointVector3);
                 }
-                player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null);
+
+                let attackAnimation = (Game.randomNumber(1,2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
+                player.runAnimationHit(attackAnimation, null, null);
                 return;
             }
             if (activeTargetPoints[remotePlayerKey] !== undefined) {

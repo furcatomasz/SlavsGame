@@ -6,8 +6,10 @@ abstract class AbstractCharacter {
     public static ANIMATION_WALK:string = 'Run';
     public static ANIMATION_STAND:string = 'stand';
     public static ANIMATION_STAND_WEAPON:string = 'Stand_with_weapon';
-    public static ANIMATION_ATTACK:string = 'Attack';
+    public static ANIMATION_ATTACK_01:string = 'Attack';
+    public static ANIMATION_ATTACK_02:string = 'Attack02';
     public static ANIMATION_SKILL_01:string = 'Skill01';
+    public static ANIMATION_SKILL_02:string = 'Skill02';
 
     public mesh:BABYLON.Mesh;
     public id:string;
@@ -66,7 +68,7 @@ abstract class AbstractCharacter {
                     }
 
                     self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
-                        if(callbackEnd) {
+                        if(callbackEnd) {22
                             callbackEnd();
                         }
                         skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
@@ -91,7 +93,7 @@ abstract class AbstractCharacter {
             if (!this.animation && skeleton) {
                 self.sfxWalk.play();
                 self.onWalkStart();
-                self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.5, function () {
+                self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.4, function () {
                     skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();

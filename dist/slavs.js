@@ -286,6 +286,14 @@ var AbstractCharacter = /** @class */ (function () {
     function AbstractCharacter(name, game) {
         this.game = game;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+        var plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 4, height: 6 }, game.getScene());
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
+        plane.isPickable = false;
+        plane.parent = this.mesh;
+        plane.position.y = 2;
+        plane.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
+        this.meshCharacterTexture = plane;
+        this.meshAdvancedTexture = advancedTexture;
     }
     AbstractCharacter.prototype.runAnimationHit = function (animation, callbackStart, callbackEnd, loop) {
         if (callbackStart === void 0) { callbackStart = null; }
@@ -309,6 +317,7 @@ var AbstractCharacter = /** @class */ (function () {
                 }
                 self.animation = skeleton_1.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
                     if (callbackEnd) {
+                        22;
                         callbackEnd();
                     }
                     skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
@@ -329,7 +338,7 @@ var AbstractCharacter = /** @class */ (function () {
             if (!this.animation && skeleton_2) {
                 self.sfxWalk.play();
                 self.onWalkStart();
-                self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.5, function () {
+                self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.4, function () {
                     skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();
@@ -350,8 +359,10 @@ var AbstractCharacter = /** @class */ (function () {
     AbstractCharacter.ANIMATION_WALK = 'Run';
     AbstractCharacter.ANIMATION_STAND = 'stand';
     AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
-    AbstractCharacter.ANIMATION_ATTACK = 'Attack';
+    AbstractCharacter.ANIMATION_ATTACK_01 = 'Attack';
+    AbstractCharacter.ANIMATION_ATTACK_02 = 'Attack02';
     AbstractCharacter.ANIMATION_SKILL_01 = 'Skill01';
+    AbstractCharacter.ANIMATION_SKILL_02 = 'Skill02';
     return AbstractCharacter;
 }());
 /// <reference path="../AbstractCharacter.ts"/>
@@ -656,8 +667,32 @@ var SocketIOClient = /** @class */ (function () {
                 var mesh_1 = enemy.mesh;
                 ///action when hp of monster is changed
                 if (enemy.statistics.hp != updatedEnemy.statistics.hp) {
+                    var damage_1 = (enemy.statistics.hp - updatedEnemy.statistics.hp);
                     setTimeout(function () {
                         enemy.bloodParticles.start();
+                        var label = new BABYLON.GUI.TextBlock();
+                        label.text = '-' + damage_1 + '';
+                        label.width = 1;
+                        label.height = 1;
+                        label.color = 'red';
+                        label.fontSize = 160;
+                        var paddingTop = 0;
+                        var alpha = 1;
+                        var animateText = function () {
+                            label.top = paddingTop;
+                            label.alpha = alpha;
+                            alpha -= (2 / 100);
+                            if (alpha < 0) {
+                                alpha = 0;
+                            }
+                            paddingTop -= 5;
+                        };
+                        enemy.meshAdvancedTexture.addControl(label);
+                        game.getScene().registerAfterRender(animateText);
+                        setTimeout(function () {
+                            game.getScene().unregisterAfterRender(animateText);
+                            enemy.meshAdvancedTexture.removeControl(label);
+                        }, 1000);
                     }, 300);
                     enemy.statistics.hp = updatedEnemy.statistics.hp;
                     if (enemy.statistics.hp <= 0) {
@@ -669,7 +704,7 @@ var SocketIOClient = /** @class */ (function () {
                     self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
                 }
                 if (updatedEnemy.attack == true) {
-                    enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null, true);
+                    enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, true);
                 }
                 else if (updatedEnemy.target) {
                     var targetMesh_1 = null;
@@ -752,7 +787,8 @@ var SocketIOClient = /** @class */ (function () {
                     var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
                     mesh.lookAt(targetPointVector3);
                 }
-                player.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK, null, null);
+                var attackAnimation = (Game.randomNumber(1, 2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
+                player.runAnimationHit(attackAnimation, null, null);
                 return;
             }
             if (activeTargetPoints[remotePlayerKey] !== undefined) {
@@ -995,6 +1031,59 @@ var Character;
     }());
     Character.Inventory = Inventory;
 })(Character || (Character = {}));
+/// <reference path="Controller.ts"/>
+var Mouse = /** @class */ (function (_super) {
+    __extends(Mouse, _super);
+    function Mouse() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Mouse.prototype.registerControls = function (scene) {
+        var self = this;
+        var clickTrigger = false;
+        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
+        ball.actionManager = new BABYLON.ActionManager(scene);
+        ball.isPickable = false;
+        ball.visibility = 0;
+        this.ball = ball;
+        scene.onPointerUp = function (evt, pickResult) {
+            clickTrigger = false;
+        };
+        scene.onPointerDown = function (evt, pickResult) {
+            var pickedMesh = pickResult.pickedMesh;
+            clickTrigger = true;
+            if (pickedMesh) {
+                if (self.game.player && (pickedMesh.name == 'Ground' || pickedMesh.name == 'Ground.002')) {
+                    self.attackPoint = null;
+                    self.targetPoint = pickResult.pickedPoint;
+                    self.targetPoint.y = 0;
+                    self.ball.position = self.targetPoint;
+                    self.ball.visibility = 1;
+                    self.game.client.socket.emit('setTargetPoint', {
+                        position: self.targetPoint,
+                        playerPosition: self.game.player.mesh.position
+                    });
+                }
+            }
+        };
+        scene.onPointerMove = function (evt, pickResult) {
+            if (clickTrigger) {
+                var pickedMesh = pickResult.pickedMesh;
+                if (pickedMesh && self.targetPoint) {
+                    if (self.game.player) {
+                        self.targetPoint = pickResult.pickedPoint;
+                        self.targetPoint.y = 0;
+                        self.ball.position = self.targetPoint;
+                        self.game.client.socket.emit('setTargetPoint', {
+                            position: self.targetPoint,
+                            playerPosition: self.game.player.mesh.position
+                        });
+                    }
+                }
+            }
+        };
+    };
+    return Mouse;
+}(Controller));
 var Player = /** @class */ (function (_super) {
     __extends(Player, _super);
     function Player(game, id, registerMoving, serverData) {
@@ -1065,7 +1154,7 @@ var Player = /** @class */ (function (_super) {
         this.skills = [];
         if (skills) {
             skills.forEach(function (skill, key) {
-                var playerSkill = skillManager.getSkill(skill.skillType);
+                var playerSkill = skillManager.getSkill(skill.type);
                 playerSkill.damage = (skill.damage) ? skill.damage : 0;
                 playerSkill.stock = (skill.stock) ? skill.stock : 0;
                 playerSkill.cooldown = (skill.cooldown) ? skill.cooldown : 0;
@@ -1168,59 +1257,6 @@ var Player = /** @class */ (function (_super) {
     };
     return Player;
 }(AbstractCharacter));
-/// <reference path="Controller.ts"/>
-var Mouse = /** @class */ (function (_super) {
-    __extends(Mouse, _super);
-    function Mouse() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Mouse.prototype.registerControls = function (scene) {
-        var self = this;
-        var clickTrigger = false;
-        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
-        ball.actionManager = new BABYLON.ActionManager(scene);
-        ball.isPickable = false;
-        ball.visibility = 0;
-        this.ball = ball;
-        scene.onPointerUp = function (evt, pickResult) {
-            clickTrigger = false;
-        };
-        scene.onPointerDown = function (evt, pickResult) {
-            var pickedMesh = pickResult.pickedMesh;
-            clickTrigger = true;
-            if (pickedMesh) {
-                if (self.game.player && (pickedMesh.name == 'Ground' || pickedMesh.name == 'Ground.002')) {
-                    self.attackPoint = null;
-                    self.targetPoint = pickResult.pickedPoint;
-                    self.targetPoint.y = 0;
-                    self.ball.position = self.targetPoint;
-                    self.ball.visibility = 1;
-                    self.game.client.socket.emit('setTargetPoint', {
-                        position: self.targetPoint,
-                        playerPosition: self.game.player.mesh.position
-                    });
-                }
-            }
-        };
-        scene.onPointerMove = function (evt, pickResult) {
-            if (clickTrigger) {
-                var pickedMesh = pickResult.pickedMesh;
-                if (pickedMesh && self.targetPoint) {
-                    if (self.game.player) {
-                        self.targetPoint = pickResult.pickedPoint;
-                        self.targetPoint.y = 0;
-                        self.ball.position = self.targetPoint;
-                        self.game.client.socket.emit('setTargetPoint', {
-                            position: self.targetPoint,
-                            playerPosition: self.game.player.mesh.position
-                        });
-                    }
-                }
-            }
-        };
-    };
-    return Mouse;
-}(Controller));
 /// <reference path="../game.ts"/>
 var Factories;
 (function (Factories) {
@@ -1928,6 +1964,133 @@ var GUI;
     }());
     GUI.ShowHp = ShowHp;
 })(GUI || (GUI = {}));
+var Quests;
+(function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var AbstractAward = /** @class */ (function () {
+            function AbstractAward() {
+            }
+            AbstractAward.AWARD_ID = 0;
+            return AbstractAward;
+        }());
+        Awards.AbstractAward = AbstractAward;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var AbstractRequirement = /** @class */ (function () {
+            function AbstractRequirement() {
+            }
+            AbstractRequirement.REQUIREMENT_ID = 0;
+            return AbstractRequirement;
+        }());
+        Requirements.AbstractRequirement = AbstractRequirement;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+})(Quests || (Quests = {}));
+/// <reference path="awards/AbstractAward.ts"/>
+/// <reference path="requirements/AbstractRequirement.ts"/>
+var Quests;
+(function (Quests) {
+    var AbstractQuest = /** @class */ (function () {
+        function AbstractQuest(game) {
+            this.game = game;
+            this.awards = [];
+            this.requirements = [];
+            this.hasRequrementsFinished = false;
+        }
+        AbstractQuest.prototype.setAwards = function (awards) {
+            this.awards = awards;
+        };
+        AbstractQuest.prototype.setRequirements = function (requirements) {
+            this.requirements = requirements;
+        };
+        AbstractQuest.QUEST_ID = 0;
+        return AbstractQuest;
+    }());
+    Quests.AbstractQuest = AbstractQuest;
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var QuestManager = /** @class */ (function () {
+        function QuestManager(game) {
+            this.game = game;
+        }
+        /**
+         * @param questData
+         */
+        QuestManager.prototype.transformQuestDatabaseDataToObject = function (questData) {
+            var self = this;
+            var awards = this.getAwards(questData.awards);
+            var requirements = questData.requirements;
+            var questId = questData.questId;
+            var quest = this.getQuest(questId);
+            quest.setAwards(awards);
+            return quest;
+        };
+        QuestManager.prototype.getAwards = function (databaseAwards) {
+            var awards = [];
+            var itemManager = new Items.ItemManager(this.game);
+            databaseAwards.forEach(function (award, key) {
+                var award;
+                switch (award.awardId) {
+                    case Quests.Awards.Item.AWARD_ID:
+                        var item = itemManager.getItemUsingId(award.value);
+                        award = new Quests.Awards.Item(item);
+                }
+                awards.push(award);
+            });
+            return awards;
+        };
+        //protected getRequrements(databaseRequrements:Array) {
+        //    let awards = [];
+        //    databaseRequrements.forEach(function (requirement, key) {
+        //        let award;
+        //
+        //        switch (requirement.requirementId) {
+        //            case Quests.Requirements.Monster.REQUIREMENT_ID:
+        //                let monster = new Worm();
+        //                award = new Quests.Requirements.Monster(item, requirement.value);
+        //        }
+        //        awards.push(award);
+        //    });
+        //
+        //    return awards;
+        //}
+        /**
+         *
+         * @param id
+         * @returns Quests.AbstractQuest
+         */
+        QuestManager.prototype.getQuest = function (id) {
+            var game = this.game;
+            var quest = null;
+            switch (id) {
+                case Quests.KillWorms.QUEST_ID:
+                    quest = new Quests.KillWorms(game);
+                    break;
+            }
+            return quest;
+        };
+        /**
+         * @param questId
+         * @returns {null|Quests.AbstractQuest}
+         */
+        QuestManager.prototype.getQuestFromServerUsingQuestId = function (questId) {
+            var quest = null;
+            this.game.quests.forEach(function (gameQuest, key) {
+                if (questId == gameQuest.getQuestId()) {
+                    quest = gameQuest;
+                }
+            });
+            return quest;
+        };
+        return QuestManager;
+    }());
+    Quests.QuestManager = QuestManager;
+})(Quests || (Quests = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var Particles;
@@ -2347,133 +2510,6 @@ var Particles;
     }(Particles.AbstractParticle));
     Particles.WalkSmoke = WalkSmoke;
 })(Particles || (Particles = {}));
-var Quests;
-(function (Quests) {
-    var Awards;
-    (function (Awards) {
-        var AbstractAward = /** @class */ (function () {
-            function AbstractAward() {
-            }
-            AbstractAward.AWARD_ID = 0;
-            return AbstractAward;
-        }());
-        Awards.AbstractAward = AbstractAward;
-    })(Awards = Quests.Awards || (Quests.Awards = {}));
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var Requirements;
-    (function (Requirements) {
-        var AbstractRequirement = /** @class */ (function () {
-            function AbstractRequirement() {
-            }
-            AbstractRequirement.REQUIREMENT_ID = 0;
-            return AbstractRequirement;
-        }());
-        Requirements.AbstractRequirement = AbstractRequirement;
-    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
-})(Quests || (Quests = {}));
-/// <reference path="awards/AbstractAward.ts"/>
-/// <reference path="requirements/AbstractRequirement.ts"/>
-var Quests;
-(function (Quests) {
-    var AbstractQuest = /** @class */ (function () {
-        function AbstractQuest(game) {
-            this.game = game;
-            this.awards = [];
-            this.requirements = [];
-            this.hasRequrementsFinished = false;
-        }
-        AbstractQuest.prototype.setAwards = function (awards) {
-            this.awards = awards;
-        };
-        AbstractQuest.prototype.setRequirements = function (requirements) {
-            this.requirements = requirements;
-        };
-        AbstractQuest.QUEST_ID = 0;
-        return AbstractQuest;
-    }());
-    Quests.AbstractQuest = AbstractQuest;
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var QuestManager = /** @class */ (function () {
-        function QuestManager(game) {
-            this.game = game;
-        }
-        /**
-         * @param questData
-         */
-        QuestManager.prototype.transformQuestDatabaseDataToObject = function (questData) {
-            var self = this;
-            var awards = this.getAwards(questData.awards);
-            var requirements = questData.requirements;
-            var questId = questData.questId;
-            var quest = this.getQuest(questId);
-            quest.setAwards(awards);
-            return quest;
-        };
-        QuestManager.prototype.getAwards = function (databaseAwards) {
-            var awards = [];
-            var itemManager = new Items.ItemManager(this.game);
-            databaseAwards.forEach(function (award, key) {
-                var award;
-                switch (award.awardId) {
-                    case Quests.Awards.Item.AWARD_ID:
-                        var item = itemManager.getItemUsingId(award.value);
-                        award = new Quests.Awards.Item(item);
-                }
-                awards.push(award);
-            });
-            return awards;
-        };
-        //protected getRequrements(databaseRequrements:Array) {
-        //    let awards = [];
-        //    databaseRequrements.forEach(function (requirement, key) {
-        //        let award;
-        //
-        //        switch (requirement.requirementId) {
-        //            case Quests.Requirements.Monster.REQUIREMENT_ID:
-        //                let monster = new Worm();
-        //                award = new Quests.Requirements.Monster(item, requirement.value);
-        //        }
-        //        awards.push(award);
-        //    });
-        //
-        //    return awards;
-        //}
-        /**
-         *
-         * @param id
-         * @returns Quests.AbstractQuest
-         */
-        QuestManager.prototype.getQuest = function (id) {
-            var game = this.game;
-            var quest = null;
-            switch (id) {
-                case Quests.KillWorms.QUEST_ID:
-                    quest = new Quests.KillWorms(game);
-                    break;
-            }
-            return quest;
-        };
-        /**
-         * @param questId
-         * @returns {null|Quests.AbstractQuest}
-         */
-        QuestManager.prototype.getQuestFromServerUsingQuestId = function (questId) {
-            var quest = null;
-            this.game.quests.forEach(function (gameQuest, key) {
-                if (questId == gameQuest.getQuestId()) {
-                    quest = gameQuest;
-                }
-            });
-            return quest;
-        };
-        return QuestManager;
-    }());
-    Quests.QuestManager = QuestManager;
-})(Quests || (Quests = {}));
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -2927,9 +2963,9 @@ var Character;
                         if (event.sourceEvent.key == 1) {
                             game.controller.attackPoint = null;
                             game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
-                                effectEmitter.particleSystem.start();
+                                //effectEmitter.particleSystem.start();
                             }, function () {
-                                effectEmitter.particleSystem.stop();
+                                //effectEmitter.particleSystem.stop();
                             });
                         }
                     }));
@@ -2994,11 +3030,12 @@ var Character;
                     game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
                         if (event.sourceEvent.key == 2) {
                             game.controller.attackPoint = null;
-                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
-                                effectEmitter.particleSystem.start();
+                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_02, function () {
+                                //effectEmitter.particleSystem.start();
                             }, function () {
-                                effectEmitter.particleSystem.stop();
+                                //effectEmitter.particleSystem.stop();
                             });
+                            3;
                         }
                     }));
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
@@ -3999,6 +4036,67 @@ var GUI;
     }(GUI.Popup));
     GUI.Quest = Quest;
 })(GUI || (GUI = {}));
+var Quests;
+(function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var Item = /** @class */ (function (_super) {
+            __extends(Item, _super);
+            function Item(item) {
+                var _this = _super.call(this) || this;
+                _this.name = item.name;
+                _this.award = item;
+                return _this;
+            }
+            Item.prototype.getAward = function () {
+                console.log('get award' + this.award.name);
+            };
+            Item.AWARD_ID = 1;
+            return Item;
+        }(Awards.AbstractAward));
+        Awards.Item = Item;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var KillWorms = /** @class */ (function (_super) {
+        __extends(KillWorms, _super);
+        function KillWorms(game) {
+            var _this = _super.call(this, game) || this;
+            _this.title = 'Bandits';
+            _this.description = 'Go to portal and kill all bandits.';
+            return _this;
+        }
+        /**
+         *
+         * @returns {number}
+         */
+        KillWorms.prototype.getQuestId = function () {
+            return Quests.KillWorms.QUEST_ID;
+        };
+        KillWorms.QUEST_ID = 1;
+        return KillWorms;
+    }(Quests.AbstractQuest));
+    Quests.KillWorms = KillWorms;
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var Monster = /** @class */ (function (_super) {
+            __extends(Monster, _super);
+            function Monster(monster, count) {
+                var _this = _super.call(this) || this;
+                _this.name = 'Kill ' + count + ' ' + monster.name + '';
+                _this.requirement = monster;
+                return _this;
+            }
+            Monster.REQUIREMENT_ID = 1;
+            return Monster;
+        }(Requirements.AbstractRequirement));
+        Requirements.Monster = Monster;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+})(Quests || (Quests = {}));
 var Particles;
 (function (Particles) {
     var DoubleAttack = /** @class */ (function (_super) {
@@ -4071,67 +4169,6 @@ var Particles;
     }(Particles.AbstractParticle));
     Particles.Tornado = Tornado;
 })(Particles || (Particles = {}));
-var Quests;
-(function (Quests) {
-    var Awards;
-    (function (Awards) {
-        var Item = /** @class */ (function (_super) {
-            __extends(Item, _super);
-            function Item(item) {
-                var _this = _super.call(this) || this;
-                _this.name = item.name;
-                _this.award = item;
-                return _this;
-            }
-            Item.prototype.getAward = function () {
-                console.log('get award' + this.award.name);
-            };
-            Item.AWARD_ID = 1;
-            return Item;
-        }(Awards.AbstractAward));
-        Awards.Item = Item;
-    })(Awards = Quests.Awards || (Quests.Awards = {}));
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var KillWorms = /** @class */ (function (_super) {
-        __extends(KillWorms, _super);
-        function KillWorms(game) {
-            var _this = _super.call(this, game) || this;
-            _this.title = 'Bandits';
-            _this.description = 'Go to portal and kill all bandits.';
-            return _this;
-        }
-        /**
-         *
-         * @returns {number}
-         */
-        KillWorms.prototype.getQuestId = function () {
-            return Quests.KillWorms.QUEST_ID;
-        };
-        KillWorms.QUEST_ID = 1;
-        return KillWorms;
-    }(Quests.AbstractQuest));
-    Quests.KillWorms = KillWorms;
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var Requirements;
-    (function (Requirements) {
-        var Monster = /** @class */ (function (_super) {
-            __extends(Monster, _super);
-            function Monster(monster, count) {
-                var _this = _super.call(this) || this;
-                _this.name = 'Kill ' + count + ' ' + monster.name + '';
-                _this.requirement = monster;
-                return _this;
-            }
-            Monster.REQUIREMENT_ID = 1;
-            return Monster;
-        }(Requirements.AbstractRequirement));
-        Requirements.Monster = Monster;
-    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
-})(Quests || (Quests = {}));
 /// <reference path="../Inventory.ts"/>
 var GUI;
 (function (GUI) {

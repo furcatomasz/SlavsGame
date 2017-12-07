@@ -1176,6 +1176,16 @@ var Server;
             this.freeSkillPoints = value;
             return this;
         };
+        Character.prototype.setSkills = function (skills) {
+            var self = this;
+            this.skills = [];
+            skills.forEach(function (skillDatabase) {
+                var skill = Skills.SkillsManager.getSkill(skillDatabase.skillType);
+                skill.setPower(skillDatabase.cooldown, skillDatabase.damage, skillDatabase.stock);
+                self.skills.push(skill);
+            });
+            return this;
+        };
         Character.prototype.setItemsOnCharacter = function (items) {
             var itemManager = new Items.ItemManager();
             itemManager.initItemsFromDatabaseOnCharacter(items, this);
@@ -1323,6 +1333,7 @@ var Server;
                                                 .setLvl(player.lvl)
                                                 .setConnectionId(self.id)
                                                 .setItemsOnCharacter(player.items)
+                                                .setSkills(player.skills)
                                                 .calculateCharacterStatistics(player.attributes);
                                             self.characters.push(character);
                                         });
@@ -1562,6 +1573,80 @@ var Items;
     }());
     Items.ItemManager = ItemManager;
 })(Items || (Items = {}));
+var Skills;
+(function (Skills) {
+    var AbstractSkill = /** @class */ (function () {
+        function AbstractSkill() {
+        }
+        AbstractSkill.prototype.setPower = function (cooldown, damage, stock) {
+            if (cooldown === void 0) { cooldown = 0; }
+            if (damage === void 0) { damage = 0; }
+            if (stock === void 0) { stock = 0; }
+            this.cooldown = cooldown;
+            this.damage = damage;
+            this.stock = stock;
+        };
+        AbstractSkill.TYPE = 0;
+        return AbstractSkill;
+    }());
+    Skills.AbstractSkill = AbstractSkill;
+})(Skills || (Skills = {}));
+var Skills;
+(function (Skills) {
+    var DoubleAttack = /** @class */ (function (_super) {
+        __extends(DoubleAttack, _super);
+        function DoubleAttack() {
+            var _this = this;
+            _this.name = 'Double Attack';
+            _this.type = Skills.DoubleAttack.TYPE;
+            return _this;
+        }
+        DoubleAttack.TYPE = 1;
+        return DoubleAttack;
+    }(Skills.AbstractSkill));
+    Skills.DoubleAttack = DoubleAttack;
+})(Skills || (Skills = {}));
+var Skills;
+(function (Skills) {
+    var SkillsManager = /** @class */ (function () {
+        function SkillsManager() {
+        }
+        /**
+         *
+         * @param type
+         * @returns {Skills.AbstractSkill}
+         */
+        SkillsManager.getSkill = function (type) {
+            var skill = null;
+            switch (type) {
+                case Skills.DoubleAttack.TYPE:
+                    skill = new Skills.DoubleAttack();
+                    break;
+                case Skills.Tornado.TYPE:
+                    skill = new Skills.Tornado();
+                    break;
+            }
+            return skill;
+        };
+        return SkillsManager;
+    }());
+    Skills.SkillsManager = SkillsManager;
+})(Skills || (Skills = {}));
+var Skills;
+(function (Skills) {
+    var Tornado = /** @class */ (function (_super) {
+        __extends(Tornado, _super);
+        function Tornado() {
+            var _this = this;
+            _this.name = 'Tornado';
+            _this.type = Skills.Tornado.TYPE;
+            return _this;
+        }
+        Tornado.TYPE = 2;
+        return Tornado;
+    }(Skills.AbstractSkill));
+    Skills.Tornado = Tornado;
+})(Skills || (Skills = {}));
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {

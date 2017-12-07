@@ -1,20 +1,20 @@
 namespace Server {
     export class Character {
 
-        public id: number;
-        public connectionId: string;
-        public name: string;
-        public skills: Array;
-        public experience: number;
-        public lvl: number;
-        public freeAttributesPoints: number;
-        public freeSkillPoints: number;
+        public id:number;
+        public connectionId:string;
+        public name:string;
+        public skills:Array;
+        public experience:number;
+        public lvl:number;
+        public freeAttributesPoints:number;
+        public freeSkillPoints:number;
         public position;
         public itemsDrop;
-        public targetPoint: string;
-        public attack: boolean;
-        public inventory: Inventory;
-        public statistics: Attributes.CharacterStatistics;
+        public targetPoint:string;
+        public attack:boolean;
+        public inventory:Inventory;
+        public statistics:Attributes.CharacterStatistics;
 
         public constructor(id) {
             this.id = id;
@@ -22,43 +22,55 @@ namespace Server {
             this.inventory = new Inventory();
         }
 
-        public setConnectionId(value: string) {
+        public setConnectionId(value:string) {
             this.connectionId = value;
 
             return this;
         }
 
-        public setName(value: string) {
+        public setName(value:string) {
             this.name = value;
 
             return this;
         }
 
-        public setExperience(value: number) {
+        public setExperience(value:number) {
             this.experience = value;
 
             return this;
         }
 
-        public setLvl(value: number) {
+        public setLvl(value:number) {
             this.lvl = value;
 
             return this;
         }
 
-        public setFreeAttributesPoints(value: number) {
+        public setFreeAttributesPoints(value:number) {
             this.freeAttributesPoints = value;
 
             return this;
         }
 
-        public setFreeSkillPoints(value: number) {
+        public setFreeSkillPoints(value:number) {
             this.freeSkillPoints = value;
 
             return this;
         }
 
-        setItemsOnCharacter(items: Array) {
+        public setSkills(skills:Array) {
+            let self = this;
+            this.skills = [];
+            skills.forEach(function (skillDatabase) {
+                let skill = Skills.SkillsManager.getSkill(skillDatabase.skillType);
+                skill.setPower(skillDatabase.cooldown, skillDatabase.damage, skillDatabase.stock);
+                self.skills.push(skill);
+            });
+
+            return this;
+        }
+
+        public setItemsOnCharacter(items:Array) {
             let itemManager = new Items.ItemManager();
             itemManager.initItemsFromDatabaseOnCharacter(items, this);
 

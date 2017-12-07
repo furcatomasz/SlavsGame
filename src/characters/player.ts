@@ -96,7 +96,7 @@ class Player extends AbstractCharacter {
 
         if(skills) {
             skills.forEach(function(skill, key) {
-                let playerSkill = skillManager.getSkill(skill.skillType);
+                let playerSkill = skillManager.getSkill(skill.type);
                 playerSkill.damage = (skill.damage) ? skill.damage : 0;
                 playerSkill.stock = (skill.stock) ? skill.stock : 0;
                 playerSkill.cooldown = (skill.cooldown) ? skill.cooldown : 0;

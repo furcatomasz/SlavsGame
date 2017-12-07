@@ -21,11 +21,11 @@ namespace Character.Skills {
                     if (event.sourceEvent.key == 2) {
                         game.controller.attackPoint = null;
 
-                        game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
-                            effectEmitter.particleSystem.start();
+                        game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_02, function () {
+                            //effectEmitter.particleSystem.start();
                         }, function () {
-                            effectEmitter.particleSystem.stop();
-                        });
+                            //effectEmitter.particleSystem.stop();
+                        });3
                     }
                 }));
 

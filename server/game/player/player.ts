@@ -52,6 +52,7 @@ namespace Server {
                                                             .setLvl(player.lvl)
                                                             .setConnectionId(self.id)
                                                             .setItemsOnCharacter(player.items)
+                                                            .setSkills(player.skills)
                                                             .calculateCharacterStatistics(player.attributes);
 
                                                         self.characters.push(character);

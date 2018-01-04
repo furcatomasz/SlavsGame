@@ -3,6 +3,7 @@ namespace Server {
 
         public id:number;
         public connectionId:string;
+        public roomId:string;
         public name:string;
         public skills:Array;
         public experience:number;

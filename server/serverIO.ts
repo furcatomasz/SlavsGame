@@ -12,6 +12,10 @@ namespace Server {
             serverIO.on('connection', function (socket) {
                 let isMonsterServer = socket.handshake.query.monsterServer;
                 let player = new Server.Player(socket.id);
+                socket.join(socket.id);
+
+                var roster =  serverIO.sockets.adapter.rooms[socket.id].sockets;
+                console.log(roster);
                 player.activeCharacter = 1;
                 if(!isMonsterServer) {
                     ////CLEAR QUESTS
@@ -115,8 +119,9 @@ namespace Server {
                     let character = player.getActiveCharacter();
                     character.attack = null;
                     character.targetPoint = targetPoint.position;
-                    socket.broadcast.emit('updatePlayer', character);
-                    socket.emit('updatePlayer', character);
+                    console.log(character.roomId);
+                    socket.broadcast.to(character.roomId).emit('updatePlayer', character);
+                    socket.to(character.roomId).emit('updatePlayer', character);
                 });
 
                 socket.on('attack', function (data) {
@@ -186,8 +191,8 @@ namespace Server {
                         });
                     });
 
-                    socket.broadcast.emit('updatePlayer', activeCharacter);
-                    socket.emit('updatePlayer', activeCharacter);
+                    socket.broadcast.to(activeCharacter.roomId).emit('updatePlayer', activeCharacter);
+                    socket.to(activeCharacter.roomId).emit('updatePlayer', activeCharacter);
                 });
 
                 socket.on('itemEquip', function (item) {
@@ -392,7 +397,7 @@ namespace Server {
                     enemy.attack = data.attack;
                     enemy.availableAttacksFromCharacters[data.target] = data.attack;
 
-                    socket.broadcast.emit('updateEnemy', {
+                    socket.broadcast.to(data.roomId).emit('updateEnemy', {
                         enemy: enemy,
                         enemyKey: data.enemyKey
                     });

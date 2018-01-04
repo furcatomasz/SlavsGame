@@ -55,6 +55,7 @@ namespace Server {
                                                             .setSkills(player.skills)
                                                             .calculateCharacterStatistics(player.attributes);
 
+                                                        character.roomId = self.id;
                                                         self.characters.push(character);
                                                     });
                                                     callback();

@@ -119,7 +119,6 @@ namespace Server {
 
             this.socket.on('newPlayerConnected', function (playerData) {
                 console.log('connected new player');
-
                 let remotePlayerKey = null;
                 if (playerData.id !== self.socket.id) {
                     self.players.forEach(function (remotePlayer, key) {
@@ -141,11 +140,12 @@ namespace Server {
                         let remotePlayer = {
                             id: activePlayer.id,
                             socketId: playerData.id,
+                            roomId: activePlayer.roomId,
                             mesh: box,
                             registeredFunction: null,
                         };
                         self.players.push(remotePlayer);
-                        self.registerPlayerInEnemyActionManager(box);
+                        self.registerPlayerInEnemyActionManager(remotePlayer);
                     }
                 }
             });
@@ -160,9 +160,7 @@ namespace Server {
         protected removePlayer() {
             let self = this;
             this.socket.on('removePlayer', function (id) {
-                console.log(id);
                 self.players.forEach(function (remotePlayer, key) {
-                    console.log(remotePlayer);
 
                     if (remotePlayer.socketId == id) {
                         let player = self.players[key];
@@ -188,8 +186,10 @@ namespace Server {
             return this;
         }
 
-        protected registerPlayerInEnemyActionManager(playerMesh:BABYLON.AbstractMesh) {
+        protected registerPlayerInEnemyActionManager(remotePlayerData) {
             let self = this;
+            let playerMesh = remotePlayerData.mesh;
+
             this.enemies.forEach(function (enemy, key) {
                 enemy.activeTargetPoints[playerMesh.id] = function () {
                     let mesh = enemy.mesh;
@@ -214,6 +214,7 @@ namespace Server {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
+                            roomId: remotePlayerData.roomId,
                             target: playerMesh.id,
                             attack: true
                         });
@@ -231,6 +232,7 @@ namespace Server {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
+                            roomId: remotePlayerData.roomId,
                             target: playerMesh.id,
                             attack: false
                         });
@@ -248,6 +250,7 @@ namespace Server {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
+                            roomId: remotePlayerData.roomId,
                             target: playerMesh.id
                         });
                         enemy.target = playerMesh.id;
@@ -266,6 +269,7 @@ namespace Server {
                         self.socket.emit('setEnemyTarget', {
                             enemyKey: key,
                             position: enemy.mesh.position,
+                            roomId: remotePlayerData.roomId,
                             target: null
                         });
                         enemy.target = false;

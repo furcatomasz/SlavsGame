@@ -287,6 +287,7 @@ class SocketIOClient {
         var game = this.game;
         let activeTargetPoints = [];
         this.socket.on('updateEnemy', function (data) {
+            console.log('updateEnemy');
             let updatedEnemy = data.enemy;
             let enemyKey = data.enemyKey;
             let enemy = game.enemies[enemyKey];

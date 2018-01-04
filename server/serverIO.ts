@@ -120,8 +120,7 @@ namespace Server {
                     character.attack = null;
                     character.targetPoint = targetPoint.position;
                     console.log(character.roomId);
-                    socket.broadcast.to(character.roomId).emit('updatePlayer', character);
-                    socket.to(character.roomId).emit('updatePlayer', character);
+                    serverIO.in(character.roomId).emit('updatePlayer', character);
                 });
 
                 socket.on('attack', function (data) {

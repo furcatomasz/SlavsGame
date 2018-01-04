@@ -415,6 +415,7 @@ class SocketIOClient {
         let game = this.game;
         let activeTargetPoints = [];
         this.socket.on('updatePlayer', function (updatedPlayer) {
+            console.log('updatePlayer');
             let remotePlayerKey = null;
             let player = null;
 

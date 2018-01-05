@@ -2,11 +2,13 @@ namespace Server {
     export class IO {
         protected server: SlavsServer;
         protected remotePlayers;
+        protected enemies = [];
+        protected monsterServerSocketId;
 
         constructor(server: SlavsServer, serverIO) {
             this.remotePlayers = [];
+            this.enemies = [];
             let self = this;
-            let enemies = server.enemies;
             let remotePlayers = this.remotePlayers;
             this.server = server;
             serverIO.on('connection', function (socket) {
@@ -14,8 +16,6 @@ namespace Server {
                 let player = new Server.Player(socket.id);
                 socket.join(socket.id);
 
-                var roster =  serverIO.sockets.adapter.rooms[socket.id].sockets;
-                console.log(roster);
                 player.activeCharacter = 1;
                 if(!isMonsterServer) {
                     ////CLEAR QUESTS
@@ -29,8 +29,8 @@ namespace Server {
                         socket.emit('clientConnected', player);
                     });
                 } else {
+                    self.monsterServerSocketId = socket.id;
                     player.activeScene = 2;
-                    socket.emit('showEnemies', enemies[player.activeScene]);
 
                     socket.on('updatePlayerPosition', function (updatedPlayer) {
                         self.remotePlayers.forEach(function(remotePlayer, remotePlayerKey) {
@@ -112,15 +112,18 @@ namespace Server {
                 socket.on('createPlayer', function () {
                     remotePlayers.push(player);
                     player.getActiveCharacter().position = self.getDefaultPositionForScene(2);
+
                     socket.broadcast.emit('newPlayerConnected', player);
+                    serverIO.to(self.monsterServerSocketId).emit('createRoom', player.getActiveCharacter().roomId);
                 });
 
                 socket.on('setTargetPoint', function (targetPoint) {
                     let character = player.getActiveCharacter();
                     character.attack = null;
                     character.targetPoint = targetPoint.position;
-                    console.log(character.roomId);
+
                     serverIO.in(character.roomId).emit('updatePlayer', character);
+                    serverIO.to(self.monsterServerSocketId).emit('updatePlayer', character);
                 });
 
                 socket.on('attack', function (data) {
@@ -135,20 +138,22 @@ namespace Server {
                     activeCharacter.attack = data.attack;
                     activeCharacter.targetPoint = data.targetPoint;
 
-                    enemies[player.activeScene].forEach(function(enemy, enemyKey) {
+                    self.enemies[activeCharacter.roomId].forEach(function(enemy, enemyKey) {
                          enemy.availableAttacksFromCharacters.forEach(function(isAtacked, characterId) {
                             if(isAtacked === true) {
                                     if(activeCharacter.id == characterId) {
                                         let attackCharacter = activeCharacter;
+                                        let roomId = activeCharacter.roomId;
                                         let damage = attackCharacter.statistics.getDamage();
                                         enemy.statistics.hp -= damage;
                                         let emitObject = {
                                             enemy: enemy,
-                                            enemyKey: enemyKey
+                                            enemyKey: enemyKey,
+                                            roomId: roomId
                                         };
-                                        console.log('updateEnemyAttack');
-                                        socket.emit('updateEnemy', emitObject);
-                                        socket.broadcast.emit('updateEnemy', emitObject);
+                                        console.log('SOCKET - Attack event');
+                                        serverIO.in(roomId).emit('updateEnemy', emitObject);
+                                        serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
 
                                         ///enemy is killed
                                         if(enemy.statistics.hp <= 0) {
@@ -190,8 +195,8 @@ namespace Server {
                         });
                     });
 
-                    socket.broadcast.to(activeCharacter.roomId).emit('updatePlayer', activeCharacter);
-                    socket.to(activeCharacter.roomId).emit('updatePlayer', activeCharacter);
+                    serverIO.in(activeCharacter.roomId).emit('updatePlayer', activeCharacter);
+                    serverIO.to(self.monsterServerSocketId).emit('updatePlayer', activeCharacter);
                 });
 
                 socket.on('itemEquip', function (item) {
@@ -356,28 +361,45 @@ namespace Server {
                     //        .remove();
                     //}
 
+                    let remotePlayerKey = null;
+                    let roomId = null;
                     remotePlayers.forEach(function (remotePlayer, key) {
                         if (remotePlayer.id == player.id || remotePlayer == null) {
-                            remotePlayers.splice(key, 1);
+                            remotePlayerKey = key;
+                            roomId = remotePlayer.getActiveCharacter().roomId;
                         }
                     });
 
-                    enemies.forEach(function (enemy, key) {
+                    self.enemies[roomId].forEach(function (enemy, key) {
                         if (enemy.target == player.id) {
                             enemy.target = null;
-                            socket.broadcast.emit('updateEnemy', {
+
+                            serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
+                            serverIO.in(roomId).emit('updateEnemy', {
                                 enemy: enemy,
-                                enemyKey: key
+                                enemyKey: key,
+                                roomId: roomId
                             });
                         }
                     });
+
+                    remotePlayers.splice(remotePlayerKey, 1);
+
                     socket.broadcast.emit('removePlayer', player.id);
                 });
 
                 socket.on('changeScenePre', function (sceneData) {
                     let sceneType = sceneData.sceneType;
-                    player.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
+                    let roomId = player.getActiveCharacter().roomId;
 
+                    player.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
+                    self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
+                    console.log(self.enemies[roomId]);
+
+                    serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
+                        enemies: self.getEnemiesInRoom(roomId),
+                        roomId: roomId,
+                    });
                     socket.emit('showPlayer', player);
 
                 });
@@ -385,24 +407,42 @@ namespace Server {
                 socket.on('changeScenePost', function (sceneData) {
                     player.activeScene = sceneData.sceneType;
 
-                    socket.emit('showEnemies', enemies[sceneData.sceneType]);
+                    serverIO.to(self.monsterServerSocketId).emit('showPlayer', player);
+                    socket.emit('showEnemies', self.enemies[player.getActiveCharacter().roomId]);
                 });
 
                 ///Enemies
                 socket.on('setEnemyTarget', function (data) {
-                    let enemy = enemies[player.activeScene][data.enemyKey];
+                    let enemy = self.enemies[data.roomId][data.enemyKey];
                     enemy.position = data.position;
                     enemy.target = data.target;
                     enemy.attack = data.attack;
                     enemy.availableAttacksFromCharacters[data.target] = data.attack;
 
-                    socket.broadcast.to(data.roomId).emit('updateEnemy', {
+                    socket.in(data.roomId).emit('updateEnemy', {
                         enemy: enemy,
                         enemyKey: data.enemyKey
                     });
                 });
 
             });
+        }
+
+        /**
+         * @param roomId
+         * @returns {Monster}
+         */
+        protected getEnemiesInRoom(roomId) {
+            return this.enemies[roomId];
+        }
+
+        /**
+         * @param roomId
+         * @param enemyId
+         * @returns Monster
+         */
+        protected getEnemyFromRoom(roomId, enemyId) {
+            return this.getEnemiesInRoom(roomId)[enemyId];
         }
 
         protected getDefaultPositionForScene(sceneType) {

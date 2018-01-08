@@ -336,7 +336,7 @@ namespace Server {
             let self = this;
             let activeTargetPoints = [];
             this.socket.on('updatePlayer', function (updatedPlayer) {
-                console.log('BABYLON: update player - '+ updatedPlayer.id);
+                // console.log('BABYLON: update player - '+ updatedPlayer.id);
 
                 let remotePlayerKey = null;
                 let player = null;
@@ -372,8 +372,9 @@ namespace Server {
 
                             remotePlayer.registeredFunction = function () {
                                 if (mesh.intersectsPoint(targetPointVector3)) {
-                                    console.log('BABYLON: player intersect target point - '+ updatedPlayer.id);
                                     let remotePlayer = self.players[remotePlayerKey];
+
+                                    console.log('BABYLON: player intersect target point - '+ updatedPlayer.id +', roomID:'+ remotePlayer.roomId);
                                     scene.unregisterBeforeRender(remotePlayer.registeredFunction);
                                     self.socket.emit('updatePlayerPosition', {
                                         playerSocketId: remotePlayer.socketId,

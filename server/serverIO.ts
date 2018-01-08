@@ -35,11 +35,11 @@ namespace Server {
                     socket.on('updatePlayerPosition', function (updatedPlayer) {
                         self.remotePlayers.forEach(function(remotePlayer, remotePlayerKey) {
                            if(remotePlayer.id == updatedPlayer.playerSocketId) {
-                               console.log('updatedPlayerPosition');
+                               // console.log('updatedPlayerPosition');
                                let remotePlayer = self.remotePlayers[remotePlayerKey];
                                remotePlayer.getActiveCharacter().position = updatedPlayer.position;
 
-                               socket.broadcast.emit('updatePlayer', remotePlayer);
+                               // socket.broadcast.emit('updatePlayer', remotePlayer);
                                return;
                            }
                         });
@@ -110,11 +110,14 @@ namespace Server {
 
                 ///Player
                 socket.on('createPlayer', function () {
-                    remotePlayers.push(player);
-                    player.getActiveCharacter().position = self.getDefaultPositionForScene(2);
+                    let character = player.getActiveCharacter();
+                    if(character) {
+                        remotePlayers.push(player);
+                        character.position = self.getDefaultPositionForScene(2);
 
-                    socket.broadcast.emit('newPlayerConnected', player);
-                    serverIO.to(self.monsterServerSocketId).emit('createRoom', player.getActiveCharacter().roomId);
+                        serverIO.in(character.roomId).emit('newPlayerConnected', player);
+                        serverIO.to(self.monsterServerSocketId).emit('createRoom', player.getActiveCharacter().roomId);
+                    }
                 });
 
                 socket.on('setTargetPoint', function (targetPoint) {
@@ -394,7 +397,6 @@ namespace Server {
 
                     player.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
                     self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
-                    console.log(self.enemies[roomId]);
 
                     serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
                         enemies: self.getEnemiesInRoom(roomId),
@@ -418,7 +420,7 @@ namespace Server {
                     enemy.target = data.target;
                     enemy.attack = data.attack;
                     enemy.availableAttacksFromCharacters[data.target] = data.attack;
-
+console.log('set enemy target '+data.target+' on room' + data.roomId);
                     socket.in(data.roomId).emit('updateEnemy', {
                         enemy: enemy,
                         enemyKey: data.enemyKey

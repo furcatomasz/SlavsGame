@@ -675,8 +675,11 @@ var SocketIOClient = /** @class */ (function () {
                         label.text = '-' + damage_1 + '';
                         label.width = 1;
                         label.height = 1;
-                        label.color = 'red';
-                        label.fontSize = 160;
+                        label.color = 'white';
+                        label.fontSize = 200;
+                        label.shadowOffsetX = 0;
+                        label.shadowOffsetY = 0;
+                        label.shadowBlur = 1;
                         var paddingTop = 0;
                         var alpha = 1;
                         var animateText = function () {
@@ -690,15 +693,20 @@ var SocketIOClient = /** @class */ (function () {
                         };
                         enemy.meshAdvancedTexture.addControl(label);
                         game.getScene().registerAfterRender(animateText);
+                        enemy.statistics.hp = updatedEnemy.statistics.hp;
+                        if (enemy.statistics.hp <= 0) {
+                            if (enemy.animation) {
+                                enemy.animation.stop();
+                            }
+                        }
                         setTimeout(function () {
                             game.getScene().unregisterAfterRender(animateText);
                             enemy.meshAdvancedTexture.removeControl(label);
+                            if (enemy.statistics.hp <= 0) {
+                                enemy.removeFromWorld();
+                            }
                         }, 1000);
                     }, 300);
-                    enemy.statistics.hp = updatedEnemy.statistics.hp;
-                    if (enemy.statistics.hp <= 0) {
-                        enemy.removeFromWorld();
-                    }
                 }
                 mesh_1.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
                 if (activeTargetPoints[enemyKey] !== undefined) {

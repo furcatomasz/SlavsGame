@@ -44,7 +44,8 @@ class SocketIOClient {
                 .newLvl()
                 .attributeAdded()
                 .skillsLearned()
-                .updateRooms();
+                .updateRooms()
+                .reloadScene();
         });
 
         return this;
@@ -56,8 +57,22 @@ class SocketIOClient {
     protected updateRooms() {
         let game = this.game;
         this.socket.on('updateRooms', function (data) {
-            game.gui.teams.rooms = data;
-            game.gui.teams.refreshPopup();
+            if(game.gui) {
+                game.gui.teams.rooms = data;
+                game.gui.teams.refreshPopup();
+            }
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected reloadScene() {
+        let game = this.game;
+        this.socket.on('reloadScene', function (data) {
+            game.sceneManager.changeScene(new Mountains());
         });
 
         return this;
@@ -302,7 +317,6 @@ class SocketIOClient {
         var game = this.game;
         let activeTargetPoints = [];
         this.socket.on('updateEnemy', function (data) {
-            console.log('updateEnemy');
             let updatedEnemy = data.enemy;
             let enemyKey = data.enemyKey;
             let enemy = game.enemies[enemyKey];
@@ -441,7 +455,6 @@ class SocketIOClient {
         let game = this.game;
         let activeTargetPoints = [];
         this.socket.on('updatePlayer', function (updatedPlayer) {
-            console.log('updatePlayer');
             let remotePlayerKey = null;
             let player = null;
 

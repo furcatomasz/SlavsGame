@@ -65,21 +65,26 @@ namespace GUI {
 
         protected showText() {
             let self = this;
-            this.rooms.forEach(function(gameRoom, key) {
-console.log(gameRoom);
-                let title = new BABYLON.GUI.TextBlock();
-                title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                title.text = gameRoom;
-                title.color = "white";
-                title.top = "10%";
-                title.width = "25%";
-                title.height = "10%";
-                title.fontSize = 36;
+            let panel = new BABYLON.GUI.StackPanel('attributes.panel');
+            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            panel.width = "32%";
+            panel.top = "5%";
+            self.guiTexture.addControl(panel);
 
-                self.guiTexture.addControl(title);
-            });
-
+            if(this.rooms) {
+                this.rooms.forEach(function (room, roomKey) {
+                    let buttonAccept = BABYLON.GUI.Button.CreateImageButton("plus", room.roomId, "/assets/gui/plus.png");
+                    buttonAccept.color = "white";
+                    buttonAccept.background = "black";
+                    buttonAccept.width = 0.6;
+                    buttonAccept.height = "40px";
+                    buttonAccept.onPointerUpObservable.add(function () {
+                        self.guiMain.game.client.socket.emit('joinToRoom', room.roomId);
+                        self.close();
+                    });
+                    panel.addControl(buttonAccept);
+                });
+            }
 
 
 

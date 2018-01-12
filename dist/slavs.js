@@ -457,7 +457,32 @@ var SocketIOClient = /** @class */ (function () {
                 .addExperience()
                 .newLvl()
                 .attributeAdded()
-                .skillsLearned();
+                .skillsLearned()
+                .updateRooms()
+                .reloadScene();
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
+    SocketIOClient.prototype.updateRooms = function () {
+        var game = this.game;
+        this.socket.on('updateRooms', function (data) {
+            if (game.gui) {
+                game.gui.teams.rooms = data;
+                game.gui.teams.refreshPopup();
+            }
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
+    SocketIOClient.prototype.reloadScene = function () {
+        var game = this.game;
+        this.socket.on('reloadScene', function (data) {
+            game.sceneManager.changeScene(new Mountains());
         });
         return this;
     };
@@ -660,7 +685,6 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         var activeTargetPoints = [];
         this.socket.on('updateEnemy', function (data) {
-            console.log('updateEnemy');
             var updatedEnemy = data.enemy;
             var enemyKey = data.enemyKey;
             var enemy = game.enemies[enemyKey];
@@ -774,7 +798,6 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         var activeTargetPoints = [];
         this.socket.on('updatePlayer', function (updatedPlayer) {
-            console.log('updatePlayer');
             var remotePlayerKey = null;
             var player = null;
             if (updatedPlayer.connectionId == self.connectionId) {
@@ -1714,7 +1737,8 @@ var GUI;
                 .initAttributes()
                 .initSkills()
                 .initFullscreen()
-                .initQuests();
+                .initQuests()
+                .initTeams();
         }
         Main.prototype.initInventory = function () {
             var self = this;
@@ -1804,6 +1828,23 @@ var GUI;
             button.onPointerUpObservable.add(function () {
                 if (!self.skills.opened) {
                     self.skills.open();
+                }
+            });
+            this.registerBlockMoveCharacter(button);
+            return this;
+        };
+        Main.prototype.initTeams = function () {
+            var self = this;
+            this.teams = new GUI.Rooms(this);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Teams");
+            button.width = 1;
+            button.height = "40px";
+            button.color = "white";
+            button.background = "black";
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.teams.opened) {
+                    self.teams.open();
                 }
             });
             this.registerBlockMoveCharacter(button);
@@ -3771,6 +3812,86 @@ var GUI;
         return PlayerQuests;
     }(GUI.Popup));
     GUI.PlayerQuests = PlayerQuests;
+})(GUI || (GUI = {}));
+/// <reference path="Popup.ts"/>
+var GUI;
+(function (GUI) {
+    var Rooms = /** @class */ (function (_super) {
+        __extends(Rooms, _super);
+        function Rooms(guiMain) {
+            var _this = _super.call(this, guiMain) || this;
+            _this.name = 'Rooms';
+            _this.imageUrl = "assets/gui/attrs.png";
+            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            _this.guiMain.game.client.socket.emit('getRooms');
+            return _this;
+        }
+        Rooms.prototype.open = function () {
+            var self = this;
+            this.opened = true;
+            this.initTexture();
+            this.guiTexture.addControl(this.container);
+            this.showText();
+            var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
+            buttonClose.color = "white";
+            buttonClose.background = "black";
+            buttonClose.width = "70px;";
+            buttonClose.height = "40px";
+            buttonClose.left = -60;
+            buttonClose.horizontalAlignment = this.position;
+            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonClose.onPointerUpObservable.add(function () {
+                self.close();
+            });
+            this.guiTexture.addControl(buttonClose);
+            this.guiMain.registerBlockMoveCharacter(buttonClose);
+            this.buttonClose = buttonClose;
+            var buttonAccept = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Accept");
+            buttonAccept.color = "white";
+            buttonAccept.background = "black";
+            buttonAccept.width = "70px;";
+            buttonAccept.height = "40px";
+            buttonAccept.left = 60;
+            buttonAccept.horizontalAlignment = this.position;
+            buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonAccept.onPointerUpObservable.add(function () {
+                //self.guiMain.game.client.socket.emit('acceptQuest', {id: self.quest.getQuestId()});
+                self.close();
+            });
+            this.guiMain.registerBlockMoveCharacter(buttonAccept);
+            this.guiTexture.addControl(buttonAccept);
+        };
+        Rooms.prototype.close = function () {
+            this.opened = false;
+            this.guiTexture.dispose();
+            this.buttonClose = null;
+            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
+        };
+        Rooms.prototype.showText = function () {
+            var self = this;
+            var panel = new BABYLON.GUI.StackPanel('attributes.panel');
+            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            panel.width = "32%";
+            panel.top = "5%";
+            self.guiTexture.addControl(panel);
+            if (this.rooms) {
+                this.rooms.forEach(function (room, roomKey) {
+                    var buttonAccept = BABYLON.GUI.Button.CreateImageButton("plus", room.roomId, "/assets/gui/plus.png");
+                    buttonAccept.color = "white";
+                    buttonAccept.background = "black";
+                    buttonAccept.width = 0.6;
+                    buttonAccept.height = "40px";
+                    buttonAccept.onPointerUpObservable.add(function () {
+                        self.guiMain.game.client.socket.emit('joinToRoom', room.roomId);
+                        self.close();
+                    });
+                    panel.addControl(buttonAccept);
+                });
+            }
+        };
+        return Rooms;
+    }(GUI.Popup));
+    GUI.Rooms = Rooms;
 })(GUI || (GUI = {}));
 /// <reference path="Popup.ts"/>
 var GUI;

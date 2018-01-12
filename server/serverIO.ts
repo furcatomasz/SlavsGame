@@ -21,7 +21,10 @@ namespace Server {
 
                     ///create room of user
                     socket.join(socket.id);
-                    self.rooms.push(socket.id)
+                    self.rooms.push({
+                        roomId: socket.id,
+                        players: [socket.id]
+                    });
 
                     player.activeCharacter = 1;
 
@@ -179,12 +182,12 @@ namespace Server {
                         //        .remove();
                         //}
 
-                        let remotePlayerKey = null;
-                        let roomId = null;
+                        let roomId = player.getActiveCharacter().roomId;
+                        let socketId = player.id;
+
                         remotePlayers.forEach(function (remotePlayer, key) {
                             if (remotePlayer.id == player.id || remotePlayer == null) {
-                                remotePlayerKey = key;
-                                roomId = remotePlayer.getActiveCharacter().roomId;
+                                remotePlayers.splice(key, 1);
                             }
                         });
 
@@ -193,25 +196,43 @@ namespace Server {
                             self.enemies[roomId].forEach(function (enemy, key) {
                                 if (enemy.target == player.id) {
                                     enemy.target = null;
-
-                                    serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
-                                    serverIO.in(roomId).emit('updateEnemy', {
+                                    let emiteData = {
                                         enemy: enemy,
                                         enemyKey: key,
                                         roomId: roomId
-                                    });
+                                    };
+                                    serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emiteData);
+                                    serverIO.in(roomId).emit('updateEnemy', emiteData);
                                 }
                             });
                         }
 
-                        remotePlayers.splice(remotePlayerKey, 1);
 
                         socket.broadcast.emit('removePlayer', player.id);
+
+                        //clear data in rooms
+                        for (let roomKey in self.rooms) {
+                            let room = self.rooms[roomKey];
+                            if(room.roomId == roomId) {
+                                room.players.forEach(function(socketId, socketIdKey) {
+                                    let roomPlayersLength = room.players.length;
+                                    if(socketId == player.id) {
+                                        delete room.players[socketIdKey];
+
+                                        if (!(roomPlayersLength-1)) {
+                                            console.log('SOCKET - delete empty room -'+ room.roomId);
+                                            self.rooms.splice(roomKey, 1);
+                                            socket.broadcast.emit('updateRooms', self.rooms);
+                                        }
+                                    }
+                                });
+                            }
+                        }
                     });
 
                     self
                         .selfEvents(socket, player)
-                        .roomsEvents(socket, player);
+                        .roomsEvents(socket, player, serverIO);
 
                 } else {
                     ///Monster socket events
@@ -448,18 +469,65 @@ namespace Server {
             return this;
         }
 
-        protected roomsEvents(socket, player:Player) {
+        protected roomsEvents(socket, player:Player, serverIO) {
             let self = this;
             socket.on('getRooms', function () {
-                socket.emit('updateRooms', self.rooms);
+                socket.emit('updateRooms', self.rooms );
+                socket.broadcast.emit('updateRooms', self.rooms );
             });
 
             socket.on('joinToRoom', function (roomId) {
-                if (self.rooms.include(roomId)) {
-                    socket.join(socket.id);
+                let roomKey = null;
+                let oldRoomId = player.getActiveCharacter().roomId;
+
+                self.rooms.forEach(function(room, key) {
+                   if(roomId == room.roomId) {
+                       roomKey = key;
+                   }
+                });
+
+                if (roomKey !== null && roomId != oldRoomId) {
+                    self.rooms[roomKey].players.push(player.id);
+                    serverIO.to(self.monsterServerSocketId).emit('removePlayer', player.getActiveCharacter().connectionId);
+
+                    //clear data in rooms
+                    for (let roomKey in self.rooms) {
+                        let room = self.rooms[roomKey];
+                        if(room.roomId == oldRoomId) {
+                            room.players.forEach(function(socketId, socketIdKey) {
+                                let roomPlayersLength = room.players.length;
+                                if(socketId == player.id) {
+                                    delete room.players[socketIdKey];
+
+                                    if (!(roomPlayersLength-1)) {
+                                        console.log('SOCKET - delete empty room -'+ room.roomId);
+                                        self.rooms.splice(roomKey, 1);
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    //if player is target of enemies, clear that
+                    if (self.enemies[oldRoomId] !== undefined) {
+                        self.enemies[oldRoomId].forEach(function (enemy, key) {
+                            if (enemy.target == player.id) {
+                                enemy.target = null;
+
+                                let emiteData = {
+                                    enemy: enemy,
+                                    enemyKey: key,
+                                    roomId: roomId
+                                };
+                                serverIO.in(roomId).emit('updateEnemy', emiteData);
+                                serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emiteData);
+                            }
+                        });
+                    }
+
+                    socket.join(roomId);
                     player.getActiveCharacter().roomId = roomId;
-                    //reload scene
-                    //send to rooms info about join new memeber
+                    socket.emit('reloadScene');
                 }
 
             });

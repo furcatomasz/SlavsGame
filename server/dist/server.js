@@ -450,8 +450,8 @@ var io = require('socket.io')(server);
 var socketIOClient = require('socket.io-client');
 var orm = require("orm");
 var config = require("./../config.js");
-var BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");
-var LOADERS = require("../../bower_components/babylonjs/dist/preview release/loaders/babylonjs.loaders");
+var BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
+var LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
 var requirejs = require('requirejs');
 server.listen(config.server.port);
 var SlavsServer = /** @class */ (function () {
@@ -512,7 +512,10 @@ var Server;
                     var player_1 = new Server.Player(socket.id);
                     ///create room of user
                     socket.join(socket.id);
-                    self.rooms.push(socket.id);
+                    self.rooms.push({
+                        roomId: socket.id,
+                        players: [socket.id]
+                    });
                     player_1.activeCharacter = 1;
                     ////CLEAR QUESTS
                     server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
@@ -641,12 +644,11 @@ var Server;
                         //        .find({player_id: playerId})
                         //        .remove();
                         //}
-                        var remotePlayerKey = null;
-                        var roomId = null;
+                        var roomId = player_1.getActiveCharacter().roomId;
+                        var socketId = player_1.id;
                         remotePlayers.forEach(function (remotePlayer, key) {
                             if (remotePlayer.id == player_1.id || remotePlayer == null) {
-                                remotePlayerKey = key;
-                                roomId = remotePlayer.getActiveCharacter().roomId;
+                                remotePlayers.splice(key, 1);
                             }
                         });
                         //if player is target of enemies, clear that
@@ -654,19 +656,41 @@ var Server;
                             self.enemies[roomId].forEach(function (enemy, key) {
                                 if (enemy.target == player_1.id) {
                                     enemy.target = null;
-                                    serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
-                                    serverIO["in"](roomId).emit('updateEnemy', {
+                                    var emiteData = {
                                         enemy: enemy,
                                         enemyKey: key,
                                         roomId: roomId
-                                    });
+                                    };
+                                    serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emiteData);
+                                    serverIO["in"](roomId).emit('updateEnemy', emiteData);
                                 }
                             });
                         }
-                        remotePlayers.splice(remotePlayerKey, 1);
                         socket.broadcast.emit('removePlayer', player_1.id);
+                        var _loop_1 = function (roomKey) {
+                            var room = self.rooms[roomKey];
+                            if (room.roomId == roomId) {
+                                room.players.forEach(function (socketId, socketIdKey) {
+                                    var roomPlayersLength = room.players.length;
+                                    if (socketId == player_1.id) {
+                                        delete room.players[socketIdKey];
+                                        if (!(roomPlayersLength - 1)) {
+                                            console.log('SOCKET - delete empty room -' + room.roomId);
+                                            self.rooms.splice(roomKey, 1);
+                                            socket.broadcast.emit('updateRooms', self.rooms);
+                                        }
+                                    }
+                                });
+                            }
+                        };
+                        //clear data in rooms
+                        for (var roomKey in self.rooms) {
+                            _loop_1(roomKey);
+                        }
                     });
-                    self.selfEvents(socket, player_1);
+                    self
+                        .selfEvents(socket, player_1)
+                        .roomsEvents(socket, player_1, serverIO);
                 }
                 else {
                     ///Monster socket events
@@ -875,17 +899,60 @@ var Server;
             });
             return this;
         };
-        IO.prototype.roomsEvents = function (socket, player) {
+        IO.prototype.roomsEvents = function (socket, player, serverIO) {
             var self = this;
             socket.on('getRooms', function () {
-                socket.emit('rooms', self.rooms);
+                socket.emit('updateRooms', self.rooms);
+                socket.broadcast.emit('updateRooms', self.rooms);
             });
             socket.on('joinToRoom', function (roomId) {
-                if (self.rooms.include(roomId)) {
-                    socket.join(socket.id);
+                var roomKey = null;
+                var oldRoomId = player.getActiveCharacter().roomId;
+                self.rooms.forEach(function (room, key) {
+                    if (roomId == room.roomId) {
+                        roomKey = key;
+                    }
+                });
+                if (roomKey !== null && roomId != oldRoomId) {
+                    self.rooms[roomKey].players.push(player.id);
+                    serverIO.to(self.monsterServerSocketId).emit('removePlayer', player.getActiveCharacter().connectionId);
+                    var _loop_2 = function (roomKey_1) {
+                        var room = self.rooms[roomKey_1];
+                        if (room.roomId == oldRoomId) {
+                            room.players.forEach(function (socketId, socketIdKey) {
+                                var roomPlayersLength = room.players.length;
+                                if (socketId == player.id) {
+                                    delete room.players[socketIdKey];
+                                    if (!(roomPlayersLength - 1)) {
+                                        console.log('SOCKET - delete empty room -' + room.roomId);
+                                        self.rooms.splice(roomKey_1, 1);
+                                    }
+                                }
+                            });
+                        }
+                    };
+                    //clear data in rooms
+                    for (var roomKey_1 in self.rooms) {
+                        _loop_2(roomKey_1);
+                    }
+                    //if player is target of enemies, clear that
+                    if (self.enemies[oldRoomId] !== undefined) {
+                        self.enemies[oldRoomId].forEach(function (enemy, key) {
+                            if (enemy.target == player.id) {
+                                enemy.target = null;
+                                var emiteData = {
+                                    enemy: enemy,
+                                    enemyKey: key,
+                                    roomId: roomId
+                                };
+                                serverIO["in"](roomId).emit('updateEnemy', emiteData);
+                                serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emiteData);
+                            }
+                        });
+                    }
+                    socket.join(roomId);
                     player.getActiveCharacter().roomId = roomId;
-                    //reload scene
-                    //send to rooms info about join new memeber
+                    socket.emit('reloadScene');
                 }
             });
             return this;
@@ -1421,7 +1488,7 @@ var Server;
             self.characters = [];
             server.ormManager.structure.user.oneAsync({ email: "furcatomasz@gmail.com" }).then(function (user) {
                 server.ormManager.structure.player.findAsync({ user_id: user.id }).then(function (players) {
-                    var _loop_1 = function (i) {
+                    var _loop_3 = function (i) {
                         var playerDatabase = players[i];
                         server.ormManager.structure.playerItems
                             .findAsync({ player_id: playerDatabase.id })
@@ -1458,7 +1525,7 @@ var Server;
                         });
                     };
                     for (var i = 0; i < players.length; i++) {
-                        _loop_1(i);
+                        _loop_3(i);
                     }
                 });
             });
@@ -1833,53 +1900,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Boots = /** @class */ (function (_super) {
-        __extends(Boots, _super);
-        /**
-         * @param databaseId
-         */
-        function Boots(databaseId) {
-            var _this = this;
-            _this.type = Items.Boots.TYPE;
-            _this = _super.call(this, databaseId) || this;
-            return _this;
-        }
-        /**
-         * @returns {number}
-         */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
-        };
-        Boots.TYPE = 5;
-        return Boots;
-    }(Items.Item));
-    Items.Boots = Boots;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots;
-    (function (Boots) {
-        var PrimaryBoots = /** @class */ (function (_super) {
-            __extends(PrimaryBoots, _super);
-            function PrimaryBoots(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Boots';
-                _this.image = 'Boots';
-                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Boots';
-                return _this;
-            }
-            PrimaryBoots.ITEM_ID = 3;
-            return PrimaryBoots;
-        }(Boots));
-        Boots.PrimaryBoots = PrimaryBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Gloves = /** @class */ (function (_super) {
         __extends(Gloves, _super);
         /**
@@ -1923,6 +1943,53 @@ var Items;
         }(Gloves));
         Gloves.PrimaryGloves = PrimaryGloves;
     })(Gloves = Items.Gloves || (Items.Gloves = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots = /** @class */ (function (_super) {
+        __extends(Boots, _super);
+        /**
+         * @param databaseId
+         */
+        function Boots(databaseId) {
+            var _this = this;
+            _this.type = Items.Boots.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        Boots.TYPE = 5;
+        return Boots;
+    }(Items.Item));
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var PrimaryBoots = /** @class */ (function (_super) {
+            __extends(PrimaryBoots, _super);
+            function PrimaryBoots(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Boots';
+                _this.image = 'Boots';
+                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Boots';
+                return _this;
+            }
+            PrimaryBoots.ITEM_ID = 3;
+            return PrimaryBoots;
+        }(Boots));
+        Boots.PrimaryBoots = PrimaryBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

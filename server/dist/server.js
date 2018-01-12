@@ -204,6 +204,7 @@ var Server;
             var self = this;
             var playerMesh = remotePlayerData.mesh;
             var roomId = remotePlayerData.roomId;
+            var socketId = remotePlayerData.socketId;
             var scene = this.scenes[roomId];
             this.enemies[roomId].forEach(function (enemy, key) {
                 enemy.activeTargetPoints[playerMesh.id] = function () {
@@ -232,7 +233,7 @@ var Server;
                             attack: true
                         });
                         scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('Box coliision enter: start attack' + playerMesh.id);
+                        console.log('BABYLON: Enemy ' + key + ' start attack player ' + socketId + ', roomID:' + roomId);
                     }
                 }));
                 ////stop attack
@@ -249,7 +250,7 @@ var Server;
                             attack: false
                         });
                         scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('Box coliision exit: stop attack' + playerMesh.id);
+                        console.log('BABYLON: Enemy ' + key + ' stop attack player ' + socketId + ', roomID:' + roomId);
                     }
                 }));
                 ///start following
@@ -267,7 +268,7 @@ var Server;
                         enemy.target = playerMesh.id;
                         scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                         scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('coliision enter:' + playerMesh.id);
+                        console.log('BABYLON: Enemy ' + key + ' set target as player ' + socketId + ', roomID:' + roomId);
                     }
                 }));
                 ///stop following
@@ -283,7 +284,7 @@ var Server;
                             target: null
                         });
                         enemy.target = false;
-                        console.log('coliision exit:' + playerMesh.id);
+                        console.log('BABYLON: Enemy ' + key + ' lost target ' + socketId + ', roomID:' + roomId);
                     }
                     scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                 }));
@@ -506,12 +507,13 @@ var Server;
             this.server = server;
             serverIO.on('connection', function (socket) {
                 var isMonsterServer = socket.handshake.query.monsterServer;
-                var player = new Server.Player(socket.id);
-                ///create room of user
-                socket.join(socket.id);
-                self.rooms.push(socket.id);
-                player.activeCharacter = 1;
+                ///Client socket events
                 if (!isMonsterServer) {
+                    var player_1 = new Server.Player(socket.id);
+                    ///create room of user
+                    socket.join(socket.id);
+                    self.rooms.push(socket.id);
+                    player_1.activeCharacter = 1;
                     ////CLEAR QUESTS
                     server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
                         for (var _i = 0, playerQuests_1 = playerQuests; _i < playerQuests_1.length; _i++) {
@@ -519,179 +521,180 @@ var Server;
                             playerQuest.remove();
                         }
                     });
-                    player.refreshPlayerData(server, function () {
-                        socket.emit('clientConnected', player);
+                    player_1.refreshPlayerData(server, function () {
+                        socket.emit('clientConnected', player_1);
                     });
+                    socket.on('changeScenePre', function (sceneData) {
+                        var sceneType = sceneData.sceneType;
+                        var roomId = player_1.getActiveCharacter().roomId;
+                        player_1.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
+                        self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
+                        serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
+                            enemies: self.getEnemiesInRoom(roomId),
+                            roomId: roomId
+                        });
+                        socket.emit('showPlayer', player_1);
+                    });
+                    socket.on('changeScenePost', function (sceneData) {
+                        player_1.activeScene = sceneData.sceneType;
+                        serverIO.to(self.monsterServerSocketId).emit('showPlayer', player_1);
+                        socket.emit('showEnemies', self.enemies[player_1.getActiveCharacter().roomId]);
+                    });
+                    socket.on('createPlayer', function () {
+                        var character = player_1.getActiveCharacter();
+                        if (character) {
+                            remotePlayers.push(player_1);
+                            character.position = self.getDefaultPositionForScene(2);
+                            serverIO["in"](character.roomId).emit('newPlayerConnected', player_1);
+                            serverIO.to(self.monsterServerSocketId).emit('createRoom', player_1.getActiveCharacter().roomId);
+                        }
+                    });
+                    socket.on('setTargetPoint', function (targetPoint) {
+                        var character = player_1.getActiveCharacter();
+                        character.attack = null;
+                        character.targetPoint = targetPoint.position;
+                        serverIO["in"](character.roomId).emit('updatePlayer', character);
+                        serverIO.to(self.monsterServerSocketId).emit('updatePlayer', character);
+                    });
+                    socket.on('attack', function (data) {
+                        if (player_1.lastPlayerAttack > new Date().getTime() - 1000) {
+                            return;
+                        }
+                        player_1.lastPlayerAttack = new Date().getTime();
+                        var activeCharacter = player_1.getActiveCharacter();
+                        activeCharacter.attack = data.attack;
+                        activeCharacter.targetPoint = data.targetPoint;
+                        self.enemies[activeCharacter.roomId].forEach(function (enemy, enemyKey) {
+                            enemy.availableAttacksFromCharacters.forEach(function (isAtacked, characterId) {
+                                if (isAtacked === true) {
+                                    if (activeCharacter.id == characterId) {
+                                        var attackCharacter = activeCharacter;
+                                        var roomId = activeCharacter.roomId;
+                                        var damage = attackCharacter.statistics.getDamage();
+                                        enemy.statistics.hp -= damage;
+                                        var emitObject = {
+                                            enemy: enemy,
+                                            enemyKey: enemyKey,
+                                            roomId: roomId
+                                        };
+                                        console.log('SOCKET - Attack event');
+                                        serverIO["in"](roomId).emit('updateEnemy', emitObject);
+                                        serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
+                                        ///enemy is killed
+                                        if (enemy.statistics.hp <= 0) {
+                                            enemy.availableAttacksFromCharacters = [];
+                                            var enemyItem = enemy.itemsToDrop[0];
+                                            var itemDropKey = player_1.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
+                                            var earnedExperience_1 = enemy.experience;
+                                            var playerId = player_1.getActiveCharacter().id;
+                                            var itemManager = new Items.ItemManager();
+                                            var item = itemManager.getItemUsingId(enemyItem, 0);
+                                            socket.emit('showDroppedItem', {
+                                                item: item,
+                                                itemKey: itemDropKey,
+                                                enemyId: enemyKey
+                                            });
+                                            self.server.ormManager.structure.player.get(playerId, function (error, playerDatabase) {
+                                                playerDatabase.experience += earnedExperience_1;
+                                                socket.emit('addExperience', {
+                                                    experience: earnedExperience_1
+                                                });
+                                                var newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
+                                                var requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
+                                                if (playerDatabase.experience >= requiredExperience) {
+                                                    playerDatabase.lvl += 1;
+                                                    playerDatabase.freeAttributesPoints += 5;
+                                                    playerDatabase.freeSkillPoints += 1;
+                                                    socket.emit('newLvl', playerDatabase);
+                                                }
+                                                playerDatabase.save();
+                                            });
+                                        }
+                                        console.log('Attack character ID:' + characterId + ' on enemy with dmg' + damage);
+                                    }
+                                }
+                            });
+                        });
+                        serverIO["in"](activeCharacter.roomId).emit('updatePlayer', activeCharacter);
+                        serverIO.to(self.monsterServerSocketId).emit('updatePlayer', activeCharacter);
+                    });
+                    socket.on('itemEquip', function (item) {
+                        var itemId = item.id;
+                        var equip = item.equip;
+                        self.server.ormManager.structure.playerItems.oneAsync({
+                            id: itemId,
+                            player_id: player_1.characters[player_1.activeCharacter].id
+                        }).then(function (itemDatabase) {
+                            itemDatabase.equip = (item.equip) ? 1 : 0;
+                            itemDatabase.saveAsync().then(function () {
+                                server.ormManager.structure.playerItems.findAsync({ player_id: player_1.characters[player_1.activeCharacter].id }).then(function (playerItems) {
+                                    player_1.characters[player_1.activeCharacter].items = playerItems;
+                                    socket.broadcast.emit('updateEnemyEquip', player_1);
+                                });
+                            });
+                        });
+                    });
+                    socket.on('disconnect', function () {
+                        //if (player.activeCharacter >= 0) {
+                        //    let playerId = player.characters[player.activeCharacter].id;
+                        //    server.ormManager.structure.playerOnline
+                        //        .find({player_id: playerId})
+                        //        .remove();
+                        //}
+                        var remotePlayerKey = null;
+                        var roomId = null;
+                        remotePlayers.forEach(function (remotePlayer, key) {
+                            if (remotePlayer.id == player_1.id || remotePlayer == null) {
+                                remotePlayerKey = key;
+                                roomId = remotePlayer.getActiveCharacter().roomId;
+                            }
+                        });
+                        //if player is target of enemies, clear that
+                        if (self.enemies[roomId] !== undefined) {
+                            self.enemies[roomId].forEach(function (enemy, key) {
+                                if (enemy.target == player_1.id) {
+                                    enemy.target = null;
+                                    serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
+                                    serverIO["in"](roomId).emit('updateEnemy', {
+                                        enemy: enemy,
+                                        enemyKey: key,
+                                        roomId: roomId
+                                    });
+                                }
+                            });
+                        }
+                        remotePlayers.splice(remotePlayerKey, 1);
+                        socket.broadcast.emit('removePlayer', player_1.id);
+                    });
+                    self.selfEvents(socket, player_1);
                 }
                 else {
+                    ///Monster socket events
                     self.monsterServerSocketId = socket.id;
-                    player.activeScene = 2;
                     socket.on('updatePlayerPosition', function (updatedPlayer) {
                         self.remotePlayers.forEach(function (remotePlayer, remotePlayerKey) {
                             if (remotePlayer.id == updatedPlayer.playerSocketId) {
                                 // console.log('updatedPlayerPosition');
                                 var remotePlayer_2 = self.remotePlayers[remotePlayerKey];
                                 remotePlayer_2.getActiveCharacter().position = updatedPlayer.position;
-                                // socket.broadcast.emit('updatePlayer', remotePlayer);
+                                socket.broadcast.emit('updatePlayer', remotePlayer_2);
                                 return;
                             }
                         });
                     });
+                    ///Enemies
+                    socket.on('setEnemyTarget', function (data) {
+                        var enemy = self.enemies[data.roomId][data.enemyKey];
+                        enemy.position = data.position;
+                        enemy.target = data.target;
+                        enemy.attack = data.attack;
+                        enemy.availableAttacksFromCharacters[data.target] = data.attack;
+                        socket["in"](data.roomId).emit('updateEnemy', {
+                            enemy: enemy,
+                            enemyKey: data.enemyKey
+                        });
+                    });
                 }
-                ///Player
-                socket.on('createPlayer', function () {
-                    var character = player.getActiveCharacter();
-                    if (character) {
-                        remotePlayers.push(player);
-                        character.position = self.getDefaultPositionForScene(2);
-                        serverIO["in"](character.roomId).emit('newPlayerConnected', player);
-                        serverIO.to(self.monsterServerSocketId).emit('createRoom', player.getActiveCharacter().roomId);
-                    }
-                });
-                socket.on('setTargetPoint', function (targetPoint) {
-                    var character = player.getActiveCharacter();
-                    character.attack = null;
-                    character.targetPoint = targetPoint.position;
-                    serverIO["in"](character.roomId).emit('updatePlayer', character);
-                    serverIO.to(self.monsterServerSocketId).emit('updatePlayer', character);
-                });
-                socket.on('attack', function (data) {
-                    if (player.lastPlayerAttack > new Date().getTime() - 1000) {
-                        return;
-                    }
-                    player.lastPlayerAttack = new Date().getTime();
-                    var activeCharacter = player.getActiveCharacter();
-                    activeCharacter.attack = data.attack;
-                    activeCharacter.targetPoint = data.targetPoint;
-                    self.enemies[activeCharacter.roomId].forEach(function (enemy, enemyKey) {
-                        enemy.availableAttacksFromCharacters.forEach(function (isAtacked, characterId) {
-                            if (isAtacked === true) {
-                                if (activeCharacter.id == characterId) {
-                                    var attackCharacter = activeCharacter;
-                                    var roomId = activeCharacter.roomId;
-                                    var damage = attackCharacter.statistics.getDamage();
-                                    enemy.statistics.hp -= damage;
-                                    var emitObject = {
-                                        enemy: enemy,
-                                        enemyKey: enemyKey,
-                                        roomId: roomId
-                                    };
-                                    console.log('SOCKET - Attack event');
-                                    serverIO["in"](roomId).emit('updateEnemy', emitObject);
-                                    serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
-                                    ///enemy is killed
-                                    if (enemy.statistics.hp <= 0) {
-                                        enemy.availableAttacksFromCharacters = [];
-                                        var enemyItem = enemy.itemsToDrop[0];
-                                        var itemDropKey = player.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
-                                        var earnedExperience_1 = enemy.experience;
-                                        var playerId = player.getActiveCharacter().id;
-                                        var itemManager = new Items.ItemManager();
-                                        var item = itemManager.getItemUsingId(enemyItem, 0);
-                                        socket.emit('showDroppedItem', {
-                                            item: item,
-                                            itemKey: itemDropKey,
-                                            enemyId: enemyKey
-                                        });
-                                        self.server.ormManager.structure.player.get(playerId, function (error, playerDatabase) {
-                                            playerDatabase.experience += earnedExperience_1;
-                                            socket.emit('addExperience', {
-                                                experience: earnedExperience_1
-                                            });
-                                            var newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
-                                            var requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
-                                            if (playerDatabase.experience >= requiredExperience) {
-                                                playerDatabase.lvl += 1;
-                                                playerDatabase.freeAttributesPoints += 5;
-                                                playerDatabase.freeSkillPoints += 1;
-                                                socket.emit('newLvl', playerDatabase);
-                                            }
-                                            playerDatabase.save();
-                                        });
-                                    }
-                                    console.log('Attack character ID:' + characterId + ' on enemy with dmg' + damage);
-                                }
-                            }
-                        });
-                    });
-                    serverIO["in"](activeCharacter.roomId).emit('updatePlayer', activeCharacter);
-                    serverIO.to(self.monsterServerSocketId).emit('updatePlayer', activeCharacter);
-                });
-                socket.on('itemEquip', function (item) {
-                    var itemId = item.id;
-                    var equip = item.equip;
-                    self.server.ormManager.structure.playerItems.oneAsync({
-                        id: itemId,
-                        player_id: player.characters[player.activeCharacter].id
-                    }).then(function (itemDatabase) {
-                        itemDatabase.equip = (item.equip) ? 1 : 0;
-                        itemDatabase.saveAsync().then(function () {
-                            server.ormManager.structure.playerItems.findAsync({ player_id: player.characters[player.activeCharacter].id }).then(function (playerItems) {
-                                player.characters[player.activeCharacter].items = playerItems;
-                                socket.broadcast.emit('updateEnemyEquip', player);
-                            });
-                        });
-                    });
-                });
-                socket.on('disconnect', function () {
-                    //if (player.activeCharacter >= 0) {
-                    //    let playerId = player.characters[player.activeCharacter].id;
-                    //    server.ormManager.structure.playerOnline
-                    //        .find({player_id: playerId})
-                    //        .remove();
-                    //}
-                    var remotePlayerKey = null;
-                    var roomId = null;
-                    remotePlayers.forEach(function (remotePlayer, key) {
-                        if (remotePlayer.id == player.id || remotePlayer == null) {
-                            remotePlayerKey = key;
-                            roomId = remotePlayer.getActiveCharacter().roomId;
-                        }
-                    });
-                    self.enemies[roomId].forEach(function (enemy, key) {
-                        if (enemy.target == player.id) {
-                            enemy.target = null;
-                            serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
-                            serverIO["in"](roomId).emit('updateEnemy', {
-                                enemy: enemy,
-                                enemyKey: key,
-                                roomId: roomId
-                            });
-                        }
-                    });
-                    remotePlayers.splice(remotePlayerKey, 1);
-                    socket.broadcast.emit('removePlayer', player.id);
-                });
-                socket.on('changeScenePre', function (sceneData) {
-                    var sceneType = sceneData.sceneType;
-                    var roomId = player.getActiveCharacter().roomId;
-                    player.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
-                    self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
-                    serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
-                        enemies: self.getEnemiesInRoom(roomId),
-                        roomId: roomId
-                    });
-                    socket.emit('showPlayer', player);
-                });
-                socket.on('changeScenePost', function (sceneData) {
-                    player.activeScene = sceneData.sceneType;
-                    serverIO.to(self.monsterServerSocketId).emit('showPlayer', player);
-                    socket.emit('showEnemies', self.enemies[player.getActiveCharacter().roomId]);
-                });
-                ///Enemies
-                socket.on('setEnemyTarget', function (data) {
-                    var enemy = self.enemies[data.roomId][data.enemyKey];
-                    enemy.position = data.position;
-                    enemy.target = data.target;
-                    enemy.attack = data.attack;
-                    enemy.availableAttacksFromCharacters[data.target] = data.attack;
-                    console.log('set enemy target ' + data.target + ' on room' + data.roomId);
-                    socket["in"](data.roomId).emit('updateEnemy', {
-                        enemy: enemy,
-                        enemyKey: data.enemyKey
-                    });
-                });
-                self.selfEvents(socket, player);
             });
         }
         IO.prototype.selfEvents = function (socket, player) {

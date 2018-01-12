@@ -238,6 +238,7 @@ namespace Server {
             let self = this;
             let playerMesh = remotePlayerData.mesh;
             let roomId = remotePlayerData.roomId;
+            let socketId = remotePlayerData.socketId;
             let scene = this.scenes[roomId];
 
             this.enemies[roomId].forEach(function (enemy, key) {
@@ -269,7 +270,7 @@ namespace Server {
                             attack: true
                         });
                         scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('Box coliision enter: start attack' + playerMesh.id);
+                        console.log('BABYLON: Enemy '+ key +' start attack player '+ socketId +', roomID:'+ roomId);
                     }
                 });
 
@@ -287,7 +288,7 @@ namespace Server {
                             attack: false
                         });
                         scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('Box coliision exit: stop attack' + playerMesh.id);
+                        console.log('BABYLON: Enemy '+ key +' stop attack player '+ socketId +', roomID:'+ roomId);
                     }
                 });
 
@@ -306,7 +307,7 @@ namespace Server {
                         enemy.target = playerMesh.id;
                         scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                         scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('coliision enter:' + playerMesh.id);
+                        console.log('BABYLON: Enemy '+ key +' set target as player '+ socketId +', roomID:'+ roomId);
                     }
                 }));
 
@@ -323,7 +324,7 @@ namespace Server {
                             target: null
                         });
                         enemy.target = false;
-                        console.log('coliision exit:' + playerMesh.id);
+                        console.log('BABYLON: Enemy '+ key +' lost target '+ socketId +', roomID:'+ roomId);
                     }
 
                     scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);

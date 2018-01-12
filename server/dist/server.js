@@ -400,8 +400,8 @@ var io = require('socket.io')(server);
 var socketIOClient = require('socket.io-client');
 var orm = require("orm");
 var config = require("./../config.js");
-var BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");
-var LOADERS = require("../../bower_components/babylonjs/dist/preview release/loaders/babylonjs.loaders");
+var BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
+var LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
 var requirejs = require('requirejs');
 server.listen(config.server.port);
 var SlavsServer = /** @class */ (function () {
@@ -467,6 +467,154 @@ var Server;
                     player.refreshPlayerData(server, function () {
                         socket.emit('clientConnected', player);
                     });
+<<<<<<< Updated upstream
+=======
+                    socket.on('changeScenePre', function (sceneData) {
+                        var sceneType = sceneData.sceneType;
+                        var roomId = player_1.getActiveCharacter().roomId;
+                        player_1.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
+                        self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
+                        serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
+                            enemies: self.getEnemiesInRoom(roomId),
+                            roomId: roomId
+                        });
+                        socket.emit('showPlayer', player_1);
+                    });
+                    socket.on('changeScenePost', function (sceneData) {
+                        player_1.activeScene = sceneData.sceneType;
+                        serverIO.to(self.monsterServerSocketId).emit('showPlayer', player_1);
+                        socket.emit('showEnemies', self.enemies[player_1.getActiveCharacter().roomId]);
+                    });
+                    socket.on('createPlayer', function () {
+                        var character = player_1.getActiveCharacter();
+                        if (character) {
+                            remotePlayers.push(player_1);
+                            character.position = self.getDefaultPositionForScene(2);
+                            serverIO["in"](character.roomId).emit('newPlayerConnected', player_1);
+                            serverIO.to(self.monsterServerSocketId).emit('createRoom', player_1.getActiveCharacter().roomId);
+                        }
+                    });
+                    socket.on('setTargetPoint', function (targetPoint) {
+                        var character = player_1.getActiveCharacter();
+                        character.attack = null;
+                        character.targetPoint = targetPoint.position;
+                        serverIO["in"](character.roomId).emit('updatePlayer', character);
+                        serverIO.to(self.monsterServerSocketId).emit('updatePlayer', character);
+                    });
+                    socket.on('attack', function (data) {
+                        if (player_1.lastPlayerAttack > new Date().getTime() - 1000) {
+                            return;
+                        }
+                        player_1.lastPlayerAttack = new Date().getTime();
+                        var activeCharacter = player_1.getActiveCharacter();
+                        activeCharacter.attack = data.attack;
+                        activeCharacter.targetPoint = data.targetPoint;
+                        self.enemies[activeCharacter.roomId].forEach(function (enemy, enemyKey) {
+                            enemy.availableAttacksFromCharacters.forEach(function (isAtacked, characterId) {
+                                if (isAtacked === true) {
+                                    if (activeCharacter.id == characterId) {
+                                        var attackCharacter = activeCharacter;
+                                        var roomId = activeCharacter.roomId;
+                                        var damage = attackCharacter.statistics.getDamage();
+                                        enemy.statistics.hp -= damage;
+                                        var emitObject = {
+                                            enemy: enemy,
+                                            enemyKey: enemyKey,
+                                            roomId: roomId
+                                        };
+                                        console.log('SOCKET - Attack event');
+                                        serverIO["in"](roomId).emit('updateEnemy', emitObject);
+                                        serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
+                                        ///enemy is killed
+                                        if (enemy.statistics.hp <= 0) {
+                                            enemy.availableAttacksFromCharacters = [];
+                                            var enemyItem = enemy.itemsToDrop[0];
+                                            var itemDropKey = player_1.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
+                                            var earnedExperience_1 = enemy.experience;
+                                            var playerId = player_1.getActiveCharacter().id;
+                                            var itemManager = new Items.ItemManager();
+                                            var item = itemManager.getItemUsingId(enemyItem, 0);
+                                            socket.emit('showDroppedItem', {
+                                                item: item,
+                                                itemKey: itemDropKey,
+                                                enemyId: enemyKey
+                                            });
+                                            self.server.ormManager.structure.player.get(playerId, function (error, playerDatabase) {
+                                                playerDatabase.experience += earnedExperience_1;
+                                                socket.emit('addExperience', {
+                                                    experience: earnedExperience_1
+                                                });
+                                                var newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
+                                                var requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
+                                                if (playerDatabase.experience >= requiredExperience) {
+                                                    playerDatabase.lvl += 1;
+                                                    playerDatabase.freeAttributesPoints += 5;
+                                                    playerDatabase.freeSkillPoints += 1;
+                                                    socket.emit('newLvl', playerDatabase);
+                                                }
+                                                playerDatabase.save();
+                                            });
+                                        }
+                                        console.log('Attack character ID:' + characterId + ' on enemy with dmg' + damage);
+                                    }
+                                }
+                            });
+                        });
+                        serverIO["in"](activeCharacter.roomId).emit('updatePlayer', activeCharacter);
+                        serverIO.to(self.monsterServerSocketId).emit('updatePlayer', activeCharacter);
+                    });
+                    socket.on('itemEquip', function (item) {
+                        var itemId = item.id;
+                        var equip = item.equip;
+                        self.server.ormManager.structure.playerItems.oneAsync({
+                            id: itemId,
+                            player_id: player_1.characters[player_1.activeCharacter].id
+                        }).then(function (itemDatabase) {
+                            itemDatabase.equip = (item.equip) ? 1 : 0;
+                            itemDatabase.saveAsync().then(function () {
+                                server.ormManager.structure.playerItems.findAsync({ player_id: player_1.characters[player_1.activeCharacter].id }).then(function (playerItems) {
+                                    player_1.characters[player_1.activeCharacter].items = playerItems;
+                                    socket.broadcast.emit('updateEnemyEquip', player_1);
+                                });
+                            });
+                        });
+                    });
+                    socket.on('disconnect', function () {
+                        //if (player.activeCharacter >= 0) {
+                        //    let playerId = player.characters[player.activeCharacter].id;
+                        //    server.ormManager.structure.playerOnline
+                        //        .find({player_id: playerId})
+                        //        .remove();
+                        //}
+                        var remotePlayerKey = null;
+                        var roomId = null;
+                        remotePlayers.forEach(function (remotePlayer, key) {
+                            if (remotePlayer.id == player_1.id || remotePlayer == null) {
+                                remotePlayerKey = key;
+                                roomId = remotePlayer.getActiveCharacter().roomId;
+                            }
+                        });
+                        //if player is target of enemies, clear that
+                        if (self.enemies[roomId] !== undefined) {
+                            self.enemies[roomId].forEach(function (enemy, key) {
+                                if (enemy.target == player_1.id) {
+                                    enemy.target = null;
+                                    serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
+                                    serverIO["in"](roomId).emit('updateEnemy', {
+                                        enemy: enemy,
+                                        enemyKey: key,
+                                        roomId: roomId
+                                    });
+                                }
+                            });
+                        }
+                        remotePlayers.splice(remotePlayerKey, 1);
+                        socket.broadcast.emit('removePlayer', player_1.id);
+                    });
+                    self
+                        .selfEvents(socket, player_1)
+                        .roomsEvents(socket, player_1);
+>>>>>>> Stashed changes
                 }
                 else {
                     player.activeScene = 2;
@@ -791,7 +939,62 @@ var Server;
                     });
                 });
             });
+<<<<<<< Updated upstream
         }
+=======
+            socket.on('selectCharacter', function (selectedCharacter) {
+                player.activeCharacter = selectedCharacter;
+                //let playerId = player.characters[selectedCharacter].id;
+                //server.ormManager.structure.playerOnline.exists(
+                //    {playerId: playerId},
+                //    function (error, playerOnlineExists) {
+                //        if (error) throw error;
+                //        if (!playerOnlineExists) {
+                //            self.server.ormManager.structure.playerOnline.create({
+                //                playerId: playerId,
+                //                connectDate: Date.now(),
+                //                activityDate: Date.now(),
+                //            }, function (error) {
+                //                if (error) throw error;
+                //            });
+                //
+                //        }
+                //    });
+                socket.emit('characterSelected', player);
+            });
+            return this;
+        };
+        IO.prototype.roomsEvents = function (socket, player) {
+            var self = this;
+            socket.on('getRooms', function () {
+                socket.emit('updateRooms', self.rooms);
+            });
+            socket.on('joinToRoom', function (roomId) {
+                if (self.rooms.include(roomId)) {
+                    socket.join(socket.id);
+                    player.getActiveCharacter().roomId = roomId;
+                    //reload scene
+                    //send to rooms info about join new memeber
+                }
+            });
+            return this;
+        };
+        /**
+         * @param roomId
+         * @returns {Monster}
+         */
+        IO.prototype.getEnemiesInRoom = function (roomId) {
+            return this.enemies[roomId];
+        };
+        /**
+         * @param roomId
+         * @param enemyId
+         * @returns Monster
+         */
+        IO.prototype.getEnemyFromRoom = function (roomId, enemyId) {
+            return this.getEnemiesInRoom(roomId)[enemyId];
+        };
+>>>>>>> Stashed changes
         IO.prototype.getDefaultPositionForScene = function (sceneType) {
             var position = null;
             if (sceneType == 3) {
@@ -1719,53 +1922,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Boots = /** @class */ (function (_super) {
-        __extends(Boots, _super);
-        /**
-         * @param databaseId
-         */
-        function Boots(databaseId) {
-            var _this = this;
-            _this.type = Items.Boots.TYPE;
-            _this = _super.call(this, databaseId) || this;
-            return _this;
-        }
-        /**
-         * @returns {number}
-         */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
-        };
-        Boots.TYPE = 5;
-        return Boots;
-    }(Items.Item));
-    Items.Boots = Boots;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots;
-    (function (Boots) {
-        var PrimaryBoots = /** @class */ (function (_super) {
-            __extends(PrimaryBoots, _super);
-            function PrimaryBoots(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Boots';
-                _this.image = 'Boots';
-                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Boots';
-                return _this;
-            }
-            PrimaryBoots.ITEM_ID = 3;
-            return PrimaryBoots;
-        }(Boots));
-        Boots.PrimaryBoots = PrimaryBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Gloves = /** @class */ (function (_super) {
         __extends(Gloves, _super);
         /**
@@ -1809,6 +1965,53 @@ var Items;
         }(Gloves));
         Gloves.PrimaryGloves = PrimaryGloves;
     })(Gloves = Items.Gloves || (Items.Gloves = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots = /** @class */ (function (_super) {
+        __extends(Boots, _super);
+        /**
+         * @param databaseId
+         */
+        function Boots(databaseId) {
+            var _this = this;
+            _this.type = Items.Boots.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        Boots.TYPE = 5;
+        return Boots;
+    }(Items.Item));
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var PrimaryBoots = /** @class */ (function (_super) {
+            __extends(PrimaryBoots, _super);
+            function PrimaryBoots(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Boots';
+                _this.image = 'Boots';
+                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Boots';
+                return _this;
+            }
+            PrimaryBoots.ITEM_ID = 3;
+            return PrimaryBoots;
+        }(Boots));
+        Boots.PrimaryBoots = PrimaryBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

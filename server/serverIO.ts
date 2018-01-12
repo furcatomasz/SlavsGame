@@ -3,18 +3,23 @@ namespace Server {
         protected server: SlavsServer;
         protected remotePlayers;
         protected enemies = [];
+        protected rooms = [];
         protected monsterServerSocketId;
 
         constructor(server: SlavsServer, serverIO) {
             this.remotePlayers = [];
             this.enemies = [];
+            this.rooms = [];
             let self = this;
             let remotePlayers = this.remotePlayers;
             this.server = server;
             serverIO.on('connection', function (socket) {
                 let isMonsterServer = socket.handshake.query.monsterServer;
                 let player = new Server.Player(socket.id);
+
+                ///create room of user
                 socket.join(socket.id);
+                self.rooms.push(socket.id)
 
                 player.activeCharacter = 1;
                 if(!isMonsterServer) {
@@ -47,66 +52,6 @@ namespace Server {
 
                 }
 
-
-                //socket.on('getQuests', function () {
-                //    let emitData = {
-                //        quests: server.quests,
-                //        playerQuests: null,
-                //        playerRequirements: null
-                //    };
-                //
-                //    player.characters[player.activeCharacter].getActiveQuests(function (error, quests) {
-                //        emitData.playerQuests = quests;
-                //        player.characters[player.activeCharacter].getQuestRequirements(function (error, requrements) {
-                //            emitData.playerRequirements = requrements;
-                //            socket.emit('quests', emitData);
-                //        });
-                //    });
-                //});
-
-                socket.on('acceptQuest', function (quest) {
-                    let questId = quest.id;
-                    let playerId = player.characters[player.activeCharacter].id;
-
-                    server.ormManager.structure.playerQuest.oneAsync({
-                        player_id: playerId,
-                        questId: questId
-                    }).then(function (quest) {
-                        if (!quest) {
-                            server.ormManager.structure.playerQuest.createAsync({
-                                questId: questId,
-                                date: 0,
-                                player_id: playerId
-                            }).then(function (quest) {
-                                socket.emit('refreshQuestsStatus', quest);
-                            });
-                        }
-                    });
-                });
-
-                socket.on('selectCharacter', function (selectedCharacter) {
-                    player.activeCharacter = selectedCharacter;
-
-                    //let playerId = player.characters[selectedCharacter].id;
-                    //server.ormManager.structure.playerOnline.exists(
-                    //    {playerId: playerId},
-                    //    function (error, playerOnlineExists) {
-                    //        if (error) throw error;
-                    //        if (!playerOnlineExists) {
-                    //            self.server.ormManager.structure.playerOnline.create({
-                    //                playerId: playerId,
-                    //                connectDate: Date.now(),
-                    //                activityDate: Date.now(),
-                    //            }, function (error) {
-                    //                if (error) throw error;
-                    //            });
-                    //
-                    //        }
-                    //    });
-
-                    socket.emit('characterSelected', player);
-
-                });
 
                 ///Player
                 socket.on('createPlayer', function () {
@@ -222,139 +167,6 @@ namespace Server {
 
                 });
 
-                socket.on('addDoppedItem', function (itemsKey) {
-                    let playerId = player.characters[player.activeCharacter].id;
-                    let itemId = player.getActiveCharacter().itemsDrop[itemsKey];
-                    let itemManager = new Items.ItemManager();
-                    let item = itemManager.getItemUsingId(itemId, 0);
-
-                    if (itemId) {
-                        self.server.ormManager.structure.playerItems.create({
-                                player_id: playerId,
-                                itemId: itemId,
-                                improvement: 0,
-                                equip: 0
-                            },
-                            function (error, addedItem) {
-                                player.getActiveCharacter().inventory.items.push(item);
-                                socket.emit('updatePlayerEquip', player.getActiveCharacter().inventory.items);
-                            });
-                    }
-                });
-
-                socket.on('addAttribute', function (attribute) {
-                    let type = attribute.type;
-
-                    self.server.ormManager.structure.player.oneAsync({
-                        id: player.characters[player.activeCharacter].id,
-                    }).then(function (playerDatabase) {
-                        if(playerDatabase.freeAttributesPoints) {
-                            self.server.ormManager.structure.playerAttributes
-                                .oneAsync({player_id: playerDatabase.id})
-                                .then(function (attributes) {
-                                    new Promise(function (resolveFind) {
-                                        if (!attributes) {
-                                            self.server.ormManager.structure.playerAttributes.create({player_id: playerDatabase.id}, function (err, insertedAttributes) {
-                                                attributes = insertedAttributes;
-                                                resolveFind();
-                                            });
-                                        } else {
-                                            resolveFind();
-                                        }
-
-
-                                    }).then(function (resolve) {
-                                        switch (type) {
-                                            case 1:
-                                                attributes.damage += 1;
-                                                break;
-                                            case 2:
-                                                attributes.defence += 1;
-                                                break;
-                                            case 3:
-                                                attributes.health += 1;
-                                                break;
-                                            case 4:
-                                                attributes.attackSpeed += 1;
-                                                break;
-                                            case 5:
-                                                attributes.walkSpeed += 1;
-                                                break;
-                                            case 6:
-                                                attributes.blockChance += 1;
-                                                break;
-                                        }
-                                        attributes.save();
-                                        playerDatabase.freeAttributesPoints -= 1;
-                                        playerDatabase.save();
-
-                                        player.refreshPlayerData(server, function() {
-                                            socket.emit('attributeAdded', player);
-                                        });
-
-                                    });
-                                });
-                        }
-                    });
-                });
-
-                socket.on('learnSkill', function (skill) {
-                    let skillType = skill.skillType;
-                    let skillPowerType = skill.powerType;
-                    let isCreated = false;
-
-                    self.server.ormManager.structure.player.oneAsync({
-                        id: player.characters[player.activeCharacter].id,
-                    }).then(function (playerDatabase) {
-                        if(playerDatabase.freeSkillPoints) {
-                            self.server.ormManager.structure.playerSkills
-                                .oneAsync({
-                                    player_id: playerDatabase.id,
-                                    skillType: skillType
-                                })
-                                .then(function (skillDatabase) {
-                                    new Promise(function (resolveFind) {
-                                        if (!skillDatabase) {
-                                            isCreated = true;
-                                            self.server.ormManager.structure.playerSkills.create({
-                                                player_id: playerDatabase.id,
-                                                skillType: skillType
-                                            }, function (err, insertedSkill) {
-                                                skillDatabase = insertedSkill;
-                                                resolveFind();
-                                            });
-                                        } else {
-                                            resolveFind();
-                                        }
-
-
-                                    }).then(function (resolve) {
-                                        if(!isCreated) {
-                                            switch (skillPowerType) {
-                                                case 1:
-                                                    skillDatabase.damage += 1;
-                                                    break;
-                                                case 2:
-                                                    skillDatabase.cooldown += 1;
-                                                    break;
-                                                case 3:
-                                                    skillDatabase.stock += 1;
-                                                    break;
-                                            }
-                                            skillDatabase.save();
-                                        }
-                                        playerDatabase.freeSkillPoints -= 1;
-                                        playerDatabase.save();
-
-                                        player.refreshPlayerData(server, function() {
-                                            socket.emit('skillLearned', player);
-                                        });
-
-                                    });
-                                });
-                        }
-                    });
-                });
 
                 socket.on('disconnect', function () {
                     //if (player.activeCharacter >= 0) {
@@ -427,7 +239,229 @@ console.log('set enemy target '+data.target+' on room' + data.roomId);
                     });
                 });
 
+                self.selfEvents(socket, player);
+
             });
+        }
+
+
+        protected selfEvents(socket, player) {
+            let self = this;
+            socket.on('addDoppedItem', function (itemsKey) {
+                let playerId = player.characters[player.activeCharacter].id;
+                let itemId = player.getActiveCharacter().itemsDrop[itemsKey];
+                let itemManager = new Items.ItemManager();
+                let item = itemManager.getItemUsingId(itemId, 0);
+
+                if (itemId) {
+                    self.server.ormManager.structure.playerItems.create({
+                            player_id: playerId,
+                            itemId: itemId,
+                            improvement: 0,
+                            equip: 0
+                        },
+                        function (error, addedItem) {
+                            player.getActiveCharacter().inventory.items.push(item);
+                            socket.emit('updatePlayerEquip', player.getActiveCharacter().inventory.items);
+                        });
+                }
+            });
+
+            socket.on('addAttribute', function (attribute) {
+                let type = attribute.type;
+
+                self.server.ormManager.structure.player.oneAsync({
+                    id: player.characters[player.activeCharacter].id,
+                }).then(function (playerDatabase) {
+                    if(playerDatabase.freeAttributesPoints) {
+                        self.server.ormManager.structure.playerAttributes
+                            .oneAsync({player_id: playerDatabase.id})
+                            .then(function (attributes) {
+                                new Promise(function (resolveFind) {
+                                    if (!attributes) {
+                                        self.server.ormManager.structure.playerAttributes.create({player_id: playerDatabase.id}, function (err, insertedAttributes) {
+                                            attributes = insertedAttributes;
+                                            resolveFind();
+                                        });
+                                    } else {
+                                        resolveFind();
+                                    }
+
+
+                                }).then(function (resolve) {
+                                    switch (type) {
+                                        case 1:
+                                            attributes.damage += 1;
+                                            break;
+                                        case 2:
+                                            attributes.defence += 1;
+                                            break;
+                                        case 3:
+                                            attributes.health += 1;
+                                            break;
+                                        case 4:
+                                            attributes.attackSpeed += 1;
+                                            break;
+                                        case 5:
+                                            attributes.walkSpeed += 1;
+                                            break;
+                                        case 6:
+                                            attributes.blockChance += 1;
+                                            break;
+                                    }
+                                    attributes.save();
+                                    playerDatabase.freeAttributesPoints -= 1;
+                                    playerDatabase.save();
+
+                                    player.refreshPlayerData(server, function() {
+                                        socket.emit('attributeAdded', player);
+                                    });
+
+                                });
+                            });
+                    }
+                });
+            });
+
+            socket.on('learnSkill', function (skill) {
+                let skillType = skill.skillType;
+                let skillPowerType = skill.powerType;
+                let isCreated = false;
+
+                self.server.ormManager.structure.player.oneAsync({
+                    id: player.characters[player.activeCharacter].id,
+                }).then(function (playerDatabase) {
+                    if(playerDatabase.freeSkillPoints) {
+                        self.server.ormManager.structure.playerSkills
+                            .oneAsync({
+                                player_id: playerDatabase.id,
+                                skillType: skillType
+                            })
+                            .then(function (skillDatabase) {
+                                new Promise(function (resolveFind) {
+                                    if (!skillDatabase) {
+                                        isCreated = true;
+                                        self.server.ormManager.structure.playerSkills.create({
+                                            player_id: playerDatabase.id,
+                                            skillType: skillType
+                                        }, function (err, insertedSkill) {
+                                            skillDatabase = insertedSkill;
+                                            resolveFind();
+                                        });
+                                    } else {
+                                        resolveFind();
+                                    }
+
+
+                                }).then(function (resolve) {
+                                    if(!isCreated) {
+                                        switch (skillPowerType) {
+                                            case 1:
+                                                skillDatabase.damage += 1;
+                                                break;
+                                            case 2:
+                                                skillDatabase.cooldown += 1;
+                                                break;
+                                            case 3:
+                                                skillDatabase.stock += 1;
+                                                break;
+                                        }
+                                        skillDatabase.save();
+                                    }
+                                    playerDatabase.freeSkillPoints -= 1;
+                                    playerDatabase.save();
+
+                                    player.refreshPlayerData(server, function() {
+                                        socket.emit('skillLearned', player);
+                                    });
+
+                                });
+                            });
+                    }
+                });
+            });
+
+            //socket.on('getQuests', function () {
+            //    let emitData = {
+            //        quests: server.quests,
+            //        playerQuests: null,
+            //        playerRequirements: null
+            //    };
+            //
+            //    player.characters[player.activeCharacter].getActiveQuests(function (error, quests) {
+            //        emitData.playerQuests = quests;
+            //        player.characters[player.activeCharacter].getQuestRequirements(function (error, requrements) {
+            //            emitData.playerRequirements = requrements;
+            //            socket.emit('quests', emitData);
+            //        });
+            //    });
+            //});
+
+            socket.on('acceptQuest', function (quest) {
+                let questId = quest.id;
+                let playerId = player.characters[player.activeCharacter].id;
+
+                server.ormManager.structure.playerQuest.oneAsync({
+                    player_id: playerId,
+                    questId: questId
+                }).then(function (quest) {
+                    if (!quest) {
+                        server.ormManager.structure.playerQuest.createAsync({
+                            questId: questId,
+                            date: 0,
+                            player_id: playerId
+                        }).then(function (quest) {
+                            socket.emit('refreshQuestsStatus', quest);
+                        });
+                    }
+                });
+            });
+
+            socket.on('selectCharacter', function (selectedCharacter) {
+                player.activeCharacter = selectedCharacter;
+
+                //let playerId = player.characters[selectedCharacter].id;
+                //server.ormManager.structure.playerOnline.exists(
+                //    {playerId: playerId},
+                //    function (error, playerOnlineExists) {
+                //        if (error) throw error;
+                //        if (!playerOnlineExists) {
+                //            self.server.ormManager.structure.playerOnline.create({
+                //                playerId: playerId,
+                //                connectDate: Date.now(),
+                //                activityDate: Date.now(),
+                //            }, function (error) {
+                //                if (error) throw error;
+                //            });
+                //
+                //        }
+                //    });
+
+                socket.emit('characterSelected', player);
+
+            });
+
+            return this;
+        }
+
+        protected roomsEvents(socket, player: Player) {
+            let self = this;
+            socket.on('getRooms', function() {
+                socket.emit('rooms', self.rooms);
+            });
+
+            socket.on('joinToRoom', function(roomId) {
+                if(self.rooms.include(roomId)) {
+                    socket.join(socket.id);
+                    player.getActiveCharacter().roomId = roomId;
+                    //reload scene
+                    //send to rooms info about join new memeber
+                }
+
+            });
+
+            return this;
+
         }
 
         /**

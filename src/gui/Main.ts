@@ -149,6 +149,27 @@ namespace GUI {
             return this;
         }
 
+        protected initTeams() {
+            let self = this;
+            this.skills = new GUI.Rooms(this);
+
+            let button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Teams");
+            button.width = 1;
+            button.height = "40px";
+            button.color = "white";
+            button.background = "black";
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.skills.opened) {
+                    self.skills.open();
+                }
+            });
+
+            this.registerBlockMoveCharacter(button);
+
+            return this;
+        }
+
         /**
          *
          * @param control

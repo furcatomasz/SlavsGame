@@ -43,11 +43,26 @@ class SocketIOClient {
                 .addExperience()
                 .newLvl()
                 .attributeAdded()
-                .skillsLearned();
+                .skillsLearned()
+                .updateRooms();
         });
 
         return this;
     }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected updateRooms() {
+        let game = this.game;
+        this.socket.on('updateRooms', function (data) {
+            game.gui.teams.rooms = data;
+            game.gui.teams.refreshPopup();
+        });
+
+        return this;
+    }
+
 
     /**
      * @returns {SocketIOClient}

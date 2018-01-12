@@ -12,6 +12,7 @@ namespace GUI {
         public skills: GUI.Skills;
         public playerQuests: GUI.PlayerQuests;
         public quest: GUI.Quest;
+        public teams: GUI.Rooms;
         public playerBottomPanel: GUI.PlayerBottomPanel;
         public playerLogsPanel: GUI.PlayerLogsPanel;
         public characterTopHp: GUI.ShowHp;
@@ -31,7 +32,8 @@ namespace GUI {
                 .initAttributes()
                 .initSkills()
                 .initFullscreen()
-                .initQuests();
+                .initQuests()
+                .initTeams();
         }
 
         protected initInventory() {
@@ -151,7 +153,7 @@ namespace GUI {
 
         protected initTeams() {
             let self = this;
-            this.skills = new GUI.Rooms(this);
+            this.teams = new GUI.Rooms(this);
 
             let button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Teams");
             button.width = 1;
@@ -160,8 +162,8 @@ namespace GUI {
             button.background = "black";
             this.buttonpanel.addControl(button);
             button.onPointerUpObservable.add(function () {
-                if (!self.skills.opened) {
-                    self.skills.open();
+                if (!self.teams.opened) {
+                    self.teams.open();
                 }
             });
 

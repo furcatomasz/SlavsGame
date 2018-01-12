@@ -5,8 +5,8 @@ let io = require('socket.io')(server);
 let socketIOClient = require('socket.io-client');
 let orm = require("orm");
 let config = require("./../config.js");
-let BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");
-let LOADERS = require("../../bower_components/babylonjs/dist/preview release/loaders/babylonjs.loaders");
+let BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
+let LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
 let requirejs = require('requirejs');
 server.listen(config.server.port);
 

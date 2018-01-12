@@ -209,7 +209,9 @@ namespace Server {
                         socket.broadcast.emit('removePlayer', player.id);
                     });
 
-                    self.selfEvents(socket, player);
+                    self
+                        .selfEvents(socket, player)
+                        .roomsEvents(socket, player);
 
                 } else {
                     ///Monster socket events
@@ -449,7 +451,7 @@ namespace Server {
         protected roomsEvents(socket, player:Player) {
             let self = this;
             socket.on('getRooms', function () {
-                socket.emit('rooms', self.rooms);
+                socket.emit('updateRooms', self.rooms);
             });
 
             socket.on('joinToRoom', function (roomId) {

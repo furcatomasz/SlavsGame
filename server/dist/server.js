@@ -297,7 +297,7 @@ var Server;
                 var remotePlayerKey = null;
                 var player = null;
                 self.players.forEach(function (remotePlayer, key) {
-                    if (remotePlayer.id == updatedPlayer.id) {
+                    if (remotePlayer.socketId == updatedPlayer.connectionId) {
                         remotePlayerKey = key;
                         return;
                     }

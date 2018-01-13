@@ -515,6 +515,8 @@ class SocketIOClient {
                         mesh.moveWithCollisions(forwards);
                         mesh.position.y = 0;
 
+                        self.game.player.refreshCameraPosition();
+
                         player.runAnimationWalk();
                     }
 

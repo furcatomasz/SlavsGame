@@ -406,7 +406,6 @@ class SocketIOClient {
                             rotation.negate();
                             let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
                             mesh.moveWithCollisions(forwards);
-                            mesh.position.y = 0;
 
                             if (enemy.animation) {
 

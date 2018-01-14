@@ -376,6 +376,15 @@ var Server;
                 new Worm(0, { x: -2, y: 0, z: -30 }, [9]),
                 new Worm(1, { x: -2, y: 0, z: -64 }, [9]),
                 new Worm(2, { x: -8, y: 0, z: -72 }, [9]),
+                new Worm(3, { x: -8, y: 0, z: 180 }, [9]),
+                new Worm(4, { x: -4, y: 0, z: 100 }, [9]),
+                new Worm(5, { x: -2, y: 0, z: 110 }, [9]),
+                new Worm(6, { x: -8, y: 0, z: 90 }, [9]),
+                new Worm(7, { x: -4, y: 0, z: 80 }, [9]),
+                new Worm(8, { x: -2, y: 0, z: 85 }, [9]),
+                new Worm(9, { x: -8, y: 0, z: 80 }, [9]),
+                new Worm(10, { x: -4, y: 0, z: 75 }, [9]),
+                new Worm(11, { x: -2, y: 0, z: 70 }, [9]),
             ];
             return enemies;
         };
@@ -443,39 +452,6 @@ var Server;
     }());
     Server.QuestManager = QuestManager;
 })(Server || (Server = {}));
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
-var socketIOClient = require('socket.io-client');
-var orm = require("orm");
-var config = require("./../config.js");
-var BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
-var LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
-var requirejs = require('requirejs');
-server.listen(config.server.port);
-var SlavsServer = /** @class */ (function () {
-    function SlavsServer() {
-        this.enemies = [];
-        this.quests = [];
-        var self = this;
-        this.ormManager = new Server.OrmManager(self, orm, config);
-        this.gameModules = new Server.GameModules();
-        this.gameModules.loadModules(function () {
-            self.enemyManager = new Server.EnemyManager();
-            self.questManager = new Server.QuestManager();
-            self.enemies = self.enemyManager.getEnemies();
-            self.quests = self.questManager.getQuests();
-            self.serverFrontEnd = new Server.FrontEnd(self, app, express);
-            self.babylonManager = new Server.BabylonManager(self);
-            self.serverWebsocket = new Server.IO(self, io);
-        });
-    }
-    return SlavsServer;
-}());
-setTimeout(function () {
-    new SlavsServer();
-}, 0);
 var path = require('path');
 var Server;
 (function (Server) {
@@ -531,11 +507,13 @@ var Server;
                         var sceneType = sceneData.sceneType;
                         var roomId = player_1.getActiveCharacter().roomId;
                         player_1.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
-                        self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
-                        serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
-                            enemies: self.getEnemiesInRoom(roomId),
-                            roomId: roomId
-                        });
+                        if (server.enemies[sceneType] !== undefined) {
+                            self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
+                            serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
+                                enemies: self.getEnemiesInRoom(roomId),
+                                roomId: roomId
+                            });
+                        }
                         socket.emit('showPlayer', player_1);
                     });
                     socket.on('changeScenePost', function (sceneData) {
@@ -981,17 +959,30 @@ var Server;
                     z: -4
                 };
             }
+            else if (sceneType == 4) {
+                position = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
+            }
             else if (sceneType == 2) {
                 position = {
                     x: 145,
                     y: 0,
                     z: -53
                 };
-                //For tests
+                //Castle entrace
                 position = {
-                    x: 35,
+                    x: 332,
                     y: 0,
-                    z: 8
+                    z: -51
+                };
+                //Cave
+                position = {
+                    x: -8,
+                    y: 0,
+                    z: 160
                 };
             }
             return position;
@@ -1001,6 +992,39 @@ var Server;
     }());
     Server.IO = IO;
 })(Server || (Server = {}));
+var express = require('express');
+var app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+var socketIOClient = require('socket.io-client');
+var orm = require("orm");
+var config = require("./../config.js");
+var BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
+var LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
+var requirejs = require('requirejs');
+server.listen(config.server.port);
+var SlavsServer = /** @class */ (function () {
+    function SlavsServer() {
+        this.enemies = [];
+        this.quests = [];
+        var self = this;
+        this.ormManager = new Server.OrmManager(self, orm, config);
+        this.gameModules = new Server.GameModules();
+        this.gameModules.loadModules(function () {
+            self.enemyManager = new Server.EnemyManager();
+            self.questManager = new Server.QuestManager();
+            self.enemies = self.enemyManager.getEnemies();
+            self.quests = self.questManager.getQuests();
+            self.serverFrontEnd = new Server.FrontEnd(self, app, express);
+            self.babylonManager = new Server.BabylonManager(self);
+            self.serverWebsocket = new Server.IO(self, io);
+        });
+    }
+    return SlavsServer;
+}());
+setTimeout(function () {
+    new SlavsServer();
+}, 0);
 var Server;
 (function (Server) {
     var Orm;
@@ -1900,53 +1924,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Gloves = /** @class */ (function (_super) {
-        __extends(Gloves, _super);
-        /**
-         * @param databaseId
-         */
-        function Gloves(databaseId) {
-            var _this = this;
-            _this.type = Items.Gloves.TYPE;
-            _this = _super.call(this, databaseId) || this;
-            return _this;
-        }
-        /**
-         * @returns {number}
-         */
-        Gloves.prototype.getType = function () {
-            return Items.Gloves.TYPE;
-        };
-        Gloves.TYPE = 4;
-        return Gloves;
-    }(Items.Item));
-    Items.Gloves = Gloves;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Gloves;
-    (function (Gloves) {
-        var PrimaryGloves = /** @class */ (function (_super) {
-            __extends(PrimaryGloves, _super);
-            function PrimaryGloves(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Gloves';
-                _this.image = 'Gloves';
-                _this.itemId = Items.Gloves.PrimaryGloves.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Gloves';
-                return _this;
-            }
-            PrimaryGloves.ITEM_ID = 4;
-            return PrimaryGloves;
-        }(Gloves));
-        Gloves.PrimaryGloves = PrimaryGloves;
-    })(Gloves = Items.Gloves || (Items.Gloves = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Boots = /** @class */ (function (_super) {
         __extends(Boots, _super);
         /**
@@ -1990,6 +1967,53 @@ var Items;
         }(Boots));
         Boots.PrimaryBoots = PrimaryBoots;
     })(Boots = Items.Boots || (Items.Boots = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Gloves = /** @class */ (function (_super) {
+        __extends(Gloves, _super);
+        /**
+         * @param databaseId
+         */
+        function Gloves(databaseId) {
+            var _this = this;
+            _this.type = Items.Gloves.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Gloves.prototype.getType = function () {
+            return Items.Gloves.TYPE;
+        };
+        Gloves.TYPE = 4;
+        return Gloves;
+    }(Items.Item));
+    Items.Gloves = Gloves;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Gloves;
+    (function (Gloves) {
+        var PrimaryGloves = /** @class */ (function (_super) {
+            __extends(PrimaryGloves, _super);
+            function PrimaryGloves(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Gloves';
+                _this.image = 'Gloves';
+                _this.itemId = Items.Gloves.PrimaryGloves.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Gloves';
+                return _this;
+            }
+            PrimaryGloves.ITEM_ID = 4;
+            return PrimaryGloves;
+        }(Gloves));
+        Gloves.PrimaryGloves = PrimaryGloves;
+    })(Gloves = Items.Gloves || (Items.Gloves = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

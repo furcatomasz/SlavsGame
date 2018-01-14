@@ -15,12 +15,12 @@ class Environment {
         this.colliders = [];
 
         //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
-        for (let i = 0; i < scene.lights.length; i++) {
-            let light = scene.lights[i];
-            light.intensity = (light.intensity/3);
+        // for (let i = 0; i < scene.lights.length; i++) {
+        //     let light = scene.lights[i];
+        //     light.intensity = (light.intensity);
             //light.range = 47;
-        }
-
+        // }
+        var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), scene);
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
 
@@ -32,8 +32,14 @@ class Environment {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
                 //sceneMesh.receiveShadows = true;
-            } else {
+            } else if (meshName.search("Box_Cube") >= 0) {
+                console.log('collider add'  +meshName              );
                 this.colliders.push(sceneMesh);
+
+            } else {
+                sceneMesh.isPickable = false;
+
+                ///others
             }
 
         }
@@ -73,7 +79,7 @@ class Environment {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: plane
                 }, function () {
-                    game.sceneManager.changeScene(new Castle());
+                    game.sceneManager.changeScene(new Cave());
                     return this;
                 }));
 
@@ -83,13 +89,14 @@ class Environment {
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
 
-        let plane = scene.getMeshByName("Castle_entrace");
+        ///town entrace
+        let plane = scene.getMeshByName("Entrace_Town");
 
         if (plane) {
             this.entrace = plane;
             plane.visibility = 0;
             plane.isPickable = false;
-            let smokeSystem = new Particles.CaveEntrace(game, plane).particleSystem;
+            let smokeSystem = new Particles.CastleEnter(game, plane).particleSystem;
             smokeSystem.start();
 
             let listener2 = function listener() {
@@ -107,10 +114,35 @@ class Environment {
             document.addEventListener(Events.PLAYER_CONNECTED, listener2);
         }
 
+        ///Cave entrace
+        let plane = scene.getMeshByName("Entrace_Cave");
+
+        if (plane) {
+            this.entrace = plane;
+            plane.visibility = 0;
+            plane.isPickable = false;
+            let smokeSystem = new Particles.CastleEnter(game, plane).particleSystem;
+            smokeSystem.start();
+
+            let listener2 = function listener() {
+                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: plane
+                }, function () {
+                    game.sceneManager.changeScene(new Cave());
+                    return this;
+                }));
+
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
+            };
+
+            document.addEventListener(Events.PLAYER_CONNECTED, listener2);
+        }
+
         ///register colliders
         for (let i = 0; i < this.colliders.length; i++) {
-            let sceneMesh = this.colliders[i];
-            Collisions.setCollider(scene, sceneMesh);
+            let sceneMeshCollider = this.colliders[i];
+            Collisions.setCollider(scene, sceneMeshCollider);
         }
 
         new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, {loop: true, autoplay: true});

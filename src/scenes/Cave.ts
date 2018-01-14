@@ -2,15 +2,15 @@
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
 
-class Mountains extends Scene {
+class Cave extends Scene {
 
-    static TYPE = 2;
+    static TYPE = 4;
 
     initScene(game:Game) {
         let self = this;
         game.sceneManager = this;
 
-        BABYLON.SceneLoader.Load("assets/scenes/Mountains/", "Mountains.babylon", game.engine, function (scene) {
+        BABYLON.SceneLoader.Load("assets/scenes/Cave/", "Cave.babylon", game.engine, function (scene) {
             game.sceneManager = self;
             self
                 .setDefaults(game)
@@ -25,7 +25,7 @@ class Mountains extends Scene {
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             scene.executeWhenReady(function () {
-                self.environment = new Environment(game, scene);
+                // self.environment = new Environment(game, scene);
                 self.initFactories(scene, assetsManager);
                 game.client.socket.emit('createPlayer');
 
@@ -33,7 +33,7 @@ class Mountains extends Scene {
                     //self.octree = scene.createOrUpdateSelectionOctree();
 
                     game.client.socket.emit('changeScenePre', {
-                        sceneType: Mountains.TYPE,
+                        sceneType: Cave.TYPE,
                     });
                 };
                 assetsManager.load();
@@ -45,7 +45,7 @@ class Mountains extends Scene {
 
                     //self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {
-                        sceneType: Mountains.TYPE,
+                        sceneType: Cave.TYPE,
                     });
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };

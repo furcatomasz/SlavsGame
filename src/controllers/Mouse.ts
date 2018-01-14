@@ -18,9 +18,9 @@ class Mouse extends Controller {
         scene.onPointerDown = function (evt, pickResult) {
             let pickedMesh = pickResult.pickedMesh;
             clickTrigger = true;
-
+console.log(pickedMesh.name);
             if (pickedMesh) {
-                if (self.game.player && (pickedMesh.name == 'Ground' || pickedMesh.name == 'Ground.002')) {
+                if (self.game.player && pickedMesh.name.search("Ground") >= 0) {
                     self.attackPoint = null;
                     self.targetPoint = pickResult.pickedPoint;
                     self.targetPoint.y = 0;

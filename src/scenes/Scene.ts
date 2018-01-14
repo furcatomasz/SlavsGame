@@ -22,16 +22,17 @@ abstract class Scene {
 
     public setCamera(scene:BABYLON.Scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
-        camera.rotation = new BABYLON.Vector3(0.75,0.75,0);
+        camera.rotation = new BABYLON.Vector3(0.79,0.79,0);
         camera.position = new BABYLON.Vector3(0,35,0);
         //camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
         //camera.orthoTop = 20;
         //camera.orthoBottom = 0;
         //camera.orthoLeft = -15;
         //camera.orthoRight = 15;
-        camera.maxZ = 110;
+        camera.maxZ = 210;
         camera.minZ = 0;
-        camera.fov = 0.4;
+        camera.fov = 0.5;
+        camera.fovMode = 0;
         //this.setOrthoCameraHeights(camera);
         scene.activeCamera = camera;
 
@@ -39,14 +40,14 @@ abstract class Scene {
     }
 
     public setFog(scene) {
-        //scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
-        //scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
-        //scene.fogColor = new BABYLON.Color3(0, 0, 0);
-        //scene.fogDensity = 0.02;
+        scene.clearColor = new BABYLON.Color3(0.02, 0.05, 0.2);
+        scene.fogMode = BABYLON.Scene.FOGMODE_LINEAR;
+        scene.fogColor = new BABYLON.Color3(0.02, 0.05, 0.2);
+        scene.fogDensity = 1;
 
         //Only if LINEAR
-        //scene.fogStart = 10.0;
-        //scene.fogEnd = 70.0;
+        scene.fogStart = 70;
+        scene.fogEnd = 88;
 
         return this;
     }

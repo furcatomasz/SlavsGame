@@ -44,12 +44,14 @@ namespace Server {
                         let roomId = player.getActiveCharacter().roomId;
 
                         player.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
-                        self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
+                        if(server.enemies[sceneType] !== undefined) {
+                            self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
 
-                        serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
-                            enemies: self.getEnemiesInRoom(roomId),
-                            roomId: roomId,
-                        });
+                            serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
+                                enemies: self.getEnemiesInRoom(roomId),
+                                roomId: roomId,
+                            });
+                        }
                         socket.emit('showPlayer', player);
 
                     });
@@ -561,19 +563,30 @@ namespace Server {
                     y: 0,
                     z: -4
                 };
+            } else if (sceneType == 4) {
+                position = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
             } else if (sceneType == 2) {
                 position = {
                     x: 145,
                     y: 0,
                     z: -53
                 };
-                //For tests
+                //Castle entrace
                 position = {
-                    x: 35,
+                    x: 332,
                     y: 0,
-                    z: 8
+                    z: -51
                 };
-
+                //Cave
+                position = {
+                    x: -8,
+                    y: 0,
+                    z: 160
+                };
             }
 
             return position;

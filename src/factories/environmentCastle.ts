@@ -85,10 +85,10 @@ class EnvironmentCastle {
         }
 
         ///register colliders
-        for (let i = 0; i < this.colliders.length; i++) {
-            let sceneMesh = this.colliders[i];
-            Collisions.setCollider(scene, sceneMesh);
-        }
+        // for (let i = 0; i < this.colliders.length; i++) {
+        //     let sceneMesh = this.colliders[i];
+        //     Collisions.setCollider(scene, sceneMesh);
+        // }
         //
         //new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, {loop: true, autoplay: true});
 

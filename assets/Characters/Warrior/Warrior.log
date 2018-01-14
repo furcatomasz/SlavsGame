@@ -1,0 +1,396 @@
+Exporter version: 5.4.2, Blender version: 2.78 (sub 0)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used:
+		selected layers only:  false
+		flat shading entire scene:  false
+		inline textures:  false
+		texture directory:  F:\Slavs\Babylon\Characters\Warrior_beta\
+	Python World class constructor completed
+	processing begun of skeleton:  metarig, id:  0
+		processing begun of bone:  root, index:  0
+		processing begun of bone:  heel.L, index:  1
+		processing begun of bone:  foot.L, index:  2
+		processing begun of bone:  heel.R, index:  3
+		processing begun of bone:  foot.R, index:  4
+		processing begun of bone:  hips, index:  5
+		processing begun of bone:  spine, index:  6
+		processing begun of bone:  chest, index:  7
+		processing begun of bone:  neck, index:  8
+		processing begun of bone:  head, index:  9
+		processing begun of bone:  shoulder.L, index:  10
+		processing begun of bone:  upper_arm.L, index:  11
+		processing begun of bone:  forearm.L, index:  12
+		processing begun of bone:  hand.L, index:  13
+		processing begun of bone:  Finger_Bone1.L, index:  14
+		processing begun of bone:  Finger_Bone2.L, index:  15
+		processing begun of bone:  Finger_Bone3.L, index:  16
+		processing begun of bone:  Finger_Bone4.L, index:  17
+		processing begun of bone:  shield.bone, index:  18
+		processing begun of bone:  shoulder.R, index:  19
+		processing begun of bone:  upper_arm.R, index:  20
+		processing begun of bone:  forearm.R, index:  21
+		processing begun of bone:  hand.R, index:  22
+		processing begun of bone:  Finger_Bone1.R, index:  23
+		processing begun of bone:  Finger_Bone2.R, index:  24
+		processing begun of bone:  weapon.bone, index:  25
+		processing begun of bone:  Finger_Bone3.R, index:  26
+		processing begun of bone:  Finger_Bone4.R, index:  27
+		processing begun of bone:  thigh.L, index:  28
+		processing begun of bone:  shin.L, index:  29
+		processing begun of bone:  thigh.R, index:  30
+		processing begun of bone:  shin.R, index:  31
+		processing action Attack:  in[-1 - 27], out[0 - 27]
+		processing action Attack02:  in[0 - 17], out[40 - 57]
+		processing action death:  in[0 - 21], out[70 - 91]
+		processing action Run:  in[0 - 20], out[100 - 120]
+		processing action Select:  in[0 - 18], out[130 - 148]
+		processing action Sit:  in[0 - 1], out[160 - 161]
+		processing action Skill01:  in[0 - 18], out[170 - 188]
+		processing action Skill02:  in[0 - 10], out[200 - 210]
+		processing action stand:  in[0 - 1], out[220 - 221]
+		processing action Stand_with_weapon:  in[0 - 60], out[230 - 290]
+	processing begun of mesh:  Cylinder.003
+		processing begun of Standard material:  Material.012
+			Diffuse texture found "Texture.006"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  161
+		num normals        :  161
+		num uvs            :  322
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  252
+	processing begun of mesh:  Cylinder.002
+		registered as also a user of material:  Material.012
+		num positions      :  161
+		num normals        :  161
+		num uvs            :  322
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  252
+	processing begun of mesh:  Cylinder.001
+		registered as also a user of material:  Material.012
+		num positions      :  29
+		num normals        :  29
+		num uvs            :  58
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  36
+	processing begun of mesh:  Cylinder
+		registered as also a user of material:  Material.012
+		num positions      :  468
+		num normals        :  468
+		num uvs            :  936
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  768
+		WARNING: # of 0 area faces found:  72
+	processing begun of mesh:  grass_broke
+		processing begun of Standard material:  Material.011
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Cube
+		WARNING: No materials have been assigned: 
+		num positions      :  32
+		num normals        :  32
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  180
+	WARNING: The following camera not visible in scene thus ignored: Camera
+	processing begun of mesh:  Armor.001
+		processing begun of Standard material:  Material.002
+			Diffuse texture found "Texture.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.003
+		processing begun of Standard material:  Material.000
+		processing begun of multimaterial:  Warrior.Multimaterial#0
+		num positions      :  374
+		num normals        :  374
+		num uvs            :  748
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  690
+		Skeleton stats:  
+			WARNING: Maximum # of influencers exceeded for 374 vertices, extras ignored
+			Total Influencers:  11968
+			Avg # of influencers per vertex:  32
+			Highest # of influencers observed:  32, num vertices with this:  374
+			exported as 8 influencers
+			num skeletonWeights and skeletonIndices:  2992
+	processing begun of mesh:  Hood
+		processing begun of Standard material:  Material.006
+			Diffuse texture found "Texture.008"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  286
+		num normals        :  286
+		num uvs            :  572
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  534
+		Skeleton stats:  
+			Total Influencers:  882
+			Avg # of influencers per vertex:  3.0839
+			Highest # of influencers observed:  8, num vertices with this:  1
+			exported as 8 influencers
+			num skeletonWeights and skeletonIndices:  2288
+	processing begun of mesh:  Warrior.002
+		processing begun of Standard material:  texture
+			Diffuse texture found "Texture.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  228
+		num normals        :  228
+		num uvs            :  456
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  840
+		Skeleton stats:  
+			Total Influencers:  793
+			Avg # of influencers per vertex:  3.4781
+			Highest # of influencers observed:  7, num vertices with this:  1
+			exported as 7 influencers
+			num skeletonWeights and skeletonIndices:  1824
+	processing begun of mesh:  Sash
+		processing begun of Standard material:  Sash
+			Diffuse texture found "Texture.005"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  58
+		num normals        :  58
+		num uvs            :  116
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  198
+		Skeleton stats:  
+			Total Influencers:  179
+			Avg # of influencers per vertex:  3.0862
+			Highest # of influencers observed:  5, num vertices with this:  6
+			exported as 5 influencers
+			num skeletonWeights and skeletonIndices:  464
+	processing begun of mesh:  Boots
+		processing begun of Standard material:  Gloves
+		num positions      :  119
+		num normals        :  119
+		num uvs            :  238
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  240
+		Skeleton stats:  
+			Total Influencers:  256
+			Avg # of influencers per vertex:  2.1513
+			Highest # of influencers observed:  3, num vertices with this:  44
+			exported as 3 influencers
+			num skeletonWeights and skeletonIndices:  476
+	processing begun of mesh:  Gloves
+		registered as also a user of material:  Gloves
+		num positions      :  107
+		num normals        :  107
+		num uvs            :  214
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  216
+		Skeleton stats:  
+			Total Influencers:  226
+			Avg # of influencers per vertex:  2.1121
+			Highest # of influencers observed:  3, num vertices with this:  35
+			exported as 3 influencers
+			num skeletonWeights and skeletonIndices:  428
+	processing begun of mesh:  Warrior
+		registered as also a user of material:  texture
+		num positions      :  1523
+		num normals        :  1523
+		num uvs            :  3046
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  3258
+		Skeleton stats:  
+			Total Influencers:  3680
+			Avg # of influencers per vertex:  2.4163
+			Highest # of influencers observed:  7, num vertices with this:  4
+			exported as 7 influencers
+			num skeletonWeights and skeletonIndices:  12184
+	processing begun of mesh:  Armor
+		processing begun of Standard material:  Material.013
+			Diffuse texture found "Texture.009"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  374
+		num normals        :  374
+		num uvs            :  748
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  690
+		Skeleton stats:  
+			WARNING: Maximum # of influencers exceeded for 374 vertices, extras ignored
+			Total Influencers:  11968
+			Avg # of influencers per vertex:  32
+			Highest # of influencers observed:  32, num vertices with this:  374
+			exported as 8 influencers
+			num skeletonWeights and skeletonIndices:  2992
+	processing begun of mesh:  Hair
+		processing begun of Standard material:  Hair
+			Diffuse texture found "Texture.004"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.001
+		processing begun of multimaterial:  Warrior.Multimaterial#1
+		num positions      :  485
+		num normals        :  485
+		num uvs            :  970
+		num uvs2           :  0
+		num colors         :  1940
+		num indices        :  1032
+		Skeleton stats:  
+			Total Influencers:  485
+			Avg # of influencers per vertex:  1
+			Highest # of influencers observed:  1, num vertices with this:  485
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  1940
+	processing begun of mesh:  Helm
+		registered as also a user of material:  Hair
+		registered as also a user of material:  Gloves
+		processing begun of multimaterial:  Warrior.Multimaterial#2
+		num positions      :  491
+		num normals        :  491
+		num uvs            :  982
+		num uvs2           :  0
+		num colors         :  1964
+		num indices        :  1056
+		Skeleton stats:  
+			Total Influencers:  491
+			Avg # of influencers per vertex:  1
+			Highest # of influencers observed:  1, num vertices with this:  491
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  1964
+	processing begun of mesh:  Sword
+		processing begun of Standard material:  short_sword
+			Diffuse texture found "Texture"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  286
+		num normals        :  286
+		num uvs            :  572
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  552
+		Skeleton stats:  
+			Total Influencers:  286
+			Avg # of influencers per vertex:  1
+			Highest # of influencers observed:  1, num vertices with this:  286
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  1144
+	processing begun of mesh:  Axe
+		animation processing begun
+			processing action Attack:  in[-1 - 27], out[0 - 27]
+			processing action Attack02:  in[0 - 17], out[40 - 57]
+			processing action death:  in[0 - 21], out[70 - 91]
+			processing action Run:  in[0 - 20], out[100 - 120]
+			processing action Select:  in[0 - 18], out[130 - 148]
+			processing action Sit:  in[0 - 0], out[160 - 160]
+			processing action Skill01:  in[0 - 18], out[170 - 188]
+			processing action Skill02:  in[0 - 10], out[200 - 210]
+			processing action stand:  in[0 - 0], out[220 - 220]
+			processing action Stand_with_weapon:  in[0 - 60], out[230 - 290]
+		processing begun of Standard material:  Material.004
+		processing begun of Standard material:  Material
+		processing begun of Standard material:  Material.005
+		processing begun of multimaterial:  Warrior.Multimaterial#3
+		num positions      :  194
+		num normals        :  194
+		num uvs            :  388
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  348
+		Skeleton stats:  
+			Total Influencers:  194
+			Avg # of influencers per vertex:  1
+			Highest # of influencers observed:  1, num vertices with this:  194
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  776
+	processing begun of mesh:  Shield
+		processing begun of Standard material:  Shield
+			Diffuse texture found "Texture.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  129
+		num normals        :  129
+		num uvs            :  258
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  246
+		Skeleton stats:  
+			Total Influencers:  129
+			Avg # of influencers per vertex:  1
+			Highest # of influencers observed:  1, num vertices with this:  129
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  516
+	processing begun of mesh:  Warrior.001
+		registered as also a user of material:  Material.006
+		num positions      :  924
+		num normals        :  924
+		num uvs            :  1848
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2190
+		Skeleton stats:  
+			WARNING: Maximum # of influencers exceeded for 1 vertices, extras ignored
+			Total Influencers:  2540
+			Avg # of influencers per vertex:  2.7489
+			Highest # of influencers observed:  9, num vertices with this:  1
+			exported as 8 influencers
+			num skeletonWeights and skeletonIndices:  7392
+	processing begun of mesh:  Axe.001
+		animation processing begun
+			processing action Attack:  in[-1 - 27], out[0 - 27]
+			processing action Attack02:  in[0 - 17], out[40 - 57]
+			processing action death:  in[0 - 21], out[70 - 91]
+			processing action Run:  in[0 - 20], out[100 - 120]
+			processing action Select:  in[0 - 18], out[130 - 148]
+			processing action Sit:  in[0 - 0], out[160 - 160]
+			processing action Skill01:  in[0 - 18], out[170 - 188]
+			processing action Skill02:  in[0 - 10], out[200 - 210]
+			processing action stand:  in[0 - 0], out[220 - 220]
+			processing action Stand_with_weapon:  in[0 - 60], out[230 - 290]
+		processing begun of Standard material:  Material.008
+		processing begun of Standard material:  Material.009
+		processing begun of multimaterial:  Warrior.Multimaterial#4
+		num positions      :  150
+		num normals        :  150
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  780
+		Skeleton stats:  
+			Total Influencers:  150
+			Avg # of influencers per vertex:  1
+			Highest # of influencers observed:  1, num vertices with this:  150
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  600
+	processing begun of mesh:  long-sword
+		processing begun of Standard material:  Material.010
+			Diffuse texture found "Texture.007"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  237
+		num normals        :  237
+		num uvs            :  474
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  420
+		Skeleton stats:  
+			Total Influencers:  237
+			Avg # of influencers per vertex:  1
+			Highest # of influencers observed:  1, num vertices with this:  237
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  948
+	processing begun of mesh:  Cone.002
+		processing begun of Standard material:  Material.007
+		num positions      :  26
+		num normals        :  26
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  132
+	WARNING: The following lamp not visible in scene thus ignored: Hemi
+========= Writing of scene file started =========
+========= Writing of scene file completed =========
+========= end of processing =========
+elapsed time:  0 min, 16.614 secs

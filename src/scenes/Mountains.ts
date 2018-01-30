@@ -43,7 +43,7 @@ class Mountains extends Scene {
                     game.client.socket.emit('getQuests');
                     game.client.showEnemies();
 
-                    //self.defaultPipeline(scene);
+                    self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Mountains.TYPE,
                     });

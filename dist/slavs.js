@@ -24,6 +24,23 @@ var Events = /** @class */ (function () {
     Events.MONSTER_TO_ATTACK = 'monsterToAttack';
     return Events;
 }());
+/// <reference path="../shared/Character/Character"/>
+var Modules = /** @class */ (function () {
+    function Modules() {
+    }
+    Modules.prototype.loadModules = function (callback) {
+        var self = this;
+        new Promise(function (modulesIsLoaded) {
+            requirejs(["./../../shared/Character/Character"], function (CharacterModule) {
+                self.character = CharacterModule.Character;
+                modulesIsLoaded();
+            });
+        }).then(function (resolve) {
+            callback();
+        });
+    };
+    return Modules;
+}());
 /// <reference path="../game.ts"/>
 var Controller = /** @class */ (function () {
     function Controller(game) {
@@ -153,13 +170,19 @@ var Scene = /** @class */ (function () {
         newScene.initScene(this.game);
     };
     Scene.prototype.defaultPipeline = function (scene) {
-        //    let self = this;
+        var self = this;
+        var camera = scene.activeCamera;
         //var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
-        //defaultPipeline.bloomEnabled = true;
+        //defaultPipeline.bloomEnabled = false;
         //defaultPipeline.fxaaEnabled = true;
         //defaultPipeline.imageProcessingEnabled = false;
-        //defaultPipeline.bloomWeight = 0.15;
-        //
+        //defaultPipeline.bloomWeight = 0.05;
+        //var kernel = 4.0;
+        //var postProcess0 = new BABYLON.BlurPostProcess("Horizontal blur", new BABYLON.Vector2(1.0, 0), kernel, 1.0, camera);
+        //var postProcess1 = new BABYLON.BlurPostProcess("Vertical blur", new BABYLON.Vector2(0, 1.0), kernel, 1.0, camera);
+        //var postProcess = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.8, camera);
+        //var postProcess = new BABYLON.FxaaPostProcess("fxaa", 1.0, camera);
+        //var postProcess = new BABYLON.HighlightsPostProcess("highlights", 0.1, camera);
         //var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         //
         //var panel = new BABYLON.GUI.StackPanel();
@@ -920,23 +943,6 @@ var Game = /** @class */ (function () {
     Game.SHOW_COLLIDERS = 0;
     return Game;
 }());
-/// <reference path="../shared/Character/Character"/>
-var Modules = /** @class */ (function () {
-    function Modules() {
-    }
-    Modules.prototype.loadModules = function (callback) {
-        var self = this;
-        new Promise(function (modulesIsLoaded) {
-            requirejs(["./../../shared/Character/Character"], function (CharacterModule) {
-                self.character = CharacterModule.Character;
-                modulesIsLoaded();
-            });
-        }).then(function (resolve) {
-            callback();
-        });
-    };
-    return Modules;
-}());
 var Character;
 (function (Character) {
     var Inventory = /** @class */ (function () {
@@ -1159,8 +1165,8 @@ var Player = /** @class */ (function (_super) {
     Player.prototype.refreshCameraPosition = function () {
         this.game.getScene().activeCamera.position = this.mesh.position.clone();
         this.game.getScene().activeCamera.position.y = 45;
-        this.game.getScene().activeCamera.position.z -= 35;
-        this.game.getScene().activeCamera.position.x -= 32;
+        this.game.getScene().activeCamera.position.z -= 31;
+        this.game.getScene().activeCamera.position.x -= 31;
     };
     /**
      *
@@ -1264,7 +1270,6 @@ var Mouse = /** @class */ (function (_super) {
         scene.onPointerDown = function (evt, pickResult) {
             var pickedMesh = pickResult.pickedMesh;
             clickTrigger = true;
-            console.log(pickedMesh.name);
             if (pickedMesh) {
                 if (self.game.player && pickedMesh.name.search("Ground") >= 0) {
                     self.attackPoint = null;
@@ -1337,23 +1342,6 @@ var Factories;
     }());
     Factories.AbstractFactory = AbstractFactory;
 })(Factories || (Factories = {}));
-/// <reference path="AbstractFactory.ts"/>
-/// <reference path="../game.ts"/>
-var Factories;
-(function (Factories) {
-    var Characters = /** @class */ (function (_super) {
-        __extends(Characters, _super);
-        function Characters(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'factory.warrior';
-            _this.dir = 'assets/Characters/Warrior/';
-            _this.fileName = 'Warrior.babylon';
-            return _this;
-        }
-        return Characters;
-    }(Factories.AbstractFactory));
-    Factories.Characters = Characters;
-})(Factories || (Factories = {}));
 var Collisions = /** @class */ (function () {
     function Collisions() {
     }
@@ -1381,6 +1369,57 @@ var Collisions = /** @class */ (function () {
     };
     return Collisions;
 }());
+/// <reference path="AbstractFactory.ts"/>
+/// <reference path="../game.ts"/>
+var Factories;
+(function (Factories) {
+    var Nature = /** @class */ (function (_super) {
+        __extends(Nature, _super);
+        function Nature(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'factory.nature.grain';
+            _this.dir = 'assets/Environment/grain/';
+            _this.fileName = 'Grain.babylon';
+            return _this;
+        }
+        return Nature;
+    }(Factories.AbstractFactory));
+    Factories.Nature = Nature;
+})(Factories || (Factories = {}));
+/// <reference path="AbstractFactory.ts"/>
+/// <reference path="../game.ts"/>
+var Factories;
+(function (Factories) {
+    var Worms = /** @class */ (function (_super) {
+        __extends(Worms, _super);
+        function Worms(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'factory.worm';
+            _this.dir = 'assets/Characters/Worm/';
+            _this.fileName = 'worm.babylon';
+            return _this;
+        }
+        return Worms;
+    }(Factories.AbstractFactory));
+    Factories.Worms = Worms;
+})(Factories || (Factories = {}));
+/// <reference path="AbstractFactory.ts"/>
+/// <reference path="../game.ts"/>
+var Factories;
+(function (Factories) {
+    var Characters = /** @class */ (function (_super) {
+        __extends(Characters, _super);
+        function Characters(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'factory.warrior';
+            _this.dir = 'assets/Characters/Warrior/';
+            _this.fileName = 'Warrior.babylon';
+            return _this;
+        }
+        return Characters;
+    }(Factories.AbstractFactory));
+    Factories.Characters = Characters;
+})(Factories || (Factories = {}));
 /// <reference path="../game.ts"/>
 var Environment = /** @class */ (function () {
     function Environment(game, scene) {
@@ -1394,7 +1433,7 @@ var Environment = /** @class */ (function () {
         //     light.intensity = (light.intensity);
         //light.range = 47;
         // }
-        var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), scene);
+        //var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), scene);
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -1406,7 +1445,6 @@ var Environment = /** @class */ (function () {
                 //sceneMesh.receiveShadows = true;
             }
             else if (meshName.search("Box_Cube") >= 0) {
-                console.log('collider add' + meshName);
                 this.colliders.push(sceneMesh);
             }
             else {
@@ -1782,40 +1820,6 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
     }
     return EnvironmentSelectCharacter;
 }());
-/// <reference path="AbstractFactory.ts"/>
-/// <reference path="../game.ts"/>
-var Factories;
-(function (Factories) {
-    var Nature = /** @class */ (function (_super) {
-        __extends(Nature, _super);
-        function Nature(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'factory.nature.grain';
-            _this.dir = 'assets/Environment/grain/';
-            _this.fileName = 'Grain.babylon';
-            return _this;
-        }
-        return Nature;
-    }(Factories.AbstractFactory));
-    Factories.Nature = Nature;
-})(Factories || (Factories = {}));
-/// <reference path="AbstractFactory.ts"/>
-/// <reference path="../game.ts"/>
-var Factories;
-(function (Factories) {
-    var Worms = /** @class */ (function (_super) {
-        __extends(Worms, _super);
-        function Worms(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'factory.worm';
-            _this.dir = 'assets/Characters/Worm/';
-            _this.fileName = 'worm.babylon';
-            return _this;
-        }
-        return Worms;
-    }(Factories.AbstractFactory));
-    Factories.Worms = Worms;
-})(Factories || (Factories = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var GUI;
@@ -2924,7 +2928,7 @@ var Mountains = /** @class */ (function (_super) {
                     game.controller.registerControls(scene);
                     game.client.socket.emit('getQuests');
                     game.client.showEnemies();
-                    //self.defaultPipeline(scene);
+                    self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Mountains.TYPE
                     });
@@ -3512,6 +3516,54 @@ var SelectCharacter;
     }(AbstractCharacter));
     SelectCharacter.Warrior = Warrior;
 })(SelectCharacter || (SelectCharacter = {}));
+var GUI;
+(function (GUI) {
+    var TooltipButton = /** @class */ (function () {
+        function TooltipButton(baseControl, text) {
+            var rect1 = new BABYLON.GUI.Rectangle('tooltip');
+            rect1.top = '-25%';
+            rect1.width = 1;
+            rect1.height = "40px";
+            rect1.cornerRadius = 20;
+            rect1.thickness = 1;
+            rect1.background = "black";
+            baseControl.addControl(rect1);
+            var label = new BABYLON.GUI.TextBlock();
+            label.text = text;
+            rect1.addControl(label);
+            this.container = rect1;
+            this.label = label;
+        }
+        return TooltipButton;
+    }());
+    GUI.TooltipButton = TooltipButton;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var TooltipMesh = /** @class */ (function () {
+        function TooltipMesh(mesh, text) {
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("tooltip");
+            var rect1 = new BABYLON.GUI.Rectangle();
+            rect1.width = 0.4;
+            rect1.height = "40px";
+            rect1.cornerRadius = 20;
+            rect1.thickness = 2;
+            rect1.background = "black";
+            advancedTexture.addControl(rect1);
+            rect1.linkWithMesh(mesh);
+            rect1.linkOffsetY = -100;
+            var label = new BABYLON.GUI.TextBlock();
+            label.text = text;
+            rect1.addControl(label);
+            setTimeout(function () {
+                advancedTexture.dispose();
+            }, 2000);
+        }
+        return TooltipMesh;
+    }());
+    GUI.TooltipMesh = TooltipMesh;
+})(GUI || (GUI = {}));
 /// <reference path="../Main.ts"/>
 /// <reference path="../../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
 var GUI;
@@ -3917,134 +3969,6 @@ var GUI;
 /// <reference path="Popup.ts"/>
 var GUI;
 (function (GUI) {
-    var Quest = /** @class */ (function (_super) {
-        __extends(Quest, _super);
-        function Quest(guiMain, quest, mesh) {
-            var _this = _super.call(this, guiMain) || this;
-            _this.quest = quest;
-            _this.mesh = mesh;
-            _this.name = 'Quest';
-            _this.imageUrl = "assets/gui/attrs.png";
-            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            return _this;
-        }
-        Quest.prototype.open = function () {
-            var self = this;
-            if (self.quest.isActive && !self.quest.hasRequrementsFinished) {
-                new GUI.TooltipMesh(self.mesh, 'Quest requirements is not complete.');
-                return;
-            }
-            this.opened = true;
-            this.initTexture();
-            this.guiTexture.addControl(this.container);
-            this.showText();
-            var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
-            buttonClose.color = "white";
-            buttonClose.background = "black";
-            buttonClose.width = "70px;";
-            buttonClose.height = "40px";
-            buttonClose.left = -60;
-            buttonClose.horizontalAlignment = this.position;
-            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            buttonClose.onPointerUpObservable.add(function () {
-                self.close();
-            });
-            this.guiTexture.addControl(buttonClose);
-            this.guiMain.registerBlockMoveCharacter(buttonClose);
-            this.buttonClose = buttonClose;
-            var buttonAccept = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Accept");
-            buttonAccept.color = "white";
-            buttonAccept.background = "black";
-            buttonAccept.width = "70px;";
-            buttonAccept.height = "40px";
-            buttonAccept.left = 60;
-            buttonAccept.horizontalAlignment = this.position;
-            buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            buttonAccept.onPointerUpObservable.add(function () {
-                self.guiMain.game.client.socket.emit('acceptQuest', { id: self.quest.getQuestId() });
-                self.close();
-            });
-            this.guiMain.registerBlockMoveCharacter(buttonAccept);
-            this.guiTexture.addControl(buttonAccept);
-        };
-        Quest.prototype.close = function () {
-            this.opened = false;
-            this.guiTexture.dispose();
-            this.buttonClose = null;
-            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
-        };
-        Quest.prototype.showText = function () {
-            var title = new BABYLON.GUI.TextBlock();
-            title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            title.text = this.quest.title;
-            title.color = "white";
-            title.top = "0%";
-            title.width = "25%";
-            title.height = "10%";
-            title.fontSize = 36;
-            this.guiTexture.addControl(title);
-            var description = new BABYLON.GUI.TextBlock();
-            description.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            description.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            description.text = this.quest.description;
-            description.color = "white";
-            description.top = "5%";
-            description.width = "25%";
-            description.height = "20%";
-            description.fontSize = 24;
-            var awardTitle = new BABYLON.GUI.TextBlock();
-            awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            awardTitle.text = 'Award';
-            awardTitle.top = "45%";
-            awardTitle.width = "25%";
-            awardTitle.height = "20%";
-            awardTitle.color = "green";
-            awardTitle.fontSize = 36;
-            this.guiTexture.addControl(awardTitle);
-            var awardTitle = new BABYLON.GUI.TextBlock();
-            awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            awardTitle.text = this.quest.awards[0].award.name;
-            awardTitle.top = "50%";
-            awardTitle.width = "25%";
-            awardTitle.height = "20%";
-            awardTitle.color = "green";
-            awardTitle.fontSize = 24;
-            this.guiTexture.addControl(awardTitle);
-            var image = this.guiMain.inventory.createItemImage(this.quest.awards[0].award);
-            image.height = 0.4;
-            this.guiTexture.addControl(image);
-            this.guiTexture.addControl(description);
-            var requirementsTitle = new BABYLON.GUI.TextBlock();
-            requirementsTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            requirementsTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            requirementsTitle.text = 'Requirements';
-            requirementsTitle.top = "15%";
-            requirementsTitle.width = "25%";
-            requirementsTitle.height = "20%";
-            requirementsTitle.color = "red";
-            requirementsTitle.fontSize = 36;
-            this.guiTexture.addControl(requirementsTitle);
-            var requirementsTitle = new BABYLON.GUI.TextBlock();
-            requirementsTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            requirementsTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            requirementsTitle.text = 'Kill all bandits';
-            requirementsTitle.top = "20%";
-            requirementsTitle.width = "25%";
-            requirementsTitle.height = "20%";
-            requirementsTitle.color = "white";
-            requirementsTitle.fontSize = 18;
-            this.guiTexture.addControl(requirementsTitle);
-        };
-        return Quest;
-    }(GUI.Popup));
-    GUI.Quest = Quest;
-})(GUI || (GUI = {}));
-/// <reference path="Popup.ts"/>
-var GUI;
-(function (GUI) {
     var Rooms = /** @class */ (function (_super) {
         __extends(Rooms, _super);
         function Rooms(guiMain) {
@@ -4268,53 +4192,133 @@ var GUI;
     }(GUI.Popup));
     GUI.Skills = Skills;
 })(GUI || (GUI = {}));
+/// <reference path="Popup.ts"/>
 var GUI;
 (function (GUI) {
-    var TooltipButton = /** @class */ (function () {
-        function TooltipButton(baseControl, text) {
-            var rect1 = new BABYLON.GUI.Rectangle('tooltip');
-            rect1.top = '-25%';
-            rect1.width = 1;
-            rect1.height = "40px";
-            rect1.cornerRadius = 20;
-            rect1.thickness = 1;
-            rect1.background = "black";
-            baseControl.addControl(rect1);
-            var label = new BABYLON.GUI.TextBlock();
-            label.text = text;
-            rect1.addControl(label);
-            this.container = rect1;
-            this.label = label;
+    var Quest = /** @class */ (function (_super) {
+        __extends(Quest, _super);
+        function Quest(guiMain, quest, mesh) {
+            var _this = _super.call(this, guiMain) || this;
+            _this.quest = quest;
+            _this.mesh = mesh;
+            _this.name = 'Quest';
+            _this.imageUrl = "assets/gui/attrs.png";
+            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            return _this;
         }
-        return TooltipButton;
-    }());
-    GUI.TooltipButton = TooltipButton;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var TooltipMesh = /** @class */ (function () {
-        function TooltipMesh(mesh, text) {
-            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("tooltip");
-            var rect1 = new BABYLON.GUI.Rectangle();
-            rect1.width = 0.4;
-            rect1.height = "40px";
-            rect1.cornerRadius = 20;
-            rect1.thickness = 2;
-            rect1.background = "black";
-            advancedTexture.addControl(rect1);
-            rect1.linkWithMesh(mesh);
-            rect1.linkOffsetY = -100;
-            var label = new BABYLON.GUI.TextBlock();
-            label.text = text;
-            rect1.addControl(label);
-            setTimeout(function () {
-                advancedTexture.dispose();
-            }, 2000);
-        }
-        return TooltipMesh;
-    }());
-    GUI.TooltipMesh = TooltipMesh;
+        Quest.prototype.open = function () {
+            var self = this;
+            if (self.quest.isActive && !self.quest.hasRequrementsFinished) {
+                new GUI.TooltipMesh(self.mesh, 'Quest requirements is not complete.');
+                return;
+            }
+            this.opened = true;
+            this.initTexture();
+            this.guiTexture.addControl(this.container);
+            this.showText();
+            var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
+            buttonClose.color = "white";
+            buttonClose.background = "black";
+            buttonClose.width = "70px;";
+            buttonClose.height = "40px";
+            buttonClose.left = -60;
+            buttonClose.horizontalAlignment = this.position;
+            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonClose.onPointerUpObservable.add(function () {
+                self.close();
+            });
+            this.guiTexture.addControl(buttonClose);
+            this.guiMain.registerBlockMoveCharacter(buttonClose);
+            this.buttonClose = buttonClose;
+            var buttonAccept = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Accept");
+            buttonAccept.color = "white";
+            buttonAccept.background = "black";
+            buttonAccept.width = "70px;";
+            buttonAccept.height = "40px";
+            buttonAccept.left = 60;
+            buttonAccept.horizontalAlignment = this.position;
+            buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonAccept.onPointerUpObservable.add(function () {
+                self.guiMain.game.client.socket.emit('acceptQuest', { id: self.quest.getQuestId() });
+                self.close();
+            });
+            this.guiMain.registerBlockMoveCharacter(buttonAccept);
+            this.guiTexture.addControl(buttonAccept);
+        };
+        Quest.prototype.close = function () {
+            this.opened = false;
+            this.guiTexture.dispose();
+            this.buttonClose = null;
+            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
+        };
+        Quest.prototype.showText = function () {
+            var title = new BABYLON.GUI.TextBlock();
+            title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            title.text = this.quest.title;
+            title.color = "white";
+            title.top = "0%";
+            title.width = "25%";
+            title.height = "10%";
+            title.fontSize = 36;
+            this.guiTexture.addControl(title);
+            var description = new BABYLON.GUI.TextBlock();
+            description.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            description.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            description.text = this.quest.description;
+            description.color = "white";
+            description.top = "5%";
+            description.width = "25%";
+            description.height = "20%";
+            description.fontSize = 24;
+            var awardTitle = new BABYLON.GUI.TextBlock();
+            awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            awardTitle.text = 'Award';
+            awardTitle.top = "45%";
+            awardTitle.width = "25%";
+            awardTitle.height = "20%";
+            awardTitle.color = "green";
+            awardTitle.fontSize = 36;
+            this.guiTexture.addControl(awardTitle);
+            var awardTitle = new BABYLON.GUI.TextBlock();
+            awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            awardTitle.text = this.quest.awards[0].award.name;
+            awardTitle.top = "50%";
+            awardTitle.width = "25%";
+            awardTitle.height = "20%";
+            awardTitle.color = "green";
+            awardTitle.fontSize = 24;
+            this.guiTexture.addControl(awardTitle);
+            var image = this.guiMain.inventory.createItemImage(this.quest.awards[0].award);
+            image.height = 0.4;
+            this.guiTexture.addControl(image);
+            this.guiTexture.addControl(description);
+            var requirementsTitle = new BABYLON.GUI.TextBlock();
+            requirementsTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            requirementsTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            requirementsTitle.text = 'Requirements';
+            requirementsTitle.top = "15%";
+            requirementsTitle.width = "25%";
+            requirementsTitle.height = "20%";
+            requirementsTitle.color = "red";
+            requirementsTitle.fontSize = 36;
+            this.guiTexture.addControl(requirementsTitle);
+            var requirementsTitle = new BABYLON.GUI.TextBlock();
+            requirementsTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            requirementsTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            requirementsTitle.text = 'Kill all bandits';
+            requirementsTitle.top = "20%";
+            requirementsTitle.width = "25%";
+            requirementsTitle.height = "20%";
+            requirementsTitle.color = "white";
+            requirementsTitle.fontSize = 18;
+            this.guiTexture.addControl(requirementsTitle);
+        };
+        return Quest;
+    }(GUI.Popup));
+    GUI.Quest = Quest;
 })(GUI || (GUI = {}));
 var Particles;
 (function (Particles) {

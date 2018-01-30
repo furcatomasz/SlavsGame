@@ -20,7 +20,7 @@ class Environment {
         //     light.intensity = (light.intensity);
             //light.range = 47;
         // }
-        var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), scene);
+        //var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), scene);
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
 
@@ -33,7 +33,7 @@ class Environment {
                 this.ground = sceneMesh;
                 //sceneMesh.receiveShadows = true;
             } else if (meshName.search("Box_Cube") >= 0) {
-                console.log('collider add'  +meshName              );
+
                 this.colliders.push(sceneMesh);
 
             } else {

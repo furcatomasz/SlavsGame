@@ -10,6 +10,7 @@ namespace Server {
 
         protected enemies = [];
         protected players = [];
+        protected scenes = [];
 
         constructor(canvas) {
             this.socket = io.connect('http://127.0.0.1:' + 5000, {query: 'monsterServer=1'});
@@ -22,17 +23,6 @@ namespace Server {
         public initEngine(canvas) {
             let self = this;
             this.engine = new BABYLON.Engine(canvas);
-            let scene = new BABYLON.Scene(this.engine);
-            this.scene = scene;
-            let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
-            camera.attachControl(canvas, true);
-            this
-                .socketShowEnemies()
-                .socketUpdateEnemy()
-                .socketPlayerConnected()
-                .socketUpdatePlayer()
-                .removePlayer()
-                .socketCreateRoom();
 
             this.engine.runRenderLoop(function () {
                 for (let key in self.scenes) {
@@ -236,6 +226,7 @@ namespace Server {
             let self = this;
             let playerMesh = remotePlayerData.mesh;
             let roomId = remotePlayerData.roomId;
+            let socketId = remotePlayerData.socketId;
             let scene = this.scenes[roomId];
 
             this.enemies[roomId].forEach(function (enemy, key) {
@@ -267,7 +258,7 @@ namespace Server {
                             attack: true
                         });
                         scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('Box coliision enter: start attack' + playerMesh.id);
+                        console.log('BABYLON: Enemy '+ key +' start attack player '+ socketId +', roomID:'+ roomId);
                     }
                 });
 
@@ -285,7 +276,7 @@ namespace Server {
                             attack: false
                         });
                         scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('Box coliision exit: stop attack' + playerMesh.id);
+                        console.log('BABYLON: Enemy '+ key +' stop attack player '+ socketId +', roomID:'+ roomId);
                     }
                 });
 
@@ -304,7 +295,7 @@ namespace Server {
                         enemy.target = playerMesh.id;
                         scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                         scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('coliision enter:' + playerMesh.id);
+                        console.log('BABYLON: Enemy '+ key +' set target as player '+ socketId +', roomID:'+ roomId);
                     }
                 }));
 
@@ -321,7 +312,7 @@ namespace Server {
                             target: null
                         });
                         enemy.target = false;
-                        console.log('coliision exit:' + playerMesh.id);
+                        console.log('BABYLON: Enemy '+ key +' lost target '+ socketId +', roomID:'+ roomId);
                     }
 
                     scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
@@ -420,4 +411,3 @@ namespace Server {
 
     }
 }
-

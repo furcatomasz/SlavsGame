@@ -94,14 +94,22 @@ abstract class Scene {
     }
 
     public defaultPipeline(scene: BABYLON.Scene) {
-    //    let self = this;
+        let self = this;
+        let camera = scene.activeCamera;
     //var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
-    //defaultPipeline.bloomEnabled = true;
+    //defaultPipeline.bloomEnabled = false;
     //defaultPipeline.fxaaEnabled = true;
     //defaultPipeline.imageProcessingEnabled = false;
-    //defaultPipeline.bloomWeight = 0.15;
-    //
-    //var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    //defaultPipeline.bloomWeight = 0.05;
+
+        //var kernel = 4.0;
+        //var postProcess0 = new BABYLON.BlurPostProcess("Horizontal blur", new BABYLON.Vector2(1.0, 0), kernel, 1.0, camera);
+        //var postProcess1 = new BABYLON.BlurPostProcess("Vertical blur", new BABYLON.Vector2(0, 1.0), kernel, 1.0, camera);
+        //var postProcess = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.8, camera);
+        //var postProcess = new BABYLON.FxaaPostProcess("fxaa", 1.0, camera);
+
+        //var postProcess = new BABYLON.HighlightsPostProcess("highlights", 0.1, camera);
+        //var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     //
     //var panel = new BABYLON.GUI.StackPanel();
     //panel.width = "200px";

@@ -122,8 +122,8 @@ class Player extends AbstractCharacter {
     public refreshCameraPosition() {
         this.game.getScene().activeCamera.position = this.mesh.position.clone();
         this.game.getScene().activeCamera.position.y = 45;
-        this.game.getScene().activeCamera.position.z -= 35;
-        this.game.getScene().activeCamera.position.x -= 32;
+        this.game.getScene().activeCamera.position.z -= 31;
+        this.game.getScene().activeCamera.position.x -= 31;
     }
 
     /**

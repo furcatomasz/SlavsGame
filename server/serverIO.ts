@@ -29,11 +29,13 @@ namespace Server {
                     player.activeCharacter = 1;
 
                     ////CLEAR QUESTS
-                    server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
-                        for (let playerQuest of playerQuests) {
-                            playerQuest.remove();
-                        }
-                    });
+                    if(server.ormManager.structure.playerQuest) {
+                        server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
+                            for (let playerQuest of playerQuests) {
+                                playerQuest.remove();
+                            }
+                        });
+                    }
 
                     player.refreshPlayerData(server, function () {
                         socket.emit('clientConnected', player);

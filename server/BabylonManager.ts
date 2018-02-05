@@ -128,6 +128,7 @@ namespace Server {
                             mesh: box,
                             target: false,
                             activeTargetPoints: [],
+                            walkSpeed: enemyData.statistics.walkSpeed,
                             visibilityAreaMesh: visibilityArea
                         };
                         self.enemies[roomId][key] = enemy;
@@ -185,6 +186,7 @@ namespace Server {
                         let remotePlayer = {
                             id: activeCharacter.id,
                             socketId: playerData.id,
+                            walkSpeed: activeCharacter.statistics.walkSpeed,
                             roomId: roomId,
                             mesh: box,
                             registeredFunction: null,
@@ -251,7 +253,11 @@ namespace Server {
                         rotation = mesh.rotationQuaternion.toEulerAngles();
                     }
                     rotation.negate();
-                    let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+
+                    let animationRatio = scene.getAnimationRatio();
+                    let walkSpeed = enemy.walkSpeed / animationRatio;
+
+                    let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / 8);
                     mesh.moveWithCollisions(forwards);
                     mesh.position.y = 0;
                 };
@@ -401,7 +407,7 @@ namespace Server {
                                     }
                                     rotation.negate();
                                     let animationRatio = scene.getAnimationRatio();
-                                    let walkSpeed = 2.3 * (125 / 100) / animationRatio;
+                                    let walkSpeed = remotePlayer.walkSpeed / animationRatio;
 
                                     let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
                                     mesh.moveWithCollisions(forwards);

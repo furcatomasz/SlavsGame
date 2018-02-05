@@ -4,18 +4,30 @@ namespace Server {
         public getEnemies() {
             let enemies = [];
             enemies[2] = [
-                new Worm(0, {x: -2, y: 0, z: -30}, [9]),
-                new Worm(1, {x: -2, y: 0, z: -64}, [9]),
-                new Worm(2, {x: -8, y: 0, z: -72}, [9]),
-                new Worm(3, {x: -8, y: 0, z: 180}, [9]),
-                new Worm(4, {x: -4, y: 0, z: 100}, [9]),
-                new Worm(5, {x: -2, y: 0, z: 110}, [9]),
-                new Worm(6, {x: -8, y: 0, z: 90}, [9]),
-                new Worm(7, {x: -4, y: 0, z: 80}, [9]),
-                new Worm(8, {x: -2, y: 0, z: 85}, [9]),
-                new Worm(9, {x: -8, y: 0, z: 80}, [9]),
-                new Worm(10, {x: -4, y: 0, z: 75}, [9]),
-                new Worm(11, {x: -2, y: 0, z: 70}, [9]),
+                new Monsters.Worm(0, {x: -28, y: 0, z: 170}, [Items.Weapons.Axe.ITEM_ID]),
+
+                new Monsters.Worm(0, {x: -92, y: 0, z: 160}, []),
+                new Monsters.Boar(0, {x: -105, y: 0, z: 160}, [Items.Weapons.Sword.ITEM_ID]),
+                new Monsters.Worm(0, {x: -97, y: 0, z: 142}, []),
+
+                new Monsters.Boar(0, {x: -55, y: 0, z: 113}, [Items.Armors.PrimaryArmor.ITEM_ID]),
+                new Monsters.Boar(0, {x: -72, y: 0, z: 94}, [Items.Helms.PrimaryHelm.ITEM_ID]),
+                new Monsters.Boar(0, {x: -93, y: 0, z: 99}, [Items.Boots.PrimaryBoots.ITEM_ID]),
+
+                new Monsters.Boar(0, {x: 5, y: 0, z: 93}, [Items.Gloves.PrimaryGloves.ITEM_ID]),
+                new Monsters.Boar(0, {x: 27, y: 0, z: 93}, []),
+                new Monsters.Boar(0, {x: 26, y: 0, z: 72}, [Items.Shields.WoodShield.ITEM_ID]),
+                new Monsters.Boar(0, {x: 1, y: 0, z: 67}, []),
+
+                new Monsters.Worm(0, {x: 105, y: 0, z: 154}, []),
+                new Monsters.Boar(0, {x: 79, y: 0, z: 156}, []),
+                new Monsters.Worm(0, {x: 96, y: 0, z: 144}, []),
+                new Monsters.Worm(0, {x: 94, y: 0, z: 129}, []),
+                new Monsters.Worm(0, {x: 88, y: 0, z: 185}, []),
+                new Monsters.Boar(0, {x: 127, y: 0, z: 169}, []),
+                new Monsters.Boar(0, {x: 134, y: 0, z: 154}, []),
+
+
             ];
 
             return enemies;

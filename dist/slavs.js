@@ -157,6 +157,7 @@ var Scene = /** @class */ (function () {
     Scene.prototype.initFactories = function (scene, assetsManager) {
         this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
         this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
+        this.game.factories['boar'] = new Factories.Boars(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
         return this;
     };
@@ -357,6 +358,11 @@ var AbstractCharacter = /** @class */ (function () {
             }
         }
     };
+    AbstractCharacter.prototype.getWalkSpeed = function () {
+        var animationRatio = this.game.getScene().getAnimationRatio();
+        return this.statistics.walkSpeed / animationRatio;
+    };
+    ;
     /** Events */
     AbstractCharacter.prototype.onHitStart = function () { };
     ;
@@ -381,13 +387,15 @@ var Monster = /** @class */ (function (_super) {
     function Monster(game, serverKey, serverData) {
         var _this = this;
         var meshName = serverData.meshName;
-        var mesh = game.factories['worm'].createInstance(meshName, true);
+        var factoryName = serverData.type;
+        var mesh = game.factories[factoryName].createInstance(meshName, true);
         mesh.visibility = true;
         mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
         _this.id = serverKey;
         _this.mesh = mesh;
         _this.statistics = serverData.statistics;
         game.enemies[_this.id] = _this;
+        mesh.skeleton.enableBlending(0.2);
         _this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
@@ -714,7 +722,8 @@ var SocketIOClient = /** @class */ (function () {
                         label.shadowOffsetX = 0;
                         label.shadowOffsetY = 0;
                         label.shadowBlur = 1;
-                        var paddingTop = 0;
+                        var paddingTop = -150;
+                        label.top = paddingTop;
                         var alpha = 1;
                         var animateText = function () {
                             label.top = paddingTop;
@@ -770,7 +779,7 @@ var SocketIOClient = /** @class */ (function () {
                                 rotation = mesh_1.rotationQuaternion.toEulerAngles();
                             }
                             rotation.negate();
-                            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / 8);
                             mesh_1.moveWithCollisions(forwards);
                             if (enemy.animation) {
                             }
@@ -1094,7 +1103,7 @@ var Player = /** @class */ (function (_super) {
         });
         var mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
-        mesh.skeleton.enableBlending(0.5);
+        mesh.skeleton.enableBlending(0.2);
         mesh.alwaysSelectAsActiveMesh = true;
         // Collisions.setCollider(game.getScene(), mesh, null, false);
         _this.mesh = mesh;
@@ -1152,11 +1161,6 @@ var Player = /** @class */ (function (_super) {
             });
         }
         return this;
-    };
-    ;
-    Player.prototype.getWalkSpeed = function () {
-        var animationRatio = this.game.getScene().getAnimationRatio();
-        return this.statistics.walkSpeed / animationRatio;
     };
     ;
     Player.prototype.removeFromWorld = function () {
@@ -1341,6 +1345,23 @@ var Factories;
         return AbstractFactory;
     }());
     Factories.AbstractFactory = AbstractFactory;
+})(Factories || (Factories = {}));
+/// <reference path="AbstractFactory.ts"/>
+/// <reference path="../game.ts"/>
+var Factories;
+(function (Factories) {
+    var Boars = /** @class */ (function (_super) {
+        __extends(Boars, _super);
+        function Boars(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'boar.worm';
+            _this.dir = 'assets/Characters/Boar/';
+            _this.fileName = 'Boar.babylon';
+            return _this;
+        }
+        return Boars;
+    }(Factories.AbstractFactory));
+    Factories.Boars = Boars;
 })(Factories || (Factories = {}));
 var Collisions = /** @class */ (function () {
     function Collisions() {
@@ -2908,7 +2929,7 @@ var Mountains = /** @class */ (function (_super) {
                 .setCamera(scene)
                 .setFog(scene)
                 .defaultPipeline(scene);
-            scene.debugLayer.show();
+            //scene.debugLayer.show();
             scene.actionManager = new BABYLON.ActionManager(scene);
             var assetsManager = new BABYLON.AssetsManager(scene);
             var sceneIndex = game.scenes.push(scene);

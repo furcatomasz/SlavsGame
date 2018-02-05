@@ -6,7 +6,9 @@ class Monster extends AbstractCharacter {
 
     constructor(game:Game, serverKey:number, serverData:Array) {
         let meshName = serverData.meshName;
-        let mesh = game.factories['worm'].createInstance(meshName, true);
+        let factoryName = serverData.type;
+
+        let mesh = game.factories[factoryName].createInstance(meshName, true);
 
         mesh.visibility = true;
         mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
@@ -14,6 +16,7 @@ class Monster extends AbstractCharacter {
         this.mesh = mesh;
         this.statistics = serverData.statistics;
         game.enemies[this.id] = this;
+        mesh.skeleton.enableBlending(0.2);
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
 

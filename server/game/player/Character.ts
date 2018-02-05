@@ -95,7 +95,7 @@ namespace Server {
                 100 + attributes.attackSpeed,
                 15 + attributes.damage * 5,
                 10 + attributes.defence * 5,
-                (125 / 100) * 2.3,
+                2.9,
                 50 + attributes.blockChance,
                 100
             );

@@ -106,6 +106,11 @@ abstract class AbstractCharacter {
         }
     }
 
+    public getWalkSpeed() {
+        let animationRatio = this.game.getScene().getAnimationRatio();
+
+        return this.statistics.walkSpeed / animationRatio;
+    };
 
     abstract removeFromWorld();
 

@@ -112,6 +112,7 @@ var Server;
                             mesh: box,
                             target: false,
                             activeTargetPoints: [],
+                            walkSpeed: enemyData.statistics.walkSpeed,
                             visibilityAreaMesh: visibilityArea
                         };
                         self.enemies[roomId][key] = enemy;
@@ -159,6 +160,7 @@ var Server;
                         var remotePlayer = {
                             id: activeCharacter.id,
                             socketId: playerData.id,
+                            walkSpeed: activeCharacter.statistics.walkSpeed,
                             roomId: roomId,
                             mesh: box,
                             registeredFunction: null
@@ -215,7 +217,9 @@ var Server;
                         rotation = mesh.rotationQuaternion.toEulerAngles();
                     }
                     rotation.negate();
-                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                    var animationRatio = scene.getAnimationRatio();
+                    var walkSpeed = enemy.walkSpeed / animationRatio;
+                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / 8);
                     mesh.moveWithCollisions(forwards);
                     mesh.position.y = 0;
                 };
@@ -304,29 +308,29 @@ var Server;
                     }
                 });
                 if (remotePlayerKey != null) {
-                    var remotePlayer = self.players[remotePlayerKey];
-                    player = remotePlayer.mesh;
-                    var scene_2 = self.scenes[remotePlayer.roomId];
+                    var remotePlayer_1 = self.players[remotePlayerKey];
+                    player = remotePlayer_1.mesh;
+                    var scene_2 = self.scenes[remotePlayer_1.roomId];
                     if (player) {
                         if (updatedPlayer.attack == true) {
                             console.log('BABYLON: attack player - ' + updatedPlayer.id);
                             return;
                         }
-                        if (remotePlayer.registeredFunction !== undefined) {
-                            scene_2.unregisterBeforeRender(remotePlayer.registeredFunction);
+                        if (remotePlayer_1.registeredFunction !== undefined) {
+                            scene_2.unregisterBeforeRender(remotePlayer_1.registeredFunction);
                         }
                         if (updatedPlayer.targetPoint) {
                             var mesh_1 = player;
                             var targetPoint = updatedPlayer.targetPoint;
                             var targetPointVector3_1 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
                             mesh_1.lookAt(targetPointVector3_1);
-                            remotePlayer.registeredFunction = function () {
+                            remotePlayer_1.registeredFunction = function () {
                                 if (mesh_1.intersectsPoint(targetPointVector3_1)) {
-                                    var remotePlayer_1 = self.players[remotePlayerKey];
-                                    console.log('BABYLON: player intersect target point - ' + updatedPlayer.id + ', roomID:' + remotePlayer_1.roomId);
-                                    scene_2.unregisterBeforeRender(remotePlayer_1.registeredFunction);
+                                    var remotePlayer_2 = self.players[remotePlayerKey];
+                                    console.log('BABYLON: player intersect target point - ' + updatedPlayer.id + ', roomID:' + remotePlayer_2.roomId);
+                                    scene_2.unregisterBeforeRender(remotePlayer_2.registeredFunction);
                                     self.socket.emit('updatePlayerPosition', {
-                                        playerSocketId: remotePlayer_1.socketId,
+                                        playerSocketId: remotePlayer_2.socketId,
                                         position: player.position
                                     });
                                     /*
@@ -348,13 +352,13 @@ var Server;
                                     }
                                     rotation.negate();
                                     var animationRatio = scene_2.getAnimationRatio();
-                                    var walkSpeed = 2.3 * (125 / 100) / animationRatio;
+                                    var walkSpeed = remotePlayer_1.walkSpeed / animationRatio;
                                     var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
                                     mesh_1.moveWithCollisions(forwards);
                                     mesh_1.position.y = 0;
                                 }
                             };
-                            scene_2.registerBeforeRender(remotePlayer.registeredFunction);
+                            scene_2.registerBeforeRender(remotePlayer_1.registeredFunction);
                         }
                     }
                 }
@@ -373,18 +377,24 @@ var Server;
         EnemyManager.prototype.getEnemies = function () {
             var enemies = [];
             enemies[2] = [
-                new Worm(0, { x: -2, y: 0, z: -30 }, [9]),
-                new Worm(1, { x: -2, y: 0, z: -64 }, [9]),
-                new Worm(2, { x: -8, y: 0, z: -72 }, [9]),
-                new Worm(3, { x: -8, y: 0, z: 180 }, [9]),
-                new Worm(4, { x: -4, y: 0, z: 100 }, [9]),
-                new Worm(5, { x: -2, y: 0, z: 110 }, [9]),
-                new Worm(6, { x: -8, y: 0, z: 90 }, [9]),
-                new Worm(7, { x: -4, y: 0, z: 80 }, [9]),
-                new Worm(8, { x: -2, y: 0, z: 85 }, [9]),
-                new Worm(9, { x: -8, y: 0, z: 80 }, [9]),
-                new Worm(10, { x: -4, y: 0, z: 75 }, [9]),
-                new Worm(11, { x: -2, y: 0, z: 70 }, [9]),
+                new Monsters.Worm(0, { x: -28, y: 0, z: 170 }, [Items.Weapons.Axe.ITEM_ID]),
+                new Monsters.Worm(0, { x: -92, y: 0, z: 160 }, []),
+                new Monsters.Boar(0, { x: -105, y: 0, z: 160 }, [Items.Weapons.Sword.ITEM_ID]),
+                new Monsters.Worm(0, { x: -97, y: 0, z: 142 }, []),
+                new Monsters.Boar(0, { x: -55, y: 0, z: 113 }, [Items.Armors.PrimaryArmor.ITEM_ID]),
+                new Monsters.Boar(0, { x: -72, y: 0, z: 94 }, [Items.Helms.PrimaryHelm.ITEM_ID]),
+                new Monsters.Boar(0, { x: -93, y: 0, z: 99 }, [Items.Boots.PrimaryBoots.ITEM_ID]),
+                new Monsters.Boar(0, { x: 5, y: 0, z: 93 }, [Items.Gloves.PrimaryGloves.ITEM_ID]),
+                new Monsters.Boar(0, { x: 27, y: 0, z: 93 }, []),
+                new Monsters.Boar(0, { x: 26, y: 0, z: 72 }, [Items.Shields.WoodShield.ITEM_ID]),
+                new Monsters.Boar(0, { x: 1, y: 0, z: 67 }, []),
+                new Monsters.Worm(0, { x: 105, y: 0, z: 154 }, []),
+                new Monsters.Boar(0, { x: 79, y: 0, z: 156 }, []),
+                new Monsters.Worm(0, { x: 96, y: 0, z: 144 }, []),
+                new Monsters.Worm(0, { x: 94, y: 0, z: 129 }, []),
+                new Monsters.Worm(0, { x: 88, y: 0, z: 185 }, []),
+                new Monsters.Boar(0, { x: 127, y: 0, z: 169 }, []),
+                new Monsters.Boar(0, { x: 134, y: 0, z: 154 }, []),
             ];
             return enemies;
         };
@@ -712,9 +722,9 @@ var Server;
                         self.remotePlayers.forEach(function (remotePlayer, remotePlayerKey) {
                             if (remotePlayer.id == updatedPlayer.playerSocketId) {
                                 // console.log('updatedPlayerPosition');
-                                var remotePlayer_2 = self.remotePlayers[remotePlayerKey];
-                                remotePlayer_2.getActiveCharacter().position = updatedPlayer.position;
-                                socket.broadcast.emit('updatePlayer', remotePlayer_2);
+                                var remotePlayer_3 = self.remotePlayers[remotePlayerKey];
+                                remotePlayer_3.getActiveCharacter().position = updatedPlayer.position;
+                                socket.broadcast.emit('updatePlayer', remotePlayer_3);
                                 return;
                             }
                         });
@@ -1325,31 +1335,53 @@ var Server;
         })(Models = Quests.Models || (Quests.Models = {}));
     })(Quests = Server.Quests || (Server.Quests = {}));
 })(Server || (Server = {}));
-var Monster = /** @class */ (function () {
-    function Monster(id, position, itemsToDrop) {
-        this.id = id;
-        this.position = position;
-        this.itemsToDrop = itemsToDrop;
-        this.availableAttacksFromCharacters = [];
-    }
-    return Monster;
-}());
-var Worm = /** @class */ (function (_super) {
-    __extends(Worm, _super);
-    function Worm(id, position, itemsToDrop) {
-        var _this = _super.call(this, id, position, itemsToDrop) || this;
-        _this.name = 'Worm';
-        _this.type = 'worm';
-        _this.meshName = 'Worm';
-        _this.lvl = 1;
-        _this.experience = 10;
-        _this.attackAreaSize = 2;
-        _this.visibilityAreaSize = 10;
-        _this.statistics = new Attributes.CharacterStatistics(80, 80, 100, 3, 10, 40, 0, 100);
-        return _this;
-    }
-    return Worm;
-}(Monster));
+var Monsters;
+(function (Monsters) {
+    var Monster = /** @class */ (function () {
+        function Monster(id, position, itemsToDrop) {
+            this.id = id;
+            this.position = position;
+            this.itemsToDrop = itemsToDrop;
+            this.availableAttacksFromCharacters = [];
+        }
+        return Monster;
+    }());
+    Monsters.Monster = Monster;
+    var Boar = /** @class */ (function (_super) {
+        __extends(Boar, _super);
+        function Boar(id, position, itemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop) || this;
+            _this.name = 'Boar';
+            _this.type = 'boar';
+            _this.meshName = 'Boar';
+            _this.lvl = 2;
+            _this.experience = 20;
+            _this.attackAreaSize = 2;
+            _this.visibilityAreaSize = 18;
+            _this.statistics = new Attributes.CharacterStatistics(200, 200, 100, 3, 10, 6, 0, 100);
+            return _this;
+        }
+        return Boar;
+    }(Monster));
+    Monsters.Boar = Boar;
+    var Worm = /** @class */ (function (_super) {
+        __extends(Worm, _super);
+        function Worm(id, position, itemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop) || this;
+            _this.name = 'Worm';
+            _this.type = 'worm';
+            _this.meshName = 'Worm';
+            _this.lvl = 1;
+            _this.experience = 10;
+            _this.attackAreaSize = 2;
+            _this.visibilityAreaSize = 10;
+            _this.statistics = new Attributes.CharacterStatistics(80, 80, 100, 3, 10, 8, 0, 100);
+            return _this;
+        }
+        return Worm;
+    }(Monster));
+    Monsters.Worm = Worm;
+})(Monsters || (Monsters = {}));
 var Server;
 (function (Server) {
     var Character = /** @class */ (function () {
@@ -1407,7 +1439,7 @@ var Server;
                     blockChance: 0
                 };
             }
-            var statistics = new Attributes.CharacterStatistics(100 + attributes.health * 5, 100 + attributes.health * 5, 100 + attributes.attackSpeed, 15 + attributes.damage * 5, 10 + attributes.defence * 5, (125 / 100) * 2.3, 50 + attributes.blockChance, 100);
+            var statistics = new Attributes.CharacterStatistics(100 + attributes.health * 5, 100 + attributes.health * 5, 100 + attributes.attackSpeed, 15 + attributes.damage * 5, 10 + attributes.defence * 5, 2.9, 50 + attributes.blockChance, 100);
             statistics.addItemsStatistics(this);
             this.statistics = statistics;
             return this;

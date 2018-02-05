@@ -31,7 +31,7 @@ class Player extends AbstractCharacter {
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
-        mesh.skeleton.enableBlending(0.5);
+        mesh.skeleton.enableBlending(0.2);
         mesh.alwaysSelectAsActiveMesh = true;
         // Collisions.setCollider(game.getScene(), mesh, null, false);
 
@@ -106,12 +106,6 @@ class Player extends AbstractCharacter {
         }
 
         return this;
-    };
-
-    public getWalkSpeed() {
-        let animationRatio = this.game.getScene().getAnimationRatio();
-
-        return this.statistics.walkSpeed / animationRatio;
     };
 
     public removeFromWorld() {

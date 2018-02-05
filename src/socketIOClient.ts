@@ -340,7 +340,9 @@ class SocketIOClient {
                         label.shadowOffsetX = 0;
                         label.shadowOffsetY = 0;
                         label.shadowBlur = 1;
-                        let paddingTop = 0;
+                        let paddingTop = -150;
+                        label.top = paddingTop;
+
                         let alpha = 1;
                         let animateText = function() {
                             label.top = paddingTop;
@@ -404,7 +406,7 @@ class SocketIOClient {
                                 rotation = mesh.rotationQuaternion.toEulerAngles();
                             }
                             rotation.negate();
-                            let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                            let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / 8);
                             mesh.moveWithCollisions(forwards);
 
                             if (enemy.animation) {

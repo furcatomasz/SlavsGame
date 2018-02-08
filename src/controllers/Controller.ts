@@ -6,6 +6,7 @@ abstract class Controller {
     public targetPoint;
     public attackPoint: BABYLON.AbstractMesh;
     public ball: BABYLON.Mesh;
+    public flag: BABYLON.Mesh;
 
     public forward:boolean;
     public back:boolean;

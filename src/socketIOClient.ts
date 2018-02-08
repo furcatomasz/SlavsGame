@@ -499,7 +499,7 @@ class SocketIOClient {
                         self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
                         if(player.isControllable) {
                             game.controller.targetPoint = null;
-                            game.controller.ball.visibility = 0;
+                            game.controller.flag.visibility = 0;
                         }
 
                         if (player.animation) {

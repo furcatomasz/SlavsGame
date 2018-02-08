@@ -159,6 +159,7 @@ var Scene = /** @class */ (function () {
         this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
         this.game.factories['boar'] = new Factories.Boars(this.game, scene, assetsManager).initFactory();
         this.game.factories['zombie'] = new Factories.Zombies(this.game, scene, assetsManager).initFactory();
+        this.game.factories['flag'] = new Factories.Flags(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
         return this;
     };
@@ -856,7 +857,7 @@ var SocketIOClient = /** @class */ (function () {
                         self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
                         if (player.isControllable) {
                             game.controller.targetPoint = null;
-                            game.controller.ball.visibility = 0;
+                            game.controller.flag.visibility = 0;
                         }
                         if (player.animation) {
                             player.animation.stop();
@@ -1264,7 +1265,13 @@ var Mouse = /** @class */ (function (_super) {
     Mouse.prototype.registerControls = function (scene) {
         var self = this;
         var clickTrigger = false;
-        var ball = BABYLON.Mesh.CreateBox("sphere", 0.4, scene);
+        var ball = BABYLON.Mesh.CreateBox("mouseBox", 0.4, scene);
+        var meshFlag = this.game.factories['flag'].createInstance('Flag', false);
+        meshFlag.visibility = 0;
+        meshFlag.isPickable = false;
+        meshFlag.parent = ball;
+        meshFlag.scaling = new BABYLON.Vector3(0.3, 0.3, 0.3);
+        this.flag = meshFlag;
         ball.actionManager = new BABYLON.ActionManager(scene);
         ball.isPickable = false;
         ball.visibility = 0;
@@ -1281,7 +1288,7 @@ var Mouse = /** @class */ (function (_super) {
                     self.targetPoint = pickResult.pickedPoint;
                     self.targetPoint.y = 0;
                     self.ball.position = self.targetPoint;
-                    self.ball.visibility = 1;
+                    meshFlag.visibility = 1;
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint,
                         playerPosition: self.game.player.mesh.position
@@ -1391,6 +1398,23 @@ var Collisions = /** @class */ (function () {
     };
     return Collisions;
 }());
+/// <reference path="AbstractFactory.ts"/>
+/// <reference path="../game.ts"/>
+var Factories;
+(function (Factories) {
+    var Flags = /** @class */ (function (_super) {
+        __extends(Flags, _super);
+        function Flags(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'flag';
+            _this.dir = 'assets/Environment/Flag/';
+            _this.fileName = 'Flag.babylon';
+            return _this;
+        }
+        return Flags;
+    }(Factories.AbstractFactory));
+    Factories.Flags = Flags;
+})(Factories || (Factories = {}));
 /// <reference path="AbstractFactory.ts"/>
 /// <reference path="../game.ts"/>
 var Factories;

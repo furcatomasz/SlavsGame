@@ -22,6 +22,7 @@ class Mouse extends Controller {
 
         scene.onPointerUp = function (evt, pickResult) {
             clickTrigger = false;
+            meshFlag.visibility = 1;
         }
         
         scene.onPointerDown = function (evt, pickResult) {
@@ -34,7 +35,7 @@ class Mouse extends Controller {
                     self.targetPoint = pickResult.pickedPoint;
                     self.targetPoint.y = 0;
                     self.ball.position = self.targetPoint;
-                    meshFlag.visibility = 1;
+                    meshFlag.visibility = 0;
 
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint,

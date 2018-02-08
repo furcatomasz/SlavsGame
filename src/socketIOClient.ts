@@ -498,7 +498,7 @@ class SocketIOClient {
                     if (player.mesh.intersectsPoint(targetPointVector3)) {
                         self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
                         if(player.isControllable) {
-                            game.controller.targetPoint = null;
+                            //game.controller.targetPoint = null;
                             game.controller.flag.visibility = 0;
                         }
 

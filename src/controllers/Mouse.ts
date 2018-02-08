@@ -22,7 +22,11 @@ class Mouse extends Controller {
 
         scene.onPointerUp = function (evt, pickResult) {
             clickTrigger = false;
-            meshFlag.visibility = 1;
+
+            let pickedMesh = pickResult.pickedMesh;
+            if (self.game.player && pickedMesh.name.search("Ground") >= 0) {
+                meshFlag.visibility = 1;
+            }
         }
         
         scene.onPointerDown = function (evt, pickResult) {

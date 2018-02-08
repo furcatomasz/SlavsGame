@@ -130,8 +130,8 @@ var Scene = /** @class */ (function () {
         scene.fogColor = new BABYLON.Color3(0.02, 0.05, 0.2);
         scene.fogDensity = 1;
         //Only if LINEAR
-        scene.fogStart = 70;
-        scene.fogEnd = 88;
+        scene.fogStart = 60;
+        scene.fogEnd = 92;
         return this;
     };
     Scene.prototype.setOrthoCameraHeights = function (camera) {
@@ -1170,9 +1170,9 @@ var Player = /** @class */ (function (_super) {
     };
     Player.prototype.refreshCameraPosition = function () {
         this.game.getScene().activeCamera.position = this.mesh.position.clone();
-        this.game.getScene().activeCamera.position.y = 45;
-        this.game.getScene().activeCamera.position.z -= 31;
-        this.game.getScene().activeCamera.position.x -= 31;
+        this.game.getScene().activeCamera.position.y = 50;
+        this.game.getScene().activeCamera.position.z -= 34;
+        this.game.getScene().activeCamera.position.x -= 34;
     };
     /**
      *
@@ -1278,7 +1278,10 @@ var Mouse = /** @class */ (function (_super) {
         this.ball = ball;
         scene.onPointerUp = function (evt, pickResult) {
             clickTrigger = false;
-            meshFlag.visibility = 1;
+            var pickedMesh = pickResult.pickedMesh;
+            if (self.game.player && pickedMesh.name.search("Ground") >= 0) {
+                meshFlag.visibility = 1;
+            }
         };
         scene.onPointerDown = function (evt, pickResult) {
             var pickedMesh = pickResult.pickedMesh;

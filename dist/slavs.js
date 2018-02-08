@@ -158,6 +158,7 @@ var Scene = /** @class */ (function () {
         this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
         this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
         this.game.factories['boar'] = new Factories.Boars(this.game, scene, assetsManager).initFactory();
+        this.game.factories['zombie'] = new Factories.Zombies(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
         return this;
     };
@@ -779,7 +780,7 @@ var SocketIOClient = /** @class */ (function () {
                                 rotation = mesh_1.rotationQuaternion.toEulerAngles();
                             }
                             rotation.negate();
-                            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / enemy.getWalkSpeed());
                             mesh_1.moveWithCollisions(forwards);
                             if (enemy.animation) {
                             }
@@ -1423,6 +1424,23 @@ var Factories;
         return Worms;
     }(Factories.AbstractFactory));
     Factories.Worms = Worms;
+})(Factories || (Factories = {}));
+/// <reference path="AbstractFactory.ts"/>
+/// <reference path="../game.ts"/>
+var Factories;
+(function (Factories) {
+    var Zombies = /** @class */ (function (_super) {
+        __extends(Zombies, _super);
+        function Zombies(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'zombie';
+            _this.dir = 'assets/Characters/Zombie/';
+            _this.fileName = 'Zombie.babylon';
+            return _this;
+        }
+        return Zombies;
+    }(Factories.AbstractFactory));
+    Factories.Zombies = Zombies;
 })(Factories || (Factories = {}));
 /// <reference path="AbstractFactory.ts"/>
 /// <reference path="../game.ts"/>

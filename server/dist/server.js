@@ -377,7 +377,7 @@ var Server;
         EnemyManager.prototype.getEnemies = function () {
             var enemies = [];
             enemies[2] = [
-                new Monsters.Worm(0, { x: -28, y: 0, z: 170 }, [Items.Weapons.Axe.ITEM_ID]),
+                new Monsters.Zombie(0, { x: -28, y: 0, z: 170 }, [Items.Weapons.Axe.ITEM_ID]),
                 new Monsters.Worm(0, { x: -92, y: 0, z: 160 }, []),
                 new Monsters.Boar(0, { x: -105, y: 0, z: 160 }, [Items.Weapons.Sword.ITEM_ID]),
                 new Monsters.Worm(0, { x: -97, y: 0, z: 142 }, []),
@@ -1358,7 +1358,7 @@ var Monsters;
             _this.experience = 20;
             _this.attackAreaSize = 2;
             _this.visibilityAreaSize = 18;
-            _this.statistics = new Attributes.CharacterStatistics(200, 200, 100, 3, 10, 6, 0, 100);
+            _this.statistics = new Attributes.CharacterStatistics(200, 200, 100, 3, 8, 6, 0, 100);
             return _this;
         }
         return Boar;
@@ -1381,6 +1381,23 @@ var Monsters;
         return Worm;
     }(Monster));
     Monsters.Worm = Worm;
+    var Zombie = /** @class */ (function (_super) {
+        __extends(Zombie, _super);
+        function Zombie(id, position, itemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop) || this;
+            _this.name = 'Zombie';
+            _this.type = 'zombie';
+            _this.meshName = 'Zombie';
+            _this.lvl = 3;
+            _this.experience = 25;
+            _this.attackAreaSize = 2;
+            _this.visibilityAreaSize = 15;
+            _this.statistics = new Attributes.CharacterStatistics(300, 300, 100, 3, 10, 40, 0, 100);
+            return _this;
+        }
+        return Zombie;
+    }(Monster));
+    Monsters.Zombie = Zombie;
 })(Monsters || (Monsters = {}));
 var Server;
 (function (Server) {

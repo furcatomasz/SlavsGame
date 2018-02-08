@@ -4,7 +4,7 @@ namespace Server {
         public getEnemies() {
             let enemies = [];
             enemies[2] = [
-                new Monsters.Worm(0, {x: -28, y: 0, z: 170}, [Items.Weapons.Axe.ITEM_ID]),
+                new Monsters.Zombie(0, {x: -28, y: 0, z: 170}, [Items.Weapons.Axe.ITEM_ID]),
 
                 new Monsters.Worm(0, {x: -92, y: 0, z: 160}, []),
                 new Monsters.Boar(0, {x: -105, y: 0, z: 160}, [Items.Weapons.Sword.ITEM_ID]),

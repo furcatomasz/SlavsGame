@@ -856,7 +856,7 @@ var SocketIOClient = /** @class */ (function () {
                     if (player.mesh.intersectsPoint(targetPointVector3_1)) {
                         self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
                         if (player.isControllable) {
-                            game.controller.targetPoint = null;
+                            //game.controller.targetPoint = null;
                             game.controller.flag.visibility = 0;
                         }
                         if (player.animation) {
@@ -1278,6 +1278,7 @@ var Mouse = /** @class */ (function (_super) {
         this.ball = ball;
         scene.onPointerUp = function (evt, pickResult) {
             clickTrigger = false;
+            meshFlag.visibility = 1;
         };
         scene.onPointerDown = function (evt, pickResult) {
             var pickedMesh = pickResult.pickedMesh;
@@ -1288,7 +1289,7 @@ var Mouse = /** @class */ (function (_super) {
                     self.targetPoint = pickResult.pickedPoint;
                     self.targetPoint.y = 0;
                     self.ball.position = self.targetPoint;
-                    meshFlag.visibility = 1;
+                    meshFlag.visibility = 0;
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint,
                         playerPosition: self.game.player.mesh.position

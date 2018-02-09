@@ -46,8 +46,8 @@ abstract class Scene {
         scene.fogDensity = 1;
 
         //Only if LINEAR
-        scene.fogStart = 60;
-        scene.fogEnd = 92;
+        scene.fogStart = 70;
+        scene.fogEnd = 93;
 
         return this;
     }

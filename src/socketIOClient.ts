@@ -473,6 +473,7 @@ class SocketIOClient {
             }
 
             if (updatedPlayer.attack == true) {
+                console.log('attack socket'                );
                 let mesh = player.mesh;
                 let targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {

@@ -26,6 +26,11 @@ namespace GUI {
             this.guiPanel = characterPanel;
             this.texture.addControl(characterPanel);
 
+            let textBlock = new BABYLON.GUI.TextBlock("gui.panelhp.name", character.name);
+            textBlock.color = 'white';
+            textBlock.height = "20px";
+            textBlock.textVerticalAlignment = 	BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+
             let hpSlider = new BABYLON.GUI.Slider();
             hpSlider.minimum = 0;
             hpSlider.maximum = character.statistics.hpMax;
@@ -39,12 +44,12 @@ namespace GUI {
             hpSlider.borderColor = 'black';
             this.hpBar = hpSlider;
 
+            characterPanel.addControl(textBlock);
             characterPanel.addControl(hpSlider);
+
         }
 
         public refreshPanel() {
-            console.log(this.character);
-
             this.hpBar.value = this.character.statistics.hp;
         }
 

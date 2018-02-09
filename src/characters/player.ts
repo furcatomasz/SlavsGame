@@ -197,14 +197,6 @@ class Player extends AbstractCharacter {
         this.refreshExperienceInGui();
     }
 
-    protected onHitStart() {
-        let self = this;
-    };
-
-    protected onHitEnd() {
-        this.attackHit = false;
-    };
-
     protected onWalkStart() {
         this.walkSmoke.start();
     }

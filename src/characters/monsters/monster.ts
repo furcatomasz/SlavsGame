@@ -14,6 +14,7 @@ class Monster extends AbstractCharacter {
         mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
         this.id = serverKey;
         this.mesh = mesh;
+        this.name = serverData.name;
         this.statistics = serverData.statistics;
         game.enemies[this.id] = this;
         mesh.skeleton.enableBlending(0.2);
@@ -39,16 +40,34 @@ class Monster extends AbstractCharacter {
                 self.game.gui.characterTopHp.showHpCharacter(self);
             }));
 
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
+        let intervalAttack = null;
+        let intervalAttackFunction = function () {
+            game.client.socket.emit('attack', {
+                attack: true,
+                targetPoint: self.game.controller.attackPoint.position,
+                rotation: self.game.controller.attackPoint.rotation,
+            });
+        };
+
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
             function (pointer) {
                 game.controller.attackPoint = pointer.meshUnderPointer;
                 game.controller.targetPoint = null;
                 game.controller.ball.visibility = 0;
-                game.client.socket.emit('attack', {
-                    attack: true,
-                    targetPoint: self.game.controller.attackPoint.position,
-                    rotation: self.game.controller.attackPoint.rotation,
-                });
+                intervalAttack = setInterval(intervalAttackFunction, 500);
+                intervalAttackFunction();
+            }));
+
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger,
+            function (pointer) {
+                clearInterval(intervalAttack);
+                self.game.controller.attackPoint = null;
+            }));
+
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger,
+            function (pointer) {
+                clearInterval(intervalAttack);
+                self.game.controller.attackPoint = null;
             }));
 
     }

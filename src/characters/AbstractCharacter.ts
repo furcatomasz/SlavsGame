@@ -22,7 +22,6 @@ abstract class AbstractCharacter {
     public animation:BABYLON.Animatable;
     public isControllable:boolean;
     protected attackAnimation: boolean;
-    protected attackHit: boolean;
     public attackArea:BABYLON.Mesh;
 
     public sfxWalk: BABYLON.Sound;
@@ -48,10 +47,8 @@ abstract class AbstractCharacter {
     }
 
     public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null, loop: boolean = false):void {
-        if (this.animation && ! this.attackAnimation) {
+        if (this.animation) {
             this.animation.stop();
-        } else if (this.animation && this.attackAnimation) {
-            return;
         }
         
             let self = this;
@@ -62,20 +59,17 @@ abstract class AbstractCharacter {
                 if(skeleton) {
 
                     self.attackAnimation = true;
-                    self.onHitStart();
                     if(callbackEnd) {
                         callbackStart();
                     }
 
                     self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
-                        if(callbackEnd) {22
+                        if(callbackEnd) {
                             callbackEnd();
                         }
                         skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                         self.animation = null;
                         self.attackAnimation = false;
-                        self.game.controller.attackPoint = null;
-                        self.onHitEnd();
                     });
                 }
             }
@@ -115,9 +109,6 @@ abstract class AbstractCharacter {
     abstract removeFromWorld();
 
     /** Events */
-    protected onHitStart() {};
-    protected onHitEnd() {};
-
     protected onWalkStart() {};
     protected onWalkEnd() {};
 }

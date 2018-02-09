@@ -2985,7 +2985,7 @@ var Mountains = /** @class */ (function (_super) {
                 self.initFactories(scene, assetsManager);
                 game.client.socket.emit('createPlayer');
                 assetsManager.onFinish = function (tasks) {
-                    self.octree = scene.createOrUpdateSelectionOctree();
+                    //self.octree = scene.createOrUpdateSelectionOctree();
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Mountains.TYPE
                     });

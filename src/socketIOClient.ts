@@ -322,7 +322,7 @@ class SocketIOClient {
             let enemy = game.enemies[enemyKey];
 
             if(enemy) {
-                let mesh = enemy.mesh;
+                let mesh = enemy.meshForMove;
 
                 ///action when hp of monster is changed
                 if(enemy.statistics.hp != updatedEnemy.statistics.hp) {
@@ -375,7 +375,11 @@ class SocketIOClient {
 
                 }
 
-                mesh.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
+                ///antylag rule
+                let distanceBetweenObjects = Game.distanceVector(mesh.position, updatedEnemy.position);
+                if(distanceBetweenObjects > 4) {
+                    mesh.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
+                }
                 if (activeTargetPoints[enemyKey] !== undefined) {
                     self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
                 }
@@ -394,7 +398,7 @@ class SocketIOClient {
                     });
 
                     if (!targetMesh && game.player.id == updatedEnemy.target) {
-                        targetMesh = game.player.mesh;
+                        targetMesh = game.player.meshForMove;
                     }
 
                     if (targetMesh) {
@@ -473,12 +477,11 @@ class SocketIOClient {
             }
 
             if (updatedPlayer.attack == true) {
-                console.log('attack socket'                );
-                let mesh = player.mesh;
+                let mesh = player.meshForMove;
                 let targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {
                     let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                    mesh.lookAt(targetPointVector3);
+                    player.meshForMove.lookAt(targetPointVector3);
                 }
 
                 let attackAnimation = (Game.randomNumber(1,2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
@@ -490,7 +493,7 @@ class SocketIOClient {
             }
 
             if (updatedPlayer.targetPoint) {
-                let mesh = player.mesh;
+                let mesh = player.meshForMove;
                 let targetPoint = updatedPlayer.targetPoint;
                 let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
                 mesh.lookAt(targetPointVector3);

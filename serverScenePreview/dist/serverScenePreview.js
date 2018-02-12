@@ -90,6 +90,7 @@ var Server;
                     var enemy = self.enemies[roomId][key];
                     if (enemyData.statistics.hp > 0 && !enemy) {
                         var box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
+                        box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
                         var visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
                             width: 30,
@@ -102,6 +103,7 @@ var Server;
                             mesh: box,
                             target: false,
                             activeTargetPoints: [],
+                            walkSpeed: enemyData.statistics.walkSpeed,
                             visibilityAreaMesh: visibilityArea
                         };
                         self.enemies[roomId][key] = enemy;
@@ -114,15 +116,11 @@ var Server;
             var self = this;
             this.socket.on('createRoom', function (roomId) {
                 if (self.scenes[roomId] === undefined) {
-                    BABYLON.SceneLoader.Load("assets/scenes/server/Mountains/", "Mountains.babylon", self.engine, function (sceneForRoom) {
-                        console.log('BABYLON: crate new room with scene - ' + roomId);
-                        sceneForRoom.fogEnabled = false;
-                        var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), sceneForRoom);
-                        //let sceneForRoom = new BABYLON.Scene(self.engine);
-                        var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), sceneForRoom);
-                        sceneForRoom.activeCamera = camera;
-                        self.scenes[roomId] = sceneForRoom;
-                    });
+                    console.log('BABYLON: crate new room with scene - ' + roomId);
+                    var sceneForRoom = new BABYLON.Scene(self.engine);
+                    sceneForRoom.collisionsEnabled = true;
+                    var camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 25, -25, sceneForRoom));
+                    self.scenes[roomId] = sceneForRoom;
                 }
                 else {
                     console.log('BABYLON: room exists - ' + roomId);
@@ -149,11 +147,13 @@ var Server;
                         var roomId = activeCharacter.roomId;
                         var scene = self.scenes[roomId];
                         var box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
+                        box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);
                         box.actionManager = new BABYLON.ActionManager(scene);
                         var remotePlayer = {
                             id: activeCharacter.id,
                             socketId: playerData.id,
+                            walkSpeed: activeCharacter.statistics.walkSpeed,
                             roomId: roomId,
                             mesh: box,
                             registeredFunction: null
@@ -210,7 +210,9 @@ var Server;
                         rotation = mesh.rotationQuaternion.toEulerAngles();
                     }
                     rotation.negate();
-                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                    var animationRatio = scene.getAnimationRatio();
+                    var walkSpeed = enemy.walkSpeed / animationRatio;
+                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
                     mesh.moveWithCollisions(forwards);
                     mesh.position.y = 0;
                 };
@@ -299,29 +301,29 @@ var Server;
                     }
                 });
                 if (remotePlayerKey != null) {
-                    var remotePlayer = self.players[remotePlayerKey];
-                    player = remotePlayer.mesh;
-                    var scene_2 = self.scenes[remotePlayer.roomId];
+                    var remotePlayer_1 = self.players[remotePlayerKey];
+                    player = remotePlayer_1.mesh;
+                    var scene_2 = self.scenes[remotePlayer_1.roomId];
                     if (player) {
                         if (updatedPlayer.attack == true) {
                             console.log('BABYLON: attack player - ' + updatedPlayer.id);
                             return;
                         }
-                        if (remotePlayer.registeredFunction !== undefined) {
-                            scene_2.unregisterBeforeRender(remotePlayer.registeredFunction);
+                        if (remotePlayer_1.registeredFunction !== undefined) {
+                            scene_2.unregisterBeforeRender(remotePlayer_1.registeredFunction);
                         }
                         if (updatedPlayer.targetPoint) {
                             var mesh_1 = player;
                             var targetPoint = updatedPlayer.targetPoint;
                             var targetPointVector3_1 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
                             mesh_1.lookAt(targetPointVector3_1);
-                            remotePlayer.registeredFunction = function () {
+                            remotePlayer_1.registeredFunction = function () {
                                 if (mesh_1.intersectsPoint(targetPointVector3_1)) {
-                                    var remotePlayer_1 = self.players[remotePlayerKey];
-                                    console.log('BABYLON: player intersect target point - ' + updatedPlayer.id + ', roomID:' + remotePlayer_1.roomId);
-                                    scene_2.unregisterBeforeRender(remotePlayer_1.registeredFunction);
+                                    var remotePlayer_2 = self.players[remotePlayerKey];
+                                    console.log('BABYLON: player intersect target point - ' + updatedPlayer.id + ', roomID:' + remotePlayer_2.roomId);
+                                    scene_2.unregisterBeforeRender(remotePlayer_2.registeredFunction);
                                     self.socket.emit('updatePlayerPosition', {
-                                        playerSocketId: remotePlayer_1.socketId,
+                                        playerSocketId: remotePlayer_2.socketId,
                                         position: player.position
                                     });
                                     /*
@@ -343,13 +345,13 @@ var Server;
                                     }
                                     rotation.negate();
                                     var animationRatio = scene_2.getAnimationRatio();
-                                    var walkSpeed = 2.3 * (125 / 100) / animationRatio;
+                                    var walkSpeed = remotePlayer_1.walkSpeed / animationRatio;
                                     var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
                                     mesh_1.moveWithCollisions(forwards);
                                     mesh_1.position.y = 0;
                                 }
                             };
-                            scene_2.registerBeforeRender(remotePlayer.registeredFunction);
+                            scene_2.registerBeforeRender(remotePlayer_1.registeredFunction);
                         }
                     }
                 }

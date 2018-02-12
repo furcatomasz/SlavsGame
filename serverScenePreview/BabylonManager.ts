@@ -114,6 +114,7 @@ namespace Server {
                     let enemy = self.enemies[roomId][key];
                     if (enemyData.statistics.hp > 0 && !enemy) {
                         let box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
+                        box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
 
                         let visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
@@ -128,6 +129,7 @@ namespace Server {
                             mesh: box,
                             target: false,
                             activeTargetPoints: [],
+                            walkSpeed: enemyData.statistics.walkSpeed,
                             visibilityAreaMesh: visibilityArea
                         };
                         self.enemies[roomId][key] = enemy;
@@ -142,17 +144,12 @@ namespace Server {
             let self = this;
             this.socket.on('createRoom', function (roomId) {
                 if (self.scenes[roomId] === undefined) {
+                    console.log('BABYLON: crate new room with scene - '+ roomId);
 
-                    BABYLON.SceneLoader.Load("assets/scenes/server/Mountains/", "Mountains.babylon", self.engine, function (sceneForRoom) {
-
-                        console.log('BABYLON: crate new room with scene - ' + roomId);
-                        sceneForRoom.fogEnabled = false;
-                        var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), sceneForRoom);
-                        //let sceneForRoom = new BABYLON.Scene(self.engine);
-                        let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), sceneForRoom);
-                        sceneForRoom.activeCamera = camera;
-                        self.scenes[roomId] = sceneForRoom;
-                    });
+                    let sceneForRoom = new BABYLON.Scene(self.engine);
+                    sceneForRoom.collisionsEnabled = true;
+                    let camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 25, -25, sceneForRoom);
+                    self.scenes[roomId] = sceneForRoom;
                 } else {
                     console.log('BABYLON: room exists - '+ roomId);
                 }
@@ -185,12 +182,14 @@ namespace Server {
                         let scene = self.scenes[roomId];
 
                         let box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
+                        box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);
                         box.actionManager = new BABYLON.ActionManager(scene);
 
                         let remotePlayer = {
                             id: activeCharacter.id,
                             socketId: playerData.id,
+                            walkSpeed: activeCharacter.statistics.walkSpeed,
                             roomId: roomId,
                             mesh: box,
                             registeredFunction: null,
@@ -257,7 +256,11 @@ namespace Server {
                         rotation = mesh.rotationQuaternion.toEulerAngles();
                     }
                     rotation.negate();
-                    let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 8, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+
+                    let animationRatio = scene.getAnimationRatio();
+                    let walkSpeed = enemy.walkSpeed / animationRatio;
+
+                    let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
                     mesh.moveWithCollisions(forwards);
                     mesh.position.y = 0;
                 };
@@ -407,7 +410,7 @@ namespace Server {
                                     }
                                     rotation.negate();
                                     let animationRatio = scene.getAnimationRatio();
-                                    let walkSpeed = 2.3 * (125 / 100) / animationRatio;
+                                    let walkSpeed = remotePlayer.walkSpeed / animationRatio;
 
                                     let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
                                     mesh.moveWithCollisions(forwards);

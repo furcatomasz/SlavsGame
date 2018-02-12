@@ -9,9 +9,13 @@ class Monster extends AbstractCharacter {
         let factoryName = serverData.type;
 
         let mesh = game.factories[factoryName].createInstance(meshName, true);
-
         mesh.visibility = true;
-        mesh.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
+
+        ///Create box mesh for moving
+        this.createBoxForMove(game.getScene());
+        this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
+        mesh.parent = this.meshForMove;
+
         this.id = serverKey;
         this.mesh = mesh;
         this.name = serverData.name;
@@ -51,7 +55,7 @@ class Monster extends AbstractCharacter {
 
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
             function (pointer) {
-                game.controller.attackPoint = pointer.meshUnderPointer;
+                game.controller.attackPoint = pointer.meshUnderPointer.parent;
                 game.controller.targetPoint = null;
                 game.controller.ball.visibility = 0;
                 intervalAttack = setInterval(intervalAttackFunction, 500);

@@ -21,20 +21,25 @@ class Mouse extends Controller {
         this.ball = ball;
 
         scene.onPointerUp = function (evt, pickResult) {
-            clickTrigger = false;
+            if(clickTrigger) {
+                clickTrigger = false;
 
-            let pickedMesh = pickResult.pickedMesh;
-            if (self.game.player && pickedMesh.name.search("Ground") >= 0) {
-                meshFlag.visibility = 1;
+                let pickedMesh = pickResult.pickedMesh;
+                if (pickedMesh.name && pickedMesh.name.search("Ground") >= 0) {
+                    meshFlag.visibility = 1;
+                }
             }
         }
         
         scene.onPointerDown = function (evt, pickResult) {
             let pickedMesh = pickResult.pickedMesh;
+            if(self.game.player.isAttack) {
+                return;
+            }
             clickTrigger = true;
 
             if (pickedMesh) {
-                if (self.game.player && pickedMesh.name.search("Ground") >= 0) {
+                if (pickedMesh.name && pickedMesh.name.search("Ground") >= 0) {
                     self.attackPoint = null;
                     self.targetPoint = pickResult.pickedPoint;
                     self.targetPoint.y = 0;
@@ -43,7 +48,7 @@ class Mouse extends Controller {
 
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint,
-                        playerPosition: self.game.player.mesh.position
+                        playerPosition: self.game.player.meshForMove.position
                     });
 
                 }

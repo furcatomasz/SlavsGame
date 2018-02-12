@@ -95,5 +95,13 @@ class Game {
         return Math.round(Math.random() * (maximum - minimum) + minimum);
     }
 
+    public static distanceVector(vectorFrom:BABYLON.Vector3, vectorTo:BABYLON.Vector3) {
+        let dx = vectorFrom.x - vectorTo.x;
+        let dy = vectorFrom.y - vectorTo.y;
+        let dz = vectorFrom.z - vectorTo.z;
+
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
 }
 

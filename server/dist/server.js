@@ -100,6 +100,7 @@ var Server;
                     var enemy = self.enemies[roomId][key];
                     if (enemyData.statistics.hp > 0 && !enemy) {
                         var box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
+                        box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
                         var visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
                             width: 30,
@@ -127,7 +128,8 @@ var Server;
                 if (self.scenes[roomId] === undefined) {
                     console.log('BABYLON: crate new room with scene - ' + roomId);
                     var sceneForRoom = new BABYLON.Scene(self.engine);
-                    var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), sceneForRoom);
+                    sceneForRoom.collisionsEnabled = true;
+                    var camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 25, -25, sceneForRoom));
                     self.scenes[roomId] = sceneForRoom;
                 }
                 else {
@@ -155,6 +157,7 @@ var Server;
                         var roomId = activeCharacter.roomId;
                         var scene = self.scenes[roomId];
                         var box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
+                        box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);
                         box.actionManager = new BABYLON.ActionManager(scene);
                         var remotePlayer = {
@@ -219,7 +222,7 @@ var Server;
                     rotation.negate();
                     var animationRatio = scene.getAnimationRatio();
                     var walkSpeed = enemy.walkSpeed / animationRatio;
-                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
                     mesh.moveWithCollisions(forwards);
                     mesh.position.y = 0;
                 };

@@ -114,6 +114,7 @@ namespace Server {
                     let enemy = self.enemies[roomId][key];
                     if (enemyData.statistics.hp > 0 && !enemy) {
                         let box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
+                        box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
 
                         let visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
@@ -146,7 +147,8 @@ namespace Server {
                     console.log('BABYLON: crate new room with scene - '+ roomId);
 
                     let sceneForRoom = new BABYLON.Scene(self.engine);
-                    let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), sceneForRoom);
+                    sceneForRoom.collisionsEnabled = true;
+                    let camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 25, -25, sceneForRoom);
                     self.scenes[roomId] = sceneForRoom;
                 } else {
                     console.log('BABYLON: room exists - '+ roomId);
@@ -180,6 +182,7 @@ namespace Server {
                         let scene = self.scenes[roomId];
 
                         let box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
+                        box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);
                         box.actionManager = new BABYLON.ActionManager(scene);
 
@@ -257,7 +260,7 @@ namespace Server {
                     let animationRatio = scene.getAnimationRatio();
                     let walkSpeed = enemy.walkSpeed / animationRatio;
 
-                    let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / 8);
+                    let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
                     mesh.moveWithCollisions(forwards);
                     mesh.position.y = 0;
                 };

@@ -12,6 +12,7 @@ abstract class AbstractCharacter {
     public static ANIMATION_SKILL_02:string = 'Skill02';
 
     public mesh:BABYLON.Mesh;
+    public meshForMove:BABYLON.Mesh;
     public id:string;
     public name:string;
 
@@ -21,7 +22,7 @@ abstract class AbstractCharacter {
     protected game:Game;
     public animation:BABYLON.Animatable;
     public isControllable:boolean;
-    protected attackAnimation: boolean;
+    public isAttack: boolean;
     public attackArea:BABYLON.Mesh;
 
     public sfxWalk: BABYLON.Sound;
@@ -46,6 +47,14 @@ abstract class AbstractCharacter {
         this.meshAdvancedTexture = advancedTexture;
     }
 
+    protected createBoxForMove(scene: BABYLON.Scene) {
+        this.meshForMove = BABYLON.Mesh.CreateBox(this.name, 3, scene, false);
+        this.meshForMove.checkCollisions = true;
+        this.meshForMove.visibility = 0;
+
+        return this;
+    }
+
     public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null, loop: boolean = false):void {
         if (this.animation) {
             this.animation.stop();
@@ -58,7 +67,7 @@ abstract class AbstractCharacter {
                 let skeleton = childMesh.skeleton;
                 if(skeleton) {
 
-                    self.attackAnimation = true;
+                    self.isAttack = true;
                     if(callbackEnd) {
                         callbackStart();
                     }
@@ -69,7 +78,7 @@ abstract class AbstractCharacter {
                         }
                         skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                         self.animation = null;
-                        self.attackAnimation = false;
+                        self.isAttack = false;
                     });
                 }
             }

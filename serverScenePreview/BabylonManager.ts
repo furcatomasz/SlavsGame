@@ -24,6 +24,18 @@ namespace Server {
             let self = this;
             this.engine = new BABYLON.Engine(canvas);
 
+            //let scene = new BABYLON.Scene(this.engine);
+            //this.scene = scene;
+            //let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
+            //camera.attachControl(canvas, true);
+            this
+                .socketShowEnemies()
+                .socketUpdateEnemy()
+                .socketPlayerConnected()
+                .socketUpdatePlayer()
+                .removePlayer()
+                .socketCreateRoom();
+
             this.engine.runRenderLoop(function () {
                 for (let key in self.scenes) {
                     let scene = self.scenes[key];
@@ -130,11 +142,17 @@ namespace Server {
             let self = this;
             this.socket.on('createRoom', function (roomId) {
                 if (self.scenes[roomId] === undefined) {
-                    console.log('BABYLON: crate new room with scene - '+ roomId);
 
-                    let sceneForRoom = new BABYLON.Scene(self.engine);
-                    let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), sceneForRoom);
-                    self.scenes[roomId] = sceneForRoom;
+                    BABYLON.SceneLoader.Load("assets/scenes/server/Mountains/", "Mountains.babylon", self.engine, function (sceneForRoom) {
+
+                        console.log('BABYLON: crate new room with scene - ' + roomId);
+                        sceneForRoom.fogEnabled = false;
+                        var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), sceneForRoom);
+                        //let sceneForRoom = new BABYLON.Scene(self.engine);
+                        let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), sceneForRoom);
+                        sceneForRoom.activeCamera = camera;
+                        self.scenes[roomId] = sceneForRoom;
+                    });
                 } else {
                     console.log('BABYLON: room exists - '+ roomId);
                 }

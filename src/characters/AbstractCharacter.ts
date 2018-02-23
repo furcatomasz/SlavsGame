@@ -31,6 +31,7 @@ abstract class AbstractCharacter {
     public bloodParticles: BABYLON.ParticleSystem;
     public meshCharacterTexture: BABYLON.AbstractMesh;
     public meshAdvancedTexture: BABYLON.AbstractMesh;
+    public dynamicFunction;
 
     constructor(name:string, game:Game) {
         this.game = game;
@@ -51,6 +52,7 @@ abstract class AbstractCharacter {
         this.meshForMove = BABYLON.Mesh.CreateBox(this.name, 3, scene, false);
         this.meshForMove.checkCollisions = true;
         this.meshForMove.visibility = 0;
+        this.meshForMove.isPickable = 0;
 
         return this;
     }

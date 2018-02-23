@@ -90,7 +90,7 @@ class Monster extends AbstractCharacter {
     }
 
     public removeFromWorld() {
-        this.mesh.dispose();
+        this.meshForMove.dispose();
     }
 
 }

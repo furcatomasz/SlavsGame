@@ -458,7 +458,7 @@ class SocketIOClient {
     protected updatePlayers() {
         let self = this;
         let game = this.game;
-        let activeTargetPoints = [];
+
         this.socket.on('updatePlayer', function (updatedPlayer) {
             let remotePlayerKey = null;
             let player = null;
@@ -476,8 +476,11 @@ class SocketIOClient {
                 player = game.remotePlayers[remotePlayerKey];
             }
 
+            if(!player) {
+                return;
+            }
+
             if (updatedPlayer.attack == true) {
-                let mesh = player.meshForMove;
                 let targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {
                     let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
@@ -488,46 +491,11 @@ class SocketIOClient {
                 player.runAnimationHit(attackAnimation, null, null);
                 return;
             }
-            if (activeTargetPoints[remotePlayerKey] !== undefined) {
-                self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
-            }
 
-            if (updatedPlayer.targetPoint) {
-                let mesh = player.meshForMove;
-                let targetPoint = updatedPlayer.targetPoint;
-                let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                mesh.lookAt(targetPointVector3);
+            if (updatedPlayer.targetPoint && !player.isControllable) {
+                let targetPointVector3 = new BABYLON.Vector3(updatedPlayer.targetPoint.x, 0, updatedPlayer.targetPoint.z);
 
-                activeTargetPoints[remotePlayerKey] = function () {
-                    if (player.mesh.intersectsPoint(targetPointVector3)) {
-                        self.game.getScene().unregisterBeforeRender(activeTargetPoints[remotePlayerKey]);
-                        if(player.isControllable) {
-                            //game.controller.targetPoint = null;
-                            game.controller.flag.visibility = 0;
-                        }
-
-                        if (player.animation) {
-                            player.animation.stop();
-                        }
-
-                    } else {
-                        let rotation = mesh.rotation;
-                        if (mesh.rotationQuaternion) {
-                            rotation = mesh.rotationQuaternion.toEulerAngles();
-                        }
-                        rotation.negate();
-                        let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / player.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / player.getWalkSpeed());
-                        mesh.moveWithCollisions(forwards);
-                        mesh.position.y = 0;
-
-                        self.game.player.refreshCameraPosition();
-
-                        player.runAnimationWalk();
-                    }
-
-                }
-
-                self.game.getScene().registerBeforeRender(activeTargetPoints[remotePlayerKey]);
+                player.runPlayerToPosition(targetPointVector3);
             }
 
         });

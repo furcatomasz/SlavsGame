@@ -201,6 +201,47 @@ class Player extends AbstractCharacter {
         this.refreshExperienceInGui();
     }
 
+    public runPlayerToPosition(targetPointVector3) {
+        let self = this;
+        let mesh = this.meshForMove;
+        mesh.lookAt(targetPointVector3);
+
+        if (this.dynamicFunction !== undefined) {
+            self.game.getScene().unregisterBeforeRender(this.dynamicFunction);
+        }
+
+        this.dynamicFunction = function() {
+            if (mesh.intersectsPoint(targetPointVector3)) {
+                self.game.getScene().unregisterBeforeRender(self.dynamicFunction);
+                if (self.isControllable) {
+                    //game.controller.targetPoint = null;
+                    self.game.controller.flag.visibility = 0;
+                }
+
+                if (self.animation) {
+                    self.animation.stop();
+                }
+
+            } else {
+                let rotation = mesh.rotation;
+                if (mesh.rotationQuaternion) {
+                    rotation = mesh.rotationQuaternion.toEulerAngles();
+                }
+                rotation.negate();
+                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / self.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / self.getWalkSpeed());
+                mesh.moveWithCollisions(forwards);
+                mesh.position.y = 0;
+
+                self.game.player.refreshCameraPosition();
+
+                self.runAnimationWalk();
+            }
+        };
+
+        this.game.getScene().registerBeforeRender(this.dynamicFunction);
+
+    }
+
     protected onWalkStart() {
         this.walkSmoke.start();
     }

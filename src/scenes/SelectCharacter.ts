@@ -13,17 +13,19 @@ class SelectCharacter extends Scene {
             game.sceneManager = self;
             self
                 .setDefaults(game)
-                .optimizeScene(scene)
-                .setCamera(scene);
+                .optimizeScene(scene);
+                //.setCamera(scene);
 
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
             let assetsManager = new BABYLON.AssetsManager(scene);
+
+            scene.activeCamera = new BABYLON.FreeCamera("selectCharacterCamera", new BABYLON.Vector3(0, 0, 0), scene);
             scene.activeCamera.maxZ = 200;
             scene.activeCamera.minZ = -200;
-            scene.activeCamera.mode = BABYLON.Camera.PERSPECTIVE_CAMERA;
+            //scene.activeCamera.mode = BABYLON.Camera.PERSPECTIVE_CAMERA;
 
-            scene.activeCamera.position = new BABYLON.Vector3(0, 11, -12);
+            scene.activeCamera.position = new BABYLON.Vector3(0, 14, -20);
             scene.activeCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
 
             scene.executeWhenReady(function () {

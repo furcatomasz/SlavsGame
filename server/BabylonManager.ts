@@ -143,6 +143,8 @@ namespace Server {
         public socketCreateRoom() {
             let self = this;
             this.socket.on('createRoom', function (roomId) {
+                console.log(self.scenes);
+                console.log(roomId);
                 if (self.scenes[roomId] === undefined) {
                     console.log('BABYLON: crate new room with scene - '+ roomId);
 
@@ -163,6 +165,9 @@ namespace Server {
 
             this.socket.on('showPlayer', function (playerData) {
                 console.log('BABYLON: connected new player - '+ playerData.id);
+                if(!self.scenes[playerData.roomId]) {
+                    return;
+                }
 
                 let remotePlayerKey = null;
                 if (playerData.id !== self.socket.id) {

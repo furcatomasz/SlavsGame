@@ -125,6 +125,8 @@ var Server;
         BabylonManager.prototype.socketCreateRoom = function () {
             var self = this;
             this.socket.on('createRoom', function (roomId) {
+                console.log(self.scenes);
+                console.log(roomId);
                 if (self.scenes[roomId] === undefined) {
                     console.log('BABYLON: crate new room with scene - ' + roomId);
                     var sceneForRoom = new BABYLON.Scene(self.engine);
@@ -142,6 +144,9 @@ var Server;
             var self = this;
             this.socket.on('showPlayer', function (playerData) {
                 console.log('BABYLON: connected new player - ' + playerData.id);
+                if (!self.scenes[playerData.roomId]) {
+                    return;
+                }
                 var remotePlayerKey = null;
                 if (playerData.id !== self.socket.id) {
                     //check if user exists
@@ -488,7 +493,7 @@ var SlavsServer = /** @class */ (function () {
             self.questManager = new Server.QuestManager();
             self.enemies = self.enemyManager.getEnemies();
             self.quests = self.questManager.getQuests();
-            self.serverFrontEnd = new Server.FrontEnd(self, app, express);
+            //self.serverFrontEnd = new Server.FrontEnd(self, app, express);
             self.babylonManager = new Server.BabylonManager(self);
             self.serverWebsocket = new Server.IO(self, io);
         });

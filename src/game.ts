@@ -68,7 +68,7 @@ class Game {
     }
 
     createScene(): Game {
-        new Mountains().initScene(this);
+        new SelectCharacter().initScene(this);
 
         return this;
     }

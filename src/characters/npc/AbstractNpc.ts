@@ -6,6 +6,7 @@ namespace NPC {
         protected quest: Quests.AbstractQuest;
         protected questId: number;
         protected tooltip: BABYLON.AbstractMesh;
+        protected inventory: Character.Inventory;
 
         public constructor(game:Game, name) {
             super(name, game);
@@ -102,6 +103,20 @@ namespace NPC {
             this.tooltip = box1;
 
             this.refreshTooltipColor();
+        }
+
+        /**
+         *
+         * @param inventoryItems
+         */
+        public setItems(inventoryItems: Array) {
+            this.inventory = new Character.Inventory(this.game, this);
+
+            if(inventoryItems) {
+                let itemManager = new Items.ItemManager(this.game);
+                itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, this.inventory, true);
+
+            }
         }
     }
 }

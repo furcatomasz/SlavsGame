@@ -46,7 +46,7 @@ class Player extends AbstractCharacter {
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         this.inventory = new Character.Inventory(game, this);
         this.setItems(serverData.inventory.items);
-
+console.log(serverData.inventory.items);
         if (this.isControllable) {
             this.mesh.isPickable = false;
 

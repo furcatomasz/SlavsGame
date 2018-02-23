@@ -12,6 +12,8 @@ namespace SelectCharacter {
 
             let mesh = game.factories['character'].createInstance('Warrior', true);
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
+            mesh.skeleton.enableBlending(0.2);
+            mesh.alwaysSelectAsActiveMesh = true;
 
             switch (place) {
                 case 0:
@@ -27,27 +29,23 @@ namespace SelectCharacter {
             this.mesh = mesh;
             super(name, game);
 
-            this.initPlayerInventory();
+            this.setItems(game.client.characters[this.place].inventory.items);
             this.mesh.skeleton.beginAnimation('Sit');
 
             this.registerActions();
         }
 
-        protected initPlayerInventory() {
-            let game = this.game;
-            this.inventory = new Character.Inventory(game, this);
-            let inventoryItems = game.client.characters[this.place].items;
+        /**
+         *
+         * @param inventoryItems
+         */
+        public setItems(inventoryItems: Array) {
+            this.inventory = new Character.Inventory(this.game, this);
+
             if(inventoryItems) {
-                let itemManager = new Items.ItemManager(game);
-                for (let i = 0; i < inventoryItems.length; i++) {
-                    let itemDatabase = inventoryItems[i];
-                    let item = itemManager.getItemUsingId(itemDatabase.itemId);
-                    if (itemDatabase.equip) {
-                        if (item.getType() != 1 && item.getType() != 2) {
-                            this.inventory.mount(item);
-                        }
-                    }
-                }
+                let itemManager = new Items.ItemManager(this.game);
+                itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, this.inventory, true);
+
             }
         }
 
@@ -56,16 +54,33 @@ namespace SelectCharacter {
 
         protected registerActions() {
             let self = this;
+            let pointerOut = false;
+            let sitDown = function() {
+                if(!self.skeletonAnimation) {
+                    let animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
+                    self.skeletonAnimation = self.game.getScene().beginAnimation(self.mesh, animationSelectRange.to, animationSelectRange.from+1, false, -1, function() {
+                        self.mesh.skeleton.beginAnimation('Sit');
+                        self.skeletonAnimation = null;
+                    });
+                }
+            };
+
             this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
             this.mesh.isPickable = true;
 
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPointerOverTrigger,
                 function() {
+                    pointerOut = false;
                     if(!self.skeletonAnimation) {
                         self.skeletonAnimation = self.mesh.skeleton.beginAnimation('Select', false, 1, function () {
-                            self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                             self.skeletonAnimation = null;
+
+                            if(pointerOut) {
+                                sitDown();
+                            } else {
+                                self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                            }
                         });
                     }
                 })
@@ -74,13 +89,8 @@ namespace SelectCharacter {
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPointerOutTrigger,
                 function() {
-                    if(!self.skeletonAnimation) {
-                        let animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
-                        self.skeletonAnimation = self.game.getScene().beginAnimation(self.mesh, animationSelectRange.to, animationSelectRange.from, false, -1, function() {
-                            self.mesh.skeleton.beginAnimation('Sit');
-                            self.skeletonAnimation = null;
-                        });
-                    }
+                    sitDown();
+                    pointerOut = true;
                 })
             );
 
@@ -91,7 +101,7 @@ namespace SelectCharacter {
                 function() {
                     client.socket.emit('selectCharacter', self.place);
                     client.socket.on('characterSelected', function() {
-                        self.game.sceneManager.changeScene(new Simple());
+                        self.game.sceneManager.changeScene(new Castle());
                         client.socket.emit('createPlayer');
                     })
                 })

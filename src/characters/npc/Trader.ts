@@ -1,6 +1,6 @@
 /// <reference path="AbstractNpc.ts"/>
 namespace NPC {
-    export class Warrior extends AbstractNpc {
+    export class Trader extends AbstractNpc {
 
         public constructor(game:Game, position: BABYLON.Vector3, rotation: BABYLON.Vector3) {
 
@@ -21,23 +21,13 @@ namespace NPC {
                     equip: 1,
                 },
                 {
-                    meshName: 'Hood',
-                    equip: 1,
-                },
-                {
                     meshName: 'Boots',
                     equip: 1,
                 },
-                {
-                    meshName: 'Gloves',
-                    equip: 1,
-                },
-                {
-                    meshName: 'Axe.001',
-                    equip: 1,
-                }
             ];
             this.setItems(items);
+            this.mesh.skeleton.beginAnimation('Sit');
+
 
         }
 

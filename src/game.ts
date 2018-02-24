@@ -83,9 +83,6 @@ class Game {
 
         window.addEventListener('resize', () => {
             self.engine.resize();
-            if(self.getScene()) {
-                self.sceneManager.setOrthoCameraHeights(self.getScene().activeCamera);
-            }
         });
 
         return this;

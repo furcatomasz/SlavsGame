@@ -2,22 +2,15 @@
 namespace NPC {
     export class BigWarrior extends AbstractNpc {
 
-        public constructor(game:Game, position: BABYLON.Vector3, rotation: BABYLON.Vector3) {
-
-            this.name = 'Warrior';
-
+        public constructor(game:Game, position:BABYLON.Vector3, rotation:BABYLON.Vector3) {
+            this.name = 'Lech';
             let mesh = game.factories['character'].createInstance('Warrior', true);
-            game.factories['character'].loadedMeshes.forEach(function(mesh, key) {
-                console.log(mesh.name);
-            });
-            mesh.position = position;
-            mesh.rotation = rotation;
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
 
             this.mesh = mesh;
             this.questId = Quests.KillWorms.QUEST_ID;
 
-            super(game, name);
+            super(game, name, position, rotation);
 
             let items = [
                 {

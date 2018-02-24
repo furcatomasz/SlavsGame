@@ -3,9 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
     <title>Slavs</title>
-    <script src="/bower_components/babylonjs/dist/preview%20release/babylon.js"></script>
-    <script src="/bower_components/babylonjs/dist/preview%20release/inspector/babylon.inspector.bundle.js"></script>
-    <script src="/bower_components/babylonjs/dist/preview%20release/gui/babylon.gui.min.js"></script>
+    <script src="/bower_components/babylonjs/dist/babylon.js"></script>
+    <script src="/bower_components/babylonjs/dist/inspector/babylon.inspector.bundle.js"></script>
+    <script src="/bower_components/babylonjs/dist/gui/babylon.gui.min.js"></script>
     <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
     <script src="require.js"></script>
     <script src="/dist/slavs.js"></script>
@@ -27,7 +27,7 @@
     </style>
 </head>
 <body>
-    <canvas id="renderCanvas" mut></canvas>
+    <canvas id="renderCanvas"></canvas>
     <script>
         if (BABYLON.Engine.isSupported()) {
             var htmlElement = document.getElementById('renderCanvas');

@@ -38,24 +38,15 @@ class EnvironmentCastle {
             }
         }
 
-        ///Freeze world matrix all static meshes
-        for (let i = 0; i < scene.meshes.length; i++) {
-            scene.meshes[i].freezeWorldMatrix();
-        }
+        /////Freeze world matrix all static meshes
+        //for (let i = 0; i < scene.meshes.length; i++) {
+        //    scene.meshes[i].freezeWorldMatrix();
+        //}
 
         ////fireplace
         if (this.fires.length) {
             this.fires.forEach(function (fire, key) {
-                let cone = fire;
-                //let fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 3, 0), scene);
-                //fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-                //fireplaceLight.parent = cone;
-                //fireplaceLight.range = 40;
-                //fireplaceLight.intensity = 2;
-                //let smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
-                //smokeSystem.start();
-
-                let fireSystem = new Particles.TorchFire(game, cone).particleSystem;
+                let fireSystem = new Particles.TorchFire(game, fire).particleSystem;
                 fireSystem.start();
             });
         }
@@ -89,15 +80,15 @@ class EnvironmentCastle {
         //     let sceneMesh = this.colliders[i];
         //     Collisions.setCollider(scene, sceneMesh);
         // }
-        //
+
         //new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, {loop: true, autoplay: true});
 
-        var plane = BABYLON.Mesh.CreateGround("waterMesh", 80, 30, 32, game.getScene(), false);
-        plane.visibility = 0;
-        plane.position.x = -110;
-        plane.position.y = -3;
-        plane.position.z = -4;
-        let fogParticleSystem = new Particles.Fog(game, plane);
+        var planeWater = BABYLON.Mesh.CreateGround("waterMesh", 80, 30, 32, game.getScene(), false);
+        planeWater.visibility = 0;
+        planeWater.position.x = -110;
+        planeWater.position.y = -3;
+        planeWater.position.z = -4;
+        let fogParticleSystem = new Particles.Fog(game, planeWater);
         fogParticleSystem.particleSystem.start();
     }
 

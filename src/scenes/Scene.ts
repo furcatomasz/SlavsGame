@@ -1,8 +1,3 @@
-/// <reference path="../game.ts"/>
-/// <reference path="../../bower_components/babylonjs/dist/babylon.d.ts"/>
-/// <reference path="../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
-
-import Camera = BABYLON.Camera;
 abstract class Scene {
     static TYPE = 0;
 
@@ -10,7 +5,6 @@ abstract class Scene {
     protected light:BABYLON.IShadowLight;
     public pipeline: BABYLON.StandardRenderingPipeline;
     public shadowGenerator:BABYLON.ShadowGenerator;
-    public guiTexture:BABYLON.GUI.AdvancedDynamicTexture;
     public environment:Environment;
     public activeQuests:Array<Quests.AbstractQuest>;
     public octree: BABYLON.Octree;
@@ -24,16 +18,11 @@ abstract class Scene {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
         camera.rotation = new BABYLON.Vector3(0.79,0.79,0);
         camera.position = new BABYLON.Vector3(0,35,0);
-        //camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        //camera.orthoTop = 20;
-        //camera.orthoBottom = 0;
-        //camera.orthoLeft = -15;
-        //camera.orthoRight = 15;
         camera.maxZ = 210;
         camera.minZ = 0;
         camera.fov = 0.5;
         camera.fovMode = 0;
-        //this.setOrthoCameraHeights(camera);
+
         scene.activeCamera = camera;
 
         return this;
@@ -52,17 +41,22 @@ abstract class Scene {
         return this;
     }
 
-    public setOrthoCameraHeights(camera:BABYLON.Camera) {
-        var ratio = window.innerWidth / window.innerHeight;
-        var zoom = camera.orthoTop;
-        var newWidth = zoom * ratio;
-        camera.orthoLeft = -Math.abs(newWidth);
-        camera.orthoRight = newWidth;
-        camera.orthoBottom = -Math.abs(zoom);
-        camera.rotation = new BABYLON.Vector3(0.75, 0.75, 0);
-
-        return camera;
-    }
+    //public setOrthoCameraHeights(camera:BABYLON.Camera) {
+    //camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
+    //camera.orthoTop = 20;
+    //camera.orthoBottom = 0;
+    //camera.orthoLeft = -15;
+    //camera.orthoRight = 15;
+    //    var ratio = window.innerWidth / window.innerHeight;
+    //    var zoom = camera.orthoTop;
+    //    var newWidth = zoom * ratio;
+    //    camera.orthoLeft = -Math.abs(newWidth);
+    //    camera.orthoRight = newWidth;
+    //    camera.orthoBottom = -Math.abs(zoom);
+    //    camera.rotation = new BABYLON.Vector3(0.75, 0.75, 0);
+    //
+    //    return camera;
+    //}
 
     public optimizeScene(scene:BABYLON.Scene) {
         scene.collisionsEnabled = true;
@@ -72,6 +66,7 @@ abstract class Scene {
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
         scene.audioEnabled = true;
+
         return this;
     }
 
@@ -105,11 +100,11 @@ abstract class Scene {
     //defaultPipeline.imageProcessingEnabled = false;
     //defaultPipeline.bloomWeight = 0.05;
 
-        //var kernel = 4.0;
+        var kernel = 4.0;
         //var postProcess0 = new BABYLON.BlurPostProcess("Horizontal blur", new BABYLON.Vector2(1.0, 0), kernel, 1.0, camera);
         //var postProcess1 = new BABYLON.BlurPostProcess("Vertical blur", new BABYLON.Vector2(0, 1.0), kernel, 1.0, camera);
         //var postProcess = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.8, camera);
-        //var postProcess = new BABYLON.FxaaPostProcess("fxaa", 1.0, camera);
+        var postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
 
         //var postProcess = new BABYLON.HighlightsPostProcess("highlights", 0.1, camera);
         //var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");

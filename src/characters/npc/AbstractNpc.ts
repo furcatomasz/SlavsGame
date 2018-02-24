@@ -8,14 +8,33 @@ namespace NPC {
         protected tooltip: BABYLON.AbstractMesh;
         protected inventory: Character.Inventory;
 
-        public constructor(game:Game, name) {
+        public constructor(game:Game, name, position: BABYLON.Vector3, rotation: BABYLON.Vector3) {
             super(name, game);
             game.npcs.push(this);
 
             let self = this;
+            this.mesh.position = position;
+            this.mesh.rotation = rotation;
+
             this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
             this.mesh.isPickable = true;
 
+            ///Top GUI BAR
+            this.statistics = {
+                hpMax: 1000,
+                hp: 1000
+            };
+            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
+                function () {
+                    self.game.gui.characterTopHp.hideHpBar();
+                }));
+
+            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
+                function () {
+                    self.game.gui.characterTopHp.showHpCharacter(self);
+                }));
+
+            ///QUEST LISTENER
             let listener = function listener() {
                 let questManager = new Quests.QuestManager(self.game);
                 self.quest = questManager.getQuestFromServerUsingQuestId(self.questId);

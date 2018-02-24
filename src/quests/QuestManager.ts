@@ -12,8 +12,7 @@ namespace Quests {
          * @param questData
          */
         public transformQuestDatabaseDataToObject(questData:Array) {
-            let self = this;
-            let awards = this.getAwards(questData.awards);
+            let awards = questData.awards;
             let requirements = questData.requirements;
             let questId = questData.questId;
 
@@ -23,6 +22,7 @@ namespace Quests {
             return quest;
         }
 
+        // TODO: Change from server
         protected getAwards(databaseAwards:Array) {
             let awards = [];
             let itemManager = new Items.ItemManager(this.game);

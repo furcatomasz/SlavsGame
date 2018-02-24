@@ -39,10 +39,11 @@ class Castle extends Scene {
                 assetsManager.load();
 
                 let listener = function listener() {
-                    let npc = new NPC.Warrior(game, new BABYLON.Vector3(-82, 0, 4), new BABYLON.Vector3(0, 0.74, 0));
-                    let npc = new NPC.Warrior(game, new BABYLON.Vector3(-82, 0, -12), new BABYLON.Vector3(0, -4.3, 0));
-                    let npc = new NPC.Trader(game, new BABYLON.Vector3(9.03, 0, 27.80), new BABYLON.Vector3(0, 0.7, 0));
-                    let npc = new NPC.BigWarrior(game, new BABYLON.Vector3(14, 0, -3.3), new BABYLON.Vector3(0, 1.54, 0));
+                    new NPC.Guard(game, new BABYLON.Vector3(-82, 0, 4), new BABYLON.Vector3(0, 0.74, 0));
+                    new NPC.Guard(game, new BABYLON.Vector3(-82, 0, -12), new BABYLON.Vector3(0, -4.3, 0));
+                    new NPC.Trader(game, new BABYLON.Vector3(9.03, 0, 27.80), new BABYLON.Vector3(0, 0.7, 0));
+                    new NPC.BigWarrior(game, new BABYLON.Vector3(14, 0, -3.3), new BABYLON.Vector3(0, 1.54, 0));
+
                     game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Castle.TYPE,
@@ -73,7 +74,7 @@ class Castle extends Scene {
     }
 
     public getType(): number {
-        return Simple.TYPE;
+        return Castle.TYPE;
     }
 
 }

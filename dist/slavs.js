@@ -96,10 +96,6 @@ var Keyboard = /** @class */ (function (_super) {
     };
     return Keyboard;
 }(Controller));
-/// <reference path="../game.ts"/>
-/// <reference path="../../bower_components/babylonjs/dist/babylon.d.ts"/>
-/// <reference path="../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
-var Camera = BABYLON.Camera;
 var Scene = /** @class */ (function () {
     function Scene() {
     }
@@ -111,16 +107,10 @@ var Scene = /** @class */ (function () {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
         camera.rotation = new BABYLON.Vector3(0.79, 0.79, 0);
         camera.position = new BABYLON.Vector3(0, 35, 0);
-        //camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        //camera.orthoTop = 20;
-        //camera.orthoBottom = 0;
-        //camera.orthoLeft = -15;
-        //camera.orthoRight = 15;
         camera.maxZ = 210;
         camera.minZ = 0;
         camera.fov = 0.5;
         camera.fovMode = 0;
-        //this.setOrthoCameraHeights(camera);
         scene.activeCamera = camera;
         return this;
     };
@@ -134,16 +124,22 @@ var Scene = /** @class */ (function () {
         scene.fogEnd = 93;
         return this;
     };
-    Scene.prototype.setOrthoCameraHeights = function (camera) {
-        var ratio = window.innerWidth / window.innerHeight;
-        var zoom = camera.orthoTop;
-        var newWidth = zoom * ratio;
-        camera.orthoLeft = -Math.abs(newWidth);
-        camera.orthoRight = newWidth;
-        camera.orthoBottom = -Math.abs(zoom);
-        camera.rotation = new BABYLON.Vector3(0.75, 0.75, 0);
-        return camera;
-    };
+    //public setOrthoCameraHeights(camera:BABYLON.Camera) {
+    //camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
+    //camera.orthoTop = 20;
+    //camera.orthoBottom = 0;
+    //camera.orthoLeft = -15;
+    //camera.orthoRight = 15;
+    //    var ratio = window.innerWidth / window.innerHeight;
+    //    var zoom = camera.orthoTop;
+    //    var newWidth = zoom * ratio;
+    //    camera.orthoLeft = -Math.abs(newWidth);
+    //    camera.orthoRight = newWidth;
+    //    camera.orthoBottom = -Math.abs(zoom);
+    //    camera.rotation = new BABYLON.Vector3(0.75, 0.75, 0);
+    //
+    //    return camera;
+    //}
     Scene.prototype.optimizeScene = function (scene) {
         scene.collisionsEnabled = true;
         scene.fogEnabled = true;
@@ -180,11 +176,11 @@ var Scene = /** @class */ (function () {
         //defaultPipeline.fxaaEnabled = true;
         //defaultPipeline.imageProcessingEnabled = false;
         //defaultPipeline.bloomWeight = 0.05;
-        //var kernel = 4.0;
+        var kernel = 4.0;
         //var postProcess0 = new BABYLON.BlurPostProcess("Horizontal blur", new BABYLON.Vector2(1.0, 0), kernel, 1.0, camera);
         //var postProcess1 = new BABYLON.BlurPostProcess("Vertical blur", new BABYLON.Vector2(0, 1.0), kernel, 1.0, camera);
         //var postProcess = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.8, camera);
-        //var postProcess = new BABYLON.FxaaPostProcess("fxaa", 1.0, camera);
+        var postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
         //var postProcess = new BABYLON.HighlightsPostProcess("highlights", 0.1, camera);
         //var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         //
@@ -930,9 +926,6 @@ var Game = /** @class */ (function () {
         });
         window.addEventListener('resize', function () {
             self.engine.resize();
-            if (self.getScene()) {
-                self.sceneManager.setOrthoCameraHeights(self.getScene().activeCamera);
-            }
         });
         return this;
     };
@@ -1111,7 +1104,6 @@ var Player = /** @class */ (function (_super) {
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         _this.inventory = new Character.Inventory(game, _this);
         _this.setItems(serverData.inventory.items);
-        console.log(serverData.inventory.items);
         if (_this.isControllable) {
             _this.mesh.isPickable = false;
             var playerLight = new BABYLON.SpotLight("playerLightSpot", new BABYLON.Vector3(0, 50, 0), new BABYLON.Vector3(0, -1, 0), null, null, game.getScene());
@@ -1303,7 +1295,7 @@ var Mouse = /** @class */ (function (_super) {
             if (clickTrigger) {
                 clickTrigger = false;
                 var pickedMesh = pickResult.pickedMesh;
-                if (pickedMesh.name && pickedMesh.name.search("Ground") >= 0) {
+                if (pickedMesh && (pickedMesh.name.search("Ground") >= 0 || pickedMesh.name.search("Tower.043") >= 0)) {
                     meshFlag.visibility = 1;
                 }
             }
@@ -1315,7 +1307,7 @@ var Mouse = /** @class */ (function (_super) {
             }
             clickTrigger = true;
             if (pickedMesh) {
-                if (pickedMesh.name && pickedMesh.name.search("Ground") >= 0) {
+                if ((pickedMesh.name.search("Ground") >= 0 || pickedMesh.name.search("Tower.043") >= 0)) {
                     self.attackPoint = null;
                     self.targetPoint = pickResult.pickedPoint;
                     self.targetPoint.y = 0;
@@ -1695,22 +1687,14 @@ var EnvironmentCastle = /** @class */ (function () {
                 this.colliders.push(sceneMesh);
             }
         }
-        ///Freeze world matrix all static meshes
-        for (var i = 0; i < scene.meshes.length; i++) {
-            scene.meshes[i].freezeWorldMatrix();
-        }
+        /////Freeze world matrix all static meshes
+        //for (let i = 0; i < scene.meshes.length; i++) {
+        //    scene.meshes[i].freezeWorldMatrix();
+        //}
         ////fireplace
         if (this.fires.length) {
             this.fires.forEach(function (fire, key) {
-                var cone = fire;
-                //let fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 3, 0), scene);
-                //fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-                //fireplaceLight.parent = cone;
-                //fireplaceLight.range = 40;
-                //fireplaceLight.intensity = 2;
-                //let smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
-                //smokeSystem.start();
-                var fireSystem = new Particles.TorchFire(game, cone).particleSystem;
+                var fireSystem = new Particles.TorchFire(game, fire).particleSystem;
                 fireSystem.start();
             });
         }
@@ -1738,14 +1722,13 @@ var EnvironmentCastle = /** @class */ (function () {
         //     let sceneMesh = this.colliders[i];
         //     Collisions.setCollider(scene, sceneMesh);
         // }
-        //
         //new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, {loop: true, autoplay: true});
-        var plane = BABYLON.Mesh.CreateGround("waterMesh", 80, 30, 32, game.getScene(), false);
-        plane.visibility = 0;
-        plane.position.x = -110;
-        plane.position.y = -3;
-        plane.position.z = -4;
-        var fogParticleSystem = new Particles.Fog(game, plane);
+        var planeWater = BABYLON.Mesh.CreateGround("waterMesh", 80, 30, 32, game.getScene(), false);
+        planeWater.visibility = 0;
+        planeWater.position.x = -110;
+        planeWater.position.y = -3;
+        planeWater.position.z = -4;
+        var fogParticleSystem = new Particles.Fog(game, planeWater);
         fogParticleSystem.particleSystem.start();
     }
     EnvironmentCastle.prototype.enableDayAndNight = function (game, light) {
@@ -2692,14 +2675,14 @@ var Quests;
          * @param questData
          */
         QuestManager.prototype.transformQuestDatabaseDataToObject = function (questData) {
-            var self = this;
-            var awards = this.getAwards(questData.awards);
+            var awards = questData.awards;
             var requirements = questData.requirements;
             var questId = questData.questId;
             var quest = this.getQuest(questId);
             quest.setAwards(awards);
             return quest;
         };
+        // TODO: Change from server
         QuestManager.prototype.getAwards = function (databaseAwards) {
             var awards = [];
             var itemManager = new Items.ItemManager(this.game);
@@ -2797,10 +2780,10 @@ var Castle = /** @class */ (function (_super) {
                 };
                 assetsManager.load();
                 var listener = function listener() {
-                    var npc = new NPC.Warrior(game, new BABYLON.Vector3(-82, 0, 4), new BABYLON.Vector3(0, 0.74, 0));
-                    var npc = new NPC.Warrior(game, new BABYLON.Vector3(-82, 0, -12), new BABYLON.Vector3(0, -4.3, 0));
-                    var npc = new NPC.Trader(game, new BABYLON.Vector3(9.03, 0, 27.80), new BABYLON.Vector3(0, 0.7, 0));
-                    var npc = new NPC.BigWarrior(game, new BABYLON.Vector3(14, 0, -3.3), new BABYLON.Vector3(0, 1.54, 0));
+                    new NPC.Guard(game, new BABYLON.Vector3(-82, 0, 4), new BABYLON.Vector3(0, 0.74, 0));
+                    new NPC.Guard(game, new BABYLON.Vector3(-82, 0, -12), new BABYLON.Vector3(0, -4.3, 0));
+                    new NPC.Trader(game, new BABYLON.Vector3(9.03, 0, 27.80), new BABYLON.Vector3(0, 0.7, 0));
+                    new NPC.BigWarrior(game, new BABYLON.Vector3(14, 0, -3.3), new BABYLON.Vector3(0, 1.54, 0));
                     game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: Castle.TYPE
@@ -2823,7 +2806,7 @@ var Castle = /** @class */ (function (_super) {
         return this;
     };
     Castle.prototype.getType = function () {
-        return Simple.TYPE;
+        return Castle.TYPE;
     };
     Castle.TYPE = 3;
     return Castle;
@@ -3413,12 +3396,26 @@ var NPC;
 (function (NPC) {
     var AbstractNpc = /** @class */ (function (_super) {
         __extends(AbstractNpc, _super);
-        function AbstractNpc(game, name) {
+        function AbstractNpc(game, name, position, rotation) {
             var _this = _super.call(this, name, game) || this;
             game.npcs.push(_this);
             var self = _this;
+            _this.mesh.position = position;
+            _this.mesh.rotation = rotation;
             _this.mesh.actionManager = new BABYLON.ActionManager(_this.game.getScene());
             _this.mesh.isPickable = true;
+            ///Top GUI BAR
+            _this.statistics = {
+                hpMax: 1000,
+                hp: 1000
+            };
+            _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+                self.game.gui.characterTopHp.hideHpBar();
+            }));
+            _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+                self.game.gui.characterTopHp.showHpCharacter(self);
+            }));
+            ///QUEST LISTENER
             var listener = function listener() {
                 var questManager = new Quests.QuestManager(self.game);
                 self.quest = questManager.getQuestFromServerUsingQuestId(self.questId);
@@ -3501,17 +3498,12 @@ var NPC;
         __extends(BigWarrior, _super);
         function BigWarrior(game, position, rotation) {
             var _this = this;
-            _this.name = 'Warrior';
+            _this.name = 'Lech';
             var mesh = game.factories['character'].createInstance('Warrior', true);
-            game.factories['character'].loadedMeshes.forEach(function (mesh, key) {
-                console.log(mesh.name);
-            });
-            mesh.position = position;
-            mesh.rotation = rotation;
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
             _this.mesh = mesh;
             _this.questId = Quests.KillWorms.QUEST_ID;
-            _this = _super.call(this, game, name) || this;
+            _this = _super.call(this, game, name, position, rotation) || this;
             var items = [
                 {
                     meshName: 'Sash',
@@ -3544,17 +3536,56 @@ var NPC;
 /// <reference path="AbstractNpc.ts"/>
 var NPC;
 (function (NPC) {
+    var Guard = /** @class */ (function (_super) {
+        __extends(Guard, _super);
+        function Guard(game, position, rotation) {
+            var _this = this;
+            _this.name = 'Guard';
+            _this.mesh = game.factories['character'].createInstance('Warrior', true);
+            _this = _super.call(this, game, name, position, rotation) || this;
+            var items = [
+                {
+                    meshName: 'Armor.001',
+                    equip: 1
+                },
+                {
+                    meshName: 'Hood',
+                    equip: 1
+                },
+                {
+                    meshName: 'Boots',
+                    equip: 1
+                },
+                {
+                    meshName: 'Gloves',
+                    equip: 1
+                },
+                {
+                    meshName: 'Shield',
+                    equip: 1
+                },
+                {
+                    meshName: 'Axe.001',
+                    equip: 1
+                }
+            ];
+            _this.setItems(items);
+            return _this;
+        }
+        return Guard;
+    }(NPC.AbstractNpc));
+    NPC.Guard = Guard;
+})(NPC || (NPC = {}));
+/// <reference path="AbstractNpc.ts"/>
+var NPC;
+(function (NPC) {
     var Trader = /** @class */ (function (_super) {
         __extends(Trader, _super);
         function Trader(game, position, rotation) {
             var _this = this;
-            _this.name = 'Warrior';
-            var mesh = game.factories['character'].createInstance('Warrior', true);
-            mesh.position = position;
-            mesh.rotation = rotation;
-            _this.mesh = mesh;
-            _this.questId = Quests.KillWorms.QUEST_ID;
-            _this = _super.call(this, game, name) || this;
+            _this.name = 'Trader';
+            _this.mesh = game.factories['character'].createInstance('Warrior', true);
+            _this = _super.call(this, game, name, position, rotation) || this;
             var items = [
                 {
                     meshName: 'Sash',
@@ -3572,49 +3603,6 @@ var NPC;
         return Trader;
     }(NPC.AbstractNpc));
     NPC.Trader = Trader;
-})(NPC || (NPC = {}));
-/// <reference path="AbstractNpc.ts"/>
-var NPC;
-(function (NPC) {
-    var Warrior = /** @class */ (function (_super) {
-        __extends(Warrior, _super);
-        function Warrior(game, position, rotation) {
-            var _this = this;
-            _this.name = 'Warrior';
-            var mesh = game.factories['character'].createInstance('Warrior', true);
-            mesh.position = position;
-            mesh.rotation = rotation;
-            _this.mesh = mesh;
-            _this.questId = Quests.KillWorms.QUEST_ID;
-            _this = _super.call(this, game, name) || this;
-            var items = [
-                {
-                    meshName: 'Sash',
-                    equip: 1
-                },
-                {
-                    meshName: 'Hood',
-                    equip: 1
-                },
-                {
-                    meshName: 'Boots',
-                    equip: 1
-                },
-                {
-                    meshName: 'Gloves',
-                    equip: 1
-                },
-                {
-                    meshName: 'Axe.001',
-                    equip: 1
-                }
-            ];
-            _this.setItems(items);
-            return _this;
-        }
-        return Warrior;
-    }(NPC.AbstractNpc));
-    NPC.Warrior = Warrior;
 })(NPC || (NPC = {}));
 /// <reference path="../AbstractCharacter.ts"/>
 var SelectCharacter;
@@ -3658,7 +3646,6 @@ var SelectCharacter;
                 //self.game.getScene().stopAnimation(self.mesh.skeleton);
             }));
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                console.log(1);
                 new Simple().initScene(self.game);
             }));
         };

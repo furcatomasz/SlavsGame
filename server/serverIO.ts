@@ -41,6 +41,7 @@ namespace Server {
                         socket.emit('clientConnected', player);
                     });
 
+                    //CHANGE SCENE CHANNELS
                     socket.on('changeScenePre', function (sceneData) {
                         let sceneType = sceneData.sceneType;
                         let roomId = player.getActiveCharacter().roomId;
@@ -64,6 +65,7 @@ namespace Server {
                         serverIO.to(self.monsterServerSocketId).emit('showPlayer', player);
                         socket.emit('showEnemies', self.enemies[player.getActiveCharacter().roomId]);
                     });
+                    /////////////
 
                     socket.on('createPlayer', function () {
                         let character = player.getActiveCharacter();
@@ -410,21 +412,28 @@ namespace Server {
                 });
             });
 
-            //socket.on('getQuests', function () {
-            //    let emitData = {
-            //        quests: server.quests,
-            //        playerQuests: null,
-            //        playerRequirements: null
-            //    };
-            //
-            //    player.characters[player.activeCharacter].getActiveQuests(function (error, quests) {
-            //        emitData.playerQuests = quests;
-            //        player.characters[player.activeCharacter].getQuestRequirements(function (error, requrements) {
-            //            emitData.playerRequirements = requrements;
-            //            socket.emit('quests', emitData);
-            //        });
-            //    });
-            //});
+            /// QUESTS
+            socket.on('getQuests', function () {
+                let emitData = {
+                    quests: self.server.quests,
+                    playerQuests: null,
+                    playerRequirements: null
+                };
+                self.server.ormManager.structure.playerQuest.findAsync({
+                    player: player.getActiveCharacter().id,
+                }).then(function (quest) {
+
+                    emitData.playerQuests = quest;
+
+                    self.server.ormManager.structure.playerQuestRequirements.findAsync({
+                        player: player.getActiveCharacter().id,
+                    }).then(function (questsRequirements) {
+                        emitData.playerRequirements = questsRequirements;
+                        socket.emit('quests', emitData);
+
+                    });
+                });
+            });
 
             socket.on('acceptQuest', function (quest) {
                 let questId = quest.id;
@@ -584,11 +593,11 @@ namespace Server {
                     z: -51
                 };
                 //Cave
-                position = {
-                    x: -8,
-                    y: 0,
-                    z: 160
-                };
+                //position = {
+                //    x: -8,
+                //    y: 0,
+                //    z: 160
+                //};
             }
 
             return position;

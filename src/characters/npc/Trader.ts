@@ -2,18 +2,12 @@
 namespace NPC {
     export class Trader extends AbstractNpc {
 
-        public constructor(game:Game, position: BABYLON.Vector3, rotation: BABYLON.Vector3) {
+        public constructor(game:Game, position:BABYLON.Vector3, rotation:BABYLON.Vector3) {
+            this.name = 'Trader';
 
-            this.name = 'Warrior';
+            this.mesh = game.factories['character'].createInstance('Warrior', true);
 
-            let mesh = game.factories['character'].createInstance('Warrior', true);
-
-            mesh.position = position;
-            mesh.rotation = rotation;
-            this.mesh = mesh;
-            this.questId = Quests.KillWorms.QUEST_ID;
-
-            super(game, name);
+            super(game, name, position, rotation);
 
             let items = [
                 {
@@ -27,8 +21,6 @@ namespace NPC {
             ];
             this.setItems(items);
             this.mesh.skeleton.beginAnimation('Sit');
-
-
         }
 
     }

@@ -1,23 +1,18 @@
 /// <reference path="AbstractNpc.ts"/>
 namespace NPC {
-    export class Warrior extends AbstractNpc {
+    export class Guard extends AbstractNpc {
 
         public constructor(game:Game, position: BABYLON.Vector3, rotation: BABYLON.Vector3) {
 
-            this.name = 'Warrior';
+            this.name = 'Guard';
 
-            let mesh = game.factories['character'].createInstance('Warrior', true);
+            this.mesh = game.factories['character'].createInstance('Warrior', true);
 
-            mesh.position = position;
-            mesh.rotation = rotation;
-            this.mesh = mesh;
-            this.questId = Quests.KillWorms.QUEST_ID;
-
-            super(game, name);
+            super(game, name, position, rotation);
 
             let items = [
                 {
-                    meshName: 'Sash',
+                    meshName: 'Armor.001',
                     equip: 1,
                 },
                 {
@@ -30,6 +25,10 @@ namespace NPC {
                 },
                 {
                     meshName: 'Gloves',
+                    equip: 1,
+                },
+                {
+                    meshName: 'Shield',
                     equip: 1,
                 },
                 {

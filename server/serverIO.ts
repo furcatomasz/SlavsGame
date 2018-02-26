@@ -593,11 +593,11 @@ namespace Server {
                     z: -51
                 };
                 //Cave
-                //position = {
-                //    x: -8,
-                //    y: 0,
-                //    z: 160
-                //};
+                position = {
+                    x: -8,
+                    y: 0,
+                    z: 160
+                };
             }
 
             return position;

@@ -4,8 +4,7 @@ namespace Particles {
     export class DroppedItem extends AbstractParticle {
 
         protected initParticleSystem() {
-            let fireSystem = new BABYLON.ParticleSystem("particles", 400, this.game.getScene());
-
+            let fireSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 400 }, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
 
             fireSystem.emitter = this.emitter;

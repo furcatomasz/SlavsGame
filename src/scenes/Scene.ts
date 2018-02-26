@@ -100,52 +100,47 @@ abstract class Scene {
     //defaultPipeline.imageProcessingEnabled = false;
     //defaultPipeline.bloomWeight = 0.05;
 
-        var kernel = 4.0;
-        //var postProcess0 = new BABYLON.BlurPostProcess("Horizontal blur", new BABYLON.Vector2(1.0, 0), kernel, 1.0, camera);
-        //var postProcess1 = new BABYLON.BlurPostProcess("Vertical blur", new BABYLON.Vector2(0, 1.0), kernel, 1.0, camera);
-        //var postProcess = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.8, camera);
-        var postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
 
-        //var postProcess = new BABYLON.HighlightsPostProcess("highlights", 0.1, camera);
-        //var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    //
-    //var panel = new BABYLON.GUI.StackPanel();
-    //panel.width = "200px";
-    //panel.isVertical = true;
-    //panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    //panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-    //advancedTexture.addControl(panel)
-    //
-    //var addCheckbox = function(text, func, initialValue, left) {
-    //    var checkbox = new BABYLON.GUI.Checkbox();
-    //    checkbox.width = "20px";
-    //    checkbox.height = "20px";
-    //    checkbox.isChecked = initialValue;
-    //    checkbox.color = "green";
-    //    checkbox.onIsCheckedChangedObservable.add(function(value) {
-    //        func(value);
-    //    });
-    //    if(self.game.gui) {
-    //        self.game.gui.registerBlockMoveCharacter(checkbox);
-    //    }
-    //    var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
-    //    header.height = "30px";
-    //    header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-    //
-    //    if (left) {
-    //        header.left = left;
-    //    }
-    //
-    //    panel.addControl(header);
-    //}
-    //
-    //addCheckbox("fxaa", function(value) {
-    //    defaultPipeline.fxaaEnabled = value;
-    //}, defaultPipeline.fxaaEnabled );
-    //
-    //addCheckbox("bloom", function(value) {
-    //    defaultPipeline.bloomEnabled = value;
-    //}, defaultPipeline.bloomEnabled);
+    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    
+    var panel = new BABYLON.GUI.StackPanel();
+    panel.width = "200px";
+    panel.isVertical = true;
+    panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    advancedTexture.addControl(panel)
+    
+    var addCheckbox = function(text, func, initialValue) {
+        var checkbox = new BABYLON.GUI.Checkbox();
+        checkbox.width = "20px";
+        checkbox.height = "20px";
+        checkbox.isChecked = initialValue;
+        checkbox.color = "green";
+        checkbox.onIsCheckedChangedObservable.add(function(value) {
+            func(value);
+        });
+        if(self.game.gui) {
+            self.game.gui.registerBlockMoveCharacter(checkbox);
+        }
+        var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
+        header.height = "30px";
+        header.color = "white";
+        header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+
+        panel.addControl(header);
+    }
+        let postProcessFxaa = null;
+        let kernel = 4;
+        let postProcessBloom1 = null;
+        let postProcessBloom2 = null;
+        addCheckbox("fxaa", function(value) {
+            if(value) {
+                postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
+            } else {
+                scene.activeCamera.detachPostProcess(postProcess);
+            }
+        }, false );
+
 
 
 }

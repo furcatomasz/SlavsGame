@@ -4,7 +4,7 @@ namespace Particles {
     export class FireplaceFire extends AbstractParticle {
 
         protected initParticleSystem() {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 150, this.game.getScene());
+            var fireSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 50 }, this.game.getScene());
 
             fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
 

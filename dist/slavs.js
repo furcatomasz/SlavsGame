@@ -176,51 +176,43 @@ var Scene = /** @class */ (function () {
         //defaultPipeline.fxaaEnabled = true;
         //defaultPipeline.imageProcessingEnabled = false;
         //defaultPipeline.bloomWeight = 0.05;
-        var kernel = 4.0;
-        //var postProcess0 = new BABYLON.BlurPostProcess("Horizontal blur", new BABYLON.Vector2(1.0, 0), kernel, 1.0, camera);
-        //var postProcess1 = new BABYLON.BlurPostProcess("Vertical blur", new BABYLON.Vector2(0, 1.0), kernel, 1.0, camera);
-        //var postProcess = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.8, camera);
-        var postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
-        //var postProcess = new BABYLON.HighlightsPostProcess("highlights", 0.1, camera);
-        //var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        //
-        //var panel = new BABYLON.GUI.StackPanel();
-        //panel.width = "200px";
-        //panel.isVertical = true;
-        //panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        //panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-        //advancedTexture.addControl(panel)
-        //
-        //var addCheckbox = function(text, func, initialValue, left) {
-        //    var checkbox = new BABYLON.GUI.Checkbox();
-        //    checkbox.width = "20px";
-        //    checkbox.height = "20px";
-        //    checkbox.isChecked = initialValue;
-        //    checkbox.color = "green";
-        //    checkbox.onIsCheckedChangedObservable.add(function(value) {
-        //        func(value);
-        //    });
-        //    if(self.game.gui) {
-        //        self.game.gui.registerBlockMoveCharacter(checkbox);
-        //    }
-        //    var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
-        //    header.height = "30px";
-        //    header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        //
-        //    if (left) {
-        //        header.left = left;
-        //    }
-        //
-        //    panel.addControl(header);
-        //}
-        //
-        //addCheckbox("fxaa", function(value) {
-        //    defaultPipeline.fxaaEnabled = value;
-        //}, defaultPipeline.fxaaEnabled );
-        //
-        //addCheckbox("bloom", function(value) {
-        //    defaultPipeline.bloomEnabled = value;
-        //}, defaultPipeline.bloomEnabled);
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        var panel = new BABYLON.GUI.StackPanel();
+        panel.width = "200px";
+        panel.isVertical = true;
+        panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        advancedTexture.addControl(panel);
+        var addCheckbox = function (text, func, initialValue) {
+            var checkbox = new BABYLON.GUI.Checkbox();
+            checkbox.width = "20px";
+            checkbox.height = "20px";
+            checkbox.isChecked = initialValue;
+            checkbox.color = "green";
+            checkbox.onIsCheckedChangedObservable.add(function (value) {
+                func(value);
+            });
+            if (self.game.gui) {
+                self.game.gui.registerBlockMoveCharacter(checkbox);
+            }
+            var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true });
+            header.height = "30px";
+            header.color = "white";
+            header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            panel.addControl(header);
+        };
+        var postProcessFxaa = null;
+        var kernel = 4;
+        var postProcessBloom1 = null;
+        var postProcessBloom2 = null;
+        addCheckbox("fxaa", function (value) {
+            if (value) {
+                postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
+            }
+            else {
+                scene.activeCamera.detachPostProcess(postProcess);
+            }
+        }, false);
     };
     Scene.TYPE = 0;
     return Scene;
@@ -913,7 +905,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new SelectCharacter().initScene(this);
+        new Mountains().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -1728,8 +1720,8 @@ var EnvironmentCastle = /** @class */ (function () {
         planeWater.position.x = -110;
         planeWater.position.y = -3;
         planeWater.position.z = -4;
-        var fogParticleSystem = new Particles.Fog(game, planeWater);
-        fogParticleSystem.particleSystem.start();
+        //let fogParticleSystem = new Particles.Fog(game, planeWater);
+        //fogParticleSystem.particleSystem.start();
     }
     EnvironmentCastle.prototype.enableDayAndNight = function (game, light) {
         light.intensity = 0;
@@ -2221,7 +2213,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         Blood.prototype.initParticleSystem = function () {
-            var particleSystem = new BABYLON.ParticleSystem("particle1s", 500, this.game.getScene());
+            var particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 500 }, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
             particleSystem.emitter = this.emitter;
             particleSystem.minEmitBox = new BABYLON.Vector3(0, this.emitter.geometry.extend.maximum.y * 0.7, 0); // Starting all from
@@ -2259,7 +2251,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         CastleEnter.prototype.initParticleSystem = function () {
-            var particleSystem = new BABYLON.ParticleSystem("particles", 500, this.game.getScene());
+            var particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 500 }, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
@@ -2296,7 +2288,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         CastleExit.prototype.initParticleSystem = function () {
-            var particleSystem = new BABYLON.ParticleSystem("particles", 500, this.game.getScene());
+            var particleSystem = new BABYLON.GPUParticleSystem("castleExit", { capacity: 500 }, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-3, 0, -1); // Starting all from
@@ -2333,7 +2325,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         CaveEntrace.prototype.initParticleSystem = function () {
-            var particleSystem = new BABYLON.ParticleSystem("particles", 150, this.game.getScene());
+            var particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 150 }, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
@@ -2370,7 +2362,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         DroppedItem.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 400, this.game.getScene());
+            var fireSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 400 }, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
@@ -2407,7 +2399,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         FireplaceFire.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 150, this.game.getScene());
+            var fireSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 50 }, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(0.5, 0, 0.5);
@@ -2444,7 +2436,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         FireplaceSmoke.prototype.initParticleSystem = function () {
-            var smokeSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
+            var smokeSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 100 }, this.game.getScene());
             smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             smokeSystem.emitter = this.emitter;
             smokeSystem.minEmitBox = new BABYLON.Vector3(0.5, 1.5, 0.5);
@@ -2552,7 +2544,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         TorchFire.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 20, this.game.getScene());
+            var fireSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 20 }, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(1, 0, 1);
@@ -4545,6 +4537,67 @@ var GUI;
     }(GUI.Popup));
     GUI.Quest = Quest;
 })(GUI || (GUI = {}));
+var Quests;
+(function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var Item = /** @class */ (function (_super) {
+            __extends(Item, _super);
+            function Item(item) {
+                var _this = _super.call(this) || this;
+                _this.name = item.name;
+                _this.award = item;
+                return _this;
+            }
+            Item.prototype.getAward = function () {
+                console.log('get award' + this.award.name);
+            };
+            Item.AWARD_ID = 1;
+            return Item;
+        }(Awards.AbstractAward));
+        Awards.Item = Item;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var KillWorms = /** @class */ (function (_super) {
+        __extends(KillWorms, _super);
+        function KillWorms(game) {
+            var _this = _super.call(this, game) || this;
+            _this.title = 'Bandits';
+            _this.description = 'Go to portal and kill all bandits.';
+            return _this;
+        }
+        /**
+         *
+         * @returns {number}
+         */
+        KillWorms.prototype.getQuestId = function () {
+            return Quests.KillWorms.QUEST_ID;
+        };
+        KillWorms.QUEST_ID = 1;
+        return KillWorms;
+    }(Quests.AbstractQuest));
+    Quests.KillWorms = KillWorms;
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var Monster = /** @class */ (function (_super) {
+            __extends(Monster, _super);
+            function Monster(monster, count) {
+                var _this = _super.call(this) || this;
+                _this.name = 'Kill ' + count + ' ' + monster.name + '';
+                _this.requirement = monster;
+                return _this;
+            }
+            Monster.REQUIREMENT_ID = 1;
+            return Monster;
+        }(Requirements.AbstractRequirement));
+        Requirements.Monster = Monster;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+})(Quests || (Quests = {}));
 var Particles;
 (function (Particles) {
     var DoubleAttack = /** @class */ (function (_super) {
@@ -4617,67 +4670,6 @@ var Particles;
     }(Particles.AbstractParticle));
     Particles.Tornado = Tornado;
 })(Particles || (Particles = {}));
-var Quests;
-(function (Quests) {
-    var Awards;
-    (function (Awards) {
-        var Item = /** @class */ (function (_super) {
-            __extends(Item, _super);
-            function Item(item) {
-                var _this = _super.call(this) || this;
-                _this.name = item.name;
-                _this.award = item;
-                return _this;
-            }
-            Item.prototype.getAward = function () {
-                console.log('get award' + this.award.name);
-            };
-            Item.AWARD_ID = 1;
-            return Item;
-        }(Awards.AbstractAward));
-        Awards.Item = Item;
-    })(Awards = Quests.Awards || (Quests.Awards = {}));
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var KillWorms = /** @class */ (function (_super) {
-        __extends(KillWorms, _super);
-        function KillWorms(game) {
-            var _this = _super.call(this, game) || this;
-            _this.title = 'Bandits';
-            _this.description = 'Go to portal and kill all bandits.';
-            return _this;
-        }
-        /**
-         *
-         * @returns {number}
-         */
-        KillWorms.prototype.getQuestId = function () {
-            return Quests.KillWorms.QUEST_ID;
-        };
-        KillWorms.QUEST_ID = 1;
-        return KillWorms;
-    }(Quests.AbstractQuest));
-    Quests.KillWorms = KillWorms;
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var Requirements;
-    (function (Requirements) {
-        var Monster = /** @class */ (function (_super) {
-            __extends(Monster, _super);
-            function Monster(monster, count) {
-                var _this = _super.call(this) || this;
-                _this.name = 'Kill ' + count + ' ' + monster.name + '';
-                _this.requirement = monster;
-                return _this;
-            }
-            Monster.REQUIREMENT_ID = 1;
-            return Monster;
-        }(Requirements.AbstractRequirement));
-        Requirements.Monster = Monster;
-    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
-})(Quests || (Quests = {}));
 /// <reference path="../Inventory.ts"/>
 var GUI;
 (function (GUI) {

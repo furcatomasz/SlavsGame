@@ -1038,11 +1038,11 @@ var Server;
                     z: -51
                 };
                 //Cave
-                //position = {
-                //    x: -8,
-                //    y: 0,
-                //    z: 160
-                //};
+                position = {
+                    x: -8,
+                    y: 0,
+                    z: 160
+                };
             }
             return position;
         };
@@ -1989,53 +1989,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Boots = /** @class */ (function (_super) {
-        __extends(Boots, _super);
-        /**
-         * @param databaseId
-         */
-        function Boots(databaseId) {
-            var _this = this;
-            _this.type = Items.Boots.TYPE;
-            _this = _super.call(this, databaseId) || this;
-            return _this;
-        }
-        /**
-         * @returns {number}
-         */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
-        };
-        Boots.TYPE = 5;
-        return Boots;
-    }(Items.Item));
-    Items.Boots = Boots;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots;
-    (function (Boots) {
-        var PrimaryBoots = /** @class */ (function (_super) {
-            __extends(PrimaryBoots, _super);
-            function PrimaryBoots(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Boots';
-                _this.image = 'Boots';
-                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Boots';
-                return _this;
-            }
-            PrimaryBoots.ITEM_ID = 3;
-            return PrimaryBoots;
-        }(Boots));
-        Boots.PrimaryBoots = PrimaryBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Gloves = /** @class */ (function (_super) {
         __extends(Gloves, _super);
         /**
@@ -2079,6 +2032,53 @@ var Items;
         }(Gloves));
         Gloves.PrimaryGloves = PrimaryGloves;
     })(Gloves = Items.Gloves || (Items.Gloves = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots = /** @class */ (function (_super) {
+        __extends(Boots, _super);
+        /**
+         * @param databaseId
+         */
+        function Boots(databaseId) {
+            var _this = this;
+            _this.type = Items.Boots.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        Boots.TYPE = 5;
+        return Boots;
+    }(Items.Item));
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var PrimaryBoots = /** @class */ (function (_super) {
+            __extends(PrimaryBoots, _super);
+            function PrimaryBoots(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Boots';
+                _this.image = 'Boots';
+                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Boots';
+                return _this;
+            }
+            PrimaryBoots.ITEM_ID = 3;
+            return PrimaryBoots;
+        }(Boots));
+        Boots.PrimaryBoots = PrimaryBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

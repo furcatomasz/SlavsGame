@@ -88,8 +88,8 @@ class EnvironmentCastle {
         planeWater.position.x = -110;
         planeWater.position.y = -3;
         planeWater.position.z = -4;
-        let fogParticleSystem = new Particles.Fog(game, planeWater);
-        fogParticleSystem.particleSystem.start();
+        //let fogParticleSystem = new Particles.Fog(game, planeWater);
+        //fogParticleSystem.particleSystem.start();
     }
 
     protected enableDayAndNight(game, light:BABYLON.Light):BABYLON.Light {

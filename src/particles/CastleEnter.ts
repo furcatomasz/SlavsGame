@@ -4,7 +4,7 @@ namespace Particles {
     export class CastleEnter extends AbstractParticle {
 
         protected initParticleSystem() {
-            var particleSystem = new BABYLON.ParticleSystem("particles", 500, this.game.getScene());
+            var particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 500 }, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from

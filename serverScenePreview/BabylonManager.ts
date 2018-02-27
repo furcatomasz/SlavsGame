@@ -163,8 +163,16 @@ namespace Server {
 
             this.socket.on('showPlayer', function (playerData) {
                 console.log('BABYLON: connected new player - '+ playerData.id);
+                let activeCharacter = playerData.characters[playerData.activeCharacter];
+                let roomId = activeCharacter.roomId;
+                let scene = self.scenes[roomId];
+
+                if(!scene) {
+                    return;
+                }
 
                 let remotePlayerKey = null;
+
                 if (playerData.id !== self.socket.id) {
                     //check if user exists
                     self.players.forEach(function (remotePlayer, key) {
@@ -177,10 +185,6 @@ namespace Server {
 
                     //if user not exists create scene and box with action manager
                     if (remotePlayerKey === null) {
-                        let activeCharacter = playerData.characters[playerData.activeCharacter];
-                        let roomId = activeCharacter.roomId;
-                        let scene = self.scenes[roomId];
-
                         let box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
                         box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);
@@ -210,7 +214,11 @@ namespace Server {
         protected removePlayer() {
             let self = this;
             this.socket.on('removePlayer', function (id) {
+                let playersInRoomCount = 0;
                 self.players.forEach(function (remotePlayer, key) {
+                    if(remotePlayer.roomId == id) {
+                        playersInRoomCount++;
+                    }
 
                     if (remotePlayer.socketId == id) {
                         let player = self.players[key];
@@ -233,6 +241,11 @@ namespace Server {
                         player.mesh.dispose();
                         self.players.splice(key, 1);
                     }
+
+                    if(playersInRoomCount == 0) {
+                        self.scenes[]
+                    }
+
                 });
             });
 
@@ -346,11 +359,10 @@ namespace Server {
             let self = this;
             let activeTargetPoints = [];
             this.socket.on('updatePlayer', function (updatedPlayer) {
-                // console.log('BABYLON: update player - '+ updatedPlayer.id);
+                console.log('BABYLON: update player - '+ updatedPlayer.id);
 
                 let remotePlayerKey = null;
                 let player = null;
-
                 self.players.forEach(function (remotePlayer, key) {
                     if (remotePlayer.socketId == updatedPlayer.connectionId) {
                         remotePlayerKey = key;

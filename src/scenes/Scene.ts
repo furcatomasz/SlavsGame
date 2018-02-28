@@ -66,6 +66,7 @@ abstract class Scene {
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
         scene.audioEnabled = true;
+        scene.workerCollisions = true;
 
         return this;
     }

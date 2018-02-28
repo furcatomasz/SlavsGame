@@ -148,6 +148,7 @@ var Scene = /** @class */ (function () {
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
         scene.audioEnabled = true;
+        scene.workerCollisions = true;
         return this;
     };
     Scene.prototype.initFactories = function (scene, assetsManager) {
@@ -4537,67 +4538,6 @@ var GUI;
     }(GUI.Popup));
     GUI.Quest = Quest;
 })(GUI || (GUI = {}));
-var Quests;
-(function (Quests) {
-    var Awards;
-    (function (Awards) {
-        var Item = /** @class */ (function (_super) {
-            __extends(Item, _super);
-            function Item(item) {
-                var _this = _super.call(this) || this;
-                _this.name = item.name;
-                _this.award = item;
-                return _this;
-            }
-            Item.prototype.getAward = function () {
-                console.log('get award' + this.award.name);
-            };
-            Item.AWARD_ID = 1;
-            return Item;
-        }(Awards.AbstractAward));
-        Awards.Item = Item;
-    })(Awards = Quests.Awards || (Quests.Awards = {}));
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var KillWorms = /** @class */ (function (_super) {
-        __extends(KillWorms, _super);
-        function KillWorms(game) {
-            var _this = _super.call(this, game) || this;
-            _this.title = 'Bandits';
-            _this.description = 'Go to portal and kill all bandits.';
-            return _this;
-        }
-        /**
-         *
-         * @returns {number}
-         */
-        KillWorms.prototype.getQuestId = function () {
-            return Quests.KillWorms.QUEST_ID;
-        };
-        KillWorms.QUEST_ID = 1;
-        return KillWorms;
-    }(Quests.AbstractQuest));
-    Quests.KillWorms = KillWorms;
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var Requirements;
-    (function (Requirements) {
-        var Monster = /** @class */ (function (_super) {
-            __extends(Monster, _super);
-            function Monster(monster, count) {
-                var _this = _super.call(this) || this;
-                _this.name = 'Kill ' + count + ' ' + monster.name + '';
-                _this.requirement = monster;
-                return _this;
-            }
-            Monster.REQUIREMENT_ID = 1;
-            return Monster;
-        }(Requirements.AbstractRequirement));
-        Requirements.Monster = Monster;
-    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
-})(Quests || (Quests = {}));
 var Particles;
 (function (Particles) {
     var DoubleAttack = /** @class */ (function (_super) {
@@ -4670,6 +4610,67 @@ var Particles;
     }(Particles.AbstractParticle));
     Particles.Tornado = Tornado;
 })(Particles || (Particles = {}));
+var Quests;
+(function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var Item = /** @class */ (function (_super) {
+            __extends(Item, _super);
+            function Item(item) {
+                var _this = _super.call(this) || this;
+                _this.name = item.name;
+                _this.award = item;
+                return _this;
+            }
+            Item.prototype.getAward = function () {
+                console.log('get award' + this.award.name);
+            };
+            Item.AWARD_ID = 1;
+            return Item;
+        }(Awards.AbstractAward));
+        Awards.Item = Item;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var KillWorms = /** @class */ (function (_super) {
+        __extends(KillWorms, _super);
+        function KillWorms(game) {
+            var _this = _super.call(this, game) || this;
+            _this.title = 'Bandits';
+            _this.description = 'Go to portal and kill all bandits.';
+            return _this;
+        }
+        /**
+         *
+         * @returns {number}
+         */
+        KillWorms.prototype.getQuestId = function () {
+            return Quests.KillWorms.QUEST_ID;
+        };
+        KillWorms.QUEST_ID = 1;
+        return KillWorms;
+    }(Quests.AbstractQuest));
+    Quests.KillWorms = KillWorms;
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var Monster = /** @class */ (function (_super) {
+            __extends(Monster, _super);
+            function Monster(monster, count) {
+                var _this = _super.call(this) || this;
+                _this.name = 'Kill ' + count + ' ' + monster.name + '';
+                _this.requirement = monster;
+                return _this;
+            }
+            Monster.REQUIREMENT_ID = 1;
+            return Monster;
+        }(Requirements.AbstractRequirement));
+        Requirements.Monster = Monster;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+})(Quests || (Quests = {}));
 /// <reference path="../Inventory.ts"/>
 var GUI;
 (function (GUI) {

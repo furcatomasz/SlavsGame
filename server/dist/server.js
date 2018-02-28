@@ -144,7 +144,10 @@ var Server;
             var self = this;
             this.socket.on('showPlayer', function (playerData) {
                 console.log('BABYLON: connected new player - ' + playerData.id);
-                if (!self.scenes[playerData.roomId]) {
+                var activeCharacter = playerData.characters[playerData.activeCharacter];
+                var roomId = activeCharacter.roomId;
+                var scene = self.scenes[roomId];
+                if (!scene) {
                     return;
                 }
                 var remotePlayerKey = null;
@@ -158,9 +161,6 @@ var Server;
                     });
                     //if user not exists create scene and box with action manager
                     if (remotePlayerKey === null) {
-                        var activeCharacter = playerData.characters[playerData.activeCharacter];
-                        var roomId = activeCharacter.roomId;
-                        var scene = self.scenes[roomId];
                         var box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
                         box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);
@@ -1989,53 +1989,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Gloves = /** @class */ (function (_super) {
-        __extends(Gloves, _super);
-        /**
-         * @param databaseId
-         */
-        function Gloves(databaseId) {
-            var _this = this;
-            _this.type = Items.Gloves.TYPE;
-            _this = _super.call(this, databaseId) || this;
-            return _this;
-        }
-        /**
-         * @returns {number}
-         */
-        Gloves.prototype.getType = function () {
-            return Items.Gloves.TYPE;
-        };
-        Gloves.TYPE = 4;
-        return Gloves;
-    }(Items.Item));
-    Items.Gloves = Gloves;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Gloves;
-    (function (Gloves) {
-        var PrimaryGloves = /** @class */ (function (_super) {
-            __extends(PrimaryGloves, _super);
-            function PrimaryGloves(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Gloves';
-                _this.image = 'Gloves';
-                _this.itemId = Items.Gloves.PrimaryGloves.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Gloves';
-                return _this;
-            }
-            PrimaryGloves.ITEM_ID = 4;
-            return PrimaryGloves;
-        }(Gloves));
-        Gloves.PrimaryGloves = PrimaryGloves;
-    })(Gloves = Items.Gloves || (Items.Gloves = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Boots = /** @class */ (function (_super) {
         __extends(Boots, _super);
         /**
@@ -2079,6 +2032,53 @@ var Items;
         }(Boots));
         Boots.PrimaryBoots = PrimaryBoots;
     })(Boots = Items.Boots || (Items.Boots = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Gloves = /** @class */ (function (_super) {
+        __extends(Gloves, _super);
+        /**
+         * @param databaseId
+         */
+        function Gloves(databaseId) {
+            var _this = this;
+            _this.type = Items.Gloves.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Gloves.prototype.getType = function () {
+            return Items.Gloves.TYPE;
+        };
+        Gloves.TYPE = 4;
+        return Gloves;
+    }(Items.Item));
+    Items.Gloves = Gloves;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Gloves;
+    (function (Gloves) {
+        var PrimaryGloves = /** @class */ (function (_super) {
+            __extends(PrimaryGloves, _super);
+            function PrimaryGloves(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'Gloves';
+                _this.image = 'Gloves';
+                _this.itemId = Items.Gloves.PrimaryGloves.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'Gloves';
+                return _this;
+            }
+            PrimaryGloves.ITEM_ID = 4;
+            return PrimaryGloves;
+        }(Gloves));
+        Gloves.PrimaryGloves = PrimaryGloves;
+    })(Gloves = Items.Gloves || (Items.Gloves = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

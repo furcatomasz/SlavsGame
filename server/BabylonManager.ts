@@ -165,11 +165,16 @@ namespace Server {
 
             this.socket.on('showPlayer', function (playerData) {
                 console.log('BABYLON: connected new player - '+ playerData.id);
-                if(!self.scenes[playerData.roomId]) {
+                let activeCharacter = playerData.characters[playerData.activeCharacter];
+                let roomId = activeCharacter.roomId;
+                let scene = self.scenes[roomId];
+
+                if(!scene) {
                     return;
                 }
 
                 let remotePlayerKey = null;
+
                 if (playerData.id !== self.socket.id) {
                     //check if user exists
                     self.players.forEach(function (remotePlayer, key) {
@@ -182,10 +187,6 @@ namespace Server {
 
                     //if user not exists create scene and box with action manager
                     if (remotePlayerKey === null) {
-                        let activeCharacter = playerData.characters[playerData.activeCharacter];
-                        let roomId = activeCharacter.roomId;
-                        let scene = self.scenes[roomId];
-
                         let box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
                         box.checkCollisions = true;
                         box.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);

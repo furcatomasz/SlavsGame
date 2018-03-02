@@ -13,8 +13,7 @@ class Environment {
         let trees = [];
         this.bushes = [];
         this.colliders = [];
-
-        //let light = this.enableDayAndNight(game, game.getScene().lights[0]);
+        // let light = this.enableDayAndNight(game, game.getScene().lights[1]);
         // for (let i = 0; i < scene.lights.length; i++) {
         //     let light = scene.lights[i];
         //     light.intensity = (light.intensity);

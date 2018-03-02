@@ -3,6 +3,7 @@
 class Monster extends AbstractCharacter {
 
     protected target:string;
+    public intervalAttackRegisteredFunction;
 
     constructor(game:Game, serverKey:number, serverData:Array) {
         let meshName = serverData.meshName;
@@ -44,7 +45,6 @@ class Monster extends AbstractCharacter {
                 self.game.gui.characterTopHp.showHpCharacter(self);
             }));
 
-        let intervalAttack = null;
         let intervalAttackFunction = function () {
             game.client.socket.emit('attack', {
                 attack: true,
@@ -55,22 +55,24 @@ class Monster extends AbstractCharacter {
 
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
             function (pointer) {
+            if(self.game.player.isAlive) {
                 game.controller.attackPoint = pointer.meshUnderPointer.parent;
                 game.controller.targetPoint = null;
                 game.controller.ball.visibility = 0;
-                intervalAttack = setInterval(intervalAttackFunction, 500);
+                self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 200);
                 intervalAttackFunction();
+            }
             }));
 
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger,
             function (pointer) {
-                clearInterval(intervalAttack);
+                clearInterval(self.intervalAttackRegisteredFunction);
                 self.game.controller.attackPoint = null;
             }));
 
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger,
             function (pointer) {
-                clearInterval(intervalAttack);
+                clearInterval(self.intervalAttackRegisteredFunction);
                 self.game.controller.attackPoint = null;
             }));
 
@@ -90,6 +92,9 @@ class Monster extends AbstractCharacter {
     }
 
     public removeFromWorld() {
+        if(this.intervalAttackRegisteredFunction) {
+            clearInterval(this.intervalAttackRegisteredFunction);
+        }
         this.meshForMove.dispose();
     }
 

@@ -3,12 +3,14 @@ namespace Server {
         protected server:SlavsServer;
         protected remotePlayers;
         protected enemies = [];
+        protected enemiesIntervals = [];
         protected rooms = [];
         protected monsterServerSocketId;
 
         constructor(server:SlavsServer, serverIO) {
             this.remotePlayers = [];
             this.enemies = [];
+            this.enemiesIntervals = [];
             this.rooms = [];
             let self = this;
             let remotePlayers = this.remotePlayers;
@@ -125,6 +127,13 @@ namespace Server {
                                             let playerId = player.getActiveCharacter().id;
                                             let itemManager = new Items.ItemManager();
                                             let item = itemManager.getItemUsingId(enemyItem, 0);
+
+                                            ///clear attack interval
+                                            if(self.enemiesIntervals[roomId][enemyKey]) {
+                                                clearInterval(self.enemiesIntervals[roomId][enemyKey]);
+                                                self.enemiesIntervals[roomId][enemyKey] = null;
+                                            }
+
                                             socket.emit('showDroppedItem', {
                                                 item: item,
                                                 itemKey: itemDropKey,
@@ -189,8 +198,6 @@ namespace Server {
                         //}
 
                         let roomId = player.getActiveCharacter().roomId;
-                        let socketId = player.id;
-
                         remotePlayers.forEach(function (remotePlayer, key) {
                             if (remotePlayer.id == player.id || remotePlayer == null) {
                                 remotePlayers.splice(key, 1);
@@ -199,14 +206,21 @@ namespace Server {
 
                         //if player is target of enemies, clear that
                         if (self.enemies[roomId] !== undefined) {
+                            let characterId = player.getActiveCharacter().id;
+
                             self.enemies[roomId].forEach(function (enemy, key) {
-                                if (enemy.target == player.id) {
+                                if (enemy.target == characterId) {
                                     enemy.target = null;
                                     let emiteData = {
                                         enemy: enemy,
                                         enemyKey: key,
                                         roomId: roomId
                                     };
+                                    if(self.enemiesIntervals[roomId][key]) {
+                                        clearInterval(self.enemiesIntervals[roomId][key]);
+                                        self.enemiesIntervals[roomId][key] = null;
+                                    }
+
                                     serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emiteData);
                                     serverIO.in(roomId).emit('updateEnemy', emiteData);
                                 }
@@ -247,7 +261,6 @@ namespace Server {
                     socket.on('updatePlayerPosition', function (updatedPlayer) {
                         self.remotePlayers.forEach(function (remotePlayer, remotePlayerKey) {
                             if (remotePlayer.id == updatedPlayer.playerSocketId) {
-                                // console.log('updatedPlayerPosition');
                                 let remotePlayer = self.remotePlayers[remotePlayerKey];
                                 remotePlayer.getActiveCharacter().position = updatedPlayer.position;
 
@@ -265,10 +278,45 @@ namespace Server {
                         enemy.attack = data.attack;
                         enemy.availableAttacksFromCharacters[data.target] = data.attack;
 
-                        socket.in(data.roomId).emit('updateEnemy', {
-                            enemy: enemy,
-                            enemyKey: data.enemyKey
-                        });
+                        if(!self.enemiesIntervals[data.roomId]) {
+                            self.enemiesIntervals[data.roomId] = [];
+                        }
+
+                        ///Enemy attack
+                        if(enemy.attack) {
+                            let enemeyAttackFunction = function () {
+                                self.remotePlayers.forEach(function (remotePlayer, remotePlayerKey) {
+                                    let activeCharacter = remotePlayer.getActiveCharacter();
+                                    enemy.availableAttacksFromCharacters.forEach(function (isAtacked, characterId) {
+                                        if (isAtacked === true) {
+                                            if (activeCharacter.id == characterId) {
+                                                let damage = enemy.statistics.damage;
+                                                activeCharacter.statistics.hp -= damage;
+                                                console.log('SOCKET - Enemy '+enemy.name+' attack on character '+activeCharacter.name+' DMG: '+damage);
+
+                                                serverIO.in(activeCharacter.roomId).emit('updatePlayer', activeCharacter);
+                                            }
+                                        }
+                                    });
+                                });
+
+                                socket.in(data.roomId).emit('updateEnemy', {
+                                    enemy: enemy,
+                                    enemyKey: data.enemyKey
+                                });
+                            };
+
+                            self.enemiesIntervals[data.roomId][data.enemyKey] = setInterval(enemeyAttackFunction, 1500);
+                        } else {
+                            if(self.enemiesIntervals[data.roomId][data.enemyKey]) {
+                                clearInterval(self.enemiesIntervals[data.roomId][data.enemyKey]);
+                                self.enemiesIntervals[data.roomId][data.enemyKey] = null;
+                            }
+                            socket.in(data.roomId).emit('updateEnemy', {
+                                enemy: enemy,
+                                enemyKey: data.enemyKey
+                            });
+                        }
                     });
                 }
 

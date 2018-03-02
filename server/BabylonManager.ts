@@ -143,8 +143,6 @@ namespace Server {
         public socketCreateRoom() {
             let self = this;
             this.socket.on('createRoom', function (roomId) {
-                console.log(self.scenes);
-                console.log(roomId);
                 if (self.scenes[roomId] === undefined) {
                     console.log('BABYLON: crate new room with scene - '+ roomId);
 

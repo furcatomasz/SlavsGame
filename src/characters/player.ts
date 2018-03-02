@@ -5,6 +5,7 @@ class Player extends AbstractCharacter {
     public walkSmoke:BABYLON.ParticleSystem;
     public inventory:Character.Inventory;
     public playerLight:BABYLON.PointLight;
+    public isAlive:boolean;
 
     public skills: Array;
     protected experience: number;
@@ -15,7 +16,7 @@ class Player extends AbstractCharacter {
     public constructor(game:Game, id, registerMoving:boolean, serverData: Array = []) {
         this.id = id;
         this.game = game;
-
+        this.isAlive = true;
         this.setCharacterStatistics(serverData.statistics);
         this.connectionId = serverData.connectionId;
         this.isControllable = registerMoving;

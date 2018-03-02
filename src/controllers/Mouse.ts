@@ -33,7 +33,7 @@ class Mouse extends Controller {
         
         scene.onPointerDown = function (evt, pickResult) {
             let pickedMesh = pickResult.pickedMesh;
-            if(self.game.player.isAttack) {
+            if(self.game.player.isAttack || !self.game.player.isAlive) {
                 return;
             }
             clickTrigger = true;
@@ -59,6 +59,9 @@ class Mouse extends Controller {
 
         scene.onPointerMove= function (evt, pickResult) {
             if(clickTrigger) {
+                if(!self.game.player.isAlive) {
+                    return;
+                }
                 let pickedMesh = pickResult.pickedMesh;
                 if (pickedMesh && self.targetPoint) {
                     if (self.game.player) {

@@ -365,6 +365,9 @@ class SocketIOClient {
                         setTimeout(function() {
                             game.getScene().unregisterAfterRender(animateText);
                             enemy.meshAdvancedTexture.removeControl(label);
+                            enemy.bloodParticles.rebuild();
+                            enemy.bloodParticles.stop();
+                            enemy.bloodParticles.reset();
 
                             if(enemy.statistics.hp <= 0) {
                                 enemy.removeFromWorld();
@@ -372,7 +375,6 @@ class SocketIOClient {
                         }, 1000);
 
                     }, 300);
-
                 }
 
                 ///antylag rule
@@ -385,7 +387,7 @@ class SocketIOClient {
                 }
 
                 if (updatedEnemy.attack == true) {
-                    enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, true);
+                    enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
                 } else if (updatedEnemy.target) {
                     let targetMesh = null;
                     if (enemy.animation) {
@@ -479,6 +481,63 @@ class SocketIOClient {
             if(!player) {
                 return;
             }
+
+            ///action when hp of character is changed
+            if(player.statistics.hp != updatedPlayer.statistics.hp) {
+                let damage = (player.statistics.hp-updatedPlayer.statistics.hp);
+                setTimeout(function() {
+
+                    player.bloodParticles.start();
+
+                    let label = new BABYLON.GUI.TextBlock();
+                    label.text = '-'+damage+'';
+                    label.width = 2;
+                    label.height = 2;
+                    label.color = 'red';
+                    label.fontSize = 200;
+                    label.shadowOffsetX = 0;
+                    label.shadowOffsetY = 0;
+                    label.shadowBlur = 1;
+                    let paddingTop = -300;
+                    label.top = paddingTop;
+
+                    let alpha = 1;
+                    let animateText = function() {
+                        label.top = paddingTop;
+                        label.alpha = alpha;
+                        alpha -= (2/100);
+                        if(alpha < 0) {
+                            alpha = 0;
+                        }
+                        paddingTop -= 5;
+                    }
+                    player.meshAdvancedTexture.addControl(label);
+                    game.getScene().registerAfterRender(animateText);
+
+                    player.statistics.hp = updatedPlayer.statistics.hp;
+                    if(player.isControllable) {
+                        game.gui.playerBottomPanel.setHpOnPanel(player.statistics.hp);
+                    }
+                    
+                    if(player.isAlive && player.statistics.hp <= 0) {
+                        player.isAlive = false;
+                        player.mesh.skeleton.beginAnimation('death', false);
+                    }
+                    
+                    setTimeout(function() {
+                        game.getScene().unregisterAfterRender(animateText);
+                        player.meshAdvancedTexture.removeControl(label);
+                        player.bloodParticles.rebuild();
+                        player.bloodParticles.stop();
+                        player.bloodParticles.reset();
+
+                    }, 1000);
+
+                }, 300);
+
+                return;
+            }
+            
 
             if (updatedPlayer.attack == true) {
                 let targetPoint = updatedPlayer.targetPoint;

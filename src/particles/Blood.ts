@@ -4,7 +4,7 @@ namespace Particles {
     export class Blood extends AbstractParticle {
 
         protected initParticleSystem() {
-            var particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 500 }, this.game.getScene());
+            var particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 100 } , this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
             particleSystem.emitter = this.emitter;
 
@@ -18,23 +18,23 @@ namespace Particles {
             particleSystem.minSize = 0.3;
             particleSystem.maxSize = 0.5;
 
-            particleSystem.minLifeTime = 0.05;
-            particleSystem.maxLifeTime = 0.7;
+            particleSystem.minLifeTime = 1;
+            particleSystem.maxLifeTime = 1;
 
-            particleSystem.emitRate = 500;
+            particleSystem.emitRate = 100;
 
             particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
 
             particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
 
-            particleSystem.direction1 = new BABYLON.Vector3(-2, 2, -2);
-            particleSystem.direction2 = new BABYLON.Vector3(2, 2, 2);
-            particleSystem.targetStopDuration = 0.6;
+            particleSystem.direction1 = new BABYLON.Vector3(-1, 8, -1);
+            particleSystem.direction2 = new BABYLON.Vector3(4, 8, 4);
+            //particleSystem.targetStopDuration = 0.6;
             particleSystem.minAngularSpeed = -10.0;
             particleSystem.maxAngularSpeed = 10.0;
 
-            particleSystem.minEmitPower = 1;
-            particleSystem.maxEmitPower = 2;
+            particleSystem.minEmitPower = 0.5;
+            particleSystem.maxEmitPower = 1;
             particleSystem.updateSpeed = 0.02;
 
             this.particleSystem = particleSystem;

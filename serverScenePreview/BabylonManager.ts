@@ -243,7 +243,8 @@ namespace Server {
                     }
 
                     if(playersInRoomCount == 0) {
-                        self.scenes[]
+                        console.log('delete scene');
+                        delete self.scenes[roomId];
                     }
 
                 });

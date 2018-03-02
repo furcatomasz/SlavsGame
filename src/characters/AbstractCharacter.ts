@@ -28,7 +28,7 @@ abstract class AbstractCharacter {
     public sfxWalk: BABYLON.Sound;
     protected sfxHit: BABYLON.Sound;
 
-    public bloodParticles: BABYLON.ParticleSystem;
+    public bloodParticles: BABYLON.GPUParticleSystem;
     public meshCharacterTexture: BABYLON.AbstractMesh;
     public meshAdvancedTexture: BABYLON.AbstractMesh;
     public dynamicFunction;
@@ -37,7 +37,7 @@ abstract class AbstractCharacter {
         this.game = game;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
 
-        let plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 4, height: 6}, game.getScene());
+        let plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 4, height: 8}, game.getScene());
         let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
 
         plane.isPickable = false;
@@ -68,8 +68,7 @@ abstract class AbstractCharacter {
             if (childMesh) {
                 let skeleton = childMesh.skeleton;
                 if(skeleton) {
-
-                    self.isAttack = true;
+                     self.isAttack = true;
                     if(callbackEnd) {
                         callbackStart();
                     }
@@ -78,6 +77,7 @@ abstract class AbstractCharacter {
                         if(callbackEnd) {
                             callbackEnd();
                         }
+
                         skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                         self.animation = null;
                         self.isAttack = false;

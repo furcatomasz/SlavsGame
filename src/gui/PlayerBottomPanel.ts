@@ -21,8 +21,8 @@ namespace GUI {
 
                 let hpSlider = new BABYLON.GUI.Slider();
                 hpSlider.minimum = 0;
-                hpSlider.maximum = 100;
-                hpSlider.value = 100;
+                hpSlider.maximum = game.player.statistics.hpMax;
+                hpSlider.value = game.player.statistics.hp;
                 hpSlider.width = "100%";
                 hpSlider.height = "10px";
                 hpSlider.thumbWidth = 0;
@@ -50,6 +50,10 @@ namespace GUI {
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        }
+
+        public setHpOnPanel(hp: int) {
+            this.hpBar.value = hp;
         }
 
     }

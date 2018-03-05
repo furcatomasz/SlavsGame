@@ -306,6 +306,7 @@ namespace Server {
                                 });
                             };
 
+                            enemeyAttackFunction();
                             self.enemiesIntervals[data.roomId][data.enemyKey] = setInterval(enemeyAttackFunction, 1500);
                         } else {
                             if(self.enemiesIntervals[data.roomId][data.enemyKey]) {

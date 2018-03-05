@@ -327,6 +327,8 @@ class SocketIOClient {
                 ///action when hp of monster is changed
                 if(enemy.statistics.hp != updatedEnemy.statistics.hp) {
                     let damage = (enemy.statistics.hp-updatedEnemy.statistics.hp);
+                    enemy.statistics.hp = updatedEnemy.statistics.hp;
+
                     setTimeout(function() {
 
                         enemy.bloodParticles.start();
@@ -356,7 +358,6 @@ class SocketIOClient {
                         enemy.meshAdvancedTexture.addControl(label);
                         game.getScene().registerAfterRender(animateText);
 
-                        enemy.statistics.hp = updatedEnemy.statistics.hp;
                         if(enemy.statistics.hp <= 0) {
                             if (enemy.animation) {
                                 enemy.animation.stop();
@@ -379,11 +380,15 @@ class SocketIOClient {
 
                 ///antylag rule
                 let distanceBetweenObjects = Game.distanceVector(mesh.position, updatedEnemy.position);
-                if(distanceBetweenObjects > 4) {
+                if(distanceBetweenObjects > 8) {
                     mesh.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
                 }
                 if (activeTargetPoints[enemyKey] !== undefined) {
                     self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
+                }
+
+                if (updatedEnemy.collisionWithCharacter == true) {
+                    enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                 }
 
                 if (updatedEnemy.attack == true) {
@@ -485,6 +490,7 @@ class SocketIOClient {
             ///action when hp of character is changed
             if(player.statistics.hp != updatedPlayer.statistics.hp) {
                 let damage = (player.statistics.hp-updatedPlayer.statistics.hp);
+                player.statistics.hp = updatedPlayer.statistics.hp;
                 setTimeout(function() {
 
                     player.bloodParticles.start();
@@ -514,16 +520,15 @@ class SocketIOClient {
                     player.meshAdvancedTexture.addControl(label);
                     game.getScene().registerAfterRender(animateText);
 
-                    player.statistics.hp = updatedPlayer.statistics.hp;
                     if(player.isControllable) {
                         game.gui.playerBottomPanel.setHpOnPanel(player.statistics.hp);
                     }
-                    
+
                     if(player.isAlive && player.statistics.hp <= 0) {
                         player.isAlive = false;
                         player.mesh.skeleton.beginAnimation('death', false);
                     }
-                    
+
                     setTimeout(function() {
                         game.getScene().unregisterAfterRender(animateText);
                         player.meshAdvancedTexture.removeControl(label);
@@ -535,11 +540,10 @@ class SocketIOClient {
 
                 }, 300);
 
-                return;
             }
             
 
-            if (updatedPlayer.attack == true) {
+            if (updatedPlayer.attack == true && !player.isAttack) {
                 let targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {
                     let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);

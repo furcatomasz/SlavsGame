@@ -719,6 +719,7 @@ var SocketIOClient = /** @class */ (function () {
                 ///action when hp of monster is changed
                 if (enemy.statistics.hp != updatedEnemy.statistics.hp) {
                     var damage_1 = (enemy.statistics.hp - updatedEnemy.statistics.hp);
+                    enemy.statistics.hp = updatedEnemy.statistics.hp;
                     setTimeout(function () {
                         enemy.bloodParticles.start();
                         var label = new BABYLON.GUI.TextBlock();
@@ -744,7 +745,6 @@ var SocketIOClient = /** @class */ (function () {
                         };
                         enemy.meshAdvancedTexture.addControl(label);
                         game.getScene().registerAfterRender(animateText);
-                        enemy.statistics.hp = updatedEnemy.statistics.hp;
                         if (enemy.statistics.hp <= 0) {
                             if (enemy.animation) {
                                 enemy.animation.stop();
@@ -764,11 +764,14 @@ var SocketIOClient = /** @class */ (function () {
                 }
                 ///antylag rule
                 var distanceBetweenObjects = Game.distanceVector(mesh_1.position, updatedEnemy.position);
-                if (distanceBetweenObjects > 4) {
+                if (distanceBetweenObjects > 8) {
                     mesh_1.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
                 }
                 if (activeTargetPoints[enemyKey] !== undefined) {
                     self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
+                }
+                if (updatedEnemy.collisionWithCharacter == true) {
+                    enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                 }
                 if (updatedEnemy.attack == true) {
                     enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
@@ -851,6 +854,7 @@ var SocketIOClient = /** @class */ (function () {
             ///action when hp of character is changed
             if (player.statistics.hp != updatedPlayer.statistics.hp) {
                 var damage_2 = (player.statistics.hp - updatedPlayer.statistics.hp);
+                player.statistics.hp = updatedPlayer.statistics.hp;
                 setTimeout(function () {
                     player.bloodParticles.start();
                     var label = new BABYLON.GUI.TextBlock();
@@ -876,7 +880,6 @@ var SocketIOClient = /** @class */ (function () {
                     };
                     player.meshAdvancedTexture.addControl(label);
                     game.getScene().registerAfterRender(animateText);
-                    player.statistics.hp = updatedPlayer.statistics.hp;
                     if (player.isControllable) {
                         game.gui.playerBottomPanel.setHpOnPanel(player.statistics.hp);
                     }
@@ -892,9 +895,9 @@ var SocketIOClient = /** @class */ (function () {
                         player.bloodParticles.reset();
                     }, 1000);
                 }, 300);
-                return;
             }
-            if (updatedPlayer.attack == true) {
+            if (updatedPlayer.attack == true && !player.isAttack) {
+                console.log(player.isAttack);
                 var targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {
                     var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);

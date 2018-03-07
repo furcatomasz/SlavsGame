@@ -647,6 +647,12 @@ namespace Server {
                     y: 0,
                     z: 160
                 };
+
+                position = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
             }
 
             return position;

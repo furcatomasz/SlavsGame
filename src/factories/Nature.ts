@@ -5,8 +5,8 @@ namespace Factories {
         constructor(game:Game, scene:BABYLON.Scene, assetsManager:BABYLON.AssetsManager) {
             super(game, scene, assetsManager);
             this.taskName = 'factory.nature.grain';
-            this.dir = 'assets/Environment/grain/';
-            this.fileName = 'Grain.babylon';
+            this.dir = 'assets/Environment/Plants/';
+            this.fileName = 'Plants.babylon';
         }
     }
 }

@@ -3,19 +3,20 @@
   "version": "0.0.0",
   "description": "Game server",
   "dependencies": {
-    "browser-sync": "^2.18.13",
+    "bower": "^1.8.2",
+    "browser-sync": "^2.23.6",
     "child_process": "^1.0.2",
     "express": "^4.16.2",
     "gulp": "^3.9.1",
-    "gulp-typescript": "^3.2.3",
+    "gulp-typescript": "^3.2.4",
     "http": "0.0.0",
     "mysql": "^2.15.0",
-    "orm": "^4.0.1",
+    "orm": "^4.0.2",
     "path": "^0.12.7",
     "requirejs": "^2.3.5",
     "socket.io": "^2.0.4",
     "socket.io-client": "latest",
-    "typescript": "^2.6.1"
+    "typescript": "^2.7.2"
   },
   "author": "Tomasz Furca"
 }

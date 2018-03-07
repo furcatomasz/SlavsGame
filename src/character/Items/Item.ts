@@ -14,7 +14,9 @@ namespace Items {
             this.type = itemData.type;
             this.databaseId = itemData.databaseId;
             this.statistics = itemData.statistics;
+            console.log(itemData);
             this.mesh = game.factories['character'].createInstance(itemData.meshName);
+            console.log(this.mesh);
             this.mesh.visibility = 0;
         }
     }

@@ -10,7 +10,7 @@ class Mountains extends Scene {
         let self = this;
         game.sceneManager = this;
 
-        BABYLON.SceneLoader.Load("assets/scenes/Mountains/", "Mountains.babylon", game.engine, function (scene) {
+        BABYLON.SceneLoader.Load("assets/scenes/Forest_house/", "Forest_house.babylon", game.engine, function (scene) {
             game.sceneManager = self;
             self
                 .setDefaults(game)
@@ -22,15 +22,17 @@ class Mountains extends Scene {
 
             scene.actionManager = new BABYLON.ActionManager(scene);
             let assetsManager = new BABYLON.AssetsManager(scene);
+            self.initFactories(scene, assetsManager);
+
             let sceneIndex = game.scenes.push(scene);
             game.activeScene = sceneIndex - 1;
+
             scene.executeWhenReady(function () {
-                self.environment = new Environment(game, scene);
-                self.initFactories(scene, assetsManager);
                 game.client.socket.emit('createPlayer');
 
                 assetsManager.onFinish = function (tasks) {
                     //self.octree = scene.createOrUpdateSelectionOctree();
+                    self.environment = new Environment(game, scene);
 
                     game.client.socket.emit('changeScenePre', {
                         sceneType: Mountains.TYPE,

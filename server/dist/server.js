@@ -383,24 +383,27 @@ var Server;
         EnemyManager.prototype.getEnemies = function () {
             var enemies = [];
             enemies[2] = [
-                new Monsters.Zombie(0, { x: -28, y: 0, z: 170 }, [Items.Weapons.Axe.ITEM_ID]),
-                new Monsters.Worm(0, { x: -92, y: 0, z: 160 }, []),
-                new Monsters.Boar(0, { x: -105, y: 0, z: 160 }, [Items.Weapons.Sword.ITEM_ID]),
-                new Monsters.Worm(0, { x: -97, y: 0, z: 142 }, []),
-                new Monsters.Boar(0, { x: -55, y: 0, z: 113 }, [Items.Armors.PrimaryArmor.ITEM_ID]),
-                new Monsters.Boar(0, { x: -72, y: 0, z: 94 }, [Items.Helms.PrimaryHelm.ITEM_ID]),
-                new Monsters.Boar(0, { x: -93, y: 0, z: 99 }, [Items.Boots.PrimaryBoots.ITEM_ID]),
-                new Monsters.Boar(0, { x: 5, y: 0, z: 93 }, [Items.Gloves.PrimaryGloves.ITEM_ID]),
-                new Monsters.Boar(0, { x: 27, y: 0, z: 93 }, []),
-                new Monsters.Boar(0, { x: 26, y: 0, z: 72 }, [Items.Shields.WoodShield.ITEM_ID]),
-                new Monsters.Boar(0, { x: 1, y: 0, z: 67 }, []),
-                new Monsters.Worm(0, { x: 105, y: 0, z: 154 }, []),
-                new Monsters.Boar(0, { x: 79, y: 0, z: 156 }, []),
-                new Monsters.Worm(0, { x: 96, y: 0, z: 144 }, []),
-                new Monsters.Worm(0, { x: 94, y: 0, z: 129 }, []),
-                new Monsters.Worm(0, { x: 88, y: 0, z: 185 }, []),
+                // new Monsters.Zombie(0, {x: -28, y: 0, z: 170}, [Items.Weapons.Axe.ITEM_ID]),
+                //
+                // new Monsters.Worm(0, {x: -92, y: 0, z: 160}, []),
+                // new Monsters.Boar(0, {x: -105, y: 0, z: 160}, [Items.Weapons.Sword.ITEM_ID]),
+                // new Monsters.Worm(0, {x: -97, y: 0, z: 142}, []),
+                //
+                // new Monsters.Boar(0, {x: -55, y: 0, z: 113}, [Items.Armors.PrimaryArmor.ITEM_ID]),
+                // new Monsters.Boar(0, {x: -72, y: 0, z: 94}, [Items.Helms.PrimaryHelm.ITEM_ID]),
+                // new Monsters.Boar(0, {x: -93, y: 0, z: 99}, [Items.Boots.PrimaryBoots.ITEM_ID]),
+                //
+                // new Monsters.Boar(0, {x: 5, y: 0, z: 93}, [Items.Gloves.PrimaryGloves.ITEM_ID]),
+                // new Monsters.Boar(0, {x: 27, y: 0, z: 93}, []),
+                // new Monsters.Boar(0, {x: 26, y: 0, z: 72}, [Items.Shields.WoodShield.ITEM_ID]),
+                // new Monsters.Boar(0, {x: 1, y: 0, z: 67}, []),
+                //
+                // new Monsters.Worm(0, {x: 105, y: 0, z: 154}, []),
+                // new Monsters.Boar(0, {x: 79, y: 0, z: 156}, []),
+                // new Monsters.Worm(0, {x: 96, y: 0, z: 144}, []),
+                // new Monsters.Worm(0, {x: 94, y: 0, z: 129}, []),
+                // new Monsters.Worm(0, {x: 88, y: 0, z: 185}, []),
                 new Monsters.Boar(0, { x: 127, y: 0, z: 169 }, []),
-                new Monsters.Boar(0, { x: 134, y: 0, z: 154 }, []),
             ];
             return enemies;
         };
@@ -468,39 +471,6 @@ var Server;
     }());
     Server.QuestManager = QuestManager;
 })(Server || (Server = {}));
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
-var socketIOClient = require('socket.io-client');
-var orm = require("orm");
-var config = require("./../config.js");
-var BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
-var LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
-var requirejs = require('requirejs');
-server.listen(config.server.port);
-var SlavsServer = /** @class */ (function () {
-    function SlavsServer() {
-        this.enemies = [];
-        this.quests = [];
-        var self = this;
-        this.ormManager = new Server.OrmManager(self, orm, config);
-        this.gameModules = new Server.GameModules();
-        this.gameModules.loadModules(function () {
-            self.enemyManager = new Server.EnemyManager();
-            self.questManager = new Server.QuestManager();
-            self.enemies = self.enemyManager.getEnemies();
-            self.quests = self.questManager.getQuests();
-            //self.serverFrontEnd = new Server.FrontEnd(self, app, express);
-            self.babylonManager = new Server.BabylonManager(self);
-            self.serverWebsocket = new Server.IO(self, io);
-        });
-    }
-    return SlavsServer;
-}());
-setTimeout(function () {
-    new SlavsServer();
-}, 0);
 var path = require('path');
 var Server;
 (function (Server) {
@@ -778,6 +748,7 @@ var Server;
                                     enemyKey: data.enemyKey
                                 });
                             };
+                            enemeyAttackFunction();
                             self.enemiesIntervals[data.roomId][data.enemyKey] = setInterval(enemeyAttackFunction, 1500);
                         }
                         else {
@@ -1083,6 +1054,11 @@ var Server;
                     y: 0,
                     z: 160
                 };
+                position = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
             }
             return position;
         };
@@ -1091,6 +1067,39 @@ var Server;
     }());
     Server.IO = IO;
 })(Server || (Server = {}));
+var express = require('express');
+var app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+var socketIOClient = require('socket.io-client');
+var orm = require("orm");
+var config = require("./../config.js");
+var BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
+var LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
+var requirejs = require('requirejs');
+server.listen(config.server.port);
+var SlavsServer = /** @class */ (function () {
+    function SlavsServer() {
+        this.enemies = [];
+        this.quests = [];
+        var self = this;
+        this.ormManager = new Server.OrmManager(self, orm, config);
+        this.gameModules = new Server.GameModules();
+        this.gameModules.loadModules(function () {
+            self.enemyManager = new Server.EnemyManager();
+            self.questManager = new Server.QuestManager();
+            self.enemies = self.enemyManager.getEnemies();
+            self.quests = self.questManager.getQuests();
+            //self.serverFrontEnd = new Server.FrontEnd(self, app, express);
+            self.babylonManager = new Server.BabylonManager(self);
+            self.serverWebsocket = new Server.IO(self, io);
+        });
+    }
+    return SlavsServer;
+}());
+setTimeout(function () {
+    new SlavsServer();
+}, 0);
 var Server;
 (function (Server) {
     var Orm;
@@ -1852,29 +1861,29 @@ var Items;
         ItemManager.prototype.getItem = function (id, databaseId) {
             var item = null;
             switch (id) {
-                case Items.Armors.Robe.ITEM_ID:
-                    item = new Items.Armors.Robe(databaseId);
+                case Items.Armors.LeatherArmor.ITEM_ID:
+                    item = new Items.Armors.LeatherArmor(databaseId);
                     break;
-                case Items.Armors.PrimaryArmor.ITEM_ID:
-                    item = new Items.Armors.PrimaryArmor(databaseId);
+                case Items.Boots.LeatherBoots.ITEM_ID:
+                    item = new Items.Boots.LeatherBoots(databaseId);
                     break;
-                case Items.Boots.PrimaryBoots.ITEM_ID:
-                    item = new Items.Boots.PrimaryBoots(databaseId);
+                case Items.Gloves.LeatherGloves.ITEM_ID:
+                    item = new Items.Gloves.LeatherGloves(databaseId);
                     break;
-                case Items.Gloves.PrimaryGloves.ITEM_ID:
-                    item = new Items.Gloves.PrimaryGloves(databaseId);
+                case Items.Helms.LeatherHelm.ITEM_ID:
+                    item = new Items.Helms.LeatherHelm(databaseId);
                     break;
-                case Items.Helms.PrimaryHelm.ITEM_ID:
-                    item = new Items.Helms.PrimaryHelm(databaseId);
+                case Items.Shields.SmallWoodenShield.ITEM_ID:
+                    item = new Items.Shields.SmallWoodenShield(databaseId);
                     break;
-                case Items.Shields.WoodShield.ITEM_ID:
-                    item = new Items.Shields.WoodShield(databaseId);
-                    break;
-                case Items.Weapons.Axe.ITEM_ID:
-                    item = new Items.Weapons.Axe(databaseId);
+                case Items.Shields.MediumWoodenShield.ITEM_ID:
+                    item = new Items.Shields.MediumWoodenShield(databaseId);
                     break;
                 case Items.Weapons.Sword.ITEM_ID:
                     item = new Items.Weapons.Sword(databaseId);
+                    break;
+                case Items.Weapons.LongSword.ITEM_ID:
+                    item = new Items.Weapons.LongSword(databaseId);
                     break;
             }
             return item;
@@ -1987,43 +1996,21 @@ var Items;
 (function (Items) {
     var Armors;
     (function (Armors) {
-        var PrimaryArmor = /** @class */ (function (_super) {
-            __extends(PrimaryArmor, _super);
-            function PrimaryArmor(databaseId) {
+        var LeatherArmor = /** @class */ (function (_super) {
+            __extends(LeatherArmor, _super);
+            function LeatherArmor(databaseId) {
                 var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Armor';
+                _this.name = 'leatherArmor';
                 _this.image = 'Armor';
-                _this.itemId = Items.Armors.PrimaryArmor.ITEM_ID;
+                _this.itemId = Items.Armors.LeatherArmor.ITEM_ID;
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Armor';
+                _this.meshName = 'leatherArmor';
                 return _this;
             }
-            PrimaryArmor.ITEM_ID = 1;
-            return PrimaryArmor;
+            LeatherArmor.ITEM_ID = 1;
+            return LeatherArmor;
         }(Items.Armor));
-        Armors.PrimaryArmor = PrimaryArmor;
-    })(Armors = Items.Armors || (Items.Armors = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Armors;
-    (function (Armors) {
-        var Robe = /** @class */ (function (_super) {
-            __extends(Robe, _super);
-            function Robe(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Robe';
-                _this.image = 'Armor';
-                _this.itemId = Items.Armors.Robe.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Warrior.001';
-                return _this;
-            }
-            Robe.ITEM_ID = 2;
-            return Robe;
-        }(Items.Armor));
-        Armors.Robe = Robe;
+        Armors.LeatherArmor = LeatherArmor;
     })(Armors = Items.Armors || (Items.Armors = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2056,21 +2043,21 @@ var Items;
 (function (Items) {
     var Boots;
     (function (Boots) {
-        var PrimaryBoots = /** @class */ (function (_super) {
-            __extends(PrimaryBoots, _super);
-            function PrimaryBoots(databaseId) {
+        var LeatherBoots = /** @class */ (function (_super) {
+            __extends(LeatherBoots, _super);
+            function LeatherBoots(databaseId) {
                 var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Boots';
+                _this.name = 'leatherBoots';
                 _this.image = 'Boots';
-                _this.itemId = Items.Boots.PrimaryBoots.ITEM_ID;
+                _this.itemId = Items.Boots.LeatherBoots.ITEM_ID;
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Boots';
+                _this.meshName = 'leatherBoots';
                 return _this;
             }
-            PrimaryBoots.ITEM_ID = 3;
-            return PrimaryBoots;
+            LeatherBoots.ITEM_ID = 2;
+            return LeatherBoots;
         }(Boots));
-        Boots.PrimaryBoots = PrimaryBoots;
+        Boots.LeatherBoots = LeatherBoots;
     })(Boots = Items.Boots || (Items.Boots = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2103,21 +2090,21 @@ var Items;
 (function (Items) {
     var Gloves;
     (function (Gloves) {
-        var PrimaryGloves = /** @class */ (function (_super) {
-            __extends(PrimaryGloves, _super);
-            function PrimaryGloves(databaseId) {
+        var LeatherGloves = /** @class */ (function (_super) {
+            __extends(LeatherGloves, _super);
+            function LeatherGloves(databaseId) {
                 var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Gloves';
+                _this.name = 'leatherGloves';
                 _this.image = 'Gloves';
-                _this.itemId = Items.Gloves.PrimaryGloves.ITEM_ID;
+                _this.itemId = Items.Gloves.LeatherGloves.ITEM_ID;
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Gloves';
+                _this.meshName = 'leatherGloves';
                 return _this;
             }
-            PrimaryGloves.ITEM_ID = 4;
-            return PrimaryGloves;
+            LeatherGloves.ITEM_ID = 3;
+            return LeatherGloves;
         }(Gloves));
-        Gloves.PrimaryGloves = PrimaryGloves;
+        Gloves.LeatherGloves = LeatherGloves;
     })(Gloves = Items.Gloves || (Items.Gloves = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2150,21 +2137,21 @@ var Items;
 (function (Items) {
     var Helms;
     (function (Helms) {
-        var PrimaryHelm = /** @class */ (function (_super) {
-            __extends(PrimaryHelm, _super);
-            function PrimaryHelm(databaseId) {
+        var LeatherHelm = /** @class */ (function (_super) {
+            __extends(LeatherHelm, _super);
+            function LeatherHelm(databaseId) {
                 var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Helm';
+                _this.name = 'leatherHelm';
                 _this.image = 'Helm';
-                _this.itemId = Items.Helms.PrimaryHelm.ITEM_ID;
+                _this.itemId = Items.Helms.LeatherHelm.ITEM_ID;
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Helm';
+                _this.meshName = 'leatherHelm';
                 return _this;
             }
-            PrimaryHelm.ITEM_ID = 5;
-            return PrimaryHelm;
+            LeatherHelm.ITEM_ID = 4;
+            return LeatherHelm;
         }(Items.Helm));
-        Helms.PrimaryHelm = PrimaryHelm;
+        Helms.LeatherHelm = LeatherHelm;
     })(Helms = Items.Helms || (Items.Helms = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2197,21 +2184,43 @@ var Items;
 (function (Items) {
     var Shields;
     (function (Shields) {
-        var WoodShield = /** @class */ (function (_super) {
-            __extends(WoodShield, _super);
-            function WoodShield(databaseId) {
+        var MediumWoodenShield = /** @class */ (function (_super) {
+            __extends(MediumWoodenShield, _super);
+            function MediumWoodenShield(databaseId) {
                 var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Wood Shield';
+                _this.name = 'shieldWoodenMedium';
                 _this.image = 'Shield';
-                _this.itemId = Items.Shields.WoodShield.ITEM_ID;
+                _this.itemId = Items.Shields.SmallWoodenShield.ITEM_ID;
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'Shield';
+                _this.meshName = 'shieldWoodenMedium';
                 return _this;
             }
-            WoodShield.ITEM_ID = 7;
-            return WoodShield;
+            MediumWoodenShield.ITEM_ID = 6;
+            return MediumWoodenShield;
         }(Items.Shield));
-        Shields.WoodShield = WoodShield;
+        Shields.MediumWoodenShield = MediumWoodenShield;
+    })(Shields = Items.Shields || (Items.Shields = {}));
+})(Items || (Items = {}));
+/// <reference path="Shield.ts"/>
+var Items;
+(function (Items) {
+    var Shields;
+    (function (Shields) {
+        var SmallWoodenShield = /** @class */ (function (_super) {
+            __extends(SmallWoodenShield, _super);
+            function SmallWoodenShield(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'shieldWoodenSmall';
+                _this.image = 'Shield';
+                _this.itemId = Items.Shields.SmallWoodenShield.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'shieldWoodenSmall';
+                return _this;
+            }
+            SmallWoodenShield.ITEM_ID = 5;
+            return SmallWoodenShield;
+        }(Items.Shield));
+        Shields.SmallWoodenShield = SmallWoodenShield;
     })(Shields = Items.Shields || (Items.Shields = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
@@ -2244,21 +2253,21 @@ var Items;
 (function (Items) {
     var Weapons;
     (function (Weapons) {
-        var Axe = /** @class */ (function (_super) {
-            __extends(Axe, _super);
-            function Axe(databaseId) {
+        var LongSword = /** @class */ (function (_super) {
+            __extends(LongSword, _super);
+            function LongSword(databaseId) {
                 var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Axe';
-                _this.image = 'BigSword';
-                _this.itemId = Items.Weapons.Axe.ITEM_ID;
-                _this.meshName = 'Axe';
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 10, 0, 0, 0, 0);
+                _this.name = 'swordLong';
+                _this.image = 'Sword';
+                _this.itemId = Items.Weapons.LongSword.ITEM_ID;
+                _this.meshName = 'swordLong';
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 5, 0, 0, 0, 0);
                 return _this;
             }
-            Axe.ITEM_ID = 8;
-            return Axe;
+            LongSword.ITEM_ID = 8;
+            return LongSword;
         }(Items.Weapon));
-        Weapons.Axe = Axe;
+        Weapons.LongSword = LongSword;
     })(Weapons = Items.Weapons || (Items.Weapons = {}));
 })(Items || (Items = {}));
 /// <reference path="Weapon.ts"/>
@@ -2270,14 +2279,14 @@ var Items;
             __extends(Sword, _super);
             function Sword(databaseId) {
                 var _this = _super.call(this, databaseId) || this;
-                _this.name = 'Sword';
+                _this.name = 'sword';
                 _this.image = 'Sword';
                 _this.itemId = Items.Weapons.Sword.ITEM_ID;
-                _this.meshName = 'Sword';
+                _this.meshName = 'sword';
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 5, 0, 0, 0, 0);
                 return _this;
             }
-            Sword.ITEM_ID = 9;
+            Sword.ITEM_ID = 7;
             return Sword;
         }(Items.Weapon));
         Weapons.Sword = Sword;

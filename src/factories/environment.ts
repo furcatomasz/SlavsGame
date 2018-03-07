@@ -23,6 +23,7 @@ class Environment {
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         //this.shadowGenerator = shadowGenerator;
 
+        let fern = null;
         for (let i = 0; i < scene.meshes.length; i++) {
             let sceneMesh = scene.meshes[i];
             let meshName = scene.meshes[i]['name'];
@@ -30,6 +31,11 @@ class Environment {
             if (meshName.search("Ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 this.ground = sceneMesh;
+
+                var myTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.png", scene);
+                myTexture.uScale = 10.0;
+                myTexture.vScale = 10.0;
+                sceneMesh.material.diffuseTexture = myTexture;
                 //sceneMesh.receiveShadows = true;
             } else if (meshName.search("Box_Cube") >= 0) {
 
@@ -42,7 +48,40 @@ class Environment {
             }
 
         }
+//TODO: SPS Nature
+// console.log(game, game.factories);
+        // let fern = game.factories['nature_grain'].createInstance('Fern', false);
+        // console.log(fern);
+        //
+        // let fact = 100;
+        // var myPositionFunction = function(particle, i, s) {
+        //     particle.position.x = (Math.random() - 0.5) * fact;
+        //     particle.position.y = 0;
+        //     particle.position.z = (Math.random() - 0.5) * fact;
+        //     // particle.rotation.x = Math.random() * 3.15;
+        //     // particle.rotation.y = Math.random() * 3.15;
+        //     // particle.rotation.z = Math.random() * 1.5;
+        // };
+        //
+        // var SPS = new BABYLON.SolidParticleSystem("SPS", scene);
+        // SPS.addShape(fern, 5000, {positionFunction: myPositionFunction});
+        // var mesh = SPS.buildMesh();
 
+        // let SPSPlain = scene.getMeshByName("Ground");
+        // if (SPSPlain) {
+        //     SPSPlain.updateFacetData();
+        //     var positions = SPSPlain.getFacetLocalPositions();
+        //     var normals = SPSPlain.getFacetLocalNormals();
+        //
+        //     var lines = [];
+        //     for (var i = 0; i < positions.length; i++) {
+        //         var line = [ positions[i], positions[i].add(normals[i]) ];
+        //         console.log(line);
+        //         lines.push(line);
+        //     }
+        //     var lineSystem = BABYLON.MeshBuilder.CreateLineSystem("ls", {lines: lines}, scene);
+        //     lineSystem.color = BABYLON.Color3.Green();
+        // }
         ///Freeze world matrix all static meshes
         for (let i = 0; i < scene.meshes.length; i++) {
             scene.meshes[i].freezeWorldMatrix();

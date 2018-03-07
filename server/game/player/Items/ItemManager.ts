@@ -43,29 +43,29 @@ namespace Items {
         protected getItem(id, databaseId:number) {
             let item = null;
             switch (id) {
-                case Items.Armors.Robe.ITEM_ID:
-                    item = new Items.Armors.Robe(databaseId);
+                case Items.Armors.LeatherArmor.ITEM_ID:
+                    item = new Items.Armors.LeatherArmor(databaseId);
                     break;
-                case Items.Armors.PrimaryArmor.ITEM_ID:
-                    item = new Items.Armors.PrimaryArmor(databaseId);
+                case Items.Boots.LeatherBoots.ITEM_ID:
+                    item = new Items.Boots.LeatherBoots(databaseId);
                     break;
-                case Items.Boots.PrimaryBoots.ITEM_ID:
-                    item = new Items.Boots.PrimaryBoots(databaseId);
+                case Items.Gloves.LeatherGloves.ITEM_ID:
+                    item = new Items.Gloves.LeatherGloves(databaseId);
                     break;
-                case Items.Gloves.PrimaryGloves.ITEM_ID:
-                    item = new Items.Gloves.PrimaryGloves(databaseId);
+                case Items.Helms.LeatherHelm.ITEM_ID:
+                    item = new Items.Helms.LeatherHelm(databaseId);
                     break;
-                case Items.Helms.PrimaryHelm.ITEM_ID:
-                    item = new Items.Helms.PrimaryHelm(databaseId);
+                case Items.Shields.SmallWoodenShield.ITEM_ID:
+                    item = new Items.Shields.SmallWoodenShield(databaseId);
                     break;
-                case Items.Shields.WoodShield.ITEM_ID:
-                    item = new Items.Shields.WoodShield(databaseId);
-                    break;
-                case Items.Weapons.Axe.ITEM_ID:
-                    item = new Items.Weapons.Axe(databaseId);
+                case Items.Shields.MediumWoodenShield.ITEM_ID:
+                    item = new Items.Shields.MediumWoodenShield(databaseId);
                     break;
                 case Items.Weapons.Sword.ITEM_ID:
                     item = new Items.Weapons.Sword(databaseId);
+                    break;
+                case Items.Weapons.LongSword.ITEM_ID:
+                    item = new Items.Weapons.LongSword(databaseId);
                     break;
             }
 

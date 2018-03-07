@@ -29,9 +29,10 @@ abstract class Scene {
     }
 
     public setFog(scene) {
-        scene.clearColor = new BABYLON.Color3(0.02, 0.05, 0.2);
+        scene.clearColor = new BABYLON.Color3(0, 0, 0);
         scene.fogMode = BABYLON.Scene.FOGMODE_LINEAR;
         scene.fogColor = new BABYLON.Color3(0.02, 0.05, 0.2);
+        scene.fogColor = new BABYLON.Color3(0, 0, 0);
         scene.fogDensity = 1;
 
         //Only if LINEAR

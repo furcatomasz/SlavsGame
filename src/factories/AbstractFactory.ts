@@ -21,6 +21,7 @@ namespace Factories {
             let self = this;
             let meshTask = this.assetsManager.addMeshTask(this.taskName, null, this.dir, this.fileName);
             meshTask.onSuccess = function (task) {
+                console.log(task                );
                 self.loadedMeshes = task.loadedMeshes;
                 for (let i = 0; i < self.loadedMeshes.length; i++) {
                     let loadedMesh = self.loadedMeshes[i];

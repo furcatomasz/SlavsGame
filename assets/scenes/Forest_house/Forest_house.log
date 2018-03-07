@@ -1,0 +1,343 @@
+Exporter version: 5.6.0, Blender version: 2.79 (sub 0)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used:
+		selected layers only:  false
+		inline textures:  false
+		Positions Precision :  4
+		Normals Precision   :  3
+		UVs Precision       :  3
+		Vert Color Precision:  3
+		Mat Weight Precision:  2
+		texture directory:  F:\Slavs\Babylon\Maps\Forest_house\
+	Python World class constructor completed
+	processing begun of mesh:  Plane.004
+		processing begun of Standard material:  Material
+		num positions      :  9745
+		num normals        :  9745
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  56634
+	processing begun of mesh:  Ground
+		processing begun of baked material:  Ground
+			Internal baking texture, type: TEXTURE, mapped using: UVMap
+		num positions      :  464
+		num normals        :  464
+		num uvs            :  928
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2526
+	processing begun of mesh:  Cube.000
+		processing begun of Standard material:  wood
+			Diffuse texture found "Texture.010"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  236
+		num normals        :  236
+		num uvs            :  472
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  336
+	processing begun of mesh:  Cylinder.023
+		processing begun of Standard material:  LOg_low
+			Diffuse texture found "Texture.007"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  45
+		num normals        :  45
+		num uvs            :  90
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.022
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.021
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.020
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.019
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.018
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.017
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.016
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.015
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.014
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.013
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.012
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.011
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.010
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.009
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.008
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.007
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.006
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.005
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.004
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.003
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.002
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Cylinder.000
+		registered as also a user of material:  LOg_low
+		num positions      :  45
+		num normals        :  45
+		num uvs            :  90
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Plane
+		processing begun of Standard material:  Material.003
+			Diffuse texture found "Texture.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  61
+		num normals        :  61
+		num uvs            :  122
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  216
+	processing begun of mesh:  Chest
+		processing begun of Standard material:  Material.009
+		processing begun of Standard material:  Material.001
+			Diffuse texture found "Texture.009"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Forest_house.Multimaterial#0
+		num positions      :  1135
+		num normals        :  1135
+		num uvs            :  2270
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1494
+		WARNING: # of 0 area faces found:  4
+	processing begun of mesh:  Cube.001
+		registered as also a user of material:  wood
+		num positions      :  182
+		num normals        :  182
+		num uvs            :  364
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  252
+	processing begun of mesh:  Cylinder.001
+		registered as also a user of material:  LOg_low
+		num positions      :  44
+		num normals        :  44
+		num uvs            :  88
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60
+	processing begun of mesh:  Fern.001
+		processing begun of Standard material:  Fern
+			Diffuse texture found "Fern"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  64
+		num normals        :  64
+		num uvs            :  128
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  144
+	processing begun of mesh:  ground_plants.001
+		processing begun of Standard material:  ground_plants
+			Diffuse texture found "ground_plants"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Fern
+		registered as also a user of material:  Fern
+		num positions      :  80
+		num normals        :  80
+		num uvs            :  160
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  180
+	processing begun of mesh:  Spruce.001
+		processing begun of Standard material:  korona2.001
+			Diffuse texture found "korona2.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  root.001
+			Diffuse texture found "Texture.000"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Forest_house.Multimaterial#1
+		num positions      :  170
+		num normals        :  170
+		num uvs            :  340
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  330
+	processing begun of mesh:  Stone_noise.001
+		processing begun of Standard material:  Stone_noise
+			Diffuse texture found "Tex.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  62
+		num normals        :  62
+		num uvs            :  124
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  96
+	processing begun of mesh:  Stone_noise.002
+		registered as also a user of material:  Stone_noise
+		num positions      :  37
+		num normals        :  37
+		num uvs            :  74
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  96
+	processing begun of camera (UniversalCamera):  Camera
+	processing begun of mesh:  Gap
+		processing begun of Standard material:  Material.004
+			Diffuse texture found "Texture.006"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  6318
+		num normals        :  6318
+		num uvs            :  12636
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  20214
+	WARNING: The following lamp not visible in scene thus ignored: Lamp
+========= Writing of scene file started =========
+========= Writing of scene file completed =========
+========= end of processing =========
+elapsed time:  0 min, 24.965 secs

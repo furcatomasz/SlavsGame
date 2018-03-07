@@ -1,6 +1,6 @@
 /// <reference path="../game.ts"/>
 
-class Environment {
+class EnvironmentForestHouse {
 
     bushes: Array<BABYLON.AbstractMesh>;
     colliders: Array<BABYLON.AbstractMesh>;
@@ -36,6 +36,8 @@ class Environment {
                 myTexture.uScale = 10.0;
                 myTexture.vScale = 10.0;
                 sceneMesh.material.diffuseTexture = myTexture;
+                console.log(sceneMesh.material);
+                sceneMesh.material.specularColor = new BABYLON.Color3(0,0,0);
                 //sceneMesh.receiveShadows = true;
             } else if (meshName.search("Box_Cube") >= 0) {
 
@@ -88,47 +90,47 @@ class Environment {
         }
 
         ////fireplace
-        let cone = scene.getMeshByName("Fireplace");
-        if (cone) {
-            let smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
-            smokeSystem.start();
-
-            let fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
-            fireSystem.start();
-
-            let sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, {
-                loop: true,
-                autoplay: true
-            });
-            sfxFireplace.attachToMesh(cone);
-        }
+        // let cone = scene.getMeshByName("Fireplace");
+        // if (cone) {
+        //     let smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
+        //     smokeSystem.start();
+        //
+        //     let fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
+        //     fireSystem.start();
+        //
+        //     let sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, {
+        //         loop: true,
+        //         autoplay: true
+        //     });
+        //     sfxFireplace.attachToMesh(cone);
+        // }
 
         ///portal to town
-        let plane = scene.getMeshByName("Cave_entrace");
-        if (plane) {
-            this.entrace = plane;
-            plane.visibility = 0;
-            plane.isPickable = false;
-            let smokeSystem = new Particles.CaveEntrace(game, plane).particleSystem;
-            smokeSystem.start();
-
-            let listener = function listener() {
-                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                    parameter: plane
-                }, function () {
-                    game.sceneManager.changeScene(new Cave());
-                    return this;
-                }));
-
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
-        }
+        // let plane = scene.getMeshByName("Cave_entrace");
+        // if (plane) {
+        //     this.entrace = plane;
+        //     plane.visibility = 0;
+        //     plane.isPickable = false;
+        //     let smokeSystem = new Particles.CaveEntrace(game, plane).particleSystem;
+        //     smokeSystem.start();
+        //
+        //     let listener = function listener() {
+        //         game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+        //             trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+        //             parameter: plane
+        //         }, function () {
+        //             game.sceneManager.changeScene(new Cave());
+        //             return this;
+        //         }));
+        //
+        //         document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+        //     };
+        //
+        //     document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        // }
 
         ///town entrace
-        let plane = scene.getMeshByName("Entrace_Town");
+        let plane = scene.getMeshByName("Entrace_House");
 
         if (plane) {
             this.entrace = plane;
@@ -142,7 +144,7 @@ class Environment {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: plane
                 }, function () {
-                    game.sceneManager.changeScene(new Castle());
+                    game.sceneManager.changeScene(new ForestHouseStart());
                     return this;
                 }));
 
@@ -153,29 +155,29 @@ class Environment {
         }
 
         ///Cave entrace
-        let plane = scene.getMeshByName("Entrace_Cave");
-
-        if (plane) {
-            this.entrace = plane;
-            plane.visibility = 0;
-            plane.isPickable = false;
-            let smokeSystem = new Particles.CastleEnter(game, plane).particleSystem;
-            smokeSystem.start();
-
-            let listener2 = function listener() {
-                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                    parameter: plane
-                }, function () {
-                    game.sceneManager.changeScene(new Cave());
-                    return this;
-                }));
-
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
-            };
-
-            document.addEventListener(Events.PLAYER_CONNECTED, listener2);
-        }
+        // let plane = scene.getMeshByName("Entrace_Cave");
+        //
+        // if (plane) {
+        //     this.entrace = plane;
+        //     plane.visibility = 0;
+        //     plane.isPickable = false;
+        //     let smokeSystem = new Particles.CastleEnter(game, plane).particleSystem;
+        //     smokeSystem.start();
+        //
+        //     let listener2 = function listener() {
+        //         game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+        //             trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+        //             parameter: plane
+        //         }, function () {
+        //             game.sceneManager.changeScene(new Cave());
+        //             return this;
+        //         }));
+        //
+        //         document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
+        //     };
+        //
+        //     document.addEventListener(Events.PLAYER_CONNECTED, listener2);
+        // }
 
         ///register colliders
         for (let i = 0; i < this.colliders.length; i++) {

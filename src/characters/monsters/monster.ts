@@ -30,6 +30,7 @@ class Monster extends AbstractCharacter {
 
         this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
         this.mesh.outlineWidth = 0.1;
+        this.mesh.isPickable = 1;
 
         let self = this;
         this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
@@ -41,6 +42,7 @@ class Monster extends AbstractCharacter {
 
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
             function () {
+            console.log('show '           );
                 self.mesh.renderOutline = true;
                 self.game.gui.characterTopHp.showHpCharacter(self);
             }));

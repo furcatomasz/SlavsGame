@@ -315,6 +315,7 @@ class SocketIOClient {
      */
     protected updateEnemies() {
         var game = this.game;
+        let self = this;
         let activeTargetPoints = [];
         this.socket.on('updateEnemy', function (data) {
             let updatedEnemy = data.enemy;

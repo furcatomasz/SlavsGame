@@ -76,4 +76,38 @@ namespace Monsters {
 
     }
 
+    export class Skeleton extends Monster {
+
+        constructor(id, position, itemsToDrop:Array) {
+            super(id, position, itemsToDrop);
+
+            this.name = 'Skeleton';
+            this.type = 'skeletons';
+            this.meshName = 'Skeleton';
+            this.lvl = 3;
+            this.experience = 25;
+            this.attackAreaSize = 2;
+            this.visibilityAreaSize = 15;
+            this.statistics = new Attributes.CharacterStatistics(300, 300, 100, 3, 10, 6, 0, 100);
+        }
+
+    }
+
+    export class SkeletonMedium extends Monster {
+
+        constructor(id, position, itemsToDrop:Array) {
+            super(id, position, itemsToDrop);
+
+            this.name = 'skeletonMedium.001';
+            this.type = 'skeletons';
+            this.meshName = 'skeletonMedium.001';
+            this.lvl = 3;
+            this.experience = 25;
+            this.attackAreaSize = 2;
+            this.visibilityAreaSize = 15;
+            this.statistics = new Attributes.CharacterStatistics(300, 300, 100, 10, 10, 6, 0, 100);
+        }
+
+    }
+
 }

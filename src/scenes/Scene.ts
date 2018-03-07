@@ -77,6 +77,7 @@ abstract class Scene {
         this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
         this.game.factories['boar'] = new Factories.Boars(this.game, scene, assetsManager).initFactory();
         this.game.factories['zombie'] = new Factories.Zombies(this.game, scene, assetsManager).initFactory();
+        this.game.factories['skeletons'] = new Factories.Skeletons(this.game, scene, assetsManager).initFactory();
         this.game.factories['flag'] = new Factories.Flags(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
 

@@ -619,9 +619,9 @@ namespace Server {
             let position = null
             if (sceneType == 3) {
                 position = {
-                    x: 3.5,
+                    x: 0,
                     y: 0,
-                    z: 12
+                    z: 0
                 };
             } else if (sceneType == 4) {
                 position = {

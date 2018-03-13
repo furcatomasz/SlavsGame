@@ -1,0 +1,17 @@
+{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.5.0","file":"boundingForestHouseStart.babylon"},
+"autoClear":true,"clearColor":[0,0,0],"ambientColor":[0,0,0],"gravity":[0,-9.81,0],"fogMode":3,"fogColor":[0,0,0],"fogStart":14.1,"fogEnd":32.4,"fogDensity":0.3,
+"materials":[{"name":"boundingForestHouseStart.Box_Cube","id":"boundingForestHouseStart.Box_Cube","ambient":[0.7747,0.3102,0.8],"diffuse":[0.6198,0.2482,0.64],"specular":[0,0,0],"emissive":[0,0,0],"specularPower":50,"alpha":1,"backFaceCulling":true,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4}],
+"multiMaterials":[],
+"skeletons":[],
+"meshes":[{"name":"Box_Cube.004","id":"Box_Cube.004","materialId":"boundingForestHouseStart.Box_Cube","billboardMode":0,"position":[1.2415,2.2969,3.0721],"rotation":[0,0,0],"scaling":[3.7124,2.6526,1.3995],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"tags":""
+,"positions":[-1,1,-1,-1,-1,1,-1,-1,-1,-1,1,1,1,-1,1,1,1,1,1,-1,-1,1,1,-1]
+,"normals":[-0.5773,0.5773,-0.5773,-0.5773,-0.5773,0.5773,-0.5773,-0.5773,-0.5773,-0.5773,0.5773,0.5773,0.5773,-0.5773,0.5773,0.5773,0.5773,0.5773,0.5773,-0.5773,-0.5773,0.5773,0.5773,-0.5773]
+,"indices":[0,1,2,3,4,1,5,6,4,7,2,6,4,2,1,3,7,5,0,3,1,3,5,4,5,7,6,7,0,2,4,6,2,3,0,7]
+,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":8,"indexStart":0,"indexCount":36}]
+,"instances":[{"name":"Box_Cube.003","position":[-7.8299,1.9243,-0.0202],"rotation":[0,0,0],"scaling":[1,1.5732,6.5628],"freezeWorldMatrix":false},{"name":"Box_Cube.002","position":[5.633,1.9243,-0.0202],"rotation":[0,0,0],"scaling":[1,1.5732,6.5628],"freezeWorldMatrix":false},{"name":"Box_Cube.001","position":[0,1.9243,5.3139],"rotation":[0,0,0],"scaling":[9.4545,1.5732,1],"freezeWorldMatrix":false},{"name":"Box_Cube","position":[0,1.9243,-6.6359],"rotation":[0,0,0],"scaling":[9.4545,1.5732,1],"freezeWorldMatrix":false}]}
+],
+"morphTargetManagers":[],
+"cameras":[],"activeCamera":"Camera",
+"lights":[],
+"shadowGenerators":[]
+}

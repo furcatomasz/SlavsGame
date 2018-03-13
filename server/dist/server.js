@@ -459,6 +459,39 @@ var Server;
     }());
     Server.QuestManager = QuestManager;
 })(Server || (Server = {}));
+var express = require('express');
+var app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+var socketIOClient = require('socket.io-client');
+var orm = require("orm");
+var config = require("./../config.js");
+var BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
+var LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
+var requirejs = require('requirejs');
+server.listen(config.server.port);
+var SlavsServer = /** @class */ (function () {
+    function SlavsServer() {
+        this.enemies = [];
+        this.quests = [];
+        var self = this;
+        this.ormManager = new Server.OrmManager(self, orm, config);
+        this.gameModules = new Server.GameModules();
+        this.gameModules.loadModules(function () {
+            self.enemyManager = new Server.EnemyManager();
+            self.questManager = new Server.QuestManager();
+            self.enemies = self.enemyManager.getEnemies();
+            self.quests = self.questManager.getQuests();
+            //self.serverFrontEnd = new Server.FrontEnd(self, app, express);
+            self.babylonManager = new Server.BabylonManager(self);
+            self.serverWebsocket = new Server.IO(self, io);
+        });
+    }
+    return SlavsServer;
+}());
+setTimeout(function () {
+    new SlavsServer();
+}, 0);
 var path = require('path');
 var Server;
 (function (Server) {
@@ -1012,9 +1045,9 @@ var Server;
             var position = null;
             if (sceneType == 3) {
                 position = {
-                    x: 3.5,
+                    x: 0,
                     y: 0,
-                    z: 12
+                    z: 0
                 };
             }
             else if (sceneType == 4) {
@@ -1055,39 +1088,6 @@ var Server;
     }());
     Server.IO = IO;
 })(Server || (Server = {}));
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
-var socketIOClient = require('socket.io-client');
-var orm = require("orm");
-var config = require("./../config.js");
-var BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
-var LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
-var requirejs = require('requirejs');
-server.listen(config.server.port);
-var SlavsServer = /** @class */ (function () {
-    function SlavsServer() {
-        this.enemies = [];
-        this.quests = [];
-        var self = this;
-        this.ormManager = new Server.OrmManager(self, orm, config);
-        this.gameModules = new Server.GameModules();
-        this.gameModules.loadModules(function () {
-            self.enemyManager = new Server.EnemyManager();
-            self.questManager = new Server.QuestManager();
-            self.enemies = self.enemyManager.getEnemies();
-            self.quests = self.questManager.getQuests();
-            //self.serverFrontEnd = new Server.FrontEnd(self, app, express);
-            self.babylonManager = new Server.BabylonManager(self);
-            self.serverWebsocket = new Server.IO(self, io);
-        });
-    }
-    return SlavsServer;
-}());
-setTimeout(function () {
-    new SlavsServer();
-}, 0);
 var Server;
 (function (Server) {
     var Orm;

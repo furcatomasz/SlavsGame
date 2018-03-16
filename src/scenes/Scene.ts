@@ -39,6 +39,11 @@ abstract class Scene {
         scene.fogStart = 70;
         scene.fogEnd = 93;
 
+
+        // scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+        // scene.fogColor = new BABYLON.Color3(0, 0, 0);
+        // scene.fogDensity = 0.01;
+
         return this;
     }
 

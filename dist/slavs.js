@@ -123,6 +123,9 @@ var Scene = /** @class */ (function () {
         //Only if LINEAR
         scene.fogStart = 70;
         scene.fogEnd = 93;
+        // scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+        // scene.fogColor = new BABYLON.Color3(0, 0, 0);
+        // scene.fogDensity = 0.01;
         return this;
     };
     //public setOrthoCameraHeights(camera:BABYLON.Camera) {
@@ -1707,63 +1710,96 @@ var EnvironmentForestHouse = /** @class */ (function () {
         //this.shadowGenerator = shadowGenerator;
         var fern = null;
         for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
-            var meshName = scene.meshes[i]['name'];
-            if (meshName.search("Ground") >= 0) {
-                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
-                this.ground = sceneMesh;
-                var myTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.png", scene);
-                myTexture.uScale = 10.0;
-                myTexture.vScale = 10.0;
-                sceneMesh.material.diffuseTexture = myTexture;
-                console.log(sceneMesh.material);
-                sceneMesh.material.specularColor = new BABYLON.Color3(0, 0, 0);
-                //sceneMesh.receiveShadows = true;
+            var sceneMesh_1 = scene.meshes[i];
+            var meshName_1 = scene.meshes[i]['name'];
+            if (meshName_1.search("Ground") >= 0) {
+                sceneMesh_1.actionManager = new BABYLON.ActionManager(scene);
+                sceneMesh_1.receiveShadows = true;
+                this.ground = sceneMesh_1;
+                // var myTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.png", scene);
+                // myTexture.uScale = 10.0;
+                // myTexture.vScale = 10.0;
+                // sceneMesh.material.diffuseTexture = myTexture;
+                // sceneMesh.material.specularColor = new BABYLON.Color3(0,0,0);
+                var terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
+                terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+                terrainMaterial.specularPower = 64;
+                terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/Forest_house/stencil.png", scene);
+                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.png", scene);
+                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/Dirt.png", scene);
+                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.png", scene);
+                terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 10;
+                terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 10;
+                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 10;
+                sceneMesh_1.material = terrainMaterial;
             }
-            else if (meshName.search("Box_Cube") >= 0) {
-                this.colliders.push(sceneMesh);
+            else if (meshName_1.search("Box_Cube") >= 0) {
+                this.colliders.push(sceneMesh_1);
             }
             else {
-                sceneMesh.isPickable = false;
+                sceneMesh_1.isPickable = false;
                 ///others
             }
         }
         //TODO: SPS Nature
-        // console.log(game, game.factories);
-        // let fern = game.factories['nature_grain'].createInstance('Fern', false);
-        // console.log(fern);
-        //
-        // let fact = 100;
-        // var myPositionFunction = function(particle, i, s) {
-        //     particle.position.x = (Math.random() - 0.5) * fact;
-        //     particle.position.y = 0;
-        //     particle.position.z = (Math.random() - 0.5) * fact;
-        //     // particle.rotation.x = Math.random() * 3.15;
-        //     // particle.rotation.y = Math.random() * 3.15;
-        //     // particle.rotation.z = Math.random() * 1.5;
-        // };
-        //
-        // var SPS = new BABYLON.SolidParticleSystem("SPS", scene);
-        // SPS.addShape(fern, 5000, {positionFunction: myPositionFunction});
-        // var mesh = SPS.buildMesh();
-        // let SPSPlain = scene.getMeshByName("Ground");
-        // if (SPSPlain) {
-        //     SPSPlain.updateFacetData();
-        //     var positions = SPSPlain.getFacetLocalPositions();
-        //     var normals = SPSPlain.getFacetLocalNormals();
-        //
-        //     var lines = [];
-        //     for (var i = 0; i < positions.length; i++) {
-        //         var line = [ positions[i], positions[i].add(normals[i]) ];
-        //         console.log(line);
-        //         lines.push(line);
-        //     }
-        //     var lineSystem = BABYLON.MeshBuilder.CreateLineSystem("ls", {lines: lines}, scene);
-        //     lineSystem.color = BABYLON.Color3.Green();
-        // }
-        ///Freeze world matrix all static meshes
+        var spruce = game.factories['nature_grain'].createInstance('Spruce', false);
+        spruce.visibility = 0;
+        var groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
+        groundPlants.visibility = 0;
+        var fern = game.factories['nature_grain'].createInstance('Fern', false);
+        fern.visibility = 0;
+        var parentSPS = scene.getMeshByName("Plane.004");
+        var positions = parentSPS.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+        var myBuilder = function (particle, i, s) {
+            var randomPosition = Math.round(Math.random() * 10);
+            var position = new BABYLON.Vector3(positions[s * randomPosition * 3], positions[s * randomPosition * 3 + 1], positions[s * randomPosition * 3 + 2]);
+            particle.position = position;
+            particle.scaling.y = Math.random() + 1;
+        };
+        ///Spruce
+        var SPSSpruce = new BABYLON.SolidParticleSystem('SPSSpruce', scene, { updatable: false });
+        SPSSpruce.addShape(spruce, 200, { positionFunction: myBuilder });
+        var SPSMeshSpruce = SPSSpruce.buildMesh();
+        SPSMeshSpruce.material = spruce.material;
+        SPSMeshSpruce.parent = parentSPS;
+        ///Fern
+        var SPSFern = new BABYLON.SolidParticleSystem('SPSFern', scene, { updatable: false });
+        SPSFern.addShape(fern, 500, { positionFunction: myBuilder });
+        var SPSMeshFern = SPSFern.buildMesh();
+        SPSMeshFern.material = fern.material;
+        SPSMeshFern.parent = parentSPS;
+        ///PLants
+        var SPSPlants = new BABYLON.SolidParticleSystem('SPSPlants', scene, { updatable: true });
+        SPSPlants.addShape(groundPlants, 500, { positionFunction: myBuilder });
+        var SPSMeshPlants = SPSPlants.buildMesh();
+        SPSMeshPlants.material = groundPlants.material;
+        SPSMeshPlants.parent = parentSPS;
+        //Freeze world matrix all static meshes
         for (var i = 0; i < scene.meshes.length; i++) {
             scene.meshes[i].freezeWorldMatrix();
+        }
+        scene.lights[0].intensity = 0;
+        // scene.lights[1].intensity = 0;
+        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+        light.intensity = 0.4;
+        light.position = new BABYLON.Vector3(0, 80, -210);
+        light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
+        var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
+        // shadowGenerator.useBlurExponentialShadowMap = true;
+        // shadowGenerator.useExponentialShadowMap = true;
+        shadowGenerator.usePoissonSampling = true;
+        shadowGenerator.frustumEdgeFalloff = 1.0;
+        shadowGenerator.useKernelBlur = true;
+        shadowGenerator.blurKernel = 32;
+        shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+        light.autoUpdateExtends = false;
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh = scene.meshes[i];
+            var meshName = scene.meshes[i]['name'];
+            if (meshName.search("Ground") >= 0) {
+                continue;
+            }
+            shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
         ////fireplace
         // let cone = scene.getMeshByName("Fireplace");
@@ -3018,7 +3054,7 @@ var ForestHouse = /** @class */ (function (_super) {
             scene.executeWhenReady(function () {
                 game.client.socket.emit('createPlayer');
                 assetsManager.onFinish = function (tasks) {
-                    self.octree = scene.createOrUpdateSelectionOctree();
+                    // self.octree = scene.createOrUpdateSelectionOctree();
                     self.environment = new EnvironmentForestHouse(game, scene);
                     game.client.socket.emit('changeScenePre', {
                         sceneType: ForestHouse.TYPE

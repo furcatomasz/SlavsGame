@@ -31,7 +31,7 @@ class ForestHouse extends Scene {
                 game.client.socket.emit('createPlayer');
 
                 assetsManager.onFinish = function (tasks) {
-                    self.octree = scene.createOrUpdateSelectionOctree();
+                    // self.octree = scene.createOrUpdateSelectionOctree();
                     self.environment = new EnvironmentForestHouse(game, scene);
 
                     game.client.socket.emit('changeScenePre', {

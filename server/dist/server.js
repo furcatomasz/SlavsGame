@@ -383,15 +383,15 @@ var Server;
         EnemyManager.prototype.getEnemies = function () {
             var enemies = [];
             enemies[2] = [
-                new Monsters.Skeleton(0, { x: -42, y: 0, z: -33 }, []),
-                new Monsters.Skeleton(0, { x: -57, y: 0, z: -34 }, []),
-                new Monsters.Skeleton(0, { x: -82, y: 0, z: 10 }, []),
-                new Monsters.Skeleton(0, { x: -104, y: 0, z: -9 }, []),
-                new Monsters.Skeleton(0, { x: -113, y: 0, z: -54 }, []),
-                new Monsters.Skeleton(0, { x: -97, y: 0, z: -43 }, []),
-                new Monsters.Skeleton(0, { x: -120, y: 0, z: -33 }, []),
-                new Monsters.Skeleton(0, { x: -161, y: 0, z: -20 }, []),
-                new Monsters.Skeleton(0, { x: 44, y: 0, z: -47 }, []),
+                new Monsters.Skeleton(0, { x: -42, y: 0, z: -33 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, { x: -57, y: 0, z: -34 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, { x: -82, y: 0, z: 10 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, { x: -104, y: 0, z: -9 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, { x: -113, y: 0, z: -54 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, { x: -97, y: 0, z: -43 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, { x: -120, y: 0, z: -33 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, { x: -161, y: 0, z: -20 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, { x: 44, y: 0, z: -47 }, [], [SpecialItems.Gold(1)]),
             ];
             return enemies;
         };
@@ -609,23 +609,33 @@ var Server;
                                         serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
                                         ///enemy is killed
                                         if (enemy.statistics.hp <= 0) {
+                                            ///add special item
+                                            var specialItemFlat = enemy.specialItemsToDrop[0];
+                                            var specialItemManager = new SpecialItems.SpecialItemsManager();
+                                            var specialItem = specialItemManager.getSpecialItem(specialItemFlat.type, specialItemFlat.value);
+                                            if (specialItem) {
+                                                serverIO.emit('addSpecialItem', specialItem);
+                                                specialItem.addItem(player_1.getActiveCharacter(), self.server.ormManager);
+                                            }
                                             enemy.availableAttacksFromCharacters = [];
                                             var enemyItem = enemy.itemsToDrop[0];
-                                            var itemDropKey = player_1.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
                                             var earnedExperience_1 = enemy.experience;
                                             var playerId = player_1.getActiveCharacter().id;
-                                            var itemManager = new Items.ItemManager();
-                                            var item = itemManager.getItemUsingId(enemyItem, 0);
+                                            if (enemyItem) {
+                                                var itemDropKey = player_1.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
+                                                var itemManager = new Items.ItemManager();
+                                                var item = itemManager.getItemUsingId(enemyItem, 0);
+                                                socket.emit('showDroppedItem', {
+                                                    item: item,
+                                                    itemKey: itemDropKey,
+                                                    enemyId: enemyKey
+                                                });
+                                            }
                                             ///clear attack interval
                                             if (self.enemiesIntervals[roomId][enemyKey]) {
                                                 clearInterval(self.enemiesIntervals[roomId][enemyKey]);
                                                 self.enemiesIntervals[roomId][enemyKey] = null;
                                             }
-                                            socket.emit('showDroppedItem', {
-                                                item: item,
-                                                itemKey: itemDropKey,
-                                                enemyId: enemyKey
-                                            });
                                             self.server.ormManager.structure.player.get(playerId, function (error, playerDatabase) {
                                                 playerDatabase.experience += earnedExperience_1;
                                                 socket.emit('addExperience', {
@@ -649,22 +659,6 @@ var Server;
                         });
                         serverIO["in"](activeCharacter.roomId).emit('updatePlayer', activeCharacter);
                         serverIO.to(self.monsterServerSocketId).emit('updatePlayer', activeCharacter);
-                    });
-                    socket.on('itemEquip', function (item) {
-                        var itemId = item.id;
-                        var equip = item.equip;
-                        self.server.ormManager.structure.playerItems.oneAsync({
-                            id: itemId,
-                            player_id: player_1.characters[player_1.activeCharacter].id
-                        }).then(function (itemDatabase) {
-                            itemDatabase.equip = (item.equip) ? 1 : 0;
-                            itemDatabase.saveAsync().then(function () {
-                                server.ormManager.structure.playerItems.findAsync({ player_id: player_1.characters[player_1.activeCharacter].id }).then(function (playerItems) {
-                                    player_1.characters[player_1.activeCharacter].items = playerItems;
-                                    socket.broadcast.emit('updateEnemyEquip', player_1);
-                                });
-                            });
-                        });
                     });
                     socket.on('disconnect', function () {
                         //if (player.activeCharacter >= 0) {
@@ -722,7 +716,8 @@ var Server;
                         }
                     });
                     self
-                        .selfEvents(socket, player_1)
+                        .characterEvents(socket, player_1)
+                        .questsEvents(socket, player_1)
                         .roomsEvents(socket, player_1, serverIO);
                 }
                 else {
@@ -786,7 +781,12 @@ var Server;
                 }
             });
         }
-        IO.prototype.selfEvents = function (socket, player) {
+        /**
+         * @param socket
+         * @param player
+         * @returns {Server.IO}
+         */
+        IO.prototype.characterEvents = function (socket, player) {
             var self = this;
             socket.on('addDoppedItem', function (itemsKey) {
                 var playerId = player.characters[player.activeCharacter].id;
@@ -909,43 +909,6 @@ var Server;
                     }
                 });
             });
-            /// QUESTS
-            socket.on('getQuests', function () {
-                var emitData = {
-                    quests: self.server.quests,
-                    playerQuests: null,
-                    playerRequirements: null
-                };
-                self.server.ormManager.structure.playerQuest.findAsync({
-                    player: player.getActiveCharacter().id
-                }).then(function (quest) {
-                    emitData.playerQuests = quest;
-                    self.server.ormManager.structure.playerQuestRequirements.findAsync({
-                        player: player.getActiveCharacter().id
-                    }).then(function (questsRequirements) {
-                        emitData.playerRequirements = questsRequirements;
-                        socket.emit('quests', emitData);
-                    });
-                });
-            });
-            socket.on('acceptQuest', function (quest) {
-                var questId = quest.id;
-                var playerId = player.characters[player.activeCharacter].id;
-                server.ormManager.structure.playerQuest.oneAsync({
-                    player_id: playerId,
-                    questId: questId
-                }).then(function (quest) {
-                    if (!quest) {
-                        server.ormManager.structure.playerQuest.createAsync({
-                            questId: questId,
-                            date: 0,
-                            player_id: playerId
-                        }).then(function (quest) {
-                            socket.emit('refreshQuestsStatus', quest);
-                        });
-                    }
-                });
-            });
             socket.on('selectCharacter', function (selectedCharacter) {
                 player.activeCharacter = selectedCharacter;
                 //let playerId = player.characters[selectedCharacter].id;
@@ -966,8 +929,81 @@ var Server;
                 //    });
                 socket.emit('characterSelected', player);
             });
+            socket.on('itemEquip', function (item) {
+                var itemId = item.id;
+                var equip = item.equip;
+                self.server.ormManager.structure.playerItems.oneAsync({
+                    id: itemId,
+                    player_id: player.characters[player.activeCharacter].id
+                }).then(function (itemDatabase) {
+                    itemDatabase.equip = (item.equip) ? 1 : 0;
+                    itemDatabase.saveAsync().then(function () {
+                        server.ormManager.structure.playerItems.findAsync({ player_id: player.characters[player.activeCharacter].id }).then(function (playerItems) {
+                            player.characters[player.activeCharacter].items = playerItems;
+                            socket.broadcast.emit('updateEnemyEquip', player);
+                        });
+                    });
+                });
+            });
             return this;
         };
+        /**
+         *
+         * @param socket
+         * @param player
+         * @returns {Server.IO}
+         */
+        IO.prototype.questsEvents = function (socket, player) {
+            // socket.on('getQuests', function () {
+            //     let emitData = {
+            //         quests: self.server.quests,
+            //         playerQuests: null,
+            //         playerRequirements: null
+            //     };
+            //     self.server.ormManager.structure.playerQuest.findAsync({
+            //         player: player.getActiveCharacter().id,
+            //     }).then(function (quest) {
+            //
+            //         emitData.playerQuests = quest;
+            //
+            //         self.server.ormManager.structure.playerQuestRequirements.findAsync({
+            //             player: player.getActiveCharacter().id,
+            //         }).then(function (questsRequirements) {
+            //             emitData.playerRequirements = questsRequirements;
+            //             socket.emit('quests', emitData);
+            //
+            //         });
+            //     });
+            // });
+            //
+            // socket.on('acceptQuest', function (quest) {
+            //     let questId = quest.id;
+            //     let playerId = player.characters[player.activeCharacter].id;
+            //
+            //     server.ormManager.structure.playerQuest.oneAsync({
+            //         player_id: playerId,
+            //         questId: questId
+            //     }).then(function (quest) {
+            //         if (!quest) {
+            //             server.ormManager.structure.playerQuest.createAsync({
+            //                 questId: questId,
+            //                 date: 0,
+            //                 player_id: playerId
+            //             }).then(function (quest) {
+            //                 socket.emit('refreshQuestsStatus', quest);
+            //             });
+            //         }
+            //     });
+            // });
+            return this;
+        };
+        /**
+         *
+         * @param socket
+         * @param player
+         * @param serverIO
+         * @returns {Server.IO}
+         */
         IO.prototype.roomsEvents = function (socket, player, serverIO) {
             var self = this;
             socket.on('getRooms', function () {
@@ -1103,6 +1139,7 @@ var Server;
                     type: String,
                     lvl: Number,
                     experience: Number,
+                    gold: Number,
                     freeSkillPoints: Number,
                     freeAttributesPoints: Number,
                     scene: Number,
@@ -1389,10 +1426,11 @@ var Server;
 var Monsters;
 (function (Monsters) {
     var Monster = /** @class */ (function () {
-        function Monster(id, position, itemsToDrop) {
+        function Monster(id, position, itemsToDrop, specialItemsToDrop) {
             this.id = id;
             this.position = position;
             this.itemsToDrop = itemsToDrop;
+            this.specialItemsToDrop = specialItemsToDrop;
             this.availableAttacksFromCharacters = [];
         }
         return Monster;
@@ -1400,8 +1438,8 @@ var Monsters;
     Monsters.Monster = Monster;
     var Boar = /** @class */ (function (_super) {
         __extends(Boar, _super);
-        function Boar(id, position, itemsToDrop) {
-            var _this = _super.call(this, id, position, itemsToDrop) || this;
+        function Boar(id, position, itemsToDrop, specialItemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop, specialItemsToDrop) || this;
             _this.name = 'Boar';
             _this.type = 'boar';
             _this.meshName = 'Boar';
@@ -1417,8 +1455,8 @@ var Monsters;
     Monsters.Boar = Boar;
     var Worm = /** @class */ (function (_super) {
         __extends(Worm, _super);
-        function Worm(id, position, itemsToDrop) {
-            var _this = _super.call(this, id, position, itemsToDrop) || this;
+        function Worm(id, position, itemsToDrop, specialItemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
             _this.name = 'Worm';
             _this.type = 'worm';
             _this.meshName = 'Worm';
@@ -1434,8 +1472,8 @@ var Monsters;
     Monsters.Worm = Worm;
     var Zombie = /** @class */ (function (_super) {
         __extends(Zombie, _super);
-        function Zombie(id, position, itemsToDrop) {
-            var _this = _super.call(this, id, position, itemsToDrop) || this;
+        function Zombie(id, position, itemsToDrop, specialItemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
             _this.name = 'Zombie';
             _this.type = 'zombie';
             _this.meshName = 'Zombie';
@@ -1451,8 +1489,8 @@ var Monsters;
     Monsters.Zombie = Zombie;
     var Skeleton = /** @class */ (function (_super) {
         __extends(Skeleton, _super);
-        function Skeleton(id, position, itemsToDrop) {
-            var _this = _super.call(this, id, position, itemsToDrop) || this;
+        function Skeleton(id, position, itemsToDrop, specialItemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
             _this.name = 'Skeleton';
             _this.type = 'skeletons';
             _this.meshName = 'Skeleton';
@@ -1468,8 +1506,8 @@ var Monsters;
     Monsters.Skeleton = Skeleton;
     var SkeletonMedium = /** @class */ (function (_super) {
         __extends(SkeletonMedium, _super);
-        function SkeletonMedium(id, position, itemsToDrop) {
-            var _this = _super.call(this, id, position, itemsToDrop) || this;
+        function SkeletonMedium(id, position, itemsToDrop, specialItemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
             _this.name = 'skeletonMedium.001';
             _this.type = 'skeletons';
             _this.meshName = 'skeletonMedium.001';
@@ -1514,6 +1552,10 @@ var Server;
         };
         Character.prototype.setFreeSkillPoints = function (value) {
             this.freeSkillPoints = value;
+            return this;
+        };
+        Character.prototype.setGold = function (value) {
+            this.gold = value;
             return this;
         };
         Character.prototype.setSkills = function (skills) {
@@ -1668,6 +1710,7 @@ var Server;
                                             character
                                                 .setName(player.name)
                                                 .setExperience(player.experience)
+                                                .setGold(player.gold)
                                                 .setFreeAttributesPoints(player.freeAttributesPoints)
                                                 .setFreeSkillPoints(player.freeSkillPoints)
                                                 .setLvl(player.lvl)
@@ -1988,6 +2031,66 @@ var Skills;
     }(Skills.AbstractSkill));
     Skills.Tornado = Tornado;
 })(Skills || (Skills = {}));
+var SpecialItems;
+(function (SpecialItems) {
+    var SpecialItemsManager = /** @class */ (function () {
+        function SpecialItemsManager() {
+        }
+        /**
+         * @param {Number} type
+         * @param {number} value
+         * @returns {any}
+         */
+        SpecialItemsManager.prototype.getSpecialItem = function (type, value) {
+            var item = null;
+            switch (type) {
+                case SpecialItems.Gold.TYPE:
+                    item = new SpecialItems.Gold(value);
+                    break;
+            }
+            return item;
+        };
+        return SpecialItemsManager;
+    }());
+    SpecialItems.SpecialItemsManager = SpecialItemsManager;
+    var SpecialItem = /** @class */ (function () {
+        function SpecialItem(value) {
+            this.value = value;
+        }
+        SpecialItem.TYPE = 0;
+        return SpecialItem;
+    }());
+    SpecialItems.SpecialItem = SpecialItem;
+    var Gold = /** @class */ (function (_super) {
+        __extends(Gold, _super);
+        function Gold(value) {
+            var _this = this;
+            _this.name = 'Gold';
+            _this.type = SpecialItems.Gold.TYPE;
+            _this = _super.call(this, value) || this;
+            return _this;
+        }
+        Gold.prototype.getType = function () {
+            return SpecialItems.Gold.TYPE;
+        };
+        ;
+        Gold.prototype.addItem = function (character, ormManager) {
+            var self = this;
+            ormManager.structure.player.getAsync(character.id)
+                .then(function (character) {
+                character.gold += self.value;
+                return character.saveAsync();
+            })
+                .then(function () {
+                // saved
+            });
+            return this;
+        };
+        Gold.TYPE = 1;
+        return Gold;
+    }(SpecialItems.SpecialItem));
+    SpecialItems.Gold = Gold;
+})(SpecialItems || (SpecialItems = {}));
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {

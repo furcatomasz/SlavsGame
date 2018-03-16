@@ -492,7 +492,8 @@ var SocketIOClient = /** @class */ (function () {
                 .attributeAdded()
                 .skillsLearned()
                 .updateRooms()
-                .reloadScene();
+                .reloadScene()
+                .addSpecialItem();
         });
         return this;
     };
@@ -526,7 +527,17 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         this.socket.on('addExperience', function (data) {
             game.player.addExperience(data.experience);
-            game.gui.playerLogsPanel.addText('Earned ' + data.experience + ' experience.', 'yellow');
+            game.gui.playerLogsPanel.addText('You earned ' + data.experience + ' experience.', 'blue');
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
+    SocketIOClient.prototype.addSpecialItem = function () {
+        var game = this.game;
+        this.socket.on('addSpecialItem', function (data) {
+            game.gui.playerLogsPanel.addText('You earned ' + data.value + ' ' + data.name + '', 'gold');
         });
         return this;
     };
@@ -969,7 +980,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new ForestHouseStart().initScene(this);
+        new ForestHouse().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -3045,7 +3056,7 @@ var ForestHouse = /** @class */ (function (_super) {
                 .setCamera(scene)
                 .setFog(scene)
                 .defaultPipeline(scene);
-            scene.debugLayer.show();
+            // scene.debugLayer.show();
             scene.actionManager = new BABYLON.ActionManager(scene);
             var assetsManager = new BABYLON.AssetsManager(scene);
             self.initFactories(scene, assetsManager);

@@ -45,7 +45,8 @@ class SocketIOClient {
                 .attributeAdded()
                 .skillsLearned()
                 .updateRooms()
-                .reloadScene();
+                .reloadScene()
+                .addSpecialItem();
         });
 
         return this;
@@ -86,7 +87,20 @@ class SocketIOClient {
         let game = this.game;
         this.socket.on('addExperience', function (data) {
             game.player.addExperience(data.experience);
-            game.gui.playerLogsPanel.addText('Earned ' + data.experience + ' experience.', 'yellow');
+            game.gui.playerLogsPanel.addText('You earned ' + data.experience + ' experience.', 'blue');
+
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected addSpecialItem() {
+        let game = this.game;
+        this.socket.on('addSpecialItem', function (data) {
+            game.gui.playerLogsPanel.addText('You earned '+data.value+' ' + data.name + '', 'gold');
 
         });
 

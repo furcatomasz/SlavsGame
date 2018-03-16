@@ -17,7 +17,7 @@ namespace Monsters {
         public visibilityAreaSize:number;
         public availableAttacksFromCharacters:Array;
 
-        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array) {
             this.id = id;
             this.position = position;
             this.itemsToDrop = itemsToDrop;
@@ -29,7 +29,7 @@ namespace Monsters {
 
     export class Boar extends Monster {
 
-        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array) {
             super(id, position, itemsToDrop, specialItemsToDrop, specialItemsToDrop);
 
             this.name = 'Boar';
@@ -46,7 +46,7 @@ namespace Monsters {
 
     export class Worm extends Monster {
 
-        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array) {
             super(id, position, itemsToDrop, specialItemsToDrop);
 
             this.name = 'Worm';
@@ -63,7 +63,7 @@ namespace Monsters {
 
     export class Zombie extends Monster {
 
-        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array) {
             super(id, position, itemsToDrop, specialItemsToDrop);
 
             this.name = 'Zombie';
@@ -80,7 +80,7 @@ namespace Monsters {
 
     export class Skeleton extends Monster {
 
-        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array) {
             super(id, position, itemsToDrop, specialItemsToDrop);
 
             this.name = 'Skeleton';
@@ -97,7 +97,7 @@ namespace Monsters {
 
     export class SkeletonMedium extends Monster {
 
-        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array) {
             super(id, position, itemsToDrop, specialItemsToDrop);
 
             this.name = 'skeletonMedium.001';

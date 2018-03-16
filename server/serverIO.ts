@@ -121,30 +121,34 @@ namespace Server {
                                         ///enemy is killed
                                         if (enemy.statistics.hp <= 0) {
                                             ///add special item
-                                            let specialItem = enemy.specialItemsToDrop[0];
+                                            let specialItemFlat = enemy.specialItemsToDrop[0];
+                                            let specialItemManager = new SpecialItems.SpecialItemsManager();
+                                            let specialItem = specialItemManager.getSpecialItem(specialItemFlat.type, specialItemFlat.value);
                                             if(specialItem) {
+                                                serverIO.emit('addSpecialItem', specialItem);
                                                 specialItem.addItem(player.getActiveCharacter(), self.server.ormManager);
                                             }
 
                                             enemy.availableAttacksFromCharacters = [];
                                             let enemyItem = enemy.itemsToDrop[0];
-                                            let itemDropKey = player.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
                                             let earnedExperience = enemy.experience;
                                             let playerId = player.getActiveCharacter().id;
-                                            let itemManager = new Items.ItemManager();
-                                            let item = itemManager.getItemUsingId(enemyItem, 0);
+                                            if(enemyItem) {
+                                                let itemDropKey = player.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
+                                                let itemManager = new Items.ItemManager();
+                                                let item = itemManager.getItemUsingId(enemyItem, 0);
 
+                                                socket.emit('showDroppedItem', {
+                                                    item: item,
+                                                    itemKey: itemDropKey,
+                                                    enemyId: enemyKey
+                                                });
+                                            }
                                             ///clear attack interval
                                             if(self.enemiesIntervals[roomId][enemyKey]) {
                                                 clearInterval(self.enemiesIntervals[roomId][enemyKey]);
                                                 self.enemiesIntervals[roomId][enemyKey] = null;
                                             }
-
-                                            socket.emit('showDroppedItem', {
-                                                item: item,
-                                                itemKey: itemDropKey,
-                                                enemyId: enemyKey
-                                            });
 
                                             self.server.ormManager.structure.player.get(playerId,
                                                 function (error, playerDatabase) {
@@ -508,47 +512,47 @@ namespace Server {
          * @returns {Server.IO}
          */
         protected questsEvents(socket, player:Player) {
-            socket.on('getQuests', function () {
-                let emitData = {
-                    quests: self.server.quests,
-                    playerQuests: null,
-                    playerRequirements: null
-                };
-                self.server.ormManager.structure.playerQuest.findAsync({
-                    player: player.getActiveCharacter().id,
-                }).then(function (quest) {
-
-                    emitData.playerQuests = quest;
-
-                    self.server.ormManager.structure.playerQuestRequirements.findAsync({
-                        player: player.getActiveCharacter().id,
-                    }).then(function (questsRequirements) {
-                        emitData.playerRequirements = questsRequirements;
-                        socket.emit('quests', emitData);
-
-                    });
-                });
-            });
-
-            socket.on('acceptQuest', function (quest) {
-                let questId = quest.id;
-                let playerId = player.characters[player.activeCharacter].id;
-
-                server.ormManager.structure.playerQuest.oneAsync({
-                    player_id: playerId,
-                    questId: questId
-                }).then(function (quest) {
-                    if (!quest) {
-                        server.ormManager.structure.playerQuest.createAsync({
-                            questId: questId,
-                            date: 0,
-                            player_id: playerId
-                        }).then(function (quest) {
-                            socket.emit('refreshQuestsStatus', quest);
-                        });
-                    }
-                });
-            });
+            // socket.on('getQuests', function () {
+            //     let emitData = {
+            //         quests: self.server.quests,
+            //         playerQuests: null,
+            //         playerRequirements: null
+            //     };
+            //     self.server.ormManager.structure.playerQuest.findAsync({
+            //         player: player.getActiveCharacter().id,
+            //     }).then(function (quest) {
+            //
+            //         emitData.playerQuests = quest;
+            //
+            //         self.server.ormManager.structure.playerQuestRequirements.findAsync({
+            //             player: player.getActiveCharacter().id,
+            //         }).then(function (questsRequirements) {
+            //             emitData.playerRequirements = questsRequirements;
+            //             socket.emit('quests', emitData);
+            //
+            //         });
+            //     });
+            // });
+            //
+            // socket.on('acceptQuest', function (quest) {
+            //     let questId = quest.id;
+            //     let playerId = player.characters[player.activeCharacter].id;
+            //
+            //     server.ormManager.structure.playerQuest.oneAsync({
+            //         player_id: playerId,
+            //         questId: questId
+            //     }).then(function (quest) {
+            //         if (!quest) {
+            //             server.ormManager.structure.playerQuest.createAsync({
+            //                 questId: questId,
+            //                 date: 0,
+            //                 player_id: playerId
+            //             }).then(function (quest) {
+            //                 socket.emit('refreshQuestsStatus', quest);
+            //             });
+            //         }
+            //     });
+            // });
 
             return this;
         }

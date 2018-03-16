@@ -47,6 +47,7 @@ namespace Server {
                                                         character
                                                             .setName(player.name)
                                                             .setExperience(player.experience)
+                                                            .setGold(player.gold)
                                                             .setFreeAttributesPoints(player.freeAttributesPoints)
                                                             .setFreeSkillPoints(player.freeSkillPoints)
                                                             .setLvl(player.lvl)

@@ -6,7 +6,8 @@ namespace Monsters {
         public experience:number;
         public lvl:number;
         public position;
-        public itemsToDrop:Array;
+        public itemsToDrop:Array<Items.Item>;
+        public specialItemsToDrop:Array<SpecialItems.SpecialItem>;
         public target:string;
         public attack:boolean;
         public type:string;
@@ -16,10 +17,11 @@ namespace Monsters {
         public visibilityAreaSize:number;
         public availableAttacksFromCharacters:Array;
 
-        constructor(id, position, itemsToDrop:Array) {
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array, specialItemsToDrop:Array) {
             this.id = id;
             this.position = position;
             this.itemsToDrop = itemsToDrop;
+            this.specialItemsToDrop = specialItemsToDrop;
             this.availableAttacksFromCharacters = [];
         }
 
@@ -27,8 +29,8 @@ namespace Monsters {
 
     export class Boar extends Monster {
 
-        constructor(id, position, itemsToDrop:Array) {
-            super(id, position, itemsToDrop);
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+            super(id, position, itemsToDrop, specialItemsToDrop, specialItemsToDrop);
 
             this.name = 'Boar';
             this.type = 'boar';
@@ -44,8 +46,8 @@ namespace Monsters {
 
     export class Worm extends Monster {
 
-        constructor(id, position, itemsToDrop:Array) {
-            super(id, position, itemsToDrop);
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+            super(id, position, itemsToDrop, specialItemsToDrop);
 
             this.name = 'Worm';
             this.type = 'worm';
@@ -61,8 +63,8 @@ namespace Monsters {
 
     export class Zombie extends Monster {
 
-        constructor(id, position, itemsToDrop:Array) {
-            super(id, position, itemsToDrop);
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+            super(id, position, itemsToDrop, specialItemsToDrop);
 
             this.name = 'Zombie';
             this.type = 'zombie';
@@ -78,8 +80,8 @@ namespace Monsters {
 
     export class Skeleton extends Monster {
 
-        constructor(id, position, itemsToDrop:Array) {
-            super(id, position, itemsToDrop);
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+            super(id, position, itemsToDrop, specialItemsToDrop);
 
             this.name = 'Skeleton';
             this.type = 'skeletons';
@@ -95,8 +97,8 @@ namespace Monsters {
 
     export class SkeletonMedium extends Monster {
 
-        constructor(id, position, itemsToDrop:Array) {
-            super(id, position, itemsToDrop);
+        constructor(id, position, itemsToDrop, specialItemsToDrop:Array, specialItemsToDrop:Array) {
+            super(id, position, itemsToDrop, specialItemsToDrop);
 
             this.name = 'skeletonMedium.001';
             this.type = 'skeletons';

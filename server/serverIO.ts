@@ -120,6 +120,12 @@ namespace Server {
 
                                         ///enemy is killed
                                         if (enemy.statistics.hp <= 0) {
+                                            ///add special item
+                                            let specialItem = enemy.specialItemsToDrop[0];
+                                            if(specialItem) {
+                                                specialItem.addItem(player.getActiveCharacter(), self.server.ormManager);
+                                            }
+
                                             enemy.availableAttacksFromCharacters = [];
                                             let enemyItem = enemy.itemsToDrop[0];
                                             let itemDropKey = player.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
@@ -167,26 +173,6 @@ namespace Server {
 
                         serverIO.in(activeCharacter.roomId).emit('updatePlayer', activeCharacter);
                         serverIO.to(self.monsterServerSocketId).emit('updatePlayer', activeCharacter);
-                    });
-
-                    socket.on('itemEquip', function (item) {
-                        let itemId = item.id;
-                        let equip = item.equip;
-                        self.server.ormManager.structure.playerItems.oneAsync({
-                            id: itemId,
-                            player_id: player.characters[player.activeCharacter].id
-                        }).then(function (itemDatabase) {
-                            itemDatabase.equip = (item.equip) ? 1 : 0;
-                            itemDatabase.saveAsync().then(function () {
-                                server.ormManager.structure.playerItems.findAsync(
-                                    {player_id: player.characters[player.activeCharacter].id}).then(
-                                    function (playerItems) {
-                                        player.characters[player.activeCharacter].items = playerItems;
-                                        socket.broadcast.emit('updateEnemyEquip', player);
-                                    });
-                            });
-                        });
-
                     });
 
                     socket.on('disconnect', function () {
@@ -251,7 +237,8 @@ namespace Server {
                     });
 
                     self
-                        .selfEvents(socket, player)
+                        .characterEvents(socket, player)
+                        .questsEvents(socket, player)
                         .roomsEvents(socket, player, serverIO);
 
                 } else {
@@ -325,7 +312,13 @@ namespace Server {
         }
 
 
-        protected selfEvents(socket, player) {
+
+        /**
+         * @param socket
+         * @param player
+         * @returns {Server.IO}
+         */
+        protected characterEvents(socket, player) {
             let self = this;
             socket.on('addDoppedItem', function (itemsKey) {
                 let playerId = player.characters[player.activeCharacter].id;
@@ -461,7 +454,60 @@ namespace Server {
                 });
             });
 
-            /// QUESTS
+            socket.on('selectCharacter', function (selectedCharacter) {
+                player.activeCharacter = selectedCharacter;
+
+                //let playerId = player.characters[selectedCharacter].id;
+                //server.ormManager.structure.playerOnline.exists(
+                //    {playerId: playerId},
+                //    function (error, playerOnlineExists) {
+                //        if (error) throw error;
+                //        if (!playerOnlineExists) {
+                //            self.server.ormManager.structure.playerOnline.create({
+                //                playerId: playerId,
+                //                connectDate: Date.now(),
+                //                activityDate: Date.now(),
+                //            }, function (error) {
+                //                if (error) throw error;
+                //            });
+                //
+                //        }
+                //    });
+
+                socket.emit('characterSelected', player);
+
+            });
+
+            socket.on('itemEquip', function (item) {
+                let itemId = item.id;
+                let equip = item.equip;
+                self.server.ormManager.structure.playerItems.oneAsync({
+                    id: itemId,
+                    player_id: player.characters[player.activeCharacter].id
+                }).then(function (itemDatabase) {
+                    itemDatabase.equip = (item.equip) ? 1 : 0;
+                    itemDatabase.saveAsync().then(function () {
+                        server.ormManager.structure.playerItems.findAsync(
+                            {player_id: player.characters[player.activeCharacter].id}).then(
+                            function (playerItems) {
+                                player.characters[player.activeCharacter].items = playerItems;
+                                socket.broadcast.emit('updateEnemyEquip', player);
+                            });
+                    });
+                });
+
+            });
+
+            return this;
+        }
+
+        /**
+         *
+         * @param socket
+         * @param player
+         * @returns {Server.IO}
+         */
+        protected questsEvents(socket, player:Player) {
             socket.on('getQuests', function () {
                 let emitData = {
                     quests: self.server.quests,
@@ -504,33 +550,16 @@ namespace Server {
                 });
             });
 
-            socket.on('selectCharacter', function (selectedCharacter) {
-                player.activeCharacter = selectedCharacter;
-
-                //let playerId = player.characters[selectedCharacter].id;
-                //server.ormManager.structure.playerOnline.exists(
-                //    {playerId: playerId},
-                //    function (error, playerOnlineExists) {
-                //        if (error) throw error;
-                //        if (!playerOnlineExists) {
-                //            self.server.ormManager.structure.playerOnline.create({
-                //                playerId: playerId,
-                //                connectDate: Date.now(),
-                //                activityDate: Date.now(),
-                //            }, function (error) {
-                //                if (error) throw error;
-                //            });
-                //
-                //        }
-                //    });
-
-                socket.emit('characterSelected', player);
-
-            });
-
             return this;
         }
 
+        /**
+         *
+         * @param socket
+         * @param player
+         * @param serverIO
+         * @returns {Server.IO}
+         */
         protected roomsEvents(socket, player:Player, serverIO) {
             let self = this;
             socket.on('getRooms', function () {

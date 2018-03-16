@@ -21,6 +21,7 @@ namespace Server.Orm {
                 type: String,
                 lvl: Number,
                 experience: Number,
+                gold: Number,
                 freeSkillPoints: Number,
                 freeAttributesPoints: Number,
                 scene: Number,

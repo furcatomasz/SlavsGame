@@ -4,20 +4,20 @@ namespace Server {
         public getEnemies() {
             let enemies = [];
             enemies[2] = [
-                new Monsters.Skeleton(0, {x: -42, y: 0, z: -33}, []),
-                new Monsters.Skeleton(0, {x: -57, y: 0, z: -34}, []),
+                new Monsters.Skeleton(0, {x: -42, y: 0, z: -33}, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, {x: -57, y: 0, z: -34}, [], [SpecialItems.Gold(1)]),
 
-                new Monsters.Skeleton(0, {x: -82, y: 0, z: 10}, []),
-                new Monsters.Skeleton(0, {x: -104, y: 0, z: -9}, []),
+                new Monsters.Skeleton(0, {x: -82, y: 0, z: 10}, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, {x: -104, y: 0, z: -9}, [], [SpecialItems.Gold(1)]),
 
-                new Monsters.Skeleton(0, {x: -113, y: 0, z: -54}, []),
-                new Monsters.Skeleton(0, {x: -97, y: 0, z: -43}, []),
-                new Monsters.Skeleton(0, {x: -120, y: 0, z: -33}, []),
+                new Monsters.Skeleton(0, {x: -113, y: 0, z: -54}, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, {x: -97, y: 0, z: -43}, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, {x: -120, y: 0, z: -33}, [], [SpecialItems.Gold(1)]),
 
 
-                new Monsters.Skeleton(0, {x: -161, y: 0, z: -20}, []),
+                new Monsters.Skeleton(0, {x: -161, y: 0, z: -20}, [], [SpecialItems.Gold(1)]),
 
-                new Monsters.Skeleton(0, {x: 44, y: 0, z: -47}, []),
+                new Monsters.Skeleton(0, {x: 44, y: 0, z: -47}, [], [SpecialItems.Gold(1)]),
 
 
                 // new Monsters.Zombie(0, {x: -28, y: 0, z: 170}, [Items.Weapons.Axe.ITEM_ID]),

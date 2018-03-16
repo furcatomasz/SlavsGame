@@ -7,6 +7,7 @@ namespace Server {
         public name:string;
         public skills:Array;
         public experience:number;
+        public gold:number;
         public lvl:number;
         public freeAttributesPoints:number;
         public freeSkillPoints:number;
@@ -55,6 +56,12 @@ namespace Server {
 
         public setFreeSkillPoints(value:number) {
             this.freeSkillPoints = value;
+
+            return this;
+        }
+
+        public setGold(value:number) {
+            this.gold = value;
 
             return this;
         }

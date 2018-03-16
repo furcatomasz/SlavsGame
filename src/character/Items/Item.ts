@@ -7,6 +7,7 @@ namespace Items {
         public name:string;
         public image:string;
         public statistics:Attributes.ItemStatistics;
+        public isAutoLoot: boolean;
 
         constructor(game:Game, itemData:Array) {
             this.name = itemData.name;

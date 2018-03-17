@@ -405,7 +405,6 @@ var Monster = /** @class */ (function (_super) {
             self.game.gui.characterTopHp.hideHpBar();
         }));
         _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-            console.log('show ');
             self.mesh.renderOutline = true;
             self.game.gui.characterTopHp.showHpCharacter(self);
         }));
@@ -1203,6 +1202,35 @@ var Player = /** @class */ (function (_super) {
         _this = _super.call(this, null, game) || this;
         return _this;
     }
+    Player.prototype.initGodRay = function () {
+        var engine = this.game.engine;
+        var scene = this.game.getScene();
+        var camera = this.game.getScene().activeCamera;
+        var fireMaterial = new BABYLON.StandardMaterial("fontainSculptur2", scene);
+        var fireTexture = new BABYLON.Texture("assets/flare.png", scene);
+        fireTexture.hasAlpha = true;
+        fireMaterial.alpha = 0.2;
+        fireMaterial.emissiveTexture = fireTexture;
+        fireMaterial.diffuseTexture = fireTexture;
+        fireMaterial.specularPower = 1;
+        fireMaterial.backFaceCulling = false;
+        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 12, scene);
+        box.visibility = 1;
+        // box.material = new BABYLON.StandardMaterial("bmat", scene);
+        // box.material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+        box.position = new BABYLON.Vector3(-1, 0.1, -1);
+        box.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
+        // box.parent = this.mesh;
+        box.material = fireMaterial;
+        var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 100, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
+        godrays.useCustomMeshPosition = true;
+        godrays.setCustomMeshPosition(new BABYLON.Vector3(0.0, -45.0, 0.0));
+        // godrays.invert = true;
+        godrays.exposure = 0.5;
+        godrays.decay = 1;
+        godrays.weight = 0.5;
+        godrays.density = 0.5;
+    };
     Player.prototype.setCharacterStatistics = function (attributes) {
         this.statistics = attributes;
     };
@@ -3056,7 +3084,7 @@ var ForestHouse = /** @class */ (function (_super) {
                 .setCamera(scene)
                 .setFog(scene)
                 .defaultPipeline(scene);
-            // scene.debugLayer.show();
+            scene.debugLayer.show();
             scene.actionManager = new BABYLON.ActionManager(scene);
             var assetsManager = new BABYLON.AssetsManager(scene);
             self.initFactories(scene, assetsManager);
@@ -3076,6 +3104,7 @@ var ForestHouse = /** @class */ (function (_super) {
                     game.controller.registerControls(scene);
                     game.client.socket.emit('getQuests');
                     game.client.showEnemies();
+                    game.player.initGodRay();
                     self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: ForestHouse.TYPE
@@ -3578,43 +3607,6 @@ var Character;
         Skills.Tornado = Tornado;
     })(Skills = Character.Skills || (Character.Skills = {}));
 })(Character || (Character = {}));
-/// <reference path="../AbstractCharacter.ts"/>
-var Bandit;
-(function (Bandit_1) {
-    var Bandit = /** @class */ (function (_super) {
-        __extends(Bandit, _super);
-        function Bandit(serverKey, game, position, rotationQuaternion) {
-            var _this = this;
-            _this.name = 'Bandit';
-            var mesh = game.factories['character'].createInstance('Warrior', true);
-            mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
-            mesh.position = position;
-            mesh.rotation = rotationQuaternion;
-            _this.mesh = mesh;
-            _this.statistics = new Attributes.CharacterStatistics(50, 50, 100, 3, 10, 100, 0, 100);
-            _this.id = serverKey;
-            _this.mesh = mesh;
-            _this.visibilityAreaSize = 30;
-            _this.attackAreaSize = 6;
-            _this.sfxHit = new BABYLON.Sound("WormWalk", "/assets/Characters/Worm/hit.wav", game.getScene(), null, { loop: false, autoplay: false });
-            _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, { loop: true, autoplay: false });
-            _this.inventory = new Character.Inventory(game, _this);
-            var armor = new Items.Armors.Robe(game);
-            var axe = new Items.Weapons.Axe(game);
-            var gloves = new Items.Gloves.PrimaryGloves(game);
-            var boots = new Items.Boots.PrimaryBoots(game);
-            _this.inventory.mount(armor);
-            _this.inventory.mount(gloves);
-            _this.inventory.mount(boots);
-            _this.inventory.mount(axe);
-            _this = _super.call(this, name, game) || this;
-            return _this;
-        }
-        Bandit.TYPE = 'bandit';
-        return Bandit;
-    }(Monster));
-    Bandit_1.Bandit = Bandit;
-})(Bandit || (Bandit = {}));
 /// <reference path="../AbstractCharacter.ts"/>
 var NPC;
 (function (NPC) {

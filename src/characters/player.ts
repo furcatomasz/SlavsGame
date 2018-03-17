@@ -90,6 +90,43 @@ class Player extends AbstractCharacter {
         super(null, game);
     }
 
+    public initGodRay() {
+        let engine = this.game.engine;
+        let scene = this.game.getScene();
+        let camera = this.game.getScene().activeCamera;
+
+        var fireMaterial = new BABYLON.StandardMaterial("fontainSculptur2", scene);
+        var fireTexture = new BABYLON.Texture("assets/flare.png", scene);
+        fireTexture.hasAlpha = true;
+        fireMaterial.alpha = 0.2;
+        fireMaterial.emissiveTexture = fireTexture;
+        fireMaterial.diffuseTexture = fireTexture;
+
+        fireMaterial.specularPower = 1;
+        fireMaterial.backFaceCulling = false;
+
+        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 12, scene);
+        box.visibility = 1;
+
+        // box.material = new BABYLON.StandardMaterial("bmat", scene);
+        // box.material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+        box.position = new BABYLON.Vector3(-1, 0.1, -1);
+        box.rotation = new BABYLON.Vector3(-Math.PI/2, 0, 0);
+        // box.parent = this.mesh;
+        box.material = fireMaterial;
+
+
+        var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 100, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
+        godrays.useCustomMeshPosition = true;
+        godrays.setCustomMeshPosition(new BABYLON.Vector3(0.0, -45.0, 0.0));
+        // godrays.invert = true;
+        godrays.exposure = 0.5;
+        godrays.decay = 1;
+        godrays.weight = 0.5;
+        godrays.density = 0.5;
+
+    }
+
     public setCharacterStatistics(attributes) {
         this.statistics = attributes;
     };

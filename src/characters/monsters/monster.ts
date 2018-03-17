@@ -42,7 +42,6 @@ class Monster extends AbstractCharacter {
 
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
             function () {
-            console.log('show '           );
                 self.mesh.renderOutline = true;
                 self.game.gui.characterTopHp.showHpCharacter(self);
             }));

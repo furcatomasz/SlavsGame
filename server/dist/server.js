@@ -383,12 +383,12 @@ var Server;
         EnemyManager.prototype.getEnemies = function () {
             var enemies = [];
             enemies[2] = [
-                new Monsters.Skeleton(0, { x: -42, y: 0, z: -33 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, { x: -42, y: 0, z: -33 }, [], [SpecialItems.Ke(1)]),
                 new Monsters.Skeleton(0, { x: -57, y: 0, z: -34 }, [], [SpecialItems.Gold(1)]),
                 new Monsters.Skeleton(0, { x: -82, y: 0, z: 10 }, [], [SpecialItems.Gold(1)]),
                 new Monsters.Skeleton(0, { x: -104, y: 0, z: -9 }, [], [SpecialItems.Gold(1)]),
                 new Monsters.Skeleton(0, { x: -113, y: 0, z: -54 }, [], [SpecialItems.Gold(1)]),
-                new Monsters.Skeleton(0, { x: -97, y: 0, z: -43 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, { x: -97, y: 0, z: -43 }, [], [SpecialItems.KeyToChest(1)]),
                 new Monsters.Skeleton(0, { x: -120, y: 0, z: -33 }, [], [SpecialItems.Gold(1)]),
                 new Monsters.Skeleton(0, { x: -161, y: 0, z: -20 }, [], [SpecialItems.Gold(1)]),
                 new Monsters.Skeleton(0, { x: 44, y: 0, z: -47 }, [], [SpecialItems.Gold(1)]),
@@ -1197,6 +1197,13 @@ var Server;
                 this.playerQuestRequirements.hasOne("player", this.player, {
                     reverse: "questRequirements"
                 });
+                this.playerSpecialItems = db.define("player_items_special", {
+                    type: Number,
+                    value: Number
+                });
+                this.playerSpecialItems.hasOne("player", this.player, {
+                    reverse: "specialItems"
+                });
             }
             return Structure;
         }());
@@ -1425,68 +1432,20 @@ var Server;
 })(Server || (Server = {}));
 var Monsters;
 (function (Monsters) {
-    var Monster = /** @class */ (function () {
-        function Monster(id, position, itemsToDrop, specialItemsToDrop) {
+    var AbstractMonster = /** @class */ (function () {
+        function AbstractMonster(id, position, itemsToDrop, specialItemsToDrop) {
             this.id = id;
             this.position = position;
             this.itemsToDrop = itemsToDrop;
             this.specialItemsToDrop = specialItemsToDrop;
             this.availableAttacksFromCharacters = [];
         }
-        return Monster;
+        return AbstractMonster;
     }());
-    Monsters.Monster = Monster;
-    var Boar = /** @class */ (function (_super) {
-        __extends(Boar, _super);
-        function Boar(id, position, itemsToDrop, specialItemsToDrop) {
-            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop, specialItemsToDrop) || this;
-            _this.name = 'Boar';
-            _this.type = 'boar';
-            _this.meshName = 'Boar';
-            _this.lvl = 2;
-            _this.experience = 20;
-            _this.attackAreaSize = 2;
-            _this.visibilityAreaSize = 18;
-            _this.statistics = new Attributes.CharacterStatistics(200, 200, 100, 3, 8, 6, 0, 100);
-            return _this;
-        }
-        return Boar;
-    }(Monster));
-    Monsters.Boar = Boar;
-    var Worm = /** @class */ (function (_super) {
-        __extends(Worm, _super);
-        function Worm(id, position, itemsToDrop, specialItemsToDrop) {
-            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
-            _this.name = 'Worm';
-            _this.type = 'worm';
-            _this.meshName = 'Worm';
-            _this.lvl = 1;
-            _this.experience = 10;
-            _this.attackAreaSize = 2;
-            _this.visibilityAreaSize = 10;
-            _this.statistics = new Attributes.CharacterStatistics(80, 80, 100, 3, 10, 8, 0, 100);
-            return _this;
-        }
-        return Worm;
-    }(Monster));
-    Monsters.Worm = Worm;
-    var Zombie = /** @class */ (function (_super) {
-        __extends(Zombie, _super);
-        function Zombie(id, position, itemsToDrop, specialItemsToDrop) {
-            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
-            _this.name = 'Zombie';
-            _this.type = 'zombie';
-            _this.meshName = 'Zombie';
-            _this.lvl = 3;
-            _this.experience = 25;
-            _this.attackAreaSize = 2;
-            _this.visibilityAreaSize = 15;
-            _this.statistics = new Attributes.CharacterStatistics(300, 300, 100, 3, 10, 40, 0, 100);
-            return _this;
-        }
-        return Zombie;
-    }(Monster));
-    Monsters.Zombie = Zombie;
+    Monsters.AbstractMonster = AbstractMonster;
+})(Monsters || (Monsters = {}));
+var Monsters;
+(function (Monsters) {
     var Skeleton = /** @class */ (function (_super) {
         __extends(Skeleton, _super);
         function Skeleton(id, position, itemsToDrop, specialItemsToDrop) {
@@ -1502,25 +1461,68 @@ var Monsters;
             return _this;
         }
         return Skeleton;
-    }(Monster));
+    }(Monsters.AbstractMonster));
     Monsters.Skeleton = Skeleton;
-    var SkeletonMedium = /** @class */ (function (_super) {
-        __extends(SkeletonMedium, _super);
-        function SkeletonMedium(id, position, itemsToDrop, specialItemsToDrop) {
+})(Monsters || (Monsters = {}));
+var Monsters;
+(function (Monsters) {
+    var Zombie = /** @class */ (function (_super) {
+        __extends(Zombie, _super);
+        function Zombie(id, position, itemsToDrop, specialItemsToDrop) {
             var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
-            _this.name = 'skeletonMedium.001';
-            _this.type = 'skeletons';
-            _this.meshName = 'skeletonMedium.001';
+            _this.name = 'Zombie';
+            _this.type = 'zombie';
+            _this.meshName = 'Zombie';
             _this.lvl = 3;
             _this.experience = 25;
             _this.attackAreaSize = 2;
             _this.visibilityAreaSize = 15;
-            _this.statistics = new Attributes.CharacterStatistics(300, 300, 100, 10, 10, 6, 0, 100);
+            _this.statistics = new Attributes.CharacterStatistics(300, 300, 100, 3, 10, 40, 0, 100);
             return _this;
         }
-        return SkeletonMedium;
-    }(Monster));
-    Monsters.SkeletonMedium = SkeletonMedium;
+        return Zombie;
+    }(Monsters.AbstractMonster));
+    Monsters.Zombie = Zombie;
+})(Monsters || (Monsters = {}));
+var Monsters;
+(function (Monsters) {
+    var Boar = /** @class */ (function (_super) {
+        __extends(Boar, _super);
+        function Boar(id, position, itemsToDrop, specialItemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop, specialItemsToDrop) || this;
+            _this.name = 'Boar';
+            _this.type = 'boar';
+            _this.meshName = 'Boar';
+            _this.lvl = 2;
+            _this.experience = 20;
+            _this.attackAreaSize = 2;
+            _this.visibilityAreaSize = 18;
+            _this.statistics = new Attributes.CharacterStatistics(200, 200, 100, 3, 8, 6, 0, 100);
+            return _this;
+        }
+        return Boar;
+    }(Monsters.AbstractMonster));
+    Monsters.Boar = Boar;
+})(Monsters || (Monsters = {}));
+var Monsters;
+(function (Monsters) {
+    var Worm = /** @class */ (function (_super) {
+        __extends(Worm, _super);
+        function Worm(id, position, itemsToDrop, specialItemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
+            _this.name = 'Worm';
+            _this.type = 'worm';
+            _this.meshName = 'Worm';
+            _this.lvl = 1;
+            _this.experience = 10;
+            _this.attackAreaSize = 2;
+            _this.visibilityAreaSize = 10;
+            _this.statistics = new Attributes.CharacterStatistics(80, 80, 100, 3, 10, 8, 0, 100);
+            return _this;
+        }
+        return Worm;
+    }(Monsters.AbstractMonster));
+    Monsters.Worm = Worm;
 })(Monsters || (Monsters = {}));
 var Server;
 (function (Server) {
@@ -2033,34 +2035,17 @@ var Skills;
 })(Skills || (Skills = {}));
 var SpecialItems;
 (function (SpecialItems) {
-    var SpecialItemsManager = /** @class */ (function () {
-        function SpecialItemsManager() {
-        }
-        /**
-         * @param {Number} type
-         * @param {number} value
-         * @returns {any}
-         */
-        SpecialItemsManager.prototype.getSpecialItem = function (type, value) {
-            var item = null;
-            switch (type) {
-                case SpecialItems.Gold.TYPE:
-                    item = new SpecialItems.Gold(value);
-                    break;
-            }
-            return item;
-        };
-        return SpecialItemsManager;
-    }());
-    SpecialItems.SpecialItemsManager = SpecialItemsManager;
-    var SpecialItem = /** @class */ (function () {
-        function SpecialItem(value) {
+    var AbstractSpecialItem = /** @class */ (function () {
+        function AbstractSpecialItem(value) {
             this.value = value;
         }
-        SpecialItem.TYPE = 0;
-        return SpecialItem;
+        AbstractSpecialItem.TYPE = 0;
+        return AbstractSpecialItem;
     }());
-    SpecialItems.SpecialItem = SpecialItem;
+    SpecialItems.AbstractSpecialItem = AbstractSpecialItem;
+})(SpecialItems || (SpecialItems = {}));
+var SpecialItems;
+(function (SpecialItems) {
     var Gold = /** @class */ (function (_super) {
         __extends(Gold, _super);
         function Gold(value) {
@@ -2088,8 +2073,65 @@ var SpecialItems;
         };
         Gold.TYPE = 1;
         return Gold;
-    }(SpecialItems.SpecialItem));
+    }(SpecialItems.AbstractSpecialItem));
     SpecialItems.Gold = Gold;
+})(SpecialItems || (SpecialItems = {}));
+var SpecialItems;
+(function (SpecialItems) {
+    var KeyToChest = /** @class */ (function (_super) {
+        __extends(KeyToChest, _super);
+        function KeyToChest(value) {
+            var _this = this;
+            _this.name = 'Key to chest';
+            _this.type = SpecialItems.KeyToChest.TYPE;
+            _this = _super.call(this, value) || this;
+            return _this;
+        }
+        KeyToChest.prototype.getType = function () {
+            return SpecialItems.KeyToChest.TYPE;
+        };
+        ;
+        KeyToChest.prototype.addItem = function (character, ormManager) {
+            var self = this;
+            ormManager.structure.playerSpecialItems.createAsync({
+                type: this.type,
+                value: this.value,
+                player: character.id
+            }).then(function (results) {
+                console.log('SOCKET - KeyToChest added');
+            });
+            return this;
+        };
+        KeyToChest.TYPE = 2;
+        return KeyToChest;
+    }(SpecialItems.AbstractSpecialItem));
+    SpecialItems.KeyToChest = KeyToChest;
+})(SpecialItems || (SpecialItems = {}));
+var SpecialItems;
+(function (SpecialItems) {
+    var SpecialItemsManager = /** @class */ (function () {
+        function SpecialItemsManager() {
+        }
+        /**
+         * @param {Number} type
+         * @param {number} value
+         * @returns {any}
+         */
+        SpecialItemsManager.prototype.getSpecialItem = function (type, value) {
+            var item = null;
+            switch (type) {
+                case SpecialItems.Gold.TYPE:
+                    item = new SpecialItems.Gold(value);
+                    break;
+                case SpecialItems.KeyToChest.TYPE:
+                    item = new SpecialItems.KeyToChest(value);
+                    break;
+            }
+            return item;
+        };
+        return SpecialItemsManager;
+    }());
+    SpecialItems.SpecialItemsManager = SpecialItemsManager;
 })(SpecialItems || (SpecialItems = {}));
 /// <reference path="../Item.ts"/>
 var Items;

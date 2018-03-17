@@ -4,14 +4,14 @@ namespace Server {
         public getEnemies() {
             let enemies = [];
             enemies[2] = [
-                new Monsters.Skeleton(0, {x: -42, y: 0, z: -33}, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, {x: -42, y: 0, z: -33}, [], [SpecialItems.Ke(1)]),
                 new Monsters.Skeleton(0, {x: -57, y: 0, z: -34}, [], [SpecialItems.Gold(1)]),
 
                 new Monsters.Skeleton(0, {x: -82, y: 0, z: 10}, [], [SpecialItems.Gold(1)]),
                 new Monsters.Skeleton(0, {x: -104, y: 0, z: -9}, [], [SpecialItems.Gold(1)]),
 
                 new Monsters.Skeleton(0, {x: -113, y: 0, z: -54}, [], [SpecialItems.Gold(1)]),
-                new Monsters.Skeleton(0, {x: -97, y: 0, z: -43}, [], [SpecialItems.Gold(1)]),
+                new Monsters.Skeleton(0, {x: -97, y: 0, z: -43}, [], [SpecialItems.KeyToChest(1)]),
                 new Monsters.Skeleton(0, {x: -120, y: 0, z: -33}, [], [SpecialItems.Gold(1)]),
 
 

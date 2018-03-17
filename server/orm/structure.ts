@@ -7,6 +7,7 @@ namespace Server.Orm {
         public playerAttributes;
         public playerOnline;
         public playerItems;
+        public playerSpecialItems;
         public playerQuest;
         public playerQuestRequirements;
 
@@ -87,6 +88,15 @@ namespace Server.Orm {
             });
             this.playerQuestRequirements.hasOne("player", this.player, {
                 reverse : "questRequirements"
+            });
+
+            this.playerSpecialItems = db.define("player_items_special", {
+                type: Number,
+                value: Number,
+            });
+
+            this.playerSpecialItems.hasOne("player", this.player, {
+                reverse : "specialItems"
             });
 
         }

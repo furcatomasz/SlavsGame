@@ -18,7 +18,7 @@ class ForestHouse extends Scene {
                 .setCamera(scene)
                 .setFog(scene)
                 .defaultPipeline(scene);
-             // scene.debugLayer.show();
+             scene.debugLayer.show();
 
             scene.actionManager = new BABYLON.ActionManager(scene);
             let assetsManager = new BABYLON.AssetsManager(scene);
@@ -44,6 +44,8 @@ class ForestHouse extends Scene {
                     game.controller.registerControls(scene);
                     game.client.socket.emit('getQuests');
                     game.client.showEnemies();
+
+                    game.player.initGodRay();
 
                     self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {

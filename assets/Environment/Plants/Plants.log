@@ -1,28 +1,24 @@
-Exporter version: 5.6.0, Blender version: 2.79 (sub 0)
+Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 ========= Conversion from Blender to Babylon.js =========
 	Scene settings used:
 		selected layers only:  false
+		flat shading entire scene:  false
 		inline textures:  false
-		Positions Precision :  4
-		Normals Precision   :  3
-		UVs Precision       :  3
-		Vert Color Precision:  3
-		Mat Weight Precision:  2
 		texture directory:  F:\Slavs\Babylon\Nature\Plants\
 	Python World class constructor completed
 	WARNING: The following camera not visible in scene thus ignored: Camera
-	processing begun of mesh:  Fern
+	processing begun of mesh:  fern
 		processing begun of Standard material:  Fern
 			Diffuse texture found "Fern"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		num positions      :  80
-		num normals        :  80
-		num uvs            :  160
+		num positions      :  64
+		num normals        :  64
+		num uvs            :  128
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  180
-	processing begun of mesh:  ground_plants
+		num indices        :  144
+	processing begun of mesh:  plantsGround
 		processing begun of Standard material:  ground_plants
 			Diffuse texture found "ground_plants"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
@@ -33,23 +29,19 @@ Exporter version: 5.6.0, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  6
-	processing begun of mesh:  Spruce
-		processing begun of Standard material:  korona2.001
-			Diffuse texture found "korona2.001"
+	processing begun of mesh:  spruce
+		processing begun of Standard material:  Spruce
+			Diffuse texture found "Texture"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		processing begun of Standard material:  root.001
-			Diffuse texture found "Texture.000"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  Plants.Multimaterial#0
-		num positions      :  172
-		num normals        :  172
-		num uvs            :  344
+		num positions      :  121
+		num normals        :  121
+		num uvs            :  242
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  330
+		num indices        :  258
 	WARNING: The following lamp not visible in scene thus ignored: Lamp
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.209 secs
+elapsed time:  0 min, 0.106 secs

@@ -1212,13 +1212,14 @@ var Player = /** @class */ (function (_super) {
         fireMaterial.alpha = 0.2;
         fireMaterial.emissiveTexture = fireTexture;
         fireMaterial.diffuseTexture = fireTexture;
+        fireMaterial.opacityTexture = fireTexture;
         fireMaterial.specularPower = 1;
         fireMaterial.backFaceCulling = false;
-        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 12, scene);
+        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 12, scene, true);
         box.visibility = 1;
         // box.material = new BABYLON.StandardMaterial("bmat", scene);
         // box.material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-        box.position = new BABYLON.Vector3(-1, 0.1, -1);
+        box.position = new BABYLON.Vector3(0, 0.1, 0);
         box.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
         // box.parent = this.mesh;
         box.material = fireMaterial;
@@ -1230,6 +1231,15 @@ var Player = /** @class */ (function (_super) {
         godrays.decay = 1;
         godrays.weight = 0.5;
         godrays.density = 0.5;
+        // BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'position.y', 30, 70, 30, 0,0, null, function() {
+        //     godrays.invert = false;
+        //     setTimeout(function() {
+        //         BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'position.y', 30, 70, 0, 30,0, null, function() {
+        //             godrays.dispose(camera);
+        //             box.dispose();
+        //         } );
+        //     }, 1000);
+        // } );
     };
     Player.prototype.setCharacterStatistics = function (attributes) {
         this.statistics = attributes;
@@ -1781,11 +1791,11 @@ var EnvironmentForestHouse = /** @class */ (function () {
             }
         }
         //TODO: SPS Nature
-        var spruce = game.factories['nature_grain'].createInstance('Spruce', false);
+        var spruce = game.factories['nature_grain'].createInstance('spruce', false);
         spruce.visibility = 0;
-        var groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
-        groundPlants.visibility = 0;
-        var fern = game.factories['nature_grain'].createInstance('Fern', false);
+        var groundPlants = game.factories['nature_grain'].createInstance('plantsGround', false);
+        // groundPlants.visibility = 0;
+        var fern = game.factories['nature_grain'].createInstance('fern', false);
         fern.visibility = 0;
         var parentSPS = scene.getMeshByName("Plane.004");
         var positions = parentSPS.getVerticesData(BABYLON.VertexBuffer.PositionKind);

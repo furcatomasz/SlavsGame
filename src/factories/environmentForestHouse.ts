@@ -64,13 +64,13 @@ class EnvironmentForestHouse {
         }
 //TODO: SPS Nature
 
-        let spruce = game.factories['nature_grain'].createInstance('Spruce', false);
+        let spruce = game.factories['nature_grain'].createInstance('spruce', false);
         spruce.visibility = 0;
 
-        let groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
-        groundPlants.visibility = 0;
+        let groundPlants = game.factories['nature_grain'].createInstance('plantsGround', false);
+        // groundPlants.visibility = 0;
 
-        let fern = game.factories['nature_grain'].createInstance('Fern', false);
+        let fern = game.factories['nature_grain'].createInstance('fern', false);
         fern.visibility = 0;
 
         var parentSPS = scene.getMeshByName("Plane.004");

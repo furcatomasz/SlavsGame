@@ -4,7 +4,7 @@ namespace Server {
         public getEnemies() {
             let enemies = [];
             enemies[2] = [
-                new Monsters.Skeleton(0, {x: -42, y: 0, z: -33}, [], [SpecialItems.Ke(1)]),
+                new Monsters.Skeleton(0, {x: -42, y: 0, z: -33}, [], [SpecialItems.Gold(1)]),
                 new Monsters.Skeleton(0, {x: -57, y: 0, z: -34}, [], [SpecialItems.Gold(1)]),
 
                 new Monsters.Skeleton(0, {x: -82, y: 0, z: 10}, [], [SpecialItems.Gold(1)]),

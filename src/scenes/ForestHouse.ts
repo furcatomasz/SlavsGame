@@ -45,8 +45,6 @@ class ForestHouse extends Scene {
                     game.client.socket.emit('getQuests');
                     game.client.showEnemies();
 
-                    game.player.initGodRay();
-
                     self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: ForestHouse.TYPE,

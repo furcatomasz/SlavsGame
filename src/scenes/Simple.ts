@@ -4,7 +4,7 @@
 
 class Simple extends Scene {
 
-    static TYPE = 2;
+    static TYPE = 0;
 
     initScene(game:Game) {
         let self = this;

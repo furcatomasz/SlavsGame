@@ -46,7 +46,40 @@ class SocketIOClient {
                 .skillsLearned()
                 .updateRooms()
                 .reloadScene()
-                .addSpecialItem();
+                .addSpecialItem()
+                .refreshGateways()
+                .changeScene();
+        });
+
+        return this;
+    }
+
+    protected refreshGateways() {
+        let game = this.game;
+        let gateways = [];
+        this.socket.on('refreshGateways', function (sceneServerData) {
+            gateways.forEach(function(gateway) {
+                gateway.particleSystem.dispose();
+            });
+
+            let gatewaysFromServer = sceneServerData.gateways;
+            gatewaysFromServer.forEach(function(gateway) {
+                let gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType);
+                gateways.push(gatewayInGame);
+            })
+
+        });
+
+        return this;
+    }
+
+    protected changeScene() {
+        let game = this.game;
+        this.socket.on('changeScene', function (sceneServerData) {
+            let sceneType = sceneServerData.type;
+            let scene = Scenes.Manager.factory(sceneType);
+            
+            game.sceneManager.changeScene(scene);
         });
 
         return this;

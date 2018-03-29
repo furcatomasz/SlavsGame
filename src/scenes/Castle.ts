@@ -4,7 +4,7 @@
 
 class Castle extends Scene {
 
-    static TYPE = 3;
+    static TYPE = 0;
 
     initScene(game:Game) {
         let self = this;

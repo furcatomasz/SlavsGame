@@ -49,7 +49,10 @@ class ForestHouse extends Scene {
                     game.client.socket.emit('changeScenePost', {
                         sceneType: ForestHouse.TYPE,
                     });
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+
+                    game.client.socket.emit('refreshGateways');
+
+                        document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
             });

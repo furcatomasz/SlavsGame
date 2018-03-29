@@ -4,7 +4,7 @@
 
 class ForestHouseStart extends Scene {
 
-    static TYPE = 3;
+    static TYPE = 1;
 
     initScene(game:Game) {
         let self = this;
@@ -32,7 +32,7 @@ class ForestHouseStart extends Scene {
                 
                 assetsManager.onFinish = function (tasks) {
                     game.client.socket.emit('changeScenePre', {
-                        sceneType: Castle.TYPE,
+                        sceneType: ForestHouseStart.TYPE,
                     });
 
                 };
@@ -41,7 +41,7 @@ class ForestHouseStart extends Scene {
                 let listener = function listener() {
                     game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePost', {
-                        sceneType: Castle.TYPE,
+                        sceneType: ForestHouseStart.TYPE,
                     });
                     game.client.socket.emit('getQuests');
 

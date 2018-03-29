@@ -243,7 +243,8 @@ namespace Server {
                     self
                         .characterEvents(socket, player)
                         .questsEvents(socket, player)
-                        .roomsEvents(socket, player, serverIO);
+                        .roomsEvents(socket, player, serverIO)
+                        .sceneEvents(socket, player);
 
                 } else {
                     ///Monster socket events
@@ -315,7 +316,29 @@ namespace Server {
             });
         }
 
+        /**
+         *
+         * @param socket
+         * @param player
+         */
+        protected sceneEvents(socket, player) {
+            socket.on('refreshGateways', function () {
+                let character = player.getActiveCharacter();
+                let sceneType = player.activeScene;
+                let scene = Server.Scenes.Manager.factory(sceneType);
+                scene.refreshGatewaysData(character);
 
+                socket.emit('refreshGateways', scene);
+            });
+
+            socket.on('changeScene', function (sceneType) {
+                let scene = Server.Scenes.Manager.factory(sceneType);
+
+                socket.emit('changeScene', scene);
+            });
+            
+            return this;
+        }
 
         /**
          * @param socket
@@ -650,13 +673,7 @@ namespace Server {
 
         protected getDefaultPositionForScene(sceneType) {
             let position = null
-            if (sceneType == 3) {
-                position = {
-                    x: 0,
-                    y: 0,
-                    z: 0
-                };
-            } else if (sceneType == 4) {
+            if (sceneType == 1) {
                 position = {
                     x: 0,
                     y: 0,

@@ -284,7 +284,7 @@ var Simple = /** @class */ (function (_super) {
     Simple.prototype.getType = function () {
         return Simple.TYPE;
     };
-    Simple.TYPE = 2;
+    Simple.TYPE = 0;
     return Simple;
 }(Scene));
 /// <reference path="../../babylon/babylon.d.ts"/>
@@ -492,7 +492,33 @@ var SocketIOClient = /** @class */ (function () {
                 .skillsLearned()
                 .updateRooms()
                 .reloadScene()
-                .addSpecialItem();
+                .addSpecialItem()
+                .refreshGateways()
+                .changeScene();
+        });
+        return this;
+    };
+    SocketIOClient.prototype.refreshGateways = function () {
+        var game = this.game;
+        var gateways = [];
+        this.socket.on('refreshGateways', function (sceneServerData) {
+            gateways.forEach(function (gateway) {
+                gateway.particleSystem.dispose();
+            });
+            var gatewaysFromServer = sceneServerData.gateways;
+            gatewaysFromServer.forEach(function (gateway) {
+                var gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType);
+                gateways.push(gatewayInGame);
+            });
+        });
+        return this;
+    };
+    SocketIOClient.prototype.changeScene = function () {
+        var game = this.game;
+        this.socket.on('changeScene', function (sceneServerData) {
+            var sceneType = sceneServerData.type;
+            var scene = Scenes.Manager.factory(sceneType);
+            game.sceneManager.changeScene(scene);
         });
         return this;
     };
@@ -1587,6 +1613,39 @@ var Factories;
     }(Factories.AbstractFactory));
     Factories.Flags = Flags;
 })(Factories || (Factories = {}));
+var Factories;
+(function (Factories) {
+    var Gateway = /** @class */ (function () {
+        /**
+         *
+         * @param {Game} game
+         * @param {string} meshName
+         * @param {boolean} isActive
+         * @param {number} openSceneType
+         */
+        function Gateway(game, meshName, isActive, openSceneType) {
+            var gateway = game.getScene().getMeshByName(meshName);
+            if (!gateway) {
+                throw new TypeError('Wrong gateway mesh name.');
+            }
+            this.mesh = gateway;
+            gateway.visibility = 0;
+            gateway.isPickable = false;
+            var gatewayParticleSystem = new Particles.Gateway(game, gateway, isActive).particleSystem;
+            gatewayParticleSystem.start();
+            this.particleSystem = gatewayParticleSystem;
+            game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                parameter: gateway
+            }, function () {
+                game.client.socket.emit('changeScene', openSceneType);
+                return this;
+            }));
+        }
+        return Gateway;
+    }());
+    Factories.Gateway = Gateway;
+})(Factories || (Factories = {}));
 /// <reference path="AbstractFactory.ts"/>
 /// <reference path="../game.ts"/>
 var Factories;
@@ -1782,19 +1841,7 @@ var EnvironmentCastle = /** @class */ (function () {
 var EnvironmentForestHouse = /** @class */ (function () {
     function EnvironmentForestHouse(game, scene) {
         var self = this;
-        var trees = [];
-        this.bushes = [];
         this.colliders = [];
-        // let light = this.enableDayAndNight(game, game.getScene().lights[1]);
-        // for (let i = 0; i < scene.lights.length; i++) {
-        //     let light = scene.lights[i];
-        //     light.intensity = (light.intensity);
-        //light.range = 47;
-        // }
-        //var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), scene);
-        //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
-        //this.shadowGenerator = shadowGenerator;
-        var fern = null;
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh_1 = scene.meshes[i];
             var meshName_1 = scene.meshes[i]['name'];
@@ -1802,11 +1849,6 @@ var EnvironmentForestHouse = /** @class */ (function () {
                 sceneMesh_1.actionManager = new BABYLON.ActionManager(scene);
                 sceneMesh_1.receiveShadows = true;
                 this.ground = sceneMesh_1;
-                // var myTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.png", scene);
-                // myTexture.uScale = 10.0;
-                // myTexture.vScale = 10.0;
-                // sceneMesh.material.diffuseTexture = myTexture;
-                // sceneMesh.material.specularColor = new BABYLON.Color3(0,0,0);
                 var terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
                 terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
                 terrainMaterial.specularPower = 64;
@@ -1860,10 +1902,6 @@ var EnvironmentForestHouse = /** @class */ (function () {
         var SPSMeshPlants = SPSPlants.buildMesh();
         SPSMeshPlants.material = groundPlants.material;
         SPSMeshPlants.parent = parentSPS;
-        //Freeze world matrix all static meshes
-        for (var i = 0; i < scene.meshes.length; i++) {
-            scene.meshes[i].freezeWorldMatrix();
-        }
         scene.lights[0].intensity = 0;
         // scene.lights[1].intensity = 0;
         var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
@@ -1902,111 +1940,17 @@ var EnvironmentForestHouse = /** @class */ (function () {
         //     });
         //     sfxFireplace.attachToMesh(cone);
         // }
-        ///portal to town
-        // let plane = scene.getMeshByName("Cave_entrace");
-        // if (plane) {
-        //     this.entrace = plane;
-        //     plane.visibility = 0;
-        //     plane.isPickable = false;
-        //     let smokeSystem = new Particles.CaveEntrace(game, plane).particleSystem;
-        //     smokeSystem.start();
-        //
-        //     let listener = function listener() {
-        //         game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //             trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-        //             parameter: plane
-        //         }, function () {
-        //             game.sceneManager.changeScene(new Cave());
-        //             return this;
-        //         }));
-        //
-        //         document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-        //     };
-        //
-        //     document.addEventListener(Events.PLAYER_CONNECTED, listener);
-        // }
-        ///town entrace
-        var plane = scene.getMeshByName("Entrace_House");
-        if (plane) {
-            this.entrace = plane;
-            plane.visibility = 0;
-            plane.isPickable = false;
-            var smokeSystem = new Particles.CastleEnter(game, plane).particleSystem;
-            smokeSystem.start();
-            var listener2_1 = function listener() {
-                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                    parameter: plane
-                }, function () {
-                    game.sceneManager.changeScene(new ForestHouseStart());
-                    return this;
-                }));
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener2_1);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener2_1);
-        }
-        ///Cave entrace
-        // let plane = scene.getMeshByName("Entrace_Cave");
-        //
-        // if (plane) {
-        //     this.entrace = plane;
-        //     plane.visibility = 0;
-        //     plane.isPickable = false;
-        //     let smokeSystem = new Particles.CastleEnter(game, plane).particleSystem;
-        //     smokeSystem.start();
-        //
-        //     let listener2 = function listener() {
-        //         game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-        //             trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-        //             parameter: plane
-        //         }, function () {
-        //             game.sceneManager.changeScene(new Cave());
-        //             return this;
-        //         }));
-        //
-        //         document.removeEventListener(Events.PLAYER_CONNECTED, listener2);
-        //     };
-        //
-        //     document.addEventListener(Events.PLAYER_CONNECTED, listener2);
-        // }
         ///register colliders
         for (var i = 0; i < this.colliders.length; i++) {
             var sceneMeshCollider = this.colliders[i];
             Collisions.setCollider(scene, sceneMeshCollider);
         }
         new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
+        //Freeze world matrix all static meshes
+        for (var i = 0; i < scene.meshes.length; i++) {
+            scene.meshes[i].freezeWorldMatrix();
+        }
     }
-    EnvironmentForestHouse.prototype.enableDayAndNight = function (game, light) {
-        light.intensity = 0;
-        var keys = [];
-        keys.push({
-            frame: 0,
-            value: 0
-        });
-        keys.push({
-            frame: 80,
-            value: 0
-        });
-        keys.push({
-            frame: 100,
-            value: 1
-        });
-        keys.push({
-            frame: 180,
-            value: 1
-        });
-        keys.push({
-            frame: 200,
-            value: 0
-        });
-        var animationBox = new BABYLON.Animation("mainLightIntensity", "intensity", 10, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
-        animationBox.setKeys(keys);
-        light.animations = [];
-        light.animations.push(animationBox);
-        game.getScene().beginAnimation(light, 0, 200, true);
-        return light;
-    };
-    ;
     return EnvironmentForestHouse;
 }());
 /// <reference path="../game.ts"/>
@@ -2499,43 +2443,6 @@ var Particles;
 /// <reference path="AbstractParticle.ts"/>
 var Particles;
 (function (Particles) {
-    var CastleEnter = /** @class */ (function (_super) {
-        __extends(CastleEnter, _super);
-        function CastleEnter() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        CastleEnter.prototype.initParticleSystem = function () {
-            var particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 500 }, this.game.getScene());
-            particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
-            particleSystem.emitter = this.emitter; // the starting object, the emitter
-            particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
-            particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1); // To...
-            particleSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
-            particleSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
-            particleSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
-            particleSystem.minSize = 0.1;
-            particleSystem.maxSize = 0.5;
-            particleSystem.minLifeTime = 0.3;
-            particleSystem.maxLifeTime = 1;
-            particleSystem.emitRate = 500;
-            particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-            particleSystem.gravity = new BABYLON.Vector3(0, 9.81, 0);
-            particleSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
-            particleSystem.direction2 = new BABYLON.Vector3(0, 0.25, 0);
-            particleSystem.minAngularSpeed = 0;
-            particleSystem.maxAngularSpeed = Math.PI;
-            particleSystem.minEmitPower = 0.5;
-            particleSystem.maxEmitPower = 1.5;
-            particleSystem.updateSpeed = 0.004;
-            this.particleSystem = particleSystem;
-        };
-        return CastleEnter;
-    }(Particles.AbstractParticle));
-    Particles.CastleEnter = CastleEnter;
-})(Particles || (Particles = {}));
-/// <reference path="AbstractParticle.ts"/>
-var Particles;
-(function (Particles) {
     var CaveEntrace = /** @class */ (function (_super) {
         __extends(CaveEntrace, _super);
         function CaveEntrace() {
@@ -2722,6 +2629,52 @@ var Particles;
         return Fog;
     }(Particles.AbstractParticle));
     Particles.Fog = Fog;
+})(Particles || (Particles = {}));
+/// <reference path="AbstractParticle.ts"/>
+var Particles;
+(function (Particles) {
+    var Gateway = /** @class */ (function (_super) {
+        __extends(Gateway, _super);
+        function Gateway(game, emitter, isActive) {
+            var _this = this;
+            _this.isActive = isActive;
+            _this = _super.call(this, game, emitter) || this;
+            return _this;
+        }
+        Gateway.prototype.initParticleSystem = function () {
+            var particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 500 }, this.game.getScene());
+            particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            particleSystem.emitter = this.emitter; // the starting object, the emitter
+            particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
+            particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1); // To...
+            if (this.isActive) {
+                particleSystem.color1 = new BABYLON.Color3(0.7, 0.8, 1.0);
+                particleSystem.color2 = new BABYLON.Color3(0.2, 0.5, 1.0);
+            }
+            else {
+                particleSystem.color1 = new BABYLON.Color3(1, 0, 0.0);
+                particleSystem.color2 = new BABYLON.Color3(0.5, 0, 0.0);
+            }
+            particleSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+            particleSystem.minSize = 0.1;
+            particleSystem.maxSize = 0.5;
+            particleSystem.minLifeTime = 0.3;
+            particleSystem.maxLifeTime = 1;
+            particleSystem.emitRate = 500;
+            particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            particleSystem.gravity = new BABYLON.Vector3(0, 9.81, 0);
+            particleSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+            particleSystem.direction2 = new BABYLON.Vector3(0, 0.25, 0);
+            particleSystem.minAngularSpeed = 0;
+            particleSystem.maxAngularSpeed = Math.PI;
+            particleSystem.minEmitPower = 0.5;
+            particleSystem.maxEmitPower = 1.5;
+            particleSystem.updateSpeed = 0.004;
+            this.particleSystem = particleSystem;
+        };
+        return Gateway;
+    }(Particles.AbstractParticle));
+    Particles.Gateway = Gateway;
 })(Particles || (Particles = {}));
 /// <reference path="AbstractParticle.ts"/>
 var Particles;
@@ -3054,63 +3007,8 @@ var Castle = /** @class */ (function (_super) {
     Castle.prototype.getType = function () {
         return Castle.TYPE;
     };
-    Castle.TYPE = 3;
+    Castle.TYPE = 0;
     return Castle;
-}(Scene));
-/// <reference path="Scene.ts"/>
-/// <reference path="../game.ts"/>
-/// <reference path="../Events.ts"/>
-var Cave = /** @class */ (function (_super) {
-    __extends(Cave, _super);
-    function Cave() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Cave.prototype.initScene = function (game) {
-        var self = this;
-        game.sceneManager = this;
-        BABYLON.SceneLoader.Load("assets/scenes/Cave/", "Cave.babylon", game.engine, function (scene) {
-            game.sceneManager = self;
-            self
-                .setDefaults(game)
-                .optimizeScene(scene)
-                .setCamera(scene)
-                .setFog(scene)
-                .defaultPipeline(scene);
-            scene.debugLayer.show();
-            scene.actionManager = new BABYLON.ActionManager(scene);
-            var assetsManager = new BABYLON.AssetsManager(scene);
-            var sceneIndex = game.scenes.push(scene);
-            game.activeScene = sceneIndex - 1;
-            scene.executeWhenReady(function () {
-                // self.environment = new Environment(game, scene);
-                self.initFactories(scene, assetsManager);
-                game.client.socket.emit('createPlayer');
-                assetsManager.onFinish = function (tasks) {
-                    //self.octree = scene.createOrUpdateSelectionOctree();
-                    game.client.socket.emit('changeScenePre', {
-                        sceneType: Cave.TYPE
-                    });
-                };
-                assetsManager.load();
-                var listener = function listener() {
-                    game.controller.registerControls(scene);
-                    game.client.socket.emit('getQuests');
-                    game.client.showEnemies();
-                    //self.defaultPipeline(scene);
-                    game.client.socket.emit('changeScenePost', {
-                        sceneType: Cave.TYPE
-                    });
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-                };
-                document.addEventListener(Events.PLAYER_CONNECTED, listener);
-            });
-        });
-    };
-    Cave.prototype.getType = function () {
-        return Simple.TYPE;
-    };
-    Cave.TYPE = 4;
-    return Cave;
 }(Scene));
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
@@ -3155,6 +3053,7 @@ var ForestHouse = /** @class */ (function (_super) {
                     game.client.socket.emit('changeScenePost', {
                         sceneType: ForestHouse.TYPE
                     });
+                    game.client.socket.emit('refreshGateways');
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -3198,14 +3097,14 @@ var ForestHouseStart = /** @class */ (function (_super) {
                 self.initFactories(scene, assetsManager);
                 assetsManager.onFinish = function (tasks) {
                     game.client.socket.emit('changeScenePre', {
-                        sceneType: Castle.TYPE
+                        sceneType: ForestHouseStart.TYPE
                     });
                 };
                 assetsManager.load();
                 var listener = function listener() {
                     game.controller.registerControls(scene);
                     game.client.socket.emit('changeScenePost', {
-                        sceneType: Castle.TYPE
+                        sceneType: ForestHouseStart.TYPE
                     });
                     game.client.socket.emit('getQuests');
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
@@ -3217,7 +3116,7 @@ var ForestHouseStart = /** @class */ (function (_super) {
     ForestHouseStart.prototype.getType = function () {
         return Castle.TYPE;
     };
-    ForestHouseStart.TYPE = 3;
+    ForestHouseStart.TYPE = 1;
     return ForestHouseStart;
 }(Scene));
 /// <reference path="../../babylon/babylon.d.ts"/>
@@ -3340,6 +3239,35 @@ var MainMenu = /** @class */ (function (_super) {
     }
     return MainMenu;
 }(Scene));
+var Scenes;
+(function (Scenes) {
+    var Manager = /** @class */ (function () {
+        function Manager() {
+        }
+        /**
+         *
+         * @param {int} sceneType
+         * @returns {AbstractScene}
+         */
+        Manager.factory = function (sceneType) {
+            var scene = null;
+            switch (sceneType) {
+                case ForestHouse.TYPE:
+                    scene = new ForestHouse();
+                    break;
+                case ForestHouseStart.TYPE:
+                    scene = new ForestHouseStart();
+                    break;
+            }
+            if (!scene) {
+                throw new TypeError('Wrong scene type.');
+            }
+            return scene;
+        };
+        return Manager;
+    }());
+    Scenes.Manager = Manager;
+})(Scenes || (Scenes = {}));
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -3430,7 +3358,7 @@ var SimpleBandit = /** @class */ (function (_super) {
     SimpleBandit.prototype.getType = function () {
         return SimpleBandit.TYPE;
     };
-    SimpleBandit.TYPE = 3;
+    SimpleBandit.TYPE = 0;
     return SimpleBandit;
 }(Scene));
 var Items;

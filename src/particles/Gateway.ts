@@ -1,17 +1,28 @@
 /// <reference path="AbstractParticle.ts"/>
 
 namespace Particles {
-    export class CastleEnter extends AbstractParticle {
+    export class Gateway extends AbstractParticle {
+        protected isActive: boolean;
 
-        protected initParticleSystem() {
-            var particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 500 }, this.game.getScene());
+        constructor(game: Game, emitter: BABYLON.AbstractMesh, isActive: boolean) {
+            this.isActive = isActive;
+            super(game, emitter);
+        }
+
+        public initParticleSystem() {
+            let particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 500 }, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
             particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1); // To...
 
-            particleSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
-            particleSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+            if(this.isActive) {
+                particleSystem.color1 = new BABYLON.Color3(0.7, 0.8, 1.0);
+                particleSystem.color2 = new BABYLON.Color3(0.2, 0.5, 1.0);
+            } else {
+                particleSystem.color1 = new BABYLON.Color3(1, 0, 0.0);
+                particleSystem.color2 = new BABYLON.Color3(0.5, 0, 0.0);
+            }
             particleSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
 
             particleSystem.minSize = 0.1;

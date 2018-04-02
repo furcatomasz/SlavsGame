@@ -9,6 +9,11 @@ namespace Server.Scenes {
          */
         public gateways: Array<Server.Gateways.AbstractGateway>;
 
+        /**
+         * Gateways to change scene by character or team
+         */
+        public quests: Array<Server.Quests.AbstractQuest>;
+
         public abstract getType(): number;
 
         /**

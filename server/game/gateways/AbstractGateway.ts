@@ -1,8 +1,7 @@
 namespace Server.Gateways {
-    export abstract class AbstractGateway {
+    export abstract class AbstractGateway implements ObjectSelector {
 
         public isActive:string;
-        public objectName: string;
         public openSceneType: number;
 
         /**

@@ -40,32 +40,6 @@ class EnvironmentForestHouseStart {
            scene.meshes[i].freezeWorldMatrix();
         }
 
-
-        ///exit from house
-        let plane = scene.getMeshByName("exitHouse");
-        if (plane) {
-            this.entrace = plane;
-            plane.isPickable = true;
-            plane.visibility = false;
-            let smokeSystem = new Particles.HouseExit(game, plane).particleSystem;
-            smokeSystem.start();
-
-            let listener = function listener() {
-                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                    parameter: plane
-                }, function () {
-                    game.sceneManager.changeScene(new ForestHouse());
-                    return this;
-                }));
-
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
-
-        }
-
         ///register colliders
         for (let i = 0; i < this.colliders.length; i++) {
             let sceneMeshCollider = this.colliders[i];

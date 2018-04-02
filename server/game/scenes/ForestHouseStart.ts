@@ -4,7 +4,12 @@ namespace Server.Scenes {
 
         constructor() {
             this.type = ForestHouseStart.TYPE;
-            this.gateways = [];
+            this.gateways = [
+                new Server.Gateways.EntraceForestHouse(),
+            ];
+            this.quests = [
+                new Server.Quests.SkeletonKing(),
+            ];
         }
 
     }

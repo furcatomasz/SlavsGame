@@ -19,9 +19,9 @@ class ForestHouseStart extends Scene {
                 .setFog(scene)
                 .defaultPipeline(scene);
 
-            // scene.debugLayer.show({
-            //     initialTab: 2
-            //  });
+            scene.debugLayer.show({
+                initialTab: 2
+             });
             scene.actionManager = new BABYLON.ActionManager(scene);
             let assetsManager = new BABYLON.AssetsManager(scene);
             let sceneIndex = game.scenes.push(scene);
@@ -44,6 +44,9 @@ class ForestHouseStart extends Scene {
                         sceneType: ForestHouseStart.TYPE,
                     });
                     game.client.socket.emit('getQuests');
+
+                    game.client.socket.emit('refreshGateways');
+                    game.client.socket.emit('refreshQuests');
 
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };

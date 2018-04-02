@@ -331,6 +331,14 @@ namespace Server {
                 socket.emit('refreshGateways', scene);
             });
 
+            socket.on('refreshQuests', function () {
+                let character = player.getActiveCharacter();
+                let sceneType = player.activeScene;
+                let scene = Server.Scenes.Manager.factory(sceneType);
+
+                socket.emit('refreshQuests', scene);
+            });
+
             socket.on('changeScene', function (sceneType) {
                 let scene = Server.Scenes.Manager.factory(sceneType);
 

@@ -795,6 +795,12 @@ var Server;
                 scene.refreshGatewaysData(character);
                 socket.emit('refreshGateways', scene);
             });
+            socket.on('refreshQuests', function () {
+                var character = player.getActiveCharacter();
+                var sceneType = player.activeScene;
+                var scene = Server.Scenes.Manager.factory(sceneType);
+                socket.emit('refreshQuests', scene);
+            });
             socket.on('changeScene', function (sceneType) {
                 var scene = Server.Scenes.Manager.factory(sceneType);
                 socket.emit('changeScene', scene);
@@ -1445,6 +1451,35 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
+    var Quests;
+    (function (Quests) {
+        var AbstractQuest = /** @class */ (function () {
+            function AbstractQuest() {
+            }
+            return AbstractQuest;
+        }());
+        Quests.AbstractQuest = AbstractQuest;
+    })(Quests = Server.Quests || (Server.Quests = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Quests;
+    (function (Quests) {
+        var SkeletonKing = /** @class */ (function (_super) {
+            __extends(SkeletonKing, _super);
+            function SkeletonKing() {
+                var _this = this;
+                _this.objectName = 'questLog';
+                _this.title = 'Skeleton King';
+                return _this;
+            }
+            return SkeletonKing;
+        }(Quests.AbstractQuest));
+        Quests.SkeletonKing = SkeletonKing;
+    })(Quests = Server.Quests || (Server.Quests = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
     var Gateways;
     (function (Gateways) {
         var AbstractGateway = /** @class */ (function () {
@@ -1453,6 +1488,30 @@ var Server;
             return AbstractGateway;
         }());
         Gateways.AbstractGateway = AbstractGateway;
+    })(Gateways = Server.Gateways || (Server.Gateways = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Gateways;
+    (function (Gateways) {
+        var EntraceForestHouse = /** @class */ (function (_super) {
+            __extends(EntraceForestHouse, _super);
+            function EntraceForestHouse() {
+                var _this = this;
+                _this.objectName = 'exitHouse';
+                _this.openSceneType = Server.Scenes.ForestHouse.TYPE;
+                return _this;
+            }
+            /**
+             *
+             * @returns {Server.Gateways.AbstractGateway}
+             */
+            EntraceForestHouse.prototype.verifyIsActive = function (character) {
+                this.isActive = true;
+            };
+            return EntraceForestHouse;
+        }(Gateways.AbstractGateway));
+        Gateways.EntraceForestHouse = EntraceForestHouse;
     })(Gateways = Server.Gateways || (Server.Gateways = {}));
 })(Server || (Server = {}));
 var Server;
@@ -1573,6 +1632,105 @@ var Monsters;
     }(Monsters.AbstractMonster));
     Monsters.Worm = Worm;
 })(Monsters || (Monsters = {}));
+var Server;
+(function (Server) {
+    var Scenes;
+    (function (Scenes) {
+        var AbstractScene = /** @class */ (function () {
+            function AbstractScene() {
+            }
+            /**
+             *
+             * @param {Server.Character} character
+             * @returns {Server.Scenes.AbstractScene}
+             */
+            AbstractScene.prototype.refreshGatewaysData = function (character) {
+                this.gateways.forEach(function (gateway) {
+                    gateway.verifyIsActive(character);
+                });
+                return this;
+            };
+            AbstractScene.TYPE = 0;
+            return AbstractScene;
+        }());
+        Scenes.AbstractScene = AbstractScene;
+    })(Scenes = Server.Scenes || (Server.Scenes = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Scenes;
+    (function (Scenes) {
+        var ForestHouse = /** @class */ (function (_super) {
+            __extends(ForestHouse, _super);
+            function ForestHouse() {
+                var _this = this;
+                _this.type = ForestHouse.TYPE;
+                _this.gateways = [
+                    new Server.Gateways.EntraceHouse(),
+                ];
+                return _this;
+            }
+            ForestHouse.TYPE = 2;
+            return ForestHouse;
+        }(Scenes.AbstractScene));
+        Scenes.ForestHouse = ForestHouse;
+    })(Scenes = Server.Scenes || (Server.Scenes = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Scenes;
+    (function (Scenes) {
+        var ForestHouseStart = /** @class */ (function (_super) {
+            __extends(ForestHouseStart, _super);
+            function ForestHouseStart() {
+                var _this = this;
+                _this.type = ForestHouseStart.TYPE;
+                _this.gateways = [
+                    new Server.Gateways.EntraceForestHouse(),
+                ];
+                _this.quests = [
+                    new Server.Quests.SkeletonKing(),
+                ];
+                return _this;
+            }
+            ForestHouseStart.TYPE = 1;
+            return ForestHouseStart;
+        }(Scenes.AbstractScene));
+        Scenes.ForestHouseStart = ForestHouseStart;
+    })(Scenes = Server.Scenes || (Server.Scenes = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Scenes;
+    (function (Scenes) {
+        var Manager = /** @class */ (function () {
+            function Manager() {
+            }
+            /**
+             *
+             * @param {int} sceneType
+             * @returns {AbstractScene}
+             */
+            Manager.factory = function (sceneType) {
+                var scene = null;
+                switch (sceneType) {
+                    case Scenes.ForestHouse.TYPE:
+                        scene = new Scenes.ForestHouse();
+                        break;
+                    case Scenes.ForestHouseStart.TYPE:
+                        scene = new Scenes.ForestHouseStart();
+                        break;
+                }
+                if (!scene) {
+                    throw new TypeError('Wrong scene type.');
+                }
+                return scene;
+            };
+            return Manager;
+        }());
+        Scenes.Manager = Manager;
+    })(Scenes = Server.Scenes || (Server.Scenes = {}));
+})(Server || (Server = {}));
 var Server;
 (function (Server) {
     var Character = /** @class */ (function () {
@@ -1789,100 +1947,6 @@ var Server;
     }());
     Server.Player = Player;
 })(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Scenes;
-    (function (Scenes) {
-        var AbstractScene = /** @class */ (function () {
-            function AbstractScene() {
-            }
-            /**
-             *
-             * @param {Server.Character} character
-             * @returns {Server.Scenes.AbstractScene}
-             */
-            AbstractScene.prototype.refreshGatewaysData = function (character) {
-                this.gateways.forEach(function (gateway) {
-                    gateway.verifyIsActive(character);
-                });
-                return this;
-            };
-            AbstractScene.TYPE = 0;
-            return AbstractScene;
-        }());
-        Scenes.AbstractScene = AbstractScene;
-    })(Scenes = Server.Scenes || (Server.Scenes = {}));
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Scenes;
-    (function (Scenes) {
-        var ForestHouse = /** @class */ (function (_super) {
-            __extends(ForestHouse, _super);
-            function ForestHouse() {
-                var _this = this;
-                _this.type = ForestHouse.TYPE;
-                _this.gateways = [
-                    new Server.Gateways.EntraceHouse(),
-                ];
-                return _this;
-            }
-            ForestHouse.TYPE = 2;
-            return ForestHouse;
-        }(Scenes.AbstractScene));
-        Scenes.ForestHouse = ForestHouse;
-    })(Scenes = Server.Scenes || (Server.Scenes = {}));
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Scenes;
-    (function (Scenes) {
-        var ForestHouseStart = /** @class */ (function (_super) {
-            __extends(ForestHouseStart, _super);
-            function ForestHouseStart() {
-                var _this = this;
-                _this.type = ForestHouseStart.TYPE;
-                _this.gateways = [];
-                return _this;
-            }
-            ForestHouseStart.TYPE = 1;
-            return ForestHouseStart;
-        }(Scenes.AbstractScene));
-        Scenes.ForestHouseStart = ForestHouseStart;
-    })(Scenes = Server.Scenes || (Server.Scenes = {}));
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Scenes;
-    (function (Scenes) {
-        var Manager = /** @class */ (function () {
-            function Manager() {
-            }
-            /**
-             *
-             * @param {int} sceneType
-             * @returns {AbstractScene}
-             */
-            Manager.factory = function (sceneType) {
-                var scene = null;
-                switch (sceneType) {
-                    case Scenes.ForestHouse.TYPE:
-                        scene = new Scenes.ForestHouse();
-                        break;
-                    case Scenes.ForestHouseStart.TYPE:
-                        scene = new Scenes.ForestHouseStart();
-                        break;
-                }
-                if (!scene) {
-                    throw new TypeError('Wrong scene type.');
-                }
-                return scene;
-            };
-            return Manager;
-        }());
-        Scenes.Manager = Manager;
-    })(Scenes = Server.Scenes || (Server.Scenes = {}));
-})(Server || (Server = {}));
 var Attributes;
 (function (Attributes) {
     var AbstractStatistics = /** @class */ (function () {
@@ -2018,80 +2082,6 @@ var Attributes;
     }(AbstractStatistics));
     Attributes.ItemStatistics = ItemStatistics;
 })(Attributes || (Attributes = {}));
-var Skills;
-(function (Skills) {
-    var AbstractSkill = /** @class */ (function () {
-        function AbstractSkill() {
-        }
-        AbstractSkill.prototype.setPower = function (cooldown, damage, stock) {
-            if (cooldown === void 0) { cooldown = 0; }
-            if (damage === void 0) { damage = 0; }
-            if (stock === void 0) { stock = 0; }
-            this.cooldown = cooldown;
-            this.damage = damage;
-            this.stock = stock;
-        };
-        AbstractSkill.TYPE = 0;
-        return AbstractSkill;
-    }());
-    Skills.AbstractSkill = AbstractSkill;
-})(Skills || (Skills = {}));
-var Skills;
-(function (Skills) {
-    var DoubleAttack = /** @class */ (function (_super) {
-        __extends(DoubleAttack, _super);
-        function DoubleAttack() {
-            var _this = this;
-            _this.name = 'Double Attack';
-            _this.type = Skills.DoubleAttack.TYPE;
-            return _this;
-        }
-        DoubleAttack.TYPE = 1;
-        return DoubleAttack;
-    }(Skills.AbstractSkill));
-    Skills.DoubleAttack = DoubleAttack;
-})(Skills || (Skills = {}));
-var Skills;
-(function (Skills) {
-    var SkillsManager = /** @class */ (function () {
-        function SkillsManager() {
-        }
-        /**
-         *
-         * @param type
-         * @returns {Skills.AbstractSkill}
-         */
-        SkillsManager.getSkill = function (type) {
-            var skill = null;
-            switch (type) {
-                case Skills.DoubleAttack.TYPE:
-                    skill = new Skills.DoubleAttack();
-                    break;
-                case Skills.Tornado.TYPE:
-                    skill = new Skills.Tornado();
-                    break;
-            }
-            return skill;
-        };
-        return SkillsManager;
-    }());
-    Skills.SkillsManager = SkillsManager;
-})(Skills || (Skills = {}));
-var Skills;
-(function (Skills) {
-    var Tornado = /** @class */ (function (_super) {
-        __extends(Tornado, _super);
-        function Tornado() {
-            var _this = this;
-            _this.name = 'Tornado';
-            _this.type = Skills.Tornado.TYPE;
-            return _this;
-        }
-        Tornado.TYPE = 2;
-        return Tornado;
-    }(Skills.AbstractSkill));
-    Skills.Tornado = Tornado;
-})(Skills || (Skills = {}));
 var Items;
 (function (Items) {
     var Item = /** @class */ (function () {
@@ -2176,6 +2166,80 @@ var Items;
     }());
     Items.ItemManager = ItemManager;
 })(Items || (Items = {}));
+var Skills;
+(function (Skills) {
+    var AbstractSkill = /** @class */ (function () {
+        function AbstractSkill() {
+        }
+        AbstractSkill.prototype.setPower = function (cooldown, damage, stock) {
+            if (cooldown === void 0) { cooldown = 0; }
+            if (damage === void 0) { damage = 0; }
+            if (stock === void 0) { stock = 0; }
+            this.cooldown = cooldown;
+            this.damage = damage;
+            this.stock = stock;
+        };
+        AbstractSkill.TYPE = 0;
+        return AbstractSkill;
+    }());
+    Skills.AbstractSkill = AbstractSkill;
+})(Skills || (Skills = {}));
+var Skills;
+(function (Skills) {
+    var DoubleAttack = /** @class */ (function (_super) {
+        __extends(DoubleAttack, _super);
+        function DoubleAttack() {
+            var _this = this;
+            _this.name = 'Double Attack';
+            _this.type = Skills.DoubleAttack.TYPE;
+            return _this;
+        }
+        DoubleAttack.TYPE = 1;
+        return DoubleAttack;
+    }(Skills.AbstractSkill));
+    Skills.DoubleAttack = DoubleAttack;
+})(Skills || (Skills = {}));
+var Skills;
+(function (Skills) {
+    var SkillsManager = /** @class */ (function () {
+        function SkillsManager() {
+        }
+        /**
+         *
+         * @param type
+         * @returns {Skills.AbstractSkill}
+         */
+        SkillsManager.getSkill = function (type) {
+            var skill = null;
+            switch (type) {
+                case Skills.DoubleAttack.TYPE:
+                    skill = new Skills.DoubleAttack();
+                    break;
+                case Skills.Tornado.TYPE:
+                    skill = new Skills.Tornado();
+                    break;
+            }
+            return skill;
+        };
+        return SkillsManager;
+    }());
+    Skills.SkillsManager = SkillsManager;
+})(Skills || (Skills = {}));
+var Skills;
+(function (Skills) {
+    var Tornado = /** @class */ (function (_super) {
+        __extends(Tornado, _super);
+        function Tornado() {
+            var _this = this;
+            _this.name = 'Tornado';
+            _this.type = Skills.Tornado.TYPE;
+            return _this;
+        }
+        Tornado.TYPE = 2;
+        return Tornado;
+    }(Skills.AbstractSkill));
+    Skills.Tornado = Tornado;
+})(Skills || (Skills = {}));
 var SpecialItems;
 (function (SpecialItems) {
     var AbstractSpecialItem = /** @class */ (function () {

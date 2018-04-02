@@ -68,7 +68,7 @@ class Game {
     }
 
     createScene(): Game {
-        new ForestHouse().initScene(this);
+        new ForestHouseStart().initScene(this);
 
         return this;
     }

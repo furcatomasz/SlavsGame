@@ -48,6 +48,7 @@ class SocketIOClient {
                 .reloadScene()
                 .addSpecialItem()
                 .refreshGateways()
+                .refreshQuests()
                 .changeScene();
         });
 
@@ -66,6 +67,21 @@ class SocketIOClient {
             gatewaysFromServer.forEach(function(gateway) {
                 let gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType);
                 gateways.push(gatewayInGame);
+            })
+
+        });
+
+        return this;
+    }
+
+    protected refreshQuests() {
+        let game = this.game;
+        this.socket.on('refreshQuests', function (sceneServerData) {
+            let questsFromServer = sceneServerData.quests;
+            console.log(sceneServerData);
+
+            questsFromServer.forEach(function(quest) {
+                new Factories.Quests(game, quest.objectName);
             })
 
         });

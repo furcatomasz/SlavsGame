@@ -4,6 +4,12 @@ namespace Server.Scenes {
 
         public type: number;
 
+        protected questManager: QuestManager;
+
+        constructor() {
+            this.questManager = app.get('quest_manager');
+        }
+
         /**
          * Gateways to change scene by character or team
          */

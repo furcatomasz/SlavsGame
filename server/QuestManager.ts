@@ -1,20 +1,35 @@
 namespace Server {
     export class QuestManager {
+        quests = Array;
 
-        public getQuests() {
+        constructor() {
+            this.registerQuests();
+        }
+
+        /**
+         * @param {Server.Scenes.AbstractScene} scene
+         * @returns Array
+         */
+        public getQuestsForScene(scene: Server.Scenes.AbstractScene) {
+            return this.quests[scene.TYPE];
+        }
+
+        /**
+         * @returns {Server.QuestManager}
+         */
+        protected registerQuests() {
             let quests = [];
-            quests[1] = new Server.Quests.Models.Quest(
-                1,
-                [
-                    new Server.Quests.Models.ModelAward(1, 1)
-                ],
-                [
-                    new Server.Quests.Models.Requirement(1, 3)
-                ]
+
+            quests[Server.Scenes.ForestHouseStart.TYPE] = [];
+            quests[Server.Scenes.ForestHouseStart.TYPE].push(
+                new Server.Quests.SkeletonKing()
             );
 
-            return quests;
+            this.quests = quests;
+
+            return this;
         }
+
     }
 
 }

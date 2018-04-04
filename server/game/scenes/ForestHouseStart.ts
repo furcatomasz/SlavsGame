@@ -3,13 +3,12 @@ namespace Server.Scenes {
         static TYPE = 1;
 
         constructor() {
+            super();
             this.type = ForestHouseStart.TYPE;
             this.gateways = [
                 new Server.Gateways.EntraceForestHouse(),
             ];
-            this.quests = [
-                new Server.Quests.SkeletonKing(),
-            ];
+            this.quests = this.questManager.getQuestsForScene(this.type);
         }
 
     }

@@ -49,7 +49,16 @@ class SocketIOClient {
                 .addSpecialItem()
                 .refreshGateways()
                 .refreshQuests()
+                .questRequirementInformation()
                 .changeScene();
+        });
+
+        return this;
+    }
+
+    protected questRequirementInformation() {
+        this.socket.on('questRequirementInformation', function (data) {
+            game.gui.playerLogsQuests.addText(data);
         });
 
         return this;

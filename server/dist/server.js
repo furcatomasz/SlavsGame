@@ -445,15 +445,25 @@ var Server;
 (function (Server) {
     var QuestManager = /** @class */ (function () {
         function QuestManager() {
+            this.quests = Array;
+            this.registerQuests();
         }
-        QuestManager.prototype.getQuests = function () {
+        /**
+         * @param {Server.Scenes.AbstractScene} scene
+         * @returns Array
+         */
+        QuestManager.prototype.getQuestsForScene = function (scene) {
+            return this.quests[scene.TYPE];
+        };
+        /**
+         * @returns {Server.QuestManager}
+         */
+        QuestManager.prototype.registerQuests = function () {
             var quests = [];
-            quests[1] = new Server.Quests.Models.Quest(1, [
-                new Server.Quests.Models.ModelAward(1, 1)
-            ], [
-                new Server.Quests.Models.Requirement(1, 3)
-            ]);
-            return quests;
+            quests[Server.Scenes.ForestHouseStart.TYPE] = [];
+            quests[Server.Scenes.ForestHouseStart.TYPE].push(new Server.Quests.SkeletonKing());
+            this.quests = quests;
+            return this;
         };
         return QuestManager;
     }());
@@ -469,19 +479,20 @@ var config = require("./../config.js");
 var BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
 var LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
 var requirejs = require('requirejs');
+var EventEmitter = require('events');
 server.listen(config.server.port);
 var SlavsServer = /** @class */ (function () {
     function SlavsServer() {
         this.enemies = [];
-        this.quests = [];
         var self = this;
+        app.set('server_socket_io', io);
+        app.set('event_emitter', new EventEmitter());
+        app.set('quest_manager', new Server.QuestManager());
         this.ormManager = new Server.OrmManager(self, orm, config);
         this.gameModules = new Server.GameModules();
         this.gameModules.loadModules(function () {
             self.enemyManager = new Server.EnemyManager();
-            self.questManager = new Server.QuestManager();
             self.enemies = self.enemyManager.getEnemies();
-            self.quests = self.questManager.getQuests();
             //self.serverFrontEnd = new Server.FrontEnd(self, app, express);
             self.babylonManager = new Server.BabylonManager(self);
             self.serverWebsocket = new Server.IO(self, io);
@@ -516,6 +527,7 @@ var Server;
             this.enemies = [];
             this.enemiesIntervals = [];
             this.rooms = [];
+            this.emitter = app.get('event_emitter');
             this.remotePlayers = [];
             this.enemies = [];
             this.enemiesIntervals = [];
@@ -523,6 +535,7 @@ var Server;
             var self = this;
             var remotePlayers = this.remotePlayers;
             this.server = server;
+            var emitter = this.emitter;
             serverIO.on('connection', function (socket) {
                 var isMonsterServer = socket.handshake.query.monsterServer;
                 ///Client socket events
@@ -536,14 +549,13 @@ var Server;
                     });
                     player_1.activeCharacter = 1;
                     ////CLEAR QUESTS
-                    if (server.ormManager.structure.playerQuest) {
-                        server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
-                            for (var _i = 0, playerQuests_1 = playerQuests; _i < playerQuests_1.length; _i++) {
-                                var playerQuest = playerQuests_1[_i];
-                                playerQuest.remove();
-                            }
-                        });
-                    }
+                    // if(server.ormManager.structure.playerQuest) {
+                    //     server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
+                    //         for (let playerQuest of playerQuests) {
+                    //             playerQuest.remove();
+                    //         }
+                    //     });
+                    // }
                     player_1.refreshPlayerData(server, function () {
                         socket.emit('clientConnected', player_1);
                     });
@@ -609,6 +621,7 @@ var Server;
                                         serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
                                         ///enemy is killed
                                         if (enemy.statistics.hp <= 0) {
+                                            emitter.emit('monster_kill', enemy, player_1.getActiveCharacter(), socket);
                                             ///add special item
                                             var specialItemFlat = enemy.specialItemsToDrop[0];
                                             var specialItemManager = new SpecialItems.SpecialItemsManager();
@@ -1471,6 +1484,9 @@ var Server;
                 var _this = this;
                 _this.objectName = 'questLog';
                 _this.title = 'Skeleton King';
+                _this.requirements = [
+                    new Server.Quests.Requirements.KillMonster(new Monsters.Skeleton(), 5)
+                ];
                 return _this;
             }
             return SkeletonKing;
@@ -1632,105 +1648,6 @@ var Monsters;
     }(Monsters.AbstractMonster));
     Monsters.Worm = Worm;
 })(Monsters || (Monsters = {}));
-var Server;
-(function (Server) {
-    var Scenes;
-    (function (Scenes) {
-        var AbstractScene = /** @class */ (function () {
-            function AbstractScene() {
-            }
-            /**
-             *
-             * @param {Server.Character} character
-             * @returns {Server.Scenes.AbstractScene}
-             */
-            AbstractScene.prototype.refreshGatewaysData = function (character) {
-                this.gateways.forEach(function (gateway) {
-                    gateway.verifyIsActive(character);
-                });
-                return this;
-            };
-            AbstractScene.TYPE = 0;
-            return AbstractScene;
-        }());
-        Scenes.AbstractScene = AbstractScene;
-    })(Scenes = Server.Scenes || (Server.Scenes = {}));
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Scenes;
-    (function (Scenes) {
-        var ForestHouse = /** @class */ (function (_super) {
-            __extends(ForestHouse, _super);
-            function ForestHouse() {
-                var _this = this;
-                _this.type = ForestHouse.TYPE;
-                _this.gateways = [
-                    new Server.Gateways.EntraceHouse(),
-                ];
-                return _this;
-            }
-            ForestHouse.TYPE = 2;
-            return ForestHouse;
-        }(Scenes.AbstractScene));
-        Scenes.ForestHouse = ForestHouse;
-    })(Scenes = Server.Scenes || (Server.Scenes = {}));
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Scenes;
-    (function (Scenes) {
-        var ForestHouseStart = /** @class */ (function (_super) {
-            __extends(ForestHouseStart, _super);
-            function ForestHouseStart() {
-                var _this = this;
-                _this.type = ForestHouseStart.TYPE;
-                _this.gateways = [
-                    new Server.Gateways.EntraceForestHouse(),
-                ];
-                _this.quests = [
-                    new Server.Quests.SkeletonKing(),
-                ];
-                return _this;
-            }
-            ForestHouseStart.TYPE = 1;
-            return ForestHouseStart;
-        }(Scenes.AbstractScene));
-        Scenes.ForestHouseStart = ForestHouseStart;
-    })(Scenes = Server.Scenes || (Server.Scenes = {}));
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Scenes;
-    (function (Scenes) {
-        var Manager = /** @class */ (function () {
-            function Manager() {
-            }
-            /**
-             *
-             * @param {int} sceneType
-             * @returns {AbstractScene}
-             */
-            Manager.factory = function (sceneType) {
-                var scene = null;
-                switch (sceneType) {
-                    case Scenes.ForestHouse.TYPE:
-                        scene = new Scenes.ForestHouse();
-                        break;
-                    case Scenes.ForestHouseStart.TYPE:
-                        scene = new Scenes.ForestHouseStart();
-                        break;
-                }
-                if (!scene) {
-                    throw new TypeError('Wrong scene type.');
-                }
-                return scene;
-            };
-            return Manager;
-        }());
-        Scenes.Manager = Manager;
-    })(Scenes = Server.Scenes || (Server.Scenes = {}));
-})(Server || (Server = {}));
 var Server;
 (function (Server) {
     var Character = /** @class */ (function () {
@@ -1946,6 +1863,154 @@ var Server;
         return Player;
     }());
     Server.Player = Player;
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Scenes;
+    (function (Scenes) {
+        var AbstractScene = /** @class */ (function () {
+            function AbstractScene() {
+                this.questManager = app.get('quest_manager');
+            }
+            /**
+             *
+             * @param {Server.Character} character
+             * @returns {Server.Scenes.AbstractScene}
+             */
+            AbstractScene.prototype.refreshGatewaysData = function (character) {
+                this.gateways.forEach(function (gateway) {
+                    gateway.verifyIsActive(character);
+                });
+                return this;
+            };
+            AbstractScene.TYPE = 0;
+            return AbstractScene;
+        }());
+        Scenes.AbstractScene = AbstractScene;
+    })(Scenes = Server.Scenes || (Server.Scenes = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Scenes;
+    (function (Scenes) {
+        var ForestHouse = /** @class */ (function (_super) {
+            __extends(ForestHouse, _super);
+            function ForestHouse() {
+                var _this = _super.call(this) || this;
+                _this.type = ForestHouse.TYPE;
+                _this.gateways = [
+                    new Server.Gateways.EntraceHouse(),
+                ];
+                return _this;
+            }
+            ForestHouse.TYPE = 2;
+            return ForestHouse;
+        }(Scenes.AbstractScene));
+        Scenes.ForestHouse = ForestHouse;
+    })(Scenes = Server.Scenes || (Server.Scenes = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Scenes;
+    (function (Scenes) {
+        var ForestHouseStart = /** @class */ (function (_super) {
+            __extends(ForestHouseStart, _super);
+            function ForestHouseStart() {
+                var _this = _super.call(this) || this;
+                _this.type = ForestHouseStart.TYPE;
+                _this.gateways = [
+                    new Server.Gateways.EntraceForestHouse(),
+                ];
+                _this.quests = _this.questManager.getQuestsForScene(_this.type);
+                return _this;
+            }
+            ForestHouseStart.TYPE = 1;
+            return ForestHouseStart;
+        }(Scenes.AbstractScene));
+        Scenes.ForestHouseStart = ForestHouseStart;
+    })(Scenes = Server.Scenes || (Server.Scenes = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Scenes;
+    (function (Scenes) {
+        var Manager = /** @class */ (function () {
+            function Manager() {
+            }
+            /**
+             *
+             * @param {int} sceneType
+             * @returns {AbstractScene}
+             */
+            Manager.factory = function (sceneType) {
+                var scene = null;
+                switch (sceneType) {
+                    case Scenes.ForestHouse.TYPE:
+                        scene = new Scenes.ForestHouse();
+                        break;
+                    case Scenes.ForestHouseStart.TYPE:
+                        scene = new Scenes.ForestHouseStart();
+                        break;
+                }
+                if (!scene) {
+                    throw new TypeError('Wrong scene type.');
+                }
+                return scene;
+            };
+            return Manager;
+        }());
+        Scenes.Manager = Manager;
+    })(Scenes = Server.Scenes || (Server.Scenes = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Quests;
+    (function (Quests) {
+        var Requirements;
+        (function (Requirements) {
+            var AbstractRequirement = /** @class */ (function () {
+                function AbstractRequirement() {
+                    this.registerListener();
+                }
+                AbstractRequirement.REQUIREMENT_ID = 0;
+                return AbstractRequirement;
+            }());
+            Requirements.AbstractRequirement = AbstractRequirement;
+        })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+    })(Quests = Server.Quests || (Server.Quests = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Quests;
+    (function (Quests) {
+        var Requirements;
+        (function (Requirements) {
+            var KillMonster = /** @class */ (function (_super) {
+                __extends(KillMonster, _super);
+                function KillMonster(monster, value) {
+                    var _this = _super.call(this) || this;
+                    _this.monsterToKill = monster;
+                    _this.value = value;
+                    return _this;
+                }
+                KillMonster.prototype.registerListener = function () {
+                    var emitter = app.get('event_emitter');
+                    var self = this;
+                    var killed = 0;
+                    emitter.on('monster_kill', function (monster, character, socket) {
+                        if (monster.type == self.monsterToKill.type) {
+                            killed += 1;
+                            socket.emit('questRequirementInformation', 'Killed ' + killed + '/5 skeleton');
+                            console.log('[SOCKET][QUEST]monster has been killed ' + monster.name + ' by ' + character.name);
+                        }
+                    });
+                };
+                KillMonster.REQUIREMENT_ID = 1;
+                return KillMonster;
+            }(Requirements.AbstractRequirement));
+            Requirements.KillMonster = KillMonster;
+        })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+    })(Quests = Server.Quests || (Server.Quests = {}));
 })(Server || (Server = {}));
 var Attributes;
 (function (Attributes) {

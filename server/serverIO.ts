@@ -6,8 +6,11 @@ namespace Server {
         protected enemiesIntervals = [];
         protected rooms = [];
         protected monsterServerSocketId;
+        protected emitter: EventEmitter;
 
         constructor(server:SlavsServer, serverIO) {
+            this.emitter = app.get('event_emitter');
+
             this.remotePlayers = [];
             this.enemies = [];
             this.enemiesIntervals = [];
@@ -15,6 +18,8 @@ namespace Server {
             let self = this;
             let remotePlayers = this.remotePlayers;
             this.server = server;
+
+            let emitter = this.emitter;
             serverIO.on('connection', function (socket) {
                 let isMonsterServer = socket.handshake.query.monsterServer;
                 ///Client socket events
@@ -31,13 +36,13 @@ namespace Server {
                     player.activeCharacter = 1;
 
                     ////CLEAR QUESTS
-                    if(server.ormManager.structure.playerQuest) {
-                        server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
-                            for (let playerQuest of playerQuests) {
-                                playerQuest.remove();
-                            }
-                        });
-                    }
+                    // if(server.ormManager.structure.playerQuest) {
+                    //     server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
+                    //         for (let playerQuest of playerQuests) {
+                    //             playerQuest.remove();
+                    //         }
+                    //     });
+                    // }
 
                     player.refreshPlayerData(server, function () {
                         socket.emit('clientConnected', player);
@@ -120,6 +125,8 @@ namespace Server {
 
                                         ///enemy is killed
                                         if (enemy.statistics.hp <= 0) {
+                                            emitter.emit('monster_kill', enemy, player.getActiveCharacter(), socket);
+
                                             ///add special item
                                             let specialItemFlat = enemy.specialItemsToDrop[0];
                                             let specialItemManager = new SpecialItems.SpecialItemsManager();

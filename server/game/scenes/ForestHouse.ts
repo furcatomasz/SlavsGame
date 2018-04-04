@@ -3,6 +3,7 @@ namespace Server.Scenes {
         static TYPE = 2;
 
         constructor() {
+            super();
             this.type = ForestHouse.TYPE;
             this.gateways = [
                 new Server.Gateways.EntraceHouse(),

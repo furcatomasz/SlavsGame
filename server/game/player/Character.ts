@@ -112,5 +112,55 @@ namespace Server {
             return this;
         }
 
+        /**
+         * @param server
+         * @param socket
+         * @param earnedExperience
+         */
+        public addExperience(server: SlavsServer, socket, earnedExperience) {
+            server.ormManager.structure.player.get(this.id,
+                function (error, playerDatabase) {
+                    playerDatabase.experience += earnedExperience;
+                    socket.emit('addExperience', {
+                        experience: earnedExperience
+                    });
+                    let newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
+                    let requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
+                    if (playerDatabase.experience >= requiredExperience) {
+                        playerDatabase.lvl += 1;
+                        playerDatabase.freeAttributesPoints += 5;
+                        playerDatabase.freeSkillPoints += 1;
+                        socket.emit('newLvl', playerDatabase);
+                    }
+
+                    playerDatabase.save();
+                });
+        }
+
+        /**
+         * @param server
+         * @param socket
+         * @param earnedExperience
+         */
+        public addExperience(server: SlavsServer, socket, earnedExperience) {
+            server.ormManager.structure.player.get(this.id,
+                function (error, playerDatabase) {
+                    playerDatabase.experience += earnedExperience;
+                    socket.emit('addExperience', {
+                        experience: earnedExperience
+                    });
+                    let newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
+                    let requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
+                    if (playerDatabase.experience >= requiredExperience) {
+                        playerDatabase.lvl += 1;
+                        playerDatabase.freeAttributesPoints += 5;
+                        playerDatabase.freeSkillPoints += 1;
+                        socket.emit('newLvl', playerDatabase);
+                    }
+
+                    playerDatabase.save();
+                });
+        }
+
     }
 }

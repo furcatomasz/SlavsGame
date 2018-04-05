@@ -632,8 +632,7 @@ var Server;
                                             }
                                             enemy.availableAttacksFromCharacters = [];
                                             var enemyItem = enemy.itemsToDrop[0];
-                                            var earnedExperience_1 = enemy.experience;
-                                            var playerId = player_1.getActiveCharacter().id;
+                                            var earnedExperience = enemy.experience;
                                             if (enemyItem) {
                                                 var itemDropKey = player_1.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
                                                 var itemManager = new Items.ItemManager();
@@ -649,21 +648,7 @@ var Server;
                                                 clearInterval(self.enemiesIntervals[roomId][enemyKey]);
                                                 self.enemiesIntervals[roomId][enemyKey] = null;
                                             }
-                                            self.server.ormManager.structure.player.get(playerId, function (error, playerDatabase) {
-                                                playerDatabase.experience += earnedExperience_1;
-                                                socket.emit('addExperience', {
-                                                    experience: earnedExperience_1
-                                                });
-                                                var newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
-                                                var requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
-                                                if (playerDatabase.experience >= requiredExperience) {
-                                                    playerDatabase.lvl += 1;
-                                                    playerDatabase.freeAttributesPoints += 5;
-                                                    playerDatabase.freeSkillPoints += 1;
-                                                    socket.emit('newLvl', playerDatabase);
-                                                }
-                                                playerDatabase.save();
-                                            });
+                                            player_1.getActiveCharacter().addExperience(server, socket, earnedExperience);
                                         }
                                         console.log('Attack character ID:' + characterId + ' on enemy with dmg' + damage);
                                     }
@@ -1469,6 +1454,12 @@ var Server;
         var AbstractQuest = /** @class */ (function () {
             function AbstractQuest() {
             }
+            /**
+             * @returns {number}
+             */
+            AbstractQuest.prototype.getChaptersCount = function () {
+                return this.requirements.length;
+            };
             return AbstractQuest;
         }());
         Quests.AbstractQuest = AbstractQuest;
@@ -1485,7 +1476,20 @@ var Server;
                 _this.objectName = 'questLog';
                 _this.title = 'Skeleton King';
                 _this.requirements = [
-                    new Server.Quests.Requirements.KillMonster(new Monsters.Skeleton(), 5)
+                    [
+                        new Server.Quests.Requirements.KillMonster(new Monsters.Skeleton(), 5)
+                    ],
+                    [
+                        new Server.Quests.Requirements.KillMonster(new Monsters.Skeleton(), 1)
+                    ]
+                ];
+                _this.awards = [
+                    [
+                        new Server.Quests.Awards.Experience(50)
+                    ],
+                    [
+                        new Server.Quests.Awards.SpecialItem(new SpecialItems.KeyToChest(), 1)
+                    ]
                 ];
                 return _this;
             }
@@ -1713,6 +1717,50 @@ var Server;
             statistics.addItemsStatistics(this);
             this.statistics = statistics;
             return this;
+        };
+        /**
+         * @param server
+         * @param socket
+         * @param earnedExperience
+         */
+        Character.prototype.addExperience = function (server, socket, earnedExperience) {
+            server.ormManager.structure.player.get(this.id, function (error, playerDatabase) {
+                playerDatabase.experience += earnedExperience;
+                socket.emit('addExperience', {
+                    experience: earnedExperience
+                });
+                var newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
+                var requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
+                if (playerDatabase.experience >= requiredExperience) {
+                    playerDatabase.lvl += 1;
+                    playerDatabase.freeAttributesPoints += 5;
+                    playerDatabase.freeSkillPoints += 1;
+                    socket.emit('newLvl', playerDatabase);
+                }
+                playerDatabase.save();
+            });
+        };
+        /**
+         * @param server
+         * @param socket
+         * @param earnedExperience
+         */
+        Character.prototype.addExperience = function (server, socket, earnedExperience) {
+            server.ormManager.structure.player.get(this.id, function (error, playerDatabase) {
+                playerDatabase.experience += earnedExperience;
+                socket.emit('addExperience', {
+                    experience: earnedExperience
+                });
+                var newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
+                var requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
+                if (playerDatabase.experience >= requiredExperience) {
+                    playerDatabase.lvl += 1;
+                    playerDatabase.freeAttributesPoints += 5;
+                    playerDatabase.freeSkillPoints += 1;
+                    socket.emit('newLvl', playerDatabase);
+                }
+                playerDatabase.save();
+            });
         };
         return Character;
     }());
@@ -1961,6 +2009,69 @@ var Server;
         }());
         Scenes.Manager = Manager;
     })(Scenes = Server.Scenes || (Server.Scenes = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Quests;
+    (function (Quests) {
+        var Awards;
+        (function (Awards) {
+            var AbstractAwards = /** @class */ (function () {
+                function AbstractAwards() {
+                }
+                return AbstractAwards;
+            }());
+            Awards.AbstractAwards = AbstractAwards;
+        })(Awards = Quests.Awards || (Quests.Awards = {}));
+    })(Quests = Server.Quests || (Server.Quests = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Quests;
+    (function (Quests) {
+        var Awards;
+        (function (Awards) {
+            var Experience = /** @class */ (function (_super) {
+                __extends(Experience, _super);
+                function Experience(value) {
+                    var _this = this;
+                    _this.title = 'Experience for character';
+                    _this.value = value;
+                    return _this;
+                }
+                Experience.prototype.addAwardToCharacter = function (character, server, socket) {
+                    character.addExperience(server, socket, this.value);
+                };
+                return Experience;
+            }(Awards.AbstractAwards));
+            Awards.Experience = Experience;
+        })(Awards = Quests.Awards || (Quests.Awards = {}));
+    })(Quests = Server.Quests || (Server.Quests = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Quests;
+    (function (Quests) {
+        var Awards;
+        (function (Awards) {
+            var SpecialItem = /** @class */ (function (_super) {
+                __extends(SpecialItem, _super);
+                function SpecialItem(specialItem, value) {
+                    var _this = this;
+                    _this.title = 'Gold for character';
+                    _this.award = specialItem;
+                    _this.value = value;
+                    return _this;
+                }
+                SpecialItem.prototype.addAwardToCharacter = function (character, server, socket) {
+                    var gold = new SpecialItems.Gold(this.value);
+                    specialItem.addItem(character, server.ormManager);
+                };
+                return SpecialItem;
+            }(Awards.AbstractAwards));
+            Awards.SpecialItem = SpecialItem;
+        })(Awards = Quests.Awards || (Quests.Awards = {}));
+    })(Quests = Server.Quests || (Server.Quests = {}));
 })(Server || (Server = {}));
 var Server;
 (function (Server) {

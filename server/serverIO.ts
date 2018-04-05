@@ -139,7 +139,7 @@ namespace Server {
                                             enemy.availableAttacksFromCharacters = [];
                                             let enemyItem = enemy.itemsToDrop[0];
                                             let earnedExperience = enemy.experience;
-                                            let playerId = player.getActiveCharacter().id;
+
                                             if(enemyItem) {
                                                 let itemDropKey = player.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
                                                 let itemManager = new Items.ItemManager();
@@ -157,23 +157,7 @@ namespace Server {
                                                 self.enemiesIntervals[roomId][enemyKey] = null;
                                             }
 
-                                            self.server.ormManager.structure.player.get(playerId,
-                                                function (error, playerDatabase) {
-                                                    playerDatabase.experience += earnedExperience;
-                                                    socket.emit('addExperience', {
-                                                        experience: earnedExperience
-                                                    });
-                                                    let newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
-                                                    let requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
-                                                    if (playerDatabase.experience >= requiredExperience) {
-                                                        playerDatabase.lvl += 1;
-                                                        playerDatabase.freeAttributesPoints += 5;
-                                                        playerDatabase.freeSkillPoints += 1;
-                                                        socket.emit('newLvl', playerDatabase);
-                                                    }
-
-                                                    playerDatabase.save();
-                                                });
+                                            player.getActiveCharacter().addExperience(server, socket, earnedExperience);
                                         }
 
                                         console.log('Attack character ID:' + characterId + ' on enemy with dmg' + damage);

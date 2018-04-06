@@ -396,6 +396,9 @@ var Server;
                 //
                 new Monsters.Skeleton(0, { x: 44, y: 0, z: -47 }, [], [SpecialItems.Gold(1)]),
             ];
+            enemies[3] = [
+                new Monsters.SkeletonBoss(0, { x: 32, y: 0, z: -44 }, [], [SpecialItems.KeyToChest(1)]),
+            ];
             return enemies;
         };
         return EnemyManager;
@@ -1137,6 +1140,13 @@ var Server;
                     z: 0
                 };
             }
+            else if (sceneType == 3) {
+                position = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
+            }
             return position;
         };
         ;
@@ -1560,6 +1570,30 @@ var Server;
         Gateways.EntraceHouse = EntraceHouse;
     })(Gateways = Server.Gateways || (Server.Gateways = {}));
 })(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Gateways;
+    (function (Gateways) {
+        var ForestHouseTombExit = /** @class */ (function (_super) {
+            __extends(ForestHouseTombExit, _super);
+            function ForestHouseTombExit() {
+                var _this = this;
+                _this.objectName = 'exitForest';
+                _this.openSceneType = Server.Scenes.ForestHouse.TYPE;
+                return _this;
+            }
+            /**
+             *
+             * @returns {Server.Gateways.AbstractGateway}
+             */
+            ForestHouseTombExit.prototype.verifyIsActive = function (character) {
+                this.isActive = true;
+            };
+            return ForestHouseTombExit;
+        }(Gateways.AbstractGateway));
+        Gateways.ForestHouseTombExit = ForestHouseTombExit;
+    })(Gateways = Server.Gateways || (Server.Gateways = {}));
+})(Server || (Server = {}));
 var Monsters;
 (function (Monsters) {
     var AbstractMonster = /** @class */ (function () {
@@ -1587,7 +1621,7 @@ var Monsters;
             _this.experience = 1;
             _this.attackAreaSize = 2;
             _this.visibilityAreaSize = 15;
-            _this.statistics = new Attributes.CharacterStatistics(40, 40, 100, 3, 10, 8, 0, 100);
+            _this.statistics = new Attributes.CharacterStatistics(40, 40, 100, 3, 10, 4, 0, 100);
             return _this;
         }
         return Skeleton;
@@ -1607,7 +1641,7 @@ var Monsters;
             _this.experience = 25;
             _this.attackAreaSize = 2;
             _this.visibilityAreaSize = 15;
-            _this.statistics = new Attributes.CharacterStatistics(400, 400, 100, 15, 10, 4, 0, 100);
+            _this.statistics = new Attributes.CharacterStatistics(400, 400, 100, 15, 10, 8, 0, 100);
             return _this;
         }
         return SkeletonBoss;
@@ -1772,29 +1806,7 @@ var Server;
                     experience: earnedExperience
                 });
                 var newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
-                var requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
-                if (playerDatabase.experience >= requiredExperience) {
-                    playerDatabase.lvl += 1;
-                    playerDatabase.freeAttributesPoints += 5;
-                    playerDatabase.freeSkillPoints += 1;
-                    socket.emit('newLvl', playerDatabase);
-                }
-                playerDatabase.save();
-            });
-        };
-        /**
-         * @param server
-         * @param socket
-         * @param earnedExperience
-         */
-        Character.prototype.addExperience = function (server, socket, earnedExperience) {
-            server.ormManager.structure.player.get(this.id, function (error, playerDatabase) {
-                playerDatabase.experience += earnedExperience;
-                socket.emit('addExperience', {
-                    experience: earnedExperience
-                });
-                var newLvl = (playerDatabase.lvl) ? playerDatabase.lvl + 1 : 1;
-                var requiredExperience = self.server.gameModules.character.getLvls()[newLvl];
+                var requiredExperience = server.gameModules.character.getLvls()[newLvl];
                 if (playerDatabase.experience >= requiredExperience) {
                     playerDatabase.lvl += 1;
                     playerDatabase.freeAttributesPoints += 5;
@@ -2030,7 +2042,9 @@ var Server;
             function ForestHouseTomb() {
                 var _this = _super.call(this) || this;
                 _this.type = ForestHouseTomb.TYPE;
-                _this.gateways = [];
+                _this.gateways = [
+                    new Server.Gateways.ForestHouseTombExit()
+                ];
                 return _this;
             }
             ForestHouseTomb.TYPE = 3;
@@ -2633,53 +2647,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Boots = /** @class */ (function (_super) {
-        __extends(Boots, _super);
-        /**
-         * @param databaseId
-         */
-        function Boots(databaseId) {
-            var _this = this;
-            _this.type = Items.Boots.TYPE;
-            _this = _super.call(this, databaseId) || this;
-            return _this;
-        }
-        /**
-         * @returns {number}
-         */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
-        };
-        Boots.TYPE = 5;
-        return Boots;
-    }(Items.Item));
-    Items.Boots = Boots;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Boots;
-    (function (Boots) {
-        var LeatherBoots = /** @class */ (function (_super) {
-            __extends(LeatherBoots, _super);
-            function LeatherBoots(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'leatherBoots';
-                _this.image = 'Boots';
-                _this.itemId = Items.Boots.LeatherBoots.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'leatherBoots';
-                return _this;
-            }
-            LeatherBoots.ITEM_ID = 2;
-            return LeatherBoots;
-        }(Boots));
-        Boots.LeatherBoots = LeatherBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Gloves = /** @class */ (function (_super) {
         __extends(Gloves, _super);
         /**
@@ -2723,6 +2690,53 @@ var Items;
         }(Gloves));
         Gloves.LeatherGloves = LeatherGloves;
     })(Gloves = Items.Gloves || (Items.Gloves = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots = /** @class */ (function (_super) {
+        __extends(Boots, _super);
+        /**
+         * @param databaseId
+         */
+        function Boots(databaseId) {
+            var _this = this;
+            _this.type = Items.Boots.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        Boots.TYPE = 5;
+        return Boots;
+    }(Items.Item));
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var LeatherBoots = /** @class */ (function (_super) {
+            __extends(LeatherBoots, _super);
+            function LeatherBoots(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'leatherBoots';
+                _this.image = 'Boots';
+                _this.itemId = Items.Boots.LeatherBoots.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'leatherBoots';
+                return _this;
+            }
+            LeatherBoots.ITEM_ID = 2;
+            return LeatherBoots;
+        }(Boots));
+        Boots.LeatherBoots = LeatherBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

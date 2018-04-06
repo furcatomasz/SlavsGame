@@ -6,6 +6,7 @@ namespace Server.Scenes {
             super();
             this.type = ForestHouseTomb.TYPE;
             this.gateways = [
+                new Server.Gateways.ForestHouseTombExit()
 
             ];
         }

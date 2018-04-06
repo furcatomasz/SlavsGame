@@ -45,6 +45,10 @@ namespace Server {
 
 
             ];
+            enemies[3] = [
+                new Monsters.SkeletonBoss(0, {x: 32, y: 0, z: -44}, [], [SpecialItems.KeyToChest(1)]),
+
+            ];
 
             return enemies;
 }

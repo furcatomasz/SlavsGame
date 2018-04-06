@@ -11,7 +11,7 @@ namespace Monsters {
             this.experience = 1;
             this.attackAreaSize = 2;
             this.visibilityAreaSize = 15;
-            this.statistics = new Attributes.CharacterStatistics(40, 40, 100, 3, 10, 8, 0, 100);
+            this.statistics = new Attributes.CharacterStatistics(40, 40, 100, 3, 10, 4, 0, 100);
         }
 
     }

@@ -1,0 +1,53 @@
+Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used:
+		selected layers only:  false
+		flat shading entire scene:  false
+		inline textures:  false
+		texture directory:  F:\Slavs\Babylon\Maps\tomb\
+	Python World class constructor completed
+	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
+	processing begun of mesh:  Ground
+		processing begun of Standard material:  Material
+			Diffuse texture found "Dirt"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  166
+		num normals        :  166
+		num uvs            :  332
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  894
+		WARNING: # of 0 area faces found:  12
+	processing begun of mesh:  Box_Cube
+		processing begun of Standard material:  Box_Cube
+		num positions      :  8
+		num normals        :  8
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  36
+	processing begun of mesh:  exitForest
+		WARNING: No materials have been assigned: 
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Chest
+		processing begun of Standard material:  Material.000
+		processing begun of Standard material:  Material.001
+			Diffuse texture found "Texture.000"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  tomb.Multimaterial#0
+		num positions      :  774
+		num normals        :  774
+		num uvs            :  1548
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1398
+	WARNING: The following lamp not visible in scene thus ignored: Lamp
+========= Writing of scene file started =========
+========= Writing of scene file completed =========
+========= end of processing =========
+elapsed time:  0 min, 0.305 secs

@@ -702,6 +702,12 @@ namespace Server {
                     y: 0,
                     z: 0
                 };
+            } else if (sceneType == 3) {
+                position = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
             }
 
             return position;

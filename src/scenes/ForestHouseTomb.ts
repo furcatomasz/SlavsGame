@@ -35,7 +35,7 @@ class ForestHouseTomb extends Scene {
                     self.environment = new EnvironmentForestHouseTomb(game, scene);
 
                     game.client.socket.emit('changeScenePre', {
-                        sceneType: ForestHouse.TYPE,
+                        sceneType: ForestHouseTomb.TYPE,
                     });
                 };
                 assetsManager.load();
@@ -47,7 +47,7 @@ class ForestHouseTomb extends Scene {
 
                     self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {
-                        sceneType: ForestHouse.TYPE,
+                        sceneType: ForestHouseTomb.TYPE,
                     });
 
                     game.client.socket.emit('refreshGateways');

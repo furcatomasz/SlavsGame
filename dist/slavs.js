@@ -516,6 +516,7 @@ var SocketIOClient = /** @class */ (function () {
                 gateway.particleSystem.dispose();
             });
             var gatewaysFromServer = sceneServerData.gateways;
+            console.log(gatewaysFromServer);
             gatewaysFromServer.forEach(function (gateway) {
                 var gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType);
                 gateways.push(gatewayInGame);
@@ -1026,7 +1027,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new ForestHouse().initScene(this);
+        new ForestHouseTomb().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -2166,6 +2167,9 @@ var EnvironmentForestHouseTomb = /** @class */ (function () {
             if (meshName.search("Ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 sceneMesh.receiveShadows = true;
+                console.log(sceneMesh.material);
+                sceneMesh.material.diffuseTexture.uScale = 1;
+                sceneMesh.material.diffuseTexture.vScale = 1;
                 this.ground = sceneMesh;
             }
             else if (meshName.search("Box_Cube") >= 0) {
@@ -3375,7 +3379,7 @@ var ForestHouseTomb = /** @class */ (function (_super) {
                     // self.octree = scene.createOrUpdateSelectionOctree();
                     self.environment = new EnvironmentForestHouseTomb(game, scene);
                     game.client.socket.emit('changeScenePre', {
-                        sceneType: ForestHouse.TYPE
+                        sceneType: ForestHouseTomb.TYPE
                     });
                 };
                 assetsManager.load();
@@ -3385,7 +3389,7 @@ var ForestHouseTomb = /** @class */ (function (_super) {
                     game.client.showEnemies();
                     self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {
-                        sceneType: ForestHouse.TYPE
+                        sceneType: ForestHouseTomb.TYPE
                     });
                     game.client.socket.emit('refreshGateways');
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
@@ -3538,6 +3542,9 @@ var Scenes;
                     break;
                 case ForestHouseStart.TYPE:
                     scene = new ForestHouseStart();
+                    break;
+                case ForestHouseTomb.TYPE:
+                    scene = new ForestHouseTomb();
                     break;
             }
             if (!scene) {

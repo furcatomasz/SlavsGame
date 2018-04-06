@@ -1,5 +1,5 @@
 namespace Server.Quests.Awards {
-    export class Experience extends AbstractAwards {
+    export class Experience extends AbstractAward {
 
         constructor(value) {
             this.title = 'Experience for character';

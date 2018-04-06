@@ -1024,7 +1024,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new ForestHouse().initScene(this);
+        new ForestHouseStart().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {

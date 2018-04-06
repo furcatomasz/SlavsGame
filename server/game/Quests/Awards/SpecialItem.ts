@@ -1,5 +1,5 @@
 namespace Server.Quests.Awards {
-    export class SpecialItem extends AbstractAwards {
+    export class SpecialItem extends AbstractAward {
 
         constructor(specialItem: SpecialItems.AbstractSpecialItem, value) {
             this.title = 'Gold for character';

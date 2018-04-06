@@ -1399,58 +1399,6 @@ var Server;
 (function (Server) {
     var Quests;
     (function (Quests) {
-        var Models;
-        (function (Models) {
-            var ModelAward = /** @class */ (function () {
-                function ModelAward(awardId, value) {
-                    this.awardId = awardId;
-                    this.value = value;
-                }
-                return ModelAward;
-            }());
-            Models.ModelAward = ModelAward;
-        })(Models = Quests.Models || (Quests.Models = {}));
-    })(Quests = Server.Quests || (Server.Quests = {}));
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Quests;
-    (function (Quests) {
-        var Models;
-        (function (Models) {
-            var Quest = /** @class */ (function () {
-                function Quest(questId, awards, requirements) {
-                    this.questId = questId;
-                    this.awards = awards;
-                    this.requirements = requirements;
-                }
-                return Quest;
-            }());
-            Models.Quest = Quest;
-        })(Models = Quests.Models || (Quests.Models = {}));
-    })(Quests = Server.Quests || (Server.Quests = {}));
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Quests;
-    (function (Quests) {
-        var Models;
-        (function (Models) {
-            var Requirement = /** @class */ (function () {
-                function Requirement(requirementId, value) {
-                    this.requirementId = requirementId;
-                    this.value = value;
-                }
-                return Requirement;
-            }());
-            Models.Requirement = Requirement;
-        })(Models = Quests.Models || (Quests.Models = {}));
-    })(Quests = Server.Quests || (Server.Quests = {}));
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Quests;
-    (function (Quests) {
         var AbstractQuest = /** @class */ (function () {
             function AbstractQuest() {
             }
@@ -1458,11 +1406,38 @@ var Server;
              * @returns {number}
              */
             AbstractQuest.prototype.getChaptersCount = function () {
-                return this.requirements.length;
+                return this.chapters.length;
             };
             return AbstractQuest;
         }());
         Quests.AbstractQuest = AbstractQuest;
+    })(Quests = Server.Quests || (Server.Quests = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Quests;
+    (function (Quests) {
+        var Chapter = /** @class */ (function () {
+            function Chapter(quest, description) {
+                setTimeout(function () {
+                    this.quest = quest;
+                });
+                this.description = description;
+                this.awards = [];
+                this.requirements = [];
+            }
+            Chapter.prototype.addRequirement = function (requirement) {
+                requirement.setQuestChapter(this);
+                this.requirements.push(requirement);
+                return this;
+            };
+            Chapter.prototype.addAward = function (award) {
+                this.awards.push(award);
+                return this;
+            };
+            return Chapter;
+        }());
+        Quests.Chapter = Chapter;
     })(Quests = Server.Quests || (Server.Quests = {}));
 })(Server || (Server = {}));
 var Server;
@@ -1475,22 +1450,22 @@ var Server;
                 var _this = this;
                 _this.objectName = 'questLog';
                 _this.title = 'Skeleton King';
-                _this.requirements = [
-                    [
-                        new Server.Quests.Requirements.KillMonster(new Monsters.Skeleton(), 5)
-                    ],
-                    [
-                        new Server.Quests.Requirements.KillMonster(new Monsters.Skeleton(), 1)
-                    ]
-                ];
-                _this.awards = [
-                    [
-                        new Server.Quests.Awards.Experience(50)
-                    ],
-                    [
-                        new Server.Quests.Awards.SpecialItem(new SpecialItems.KeyToChest(), 1)
-                    ]
-                ];
+                var chapters = [];
+                var newChapter = new Server.Quests.Chapter(_this, 'Kill five skeletons in forest.');
+                // newChapter.addAward(new Server.Quests.Awards.Experience(50));
+                // newChapter.addRequirement(new Server.Quests.Requirements.KillMonster( new Monsters.Skeleton(), 5));
+                chapters[1] = newChapter;
+                // chapters[2] = new Server.Quests.Chapter(
+                //     this,
+                //     [
+                //         new Server.Quests.Awards.SpecialItem(new SpecialItems.KeyToChest(), 1)
+                //     ],
+                //     [
+                //         new Server.Quests.Requirements.KillMonster(this, new Monsters.Skeleton(), 1)
+                //     ],
+                //     'Find a entrace to cave and kill skeleton king'
+                // );
+                _this.chapters = chapters;
                 return _this;
             }
             return SkeletonKing;
@@ -1527,7 +1502,7 @@ var Server;
              * @returns {Server.Gateways.AbstractGateway}
              */
             EntraceForestHouse.prototype.verifyIsActive = function (character) {
-                this.isActive = true;
+                this.isActive = false;
             };
             return EntraceForestHouse;
         }(Gateways.AbstractGateway));
@@ -2016,12 +1991,12 @@ var Server;
     (function (Quests) {
         var Awards;
         (function (Awards) {
-            var AbstractAwards = /** @class */ (function () {
-                function AbstractAwards() {
+            var AbstractAward = /** @class */ (function () {
+                function AbstractAward() {
                 }
-                return AbstractAwards;
+                return AbstractAward;
             }());
-            Awards.AbstractAwards = AbstractAwards;
+            Awards.AbstractAward = AbstractAward;
         })(Awards = Quests.Awards || (Quests.Awards = {}));
     })(Quests = Server.Quests || (Server.Quests = {}));
 })(Server || (Server = {}));
@@ -2043,7 +2018,7 @@ var Server;
                     character.addExperience(server, socket, this.value);
                 };
                 return Experience;
-            }(Awards.AbstractAwards));
+            }(Awards.AbstractAward));
             Awards.Experience = Experience;
         })(Awards = Quests.Awards || (Quests.Awards = {}));
     })(Quests = Server.Quests || (Server.Quests = {}));
@@ -2068,7 +2043,7 @@ var Server;
                     specialItem.addItem(character, server.ormManager);
                 };
                 return SpecialItem;
-            }(Awards.AbstractAwards));
+            }(Awards.AbstractAward));
             Awards.SpecialItem = SpecialItem;
         })(Awards = Quests.Awards || (Quests.Awards = {}));
     })(Quests = Server.Quests || (Server.Quests = {}));
@@ -2083,6 +2058,9 @@ var Server;
                 function AbstractRequirement() {
                     this.registerListener();
                 }
+                AbstractRequirement.prototype.setQuestChapter = function (chapter) {
+                    this.questChapter = chapter;
+                };
                 AbstractRequirement.REQUIREMENT_ID = 0;
                 return AbstractRequirement;
             }());

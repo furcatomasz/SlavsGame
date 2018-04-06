@@ -5,8 +5,14 @@ namespace Server.Quests.Requirements {
         public value: number;
         public name;
 
+        protected questChapter: Server.Quests.Chapter;
+
         constructor() {
             this.registerListener();
+        }
+
+        public setQuestChapter(chapter: Server.Quests.Chapter) {
+            this.questChapter = chapter;
         }
 
         protected abstract registerListener();

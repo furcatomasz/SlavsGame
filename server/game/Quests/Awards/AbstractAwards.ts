@@ -1,5 +1,5 @@
 namespace Server.Quests.Awards {
-    export abstract class AbstractAwards {
+    export abstract class AbstractAward {
 
         public value: number;
         public award: any;

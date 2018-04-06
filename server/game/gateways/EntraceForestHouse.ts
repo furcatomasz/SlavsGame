@@ -11,7 +11,7 @@ namespace Server.Gateways {
          * @returns {Server.Gateways.AbstractGateway}
          */
         public verifyIsActive(character: Server.Character): AbstractGateway {
-            this.isActive = true;
+            this.isActive = false;
         }
     }
 

@@ -7,6 +7,7 @@ namespace Server.Scenes {
             this.type = ForestHouse.TYPE;
             this.gateways = [
                 new Server.Gateways.EntraceHouse(),
+                new Server.Gateways.EntraceForestHouseTomb(),
             ];
         }
 

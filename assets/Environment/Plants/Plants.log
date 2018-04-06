@@ -6,19 +6,27 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		inline textures:  false
 		texture directory:  F:\Slavs\Babylon\Nature\Plants\
 	Python World class constructor completed
+	processing begun of mesh:  stone
+		processing begun of Standard material:  Stone
+		num positions      :  28
+		num normals        :  28
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  156
 	WARNING: The following camera not visible in scene thus ignored: Camera
 	processing begun of mesh:  fern
 		processing begun of Standard material:  Fern
 			Diffuse texture found "Fern"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		num positions      :  64
-		num normals        :  64
-		num uvs            :  128
+		num positions      :  80
+		num normals        :  80
+		num uvs            :  160
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  144
-	processing begun of mesh:  plantsGround
+		num indices        :  180
+	processing begun of mesh:  ground_plants
 		processing begun of Standard material:  ground_plants
 			Diffuse texture found "ground_plants"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
@@ -30,7 +38,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  6
 	processing begun of mesh:  spruce
-		processing begun of Standard material:  Spruce
+		processing begun of Standard material:  korona2.001
 			Diffuse texture found "Texture"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
@@ -44,4 +52,4 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.106 secs
+elapsed time:  0 min, 0.108 secs

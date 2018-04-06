@@ -385,12 +385,15 @@ var Server;
             enemies[2] = [
                 new Monsters.Skeleton(0, { x: -42, y: 0, z: -33 }, [], [SpecialItems.Gold(1)]),
                 new Monsters.Skeleton(0, { x: -57, y: 0, z: -34 }, [], [SpecialItems.Gold(1)]),
-                new Monsters.Skeleton(0, { x: -82, y: 0, z: 10 }, [], [SpecialItems.Gold(1)]),
-                new Monsters.Skeleton(0, { x: -104, y: 0, z: -9 }, [], [SpecialItems.Gold(1)]),
-                new Monsters.Skeleton(0, { x: -113, y: 0, z: -54 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.SkeletonBoss(0, { x: -82, y: 0, z: 10 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.SkeletonWarrior(0, { x: -104, y: 0, z: -9 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.SkeletonWarrior(0, { x: -113, y: 0, z: -54 }, [], [SpecialItems.Gold(1)]),
                 new Monsters.Skeleton(0, { x: -97, y: 0, z: -43 }, [], [SpecialItems.KeyToChest(1)]),
-                new Monsters.Skeleton(0, { x: -120, y: 0, z: -33 }, [], [SpecialItems.Gold(1)]),
+                new Monsters.SkeletonWarrior(0, { x: -120, y: 0, z: -33 }, [], [SpecialItems.Gold(1)]),
+                //
+                //
                 new Monsters.Skeleton(0, { x: -161, y: 0, z: -20 }, [], [SpecialItems.Gold(1)]),
+                //
                 new Monsters.Skeleton(0, { x: 44, y: 0, z: -47 }, [], [SpecialItems.Gold(1)]),
             ];
             return enemies;
@@ -1513,6 +1516,30 @@ var Server;
 (function (Server) {
     var Gateways;
     (function (Gateways) {
+        var EntraceForestHouseTomb = /** @class */ (function (_super) {
+            __extends(EntraceForestHouseTomb, _super);
+            function EntraceForestHouseTomb() {
+                var _this = this;
+                _this.objectName = 'Entrace_Tomb';
+                _this.openSceneType = Server.Scenes.ForestHouseTomb.TYPE;
+                return _this;
+            }
+            /**
+             *
+             * @returns {Server.Gateways.AbstractGateway}
+             */
+            EntraceForestHouseTomb.prototype.verifyIsActive = function (character) {
+                this.isActive = false;
+            };
+            return EntraceForestHouseTomb;
+        }(Gateways.AbstractGateway));
+        Gateways.EntraceForestHouseTomb = EntraceForestHouseTomb;
+    })(Gateways = Server.Gateways || (Server.Gateways = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Gateways;
+    (function (Gateways) {
         var EntraceHouse = /** @class */ (function (_super) {
             __extends(EntraceHouse, _super);
             function EntraceHouse() {
@@ -1554,18 +1581,58 @@ var Monsters;
         function Skeleton(id, position, itemsToDrop, specialItemsToDrop) {
             var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
             _this.name = 'Skeleton';
-            _this.type = 'skeletons';
-            _this.meshName = 'Skeleton';
-            _this.lvl = 3;
-            _this.experience = 25;
+            _this.type = 'skeleton';
+            _this.meshName = 'skeleton';
+            _this.lvl = 1;
+            _this.experience = 1;
             _this.attackAreaSize = 2;
             _this.visibilityAreaSize = 15;
-            _this.statistics = new Attributes.CharacterStatistics(300, 300, 100, 3, 10, 6, 0, 100);
+            _this.statistics = new Attributes.CharacterStatistics(40, 40, 100, 3, 10, 8, 0, 100);
             return _this;
         }
         return Skeleton;
     }(Monsters.AbstractMonster));
     Monsters.Skeleton = Skeleton;
+})(Monsters || (Monsters = {}));
+var Monsters;
+(function (Monsters) {
+    var SkeletonBoss = /** @class */ (function (_super) {
+        __extends(SkeletonBoss, _super);
+        function SkeletonBoss(id, position, itemsToDrop, specialItemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
+            _this.name = 'Skeleton BOSS';
+            _this.type = 'skeletonBoss';
+            _this.meshName = 'skeletonBoss';
+            _this.lvl = 5;
+            _this.experience = 25;
+            _this.attackAreaSize = 2;
+            _this.visibilityAreaSize = 15;
+            _this.statistics = new Attributes.CharacterStatistics(400, 400, 100, 15, 10, 4, 0, 100);
+            return _this;
+        }
+        return SkeletonBoss;
+    }(Monsters.AbstractMonster));
+    Monsters.SkeletonBoss = SkeletonBoss;
+})(Monsters || (Monsters = {}));
+var Monsters;
+(function (Monsters) {
+    var SkeletonWarrior = /** @class */ (function (_super) {
+        __extends(SkeletonWarrior, _super);
+        function SkeletonWarrior(id, position, itemsToDrop, specialItemsToDrop) {
+            var _this = _super.call(this, id, position, itemsToDrop, specialItemsToDrop) || this;
+            _this.name = 'Skeleton Warrior';
+            _this.type = 'skeletonWarrior';
+            _this.meshName = 'skeletonWarrior';
+            _this.lvl = 2;
+            _this.experience = 2;
+            _this.attackAreaSize = 2;
+            _this.visibilityAreaSize = 15;
+            _this.statistics = new Attributes.CharacterStatistics(100, 100, 100, 8, 10, 6, 0, 100);
+            return _this;
+        }
+        return SkeletonWarrior;
+    }(Monsters.AbstractMonster));
+    Monsters.SkeletonWarrior = SkeletonWarrior;
 })(Monsters || (Monsters = {}));
 var Monsters;
 (function (Monsters) {
@@ -1923,6 +1990,7 @@ var Server;
                 _this.type = ForestHouse.TYPE;
                 _this.gateways = [
                     new Server.Gateways.EntraceHouse(),
+                    new Server.Gateways.EntraceForestHouseTomb(),
                 ];
                 return _this;
             }
@@ -1957,6 +2025,24 @@ var Server;
 (function (Server) {
     var Scenes;
     (function (Scenes) {
+        var ForestHouseTomb = /** @class */ (function (_super) {
+            __extends(ForestHouseTomb, _super);
+            function ForestHouseTomb() {
+                var _this = _super.call(this) || this;
+                _this.type = ForestHouseTomb.TYPE;
+                _this.gateways = [];
+                return _this;
+            }
+            ForestHouseTomb.TYPE = 3;
+            return ForestHouseTomb;
+        }(Scenes.AbstractScene));
+        Scenes.ForestHouseTomb = ForestHouseTomb;
+    })(Scenes = Server.Scenes || (Server.Scenes = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Scenes;
+    (function (Scenes) {
         var Manager = /** @class */ (function () {
             function Manager() {
             }
@@ -1973,6 +2059,9 @@ var Server;
                         break;
                     case Scenes.ForestHouseStart.TYPE:
                         scene = new Scenes.ForestHouseStart();
+                        break;
+                    case Scenes.ForestHouseTomb.TYPE:
+                        scene = new Scenes.ForestHouseTomb();
                         break;
                 }
                 if (!scene) {

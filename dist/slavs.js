@@ -107,8 +107,8 @@ var Scene = /** @class */ (function () {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
         camera.rotation = new BABYLON.Vector3(0.79, 0.79, 0);
         camera.position = new BABYLON.Vector3(0, 35, 0);
-        camera.maxZ = 210;
-        camera.minZ = 0;
+        camera.maxZ = 110;
+        camera.minZ = 30;
         camera.fov = 0.5;
         camera.fovMode = 0;
         scene.activeCamera = camera;
@@ -157,10 +157,12 @@ var Scene = /** @class */ (function () {
     };
     Scene.prototype.initFactories = function (scene, assetsManager) {
         this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
-        this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
-        this.game.factories['boar'] = new Factories.Boars(this.game, scene, assetsManager).initFactory();
-        this.game.factories['zombie'] = new Factories.Zombies(this.game, scene, assetsManager).initFactory();
-        this.game.factories['skeletons'] = new Factories.Skeletons(this.game, scene, assetsManager).initFactory();
+        // this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
+        // this.game.factories['boar'] = new Factories.Boars(this.game, scene, assetsManager).initFactory();
+        // this.game.factories['zombie'] = new Factories.Zombies(this.game, scene, assetsManager).initFactory();
+        this.game.factories['skeleton'] = new Factories.Skeletons(this.game, scene, assetsManager).initFactory();
+        this.game.factories['skeletonWarrior'] = new Factories.SkeletonWarrior(this.game, scene, assetsManager).initFactory();
+        this.game.factories['skeletonBoss'] = new Factories.SkeletonBoss(this.game, scene, assetsManager).initFactory();
         this.game.factories['flag'] = new Factories.Flags(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
         return this;
@@ -439,7 +441,7 @@ var Monster = /** @class */ (function (_super) {
         var loopAnimation = this.isControllable;
         var skeleton = this.mesh.skeleton;
         if (!this.animation && skeleton) {
-            self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
+            self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1, function () {
                 skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                 self.animation = null;
             });
@@ -1024,7 +1026,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new ForestHouseStart().initScene(this);
+        new ForestHouse().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -1242,6 +1244,7 @@ var Player = /** @class */ (function (_super) {
         _this.setCharacterStatistics(serverData.statistics);
         _this.connectionId = serverData.connectionId;
         _this.isControllable = registerMoving;
+        //
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, {
             loop: true,
             autoplay: false
@@ -1758,13 +1761,48 @@ var Factories;
 /// <reference path="../game.ts"/>
 var Factories;
 (function (Factories) {
+    var SkeletonBoss = /** @class */ (function (_super) {
+        __extends(SkeletonBoss, _super);
+        function SkeletonBoss(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'skeletonBoss';
+            _this.dir = 'assets/Characters/Skeleton/skeletonBoss/';
+            _this.fileName = 'skeletonBoss.babylon';
+            return _this;
+        }
+        return SkeletonBoss;
+    }(Factories.AbstractFactory));
+    Factories.SkeletonBoss = SkeletonBoss;
+    "";
+})(Factories || (Factories = {}));
+/// <reference path="AbstractFactory.ts"/>
+/// <reference path="../game.ts"/>
+var Factories;
+(function (Factories) {
+    var SkeletonWarrior = /** @class */ (function (_super) {
+        __extends(SkeletonWarrior, _super);
+        function SkeletonWarrior(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'skeletonWarrior';
+            _this.dir = 'assets/Characters/Skeleton/skeletonWarrior/';
+            _this.fileName = 'skeletonWarrior.babylon';
+            return _this;
+        }
+        return SkeletonWarrior;
+    }(Factories.AbstractFactory));
+    Factories.SkeletonWarrior = SkeletonWarrior;
+})(Factories || (Factories = {}));
+/// <reference path="AbstractFactory.ts"/>
+/// <reference path="../game.ts"/>
+var Factories;
+(function (Factories) {
     var Skeletons = /** @class */ (function (_super) {
         __extends(Skeletons, _super);
         function Skeletons(game, scene, assetsManager) {
             var _this = _super.call(this, game, scene, assetsManager) || this;
             _this.taskName = 'skeletons';
-            _this.dir = 'assets/Characters/Skeleton/';
-            _this.fileName = 'Skeleton.babylon';
+            _this.dir = 'assets/Characters/Skeleton/skeleton/';
+            _this.fileName = 'skeleton.babylon';
             return _this;
         }
         return Skeletons;
@@ -1945,7 +1983,7 @@ var EnvironmentForestHouse = /** @class */ (function () {
                 terrainMaterial.specularPower = 64;
                 terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/Forest_house/stencil.png", scene);
                 terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.png", scene);
-                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/Dirt.png", scene);
+                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.png", scene);
                 terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.png", scene);
                 terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 10;
                 terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 10;
@@ -1963,17 +2001,23 @@ var EnvironmentForestHouse = /** @class */ (function () {
         //TODO: SPS Nature
         var spruce = game.factories['nature_grain'].createInstance('spruce', false);
         spruce.visibility = 0;
-        var groundPlants = game.factories['nature_grain'].createInstance('plantsGround', false);
+        var groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
         // groundPlants.visibility = 0;
         var fern = game.factories['nature_grain'].createInstance('fern', false);
         fern.visibility = 0;
-        var parentSPS = scene.getMeshByName("Plane.004");
+        var stone = game.factories['nature_grain'].createInstance('stone', false);
+        stone.visibility = 0;
+        var parentSPS = scene.getMeshByName("particle");
+        parentSPS.visibility = 0;
         var positions = parentSPS.getVerticesData(BABYLON.VertexBuffer.PositionKind);
         var myBuilder = function (particle, i, s) {
             var randomPosition = Math.round(Math.random() * 10);
             var position = new BABYLON.Vector3(positions[s * randomPosition * 3], positions[s * randomPosition * 3 + 1], positions[s * randomPosition * 3 + 2]);
             particle.position = position;
-            particle.scaling.y = Math.random() + 1;
+            var random = Math.random() + 0.5;
+            particle.scaling.y = random;
+            particle.scaling.x = random;
+            particle.scaling.z = random;
         };
         ///Spruce
         var SPSSpruce = new BABYLON.SolidParticleSystem('SPSSpruce', scene, { updatable: false });
@@ -1988,17 +2032,46 @@ var EnvironmentForestHouse = /** @class */ (function () {
         SPSMeshFern.material = fern.material;
         SPSMeshFern.parent = parentSPS;
         ///PLants
-        var SPSPlants = new BABYLON.SolidParticleSystem('SPSPlants', scene, { updatable: true });
+        var SPSPlants = new BABYLON.SolidParticleSystem('SPSPlants', scene, { updatable: false });
         SPSPlants.addShape(groundPlants, 500, { positionFunction: myBuilder });
         var SPSMeshPlants = SPSPlants.buildMesh();
         SPSMeshPlants.material = groundPlants.material;
         SPSMeshPlants.parent = parentSPS;
-        scene.lights[0].intensity = 0;
+        ///Stones
+        var SPSStones = new BABYLON.SolidParticleSystem('SPSStones', scene, { updatable: false });
+        SPSStones.addShape(stone, 100, { positionFunction: myBuilder });
+        var SPSMeshStones = SPSStones.buildMesh();
+        SPSMeshStones.material = stone.material;
+        SPSMeshStones.parent = parentSPS;
+        var spsToBlock = scene.getMeshByName("particle1");
+        spsToBlock.visibility = 0;
+        var positions = spsToBlock.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+        var mybuilderForBlock = function (particle, i, s) {
+            var randomPosition = Math.round(Math.random() * 5);
+            var position = new BABYLON.Vector3(positions[s * randomPosition * 3], positions[s * randomPosition * 3 + 1], positions[s * randomPosition * 3 + 2]);
+            particle.position = position;
+            var random = Math.random() + 1;
+            particle.scaling.y = random;
+            particle.scaling.x = random;
+            particle.scaling.z = random;
+        };
+        var SPSSpruce = new BABYLON.SolidParticleSystem('SPSSpruce', scene, { updatable: false });
+        SPSSpruce.addShape(groundPlants, 500, { positionFunction: mybuilderForBlock });
+        var SPSMeshSpruce = SPSSpruce.buildMesh();
+        SPSMeshSpruce.material = groundPlants.material;
+        SPSMeshSpruce.parent = spsToBlock;
+        var SPSSpruce = new BABYLON.SolidParticleSystem('SPSSpruce', scene, { updatable: false });
+        SPSSpruce.addShape(spruce, 500, { positionFunction: mybuilderForBlock });
+        var SPSMeshSpruce = SPSSpruce.buildMesh();
+        SPSMeshSpruce.material = spruce.material;
+        SPSMeshSpruce.parent = spsToBlock;
+        // scene.lights[0].intensity = 0;
         // scene.lights[1].intensity = 0;
         var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
         light.intensity = 0.4;
         light.position = new BABYLON.Vector3(0, 80, -210);
         light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
+        light.shadowMaxZ = 500;
         var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
         // shadowGenerator.useBlurExponentialShadowMap = true;
         // shadowGenerator.useExponentialShadowMap = true;
@@ -2038,9 +2111,9 @@ var EnvironmentForestHouse = /** @class */ (function () {
         }
         new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
         //Freeze world matrix all static meshes
-        for (var i = 0; i < scene.meshes.length; i++) {
-            scene.meshes[i].freezeWorldMatrix();
-        }
+        // for (let i = 0; i < scene.meshes.length; i++) {
+        //     scene.meshes[i].freezeWorldMatrix();
+        // }
     }
     return EnvironmentForestHouse;
 }());
@@ -2081,6 +2154,43 @@ var EnvironmentForestHouseStart = /** @class */ (function () {
         }
     }
     return EnvironmentForestHouseStart;
+}());
+/// <reference path="../game.ts"/>
+var EnvironmentForestHouseTomb = /** @class */ (function () {
+    function EnvironmentForestHouseTomb(game, scene) {
+        var self = this;
+        this.colliders = [];
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh = scene.meshes[i];
+            var meshName = scene.meshes[i]['name'];
+            if (meshName.search("Ground") >= 0) {
+                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
+                sceneMesh.receiveShadows = true;
+                this.ground = sceneMesh;
+            }
+            else if (meshName.search("Box_Cube") >= 0) {
+                this.colliders.push(sceneMesh);
+            }
+            else {
+                sceneMesh.isPickable = false;
+                ///others
+            }
+        }
+        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+        light.intensity = 0.4;
+        light.position = new BABYLON.Vector3(0, 80, -210);
+        light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
+        ///register colliders
+        for (var i = 0; i < this.colliders.length; i++) {
+            var sceneMeshCollider = this.colliders[i];
+            Collisions.setCollider(scene, sceneMeshCollider);
+        }
+        //Freeze world matrix all static meshes
+        for (var i = 0; i < scene.meshes.length; i++) {
+            scene.meshes[i].freezeWorldMatrix();
+        }
+    }
+    return EnvironmentForestHouseTomb;
 }());
 /// <reference path="../game.ts"/>
 var EnvironmentSelectCharacter = /** @class */ (function () {
@@ -2755,7 +2865,7 @@ var Particles;
             return _this;
         }
         Gateway.prototype.initParticleSystem = function () {
-            var particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 500 }, this.game.getScene());
+            var particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 150 }, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
@@ -3233,6 +3343,62 @@ var ForestHouseStart = /** @class */ (function (_super) {
     };
     ForestHouseStart.TYPE = 1;
     return ForestHouseStart;
+}(Scene));
+/// <reference path="Scene.ts"/>
+/// <reference path="../game.ts"/>
+/// <reference path="../Events.ts"/>
+var ForestHouseTomb = /** @class */ (function (_super) {
+    __extends(ForestHouseTomb, _super);
+    function ForestHouseTomb() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ForestHouseTomb.prototype.initScene = function (game) {
+        var self = this;
+        game.sceneManager = this;
+        BABYLON.SceneLoader.Load("assets/scenes/Forest_House_Tomb/", "Forest_House_Tomb.babylon", game.engine, function (scene) {
+            game.sceneManager = self;
+            self
+                .setDefaults(game)
+                .optimizeScene(scene)
+                .setCamera(scene)
+                .setFog(scene)
+                .defaultPipeline(scene);
+            scene.debugLayer.show();
+            scene.actionManager = new BABYLON.ActionManager(scene);
+            var assetsManager = new BABYLON.AssetsManager(scene);
+            self.initFactories(scene, assetsManager);
+            var sceneIndex = game.scenes.push(scene);
+            game.activeScene = sceneIndex - 1;
+            scene.executeWhenReady(function () {
+                game.client.socket.emit('createPlayer');
+                assetsManager.onFinish = function (tasks) {
+                    // self.octree = scene.createOrUpdateSelectionOctree();
+                    self.environment = new EnvironmentForestHouseTomb(game, scene);
+                    game.client.socket.emit('changeScenePre', {
+                        sceneType: ForestHouse.TYPE
+                    });
+                };
+                assetsManager.load();
+                var listener = function listener() {
+                    game.controller.registerControls(scene);
+                    game.client.socket.emit('getQuests');
+                    game.client.showEnemies();
+                    self.defaultPipeline(scene);
+                    game.client.socket.emit('changeScenePost', {
+                        sceneType: ForestHouse.TYPE
+                    });
+                    game.client.socket.emit('refreshGateways');
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            });
+        });
+    };
+    ForestHouseTomb.prototype.getType = function () {
+        return Simple.TYPE;
+    };
+    ForestHouseTomb.TYPE = 3;
+    return ForestHouseTomb;
 }(Scene));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../../babylon/ts/babylon.gui.d.ts"/>

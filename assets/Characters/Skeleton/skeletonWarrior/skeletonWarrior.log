@@ -1,0 +1,88 @@
+Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used:
+		selected layers only:  false
+		flat shading entire scene:  false
+		inline textures:  false
+		texture directory:  F:\Slavs\Babylon\Enemies\Skeleton\skeletonWarrior\
+	Python World class constructor completed
+	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
+	processing begun of skeleton:  sleketonWarriorRig, id:  0
+		processing begun of bone:  root, index:  0
+		processing begun of bone:  heel.L, index:  1
+		processing begun of bone:  foot.L, index:  2
+		processing begun of bone:  heel.R, index:  3
+		processing begun of bone:  foot.R, index:  4
+		processing begun of bone:  hips, index:  5
+		processing begun of bone:  spine, index:  6
+		processing begun of bone:  chest, index:  7
+		processing begun of bone:  neck, index:  8
+		processing begun of bone:  head, index:  9
+		processing begun of bone:  shoulder.L, index:  10
+		processing begun of bone:  upper_arm.L, index:  11
+		processing begun of bone:  forearm.L, index:  12
+		processing begun of bone:  hand.L, index:  13
+		processing begun of bone:  Finger_Bone1.L, index:  14
+		processing begun of bone:  Finger_Bone2.L, index:  15
+		processing begun of bone:  Finger_Bone3.L, index:  16
+		processing begun of bone:  Finger_Bone4.L, index:  17
+		processing begun of bone:  shield.bone, index:  18
+		processing begun of bone:  shoulder.R, index:  19
+		processing begun of bone:  upper_arm.R, index:  20
+		processing begun of bone:  forearm.R, index:  21
+		processing begun of bone:  hand.R, index:  22
+		processing begun of bone:  Finger_Bone1.R, index:  23
+		processing begun of bone:  Finger_Bone2.R, index:  24
+		processing begun of bone:  weapon.bone, index:  25
+		processing begun of bone:  Finger_Bone3.R, index:  26
+		processing begun of bone:  Finger_Bone4.R, index:  27
+		processing begun of bone:  thigh.L, index:  28
+		processing begun of bone:  shin.L, index:  29
+		processing begun of bone:  thigh.R, index:  30
+		processing begun of bone:  shin.R, index:  31
+		processing action Attack:  in[0 - 18], out[0 - 18]
+		processing action Attack02:  in[0 - 17], out[30 - 47]
+		processing action Run:  in[0 - 20], out[60 - 80]
+		processing action Run.002:  in[0 - 20], out[90 - 110]
+		processing action Select:  in[0 - 18], out[120 - 138]
+		processing action Skill02:  in[0 - 10], out[150 - 160]
+		processing action stand.001:  in[0 - 1], out[170 - 171]
+		processing action Stand_with_weapon:  in[0 - 60], out[180 - 240]
+		processing action Stand_with_weapon.001:  in[0 - 60], out[250 - 310]
+		processing action Walk.001:  in[0 - 20], out[320 - 340]
+	processing begun of mesh:  skeletonWarrior
+		processing begun of Standard material:  Material.002
+			Diffuse texture found "Texture"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.001
+			Diffuse texture found "Texture.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of Standard material:  shield
+			Diffuse texture found "Texture.012"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  sword
+			Diffuse texture found "Texture.006"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  armorRing
+			Diffuse texture found "Texture.017"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		processing begun of multimaterial:  skeletonWarrior.Multimaterial#0
+		num positions      :  1814
+		num normals        :  1814
+		num uvs            :  3628
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  8628
+		Skeleton stats:  
+			WARNING: Maximum # of influencers exceeded for 284 vertices, extras ignored
+			Total Influencers:  7188
+			Avg # of influencers per vertex:  3.9625
+			Highest # of influencers observed:  20, num vertices with this:  284
+			exported as 8 influencers
+			num skeletonWeights and skeletonIndices:  14512
+========= Writing of scene file started =========
+========= Writing of scene file completed =========
+========= end of processing =========
+elapsed time:  0 min, 8.2255 secs

@@ -16,6 +16,9 @@ namespace Server.Scenes {
                 case ForestHouseStart.TYPE:
                     scene = new ForestHouseStart();
                     break;
+                case ForestHouseTomb.TYPE:
+                    scene = new ForestHouseTomb();
+                    break;
             }
 
             if(!scene) {

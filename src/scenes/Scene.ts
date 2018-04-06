@@ -18,8 +18,8 @@ abstract class Scene {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
         camera.rotation = new BABYLON.Vector3(0.79,0.79,0);
         camera.position = new BABYLON.Vector3(0,35,0);
-        camera.maxZ = 210;
-        camera.minZ = 0;
+        camera.maxZ = 110;
+        camera.minZ = 30;
         camera.fov = 0.5;
         camera.fovMode = 0;
 
@@ -79,10 +79,12 @@ abstract class Scene {
 
     protected initFactories(scene: BABYLON.Scene, assetsManager: BABYLON.AssetsManager) {
         this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
-        this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
-        this.game.factories['boar'] = new Factories.Boars(this.game, scene, assetsManager).initFactory();
-        this.game.factories['zombie'] = new Factories.Zombies(this.game, scene, assetsManager).initFactory();
-        this.game.factories['skeletons'] = new Factories.Skeletons(this.game, scene, assetsManager).initFactory();
+        // this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
+        // this.game.factories['boar'] = new Factories.Boars(this.game, scene, assetsManager).initFactory();
+        // this.game.factories['zombie'] = new Factories.Zombies(this.game, scene, assetsManager).initFactory();
+        this.game.factories['skeleton'] = new Factories.Skeletons(this.game, scene, assetsManager).initFactory();
+        this.game.factories['skeletonWarrior'] = new Factories.SkeletonWarrior(this.game, scene, assetsManager).initFactory();
+        this.game.factories['skeletonBoss'] = new Factories.SkeletonBoss(this.game, scene, assetsManager).initFactory();
         this.game.factories['flag'] = new Factories.Flags(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
 

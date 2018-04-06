@@ -6,6 +6,98 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		inline textures:  false
 		texture directory:  F:\Slavs\Babylon\Maps\Forest_house\
 	Python World class constructor completed
+	processing begun of mesh:  Box_Cube.017
+		WARNING: No materials have been assigned: 
+		num positions      :  8
+		num normals        :  8
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  36
+	processing begun of mesh:  Box_Cube.016
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.015
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.014
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.013
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.012
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.011
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.010
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.009
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.008
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.007
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.006
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.005
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.004
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.003
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube.002
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  particle1
+		WARNING: No materials have been assigned: 
+		num positions      :  2700
+		num normals        :  2700
+		num uvs            :  5400
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  16188
+	processing begun of mesh:  particle
+		WARNING: No materials have been assigned: 
+		num positions      :  1082
+		num normals        :  1082
+		num uvs            :  2164
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6036
+	processing begun of mesh:  Ground
+		processing begun of baked material:  Ground
+			Internal baking texture, type: TEXTURE, mapped using: UVMap
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  Entrace_Tomb
+		WARNING: No materials have been assigned: 
+		num positions      :  9
+		num normals        :  9
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  24
+	processing begun of mesh:  Box_Cube.001
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  Box_Cube
+		mesh is an instance of :  Box_Cube.017.  Processing halted.
+	processing begun of mesh:  joinedHouse
+		processing begun of Standard material:  wood
+			Diffuse texture found "Texture.010"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  LOg_low
+			Diffuse texture found "Texture.007"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.003
+			Diffuse texture found "Texture.003"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Forest_house.Multimaterial#0
+		num positions      :  1484
+		num normals        :  1484
+		num uvs            :  2968
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2184
 	processing begun of mesh:  Entrace_House
 		WARNING: No materials have been assigned: 
 		num positions      :  4
@@ -14,266 +106,16 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  6
-	processing begun of mesh:  Plane.004
-		processing begun of Standard material:  Material
-		num positions      :  9745
-		num normals        :  9745
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  56634
-	processing begun of mesh:  Plane.003
-		WARNING: No materials have been assigned: 
-		num positions      :  7474
-		num normals        :  7474
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  43044
-	processing begun of mesh:  Ground
-		processing begun of baked material:  Ground
-			Internal baking texture, type: TEXTURE, mapped using: UVMap
-		num positions      :  464
-		num normals        :  464
-		num uvs            :  928
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  2526
-	processing begun of mesh:  Cube.000
-		processing begun of Standard material:  wood
-			Diffuse texture found "Texture.010"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  236
-		num normals        :  236
-		num uvs            :  472
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  336
-	processing begun of mesh:  Cylinder.023
-		processing begun of Standard material:  LOg_low
-			Diffuse texture found "Texture.007"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  45
-		num normals        :  45
-		num uvs            :  90
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.022
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.021
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.020
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.019
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.018
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.017
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.016
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.015
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.014
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.013
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.012
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.011
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.010
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.009
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.008
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.007
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.006
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.005
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.004
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.003
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.002
-		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Cylinder.000
-		registered as also a user of material:  LOg_low
-		num positions      :  45
-		num normals        :  45
-		num uvs            :  90
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  60
-	processing begun of mesh:  Plane
-		processing begun of Standard material:  Material.003
-			Diffuse texture found "Texture.003"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  61
-		num normals        :  61
-		num uvs            :  122
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  216
-	processing begun of mesh:  Chest
-		processing begun of Standard material:  Material.009
-		processing begun of Standard material:  Material.001
-			Diffuse texture found "Texture.009"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  Forest_house.Multimaterial#0
-		num positions      :  867
-		num normals        :  867
-		num uvs            :  1734
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1494
-		WARNING: # of 0 area faces found:  4
 	processing begun of mesh:  Cube.001
-		registered as also a user of material:  wood
-		num positions      :  182
-		num normals        :  182
-		num uvs            :  364
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  252
-	processing begun of mesh:  Cylinder.001
 		registered as also a user of material:  LOg_low
-		num positions      :  44
-		num normals        :  44
-		num uvs            :  88
+		registered as also a user of material:  Material.003
+		processing begun of multimaterial:  Forest_house.Multimaterial#1
+		num positions      :  1483
+		num normals        :  1483
+		num uvs            :  2966
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  60
+		num indices        :  2184
 	processing begun of mesh:  Fern.001
 		processing begun of Standard material:  Fern
 			Diffuse texture found "Fern"
@@ -312,7 +154,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  root.001
 			Diffuse texture found "Texture.000"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  Forest_house.Multimaterial#1
+		processing begun of multimaterial:  Forest_house.Multimaterial#2
 		num positions      :  170
 		num normals        :  170
 		num uvs            :  340
@@ -338,18 +180,22 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  96
 	WARNING: The following camera not visible in scene thus ignored: Camera
-	processing begun of mesh:  Gap
-		processing begun of Standard material:  Material.004
-			Diffuse texture found "Texture.006"
+	processing begun of mesh:  cryptGate
+		processing begun of Standard material:  Material.001
+			Diffuse texture found "Tex"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  6318
-		num normals        :  6318
-		num uvs            :  12636
+		processing begun of Standard material:  Material.002
+			Diffuse texture found "Texture"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Forest_house.Multimaterial#3
+		num positions      :  646
+		num normals        :  646
+		num uvs            :  1292
 		num uvs2           :  0
-		num colors         :  0
-		num indices        :  20214
-	processing begun of light (HEMI):  Lamp
+		num colors         :  2584
+		num indices        :  1275
+	WARNING: The following lamp not visible in scene thus ignored: Lamp
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 20.888 secs
+elapsed time:  0 min, 30.668 secs

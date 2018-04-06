@@ -85,7 +85,7 @@ class Monster extends AbstractCharacter {
         let skeleton = this.mesh.skeleton;
 
         if (!this.animation && skeleton) {
-            self.animation = skeleton.beginAnimation('Walk', loopAnimation, 1, function () {
+            self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1, function () {
                 skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                 self.animation = null;
             });

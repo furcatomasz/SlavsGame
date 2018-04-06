@@ -151,7 +151,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
         scene.workerCollisions = false;
         return this;
     };
@@ -327,6 +327,9 @@ var AbstractCharacter = /** @class */ (function () {
                 if (callbackEnd) {
                     callbackStart();
                 }
+                if (self.sfxHit) {
+                    self.sfxHit.play();
+                }
                 self.animation = skeleton_1.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
                     if (callbackEnd) {
                         callbackEnd();
@@ -345,12 +348,14 @@ var AbstractCharacter = /** @class */ (function () {
         if (childMesh) {
             var skeleton_2 = childMesh.skeleton;
             if (!this.animation && skeleton_2) {
+                console.log('play');
                 self.sfxWalk.play();
                 self.onWalkStart();
                 self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.4, function () {
                     skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();
+                    console.log('stop');
                     self.onWalkEnd();
                 });
             }
@@ -388,6 +393,10 @@ var Monster = /** @class */ (function (_super) {
         _this.createBoxForMove(game.getScene());
         _this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
         mesh.parent = _this.meshForMove;
+        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/sounds/character/hit2.mp3", game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
         _this.id = serverKey;
         _this.mesh = mesh;
         _this.name = serverData.name;
@@ -1027,7 +1036,7 @@ var Game = /** @class */ (function () {
         return this.scenes[this.activeScene];
     };
     Game.prototype.createScene = function () {
-        new ForestHouseTomb().initScene(this);
+        new ForestHouse().initScene(this);
         return this;
     };
     Game.prototype.animate = function () {
@@ -1246,11 +1255,11 @@ var Player = /** @class */ (function (_super) {
         _this.connectionId = serverData.connectionId;
         _this.isControllable = registerMoving;
         //
-        _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, {
+        _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/sounds/character/walk/1.mp3", game.getScene(), null, {
             loop: true,
             autoplay: false
         });
-        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/Characters/Warrior/walk.wav", game.getScene(), null, {
+        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/sounds/character/hit.mp3", game.getScene(), null, {
             loop: false,
             autoplay: false
         });
@@ -2110,7 +2119,6 @@ var EnvironmentForestHouse = /** @class */ (function () {
             var sceneMeshCollider = this.colliders[i];
             Collisions.setCollider(scene, sceneMeshCollider);
         }
-        new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true });
         //Freeze world matrix all static meshes
         // for (let i = 0; i < scene.meshes.length; i++) {
         //     scene.meshes[i].freezeWorldMatrix();

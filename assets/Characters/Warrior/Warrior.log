@@ -107,18 +107,18 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 		processing begun of Standard material:  Material.018
 		processing begun of multimaterial:  Warrior.Multimaterial#0
-		num positions      :  264
-		num normals        :  264
-		num uvs            :  528
+		num positions      :  269
+		num normals        :  269
+		num uvs            :  538
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  774
 		Skeleton stats:  
 			Total Influencers:  448
-			Avg # of influencers per vertex:  1.697
-			Highest # of influencers observed:  4, num vertices with this:  7
+			Avg # of influencers per vertex:  1.6654
+			Highest # of influencers observed:  4, num vertices with this:  6
 			exported as 4 influencers
-			num skeletonWeights and skeletonIndices:  1056
+			num skeletonWeights and skeletonIndices:  1076
 	processing begun of mesh:  leatherBoots
 		registered as also a user of material:  Hood
 		num positions      :  244
@@ -229,18 +229,18 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 			num skeletonWeights and skeletonIndices:  648
 	processing begun of mesh:  Warrior
 		registered as also a user of material:  texture
-		num positions      :  1528
-		num normals        :  1528
-		num uvs            :  3056
+		num positions      :  1663
+		num normals        :  1663
+		num uvs            :  3326
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  3258
 		Skeleton stats:  
-			Total Influencers:  3688
-			Avg # of influencers per vertex:  2.4136
+			Total Influencers:  4016
+			Avg # of influencers per vertex:  2.4149
 			Highest # of influencers observed:  7, num vertices with this:  4
 			exported as 7 influencers
-			num skeletonWeights and skeletonIndices:  12224
+			num skeletonWeights and skeletonIndices:  13304
 	processing begun of mesh:  hair
 		processing begun of Standard material:  Hair
 			Diffuse texture found "Texture.004"
@@ -430,18 +430,18 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  sword
 			Diffuse texture found "Texture.007"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  237
-		num normals        :  237
-		num uvs            :  474
+		num positions      :  202
+		num normals        :  202
+		num uvs            :  404
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  420
 		Skeleton stats:  
-			Total Influencers:  237
+			Total Influencers:  202
 			Avg # of influencers per vertex:  1
-			Highest # of influencers observed:  1, num vertices with this:  237
+			Highest # of influencers observed:  1, num vertices with this:  202
 			exported as 1 influencers
-			num skeletonWeights and skeletonIndices:  948
+			num skeletonWeights and skeletonIndices:  808
 	processing begun of mesh:  sword1
 		animation processing begun
 			processing action Attack:  in[0 - 18], out[0 - 18]
@@ -475,19 +475,19 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Material.013
 			Diffuse texture found "Texture.008"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  28
-		num normals        :  28
-		num uvs            :  56
+		num positions      :  54
+		num normals        :  54
+		num uvs            :  108
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  156
 		Skeleton stats:  
-			WARNING: Maximum # of influencers exceeded for 16 vertices, extras ignored
-			Total Influencers:  239
-			Avg # of influencers per vertex:  8.5357
-			Highest # of influencers observed:  9, num vertices with this:  16
+			WARNING: Maximum # of influencers exceeded for 33 vertices, extras ignored
+			Total Influencers:  463
+			Avg # of influencers per vertex:  8.5741
+			Highest # of influencers observed:  9, num vertices with this:  33
 			exported as 8 influencers
-			num skeletonWeights and skeletonIndices:  224
+			num skeletonWeights and skeletonIndices:  432
 	processing begun of mesh:  sword
 		processing begun of Standard material:  sword.001
 			Diffuse texture found "Texture.010"
@@ -509,19 +509,19 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Material.010
 			Diffuse texture found "Texture.009"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  74
-		num normals        :  74
-		num uvs            :  148
+		num positions      :  101
+		num normals        :  101
+		num uvs            :  202
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  432
 		Skeleton stats:  
-			WARNING: Maximum # of influencers exceeded for 22 vertices, extras ignored
-			Total Influencers:  604
-			Avg # of influencers per vertex:  8.1622
-			Highest # of influencers observed:  11, num vertices with this:  22
+			WARNING: Maximum # of influencers exceeded for 45 vertices, extras ignored
+			Total Influencers:  870
+			Avg # of influencers per vertex:  8.6139
+			Highest # of influencers observed:  11, num vertices with this:  45
 			exported as 8 influencers
-			num skeletonWeights and skeletonIndices:  592
+			num skeletonWeights and skeletonIndices:  808
 	processing begun of mesh:  armor
 		processing begun of Standard material:  armor
 			WARNING: Mesh has no UV maps, material:  "Texture.013" ignored
@@ -535,4 +535,4 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 37.9405 secs
+elapsed time:  0 min, 35.83 secs

@@ -170,7 +170,6 @@ class EnvironmentForestHouse {
             Collisions.setCollider(scene, sceneMeshCollider);
         }
 
-        new BABYLON.Sound("Fire", "assets/sounds/forest_night.mp3", scene, null, {loop: true, autoplay: true});
 
         //Freeze world matrix all static meshes
         // for (let i = 0; i < scene.meshes.length; i++) {

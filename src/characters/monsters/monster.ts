@@ -17,6 +17,11 @@ class Monster extends AbstractCharacter {
         this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
         mesh.parent = this.meshForMove;
 
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/sounds/character/hit2.mp3", game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
+
         this.id = serverKey;
         this.mesh = mesh;
         this.name = serverData.name;

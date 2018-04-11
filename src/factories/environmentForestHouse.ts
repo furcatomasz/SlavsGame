@@ -8,6 +8,7 @@ class EnvironmentForestHouse {
     constructor(game: Game, scene: BABYLON.Scene) {
         let self = this;
         this.colliders = [];
+        let spsGround = [];
 
         for (let i = 0; i < scene.meshes.length; i++) {
             let sceneMesh = scene.meshes[i];
@@ -31,99 +32,49 @@ class EnvironmentForestHouse {
                 terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 10;
                 sceneMesh.material = terrainMaterial;
             } else if (meshName.search("Box_Cube") >= 0) {
-
                 this.colliders.push(sceneMesh);
-
+            } else if (meshName.search("particlesground") >= 0) {
+                spsGround.push(sceneMesh);
             } else {
                 sceneMesh.isPickable = false;
-
-                ///others
             }
-
         }
-//TODO: SPS Nature
 
+        //SPS Nature
         let spruce = game.factories['nature_grain'].createInstance('spruce', false);
         spruce.visibility = 0;
-
         let groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
-        // groundPlants.visibility = 0;
-
+        groundPlants.visibility = 0;
         let fern = game.factories['nature_grain'].createInstance('fern', false);
         fern.visibility = 0;
-
         let stone = game.factories['nature_grain'].createInstance('stone', false);
         stone.visibility = 0;
 
-        var parentSPS = scene.getMeshByName("particle");
-        parentSPS.visibility = 0;
-        var positions = parentSPS.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-        var myBuilder = function(particle, i, s) {
-            var randomPosition = Math.round(Math.random()*10);
-            var position = new BABYLON.Vector3(positions[s*randomPosition*3], positions[s*randomPosition*3+1], positions[s*randomPosition*3+2]);
-            particle.position = position;
-            let random = Math.random() + 0.5;
-            particle.scaling.y = random;
-            particle.scaling.x = random;
-            particle.scaling.z = random;
-        }
+        spsGround.forEach(function(parentSPS) {
+            parentSPS.visibility = 0;
 
-        ///Spruce
-        var SPSSpruce = new BABYLON.SolidParticleSystem('SPSSpruce', scene, {updatable: false});
-        SPSSpruce.addShape(spruce, 200, {positionFunction: myBuilder});
-        var SPSMeshSpruce = SPSSpruce.buildMesh();
-        SPSMeshSpruce.material = spruce.material;
-        SPSMeshSpruce.parent = parentSPS;
+            let spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce);
+            spsSpruce.buildSPS(20);
 
-        ///Fern
-        var SPSFern = new BABYLON.SolidParticleSystem('SPSFern', scene, {updatable: false});
-        SPSFern.addShape(fern, 500, {positionFunction: myBuilder});
-        var SPSMeshFern = SPSFern.buildMesh();
-        SPSMeshFern.material = fern.material;
-        SPSMeshFern.parent = parentSPS;
+            let spsFern = new Particles.SolidParticleSystem.Nature(game, parentSPS, fern);
+            spsFern.buildSPS(200);
 
-        ///PLants
-        var SPSPlants = new BABYLON.SolidParticleSystem('SPSPlants', scene, {updatable: false});
-        SPSPlants.addShape(groundPlants, 500, {positionFunction: myBuilder});
-        var SPSMeshPlants = SPSPlants.buildMesh();
-        SPSMeshPlants.material = groundPlants.material;
-        SPSMeshPlants.parent = parentSPS;
+            let spsPlants = new Particles.SolidParticleSystem.Nature(game, parentSPS, groundPlants);
+            spsPlants.buildSPS(300);
 
-        ///Stones
-        var SPSStones = new BABYLON.SolidParticleSystem('SPSStones', scene, {updatable: false});
-        SPSStones.addShape(stone, 100, {positionFunction: myBuilder});
-        var SPSMeshStones  = SPSStones.buildMesh();
-        SPSMeshStones.material = stone.material;
-        SPSMeshStones.parent = parentSPS;
+            let spsStone = new Particles.SolidParticleSystem.Nature(game, parentSPS, stone);
+            spsStone.buildSPS(25);
+        });
 
-
-        var spsToBlock = scene.getMeshByName("particle1");
+        let spsToBlock = scene.getMeshByName("particle1");
         spsToBlock.visibility = 0;
-        var positions = spsToBlock.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-        var mybuilderForBlock = function(particle, i, s) {
-            var randomPosition = Math.round(Math.random()*5);
-            var position = new BABYLON.Vector3(positions[s*randomPosition*3], positions[s*randomPosition*3+1], positions[s*randomPosition*3+2]);
-            particle.position = position;
-            let random = Math.random() + 1;
-            particle.scaling.y = random;
-            particle.scaling.x = random;
-            particle.scaling.z = random;
-        }
 
-        var SPSSpruce = new BABYLON.SolidParticleSystem('SPSSpruce', scene, {updatable: false});
-        SPSSpruce.addShape(groundPlants, 500, {positionFunction: mybuilderForBlock});
-        var SPSMeshSpruce = SPSSpruce.buildMesh();
-        SPSMeshSpruce.material = groundPlants.material;
-        SPSMeshSpruce.parent = spsToBlock;
+        let spsSpruceBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, spruce);
+        spsSpruceBlock.buildSPS(500);
 
-        var SPSSpruce = new BABYLON.SolidParticleSystem('SPSSpruce', scene, {updatable: false});
-        SPSSpruce.addShape(spruce, 500, {positionFunction: mybuilderForBlock});
-        var SPSMeshSpruce = SPSSpruce.buildMesh();
-        SPSMeshSpruce.material = spruce.material;
-        SPSMeshSpruce.parent = spsToBlock;
+        let spsPlantsBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, groundPlants);
+        spsPlantsBlock.buildSPS(500);
 
-        // scene.lights[0].intensity = 0;
-        // scene.lights[1].intensity = 0;
         var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
         light.intensity = 0.4;
         light.position = new BABYLON.Vector3(0, 80, -210);
@@ -148,33 +99,16 @@ class EnvironmentForestHouse {
             shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
 
-        ////fireplace
-        // let cone = scene.getMeshByName("Fireplace");
-        // if (cone) {
-        //     let smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
-        //     smokeSystem.start();
-        //
-        //     let fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
-        //     fireSystem.start();
-        //
-        //     let sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, {
-        //         loop: true,
-        //         autoplay: true
-        //     });
-        //     sfxFireplace.attachToMesh(cone);
-        // }
-
         ///register colliders
         for (let i = 0; i < this.colliders.length; i++) {
             let sceneMeshCollider = this.colliders[i];
             Collisions.setCollider(scene, sceneMeshCollider);
         }
 
-
-        //Freeze world matrix all static meshes
-        // for (let i = 0; i < scene.meshes.length; i++) {
-        //     scene.meshes[i].freezeWorldMatrix();
-        // }
+        // Freeze world matrix all static meshes
+        for (let i = 0; i < scene.meshes.length; i++) {
+            scene.meshes[i].freezeWorldMatrix();
+        }
     }
 
 }

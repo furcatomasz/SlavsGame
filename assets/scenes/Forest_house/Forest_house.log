@@ -6,6 +6,38 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		inline textures:  false
 		texture directory:  F:\Slavs\Babylon\Maps\Forest_house\
 	Python World class constructor completed
+	processing begun of mesh:  particlesground4
+		WARNING: No materials have been assigned: 
+		num positions      :  306
+		num normals        :  306
+		num uvs            :  612
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1632
+	processing begun of mesh:  particlesground3
+		WARNING: No materials have been assigned: 
+		num positions      :  302
+		num normals        :  302
+		num uvs            :  604
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1572
+	processing begun of mesh:  particlesground2
+		WARNING: No materials have been assigned: 
+		num positions      :  306
+		num normals        :  306
+		num uvs            :  612
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1632
+	processing begun of mesh:  particlesground1
+		WARNING: No materials have been assigned: 
+		num positions      :  303
+		num normals        :  303
+		num uvs            :  606
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1584
 	processing begun of mesh:  Box_Cube.017
 		WARNING: No materials have been assigned: 
 		num positions      :  8
@@ -198,4 +230,4 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 30.668 secs
+elapsed time:  0 min, 33.594 secs

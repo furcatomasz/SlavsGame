@@ -25,7 +25,7 @@ class Mouse extends Controller {
                 clickTrigger = false;
 
                 let pickedMesh = pickResult.pickedMesh;
-                if (pickedMesh && (pickedMesh.name.search("Ground") >= 0 || pickedMesh.name.search("Tower.043") >= 0)) {
+                if (pickedMesh && (pickedMesh.name.search("Ground") >= 0) {
                     meshFlag.visibility = 1;
                 }
             }
@@ -39,7 +39,7 @@ class Mouse extends Controller {
             clickTrigger = true;
 
             if (pickedMesh) {
-                if ((pickedMesh.name.search("Ground") >= 0 || pickedMesh.name.search("Tower.043") >= 0)) {
+                if ((pickedMesh.name.search("Ground") >= 0) {
                     self.attackPoint = null;
                     self.targetPoint = pickResult.pickedPoint;
                     self.targetPoint.y = 0;

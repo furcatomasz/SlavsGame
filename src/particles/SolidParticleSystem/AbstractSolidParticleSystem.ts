@@ -10,6 +10,9 @@ namespace Particles.SolidParticleSystem {
             this.game = game;
             this.parent = parent;
             this.shape = shape;
+
+            parent.visibility = 0;
+            parent.isPickable = 0;
         }
 
         abstract buildSPS(count: number): AbstractSolidParticle;

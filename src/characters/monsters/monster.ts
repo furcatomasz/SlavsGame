@@ -10,12 +10,8 @@ class Monster extends AbstractCharacter {
         let factoryName = serverData.type;
 
         let mesh = game.factories[factoryName].createInstance(meshName, true);
-        mesh.visibility = true;
-
-        ///Create box mesh for moving
-        this.createBoxForMove(game.getScene());
-        this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
-        mesh.parent = this.meshForMove;
+        mesh.visibility = 1;
+        mesh.isPickable = 0;
 
         this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/sounds/character/hit2.mp3", game.getScene(), null, {
             loop: false,
@@ -33,19 +29,24 @@ class Monster extends AbstractCharacter {
 
         super(name, game);
 
+        ///Create box mesh for moving
+        this.createBoxForMove(game.getScene());
+        this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
+        mesh.parent = this.meshForMove;
+
         this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
         this.mesh.outlineWidth = 0.1;
-        this.mesh.isPickable = 1;
 
         let self = this;
-        this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
+
+        this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
             function () {
                 self.mesh.renderOutline = false;
                 self.game.gui.characterTopHp.hideHpBar();
             }));
 
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
             function () {
                 self.mesh.renderOutline = true;
                 self.game.gui.characterTopHp.showHpCharacter(self);
@@ -59,25 +60,38 @@ class Monster extends AbstractCharacter {
             });
         };
 
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
             function (pointer) {
-            if(self.game.player.isAlive) {
-                game.controller.attackPoint = pointer.meshUnderPointer.parent;
-                game.controller.targetPoint = null;
-                game.controller.ball.visibility = 0;
-                self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 200);
-                intervalAttackFunction();
-            }
+                console.log('OnPickDownTrigger');
+
+                if(self.game.player.isAlive) {
+                    game.controller.attackPoint = pointer.meshUnderPointer;
+                    game.controller.targetPoint = null;
+                    game.controller.ball.visibility = 0;
+                    self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 200);
+                    intervalAttackFunction();
+                }
             }));
 
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger,
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger,
             function (pointer) {
+                console.log('OnPickUpTrigger');
+
                 clearInterval(self.intervalAttackRegisteredFunction);
                 self.game.controller.attackPoint = null;
             }));
 
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger,
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger,
             function (pointer) {
+                console.log('OnPickOutTrigger');
+
+                clearInterval(self.intervalAttackRegisteredFunction);
+                self.game.controller.attackPoint = null;
+            }));
+
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
+            function (pointer) {
+            console.log('OnPickTrigger');
                 clearInterval(self.intervalAttackRegisteredFunction);
                 self.game.controller.attackPoint = null;
             }));

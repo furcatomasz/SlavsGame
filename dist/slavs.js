@@ -151,7 +151,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         scene.workerCollisions = false;
         return this;
     };
@@ -308,7 +308,7 @@ var AbstractCharacter = /** @class */ (function () {
         this.meshForMove = BABYLON.Mesh.CreateBox(this.name, 3, scene, false);
         this.meshForMove.checkCollisions = true;
         this.meshForMove.visibility = 0;
-        this.meshForMove.isPickable = 0;
+        // this.meshForMove.isPickable = 0;
         return this;
     };
     AbstractCharacter.prototype.runAnimationHit = function (animation, callbackStart, callbackEnd, loop) {
@@ -388,11 +388,8 @@ var Monster = /** @class */ (function (_super) {
         var meshName = serverData.meshName;
         var factoryName = serverData.type;
         var mesh = game.factories[factoryName].createInstance(meshName, true);
-        mesh.visibility = true;
-        ///Create box mesh for moving
-        _this.createBoxForMove(game.getScene());
-        _this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
-        mesh.parent = _this.meshForMove;
+        mesh.visibility = 1;
+        mesh.isPickable = 0;
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/sounds/character/hit2.mp3", game.getScene(), null, {
             loop: false,
             autoplay: false
@@ -406,16 +403,19 @@ var Monster = /** @class */ (function (_super) {
         _this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         _this = _super.call(this, name, game) || this;
+        ///Create box mesh for moving
+        _this.createBoxForMove(game.getScene());
+        _this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
+        mesh.parent = _this.meshForMove;
         _this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
         _this.mesh.outlineWidth = 0.1;
-        _this.mesh.isPickable = 1;
         var self = _this;
-        _this.mesh.actionManager = new BABYLON.ActionManager(_this.game.getScene());
-        _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+        _this.meshForMove.actionManager = new BABYLON.ActionManager(_this.game.getScene());
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
             self.mesh.renderOutline = false;
             self.game.gui.characterTopHp.hideHpBar();
         }));
-        _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
             self.mesh.renderOutline = true;
             self.game.gui.characterTopHp.showHpCharacter(self);
         }));
@@ -426,20 +426,28 @@ var Monster = /** @class */ (function (_super) {
                 rotation: self.game.controller.attackPoint.rotation
             });
         };
-        _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function (pointer) {
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function (pointer) {
+            console.log('OnPickDownTrigger');
             if (self.game.player.isAlive) {
-                game.controller.attackPoint = pointer.meshUnderPointer.parent;
+                game.controller.attackPoint = pointer.meshUnderPointer;
                 game.controller.targetPoint = null;
                 game.controller.ball.visibility = 0;
                 self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 200);
                 intervalAttackFunction();
             }
         }));
-        _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function (pointer) {
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function (pointer) {
+            console.log('OnPickUpTrigger');
             clearInterval(self.intervalAttackRegisteredFunction);
             self.game.controller.attackPoint = null;
         }));
-        _this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger, function (pointer) {
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger, function (pointer) {
+            console.log('OnPickOutTrigger');
+            clearInterval(self.intervalAttackRegisteredFunction);
+            self.game.controller.attackPoint = null;
+        }));
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function (pointer) {
+            console.log('OnPickTrigger');
             clearInterval(self.intervalAttackRegisteredFunction);
             self.game.controller.attackPoint = null;
         }));
@@ -1496,7 +1504,7 @@ var Mouse = /** @class */ (function (_super) {
             if (clickTrigger) {
                 clickTrigger = false;
                 var pickedMesh = pickResult.pickedMesh;
-                if (pickedMesh && (pickedMesh.name.search("Ground") >= 0 || pickedMesh.name.search("Tower.043") >= 0)) {
+                if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
                     meshFlag.visibility = 1;
                 }
             }
@@ -1508,7 +1516,7 @@ var Mouse = /** @class */ (function (_super) {
             }
             clickTrigger = true;
             if (pickedMesh) {
-                if ((pickedMesh.name.search("Ground") >= 0 || pickedMesh.name.search("Tower.043") >= 0)) {
+                if ((pickedMesh.name.search("Ground") >= 0)) {
                     self.attackPoint = null;
                     self.targetPoint = pickResult.pickedPoint;
                     self.targetPoint.y = 0;
@@ -2021,7 +2029,6 @@ var EnvironmentForestHouse = /** @class */ (function () {
         var stone = game.factories['nature_grain'].createInstance('stone', false);
         stone.visibility = 0;
         spsGround.forEach(function (parentSPS) {
-            parentSPS.visibility = 0;
             var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce);
             spsSpruce.buildSPS(20);
             var spsFern = new Particles.SolidParticleSystem.Nature(game, parentSPS, fern);
@@ -2032,7 +2039,6 @@ var EnvironmentForestHouse = /** @class */ (function () {
             spsStone.buildSPS(25);
         });
         var spsToBlock = scene.getMeshByName("particle1");
-        spsToBlock.visibility = 0;
         var spsSpruceBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, spruce);
         spsSpruceBlock.buildSPS(500);
         var spsPlantsBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, groundPlants);
@@ -5057,6 +5063,8 @@ var Particles;
                 this.game = game;
                 this.parent = parent;
                 this.shape = shape;
+                parent.visibility = 0;
+                parent.isPickable = 0;
             }
             return AbstractSolidParticle;
         }());
@@ -5087,7 +5095,7 @@ var Particles;
                 sps.addShape(this.shape, count, { positionFunction: myBuilder });
                 var spsMesh = sps.buildMesh();
                 spsMesh.material = this.shape.material;
-                spsMesh.parent = this.parent;
+                spsMesh.alwaysSelectAsActiveMesh = true;
                 return this;
             };
             return Nature;
@@ -5119,7 +5127,6 @@ var Particles;
                 sps.addShape(this.shape, count, { positionFunction: myBuilder });
                 var spsMesh = sps.buildMesh();
                 spsMesh.material = this.shape.material;
-                spsMesh.parent = this.parent;
                 return this;
             };
             return NatureBlock;

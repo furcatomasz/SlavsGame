@@ -2019,9 +2019,11 @@ var EnvironmentForestHouse = /** @class */ (function () {
                 sceneMesh_1.isPickable = false;
             }
         }
+        console.log(game.factories['nature_grain']);
         //SPS Nature
-        var spruce = game.factories['nature_grain'].createInstance('spruce', false);
+        var spruce = game.factories['nature_grain'].createInstance('spruce.001', false);
         spruce.visibility = 0;
+        console.log(spruce);
         var groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
         groundPlants.visibility = 0;
         var fern = game.factories['nature_grain'].createInstance('fern', false);

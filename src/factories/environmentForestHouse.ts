@@ -39,10 +39,12 @@ class EnvironmentForestHouse {
                 sceneMesh.isPickable = false;
             }
         }
-
+        console.log(game.factories['nature_grain']);
         //SPS Nature
-        let spruce = game.factories['nature_grain'].createInstance('spruce', false);
+        let spruce = game.factories['nature_grain'].createInstance('spruce.001', false);
         spruce.visibility = 0;
+        console.log(spruce);
+
         let groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
         groundPlants.visibility = 0;
         let fern = game.factories['nature_grain'].createInstance('fern', false);

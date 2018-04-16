@@ -49,10 +49,9 @@ abstract class AbstractCharacter {
     }
 
     protected createBoxForMove(scene: BABYLON.Scene) {
-        this.meshForMove = BABYLON.Mesh.CreateBox(this.name, 3, scene, false);
+        this.meshForMove = BABYLON.Mesh.CreateBox(this.name+'_moveBox', 3, scene, false);
         this.meshForMove.checkCollisions = true;
         this.meshForMove.visibility = 0;
-        // this.meshForMove.isPickable = 0;
 
         return this;
     }
@@ -98,22 +97,15 @@ abstract class AbstractCharacter {
             let skeleton = childMesh.skeleton;
 
             if (!this.animation && skeleton) {
-                console.log('play'                );
                 self.sfxWalk.play();
                 self.onWalkStart();
                 self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.4, function () {
                     skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();
-                    console.log('stop'                    );
                     self.onWalkEnd();
                 });
-
-
-
-
             }
-
         }
     }
 

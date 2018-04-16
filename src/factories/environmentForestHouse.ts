@@ -53,8 +53,8 @@ class EnvironmentForestHouse {
         stone.visibility = 0;
 
         spsGround.forEach(function(parentSPS) {
-            let spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce);
-            spsSpruce.buildSPS(20);
+            let spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce, true);
+            spsSpruce.buildSPS(100);
 
             let spsFern = new Particles.SolidParticleSystem.Nature(game, parentSPS, fern);
             spsFern.buildSPS(200);
@@ -62,8 +62,8 @@ class EnvironmentForestHouse {
             let spsPlants = new Particles.SolidParticleSystem.Nature(game, parentSPS, groundPlants);
             spsPlants.buildSPS(300);
 
-            let spsStone = new Particles.SolidParticleSystem.Nature(game, parentSPS, stone);
-            spsStone.buildSPS(25);
+            let spsStone = new Particles.SolidParticleSystem.Nature(game, parentSPS, stone, true);
+            spsStone.buildSPS(40);
         });
 
         let spsToBlock = scene.getMeshByName("particle1");

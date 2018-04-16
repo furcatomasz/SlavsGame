@@ -149,10 +149,7 @@ class Player extends AbstractCharacter {
 
 
     public refreshCameraPosition() {
-        this.game.getScene().activeCamera.position = this.meshForMove.position.clone();
-        this.game.getScene().activeCamera.position.y = 50;
-        this.game.getScene().activeCamera.position.z -= 34;
-        this.game.getScene().activeCamera.position.x -= 34;
+        game.getScene().activeCamera.target = this.meshForMove.position;
     }
 
     /**
@@ -238,6 +235,7 @@ class Player extends AbstractCharacter {
         let self = this;
         let mesh = this.meshForMove;
         mesh.lookAt(targetPointVector3);
+        self.game.player.refreshCameraPosition();
 
         if (this.dynamicFunction !== undefined) {
             self.game.getScene().unregisterBeforeRender(this.dynamicFunction);
@@ -264,8 +262,6 @@ class Player extends AbstractCharacter {
                 let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / self.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / self.getWalkSpeed());
                 mesh.moveWithCollisions(forwards);
                 mesh.position.y = 0;
-
-                self.game.player.refreshCameraPosition();
 
                 self.runAnimationWalk();
             }

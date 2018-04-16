@@ -482,8 +482,8 @@ var io = require('socket.io')(server);
 var socketIOClient = require('socket.io-client');
 var orm = require("orm");
 var config = require("./../config.js");
-var BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
-var LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
+var BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");
+var LOADERS = require("../../bower_components/babylonjs/dist/preview release/loaders/babylonjs.loaders");
 var requirejs = require('requirejs');
 var EventEmitter = require('events');
 server.listen(config.server.port);
@@ -491,7 +491,6 @@ var SlavsServer = /** @class */ (function () {
     function SlavsServer() {
         this.enemies = [];
         var self = this;
-        app.set('server_socket_io', io);
         app.set('event_emitter', new EventEmitter());
         app.set('quest_manager', new Server.QuestManager());
         this.ormManager = new Server.OrmManager(self, orm, config);
@@ -499,7 +498,7 @@ var SlavsServer = /** @class */ (function () {
         this.gameModules.loadModules(function () {
             self.enemyManager = new Server.EnemyManager();
             self.enemies = self.enemyManager.getEnemies();
-            //self.serverFrontEnd = new Server.FrontEnd(self, app, express);
+            // self.serverFrontEnd = new Server.FrontEnd(self, app, express);
             self.babylonManager = new Server.BabylonManager(self);
             self.serverWebsocket = new Server.IO(self, io);
         });
@@ -2647,53 +2646,6 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Gloves = /** @class */ (function (_super) {
-        __extends(Gloves, _super);
-        /**
-         * @param databaseId
-         */
-        function Gloves(databaseId) {
-            var _this = this;
-            _this.type = Items.Gloves.TYPE;
-            _this = _super.call(this, databaseId) || this;
-            return _this;
-        }
-        /**
-         * @returns {number}
-         */
-        Gloves.prototype.getType = function () {
-            return Items.Gloves.TYPE;
-        };
-        Gloves.TYPE = 4;
-        return Gloves;
-    }(Items.Item));
-    Items.Gloves = Gloves;
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Gloves;
-    (function (Gloves) {
-        var LeatherGloves = /** @class */ (function (_super) {
-            __extends(LeatherGloves, _super);
-            function LeatherGloves(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'leatherGloves';
-                _this.image = 'Gloves';
-                _this.itemId = Items.Gloves.LeatherGloves.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'leatherGloves';
-                return _this;
-            }
-            LeatherGloves.ITEM_ID = 3;
-            return LeatherGloves;
-        }(Gloves));
-        Gloves.LeatherGloves = LeatherGloves;
-    })(Gloves = Items.Gloves || (Items.Gloves = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
     var Boots = /** @class */ (function (_super) {
         __extends(Boots, _super);
         /**
@@ -2737,6 +2689,53 @@ var Items;
         }(Boots));
         Boots.LeatherBoots = LeatherBoots;
     })(Boots = Items.Boots || (Items.Boots = {}));
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Gloves = /** @class */ (function (_super) {
+        __extends(Gloves, _super);
+        /**
+         * @param databaseId
+         */
+        function Gloves(databaseId) {
+            var _this = this;
+            _this.type = Items.Gloves.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Gloves.prototype.getType = function () {
+            return Items.Gloves.TYPE;
+        };
+        Gloves.TYPE = 4;
+        return Gloves;
+    }(Items.Item));
+    Items.Gloves = Gloves;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Gloves;
+    (function (Gloves) {
+        var LeatherGloves = /** @class */ (function (_super) {
+            __extends(LeatherGloves, _super);
+            function LeatherGloves(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'leatherGloves';
+                _this.image = 'Gloves';
+                _this.itemId = Items.Gloves.LeatherGloves.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'leatherGloves';
+                return _this;
+            }
+            LeatherGloves.ITEM_ID = 3;
+            return LeatherGloves;
+        }(Gloves));
+        Gloves.LeatherGloves = LeatherGloves;
+    })(Gloves = Items.Gloves || (Items.Gloves = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

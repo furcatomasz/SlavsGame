@@ -5,8 +5,8 @@ let io = require('socket.io')(server);
 let socketIOClient = require('socket.io-client');
 let orm = require("orm");
 let config = require("./../config.js");
-let BABYLON = require("../../bower_components/babylonjs/dist/babylon.max");
-let LOADERS = require("../../bower_components/babylonjs/dist/loaders/babylonjs.loaders");
+let BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");
+let LOADERS = require("../../bower_components/babylonjs/dist/preview release/loaders/babylonjs.loaders");
 let requirejs = require('requirejs');
 const EventEmitter = require('events');
 server.listen(config.server.port);
@@ -23,7 +23,6 @@ class SlavsServer {
 
     constructor() {
         let self = this;
-        app.set('server_socket_io', io);
         app.set('event_emitter', new EventEmitter());
         app.set('quest_manager', new Server.QuestManager());
 
@@ -32,8 +31,8 @@ class SlavsServer {
         this.gameModules.loadModules(function() {
             self.enemyManager = new Server.EnemyManager();
             self.enemies = self.enemyManager.getEnemies();
-            //self.serverFrontEnd = new Server.FrontEnd(self, app, express);
-             self.babylonManager = new Server.BabylonManager(self);
+            // self.serverFrontEnd = new Server.FrontEnd(self, app, express);
+            self.babylonManager = new Server.BabylonManager(self);
             self.serverWebsocket = new Server.IO(self, io);
         });
         

@@ -104,9 +104,10 @@ var Scene = /** @class */ (function () {
         return this;
     };
     Scene.prototype.setCamera = function (scene) {
-        var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
-        camera.rotation = new BABYLON.Vector3(0.79, 0.79, 0);
-        camera.position = new BABYLON.Vector3(0, 35, 0);
+        // var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
+        var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 0, new BABYLON.Vector3(-35, 45, -35), scene);
+        // camera.rotation = new BABYLON.Vector3(0.79,0.79,0);
+        // camera.position = new BABYLON.Vector3(0,35,0);
         camera.maxZ = 110;
         camera.minZ = 30;
         camera.fov = 0.5;
@@ -305,10 +306,9 @@ var AbstractCharacter = /** @class */ (function () {
         this.meshAdvancedTexture = advancedTexture;
     }
     AbstractCharacter.prototype.createBoxForMove = function (scene) {
-        this.meshForMove = BABYLON.Mesh.CreateBox(this.name, 3, scene, false);
+        this.meshForMove = BABYLON.Mesh.CreateBox(this.name + '_moveBox', 3, scene, false);
         this.meshForMove.checkCollisions = true;
         this.meshForMove.visibility = 0;
-        // this.meshForMove.isPickable = 0;
         return this;
     };
     AbstractCharacter.prototype.runAnimationHit = function (animation, callbackStart, callbackEnd, loop) {
@@ -348,14 +348,12 @@ var AbstractCharacter = /** @class */ (function () {
         if (childMesh) {
             var skeleton_2 = childMesh.skeleton;
             if (!this.animation && skeleton_2) {
-                console.log('play');
                 self.sfxWalk.play();
                 self.onWalkStart();
                 self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.4, function () {
                     skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();
-                    console.log('stop');
                     self.onWalkEnd();
                 });
             }
@@ -1367,10 +1365,7 @@ var Player = /** @class */ (function (_super) {
         this.mesh.dispose();
     };
     Player.prototype.refreshCameraPosition = function () {
-        this.game.getScene().activeCamera.position = this.meshForMove.position.clone();
-        this.game.getScene().activeCamera.position.y = 50;
-        this.game.getScene().activeCamera.position.z -= 34;
-        this.game.getScene().activeCamera.position.x -= 34;
+        game.getScene().activeCamera.target = this.meshForMove.position;
     };
     /**
      *
@@ -1443,6 +1438,7 @@ var Player = /** @class */ (function (_super) {
         var self = this;
         var mesh = this.meshForMove;
         mesh.lookAt(targetPointVector3);
+        self.game.player.refreshCameraPosition();
         if (this.dynamicFunction !== undefined) {
             self.game.getScene().unregisterBeforeRender(this.dynamicFunction);
         }
@@ -1466,7 +1462,6 @@ var Player = /** @class */ (function (_super) {
                 var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / self.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / self.getWalkSpeed());
                 mesh.moveWithCollisions(forwards);
                 mesh.position.y = 0;
-                self.game.player.refreshCameraPosition();
                 self.runAnimationWalk();
             }
         };
@@ -2031,14 +2026,14 @@ var EnvironmentForestHouse = /** @class */ (function () {
         var stone = game.factories['nature_grain'].createInstance('stone', false);
         stone.visibility = 0;
         spsGround.forEach(function (parentSPS) {
-            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce);
-            spsSpruce.buildSPS(20);
+            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce, true);
+            spsSpruce.buildSPS(100);
             var spsFern = new Particles.SolidParticleSystem.Nature(game, parentSPS, fern);
             spsFern.buildSPS(200);
             var spsPlants = new Particles.SolidParticleSystem.Nature(game, parentSPS, groundPlants);
             spsPlants.buildSPS(300);
-            var spsStone = new Particles.SolidParticleSystem.Nature(game, parentSPS, stone);
-            spsStone.buildSPS(25);
+            var spsStone = new Particles.SolidParticleSystem.Nature(game, parentSPS, stone, true);
+            spsStone.buildSPS(40);
         });
         var spsToBlock = scene.getMeshByName("particle1");
         var spsSpruceBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, spruce);
@@ -3237,7 +3232,6 @@ var ForestHouse = /** @class */ (function (_super) {
                     game.controller.registerControls(scene);
                     game.client.socket.emit('getQuests');
                     game.client.showEnemies();
-                    self.defaultPipeline(scene);
                     game.client.socket.emit('changeScenePost', {
                         sceneType: ForestHouse.TYPE
                     });
@@ -5061,10 +5055,14 @@ var Particles;
     var SolidParticleSystem;
     (function (SolidParticleSystem) {
         var AbstractSolidParticle = /** @class */ (function () {
-            function AbstractSolidParticle(game, parent, shape) {
+            function AbstractSolidParticle(game, parent, shape, isCollider) {
                 this.game = game;
                 this.parent = parent;
                 this.shape = shape;
+                if (isCollider) {
+                    this.collider = BABYLON.MeshBuilder.CreateBox("box", { height: 10 }, game.getScene());
+                    this.collider.visibility = 0;
+                }
                 parent.visibility = 0;
                 parent.isPickable = 0;
             }
@@ -5083,10 +5081,19 @@ var Particles;
                 return _super !== null && _super.apply(this, arguments) || this;
             }
             Nature.prototype.buildSPS = function (count) {
+                var self = this;
                 var parentPositions = this.parent.getVerticesData(BABYLON.VertexBuffer.PositionKind);
                 var myBuilder = function (particle, i, s) {
                     var randomPosition = Math.round(Math.random() * 10);
                     var position = new BABYLON.Vector3(parentPositions[s * randomPosition * 3], parentPositions[s * randomPosition * 3 + 1], parentPositions[s * randomPosition * 3 + 2]);
+                    if (self.collider) {
+                        var newCollider = self.collider.createInstance('sps_nature_collision');
+                        newCollider.position.x = position.x;
+                        newCollider.position.y = position.y;
+                        newCollider.position.z = position.z;
+                        newCollider.visibility = 1;
+                        Collisions.setCollider(game.getScene(), newCollider);
+                    }
                     particle.position = position;
                     var random = Math.random() + 0.5;
                     particle.scaling.y = random;

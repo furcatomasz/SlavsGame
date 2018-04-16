@@ -104,10 +104,9 @@ var Scene = /** @class */ (function () {
         return this;
     };
     Scene.prototype.setCamera = function (scene) {
-        // var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
-        var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 0, new BABYLON.Vector3(-35, 45, -35), scene);
-        // camera.rotation = new BABYLON.Vector3(0.79,0.79,0);
-        // camera.position = new BABYLON.Vector3(0,35,0);
+        var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
+        camera.rotation = new BABYLON.Vector3(0.79, 0.79, 0);
+        camera.position = new BABYLON.Vector3(0, 35, 0);
         camera.maxZ = 110;
         camera.minZ = 30;
         camera.fov = 0.5;
@@ -1365,7 +1364,10 @@ var Player = /** @class */ (function (_super) {
         this.mesh.dispose();
     };
     Player.prototype.refreshCameraPosition = function () {
-        game.getScene().activeCamera.target = this.meshForMove.position;
+        this.game.getScene().activeCamera.position = this.meshForMove.position.clone();
+        this.game.getScene().activeCamera.position.y = 50;
+        this.game.getScene().activeCamera.position.z -= 34;
+        this.game.getScene().activeCamera.position.x -= 34;
     };
     /**
      *
@@ -1438,7 +1440,6 @@ var Player = /** @class */ (function (_super) {
         var self = this;
         var mesh = this.meshForMove;
         mesh.lookAt(targetPointVector3);
-        self.game.player.refreshCameraPosition();
         if (this.dynamicFunction !== undefined) {
             self.game.getScene().unregisterBeforeRender(this.dynamicFunction);
         }
@@ -1462,6 +1463,7 @@ var Player = /** @class */ (function (_super) {
                 var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / self.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / self.getWalkSpeed());
                 mesh.moveWithCollisions(forwards);
                 mesh.position.y = 0;
+                self.game.player.refreshCameraPosition();
                 self.runAnimationWalk();
             }
         };

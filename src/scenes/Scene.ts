@@ -15,10 +15,9 @@ abstract class Scene {
     }
 
     public setCamera(scene:BABYLON.Scene) {
-        // var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
-        var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 0, new BABYLON.Vector3(-35, 45, -35), scene)
-        // camera.rotation = new BABYLON.Vector3(0.79,0.79,0);
-        // camera.position = new BABYLON.Vector3(0,35,0);
+        var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
+        camera.rotation = new BABYLON.Vector3(0.79,0.79,0);
+        camera.position = new BABYLON.Vector3(0,35,0);
         camera.maxZ = 110;
         camera.minZ = 30;
         camera.fov = 0.5;

@@ -137,6 +137,14 @@ namespace Character {
         public umount(item: Items.Item, emit: boolean = false) {
             this.equip(item, false, emit);
 
+            if(item.type == 3) {
+                 this.showSashOrHair(true, false);
+            }
+
+            if(item.type == 6) {
+                this.showSashOrHair(false, true);
+            }
+
             return this;
         }
 
@@ -154,6 +162,37 @@ namespace Character {
             equipedItems.push(this.boots);
 
             return equipedItems;
+        }
+
+        public showSashOrHair(showHair: boolean, showSash: boolean) {
+            console.log(showHair);
+            console.log(showSash);
+            if(showHair) {
+                this.helm = new Items.Item(this.game, {
+                    name: "Hair",
+                    image: 'hair',
+                    meshName: 'hair',
+                    type: 3,
+                    databaseId: 0,
+                    statistics: null
+                });
+
+                this.mount(this.helm);
+            }
+
+            if(showSash) {
+                this.armor = new Items.Item(this.game, {
+                    name: "Sash",
+                    image: 'sash',
+                    meshName: 'sash',
+                    type: 6,
+                    databaseId: 0,
+                    statistics: null
+                });
+
+                this.mount(this.armor);
+            }
+
         }
     }
 }

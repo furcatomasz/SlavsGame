@@ -530,7 +530,6 @@ var SocketIOClient = /** @class */ (function () {
                 gateway.particleSystem.dispose();
             });
             var gatewaysFromServer = sceneServerData.gateways;
-            console.log(gatewaysFromServer);
             gatewaysFromServer.forEach(function (gateway) {
                 var gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType);
                 gateways.push(gatewayInGame);
@@ -1229,6 +1228,12 @@ var Character;
         Inventory.prototype.umount = function (item, emit) {
             if (emit === void 0) { emit = false; }
             this.equip(item, false, emit);
+            if (item.type == 3) {
+                this.showSashOrHair(true, false);
+            }
+            if (item.type == 6) {
+                this.showSashOrHair(false, true);
+            }
             return this;
         };
         /**
@@ -1243,6 +1248,32 @@ var Character;
             equipedItems.push(this.gloves);
             equipedItems.push(this.boots);
             return equipedItems;
+        };
+        Inventory.prototype.showSashOrHair = function (showHair, showSash) {
+            console.log(showHair);
+            console.log(showSash);
+            if (showHair) {
+                this.helm = new Items.Item(this.game, {
+                    name: "Hair",
+                    image: 'hair',
+                    meshName: 'hair',
+                    type: 3,
+                    databaseId: 0,
+                    statistics: null
+                });
+                this.mount(this.helm);
+            }
+            if (showSash) {
+                this.armor = new Items.Item(this.game, {
+                    name: "Sash",
+                    image: 'sash',
+                    meshName: 'sash',
+                    type: 6,
+                    databaseId: 0,
+                    statistics: null
+                });
+                this.mount(this.armor);
+            }
         };
         return Inventory;
     }());
@@ -3685,6 +3716,12 @@ var Items;
                     inventory.items.push(item);
                     if (itemDatabase.equip) {
                         inventory.mount(item);
+                    }
+                    if (item.type == 3 && !itemDatabase.equip) {
+                        inventory.showSashOrHair(true, false);
+                    }
+                    if (item.type == 6 && !itemDatabase.equip) {
+                        inventory.showSashOrHair(false, true);
                     }
                 }
             });

@@ -73,7 +73,6 @@ class SocketIOClient {
             });
 
             let gatewaysFromServer = sceneServerData.gateways;
-            console.log(gatewaysFromServer);
             gatewaysFromServer.forEach(function(gateway) {
                 let gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType);
                 gateways.push(gatewayInGame);

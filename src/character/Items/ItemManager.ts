@@ -12,7 +12,7 @@ namespace Items {
          * @param inventoryItems
          * @param inventory
          */
-        public initItemsFromDatabaseOnCharacter(inventoryItems:Array, inventory:Character.Inventory, hideShieldAndWeapon:boolean = false) {
+        public initItemsFromDatabaseOnCharacter(inventoryItems: Array, inventory:Character.Inventory, hideShieldAndWeapon:boolean = false) {
             let self = this;
             inventory.items = [];
 
@@ -32,6 +32,16 @@ namespace Items {
 
                     if (itemDatabase.equip) {
                         inventory.mount(item);
+                    }
+
+
+                    if(item.type == 3 && !itemDatabase.equip) {
+                        inventory.showSashOrHair(true, false);
+                    }
+
+                    if(item.type == 6 && !itemDatabase.equip) {
+                        inventory.showSashOrHair(false, true);
+
                     }
                 }
             });

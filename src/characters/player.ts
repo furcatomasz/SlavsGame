@@ -13,11 +13,11 @@ class Player extends AbstractCharacter {
     public freeAttributesPoints: number;
     public freeSkillPoints: number;
 
-    public constructor(game:Game, id, registerMoving:boolean, serverData: Array = []) {
-        this.id = id;
+    public constructor(game:Game, registerMoving:boolean, serverData: Array = []) {
+        this.id = serverData.id;
         this.game = game;
         this.isAlive = true;
-        this.setCharacterStatistics(serverData.statistics);
+        this.setCharacterStatistics(serverData.activePlayer.statistics);
         this.connectionId = serverData.connectionId;
         this.isControllable = registerMoving;
         //
@@ -46,7 +46,7 @@ class Player extends AbstractCharacter {
 
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         this.inventory = new Character.Inventory(game, this);
-        this.setItems(serverData.inventory.items);
+        // this.setItems(serverData.inventory.items);
 
         if (this.isControllable) {
             this.mesh.isPickable = false;

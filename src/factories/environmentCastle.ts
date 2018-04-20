@@ -64,7 +64,7 @@ class EnvironmentCastle {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: plane
                 }, function () {
-                    game.sceneManager.changeScene(new Mountains());
+                    game.changeScene(new Mountains());
                     return this;
                 }));
 

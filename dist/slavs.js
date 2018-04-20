@@ -99,8 +99,44 @@ var Keyboard = /** @class */ (function (_super) {
 var Scene = /** @class */ (function () {
     function Scene() {
     }
-    Scene.prototype.setDefaults = function (game) {
+    Scene.prototype.setDefaults = function (game, scene) {
         this.game = game;
+        this.babylonScene = scene;
+        scene.actionManager = new BABYLON.ActionManager(scene);
+        var sceneIndex = game.scenes.push(scene);
+        game.activeScene = sceneIndex - 1;
+        this.assetManager = new BABYLON.AssetsManager(scene);
+        this.initFactories(scene);
+        if (Game.SHOW_DEBUG) {
+            scene.debugLayer.show();
+        }
+        console.log(1);
+        return this;
+    };
+    Scene.prototype.executeWhenReady = function (callback) {
+        var scene = this.babylonScene;
+        var assetsManager = this.assetManager;
+        scene.executeWhenReady(function () {
+            game.client.socket.emit('createPlayer');
+            assetsManager.onFinish = function (tasks) {
+                // self.octree = scene.createOrUpdateSelectionOctree();
+                self.environment = new EnvironmentForestHouse(game, scene);
+                game.client.socket.emit('changeScenePre');
+            };
+            assetsManager.load();
+            var listener = function listener() {
+                if (callback) {
+                    callback();
+                }
+                game.controller.registerControls(scene);
+                game.client.socket.emit('getQuests');
+                game.client.showEnemies();
+                game.client.socket.emit('changeScenePost');
+                game.client.socket.emit('refreshGateways');
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        });
         return this;
     };
     Scene.prototype.setCamera = function (scene) {
@@ -129,38 +165,20 @@ var Scene = /** @class */ (function () {
         // scene.fogDensity = 0.01;
         return this;
     };
-    //public setOrthoCameraHeights(camera:BABYLON.Camera) {
-    //camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-    //camera.orthoTop = 20;
-    //camera.orthoBottom = 0;
-    //camera.orthoLeft = -15;
-    //camera.orthoRight = 15;
-    //    var ratio = window.innerWidth / window.innerHeight;
-    //    var zoom = camera.orthoTop;
-    //    var newWidth = zoom * ratio;
-    //    camera.orthoLeft = -Math.abs(newWidth);
-    //    camera.orthoRight = newWidth;
-    //    camera.orthoBottom = -Math.abs(zoom);
-    //    camera.rotation = new BABYLON.Vector3(0.75, 0.75, 0);
-    //
-    //    return camera;
-    //}
     Scene.prototype.optimizeScene = function (scene) {
         scene.collisionsEnabled = true;
         scene.fogEnabled = true;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
-        scene.postProcessesEnabled = true;
+        scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
         scene.audioEnabled = false;
         scene.workerCollisions = false;
         return this;
     };
     Scene.prototype.initFactories = function (scene, assetsManager) {
+        var assetsManager = this.assetManager;
         this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
-        // this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
-        // this.game.factories['boar'] = new Factories.Boars(this.game, scene, assetsManager).initFactory();
-        // this.game.factories['zombie'] = new Factories.Zombies(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeleton'] = new Factories.Skeletons(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeletonWarrior'] = new Factories.SkeletonWarrior(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeletonBoss'] = new Factories.SkeletonBoss(this.game, scene, assetsManager).initFactory();
@@ -168,60 +186,55 @@ var Scene = /** @class */ (function () {
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
         return this;
     };
-    Scene.prototype.changeScene = function (newScene) {
-        var sceneToDispose = this.game.getScene();
-        setTimeout(function () {
-            sceneToDispose.dispose();
-        });
-        this.game.activeScene = null;
-        this.game.controller.forward = false;
-        newScene.initScene(this.game);
-    };
     Scene.prototype.defaultPipeline = function (scene) {
-        var self = this;
-        var camera = scene.activeCamera;
+        // let self = this;
+        // let camera = scene.activeCamera;
         //var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
         //defaultPipeline.bloomEnabled = false;
         //defaultPipeline.fxaaEnabled = true;
         //defaultPipeline.imageProcessingEnabled = false;
         //defaultPipeline.bloomWeight = 0.05;
-        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        var panel = new BABYLON.GUI.StackPanel();
-        panel.width = "200px";
-        panel.isVertical = true;
-        panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-        advancedTexture.addControl(panel);
-        var addCheckbox = function (text, func, initialValue) {
-            var checkbox = new BABYLON.GUI.Checkbox();
-            checkbox.width = "20px";
-            checkbox.height = "20px";
-            checkbox.isChecked = initialValue;
-            checkbox.color = "green";
-            checkbox.onIsCheckedChangedObservable.add(function (value) {
-                func(value);
-            });
-            if (self.game.gui) {
-                self.game.gui.registerBlockMoveCharacter(checkbox);
-            }
-            var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true });
-            header.height = "30px";
-            header.color = "white";
-            header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            panel.addControl(header);
-        };
-        var postProcessFxaa = null;
-        var kernel = 4;
-        var postProcessBloom1 = null;
-        var postProcessBloom2 = null;
-        addCheckbox("fxaa", function (value) {
-            if (value) {
-                postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
-            }
-            else {
-                scene.activeCamera.detachPostProcess(postProcess);
-            }
-        }, false);
+        // var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        //
+        // var panel = new BABYLON.GUI.StackPanel();
+        // panel.width = "200px";
+        // panel.isVertical = true;
+        // panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        // panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        // advancedTexture.addControl(panel)
+        //
+        // var addCheckbox = function(text, func, initialValue) {
+        //     var checkbox = new BABYLON.GUI.Checkbox();
+        //     checkbox.width = "20px";
+        //     checkbox.height = "20px";
+        //     checkbox.isChecked = initialValue;
+        //     checkbox.color = "green";
+        //     checkbox.onIsCheckedChangedObservable.add(function(value) {
+        //         func(value);
+        //     });
+        //     if(self.game.gui) {
+        //         self.game.gui.registerBlockMoveCharacter(checkbox);
+        //     }
+        //     var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
+        //     header.height = "30px";
+        //     header.color = "white";
+        //     header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        //
+        //     panel.addControl(header);
+        // }
+        //     let postProcessFxaa = null;
+        //     let kernel = 4;
+        //     let postProcessBloom1 = null;
+        //     let postProcessBloom2 = null;
+        //     addCheckbox("fxaa", function(value) {
+        //         if(value) {
+        //             postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
+        //         } else {
+        //             scene.activeCamera.detachPostProcess(postProcess);
+        //         }
+        //     }, false );
+        //
+        return this;
     };
     Scene.TYPE = 0;
     return Scene;
@@ -474,8 +487,6 @@ var Monster = /** @class */ (function (_super) {
 /// <reference path="characters/monsters/monster.ts"/>
 var SocketIOClient = /** @class */ (function () {
     function SocketIOClient(game) {
-        this.characters = [];
-        this.activeCharacter = Number;
         this.game = game;
     }
     SocketIOClient.prototype.connect = function (socketUrl) {
@@ -490,8 +501,7 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
-            self.connectionId = data.id;
-            self.characters = data.characters;
+            self.connectionId = data.connectionId;
             self
                 .updatePlayers()
                 .updateEnemies()
@@ -515,6 +525,7 @@ var SocketIOClient = /** @class */ (function () {
                 .questRequirementInformation()
                 .changeScene();
         });
+        this.socket.emit('changeScene', ForestHouse.TYPE);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -531,7 +542,6 @@ var SocketIOClient = /** @class */ (function () {
                 gateway.particleSystem.dispose();
             });
             var gatewaysFromServer = sceneServerData.gateways;
-            console.log(gatewaysFromServer);
             gatewaysFromServer.forEach(function (gateway) {
                 var gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType);
                 gateways.push(gatewayInGame);
@@ -543,7 +553,6 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         this.socket.on('refreshQuests', function (sceneServerData) {
             var questsFromServer = sceneServerData.quests;
-            console.log(sceneServerData);
             questsFromServer.forEach(function (quest) {
                 new Factories.Quests(game, quest.objectName);
             });
@@ -552,10 +561,9 @@ var SocketIOClient = /** @class */ (function () {
     };
     SocketIOClient.prototype.changeScene = function () {
         var game = this.game;
-        this.socket.on('changeScene', function (sceneServerData) {
-            var sceneType = sceneServerData.type;
+        this.socket.on('changeScene', function (sceneType) {
             var scene = Scenes.Manager.factory(sceneType);
-            game.sceneManager.changeScene(scene);
+            game.changeScene(scene);
         });
         return this;
     };
@@ -578,7 +586,7 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.reloadScene = function () {
         var game = this.game;
         this.socket.on('reloadScene', function (data) {
-            game.sceneManager.changeScene(new Mountains());
+            game.changeScene(new Mountains());
         });
         return this;
     };
@@ -695,10 +703,8 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         var self = this;
         this.socket.on('showPlayer', function (playerData) {
-            self.characters = playerData.characters;
-            self.activeCharacter = playerData.activeCharacter;
-            var activeCharacter = self.characters[self.activeCharacter];
-            game.player = new Player(game, activeCharacter.id, true, activeCharacter);
+            console.log(playerData);
+            game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
             var octree = game.sceneManager.octree;
             if (octree) {
@@ -763,6 +769,7 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.showEnemies = function () {
         var game = this.game;
         this.socket.on('showEnemies', function (data) {
+            console.log(data);
             data.forEach(function (enemyData, key) {
                 var enemy = game.enemies[key];
                 if (enemy) {
@@ -1027,7 +1034,6 @@ var Game = /** @class */ (function () {
             self.engine = new BABYLON.Engine(self.canvas, false, null, false);
             self.controller = new Mouse(self);
             self.client = new SocketIOClient(self);
-            self.client.connect(serverUrl);
             self.factories = [];
             self.enemies = [];
             self.quests = [];
@@ -1035,15 +1041,12 @@ var Game = /** @class */ (function () {
             self.scenes = [];
             self.activeScene = null;
             self.events = new Events();
-            self.createScene().animate();
+            self.client.connect(serverUrl);
+            self.animate();
         });
     }
     Game.prototype.getScene = function () {
         return this.scenes[this.activeScene];
-    };
-    Game.prototype.createScene = function () {
-        new ForestHouse().initScene(this);
-        return this;
     };
     Game.prototype.animate = function () {
         var _this = this;
@@ -1058,6 +1061,17 @@ var Game = /** @class */ (function () {
         });
         return this;
     };
+    Game.prototype.changeScene = function (newScene) {
+        var sceneToDispose = this.getScene();
+        if (sceneToDispose) {
+            setTimeout(function () {
+                sceneToDispose.dispose();
+            });
+        }
+        this.activeScene = null;
+        this.controller.forward = false;
+        newScene.initScene(this);
+    };
     Game.randomNumber = function (minimum, maximum) {
         return Math.round(Math.random() * (maximum - minimum) + minimum);
     };
@@ -1068,6 +1082,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
+    Game.SHOW_DEBUG = 0;
     return Game;
 }());
 var Effects;
@@ -1251,13 +1266,13 @@ var Character;
 })(Character || (Character = {}));
 var Player = /** @class */ (function (_super) {
     __extends(Player, _super);
-    function Player(game, id, registerMoving, serverData) {
+    function Player(game, registerMoving, serverData) {
         if (serverData === void 0) { serverData = []; }
         var _this = this;
-        _this.id = id;
+        _this.id = serverData.id;
         _this.game = game;
         _this.isAlive = true;
-        _this.setCharacterStatistics(serverData.statistics);
+        _this.setCharacterStatistics(serverData.activePlayer.statistics);
         _this.connectionId = serverData.connectionId;
         _this.isControllable = registerMoving;
         //
@@ -1282,7 +1297,7 @@ var Player = /** @class */ (function (_super) {
         _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         _this.inventory = new Character.Inventory(game, _this);
-        _this.setItems(serverData.inventory.items);
+        // this.setItems(serverData.inventory.items);
         if (_this.isControllable) {
             _this.mesh.isPickable = false;
             var playerLight = new BABYLON.SpotLight("playerLightSpot", new BABYLON.Vector3(0, 50, 0), new BABYLON.Vector3(0, -1, 0), null, null, game.getScene());
@@ -1925,7 +1940,7 @@ var EnvironmentCastle = /** @class */ (function () {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: plane
                 }, function () {
-                    game.sceneManager.changeScene(new Mountains());
+                    game.changeScene(new Mountains());
                     return this;
                 }));
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
@@ -3205,45 +3220,19 @@ var ForestHouse = /** @class */ (function (_super) {
         var self = this;
         game.sceneManager = this;
         BABYLON.SceneLoader.Load("assets/scenes/Forest_house/", "Forest_house.babylon", game.engine, function (scene) {
-            game.sceneManager = self;
             self
-                .setDefaults(game)
+                .setDefaults(game, scene)
                 .optimizeScene(scene)
                 .setCamera(scene)
                 .setFog(scene)
-                .defaultPipeline(scene);
-            scene.debugLayer.show();
-            scene.actionManager = new BABYLON.ActionManager(scene);
-            var assetsManager = new BABYLON.AssetsManager(scene);
-            self.initFactories(scene, assetsManager);
-            var sceneIndex = game.scenes.push(scene);
-            game.activeScene = sceneIndex - 1;
-            scene.executeWhenReady(function () {
-                game.client.socket.emit('createPlayer');
-                assetsManager.onFinish = function (tasks) {
-                    // self.octree = scene.createOrUpdateSelectionOctree();
-                    self.environment = new EnvironmentForestHouse(game, scene);
-                    game.client.socket.emit('changeScenePre', {
-                        sceneType: ForestHouse.TYPE
-                    });
-                };
-                assetsManager.load();
-                var listener = function listener() {
-                    game.controller.registerControls(scene);
-                    game.client.socket.emit('getQuests');
-                    game.client.showEnemies();
-                    game.client.socket.emit('changeScenePost', {
-                        sceneType: ForestHouse.TYPE
-                    });
-                    game.client.socket.emit('refreshGateways');
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-                };
-                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+                .defaultPipeline(scene)
+                .executeWhenReady(function () {
+                console.log('callback');
             });
         });
     };
     ForestHouse.prototype.getType = function () {
-        return Simple.TYPE;
+        return ForestHouse.TYPE;
     };
     ForestHouse.TYPE = 2;
     return ForestHouse;
@@ -4165,7 +4154,7 @@ var SelectCharacter;
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
                 client.socket.emit('selectCharacter', self.place);
                 client.socket.on('characterSelected', function () {
-                    self.game.sceneManager.changeScene(new Castle());
+                    self.game.changeScene(new Castle());
                     client.socket.emit('createPlayer');
                 });
             }));

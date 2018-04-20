@@ -2,15 +2,63 @@ abstract class Scene {
     static TYPE = 0;
 
     protected game:Game;
-    protected light:BABYLON.IShadowLight;
-    public pipeline: BABYLON.StandardRenderingPipeline;
-    public shadowGenerator:BABYLON.ShadowGenerator;
+    protected babylonScene: BABYLON.Scene;
+    protected assetManager: BABYLON.AssetsManager;
     public environment:Environment;
-    public activeQuests:Array<Quests.AbstractQuest>;
     public octree: BABYLON.Octree;
 
-    protected setDefaults(game:Game) {
+    protected setDefaults(game:Game, scene: BABYLON.Scene) {
         this.game = game;
+        this.babylonScene = scene;
+
+        scene.actionManager = new BABYLON.ActionManager(scene);
+
+        let sceneIndex = game.scenes.push(scene);
+        game.activeScene = sceneIndex - 1;
+
+        this.assetManager = new BABYLON.AssetsManager(scene);
+        this.initFactories(scene);
+
+        if(Game.SHOW_DEBUG) {
+            scene.debugLayer.show();
+        }
+        console.log(1);
+        return this;
+    }
+
+    protected executeWhenReady(callback: Function) {
+        let scene = this.babylonScene;
+        let assetsManager = this.assetManager;
+
+        scene.executeWhenReady(function () {
+            game.client.socket.emit('createPlayer');
+
+            assetsManager.onFinish = function (tasks) {
+                // self.octree = scene.createOrUpdateSelectionOctree();
+                self.environment = new EnvironmentForestHouse(game, scene);
+
+                game.client.socket.emit('changeScenePre');
+            };
+            assetsManager.load();
+
+            let listener = function listener() {
+                if(callback) {
+                    callback();
+                }
+
+                game.controller.registerControls(scene);
+                game.client.socket.emit('getQuests');
+                game.client.showEnemies();
+
+                game.client.socket.emit('changeScenePost');
+
+                game.client.socket.emit('refreshGateways');
+
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        });
+
         return this;
     }
 
@@ -48,29 +96,12 @@ abstract class Scene {
         return this;
     }
 
-    //public setOrthoCameraHeights(camera:BABYLON.Camera) {
-    //camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-    //camera.orthoTop = 20;
-    //camera.orthoBottom = 0;
-    //camera.orthoLeft = -15;
-    //camera.orthoRight = 15;
-    //    var ratio = window.innerWidth / window.innerHeight;
-    //    var zoom = camera.orthoTop;
-    //    var newWidth = zoom * ratio;
-    //    camera.orthoLeft = -Math.abs(newWidth);
-    //    camera.orthoRight = newWidth;
-    //    camera.orthoBottom = -Math.abs(zoom);
-    //    camera.rotation = new BABYLON.Vector3(0.75, 0.75, 0);
-    //
-    //    return camera;
-    //}
-
     public optimizeScene(scene:BABYLON.Scene) {
         scene.collisionsEnabled = true;
         scene.fogEnabled = true;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
-        scene.postProcessesEnabled = true;
+        scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
         scene.audioEnabled = false;
         scene.workerCollisions = false;
@@ -79,10 +110,9 @@ abstract class Scene {
     }
 
     protected initFactories(scene: BABYLON.Scene, assetsManager: BABYLON.AssetsManager) {
+        let assetsManager = this.assetManager;
+
         this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
-        // this.game.factories['worm'] = new Factories.Worms(this.game, scene, assetsManager).initFactory();
-        // this.game.factories['boar'] = new Factories.Boars(this.game, scene, assetsManager).initFactory();
-        // this.game.factories['zombie'] = new Factories.Zombies(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeleton'] = new Factories.Skeletons(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeletonWarrior'] = new Factories.SkeletonWarrior(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeletonBoss'] = new Factories.SkeletonBoss(this.game, scene, assetsManager).initFactory();
@@ -92,19 +122,9 @@ abstract class Scene {
         return this;
     }
 
-    public changeScene(newScene: Scene) {
-        let sceneToDispose = this.game.getScene();
-        setTimeout(function() {
-            sceneToDispose.dispose();
-        });
-        this.game.activeScene = null;
-        this.game.controller.forward = false;
-        newScene.initScene(this.game);
-    }
-
     public defaultPipeline(scene: BABYLON.Scene) {
-        let self = this;
-        let camera = scene.activeCamera;
+        // let self = this;
+        // let camera = scene.activeCamera;
     //var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
     //defaultPipeline.bloomEnabled = false;
     //defaultPipeline.fxaaEnabled = true;
@@ -112,49 +132,49 @@ abstract class Scene {
     //defaultPipeline.bloomWeight = 0.05;
 
 
-    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    
-    var panel = new BABYLON.GUI.StackPanel();
-    panel.width = "200px";
-    panel.isVertical = true;
-    panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-    advancedTexture.addControl(panel)
-    
-    var addCheckbox = function(text, func, initialValue) {
-        var checkbox = new BABYLON.GUI.Checkbox();
-        checkbox.width = "20px";
-        checkbox.height = "20px";
-        checkbox.isChecked = initialValue;
-        checkbox.color = "green";
-        checkbox.onIsCheckedChangedObservable.add(function(value) {
-            func(value);
-        });
-        if(self.game.gui) {
-            self.game.gui.registerBlockMoveCharacter(checkbox);
-        }
-        var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
-        header.height = "30px";
-        header.color = "white";
-        header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    // var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    //
+    // var panel = new BABYLON.GUI.StackPanel();
+    // panel.width = "200px";
+    // panel.isVertical = true;
+    // panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    // panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    // advancedTexture.addControl(panel)
+    //
+    // var addCheckbox = function(text, func, initialValue) {
+    //     var checkbox = new BABYLON.GUI.Checkbox();
+    //     checkbox.width = "20px";
+    //     checkbox.height = "20px";
+    //     checkbox.isChecked = initialValue;
+    //     checkbox.color = "green";
+    //     checkbox.onIsCheckedChangedObservable.add(function(value) {
+    //         func(value);
+    //     });
+    //     if(self.game.gui) {
+    //         self.game.gui.registerBlockMoveCharacter(checkbox);
+    //     }
+    //     var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
+    //     header.height = "30px";
+    //     header.color = "white";
+    //     header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    //
+    //     panel.addControl(header);
+    // }
+    //     let postProcessFxaa = null;
+    //     let kernel = 4;
+    //     let postProcessBloom1 = null;
+    //     let postProcessBloom2 = null;
+    //     addCheckbox("fxaa", function(value) {
+    //         if(value) {
+    //             postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
+    //         } else {
+    //             scene.activeCamera.detachPostProcess(postProcess);
+    //         }
+    //     }, false );
+    //
 
-        panel.addControl(header);
+        return this;
     }
-        let postProcessFxaa = null;
-        let kernel = 4;
-        let postProcessBloom1 = null;
-        let postProcessBloom2 = null;
-        addCheckbox("fxaa", function(value) {
-            if(value) {
-                postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
-            } else {
-                scene.activeCamera.detachPostProcess(postProcess);
-            }
-        }, false );
-
-
-
-}
 
     public abstract getType();
 

@@ -6,6 +6,7 @@
 class Game {
 
     static SHOW_COLLIDERS = 0;
+    static SHOW_DEBUG = 0;
 
     public sceneManager: Scene;
     public modules: Modules;
@@ -50,7 +51,6 @@ class Game {
             self.engine = new BABYLON.Engine(self.canvas, false, null, false);
             self.controller = new Mouse(self);
             self.client = new SocketIOClient(self);
-            self.client.connect(serverUrl);
             self.factories = [];
             self.enemies = [];
             self.quests = [];
@@ -59,18 +59,13 @@ class Game {
             self.activeScene = null;
             self.events = new Events();
 
-            self.createScene().animate();
+            self.client.connect(serverUrl);
+            self.animate();
         });
     }
 
     getScene(): BABYLON.Scene {
         return this.scenes[this.activeScene];
-    }
-
-    createScene(): Game {
-        new ForestHouse().initScene(this);
-
-        return this;
     }
 
     animate(): Game {
@@ -86,6 +81,19 @@ class Game {
         });
 
         return this;
+    }
+
+    public changeScene(newScene: Scene) {
+        let sceneToDispose = this.getScene();
+        if(sceneToDispose) {
+            setTimeout(function () {
+                sceneToDispose.dispose();
+            });
+        }
+        this.activeScene = null;
+        this.controller.forward = false;
+
+        newScene.initScene(this);
     }
 
     public static randomNumber(minimum: number, maximum: number): number {

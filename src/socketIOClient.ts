@@ -5,8 +5,6 @@ class SocketIOClient {
     protected game:Game;
     public socket;
     public connectionId;
-    public characters = [];
-    public activeCharacter = Number;
 
     constructor(game:Game) {
         this.game = game;
@@ -14,7 +12,6 @@ class SocketIOClient {
 
     public connect(socketUrl:string) {
         this.socket = io.connect(socketUrl);
-
         this.playerConnected();
     }
 
@@ -27,8 +24,7 @@ class SocketIOClient {
 
         this.socket.on('clientConnected', function (data) {
             game.remotePlayers = [];
-            self.connectionId = data.id;
-            self.characters = data.characters;
+            self.connectionId = data.connectionId;
             self
                 .updatePlayers()
                 .updateEnemies()
@@ -53,6 +49,8 @@ class SocketIOClient {
                 .changeScene();
         });
 
+        this.socket.emit('changeScene', ForestHouse.TYPE);
+
         return this;
     }
 
@@ -73,7 +71,6 @@ class SocketIOClient {
             });
 
             let gatewaysFromServer = sceneServerData.gateways;
-            console.log(gatewaysFromServer);
             gatewaysFromServer.forEach(function(gateway) {
                 let gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType);
                 gateways.push(gatewayInGame);
@@ -88,7 +85,6 @@ class SocketIOClient {
         let game = this.game;
         this.socket.on('refreshQuests', function (sceneServerData) {
             let questsFromServer = sceneServerData.quests;
-            console.log(sceneServerData);
 
             questsFromServer.forEach(function(quest) {
                 new Factories.Quests(game, quest.objectName);
@@ -101,11 +97,10 @@ class SocketIOClient {
 
     protected changeScene() {
         let game = this.game;
-        this.socket.on('changeScene', function (sceneServerData) {
-            let sceneType = sceneServerData.type;
+        this.socket.on('changeScene', function (sceneType) {
             let scene = Scenes.Manager.factory(sceneType);
             
-            game.sceneManager.changeScene(scene);
+            game.changeScene(scene);
         });
 
         return this;
@@ -132,7 +127,7 @@ class SocketIOClient {
     protected reloadScene() {
         let game = this.game;
         this.socket.on('reloadScene', function (data) {
-            game.sceneManager.changeScene(new Mountains());
+            game.changeScene(new Mountains());
         });
 
         return this;
@@ -277,11 +272,9 @@ class SocketIOClient {
         let self = this;
 
         this.socket.on('showPlayer', function (playerData) {
-            self.characters = playerData.characters;
-            self.activeCharacter = playerData.activeCharacter;
-            let activeCharacter = self.characters[self.activeCharacter];
+           console.log(playerData);
 
-            game.player = new Player(game, activeCharacter.id, true, activeCharacter);
+            game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
 
             let octree = game.sceneManager.octree;
@@ -358,6 +351,7 @@ class SocketIOClient {
         let game = this.game;
 
         this.socket.on('showEnemies', function (data) {
+            console.log(data);
             data.forEach(function (enemyData, key) {
                 let enemy = game.enemies[key];
 

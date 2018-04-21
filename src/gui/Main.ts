@@ -181,13 +181,13 @@ namespace GUI {
          */
         public registerBlockMoveCharacter(control: BABYLON.GUI.Control) {
             let self = this;
-            control.onPointerEnterObservable.add(function () {
-                self.game.sceneManager.environment.ground.isPickable = false;
-            });
-
-            control.onPointerOutObservable.add(function () {
-                self.game.sceneManager.environment.ground.isPickable = true;
-            });
+            // control.onPointerEnterObservable.add(function () {
+            //     self.game.sceneManager.environment.ground.isPickable = false;
+            // });
+            //
+            // control.onPointerOutObservable.add(function () {
+            //     self.game.sceneManager.environment.ground.isPickable = true;
+            // });
 
             return this;
         }

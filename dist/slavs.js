@@ -2414,12 +2414,13 @@ var GUI;
          */
         Main.prototype.registerBlockMoveCharacter = function (control) {
             var self = this;
-            control.onPointerEnterObservable.add(function () {
-                self.game.sceneManager.environment.ground.isPickable = false;
-            });
-            control.onPointerOutObservable.add(function () {
-                self.game.sceneManager.environment.ground.isPickable = true;
-            });
+            // control.onPointerEnterObservable.add(function () {
+            //     self.game.sceneManager.environment.ground.isPickable = false;
+            // });
+            //
+            // control.onPointerOutObservable.add(function () {
+            //     self.game.sceneManager.environment.ground.isPickable = true;
+            // });
             return this;
         };
         return Main;

@@ -7,13 +7,12 @@ namespace Items {
         public name:string;
         public image:string;
         public statistics:Attributes.ItemStatistics;
-        public isAutoLoot: boolean;
 
-        constructor(game:Game, itemData:Array) {
+        constructor(game:Game, itemData:Array<any>) {
             this.name = itemData.name;
             this.image = itemData.image;
             this.type = itemData.type;
-            this.databaseId = itemData.databaseId;
+            this.databaseId = itemData.entity.id;
             this.statistics = itemData.statistics;
             this.mesh = game.factories['character'].createInstance(itemData.meshName);
             this.mesh.visibility = 0;

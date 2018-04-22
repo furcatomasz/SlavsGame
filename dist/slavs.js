@@ -110,7 +110,6 @@ var Scene = /** @class */ (function () {
         if (Game.SHOW_DEBUG) {
             scene.debugLayer.show();
         }
-        console.log(1);
         return this;
     };
     Scene.prototype.executeWhenReady = function (callback) {
@@ -1266,15 +1265,13 @@ var Character;
             return equipedItems;
         };
         Inventory.prototype.showSashOrHair = function (showHair, showSash) {
-            console.log(showHair);
-            console.log(showSash);
             if (showHair) {
                 this.helm = new Items.Item(this.game, {
                     name: "Hair",
                     image: 'hair',
                     meshName: 'hair',
                     type: 3,
-                    databaseId: 0,
+                    entity: { id: 0 },
                     statistics: null
                 });
                 this.mount(this.helm);
@@ -1285,7 +1282,7 @@ var Character;
                     image: 'sash',
                     meshName: 'sash',
                     type: 6,
-                    databaseId: 0,
+                    entity: { id: 0 },
                     statistics: null
                 });
                 this.mount(this.armor);
@@ -1328,7 +1325,7 @@ var Player = /** @class */ (function (_super) {
         _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         _this.inventory = new Character.Inventory(game, _this);
-        // this.setItems(serverData.inventory.items);
+        _this.setItems(serverData.activePlayer.items);
         if (_this.isControllable) {
             _this.mesh.isPickable = false;
             var playerLight = new BABYLON.SpotLight("playerLightSpot", new BABYLON.Vector3(0, 50, 0), new BABYLON.Vector3(0, -1, 0), null, null, game.getScene());
@@ -1421,11 +1418,13 @@ var Player = /** @class */ (function (_super) {
      * @param inventoryItems
      */
     Player.prototype.setItems = function (inventoryItems) {
+        console.log(inventoryItems);
         if (inventoryItems) {
             var self_1 = this;
             var game = this.game;
             var itemManager_1 = new Items.ItemManager(game);
             if (this.inventory.items.length) {
+                //TODO: create Promise
                 var itemsProcessed_1 = 0;
                 this.inventory.items.forEach(function (item) {
                     item.mesh.dispose();
@@ -2063,11 +2062,9 @@ var EnvironmentForestHouse = /** @class */ (function () {
                 sceneMesh_1.isPickable = false;
             }
         }
-        console.log(game.factories['nature_grain']);
         //SPS Nature
         var spruce = game.factories['nature_grain'].createInstance('spruce.001', false);
         spruce.visibility = 0;
-        console.log(spruce);
         var groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
         groundPlants.visibility = 0;
         var fern = game.factories['nature_grain'].createInstance('fern', false);
@@ -3671,7 +3668,7 @@ var Items;
             this.name = itemData.name;
             this.image = itemData.image;
             this.type = itemData.type;
-            this.databaseId = itemData.databaseId;
+            this.databaseId = itemData.entity.id;
             this.statistics = itemData.statistics;
             this.mesh = game.factories['character'].createInstance(itemData.meshName);
             this.mesh.visibility = 0;
@@ -3705,13 +3702,13 @@ var Items;
                     }
                     item.mesh.alwaysSelectAsActiveMesh = true;
                     inventory.items.push(item);
-                    if (itemDatabase.equip) {
+                    if (itemDatabase.entity.equip) {
                         inventory.mount(item);
                     }
-                    if (item.type == 3 && !itemDatabase.equip) {
+                    if (item.type == 3 && !itemDatabase.entity.equip) {
                         inventory.showSashOrHair(true, false);
                     }
-                    if (item.type == 6 && !itemDatabase.equip) {
+                    if (item.type == 6 && !itemDatabase.entity.equip) {
                         inventory.showSashOrHair(false, true);
                     }
                 }

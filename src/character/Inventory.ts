@@ -165,15 +165,13 @@ namespace Character {
         }
 
         public showSashOrHair(showHair: boolean, showSash: boolean) {
-            console.log(showHair);
-            console.log(showSash);
             if(showHair) {
                 this.helm = new Items.Item(this.game, {
                     name: "Hair",
                     image: 'hair',
                     meshName: 'hair',
                     type: 3,
-                    databaseId: 0,
+                    entity: { id: 0 },
                     statistics: null
                 });
 
@@ -186,7 +184,7 @@ namespace Character {
                     image: 'sash',
                     meshName: 'sash',
                     type: 6,
-                    databaseId: 0,
+                    entity: { id: 0 },
                     statistics: null
                 });
 

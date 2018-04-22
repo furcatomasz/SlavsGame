@@ -30,16 +30,16 @@ namespace Items {
 
                     inventory.items.push(item);
 
-                    if (itemDatabase.equip) {
+                    if (itemDatabase.entity.equip) {
                         inventory.mount(item);
                     }
 
 
-                    if(item.type == 3 && !itemDatabase.equip) {
+                    if(item.type == 3 && !itemDatabase.entity.equip) {
                         inventory.showSashOrHair(true, false);
                     }
 
-                    if(item.type == 6 && !itemDatabase.equip) {
+                    if(item.type == 6 && !itemDatabase.entity.equip) {
                         inventory.showSashOrHair(false, true);
 
                     }

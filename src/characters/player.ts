@@ -46,7 +46,7 @@ class Player extends AbstractCharacter {
 
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         this.inventory = new Character.Inventory(game, this);
-        // this.setItems(serverData.inventory.items);
+        this.setItems(serverData.activePlayer.items);
 
         if (this.isControllable) {
             this.mesh.isPickable = false;
@@ -159,12 +159,14 @@ class Player extends AbstractCharacter {
      *
      * @param inventoryItems
      */
-    public setItems(inventoryItems: Array) {
+    public setItems(inventoryItems: Array<any>) {
+        console.log(inventoryItems);
         if(inventoryItems) {
             let self = this;
             let game = this.game;
             let itemManager = new Items.ItemManager(game);
             if (this.inventory.items.length) {
+                //TODO: create Promise
                 let itemsProcessed = 0;
                 this.inventory.items.forEach(function (item) {
                     item.mesh.dispose();

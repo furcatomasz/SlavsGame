@@ -22,7 +22,7 @@ abstract class Scene {
         if(Game.SHOW_DEBUG) {
             scene.debugLayer.show();
         }
-        console.log(1);
+
         return this;
     }
 

@@ -8,15 +8,15 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var config = require("./../config.js");
 var Server;
 (function (Server) {
     var BabylonManager = /** @class */ (function () {
-        function BabylonManager(slavsServer) {
+        function BabylonManager() {
             /* Game Data */
             this.enemies = [];
             this.players = [];
             this.scenes = [];
-            this.slavsServer = slavsServer;
             this.socket = socketIOClient.connect('http://127.0.0.1:' + config.server.port, { query: 'monsterServer=1' });
             this.enemies = [];
             this.players = [];
@@ -26,9 +26,6 @@ var Server;
         BabylonManager.prototype.initEngine = function () {
             var self = this;
             this.engine = new BABYLON.NullEngine();
-            // let scene = new BABYLON.Scene(this.engine);
-            // this.scene = scene;
-            // let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
             this
                 .socketShowEnemies()
                 .socketUpdateEnemy()
@@ -475,33 +472,13 @@ var Server;
     }());
     Server.QuestManager = QuestManager;
 })(Server || (Server = {}));
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
+var io = require('socket.io');
 var socketIOClient = require('socket.io-client');
-var orm = require("orm");
-var config = require("./../config.js");
 var BABYLON = require("../../bower_components/babylonjs/dist/preview release/babylon.max");
 var LOADERS = require("../../bower_components/babylonjs/dist/preview release/loaders/babylonjs.loaders");
-var requirejs = require('requirejs');
-var EventEmitter = require('events');
-server.listen(config.server.port);
 var SlavsServer = /** @class */ (function () {
     function SlavsServer() {
-        this.enemies = [];
-        var self = this;
-        app.set('event_emitter', new EventEmitter());
-        app.set('quest_manager', new Server.QuestManager());
-        this.ormManager = new Server.OrmManager(self, orm, config);
-        this.gameModules = new Server.GameModules();
-        this.gameModules.loadModules(function () {
-            self.enemyManager = new Server.EnemyManager();
-            self.enemies = self.enemyManager.getEnemies();
-            // self.serverFrontEnd = new Server.FrontEnd(self, app, express);
-            self.babylonManager = new Server.BabylonManager(self);
-            self.serverWebsocket = new Server.IO(self, io);
-        });
+        new Server.BabylonManager();
     }
     return SlavsServer;
 }());

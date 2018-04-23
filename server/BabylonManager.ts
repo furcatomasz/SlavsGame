@@ -1,8 +1,9 @@
+let config = require("./../config.js");
+
 namespace Server {
 
     export class BabylonManager {
 
-        protected slavsServer:SlavsServer;
         protected engine:BABYLON.NullEngine;
         protected scene:BABYLON.Scene;
         protected socket;
@@ -13,8 +14,7 @@ namespace Server {
         protected players = [];
         protected scenes = [];
 
-        constructor(slavsServer:SlavsServer) {
-            this.slavsServer = slavsServer;
+        constructor() {
             this.socket = socketIOClient.connect('http://127.0.0.1:' + config.server.port, {query: 'monsterServer=1'});
             this.enemies = [];
             this.players = [];
@@ -25,9 +25,6 @@ namespace Server {
         public initEngine() {
             let self = this;
             this.engine = new BABYLON.NullEngine();
-            // let scene = new BABYLON.Scene(this.engine);
-            // this.scene = scene;
-            // let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
             this
                 .socketShowEnemies()
                 .socketUpdateEnemy()

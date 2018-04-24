@@ -99,7 +99,7 @@ class SocketIOClient {
         let game = this.game;
         this.socket.on('changeScene', function (sceneType) {
             let scene = Scenes.Manager.factory(sceneType);
-            
+
             game.changeScene(scene);
         });
 
@@ -272,8 +272,6 @@ class SocketIOClient {
         let self = this;
 
         this.socket.on('showPlayer', function (playerData) {
-           console.log(playerData);
-
             game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
 
@@ -351,7 +349,6 @@ class SocketIOClient {
         let game = this.game;
 
         this.socket.on('showEnemies', function (data) {
-            console.log(data);
             data.forEach(function (enemyData, key) {
                 let enemy = game.enemies[key];
 

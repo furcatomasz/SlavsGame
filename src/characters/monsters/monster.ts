@@ -62,8 +62,6 @@ class Monster extends AbstractCharacter {
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
             function (pointer) {
-                console.log('OnPickDownTrigger');
-
                 if(self.game.player.isAlive) {
                     game.controller.attackPoint = pointer.meshUnderPointer;
                     game.controller.targetPoint = null;
@@ -75,23 +73,18 @@ class Monster extends AbstractCharacter {
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger,
             function (pointer) {
-                console.log('OnPickUpTrigger');
-
                 clearInterval(self.intervalAttackRegisteredFunction);
                 self.game.controller.attackPoint = null;
             }));
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger,
             function (pointer) {
-                console.log('OnPickOutTrigger');
-
                 clearInterval(self.intervalAttackRegisteredFunction);
                 self.game.controller.attackPoint = null;
             }));
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
             function (pointer) {
-            console.log('OnPickTrigger');
                 clearInterval(self.intervalAttackRegisteredFunction);
                 self.game.controller.attackPoint = null;
             }));

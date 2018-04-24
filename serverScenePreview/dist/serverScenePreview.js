@@ -17,8 +17,8 @@ var Server;
             this.engine = new BABYLON.Engine(canvas);
             //let scene = new BABYLON.Scene(this.engine);
             //this.scene = scene;
-            //let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
-            //camera.attachControl(canvas, true);
+            // let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
+            // camera.attachControl(canvas, true);
             this
                 .socketShowEnemies()
                 .socketUpdateEnemy()
@@ -119,7 +119,8 @@ var Server;
                     console.log('BABYLON: crate new room with scene - ' + roomId);
                     var sceneForRoom = new BABYLON.Scene(self.engine);
                     sceneForRoom.collisionsEnabled = true;
-                    var camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 25, -25, sceneForRoom));
+                    var camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 400, 0, sceneForRoom));
+                    camera.rotation = new BABYLON.Vector3(1.5, 1, 1);
                     self.scenes[roomId] = sceneForRoom;
                 }
                 else {
@@ -132,9 +133,12 @@ var Server;
             var self = this;
             this.socket.on('showPlayer', function (playerData) {
                 console.log('BABYLON: connected new player - ' + playerData.id);
-                var activeCharacter = playerData.characters[playerData.activeCharacter];
-                var roomId = activeCharacter.roomId;
+                var activeCharacter = playerData.activePlayer;
+                var roomId = playerData.activeRoom.id;
                 var scene = self.scenes[roomId];
+                console.log(activeCharacter);
+                console.log(roomId);
+                console.log(scene);
                 if (!scene) {
                     return;
                 }
@@ -151,11 +155,11 @@ var Server;
                     if (remotePlayerKey === null) {
                         var box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
                         box.checkCollisions = true;
-                        box.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);
+                        box.position = new BABYLON.Vector3(playerData.position.x, playerData.position.y, playerData.position.z);
                         box.actionManager = new BABYLON.ActionManager(scene);
                         var remotePlayer = {
                             id: activeCharacter.id,
-                            socketId: playerData.id,
+                            socketId: playerData.connectionId,
                             walkSpeed: activeCharacter.statistics.walkSpeed,
                             roomId: roomId,
                             mesh: box,
@@ -175,11 +179,7 @@ var Server;
         BabylonManager.prototype.removePlayer = function () {
             var self = this;
             this.socket.on('removePlayer', function (id) {
-                var playersInRoomCount = 0;
                 self.players.forEach(function (remotePlayer, key) {
-                    if (remotePlayer.roomId == id) {
-                        playersInRoomCount++;
-                    }
                     if (remotePlayer.socketId == id) {
                         var player = self.players[key];
                         var roomId = player.roomId;
@@ -197,10 +197,6 @@ var Server;
                         }
                         player.mesh.dispose();
                         self.players.splice(key, 1);
-                    }
-                    if (playersInRoomCount == 0) {
-                        console.log('delete scene');
-                        delete self.scenes[roomId];
                     }
                 });
             });
@@ -302,7 +298,7 @@ var Server;
             var self = this;
             var activeTargetPoints = [];
             this.socket.on('updatePlayer', function (updatedPlayer) {
-                console.log('BABYLON: update player - ' + updatedPlayer.id);
+                // console.log('BABYLON: update player - '+ updatedPlayer.id);
                 var remotePlayerKey = null;
                 var player = null;
                 self.players.forEach(function (remotePlayer, key) {

@@ -31,7 +31,7 @@ abstract class Scene {
         let assetsManager = this.assetManager;
 
         scene.executeWhenReady(function () {
-            game.client.socket.emit('createPlayer');
+            // game.client.socket.emit('createPlayer');
 
             assetsManager.onFinish = function (tasks) {
                 // self.octree = scene.createOrUpdateSelectionOctree();

@@ -16,7 +16,6 @@ class EnvironmentForestHouseTomb {
             if (meshName.search("Ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 sceneMesh.receiveShadows = true;
-                console.log(sceneMesh.material);
                 sceneMesh.material.diffuseTexture.uScale = 1;
                 sceneMesh.material.diffuseTexture.vScale = 1;
 

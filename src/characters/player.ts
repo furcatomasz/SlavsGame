@@ -160,7 +160,6 @@ class Player extends AbstractCharacter {
      * @param inventoryItems
      */
     public setItems(inventoryItems: Array<any>) {
-        console.log(inventoryItems);
         if(inventoryItems) {
             let self = this;
             let game = this.game;

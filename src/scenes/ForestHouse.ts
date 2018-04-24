@@ -18,7 +18,7 @@ class ForestHouse extends Scene {
                 .setFog(scene)
                 .defaultPipeline(scene)
                 .executeWhenReady(function() {
-                    console.log('callback');
+
                 });
         });
     }

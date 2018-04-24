@@ -116,7 +116,7 @@ var Scene = /** @class */ (function () {
         var scene = this.babylonScene;
         var assetsManager = this.assetManager;
         scene.executeWhenReady(function () {
-            game.client.socket.emit('createPlayer');
+            // game.client.socket.emit('createPlayer');
             assetsManager.onFinish = function (tasks) {
                 // self.octree = scene.createOrUpdateSelectionOctree();
                 self.environment = new EnvironmentForestHouse(game, scene);
@@ -436,7 +436,6 @@ var Monster = /** @class */ (function (_super) {
             });
         };
         _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function (pointer) {
-            console.log('OnPickDownTrigger');
             if (self.game.player.isAlive) {
                 game.controller.attackPoint = pointer.meshUnderPointer;
                 game.controller.targetPoint = null;
@@ -446,17 +445,14 @@ var Monster = /** @class */ (function (_super) {
             }
         }));
         _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function (pointer) {
-            console.log('OnPickUpTrigger');
             clearInterval(self.intervalAttackRegisteredFunction);
             self.game.controller.attackPoint = null;
         }));
         _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger, function (pointer) {
-            console.log('OnPickOutTrigger');
             clearInterval(self.intervalAttackRegisteredFunction);
             self.game.controller.attackPoint = null;
         }));
         _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function (pointer) {
-            console.log('OnPickTrigger');
             clearInterval(self.intervalAttackRegisteredFunction);
             self.game.controller.attackPoint = null;
         }));
@@ -701,7 +697,6 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         var self = this;
         this.socket.on('showPlayer', function (playerData) {
-            console.log(playerData);
             game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
             var octree = game.sceneManager.octree;
@@ -767,7 +762,6 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.showEnemies = function () {
         var game = this.game;
         this.socket.on('showEnemies', function (data) {
-            console.log(data);
             data.forEach(function (enemyData, key) {
                 var enemy = game.enemies[key];
                 if (enemy) {
@@ -1418,7 +1412,6 @@ var Player = /** @class */ (function (_super) {
      * @param inventoryItems
      */
     Player.prototype.setItems = function (inventoryItems) {
-        console.log(inventoryItems);
         if (inventoryItems) {
             var self_1 = this;
             var game = this.game;
@@ -2169,7 +2162,6 @@ var EnvironmentForestHouseTomb = /** @class */ (function () {
             if (meshName.search("Ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 sceneMesh.receiveShadows = true;
-                console.log(sceneMesh.material);
                 sceneMesh.material.diffuseTexture.uScale = 1;
                 sceneMesh.material.diffuseTexture.vScale = 1;
                 this.ground = sceneMesh;
@@ -3259,7 +3251,6 @@ var ForestHouse = /** @class */ (function (_super) {
                 .setFog(scene)
                 .defaultPipeline(scene)
                 .executeWhenReady(function () {
-                console.log('callback');
             });
         });
     };

@@ -382,6 +382,7 @@ class SocketIOClient {
         let self = this;
         let activeTargetPoints = [];
         this.socket.on('updateEnemy', function (data) {
+            console.log(data);
             let updatedEnemy = data.enemy;
             let enemyKey = data.enemyKey;
             let enemy = game.enemies[enemyKey];
@@ -463,6 +464,8 @@ class SocketIOClient {
                     if (enemy.animation) {
                         enemy.animation.stop();
                     }
+                    console.log(game.remotePlayers);
+                    console.log(game.player);
                     game.remotePlayers.forEach(function (socketRemotePlayer) {
                         if (updatedEnemy.target == socketRemotePlayer.id) {
                             targetMesh = socketRemotePlayer.mesh;

@@ -791,6 +791,7 @@ var SocketIOClient = /** @class */ (function () {
         var self = this;
         var activeTargetPoints = [];
         this.socket.on('updateEnemy', function (data) {
+            console.log(data);
             var updatedEnemy = data.enemy;
             var enemyKey = data.enemyKey;
             var enemy = game.enemies[enemyKey];
@@ -861,6 +862,8 @@ var SocketIOClient = /** @class */ (function () {
                     if (enemy.animation) {
                         enemy.animation.stop();
                     }
+                    console.log(game.remotePlayers);
+                    console.log(game.player);
                     game.remotePlayers.forEach(function (socketRemotePlayer) {
                         if (updatedEnemy.target == socketRemotePlayer.id) {
                             targetMesh_1 = socketRemotePlayer.mesh;
@@ -1291,7 +1294,8 @@ var Player = /** @class */ (function (_super) {
     function Player(game, registerMoving, serverData) {
         if (serverData === void 0) { serverData = []; }
         var _this = this;
-        _this.id = serverData.id;
+        console.log(serverData);
+        _this.id = serverData.activePlayer.id;
         _this.game = game;
         _this.isAlive = true;
         _this.setCharacterStatistics(serverData.activePlayer.statistics);

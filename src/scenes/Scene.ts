@@ -26,7 +26,7 @@ abstract class Scene {
         return this;
     }
 
-    protected executeWhenReady(callback: Function) {
+    protected executeWhenReady(onReady: Function, onPlayerConnected: Function) {
         let scene = this.babylonScene;
         let assetsManager = this.assetManager;
 
@@ -34,16 +34,18 @@ abstract class Scene {
             // game.client.socket.emit('createPlayer');
 
             assetsManager.onFinish = function (tasks) {
+                if(onReady) {
+                    onReady();
+                }
                 // self.octree = scene.createOrUpdateSelectionOctree();
-                self.environment = new EnvironmentForestHouse(game, scene);
 
                 game.client.socket.emit('changeScenePre');
             };
             assetsManager.load();
 
             let listener = function listener() {
-                if(callback) {
-                    callback();
+                if(onPlayerConnected) {
+                    onPlayerConnected();
                 }
 
                 game.controller.registerControls(scene);
@@ -174,8 +176,6 @@ abstract class Scene {
 
         return this;
     }
-
-    public abstract getType();
 
     public abstract initScene(game: Game);
 }

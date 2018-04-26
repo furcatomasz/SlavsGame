@@ -112,20 +112,22 @@ var Scene = /** @class */ (function () {
         }
         return this;
     };
-    Scene.prototype.executeWhenReady = function (callback) {
+    Scene.prototype.executeWhenReady = function (onReady, onPlayerConnected) {
         var scene = this.babylonScene;
         var assetsManager = this.assetManager;
         scene.executeWhenReady(function () {
             // game.client.socket.emit('createPlayer');
             assetsManager.onFinish = function (tasks) {
+                if (onReady) {
+                    onReady();
+                }
                 // self.octree = scene.createOrUpdateSelectionOctree();
-                self.environment = new EnvironmentForestHouse(game, scene);
                 game.client.socket.emit('changeScenePre');
             };
             assetsManager.load();
             var listener = function listener() {
-                if (callback) {
-                    callback();
+                if (onPlayerConnected) {
+                    onPlayerConnected();
                 }
                 game.controller.registerControls(scene);
                 game.client.socket.emit('getQuests');
@@ -791,7 +793,6 @@ var SocketIOClient = /** @class */ (function () {
         var self = this;
         var activeTargetPoints = [];
         this.socket.on('updateEnemy', function (data) {
-            console.log(data);
             var updatedEnemy = data.enemy;
             var enemyKey = data.enemyKey;
             var enemy = game.enemies[enemyKey];
@@ -848,45 +849,45 @@ var SocketIOClient = /** @class */ (function () {
                 if (distanceBetweenObjects > 8) {
                     mesh_1.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
                 }
-                if (activeTargetPoints[enemyKey] !== undefined) {
-                    self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
-                }
-                if (updatedEnemy.collisionWithCharacter == true) {
-                    enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                }
-                if (updatedEnemy.attack == true) {
-                    enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
-                }
-                else if (updatedEnemy.target) {
-                    var targetMesh_1 = null;
-                    if (enemy.animation) {
-                        enemy.animation.stop();
+                if (data.collisionEvent) {
+                    if (activeTargetPoints[enemyKey] !== undefined) {
+                        self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
                     }
-                    console.log(game.remotePlayers);
-                    console.log(game.player);
-                    game.remotePlayers.forEach(function (socketRemotePlayer) {
-                        if (updatedEnemy.target == socketRemotePlayer.id) {
-                            targetMesh_1 = socketRemotePlayer.mesh;
+                    if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack' && updatedEnemy.attack == true) {
+                        enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
+                    }
+                    else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
+                        var targetMesh_1 = null;
+                        if (enemy.animation) {
+                            enemy.animation.stop();
                         }
-                    });
-                    if (!targetMesh_1 && game.player.id == updatedEnemy.target) {
-                        targetMesh_1 = game.player.meshForMove;
+                        game.remotePlayers.forEach(function (socketRemotePlayer) {
+                            if (updatedEnemy.target == socketRemotePlayer.id) {
+                                targetMesh_1 = socketRemotePlayer.mesh;
+                            }
+                        });
+                        if (!targetMesh_1 && game.player.id == updatedEnemy.target) {
+                            targetMesh_1 = game.player.meshForMove;
+                        }
+                        if (targetMesh_1) {
+                            activeTargetPoints[enemyKey] = function () {
+                                mesh_1.lookAt(targetMesh_1.position);
+                                var rotation = mesh_1.rotation;
+                                if (mesh_1.rotationQuaternion) {
+                                    rotation = mesh_1.rotationQuaternion.toEulerAngles();
+                                }
+                                rotation.negate();
+                                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / enemy.getWalkSpeed());
+                                mesh_1.moveWithCollisions(forwards);
+                                if (enemy.animation) {
+                                }
+                                enemy.runAnimationWalk();
+                            };
+                            self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
+                        }
                     }
-                    if (targetMesh_1) {
-                        activeTargetPoints[enemyKey] = function () {
-                            mesh_1.lookAt(targetMesh_1.position);
-                            var rotation = mesh_1.rotation;
-                            if (mesh_1.rotationQuaternion) {
-                                rotation = mesh_1.rotationQuaternion.toEulerAngles();
-                            }
-                            rotation.negate();
-                            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / enemy.getWalkSpeed());
-                            mesh_1.moveWithCollisions(forwards);
-                            if (enemy.animation) {
-                            }
-                            enemy.runAnimationWalk();
-                        };
-                        self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
+                    else if (data.collisionEvent == 'OnIntersectionExitTriggerVisibility') {
+                        enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     }
                 }
                 setTimeout(function () {
@@ -916,28 +917,22 @@ var SocketIOClient = /** @class */ (function () {
         var self = this;
         var game = this.game;
         this.socket.on('updatePlayer', function (updatedPlayer) {
-            var remotePlayerKey = null;
             var player = null;
-            if (updatedPlayer.connectionId == self.connectionId) {
+            if (updatedPlayer.activePlayer.id == game.player.id) {
                 player = game.player;
-                remotePlayerKey = -1;
             }
             else {
                 game.remotePlayers.forEach(function (remotePlayer, key) {
-                    if (remotePlayer.connectionId == updatedPlayer.connectionId) {
-                        remotePlayerKey = key;
+                    if (remotePlayer.id == updatedPlayer.activePlayer.id) {
+                        player = game.remotePlayers[key];
                         return;
                     }
                 });
-                player = game.remotePlayers[remotePlayerKey];
-            }
-            if (!player) {
-                return;
             }
             ///action when hp of character is changed
-            if (player.statistics.hp != updatedPlayer.statistics.hp) {
-                var damage_2 = (player.statistics.hp - updatedPlayer.statistics.hp);
-                player.statistics.hp = updatedPlayer.statistics.hp;
+            if (player.statistics.hp != updatedPlayer.activePlayer.statistics.hp) {
+                var damage_2 = (player.statistics.hp - updatedPlayer.activePlayer.statistics.hp);
+                player.statistics.hp = updatedPlayer.activePlayer.statistics.hp;
                 setTimeout(function () {
                     player.bloodParticles.start();
                     var label = new BABYLON.GUI.TextBlock();
@@ -1058,6 +1053,7 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.changeScene = function (newScene) {
         var sceneToDispose = this.getScene();
+        console.log(sceneToDispose);
         if (sceneToDispose) {
             setTimeout(function () {
                 sceneToDispose.dispose();
@@ -1065,6 +1061,7 @@ var Game = /** @class */ (function () {
         }
         this.activeScene = null;
         this.controller.forward = false;
+        console.log();
         newScene.initScene(this);
     };
     Game.randomNumber = function (minimum, maximum) {
@@ -1294,7 +1291,6 @@ var Player = /** @class */ (function (_super) {
     function Player(game, registerMoving, serverData) {
         if (serverData === void 0) { serverData = []; }
         var _this = this;
-        console.log(serverData);
         _this.id = serverData.activePlayer.id;
         _this.game = game;
         _this.isAlive = true;
@@ -1529,6 +1525,7 @@ var Mouse = /** @class */ (function (_super) {
     Mouse.prototype.registerControls = function (scene) {
         var self = this;
         var clickTrigger = false;
+        var lastUpdate = new Date().getTime() / 1000;
         var ball = BABYLON.Mesh.CreateBox("mouseBox", 0.4, scene);
         var meshFlag = this.game.factories['flag'].createInstance('Flag', false);
         meshFlag.visibility = 0;
@@ -1565,7 +1562,7 @@ var Mouse = /** @class */ (function (_super) {
                     self.game.player.runPlayerToPosition(self.targetPoint);
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint,
-                        playerPosition: self.game.player.meshForMove.position
+                        playerPosition: self.game.player.mesh.position
                     });
                 }
             }
@@ -1582,10 +1579,13 @@ var Mouse = /** @class */ (function (_super) {
                         self.targetPoint.y = 0;
                         self.ball.position = self.targetPoint;
                         self.game.player.runPlayerToPosition(self.targetPoint);
-                        self.game.client.socket.emit('setTargetPoint', {
-                            position: self.targetPoint,
-                            playerPosition: self.game.player.mesh.position
-                        });
+                        if (lastUpdate < (new Date().getTime() / 1000) - 0.3) {
+                            lastUpdate = (new Date().getTime() / 1000);
+                            self.game.client.socket.emit('setTargetPoint', {
+                                position: self.targetPoint,
+                                playerPosition: self.game.player.mesh.position
+                            });
+                        }
                     }
                 }
             }
@@ -1718,7 +1718,7 @@ var Factories;
                 trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                 parameter: gateway
             }, function () {
-                game.client.socket.emit('changeScene', openSceneType);
+                game.client.socket.emit('changeSceneTrigger', openSceneType);
                 return this;
             }));
         }
@@ -2603,7 +2603,9 @@ var GUI;
             characterPanel.addControl(hpSlider);
         };
         ShowHp.prototype.refreshPanel = function () {
-            this.hpBar.value = this.character.statistics.hp;
+            if (this.character) {
+                this.hpBar.value = this.character.statistics.hp;
+            }
         };
         ShowHp.prototype.hideHpBar = function () {
             if (this.guiPanel) {
@@ -3255,11 +3257,9 @@ var ForestHouse = /** @class */ (function (_super) {
                 .setFog(scene)
                 .defaultPipeline(scene)
                 .executeWhenReady(function () {
-            });
+                self.environment = new EnvironmentForestHouse(game, scene);
+            }, null);
         });
-    };
-    ForestHouse.prototype.getType = function () {
-        return ForestHouse.TYPE;
     };
     ForestHouse.TYPE = 2;
     return ForestHouse;
@@ -3333,44 +3333,15 @@ var ForestHouseTomb = /** @class */ (function (_super) {
         BABYLON.SceneLoader.Load("assets/scenes/Forest_House_Tomb/", "Forest_House_Tomb.babylon", game.engine, function (scene) {
             game.sceneManager = self;
             self
-                .setDefaults(game)
+                .setDefaults(game, scene)
                 .optimizeScene(scene)
                 .setCamera(scene)
                 .setFog(scene)
-                .defaultPipeline(scene);
-            scene.debugLayer.show();
-            scene.actionManager = new BABYLON.ActionManager(scene);
-            var assetsManager = new BABYLON.AssetsManager(scene);
-            self.initFactories(scene, assetsManager);
-            var sceneIndex = game.scenes.push(scene);
-            game.activeScene = sceneIndex - 1;
-            scene.executeWhenReady(function () {
-                game.client.socket.emit('createPlayer');
-                assetsManager.onFinish = function (tasks) {
-                    // self.octree = scene.createOrUpdateSelectionOctree();
-                    self.environment = new EnvironmentForestHouseTomb(game, scene);
-                    game.client.socket.emit('changeScenePre', {
-                        sceneType: ForestHouseTomb.TYPE
-                    });
-                };
-                assetsManager.load();
-                var listener = function listener() {
-                    game.controller.registerControls(scene);
-                    game.client.socket.emit('getQuests');
-                    game.client.showEnemies();
-                    self.defaultPipeline(scene);
-                    game.client.socket.emit('changeScenePost', {
-                        sceneType: ForestHouseTomb.TYPE
-                    });
-                    game.client.socket.emit('refreshGateways');
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-                };
-                document.addEventListener(Events.PLAYER_CONNECTED, listener);
-            });
+                .defaultPipeline(scene)
+                .executeWhenReady(function () {
+                self.environment = new EnvironmentForestHouseTomb(game, scene);
+            }, null);
         });
-    };
-    ForestHouseTomb.prototype.getType = function () {
-        return Simple.TYPE;
     };
     ForestHouseTomb.TYPE = 3;
     return ForestHouseTomb;

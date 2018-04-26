@@ -29,7 +29,7 @@ namespace Factories {
                 trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                 parameter: gateway
             }, function () {
-                game.client.socket.emit('changeScene', openSceneType);
+                game.client.socket.emit('changeSceneTrigger', openSceneType);
 
                 return this;
             }));

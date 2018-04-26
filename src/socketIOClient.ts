@@ -382,7 +382,6 @@ class SocketIOClient {
         let self = this;
         let activeTargetPoints = [];
         this.socket.on('updateEnemy', function (data) {
-            console.log(data);
             let updatedEnemy = data.enemy;
             let enemyKey = data.enemyKey;
             let enemy = game.enemies[enemyKey];
@@ -449,59 +448,57 @@ class SocketIOClient {
                 if(distanceBetweenObjects > 8) {
                     mesh.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
                 }
-                if (activeTargetPoints[enemyKey] !== undefined) {
-                    self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
-                }
 
-                if (updatedEnemy.collisionWithCharacter == true) {
-                    enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                }
-
-                if (updatedEnemy.attack == true) {
-                    enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
-                } else if (updatedEnemy.target) {
-                    let targetMesh = null;
-                    if (enemy.animation) {
-                        enemy.animation.stop();
-                    }
-                    console.log(game.remotePlayers);
-                    console.log(game.player);
-                    game.remotePlayers.forEach(function (socketRemotePlayer) {
-                        if (updatedEnemy.target == socketRemotePlayer.id) {
-                            targetMesh = socketRemotePlayer.mesh;
-                        }
-                    });
-
-                    if (!targetMesh && game.player.id == updatedEnemy.target) {
-                        targetMesh = game.player.meshForMove;
+                if(data.collisionEvent) {
+                    if (activeTargetPoints[enemyKey] !== undefined) {
+                        self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
                     }
 
-                    if (targetMesh) {
-                        activeTargetPoints[enemyKey] = function () {
-                            mesh.lookAt(targetMesh.position);
-
-                            let rotation = mesh.rotation;
-                            if (mesh.rotationQuaternion) {
-                                rotation = mesh.rotationQuaternion.toEulerAngles();
+                    if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack' && updatedEnemy.attack == true) {
+                        enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
+                    } else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
+                        let targetMesh = null;
+                        if (enemy.animation) {
+                            enemy.animation.stop();
+                        }
+                        game.remotePlayers.forEach(function (socketRemotePlayer) {
+                            if (updatedEnemy.target == socketRemotePlayer.id) {
+                                targetMesh = socketRemotePlayer.mesh;
                             }
-                            rotation.negate();
-                            let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / enemy.getWalkSpeed());
-                            mesh.moveWithCollisions(forwards);
+                        });
 
-                            if (enemy.animation) {
-
-                            }
-                            enemy.runAnimationWalk();
-
+                        if (!targetMesh && game.player.id == updatedEnemy.target) {
+                            targetMesh = game.player.meshForMove;
                         }
 
-                        self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
+                        if (targetMesh) {
+                            activeTargetPoints[enemyKey] = function () {
+                                mesh.lookAt(targetMesh.position);
+
+                                let rotation = mesh.rotation;
+                                if (mesh.rotationQuaternion) {
+                                    rotation = mesh.rotationQuaternion.toEulerAngles();
+                                }
+                                rotation.negate();
+                                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / enemy.getWalkSpeed());
+                                mesh.moveWithCollisions(forwards);
+
+                                if (enemy.animation) {
+
+                                }
+                                enemy.runAnimationWalk();
+
+                            }
+
+                            self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
+                        }
+                    } else if (data.collisionEvent == 'OnIntersectionExitTriggerVisibility') {
+                        enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     }
                 }
 
                 setTimeout(function() {
                     self.game.gui.characterTopHp.refreshPanel();
-
                 }, 300);
             }
         });
@@ -535,30 +532,23 @@ class SocketIOClient {
         let game = this.game;
 
         this.socket.on('updatePlayer', function (updatedPlayer) {
-            let remotePlayerKey = null;
             let player = null;
-
-            if (updatedPlayer.connectionId == self.connectionId) {
+            if (updatedPlayer.activePlayer.id == game.player.id) {
                 player = game.player;
-                remotePlayerKey = -1;
             } else {
                 game.remotePlayers.forEach(function (remotePlayer, key) {
-                    if (remotePlayer.connectionId == updatedPlayer.connectionId) {
-                        remotePlayerKey = key;
+                    if (remotePlayer.id == updatedPlayer.activePlayer.id) {
+                        player = game.remotePlayers[key];
                         return;
                     }
                 });
-                player = game.remotePlayers[remotePlayerKey];
             }
 
-            if(!player) {
-                return;
-            }
 
             ///action when hp of character is changed
-            if(player.statistics.hp != updatedPlayer.statistics.hp) {
-                let damage = (player.statistics.hp-updatedPlayer.statistics.hp);
-                player.statistics.hp = updatedPlayer.statistics.hp;
+            if(player.statistics.hp != updatedPlayer.activePlayer.statistics.hp) {
+                let damage = (player.statistics.hp-updatedPlayer.activePlayer.statistics.hp);
+                player.statistics.hp = updatedPlayer.activePlayer.statistics.hp;
                 setTimeout(function() {
 
                     player.bloodParticles.start();
@@ -610,7 +600,6 @@ class SocketIOClient {
 
             }
             
-
             if (updatedPlayer.attack == true && !player.isAttack) {
                 let targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {

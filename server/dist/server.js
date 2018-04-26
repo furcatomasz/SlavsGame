@@ -58,20 +58,24 @@ var Server;
                             console.log('BABYLON: unregister function enemy - ' + remoteEnemyId);
                             scene.unregisterBeforeRender(activeTargetFunction);
                         });
+                        clearInterval(localEnemy.attackInterval);
                         localEnemy.mesh.dispose();
-                        self.players.forEach(function (player) {
-                            var playerActionManager = player.mesh.actionManager;
-                            playerActionManager.actions.forEach(function (action, key) {
-                                if (action._triggerParameter == localEnemy.visibilityAreaMesh ||
-                                    action._triggerParameter == localEnemy.mesh) {
-                                    ///TODO: There should be unregister enemy triggers
-                                    console.log('BABYLON: deleted from action manager enemy - ' + remoteEnemyId);
-                                    //setTimeout(function() {
-                                    //    delete playerActionManager.actions[key];
-                                    //});
-                                }
-                            });
-                        });
+                        // self.players.forEach(function(player) {
+                        //     let playerActionManager = player.mesh.actionManager;
+                        //     playerActionManager.actions.forEach(function(action, key) {
+                        //         if(action._triggerParameter == localEnemy.visibilityAreaMesh ||
+                        //             action._triggerParameter == localEnemy.mesh)
+                        //         {
+                        //             ///TODO: There should be unregister enemy triggers
+                        //             console.log('BABYLON: deleted from action manager enemy - ' + remoteEnemyId);
+                        //
+                        //             //setTimeout(function() {
+                        //             //    delete playerActionManager.actions[key];
+                        //             //});
+                        //         }
+                        //     });
+                        //
+                        // });
                     }
                 }
             });
@@ -111,7 +115,8 @@ var Server;
                             target: false,
                             activeTargetPoints: [],
                             walkSpeed: enemyData.statistics.walkSpeed,
-                            visibilityAreaMesh: visibilityArea
+                            visibilityAreaMesh: visibilityArea,
+                            attackInterval: null
                         };
                         self.enemies[roomId][key] = enemy;
                     }
@@ -126,7 +131,8 @@ var Server;
                     console.log('BABYLON: crate new room with scene - ' + roomId);
                     var sceneForRoom = new BABYLON.Scene(self.engine);
                     sceneForRoom.collisionsEnabled = true;
-                    var camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 25, -25, sceneForRoom));
+                    var camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 400, 0, sceneForRoom));
+                    camera.rotation = new BABYLON.Vector3(1.5, 1, 1);
                     self.scenes[roomId] = sceneForRoom;
                 }
                 else {
@@ -139,38 +145,28 @@ var Server;
             var self = this;
             this.socket.on('showPlayer', function (playerData) {
                 console.log('BABYLON: connected new player - ' + playerData.id);
-                var activeCharacter = playerData.characters[playerData.activeCharacter];
-                var roomId = activeCharacter.roomId;
+                var activeCharacter = playerData.activePlayer;
+                var roomId = playerData.activeRoom.id;
                 var scene = self.scenes[roomId];
                 if (!scene) {
                     return;
                 }
-                var remotePlayerKey = null;
-                if (playerData.id !== self.socket.id) {
-                    //check if user exists
-                    self.players.forEach(function (remotePlayer, key) {
-                        if (remotePlayer.id == playerData.id) {
-                            remotePlayerKey = key;
-                            return;
-                        }
-                    });
+                if (playerData.connectionId !== self.socket.id) {
                     //if user not exists create scene and box with action manager
-                    if (remotePlayerKey === null) {
-                        var box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
-                        box.checkCollisions = true;
-                        box.position = new BABYLON.Vector3(activeCharacter.position.x, activeCharacter.position.y, activeCharacter.position.z);
-                        box.actionManager = new BABYLON.ActionManager(scene);
-                        var remotePlayer = {
-                            id: activeCharacter.id,
-                            socketId: playerData.id,
-                            walkSpeed: activeCharacter.statistics.walkSpeed,
-                            roomId: roomId,
-                            mesh: box,
-                            registeredFunction: null
-                        };
-                        self.players.push(remotePlayer);
-                        self.registerPlayerInEnemyActionManager(remotePlayer);
-                    }
+                    var box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
+                    box.checkCollisions = true;
+                    box.position = new BABYLON.Vector3(playerData.position.x, playerData.position.y, playerData.position.z);
+                    box.actionManager = new BABYLON.ActionManager(scene);
+                    var remotePlayer = {
+                        id: activeCharacter.id,
+                        socketId: playerData.connectionId,
+                        walkSpeed: activeCharacter.statistics.walkSpeed,
+                        roomId: roomId,
+                        mesh: box,
+                        registeredFunction: null
+                    };
+                    self.players[activeCharacter.id] = remotePlayer;
+                    self.registerPlayerInEnemyActionManager(remotePlayer);
                 }
             });
             return this;
@@ -226,19 +222,26 @@ var Server;
                     mesh.moveWithCollisions(forwards);
                     mesh.position.y = 0;
                 };
+                var setEnemyTargetFunction = function (position, attack, event) {
+                    self.socket.emit('setEnemyTarget', {
+                        enemyKey: key,
+                        position: position,
+                        roomId: roomId,
+                        target: playerMesh.id,
+                        attack: attack,
+                        collisionEvent: event
+                    });
+                };
                 ////start attack
                 playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: enemy.mesh
                 }, function () {
                     if (!enemy.mesh._isDisposed && enemy.target) {
-                        self.socket.emit('setEnemyTarget', {
-                            enemyKey: key,
-                            position: enemy.mesh.position,
-                            roomId: roomId,
-                            target: playerMesh.id,
-                            attack: true
-                        });
+                        setEnemyTargetFunction(enemy.mesh.position, true, 'OnIntersectionEnterTriggerAttack');
+                        enemy.attackInterval = setInterval(function () {
+                            setEnemyTargetFunction(enemy.mesh.position, true, 'OnIntersectionEnterTriggerAttack');
+                        }, 1500);
                         scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                         console.log('BABYLON: Enemy ' + key + ' start attack player ' + socketId + ', roomID:' + roomId);
                     }
@@ -249,13 +252,8 @@ var Server;
                     parameter: enemy.mesh
                 }, function () {
                     if (!enemy.mesh._isDisposed && enemy.target) {
-                        self.socket.emit('setEnemyTarget', {
-                            enemyKey: key,
-                            position: enemy.mesh.position,
-                            roomId: roomId,
-                            target: playerMesh.id,
-                            attack: false
-                        });
+                        setEnemyTargetFunction(enemy.mesh.position, false, 'OnIntersectionExitTriggerAttack');
+                        clearInterval(enemy.attackInterval);
                         scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                         console.log('BABYLON: Enemy ' + key + ' stop attack player ' + socketId + ', roomID:' + roomId);
                     }
@@ -270,7 +268,9 @@ var Server;
                             enemyKey: key,
                             position: enemy.mesh.position,
                             roomId: roomId,
-                            target: playerMesh.id
+                            target: playerMesh.id,
+                            attack: false,
+                            collisionEvent: 'OnIntersectionEnterTriggerVisibility'
                         });
                         enemy.target = playerMesh.id;
                         scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
@@ -288,7 +288,9 @@ var Server;
                             enemyKey: key,
                             position: enemy.mesh.position,
                             roomId: roomId,
-                            target: null
+                            target: null,
+                            attack: false,
+                            collisionEvent: 'OnIntersectionExitTriggerVisibility'
                         });
                         enemy.target = false;
                         console.log('BABYLON: Enemy ' + key + ' lost target ' + socketId + ', roomID:' + roomId);
@@ -301,68 +303,57 @@ var Server;
             var self = this;
             var activeTargetPoints = [];
             this.socket.on('updatePlayer', function (updatedPlayer) {
-                // console.log('BABYLON: update player - '+ updatedPlayer.id);
-                var remotePlayerKey = null;
-                var player = null;
-                self.players.forEach(function (remotePlayer, key) {
-                    if (remotePlayer.socketId == updatedPlayer.connectionId) {
-                        remotePlayerKey = key;
+                console.log('BABYLON: update player - ' + updatedPlayer.id);
+                var player = self.players[updatedPlayer.activePlayer.id];
+                var scene = self.scenes[updatedPlayer.activeRoom.id];
+                if (player) {
+                    if (updatedPlayer.attack == true) {
+                        console.log('BABYLON: attack player - ' + updatedPlayer.activePlayer.id);
                         return;
                     }
-                });
-                if (remotePlayerKey != null) {
-                    var remotePlayer_1 = self.players[remotePlayerKey];
-                    player = remotePlayer_1.mesh;
-                    var scene_2 = self.scenes[remotePlayer_1.roomId];
-                    if (player) {
-                        if (updatedPlayer.attack == true) {
-                            console.log('BABYLON: attack player - ' + updatedPlayer.id);
-                            return;
-                        }
-                        if (remotePlayer_1.registeredFunction !== undefined) {
-                            scene_2.unregisterBeforeRender(remotePlayer_1.registeredFunction);
-                        }
-                        if (updatedPlayer.targetPoint) {
-                            var mesh_1 = player;
-                            var targetPoint = updatedPlayer.targetPoint;
-                            var targetPointVector3_1 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                            mesh_1.lookAt(targetPointVector3_1);
-                            remotePlayer_1.registeredFunction = function () {
-                                if (mesh_1.intersectsPoint(targetPointVector3_1)) {
-                                    var remotePlayer_2 = self.players[remotePlayerKey];
-                                    console.log('BABYLON: player intersect target point - ' + updatedPlayer.id + ', roomID:' + remotePlayer_2.roomId);
-                                    scene_2.unregisterBeforeRender(remotePlayer_2.registeredFunction);
-                                    self.socket.emit('updatePlayerPosition', {
-                                        playerSocketId: remotePlayer_2.socketId,
-                                        position: player.position
-                                    });
-                                    /*
+                    if (player.registeredFunction !== undefined) {
+                        scene.unregisterBeforeRender(player.registeredFunction);
+                    }
+                    if (updatedPlayer.targetPoint && !updatedPlayer.attack) {
+                        var mesh_1 = player.mesh;
+                        var targetPoint = updatedPlayer.targetPoint;
+                        var targetPointVector3_1 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                        mesh_1.lookAt(targetPointVector3_1);
+                        player.registeredFunction = function () {
+                            if (mesh_1.intersectsPoint(targetPointVector3_1)) {
+                                var player_1 = self.players[updatedPlayer.activePlayer.id];
+                                console.log('BABYLON: player intersect target point - ' + updatedPlayer.id + ', roomID:' + player_1.roomId);
+                                scene.unregisterBeforeRender(player_1.registeredFunction);
+                                // self.socket.emit('updatePlayerPosition', {
+                                //     playerSocketId: player.socketId,
+                                //     position: player.position
+                                // });
+                                /*
 
-                                     socket.on('setTargetPoint', function (targetPoint) {
-                                     let character = player.getActiveCharacter();
-                                     character.attack = null;
-                                     character.targetPoint = targetPoint.position;
-                                     socket.broadcast.emit('updatePlayer', character);
-                                     socket.emit('updatePlayer', character);
-                                     });
+                                 socket.on('setTargetPoint', function (targetPoint) {
+                                 let character = player.getActiveCharacter();
+                                 character.attack = null;
+                                 character.targetPoint = targetPoint.position;
+                                 socket.broadcast.emit('updatePlayer', character);
+                                 socket.emit('updatePlayer', character);
+                                 });
 
-                                     */
+                                 */
+                            }
+                            else {
+                                var rotation = mesh_1.rotation;
+                                if (mesh_1.rotationQuaternion) {
+                                    rotation = mesh_1.rotationQuaternion.toEulerAngles();
                                 }
-                                else {
-                                    var rotation = mesh_1.rotation;
-                                    if (mesh_1.rotationQuaternion) {
-                                        rotation = mesh_1.rotationQuaternion.toEulerAngles();
-                                    }
-                                    rotation.negate();
-                                    var animationRatio = scene_2.getAnimationRatio();
-                                    var walkSpeed = remotePlayer_1.walkSpeed / animationRatio;
-                                    var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
-                                    mesh_1.moveWithCollisions(forwards);
-                                    mesh_1.position.y = 0;
-                                }
-                            };
-                            scene_2.registerBeforeRender(remotePlayer_1.registeredFunction);
-                        }
+                                rotation.negate();
+                                var animationRatio = scene.getAnimationRatio();
+                                var walkSpeed = player.walkSpeed / animationRatio;
+                                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                                mesh_1.moveWithCollisions(forwards);
+                                mesh_1.position.y = 0;
+                            }
+                        };
+                        scene.registerBeforeRender(player.registeredFunction);
                     }
                 }
             });
@@ -522,14 +513,14 @@ var Server;
                 var isMonsterServer = socket.handshake.query.monsterServer;
                 ///Client socket events
                 if (!isMonsterServer) {
-                    var player_1 = new Server.Player(socket.id);
+                    var player_2 = new Server.Player(socket.id);
                     ///create room of user
                     socket.join(socket.id);
                     self.rooms.push({
                         roomId: socket.id,
                         players: [socket.id]
                     });
-                    player_1.activeCharacter = 1;
+                    player_2.activeCharacter = 1;
                     ////CLEAR QUESTS
                     // if(server.ormManager.structure.playerQuest) {
                     //     server.ormManager.structure.playerQuest.allAsync().then(function (playerQuests) {
@@ -538,108 +529,127 @@ var Server;
                     //         }
                     //     });
                     // }
-                    player_1.refreshPlayerData(server, function () {
-                        socket.emit('clientConnected', player_1);
-                    });
+                    // player.refreshPlayerData(server, function () {
+                    //     socket.emit('clientConnected', player);
+                    // });
                     //CHANGE SCENE CHANNELS
-                    socket.on('changeScenePre', function (sceneData) {
-                        var sceneType = sceneData.sceneType;
-                        var roomId = player_1.getActiveCharacter().roomId;
-                        player_1.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
-                        if (server.enemies[sceneType] !== undefined) {
-                            self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
-                            serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
-                                enemies: self.getEnemiesInRoom(roomId),
-                                roomId: roomId
-                            });
-                        }
-                        socket.emit('showPlayer', player_1);
-                    });
-                    socket.on('changeScenePost', function (sceneData) {
-                        player_1.activeScene = sceneData.sceneType;
-                        serverIO.to(self.monsterServerSocketId).emit('showPlayer', player_1);
-                        socket.emit('showEnemies', self.enemies[player_1.getActiveCharacter().roomId]);
-                    });
+                    // socket.on('changeScenePre', function (sceneData) {
+                    //     let sceneType = sceneData.sceneType;
+                    //     let roomId = player.getActiveCharacter().roomId;
+                    //
+                    //     player.getActiveCharacter().position = self.getDefaultPositionForScene(sceneType);
+                    //     if(server.enemies[sceneType] !== undefined) {
+                    //         self.enemies[roomId] = JSON.parse(JSON.stringify(server.enemies[sceneType]));
+                    //
+                    //         serverIO.to(self.monsterServerSocketId).emit('createEnemies', {
+                    //             enemies: self.getEnemiesInRoom(roomId),
+                    //             roomId: roomId,
+                    //         });
+                    //     }
+                    //     socket.emit('showPlayer', player);
+                    //
+                    // });
+                    //
+                    // socket.on('changeScenePost', function (sceneData) {
+                    //     player.activeScene = sceneData.sceneType;
+                    //
+                    //     serverIO.to(self.monsterServerSocketId).emit('showPlayer', player);
+                    //     socket.emit('showEnemies', self.enemies[player.getActiveCharacter().roomId]);
+                    // });
                     /////////////
-                    socket.on('createPlayer', function () {
-                        var character = player_1.getActiveCharacter();
-                        if (character) {
-                            remotePlayers.push(player_1);
-                            character.position = self.getDefaultPositionForScene(2);
-                            serverIO["in"](character.roomId).emit('newPlayerConnected', player_1);
-                            serverIO.to(self.monsterServerSocketId).emit('createRoom', player_1.getActiveCharacter().roomId);
-                        }
-                    });
-                    socket.on('setTargetPoint', function (targetPoint) {
-                        var character = player_1.getActiveCharacter();
-                        character.attack = null;
-                        character.targetPoint = targetPoint.position;
-                        serverIO["in"](character.roomId).emit('updatePlayer', character);
-                        serverIO.to(self.monsterServerSocketId).emit('updatePlayer', character);
-                    });
-                    socket.on('attack', function (data) {
-                        if (player_1.lastPlayerAttack > new Date().getTime() - 1000) {
-                            return;
-                        }
-                        player_1.lastPlayerAttack = new Date().getTime();
-                        var activeCharacter = player_1.getActiveCharacter();
-                        activeCharacter.attack = data.attack;
-                        activeCharacter.targetPoint = data.targetPoint;
-                        self.enemies[activeCharacter.roomId].forEach(function (enemy, enemyKey) {
-                            enemy.availableAttacksFromCharacters.forEach(function (isAtacked, characterId) {
-                                if (isAtacked === true) {
-                                    if (activeCharacter.id == characterId) {
-                                        var attackCharacter = activeCharacter;
-                                        var roomId = activeCharacter.roomId;
-                                        var damage = attackCharacter.statistics.getDamage();
-                                        enemy.statistics.hp -= damage;
-                                        var emitObject = {
-                                            enemy: enemy,
-                                            enemyKey: enemyKey,
-                                            roomId: roomId
-                                        };
-                                        console.log('SOCKET - Attack event');
-                                        serverIO["in"](roomId).emit('updateEnemy', emitObject);
-                                        serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
-                                        ///enemy is killed
-                                        if (enemy.statistics.hp <= 0) {
-                                            emitter.emit('monster_kill', enemy, player_1.getActiveCharacter(), socket);
-                                            ///add special item
-                                            var specialItemFlat = enemy.specialItemsToDrop[0];
-                                            var specialItemManager = new SpecialItems.SpecialItemsManager();
-                                            var specialItem = specialItemManager.getSpecialItem(specialItemFlat.type, specialItemFlat.value);
-                                            if (specialItem) {
-                                                serverIO.emit('addSpecialItem', specialItem);
-                                                specialItem.addItem(player_1.getActiveCharacter(), self.server.ormManager);
-                                            }
-                                            enemy.availableAttacksFromCharacters = [];
-                                            var enemyItem = enemy.itemsToDrop[0];
-                                            var earnedExperience = enemy.experience;
-                                            if (enemyItem) {
-                                                var itemDropKey = player_1.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
-                                                var itemManager = new Items.ItemManager();
-                                                var item = itemManager.getItemUsingId(enemyItem, 0);
-                                                socket.emit('showDroppedItem', {
-                                                    item: item,
-                                                    itemKey: itemDropKey,
-                                                    enemyId: enemyKey
-                                                });
-                                            }
-                                            ///clear attack interval
-                                            if (self.enemiesIntervals[roomId][enemyKey]) {
-                                                clearInterval(self.enemiesIntervals[roomId][enemyKey]);
-                                                self.enemiesIntervals[roomId][enemyKey] = null;
-                                            }
-                                            player_1.getActiveCharacter().addExperience(server, socket, earnedExperience);
-                                        }
-                                        console.log('Attack character ID:' + characterId + ' on enemy with dmg' + damage);
-                                    }
-                                }
-                            });
-                        });
-                        serverIO["in"](activeCharacter.roomId).emit('updatePlayer', activeCharacter);
-                        serverIO.to(self.monsterServerSocketId).emit('updatePlayer', activeCharacter);
-                    });
+                    // socket.on('createPlayer', function () {
+                    //     let character = player.getActiveCharacter();
+                    //     if (character) {
+                    //         remotePlayers.push(player);
+                    //         character.position = self.getDefaultPositionForScene(2);
+                    //
+                    //         serverIO.in(character.roomId).emit('newPlayerConnected', player);
+                    //         serverIO.to(self.monsterServerSocketId).emit('createRoom', player.getActiveCharacter().roomId);
+                    //     }
+                    // });
+                    // socket.on('setTargetPoint', function (targetPoint) {
+                    //     let character = player.getActiveCharacter();
+                    //     character.attack = null;
+                    //     character.targetPoint = targetPoint.position;
+                    //
+                    //     serverIO.in(character.roomId).emit('updatePlayer', character);
+                    //     serverIO.to(self.monsterServerSocketId).emit('updatePlayer', character);
+                    // });
+                    // socket.on('attack', function (data) {
+                    //
+                    //     if (player.lastPlayerAttack > new Date().getTime() - 1000) {
+                    //         return;
+                    //     }
+                    //     player.lastPlayerAttack = new Date().getTime();
+                    //
+                    //     let activeCharacter = player.getActiveCharacter();
+                    //
+                    //     activeCharacter.attack = data.attack;
+                    //     activeCharacter.targetPoint = data.targetPoint;
+                    //
+                    //     self.enemies[activeCharacter.roomId].forEach(function (enemy, enemyKey) {
+                    //         enemy.availableAttacksFromCharacters.forEach(function (isAtacked, characterId) {
+                    //             if (isAtacked === true) {
+                    //                 if (activeCharacter.id == characterId) {
+                    //                     let attackCharacter = activeCharacter;
+                    //                     let roomId = activeCharacter.roomId;
+                    //                     let damage = attackCharacter.statistics.getDamage();
+                    //                     enemy.statistics.hp -= damage;
+                    //                     let emitObject = {
+                    //                         enemy: enemy,
+                    //                         enemyKey: enemyKey,
+                    //                         roomId: roomId
+                    //                     };
+                    //                     console.log('SOCKET - Attack event');
+                    //                     serverIO.in(roomId).emit('updateEnemy', emitObject);
+                    //                     serverIO.to(self.monsterServerSocketId).emit('updateEnemy', emitObject);
+                    //
+                    //                     ///enemy is killed
+                    //                     if (enemy.statistics.hp <= 0) {
+                    //                         emitter.emit('monster_kill', enemy, player.getActiveCharacter(), socket);
+                    //
+                    //                         ///add special item
+                    //                         let specialItemFlat = enemy.specialItemsToDrop[0];
+                    //                         let specialItemManager = new SpecialItems.SpecialItemsManager();
+                    //                         let specialItem = specialItemManager.getSpecialItem(specialItemFlat.type, specialItemFlat.value);
+                    //                         if(specialItem) {
+                    //                             serverIO.emit('addSpecialItem', specialItem);
+                    //                             specialItem.addItem(player.getActiveCharacter(), self.server.ormManager);
+                    //                         }
+                    //
+                    //                         enemy.availableAttacksFromCharacters = [];
+                    //                         let enemyItem = enemy.itemsToDrop[0];
+                    //                         let earnedExperience = enemy.experience;
+                    //
+                    //                         if(enemyItem) {
+                    //                             let itemDropKey = player.getActiveCharacter().itemsDrop.push(enemyItem) - 1;
+                    //                             let itemManager = new Items.ItemManager();
+                    //                             let item = itemManager.getItemUsingId(enemyItem, 0);
+                    //
+                    //                             socket.emit('showDroppedItem', {
+                    //                                 item: item,
+                    //                                 itemKey: itemDropKey,
+                    //                                 enemyId: enemyKey
+                    //                             });
+                    //                         }
+                    //                         ///clear attack interval
+                    //                         if(self.enemiesIntervals[roomId][enemyKey]) {
+                    //                             clearInterval(self.enemiesIntervals[roomId][enemyKey]);
+                    //                             self.enemiesIntervals[roomId][enemyKey] = null;
+                    //                         }
+                    //
+                    //                         player.getActiveCharacter().addExperience(server, socket, earnedExperience);
+                    //                     }
+                    //
+                    //                     console.log('Attack character ID:' + characterId + ' on enemy with dmg' + damage);
+                    //                 }
+                    //             }
+                    //         });
+                    //     });
+                    //
+                    //     serverIO.in(activeCharacter.roomId).emit('updatePlayer', activeCharacter);
+                    //     serverIO.to(self.monsterServerSocketId).emit('updatePlayer', activeCharacter);
+                    // });
                     socket.on('disconnect', function () {
                         //if (player.activeCharacter >= 0) {
                         //    let playerId = player.characters[player.activeCharacter].id;
@@ -647,15 +657,15 @@ var Server;
                         //        .find({player_id: playerId})
                         //        .remove();
                         //}
-                        var roomId = player_1.getActiveCharacter().roomId;
+                        var roomId = player_2.getActiveCharacter().roomId;
                         remotePlayers.forEach(function (remotePlayer, key) {
-                            if (remotePlayer.id == player_1.id || remotePlayer == null) {
+                            if (remotePlayer.id == player_2.id || remotePlayer == null) {
                                 remotePlayers.splice(key, 1);
                             }
                         });
                         //if player is target of enemies, clear that
                         if (self.enemies[roomId] !== undefined) {
-                            var characterId_1 = player_1.getActiveCharacter().id;
+                            var characterId_1 = player_2.getActiveCharacter().id;
                             self.enemies[roomId].forEach(function (enemy, key) {
                                 if (enemy.target == characterId_1) {
                                     enemy.target = null;
@@ -673,13 +683,13 @@ var Server;
                                 }
                             });
                         }
-                        socket.broadcast.emit('removePlayer', player_1.id);
+                        socket.broadcast.emit('removePlayer', player_2.id);
                         var _loop_1 = function (roomKey) {
                             var room = self.rooms[roomKey];
                             if (room.roomId == roomId) {
                                 room.players.forEach(function (socketId, socketIdKey) {
                                     var roomPlayersLength = room.players.length;
-                                    if (socketId == player_1.id) {
+                                    if (socketId == player_2.id) {
                                         delete room.players[socketIdKey];
                                         if (!(roomPlayersLength - 1)) {
                                             console.log('SOCKET - delete empty room -' + room.roomId);
@@ -696,10 +706,10 @@ var Server;
                         }
                     });
                     self
-                        .characterEvents(socket, player_1)
-                        .questsEvents(socket, player_1)
-                        .roomsEvents(socket, player_1, serverIO)
-                        .sceneEvents(socket, player_1);
+                        .characterEvents(socket, player_2)
+                        .questsEvents(socket, player_2)
+                        .roomsEvents(socket, player_2, serverIO)
+                        .sceneEvents(socket, player_2);
                 }
                 else {
                     ///Monster socket events
@@ -707,58 +717,62 @@ var Server;
                     socket.on('updatePlayerPosition', function (updatedPlayer) {
                         self.remotePlayers.forEach(function (remotePlayer, remotePlayerKey) {
                             if (remotePlayer.id == updatedPlayer.playerSocketId) {
-                                var remotePlayer_3 = self.remotePlayers[remotePlayerKey];
-                                remotePlayer_3.getActiveCharacter().position = updatedPlayer.position;
-                                socket.broadcast.emit('updatePlayer', remotePlayer_3);
+                                var remotePlayer_1 = self.remotePlayers[remotePlayerKey];
+                                remotePlayer_1.getActiveCharacter().position = updatedPlayer.position;
+                                socket.broadcast.emit('updatePlayer', remotePlayer_1);
                                 return;
                             }
                         });
                     });
                     ///Enemies
-                    socket.on('setEnemyTarget', function (data) {
-                        var enemy = self.enemies[data.roomId][data.enemyKey];
-                        enemy.position = data.position;
-                        enemy.target = data.target;
-                        enemy.attack = data.attack;
-                        enemy.availableAttacksFromCharacters[data.target] = data.attack;
-                        if (!self.enemiesIntervals[data.roomId]) {
-                            self.enemiesIntervals[data.roomId] = [];
-                        }
-                        ///Enemy attack
-                        if (enemy.attack) {
-                            var enemeyAttackFunction = function () {
-                                self.remotePlayers.forEach(function (remotePlayer, remotePlayerKey) {
-                                    var activeCharacter = remotePlayer.getActiveCharacter();
-                                    enemy.availableAttacksFromCharacters.forEach(function (isAtacked, characterId) {
-                                        if (isAtacked === true) {
-                                            if (activeCharacter.id == characterId) {
-                                                var damage = enemy.statistics.damage;
-                                                activeCharacter.statistics.hp -= damage;
-                                                console.log('SOCKET - Enemy ' + enemy.name + ' attack on character ' + activeCharacter.name + ' DMG: ' + damage);
-                                                serverIO["in"](activeCharacter.roomId).emit('updatePlayer', activeCharacter);
-                                            }
-                                        }
-                                    });
-                                });
-                                socket["in"](data.roomId).emit('updateEnemy', {
-                                    enemy: enemy,
-                                    enemyKey: data.enemyKey
-                                });
-                            };
-                            enemeyAttackFunction();
-                            self.enemiesIntervals[data.roomId][data.enemyKey] = setInterval(enemeyAttackFunction, 1500);
-                        }
-                        else {
-                            if (self.enemiesIntervals[data.roomId][data.enemyKey]) {
-                                clearInterval(self.enemiesIntervals[data.roomId][data.enemyKey]);
-                                self.enemiesIntervals[data.roomId][data.enemyKey] = null;
-                            }
-                            socket["in"](data.roomId).emit('updateEnemy', {
-                                enemy: enemy,
-                                enemyKey: data.enemyKey
-                            });
-                        }
-                    });
+                    // socket.on('setEnemyTarget', function (data) {
+                    //     let enemy = self.enemies[data.roomId][data.enemyKey];
+                    //     enemy.position = data.position;
+                    //     enemy.target = data.target;
+                    //     enemy.attack = data.attack;
+                    //     enemy.availableAttacksFromCharacters[data.target] = data.attack;
+                    //
+                    //     if(!self.enemiesIntervals[data.roomId]) {
+                    //         self.enemiesIntervals[data.roomId] = [];
+                    //     }
+                    //
+                    //     ///Enemy attack
+                    //     if(enemy.attack) {
+                    //         let enemeyAttackFunction = function () {
+                    //             self.remotePlayers.forEach(function (remotePlayer, remotePlayerKey) {
+                    //                 let activeCharacter = remotePlayer.getActiveCharacter();
+                    //                 enemy.availableAttacksFromCharacters.forEach(function (isAtacked, characterId) {
+                    //                     if (isAtacked === true) {
+                    //                         if (activeCharacter.id == characterId) {
+                    //                             let damage = enemy.statistics.damage;
+                    //                             activeCharacter.statistics.hp -= damage;
+                    //                             console.log('SOCKET - Enemy '+enemy.name+' attack on character '+activeCharacter.name+' DMG: '+damage);
+                    //
+                    //                             serverIO.in(activeCharacter.roomId).emit('updatePlayer', activeCharacter);
+                    //                         }
+                    //                     }
+                    //                 });
+                    //             });
+                    //
+                    //             socket.in(data.roomId).emit('updateEnemy', {
+                    //                 enemy: enemy,
+                    //                 enemyKey: data.enemyKey
+                    //             });
+                    //         };
+                    //
+                    //         enemeyAttackFunction();
+                    //         self.enemiesIntervals[data.roomId][data.enemyKey] = setInterval(enemeyAttackFunction, 1500);
+                    //     } else {
+                    //         if(self.enemiesIntervals[data.roomId][data.enemyKey]) {
+                    //             clearInterval(self.enemiesIntervals[data.roomId][data.enemyKey]);
+                    //             self.enemiesIntervals[data.roomId][data.enemyKey] = null;
+                    //         }
+                    //         socket.in(data.roomId).emit('updateEnemy', {
+                    //             enemy: enemy,
+                    //             enemyKey: data.enemyKey
+                    //         });
+                    //     }
+                    // });
                 }
             });
         }

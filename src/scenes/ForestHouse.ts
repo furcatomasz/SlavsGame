@@ -6,7 +6,7 @@ class ForestHouse extends Scene {
 
     static TYPE = 2;
 
-    initScene(game:Game) {
+    initScene(game: Game) {
         let self = this;
         game.sceneManager = this;
 
@@ -17,14 +17,10 @@ class ForestHouse extends Scene {
                 .setCamera(scene)
                 .setFog(scene)
                 .defaultPipeline(scene)
-                .executeWhenReady(function() {
-
-                });
+                .executeWhenReady(function () {
+                    self.environment = new EnvironmentForestHouse(game, scene);
+                }, null);
         });
-    }
-
-    public getType():number {
-        return ForestHouse.TYPE;
     }
 
 }

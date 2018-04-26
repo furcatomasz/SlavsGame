@@ -5,7 +5,7 @@ class Mouse extends Controller {
     public registerControls(scene: BABYLON.Scene) {
         let self = this;
         let clickTrigger = false;
-
+        let lastUpdate = new Date().getTime() / 1000;
         let ball = BABYLON.Mesh.CreateBox("mouseBox", 0.4, scene);
 
         let meshFlag = this.game.factories['flag'].createInstance('Flag', false);
@@ -49,9 +49,8 @@ class Mouse extends Controller {
                     self.game.player.runPlayerToPosition(self.targetPoint);
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint,
-                        playerPosition: self.game.player.meshForMove.position
+                        playerPosition: self.game.player.mesh.position
                     });
-
                 }
 
             }
@@ -70,10 +69,14 @@ class Mouse extends Controller {
                         self.ball.position = self.targetPoint;
 
                         self.game.player.runPlayerToPosition(self.targetPoint);
-                        self.game.client.socket.emit('setTargetPoint', {
-                            position: self.targetPoint,
-                            playerPosition: self.game.player.mesh.position
-                        });
+
+                        if(lastUpdate < (new Date().getTime() / 1000)-0.3) {
+                            lastUpdate = (new Date().getTime() / 1000);
+                            self.game.client.socket.emit('setTargetPoint', {
+                                position: self.targetPoint,
+                                playerPosition: self.game.player.mesh.position
+                            });
+                        }
                     }
                 }
             }

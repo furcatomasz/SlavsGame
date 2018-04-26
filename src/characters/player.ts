@@ -14,7 +14,6 @@ class Player extends AbstractCharacter {
     public freeSkillPoints: number;
 
     public constructor(game:Game, registerMoving:boolean, serverData: Array = []) {
-        console.log(serverData);
         this.id = serverData.activePlayer.id;
         this.game = game;
         this.isAlive = true;

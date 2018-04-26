@@ -50,7 +50,9 @@ namespace GUI {
         }
 
         public refreshPanel() {
-            this.hpBar.value = this.character.statistics.hp;
+            if(this.character) {
+                this.hpBar.value = this.character.statistics.hp;
+            }
         }
 
         public hideHpBar() {

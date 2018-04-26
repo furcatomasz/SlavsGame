@@ -85,6 +85,7 @@ class Game {
 
     public changeScene(newScene: Scene) {
         let sceneToDispose = this.getScene();
+        console.log(sceneToDispose);
         if(sceneToDispose) {
             setTimeout(function () {
                 sceneToDispose.dispose();
@@ -92,7 +93,7 @@ class Game {
         }
         this.activeScene = null;
         this.controller.forward = false;
-
+    console.log();
         newScene.initScene(this);
     }
 

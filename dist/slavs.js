@@ -522,7 +522,7 @@ var SocketIOClient = /** @class */ (function () {
                 .questRequirementInformation()
                 .changeScene();
         });
-        this.socket.emit('changeScene', ForestHouse.TYPE);
+        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -738,10 +738,24 @@ var SocketIOClient = /** @class */ (function () {
      */
     SocketIOClient.prototype.refreshPlayerEquip = function () {
         var game = this.game;
-        this.socket.on('updatePlayerEquip', function (items) {
-            game.player.removeItems();
-            game.player.setItems(items);
-            if (game.gui.inventory.opened) {
+        this.socket.on('updatePlayerEquip', function (updatedPlayer) {
+            var player = null;
+            var isThisPlayer = false;
+            if (updatedPlayer.activePlayer.id == game.player.id) {
+                player = game.player;
+                isThisPlayer = true;
+            }
+            else {
+                game.remotePlayers.forEach(function (remotePlayer, key) {
+                    if (remotePlayer.id == updatedPlayer.activePlayer.id) {
+                        player = game.remotePlayers[key];
+                        return;
+                    }
+                });
+            }
+            player.removeItems();
+            player.setItems(updatedPlayer.activePlayer.items);
+            if (isThisPlayer && game.gui.inventory.opened) {
                 game.gui.inventory.refreshPopup();
             }
         });
@@ -1134,116 +1148,61 @@ var Character;
             this.player = player;
             this.items = [];
         }
-        /**
-         * @param item
-         * @param emit
-         */
-        Inventory.prototype.removeItem = function (item, emit) {
-            if (item) {
-                item.mesh.visibility = 0;
-                //TODO: this should execute by server
-                if (emit) {
-                    this.game.client.socket.emit('itemEquip', {
-                        id: item.databaseId,
-                        equip: false
-                    });
-                }
-            }
+        Inventory.prototype.clearItems = function () {
+            this.weapon = null;
+            this.shield = null;
+            this.helm = null;
+            this.gloves = null;
+            this.boots = null;
+            this.armor = null;
+            this.items = [];
+            return this;
         };
         /**
          * @param item
          * @param setItem
-         * @param emit
          */
-        Inventory.prototype.equip = function (item, setItem, emit) {
-            var emitData = {
-                id: item.databaseId,
-                equip: null
-            };
-            switch (item.type) {
-                case 1:
-                    this.removeItem(this.weapon, emit);
-                    this.weapon = null;
-                    if (setItem) {
-                        this.weapon = item;
-                    }
-                    break;
-                case 2:
-                    this.removeItem(this.shield, emit);
-                    this.shield = null;
-                    if (setItem) {
-                        this.shield = item;
-                    }
-                    break;
-                case 3:
-                    this.removeItem(this.helm, emit);
-                    this.helm = null;
-                    if (setItem) {
-                        this.helm = item;
-                    }
-                    break;
-                case 4:
-                    this.removeItem(this.gloves, emit);
-                    this.gloves = null;
-                    if (setItem) {
-                        this.gloves = item;
-                    }
-                    break;
-                case 5:
-                    this.removeItem(this.boots, emit);
-                    this.boots = null;
-                    if (setItem) {
-                        this.boots = item;
-                    }
-                    break;
-                case 6:
-                    this.removeItem(this.armor, emit);
-                    this.armor = null;
-                    if (setItem) {
-                        this.armor = item;
-                    }
-                    break;
-            }
+        Inventory.prototype.equipItem = function (item, setItem) {
             if (setItem) {
+                item.mesh.parent = this.player.mesh;
+                item.mesh.skeleton = this.player.mesh.skeleton;
                 item.mesh.visibility = 1;
-                emitData.equip = true;
+                switch (item.type) {
+                    case 1:
+                        this.weapon = item;
+                        break;
+                    case 2:
+                        this.shield = item;
+                        break;
+                    case 3:
+                        this.helm = item;
+                        break;
+                    case 4:
+                        this.gloves = item;
+                        break;
+                    case 5:
+                        this.boots = item;
+                        break;
+                    case 6:
+                        this.armor = item;
+                        break;
+                }
+                console.log('enable visi' + item.name);
             }
             else {
-                emitData.equip = false;
-                return;
-            }
-            if (emit) {
-                this.game.client.socket.emit('itemEquip', emitData);
+                item.mesh.visibility = 0;
+                console.log('disable visi' + item.name);
             }
         };
         /**
-         * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
          * @param item
-         * @param emit
+
          * @returns {AbstractCharacter.Inventory}
          */
-        Inventory.prototype.mount = function (item, emit) {
-            if (emit === void 0) { emit = false; }
-            item.mesh.parent = this.player.mesh;
-            item.mesh.skeleton = this.player.mesh.skeleton;
-            this.equip(item, true, emit);
-            return this;
-        };
-        /**
-         *
-         * @param item
-         * @param emit
-         * @returns {Character.Inventory}
-         */
-        Inventory.prototype.umount = function (item, emit) {
-            if (emit === void 0) { emit = false; }
-            this.equip(item, false, emit);
-            if (item.type == 3) {
-                this.showSashOrHair(true, false);
-            }
-            if (item.type == 6) {
-                this.showSashOrHair(false, true);
-            }
+        Inventory.prototype.emitEquip = function (item) {
+            this.game.client.socket.emit('itemEquip', {
+                id: item.databaseId
+            });
             return this;
         };
         /**
@@ -1258,30 +1217,6 @@ var Character;
             equipedItems.push(this.gloves);
             equipedItems.push(this.boots);
             return equipedItems;
-        };
-        Inventory.prototype.showSashOrHair = function (showHair, showSash) {
-            if (showHair) {
-                this.helm = new Items.Item(this.game, {
-                    name: "Hair",
-                    image: 'hair',
-                    meshName: 'hair',
-                    type: 3,
-                    entity: { id: 0 },
-                    statistics: null
-                });
-                this.mount(this.helm);
-            }
-            if (showSash) {
-                this.armor = new Items.Item(this.game, {
-                    name: "Sash",
-                    image: 'sash',
-                    meshName: 'sash',
-                    type: 6,
-                    entity: { id: 0 },
-                    statistics: null
-                });
-                this.mount(this.armor);
-            }
         };
         return Inventory;
     }());
@@ -2617,133 +2552,6 @@ var GUI;
     }());
     GUI.ShowHp = ShowHp;
 })(GUI || (GUI = {}));
-var Quests;
-(function (Quests) {
-    var Awards;
-    (function (Awards) {
-        var AbstractAward = /** @class */ (function () {
-            function AbstractAward() {
-            }
-            AbstractAward.AWARD_ID = 0;
-            return AbstractAward;
-        }());
-        Awards.AbstractAward = AbstractAward;
-    })(Awards = Quests.Awards || (Quests.Awards = {}));
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var Requirements;
-    (function (Requirements) {
-        var AbstractRequirement = /** @class */ (function () {
-            function AbstractRequirement() {
-            }
-            AbstractRequirement.REQUIREMENT_ID = 0;
-            return AbstractRequirement;
-        }());
-        Requirements.AbstractRequirement = AbstractRequirement;
-    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
-})(Quests || (Quests = {}));
-/// <reference path="awards/AbstractAward.ts"/>
-/// <reference path="requirements/AbstractRequirement.ts"/>
-var Quests;
-(function (Quests) {
-    var AbstractQuest = /** @class */ (function () {
-        function AbstractQuest(game) {
-            this.game = game;
-            this.awards = [];
-            this.requirements = [];
-            this.hasRequrementsFinished = false;
-        }
-        AbstractQuest.prototype.setAwards = function (awards) {
-            this.awards = awards;
-        };
-        AbstractQuest.prototype.setRequirements = function (requirements) {
-            this.requirements = requirements;
-        };
-        AbstractQuest.QUEST_ID = 0;
-        return AbstractQuest;
-    }());
-    Quests.AbstractQuest = AbstractQuest;
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var QuestManager = /** @class */ (function () {
-        function QuestManager(game) {
-            this.game = game;
-        }
-        /**
-         * @param questData
-         */
-        QuestManager.prototype.transformQuestDatabaseDataToObject = function (questData) {
-            var awards = questData.awards;
-            var requirements = questData.requirements;
-            var questId = questData.questId;
-            var quest = this.getQuest(questId);
-            quest.setAwards(awards);
-            return quest;
-        };
-        // TODO: Change from server
-        QuestManager.prototype.getAwards = function (databaseAwards) {
-            var awards = [];
-            var itemManager = new Items.ItemManager(this.game);
-            databaseAwards.forEach(function (award, key) {
-                var award;
-                switch (award.awardId) {
-                    case Quests.Awards.Item.AWARD_ID:
-                        var item = itemManager.getItemUsingId(award.value);
-                        award = new Quests.Awards.Item(item);
-                }
-                awards.push(award);
-            });
-            return awards;
-        };
-        //protected getRequrements(databaseRequrements:Array) {
-        //    let awards = [];
-        //    databaseRequrements.forEach(function (requirement, key) {
-        //        let award;
-        //
-        //        switch (requirement.requirementId) {
-        //            case Quests.Requirements.Monster.REQUIREMENT_ID:
-        //                let monster = new Worm();
-        //                award = new Quests.Requirements.Monster(item, requirement.value);
-        //        }
-        //        awards.push(award);
-        //    });
-        //
-        //    return awards;
-        //}
-        /**
-         *
-         * @param id
-         * @returns Quests.AbstractQuest
-         */
-        QuestManager.prototype.getQuest = function (id) {
-            var game = this.game;
-            var quest = null;
-            switch (id) {
-                case Quests.KillWorms.QUEST_ID:
-                    quest = new Quests.KillWorms(game);
-                    break;
-            }
-            return quest;
-        };
-        /**
-         * @param questId
-         * @returns {null|Quests.AbstractQuest}
-         */
-        QuestManager.prototype.getQuestFromServerUsingQuestId = function (questId) {
-            var quest = null;
-            this.game.quests.forEach(function (gameQuest, key) {
-                if (questId == gameQuest.getQuestId()) {
-                    quest = gameQuest;
-                }
-            });
-            return quest;
-        };
-        return QuestManager;
-    }());
-    Quests.QuestManager = QuestManager;
-})(Quests || (Quests = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var Particles;
@@ -3172,6 +2980,133 @@ var Particles;
     }(Particles.AbstractParticle));
     Particles.WalkSmoke = WalkSmoke;
 })(Particles || (Particles = {}));
+var Quests;
+(function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var AbstractAward = /** @class */ (function () {
+            function AbstractAward() {
+            }
+            AbstractAward.AWARD_ID = 0;
+            return AbstractAward;
+        }());
+        Awards.AbstractAward = AbstractAward;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var AbstractRequirement = /** @class */ (function () {
+            function AbstractRequirement() {
+            }
+            AbstractRequirement.REQUIREMENT_ID = 0;
+            return AbstractRequirement;
+        }());
+        Requirements.AbstractRequirement = AbstractRequirement;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+})(Quests || (Quests = {}));
+/// <reference path="awards/AbstractAward.ts"/>
+/// <reference path="requirements/AbstractRequirement.ts"/>
+var Quests;
+(function (Quests) {
+    var AbstractQuest = /** @class */ (function () {
+        function AbstractQuest(game) {
+            this.game = game;
+            this.awards = [];
+            this.requirements = [];
+            this.hasRequrementsFinished = false;
+        }
+        AbstractQuest.prototype.setAwards = function (awards) {
+            this.awards = awards;
+        };
+        AbstractQuest.prototype.setRequirements = function (requirements) {
+            this.requirements = requirements;
+        };
+        AbstractQuest.QUEST_ID = 0;
+        return AbstractQuest;
+    }());
+    Quests.AbstractQuest = AbstractQuest;
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var QuestManager = /** @class */ (function () {
+        function QuestManager(game) {
+            this.game = game;
+        }
+        /**
+         * @param questData
+         */
+        QuestManager.prototype.transformQuestDatabaseDataToObject = function (questData) {
+            var awards = questData.awards;
+            var requirements = questData.requirements;
+            var questId = questData.questId;
+            var quest = this.getQuest(questId);
+            quest.setAwards(awards);
+            return quest;
+        };
+        // TODO: Change from server
+        QuestManager.prototype.getAwards = function (databaseAwards) {
+            var awards = [];
+            var itemManager = new Items.ItemManager(this.game);
+            databaseAwards.forEach(function (award, key) {
+                var award;
+                switch (award.awardId) {
+                    case Quests.Awards.Item.AWARD_ID:
+                        var item = itemManager.getItemUsingId(award.value);
+                        award = new Quests.Awards.Item(item);
+                }
+                awards.push(award);
+            });
+            return awards;
+        };
+        //protected getRequrements(databaseRequrements:Array) {
+        //    let awards = [];
+        //    databaseRequrements.forEach(function (requirement, key) {
+        //        let award;
+        //
+        //        switch (requirement.requirementId) {
+        //            case Quests.Requirements.Monster.REQUIREMENT_ID:
+        //                let monster = new Worm();
+        //                award = new Quests.Requirements.Monster(item, requirement.value);
+        //        }
+        //        awards.push(award);
+        //    });
+        //
+        //    return awards;
+        //}
+        /**
+         *
+         * @param id
+         * @returns Quests.AbstractQuest
+         */
+        QuestManager.prototype.getQuest = function (id) {
+            var game = this.game;
+            var quest = null;
+            switch (id) {
+                case Quests.KillWorms.QUEST_ID:
+                    quest = new Quests.KillWorms(game);
+                    break;
+            }
+            return quest;
+        };
+        /**
+         * @param questId
+         * @returns {null|Quests.AbstractQuest}
+         */
+        QuestManager.prototype.getQuestFromServerUsingQuestId = function (questId) {
+            var quest = null;
+            this.game.quests.forEach(function (gameQuest, key) {
+                if (questId == gameQuest.getQuestId()) {
+                    quest = gameQuest;
+                }
+            });
+            return quest;
+        };
+        return QuestManager;
+    }());
+    Quests.QuestManager = QuestManager;
+})(Quests || (Quests = {}));
 /// <reference path="Scene.ts"/>
 /// <reference path="../game.ts"/>
 /// <reference path="../Events.ts"/>
@@ -3653,31 +3588,33 @@ var Items;
         /**
          * @param inventoryItems
          * @param inventory
+         * @param hideShieldAndWeapon
          */
         ItemManager.prototype.initItemsFromDatabaseOnCharacter = function (inventoryItems, inventory, hideShieldAndWeapon) {
             if (hideShieldAndWeapon === void 0) { hideShieldAndWeapon = false; }
             var self = this;
-            inventory.items = [];
+            inventory.clearItems();
             inventoryItems.forEach(function (itemDatabase) {
                 if (itemDatabase) {
                     if (hideShieldAndWeapon && (itemDatabase.type == 2 || itemDatabase.type == 1)) {
                         return;
                     }
-                    var item = new Items.Item(this.game, itemDatabase);
+                    var item = new Items.Item(self.game, itemDatabase);
                     if (self.game.sceneManager.octree) {
                         self.game.sceneManager.octree.dynamicContent.push(item.mesh);
                     }
                     item.mesh.alwaysSelectAsActiveMesh = true;
                     inventory.items.push(item);
-                    if (itemDatabase.entity.equip) {
-                        inventory.mount(item);
-                    }
-                    if (item.type == 3 && !itemDatabase.entity.equip) {
-                        inventory.showSashOrHair(true, false);
-                    }
-                    if (item.type == 6 && !itemDatabase.entity.equip) {
-                        inventory.showSashOrHair(false, true);
-                    }
+                    inventory.equipItem(item, itemDatabase.entity.equip);
+                    ///TODO: in prosime after mount all items
+                    // if(item.type == 3 && !itemDatabase.entity.equip) {
+                    //     inventory.showSashOrHair(true, false);
+                    // }
+                    //
+                    // if(item.type == 6 && !itemDatabase.entity.equip) {
+                    //     inventory.showSashOrHair(false, true);
+                    //
+                    // }
                 }
             });
         };
@@ -4472,7 +4409,7 @@ var GUI;
                     });
                 });
                 result.onPointerUpObservable.add(function () {
-                    self.guiMain.game.player.inventory.mount(item, true);
+                    self.guiMain.game.player.inventory.emitEquip(item);
                     self.onPointerUpItemImage(item);
                     self.showItems();
                     if (self.guiMain.attributes.opened) {
@@ -4972,67 +4909,6 @@ var GUI;
     }(GUI.Popup));
     GUI.Quest = Quest;
 })(GUI || (GUI = {}));
-var Quests;
-(function (Quests) {
-    var Awards;
-    (function (Awards) {
-        var Item = /** @class */ (function (_super) {
-            __extends(Item, _super);
-            function Item(item) {
-                var _this = _super.call(this) || this;
-                _this.name = item.name;
-                _this.award = item;
-                return _this;
-            }
-            Item.prototype.getAward = function () {
-                console.log('get award' + this.award.name);
-            };
-            Item.AWARD_ID = 1;
-            return Item;
-        }(Awards.AbstractAward));
-        Awards.Item = Item;
-    })(Awards = Quests.Awards || (Quests.Awards = {}));
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var KillWorms = /** @class */ (function (_super) {
-        __extends(KillWorms, _super);
-        function KillWorms(game) {
-            var _this = _super.call(this, game) || this;
-            _this.title = 'Bandits';
-            _this.description = 'Go to portal and kill all bandits.';
-            return _this;
-        }
-        /**
-         *
-         * @returns {number}
-         */
-        KillWorms.prototype.getQuestId = function () {
-            return Quests.KillWorms.QUEST_ID;
-        };
-        KillWorms.QUEST_ID = 1;
-        return KillWorms;
-    }(Quests.AbstractQuest));
-    Quests.KillWorms = KillWorms;
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var Requirements;
-    (function (Requirements) {
-        var Monster = /** @class */ (function (_super) {
-            __extends(Monster, _super);
-            function Monster(monster, count) {
-                var _this = _super.call(this) || this;
-                _this.name = 'Kill ' + count + ' ' + monster.name + '';
-                _this.requirement = monster;
-                return _this;
-            }
-            Monster.REQUIREMENT_ID = 1;
-            return Monster;
-        }(Requirements.AbstractRequirement));
-        Requirements.Monster = Monster;
-    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
-})(Quests || (Quests = {}));
 var Particles;
 (function (Particles) {
     var DoubleAttack = /** @class */ (function (_super) {
@@ -5198,6 +5074,67 @@ var Particles;
         SolidParticleSystem.NatureBlock = NatureBlock;
     })(SolidParticleSystem = Particles.SolidParticleSystem || (Particles.SolidParticleSystem = {}));
 })(Particles || (Particles = {}));
+var Quests;
+(function (Quests) {
+    var Awards;
+    (function (Awards) {
+        var Item = /** @class */ (function (_super) {
+            __extends(Item, _super);
+            function Item(item) {
+                var _this = _super.call(this) || this;
+                _this.name = item.name;
+                _this.award = item;
+                return _this;
+            }
+            Item.prototype.getAward = function () {
+                console.log('get award' + this.award.name);
+            };
+            Item.AWARD_ID = 1;
+            return Item;
+        }(Awards.AbstractAward));
+        Awards.Item = Item;
+    })(Awards = Quests.Awards || (Quests.Awards = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var KillWorms = /** @class */ (function (_super) {
+        __extends(KillWorms, _super);
+        function KillWorms(game) {
+            var _this = _super.call(this, game) || this;
+            _this.title = 'Bandits';
+            _this.description = 'Go to portal and kill all bandits.';
+            return _this;
+        }
+        /**
+         *
+         * @returns {number}
+         */
+        KillWorms.prototype.getQuestId = function () {
+            return Quests.KillWorms.QUEST_ID;
+        };
+        KillWorms.QUEST_ID = 1;
+        return KillWorms;
+    }(Quests.AbstractQuest));
+    Quests.KillWorms = KillWorms;
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var Monster = /** @class */ (function (_super) {
+            __extends(Monster, _super);
+            function Monster(monster, count) {
+                var _this = _super.call(this) || this;
+                _this.name = 'Kill ' + count + ' ' + monster.name + '';
+                _this.requirement = monster;
+                return _this;
+            }
+            Monster.REQUIREMENT_ID = 1;
+            return Monster;
+        }(Requirements.AbstractRequirement));
+        Requirements.Monster = Monster;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+})(Quests || (Quests = {}));
 /// <reference path="../Inventory.ts"/>
 var GUI;
 (function (GUI) {
@@ -5233,7 +5170,7 @@ var GUI;
                 var image = this.inventory.createItemImage(this.item);
                 this.inventory.guiMain.registerBlockMoveCharacter(image);
                 image.onPointerUpObservable.add(function () {
-                    self.inventory.guiMain.game.player.inventory.umount(self.item, true);
+                    self.inventory.guiMain.game.player.inventory.emitEquip(self.item);
                     self.inventory.guiTexture.removeControl(self.block);
                     self.inventory.showItems();
                     if (self.inventory.guiMain.attributesOpened) {

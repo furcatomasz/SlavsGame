@@ -11,10 +11,11 @@ namespace Items {
         /**
          * @param inventoryItems
          * @param inventory
+         * @param hideShieldAndWeapon
          */
         public initItemsFromDatabaseOnCharacter(inventoryItems: Array, inventory:Character.Inventory, hideShieldAndWeapon:boolean = false) {
             let self = this;
-            inventory.items = [];
+            inventory.clearItems();
 
             inventoryItems.forEach(function(itemDatabase) {
                 if(itemDatabase) {
@@ -22,27 +23,25 @@ namespace Items {
                         return;
                     }
 
-                    let item = new Items.Item(this.game, itemDatabase);
+                    let item = new Items.Item(self.game, itemDatabase);
                     if (self.game.sceneManager.octree) {
                         self.game.sceneManager.octree.dynamicContent.push(item.mesh);
                     }
                     item.mesh.alwaysSelectAsActiveMesh = true;
 
                     inventory.items.push(item);
-
-                    if (itemDatabase.entity.equip) {
-                        inventory.mount(item);
-                    }
+                    inventory.equipItem(item, itemDatabase.entity.equip);
 
 
-                    if(item.type == 3 && !itemDatabase.entity.equip) {
-                        inventory.showSashOrHair(true, false);
-                    }
-
-                    if(item.type == 6 && !itemDatabase.entity.equip) {
-                        inventory.showSashOrHair(false, true);
-
-                    }
+                    ///TODO: in prosime after mount all items
+                    // if(item.type == 3 && !itemDatabase.entity.equip) {
+                    //     inventory.showSashOrHair(true, false);
+                    // }
+                    //
+                    // if(item.type == 6 && !itemDatabase.entity.equip) {
+                    //     inventory.showSashOrHair(false, true);
+                    //
+                    // }
                 }
             });
         }

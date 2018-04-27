@@ -1,149 +1,87 @@
 namespace Character {
     export class Inventory {
 
-        protected player:AbstractCharacter;
-        protected game:Game;
+        protected player: AbstractCharacter;
+        protected game: Game;
 
-        /** Equipt items */
-        public helm:Items.Item;
-        public gloves:Items.Item;
-        public boots:Items.Item;
-        public armor:Items.Item;
-        public weapon:Items.Item;
-        public shield:Items.Item;
+        /** Equiped items */
+        public helm: Items.Item;
+        public gloves: Items.Item;
+        public boots: Items.Item;
+        public armor: Items.Item;
+        public weapon: Items.Item;
+        public shield: Items.Item;
 
-        public items:Array<Items.Item>;
+        public items: Array<Items.Item>;
 
-        constructor(game:Game, player:AbstractCharacter) {
+        constructor(game: Game, player: AbstractCharacter) {
             this.game = game;
             this.player = player;
             this.items = [];
         }
 
-        /**
-         * @param item
-         * @param emit
-         */
-        protected removeItem(item: Items.Item, emit: boolean) {
-            if(item) {
-                item.mesh.visibility = 0;
+        public clearItems() {
+            this.weapon = null;
+            this.shield = null;
+            this.helm = null;
+            this.gloves = null;
+            this.boots = null;
+            this.armor = null;
 
-                //TODO: this should execute by server
-                if(emit) {
-                    this.game.client.socket.emit('itemEquip', {
-                        id: item.databaseId,
-                        equip: false,
-                    });
-                }
-            }
-        }
-
-        /**
-         * @param item
-         * @param setItem
-         * @param emit
-         */
-        protected equip(item: Items.Item, setItem: boolean, emit: boolean) {
-            let emitData = {
-                id: item.databaseId,
-                equip: null,
-            };
-
-            switch (item.type) {
-                case 1:
-                    this.removeItem(this.weapon, emit);
-                    this.weapon = null;
-                    if (setItem) {
-                        this.weapon = item;
-                    }
-                    break;
-                case 2:
-                    this.removeItem(this.shield, emit);
-                    this.shield = null;
-
-                    if (setItem) {
-                        this.shield = item;
-                    }
-                    break;
-                case 3:
-                    this.removeItem(this.helm, emit);
-                    this.helm = null;
-
-                    if (setItem) {
-                        this.helm = item;
-                    }
-                    break;
-                case 4:
-                    this.removeItem(this.gloves, emit);
-                    this.gloves = null;
-
-                    if (setItem) {
-                        this.gloves = item;
-                    }
-                    break;
-                case 5:
-                    this.removeItem(this.boots, emit);
-                    this.boots = null;
-
-                    if (setItem) {
-                        this.boots = item;
-                    }
-                    break;
-                case 6:
-                    this.removeItem(this.armor, emit);
-                    this.armor = null;
-
-                    if (setItem) {
-                        this.armor = item;
-                    }
-                    break;
-            }
-
-            if(setItem) {
-                item.mesh.visibility = 1;
-                emitData.equip = true;
-            } else {
-                emitData.equip = false;
-
-                return;
-            }
-
-            if(emit) {
-                this.game.client.socket.emit('itemEquip', emitData);
-            }
-        }
-
-        /**
-         * Value 1 define mounting item usign bone, value 2 define mounting using skeleton.
-         * @param item
-         * @param emit
-         * @returns {AbstractCharacter.Inventory}
-         */
-        public mount(item: Items.Item, emit: boolean = false) {
-            item.mesh.parent = this.player.mesh;
-            item.mesh.skeleton = this.player.mesh.skeleton;
-
-            this.equip(item, true, emit);
+            this.items = [];
 
             return this;
         }
 
         /**
-         *
          * @param item
-         * @param emit
-         * @returns {Character.Inventory}
+         * @param setItem
          */
-        public umount(item: Items.Item, emit: boolean = false) {
-            this.equip(item, false, emit);
+        public equipItem(item: Items.Item, setItem: boolean) {
+            if (setItem) {
+                item.mesh.parent = this.player.mesh;
+                item.mesh.skeleton = this.player.mesh.skeleton;
+                item.mesh.visibility = 1;
 
-            if(item.type == 3) {
-                 this.showSashOrHair(true, false);
+                switch (item.type) {
+                    case 1:
+                        this.weapon = item;
+                        break;
+                    case 2:
+                        this.shield = item;
+                        break;
+                    case 3:
+                        this.helm = item;
+                        break;
+                    case 4:
+                        this.gloves = item;
+                        break;
+                    case 5:
+                        this.boots = item;
+                        break;
+                    case 6:
+                        this.armor = item;
+                        break;
+                }
+                console.log('enable visi'+item.name);
+
+            } else {
+                item.mesh.visibility = 0;
+
+                console.log('disable visi'+item.name);
             }
 
-            if(item.type == 6) {
-                this.showSashOrHair(false, true);
-            }
+        }
+
+        /**
+         * @param item
+
+         * @returns {AbstractCharacter.Inventory}
+         */
+        public emitEquip(item: Items.Item) {
+            this.game.client.socket.emit('itemEquip', {
+                id: item.databaseId
+            });
 
             return this;
         }
@@ -164,33 +102,33 @@ namespace Character {
             return equipedItems;
         }
 
-        public showSashOrHair(showHair: boolean, showSash: boolean) {
-            if(showHair) {
-                this.helm = new Items.Item(this.game, {
-                    name: "Hair",
-                    image: 'hair',
-                    meshName: 'hair',
-                    type: 3,
-                    entity: { id: 0 },
-                    statistics: null
-                });
-
-                this.mount(this.helm);
-            }
-
-            if(showSash) {
-                this.armor = new Items.Item(this.game, {
-                    name: "Sash",
-                    image: 'sash',
-                    meshName: 'sash',
-                    type: 6,
-                    entity: { id: 0 },
-                    statistics: null
-                });
-
-                this.mount(this.armor);
-            }
-
-        }
+        // public showSashOrHair(showHair: boolean, showSash: boolean) {
+        //     if (showHair) {
+        //         this.helm = new Items.Item(this.game, {
+        //             name: "Hair",
+        //             image: 'hair',
+        //             meshName: 'hair',
+        //             type: 3,
+        //             entity: {id: 0},
+        //             statistics: null
+        //         });
+        //
+        //         this.mount(this.helm);
+        //     }
+        //
+        //     if (showSash) {
+        //         this.armor = new Items.Item(this.game, {
+        //             name: "Sash",
+        //             image: 'sash',
+        //             meshName: 'sash',
+        //             type: 6,
+        //             entity: {id: 0},
+        //             statistics: null
+        //         });
+        //
+        //         this.mount(this.armor);
+        //     }
+        //
+        // }
     }
 }

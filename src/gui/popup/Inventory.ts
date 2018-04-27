@@ -142,7 +142,7 @@ namespace GUI {
                 });
 
                 result.onPointerUpObservable.add(function () {
-                    self.guiMain.game.player.inventory.mount(item, true);
+                    self.guiMain.game.player.inventory.emitEquip(item);
                     self.onPointerUpItemImage(item);
                     self.showItems();
                     if (self.guiMain.attributes.opened) {

@@ -49,7 +49,7 @@ class SocketIOClient {
                 .changeScene();
         });
 
-        this.socket.emit('changeScene', ForestHouse.TYPE);
+        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
 
         return this;
     }
@@ -317,10 +317,26 @@ class SocketIOClient {
     protected refreshPlayerEquip() {
         let game = this.game;
 
-        this.socket.on('updatePlayerEquip', function (items) {
-            game.player.removeItems();
-            game.player.setItems(items);
-            if (game.gui.inventory.opened) {
+        this.socket.on('updatePlayerEquip', function (updatedPlayer) {
+            let player = null;
+            let isThisPlayer = false;
+
+            if (updatedPlayer.activePlayer.id == game.player.id) {
+                player = game.player;
+                isThisPlayer = true;
+            } else {
+                game.remotePlayers.forEach(function (remotePlayer, key) {
+                    if (remotePlayer.id == updatedPlayer.activePlayer.id) {
+                        player = game.remotePlayers[key];
+                        return;
+                    }
+                });
+            }
+
+
+            player.removeItems();
+            player.setItems(updatedPlayer.activePlayer.items);
+            if (isThisPlayer && game.gui.inventory.opened) {
                 game.gui.inventory.refreshPopup();
             }
         });
@@ -599,7 +615,7 @@ class SocketIOClient {
                 }, 300);
 
             }
-            
+
             if (updatedPlayer.attack == true && !player.isAttack) {
                 let targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {

@@ -15,11 +15,12 @@ namespace Items {
          */
         public initItemsFromDatabaseOnCharacter(inventoryItems: Array, inventory:Character.Inventory, hideShieldAndWeapon:boolean = false) {
             let self = this;
-            inventory.clearItems();
+            let showSash = true;
+            let showHair = true;
 
-            inventoryItems.forEach(function(itemDatabase) {
-                if(itemDatabase) {
-                    if(hideShieldAndWeapon && (itemDatabase.type == 2 || itemDatabase.type == 1)) {
+            new Promise(function(resolve) {
+                inventoryItems.forEach(function (itemDatabase) {
+                    if (hideShieldAndWeapon && (itemDatabase.type == 2 || itemDatabase.type == 1)) {
                         return;
                     }
 
@@ -32,18 +33,21 @@ namespace Items {
                     inventory.items.push(item);
                     inventory.equipItem(item, itemDatabase.entity.equip);
 
+                    if (item.type == 3 && itemDatabase.entity.equip) {
+                        showHair = false;
+                    }
 
-                    ///TODO: in prosime after mount all items
-                    // if(item.type == 3 && !itemDatabase.entity.equip) {
-                    //     inventory.showSashOrHair(true, false);
-                    // }
-                    //
-                    // if(item.type == 6 && !itemDatabase.entity.equip) {
-                    //     inventory.showSashOrHair(false, true);
-                    //
-                    // }
-                }
-            });
+                    if (item.type == 6 && itemDatabase.entity.equip) {
+                        showSash = false;
+                    }
+                });
+
+                setTimeout(function() {
+                    resolve();
+                });
+            }).then(function() {
+                inventory.showSashOrHair(showHair, showSash);
+            })
         }
 
 

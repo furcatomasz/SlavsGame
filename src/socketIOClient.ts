@@ -336,9 +336,6 @@ class SocketIOClient {
 
             player.removeItems();
             player.setItems(updatedPlayer.activePlayer.items);
-            if (isThisPlayer && game.gui.inventory.opened) {
-                game.gui.inventory.refreshPopup();
-            }
         });
 
         return this;

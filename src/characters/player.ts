@@ -160,23 +160,34 @@ class Player extends AbstractCharacter {
      * @param inventoryItems
      */
     public setItems(inventoryItems: Array<any>) {
-        if(inventoryItems) {
+        if (inventoryItems) {
             let self = this;
             let game = this.game;
             let itemManager = new Items.ItemManager(game);
-            if (this.inventory.items.length) {
-                //TODO: create Promise
-                let itemsProcessed = 0;
-                this.inventory.items.forEach(function (item) {
+
+            new Promise(function (resolve) {
+                self.inventory.deleteSashAndHair();
+                self.inventory.items.forEach(function (item) {
                     item.mesh.dispose();
-                    itemsProcessed++;
-                    if (itemsProcessed === self.inventory.items.length) {
-                        itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
+                });
+                setTimeout(function () {
+                    resolve();
+                });
+            }).then(function () {
+                self.inventory.clearItems();
+
+                new Promise(function (resolve) {
+
+                    itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
+                    setTimeout(function () {
+                        resolve();
+                    });
+                }).then(function () {
+                    if (self.isControllable && game.gui.inventory.opened) {
+                        game.gui.inventory.refreshPopup();
                     }
                 });
-            } else {
-                itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
-            }
+            });
         }
     }
 

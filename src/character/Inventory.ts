@@ -63,12 +63,9 @@ namespace Character {
                         this.armor = item;
                         break;
                 }
-                console.log('enable visi'+item.name);
 
             } else {
                 item.mesh.visibility = 0;
-
-                console.log('disable visi'+item.name);
             }
 
         }
@@ -102,33 +99,50 @@ namespace Character {
             return equipedItems;
         }
 
-        // public showSashOrHair(showHair: boolean, showSash: boolean) {
-        //     if (showHair) {
-        //         this.helm = new Items.Item(this.game, {
-        //             name: "Hair",
-        //             image: 'hair',
-        //             meshName: 'hair',
-        //             type: 3,
-        //             entity: {id: 0},
-        //             statistics: null
-        //         });
-        //
-        //         this.mount(this.helm);
-        //     }
-        //
-        //     if (showSash) {
-        //         this.armor = new Items.Item(this.game, {
-        //             name: "Sash",
-        //             image: 'sash',
-        //             meshName: 'sash',
-        //             type: 6,
-        //             entity: {id: 0},
-        //             statistics: null
-        //         });
-        //
-        //         this.mount(this.armor);
-        //     }
-        //
-        // }
+        /**
+         *
+         * @param {boolean} showHair
+         * @param {boolean} showSash
+         */
+        public showSashOrHair(showHair: boolean, showSash: boolean) {
+            if (showHair) {
+                let helm = new Items.Item(this.game, {
+                    name: "Hair",
+                    image: 'hair',
+                    meshName: 'hair',
+                    type: 3,
+                    entity: {id: 0},
+                    statistics: null
+                });
+
+                this.equipItem(helm, true);
+            }
+
+            if (showSash) {
+                let armor = new Items.Item(this.game, {
+                    name: "Sash",
+                    image: 'sash',
+                    meshName: 'sash',
+                    type: 6,
+                    entity: {id: 0},
+                    statistics: null
+                });
+
+                this.equipItem(armor, true);
+            }
+
+        }
+
+        public deleteSashAndHair() {
+            if (this.helm && this.helm.name == "Hair") {
+                this.helm.mesh.dispose();
+            }
+
+            if (this.armor && this.armor.name == "Sash") {
+                this.armor.mesh.dispose();
+            }
+
+            return this;
+        }
     }
 }

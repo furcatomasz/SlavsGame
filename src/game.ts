@@ -6,7 +6,7 @@
 class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 0;
+    static SHOW_DEBUG = 1;
 
     public sceneManager: Scene;
     public modules: Modules;
@@ -85,7 +85,6 @@ class Game {
 
     public changeScene(newScene: Scene) {
         let sceneToDispose = this.getScene();
-        console.log(sceneToDispose);
         if(sceneToDispose) {
             setTimeout(function () {
                 sceneToDispose.dispose();

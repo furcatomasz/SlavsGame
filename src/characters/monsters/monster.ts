@@ -20,14 +20,13 @@ class Monster extends AbstractCharacter {
 
         this.id = serverKey;
         this.mesh = mesh;
-        this.name = serverData.name;
         this.statistics = serverData.statistics;
         game.enemies[this.id] = this;
         mesh.skeleton.enableBlending(0.2);
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND, true);
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
         mesh.scaling = new BABYLON.Vector3(serverData.scale, serverData.scale, serverData.scale);
-        super(name, game);
+        super(serverData.name, game);
 
         ///Create box mesh for moving
         this.createBoxForMove(game.getScene());

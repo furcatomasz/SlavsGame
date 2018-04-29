@@ -29,6 +29,8 @@ namespace GUI.Inventory {
                 panelItem.height = this.blockHeight;
                 panelItem.top = this.blockTop;
                 panelItem.left = this.blockLeft;
+                panelItem.isPointerBlocker = true;
+
                 this.inventory.guiTexture.addControl(panelItem);
                 this.block = panelItem;
                 this.createImage();
@@ -42,7 +44,6 @@ namespace GUI.Inventory {
         protected createImage() {
             let self = this;
             let image = this.inventory.createItemImage(this.item);
-            this.inventory.guiMain.registerBlockMoveCharacter(image);
             image.onPointerUpObservable.add(function () {
                 self.inventory.guiMain.game.player.inventory.emitEquip(self.item);
                 self.inventory.guiTexture.removeControl(self.block);

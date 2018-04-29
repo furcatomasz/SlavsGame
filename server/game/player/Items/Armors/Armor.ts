@@ -1,4 +1,4 @@
-/// <reference path="../Item.ts"/>
+/// <reference path="../ItesceneToDisposem.ts"/>
 
 namespace Items {
     export abstract class Armor extends Item {

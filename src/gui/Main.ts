@@ -51,7 +51,7 @@ namespace GUI {
 
             let button = BABYLON.GUI.Button.CreateSimpleButton("button.inventory", "Inventory");
             button.width = 1;
-            button.height = "40px";
+            button.height = "20px";
             button.color = "white";
             button.background = "black";
             button.isPointerBlocker = true;
@@ -63,7 +63,7 @@ namespace GUI {
                 }
             });
 
-            this.registerBlockMoveCharacter(button);
+
 
             return this;
         }
@@ -73,7 +73,7 @@ namespace GUI {
 
             let button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Fullscreen");
             button.width = 1;
-            button.height = "40px";
+            button.height = "20px";
             button.color = "white";
             button.background = "black";
             button.isPointerBlocker = true;
@@ -84,7 +84,7 @@ namespace GUI {
                 // self.game.engine.resize();
             });
 
-            this.registerBlockMoveCharacter(button);
+
 
             return this;
         }
@@ -94,7 +94,7 @@ namespace GUI {
             this.playerQuests = new GUI.PlayerQuests(this);
             let button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Quests");
             button.width = 1;
-            button.height = "40px";
+            button.height = "20px";
             button.color = "white";
             button.background = "black";
             button.isPointerBlocker = true;
@@ -106,7 +106,7 @@ namespace GUI {
                 }
             });
 
-            this.registerBlockMoveCharacter(button);
+
 
             return this;
         }
@@ -117,7 +117,7 @@ namespace GUI {
 
             let button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Attributes");
             button.width = 1;
-            button.height = "40px";
+            button.height = "20px";
             button.color = "white";
             button.background = "black";
             this.buttonpanel.addControl(button);
@@ -126,8 +126,6 @@ namespace GUI {
                     self.attributes.open();
                 }
             });
-
-            this.registerBlockMoveCharacter(button);
 
             return this;
         }
@@ -138,7 +136,7 @@ namespace GUI {
 
             let button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Skills");
             button.width = 1;
-            button.height = "40px";
+            button.height = "20px";
             button.color = "white";
             button.background = "black";
             this.buttonpanel.addControl(button);
@@ -148,7 +146,7 @@ namespace GUI {
                 }
             });
 
-            this.registerBlockMoveCharacter(button);
+
 
             return this;
         }
@@ -159,7 +157,7 @@ namespace GUI {
 
             let button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Teams");
             button.width = 1;
-            button.height = "40px";
+            button.height = "20px";
             button.color = "white";
             button.background = "black";
             this.buttonpanel.addControl(button);
@@ -169,27 +167,10 @@ namespace GUI {
                 }
             });
 
-            this.registerBlockMoveCharacter(button);
+
 
             return this;
         }
 
-        /**
-         *
-         * @param control
-         * @returns {GUI.Main}
-         */
-        public registerBlockMoveCharacter(control: BABYLON.GUI.Control) {
-            let self = this;
-            // control.onPointerEnterObservable.add(function () {
-            //     self.game.sceneManager.environment.ground.isPickable = false;
-            // });
-            //
-            // control.onPointerOutObservable.add(function () {
-            //     self.game.sceneManager.environment.ground.isPickable = true;
-            // });
-
-            return this;
-        }
     }
 }

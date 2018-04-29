@@ -32,7 +32,6 @@ class SocketIOClient {
                 .connectPlayer()
                 .showPlayer()
                 .refreshPlayerEquip()
-                .refreshEnemyEquip()
                 .showDroppedItem()
                 .showPlayerQuests()
                 .refreshPlayerQuests()
@@ -166,12 +165,9 @@ class SocketIOClient {
      */
     protected attributeAdded() {
         let game = this.game;
-        let self = this;
         this.socket.on('attributeAdded', function (data) {
-            self.characters = data.characters;
-            game.player.freeAttributesPoints = self.characters[self.activeCharacter].freeAttributesPoints;
-            let statistics = self.characters[self.activeCharacter].statistics;
-            game.player.setCharacterStatistics(statistics);
+            game.player.freeAttributesPoints = data.activePlayer.freeAttributesPoints;
+            game.player.setCharacterStatistics(data.activePlayer);
 
             game.gui.attributes.refreshPopup();
         });
@@ -278,31 +274,10 @@ class SocketIOClient {
             let octree = game.sceneManager.octree;
             if (octree) {
                 octree.dynamicContent.push(game.player.mesh);
-                octree.dynamicContent.push(game.player.attackArea);
                 octree.dynamicContent.push(game.controller.ball);
                 game.player.inventory.getEquipedItems().forEach(function (item) {
                     if (item) {
                         game.sceneManager.octree.dynamicContent.push(item.mesh);
-                    }
-                });
-            }
-        });
-
-        return this;
-    }
-
-    /**
-     * @returns {SocketIOClient}
-     */
-    protected refreshEnemyEquip() {
-        let game = this.game;
-        let self = this;
-
-        this.socket.on('updateEnemyEquip', function (playerUpdated) {
-            if (game.player) {
-                self.game.remotePlayers.forEach(function (socketRemotePlayer) {
-                    if (playerUpdated.id == socketRemotePlayer.id) {
-                        socketRemotePlayer.setItems(playerUpdated.characters[playerUpdated.self.activeCharacter].items);
                     }
                 });
             }
@@ -319,11 +294,11 @@ class SocketIOClient {
 
         this.socket.on('updatePlayerEquip', function (updatedPlayer) {
             let player = null;
-            let isThisPlayer = false;
 
             if (updatedPlayer.activePlayer.id == game.player.id) {
                 player = game.player;
-                isThisPlayer = true;
+                game.player.setCharacterStatistics(updatedPlayer.activePlayer);
+                game.gui.attributes.refreshPopup();
             } else {
                 game.remotePlayers.forEach(function (remotePlayer, key) {
                     if (remotePlayer.id == updatedPlayer.activePlayer.id) {

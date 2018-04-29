@@ -7,17 +7,18 @@ class Player extends AbstractCharacter {
     public playerLight:BABYLON.PointLight;
     public isAlive:boolean;
 
-    public skills: Array;
-    protected experience: number;
+    public skills: Array<any>;
+    public statisticsAll: Array<any>;
+    public experience: number;
     public lvl: number;
     public freeAttributesPoints: number;
     public freeSkillPoints: number;
 
-    public constructor(game:Game, registerMoving:boolean, serverData: Array = []) {
+    public constructor(game:Game, registerMoving:boolean, serverData) {
         this.id = serverData.activePlayer.id;
         this.game = game;
         this.isAlive = true;
-        this.setCharacterStatistics(serverData.activePlayer.statistics);
+        this.setCharacterStatistics(serverData.activePlayer);
         this.connectionId = serverData.connectionId;
         this.isControllable = registerMoving;
         //
@@ -66,28 +67,17 @@ class Player extends AbstractCharacter {
 
             game.gui = new GUI.Main(game, this);
 
-            let attackArea = BABYLON.MeshBuilder.CreateBox('player_attackArea', {
-                width: 3,
-                height: 0.1,
-                size: 3
-            }, game.getScene());
-            attackArea.parent = this.mesh;
-            attackArea.visibility = 0;
-            attackArea.position.z = -2;
-            attackArea.isPickable = false;
-
-            this.attackArea = attackArea;
-            this.experience = serverData.experience;
-            this.lvl = serverData.lvl;
-            this.freeAttributesPoints = serverData.freeAttributesPoints;
-            this.freeSkillPoints = serverData.freeSkillPoints;
-            this.name = serverData.name;
-            this.setCharacterSkills(serverData.skills);
+            this.experience = serverData.activePlayer.experience;
+            this.lvl = serverData.activePlayer.lvl;
+            this.freeAttributesPoints = serverData.activePlayer.freeAttributesPoints;
+            this.freeSkillPoints = serverData.activePlayer.freeSkillPoints;
+            this.name = serverData.activePlayer.name;
+            // this.setCharacterSkills(serverData.skills);
 
             this.refreshCameraPosition();
         }
 
-        super(null, game);
+        super(serverData.activePlayer.name, game);
     }
 
     public initGodRay() {
@@ -120,8 +110,9 @@ class Player extends AbstractCharacter {
         return this;
     }
 
-    public setCharacterStatistics(attributes) {
-        this.statistics = attributes;
+    public setCharacterStatistics(playerServerData) {
+        this.statistics = playerServerData.statistics;
+        this.statisticsAll = playerServerData.allStatistics;
     };
 
     public setCharacterSkills(skills) {

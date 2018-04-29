@@ -23,27 +23,10 @@ namespace GUI {
             this.initTexture();
             this.opened = true;
 
-            let self = this;
             this.guiTexture.addControl(this.container);
             this.showItems();
             this.showEquipedItems();
-
-            let buttonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
-            buttonClose.color = "white";
-            buttonClose.background = "black";
-            buttonClose.width = "70px;";
-            buttonClose.height = "40px";
-            buttonClose.horizontalAlignment = this.position;
-            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-
-            buttonClose.onPointerUpObservable.add(function () {
-                self.close();
-            });
-
-            this.guiMain.registerBlockMoveCharacter(buttonClose);
-            this.guiTexture.addControl(buttonClose);
-
-            this.buttonClose = buttonClose;
+            this.createButtonClose();
 
             return this;
         }
@@ -52,7 +35,6 @@ namespace GUI {
             this.opened = false;
             this.guiTexture.dispose();
             this.buttonClose = null;
-            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
         }
 
         protected showEquipedItems() {
@@ -79,12 +61,13 @@ namespace GUI {
             let left = -42;
             let level = 1;
             let top = 0;
-            var panelItems = new BABYLON.GUI.Rectangle();
+            let panelItems = new BABYLON.GUI.Rectangle();
             panelItems.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             panelItems.width = "32%";
             panelItems.height = "45%";
             panelItems.top = "26%";
             panelItems.thickness = 0;
+            panelItems.isPointerBlocker = true;
             this.panelItems = panelItems;
 
             for (let i = 0; i < inventory.items.length; i++) {
@@ -121,7 +104,6 @@ namespace GUI {
                 result.top = top + "%";
                 result.thickness = 0;
                 result.fontSize = '14';
-                this.guiMain.registerBlockMoveCharacter(result);
 
                 let image = this.createItemImage(item);
 

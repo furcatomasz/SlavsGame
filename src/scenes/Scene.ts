@@ -4,7 +4,6 @@ abstract class Scene {
     protected game:Game;
     protected babylonScene: BABYLON.Scene;
     protected assetManager: BABYLON.AssetsManager;
-    public environment:Environment;
     public octree: BABYLON.Octree;
 
     protected setDefaults(game:Game, scene: BABYLON.Scene) {
@@ -151,9 +150,6 @@ abstract class Scene {
     //     checkbox.onIsCheckedChangedObservable.add(function(value) {
     //         func(value);
     //     });
-    //     if(self.game.gui) {
-    //         self.game.gui.registerBlockMoveCharacter(checkbox);
-    //     }
     //     var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
     //     header.height = "30px";
     //     header.color = "white";

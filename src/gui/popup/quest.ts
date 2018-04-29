@@ -42,7 +42,6 @@ namespace GUI {
             });
 
             this.guiTexture.addControl(buttonClose);
-            this.guiMain.registerBlockMoveCharacter(buttonClose);
             this.buttonClose = buttonClose;
 
             let buttonAccept = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Accept");
@@ -59,7 +58,6 @@ namespace GUI {
                 self.close();
             });
 
-            this.guiMain.registerBlockMoveCharacter(buttonAccept);
             this.guiTexture.addControl(buttonAccept);
         }
 
@@ -67,7 +65,6 @@ namespace GUI {
             this.opened = false;
             this.guiTexture.dispose();
             this.buttonClose = null;
-            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
         }
 
         protected showText() {

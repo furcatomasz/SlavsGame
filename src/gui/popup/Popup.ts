@@ -22,12 +22,12 @@ namespace GUI {
          * @returns {GUI.Popup}
          */
         protected initTexture() {
-            this.guiTexture = this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
-
+            this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
             let container = new BABYLON.GUI.StackPanel();
             container.horizontalAlignment = this.position;
             container.width = 0.33;
             container.height = 1;
+            container.isPointerBlocker = true;
             this.container = container;
 
             let image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, this.imageUrl);
@@ -36,9 +36,28 @@ namespace GUI {
             image.width = 1;
             image.height = 1;
 
-            this.guiMain.registerBlockMoveCharacter(image);
             this.container.addControl(image);
             this.containerBackground = image;
+
+            return this;
+        }
+
+        protected createButtonClose() {
+            let self = this;
+            let buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
+            buttonClose.color = "white";
+            buttonClose.background = "black";
+            buttonClose.width = "70px;";
+            buttonClose.height = "40px";
+            buttonClose.horizontalAlignment = this.position;
+            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+
+            buttonClose.onPointerUpObservable.add(function () {
+                self.close();
+            });
+
+            this.guiTexture.addControl(buttonClose);
+            this.buttonClose = buttonClose;
 
             return this;
         }

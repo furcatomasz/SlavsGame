@@ -23,7 +23,6 @@ abstract class AbstractCharacter {
     public animation:BABYLON.Animatable;
     public isControllable:boolean;
     public isAttack: boolean;
-    public attackArea:BABYLON.Mesh;
 
     public sfxWalk: BABYLON.Sound;
     protected sfxHit: BABYLON.Sound;
@@ -34,6 +33,7 @@ abstract class AbstractCharacter {
     public dynamicFunction;
 
     constructor(name:string, game:Game) {
+        this.name = name;
         this.game = game;
         this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
 

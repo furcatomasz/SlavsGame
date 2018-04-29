@@ -17,56 +17,42 @@ namespace GUI {
 
             this.guiTexture.addControl(this.container);
             this.showText();
-            let buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
-            buttonClose.color = "white";
-            buttonClose.background = "black";
-            buttonClose.width = "70px;";
-            buttonClose.height = "40px";
-            buttonClose.horizontalAlignment = this.position;
-            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-
-            buttonClose.onPointerUpObservable.add(function () {
-                self.close();
-            });
-
-            this.guiMain.registerBlockMoveCharacter(buttonClose);
-            this.guiTexture.addControl(buttonClose);
-            this.buttonClose = buttonClose;
+            this.createButtonClose();
         }
 
         public close() {
             this.opened = false;
             this.guiTexture.dispose();
             this.buttonClose = null;
-            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
         }
 
         protected showText() {
             let panel = new BABYLON.GUI.StackPanel('attributes.panel');
+            panel.isPointerBlocker = true;
             panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            panel.width = "32%";
+            panel.width = "33%";
             panel.top = "5%";
 
             this.guiTexture.addControl(panel);
 
-            let textName = this.createText(this.guiMain.game.player.name);
-            textName.color = 'yellow';
-            textName.height = '8%';
-            textName.fontSize = 36;
-            panel.addControl(textName);
+            let textPlayerName = this.createText(this.guiMain.game.player.name);
+            textPlayerName.color = 'yellow';
+            textPlayerName.height = '8%';
+            textPlayerName.fontSize = 36;
+            panel.addControl(textPlayerName);
 
-            let textName = this.createText(this.guiMain.game.player.lvl+' LVL');
-            textName.color = 'yellow';
-            textName.height = '8%';
-            textName.fontSize = 28;
-            panel.addControl(textName);
+            let textPlayerLVL = this.createText(this.guiMain.game.player.lvl+' LVL');
+            textPlayerLVL.color = 'yellow';
+            textPlayerLVL.height = '8%';
+            textPlayerLVL.fontSize = 28;
+            panel.addControl(textPlayerLVL);
 
-            let textName = this.createText('Attributes');
-            textName.color = 'green';
-            textName.height = '8%';
-            textName.fontSize = 36;
-            panel.addControl(textName);
+            let textAttributes = this.createText('Attributes');
+            textAttributes.color = 'green';
+            textAttributes.height = '8%';
+            textAttributes.fontSize = 36;
+            panel.addControl(textAttributes);
 
             this.createAttribute(1, 'Damage:' + this.guiMain.player.statistics.damage, panel);
             this.createAttribute(2, 'Armor:' + this.guiMain.player.statistics.armor, panel);
@@ -79,6 +65,18 @@ namespace GUI {
                 textAttributes.color = 'red';
                 panel.addControl(textAttributes);
             }
+
+            let textStatistics = this.createText('Statistics');
+            textStatistics.color = 'green';
+            textStatistics.height = '8%';
+            textStatistics.fontSize = 36;
+            panel.addControl(textStatistics);
+
+            let damage = this.createText('Damage:' + this.guiMain.player.statisticsAll.damage);
+            panel.addControl(damage);
+
+            let armor = this.createText('Armor:' + this.guiMain.player.statisticsAll.armor);
+            panel.addControl(armor);
 
         }
 
@@ -98,7 +96,8 @@ namespace GUI {
                 let button = BABYLON.GUI.Button.CreateImageButton("plus", text, "/assets/gui/plus.png");
                 button.height = "5%";
                 button.thickness = 0;
-                button.width = 0.3;
+                button.width = 0.4;
+                button.color = 'white';
                 control.addControl(button);
 
                 button.onPointerUpObservable.add(function () {
@@ -107,7 +106,6 @@ namespace GUI {
                     });
                 });
 
-                this.guiMain.registerBlockMoveCharacter(button);
             } else {
                 let textBlock = this.createText(text);
                 control.addControl(textBlock);

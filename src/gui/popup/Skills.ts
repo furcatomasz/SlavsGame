@@ -29,7 +29,6 @@ namespace GUI {
                 self.close();
             });
 
-            this.guiMain.registerBlockMoveCharacter(buttonClose);
             this.guiTexture.addControl(buttonClose);
             this.buttonClose = buttonClose;
         }
@@ -38,7 +37,6 @@ namespace GUI {
             this.opened = false;
             this.guiTexture.dispose();
             this.buttonClose = null;
-            this.guiMain.game.sceneManager.environment.ground.isPickable = true;
         }
 
         protected showText() {

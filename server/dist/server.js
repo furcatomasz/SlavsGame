@@ -825,57 +825,40 @@ var Server;
                     });
                 }
             });
-            socket.on('addAttribute', function (attribute) {
-                var type = attribute.type;
-                self.server.ormManager.structure.player.oneAsync({
-                    id: player.characters[player.activeCharacter].id
-                }).then(function (playerDatabase) {
-                    if (playerDatabase.freeAttributesPoints) {
-                        self.server.ormManager.structure.playerAttributes
-                            .oneAsync({ player_id: playerDatabase.id })
-                            .then(function (attributes) {
-                            new Promise(function (resolveFind) {
-                                if (!attributes) {
-                                    self.server.ormManager.structure.playerAttributes.create({ player_id: playerDatabase.id }, function (err, insertedAttributes) {
-                                        attributes = insertedAttributes;
-                                        resolveFind();
-                                    });
-                                }
-                                else {
-                                    resolveFind();
-                                }
-                            }).then(function (resolve) {
-                                switch (type) {
-                                    case 1:
-                                        attributes.damage += 1;
-                                        break;
-                                    case 2:
-                                        attributes.defence += 1;
-                                        break;
-                                    case 3:
-                                        attributes.health += 1;
-                                        break;
-                                    case 4:
-                                        attributes.attackSpeed += 1;
-                                        break;
-                                    case 5:
-                                        attributes.walkSpeed += 1;
-                                        break;
-                                    case 6:
-                                        attributes.blockChance += 1;
-                                        break;
-                                }
-                                attributes.save();
-                                playerDatabase.freeAttributesPoints -= 1;
-                                playerDatabase.save();
-                                player.refreshPlayerData(server, function () {
-                                    socket.emit('attributeAdded', player);
-                                });
-                            });
-                        });
-                    }
-                });
-            });
+            // socket.on('addAttribute', function (attribute) {
+            //     let type = attribute.type;
+            //
+            //     self.server.ormManager.structure.player.oneAsync({
+            //         id: player.characters[player.activeCharacter].id,
+            //     }).then(function (playerDatabase) {
+            //         if (playerDatabase.freeAttributesPoints) {
+            //             self.server.ormManager.structure.playerAttributes
+            //                 .oneAsync({player_id: playerDatabase.id})
+            //                 .then(function (attributes) {
+            //                     new Promise(function (resolveFind) {
+            //                         if (!attributes) {
+            //                             self.server.ormManager.structure.playerAttributes.create({player_id: playerDatabase.id}, function (err, insertedAttributes) {
+            //                                 attributes = insertedAttributes;
+            //                                 resolveFind();
+            //                             });
+            //                         } else {
+            //                             resolveFind();
+            //                         }
+            //
+            //
+            //                     }).then(function (resolve) {
+            //
+            //                         attributes.save();
+            //                         playerDatabase.freeAttributesPoints -= 1;
+            //                         playerDatabase.save();
+            //
+            //
+            //
+            //                     });
+            //                 });
+            //         }
+            //     });
+            // });
             socket.on('learnSkill', function (skill) {
                 var skillType = skill.skillType;
                 var skillPowerType = skill.powerType;
@@ -2587,7 +2570,7 @@ var SpecialItems;
     }());
     SpecialItems.SpecialItemsManager = SpecialItemsManager;
 })(SpecialItems || (SpecialItems = {}));
-/// <reference path="../Item.ts"/>
+/// <reference path="../ItesceneToDisposem.ts"/>
 var Items;
 (function (Items) {
     var Armor = /** @class */ (function (_super) {

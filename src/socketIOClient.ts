@@ -48,7 +48,7 @@ class SocketIOClient {
                 .changeScene();
         });
 
-        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
+        this.socket.emit('changeScene', ForestHouse.TYPE);
 
         return this;
     }

@@ -12,10 +12,13 @@ namespace Items {
             this.name = itemData.name;
             this.image = itemData.image;
             this.type = itemData.type;
-            this.databaseId = itemData.entity.id;
             this.statistics = itemData.statistics;
             this.mesh = game.factories['character'].createInstance(itemData.meshName);
             this.mesh.visibility = 0;
+
+            if(itemData.entity) {
+                this.databaseId = itemData.entity.id;
+            }
         }
     }
 }

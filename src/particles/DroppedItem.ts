@@ -4,12 +4,12 @@ namespace Particles {
     export class DroppedItem extends AbstractParticle {
 
         protected initParticleSystem() {
-            let fireSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 400 }, this.game.getScene());
+            let fireSystem = new BABYLON.GPUParticleSystem("DroppedItemParticles", { capacity: 50 }, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
 
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
-            fireSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 0);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1);
 
             fireSystem.color1 = new BABYLON.Color4(0, 0.5, 0, 1.0);
             fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);
@@ -34,7 +34,7 @@ namespace Particles {
             fireSystem.maxAngularSpeed = Math.PI;
 
             fireSystem.minEmitPower = 1;
-            fireSystem.maxEmitPower = 3;
+            fireSystem.maxEmitPower = 2;
             fireSystem.updateSpeed = 0.007;
 
             this.particleSystem = fireSystem;

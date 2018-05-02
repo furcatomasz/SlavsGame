@@ -21,6 +21,24 @@ class ForestHouseTomb extends Scene {
                 .executeWhenReady(function () {
                     self.environment = new EnvironmentForestHouseTomb(game, scene);
 
+                    //
+                    // let item = new Items.Item(game, {
+                    //     name: 'LongSword',
+                    //     image: 'sword',
+                    //     type: 1,
+                    //     statistics: {},
+                    //     meshName: 'swordLong',
+                    // });
+                    // Items.DroppedItem.showItem(game, item, {x: 2, z:-3}, 0);
+                    //
+                    // let item = new Items.Item(game, {
+                    //     name: 'shieldWoodenSmall',
+                    //     image: 'shieldWoodenSmall',
+                    //     type: 1,
+                    //     statistics: {},
+                    //     meshName: 'shieldWoodenSmall',
+                    // });
+                    // Items.DroppedItem.showItem(game, item, {x: 4, z:-7}, 0);
                 }, null);
         });
     }

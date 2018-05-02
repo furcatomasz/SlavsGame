@@ -26,29 +26,34 @@ class SocketIOClient {
             game.remotePlayers = [];
             self.connectionId = data.connectionId;
             self
-                .updatePlayers()
-                .updateEnemies()
-                .removePlayer()
-                .connectPlayer()
+            ///PLAYER
+
+            // .connectPlayer()
                 .showPlayer()
+                .updatePlayers()
+                .removePlayer()
                 .refreshPlayerEquip()
-                .showDroppedItem()
-                .showPlayerQuests()
-                .refreshPlayerQuests()
                 .addExperience()
                 .newLvl()
                 .attributeAdded()
-                .skillsLearned()
-                .updateRooms()
-                .reloadScene()
                 .addSpecialItem()
+
+            ///Scene
+                .showDroppedItem()
                 .refreshGateways()
-                .refreshQuests()
-                .questRequirementInformation()
+                .updateEnemies()
                 .changeScene();
+
+                // .showPlayerQuests()
+                // .refreshPlayerQuests()
+                // .skillsLearned()
+                // .updateRooms()
+                // .reloadScene()
+                // .refreshQuests()
+                // .questRequirementInformation()
         });
 
-        this.socket.emit('changeScene', ForestHouse.TYPE);
+        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
 
         return this;
     }
@@ -271,7 +276,6 @@ class SocketIOClient {
         let self = this;
 
         this.socket.on('showPlayer', function (playerData) {
-            console.log(playerData);
             game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
 
@@ -326,9 +330,9 @@ class SocketIOClient {
     protected showDroppedItem() {
         let game = this.game;
         this.socket.on('showDroppedItem', function (data) {
+            console.log(data);
             let item = new Items.Item(game, data.item);
-            let enemy = game.enemies[data.enemyId];
-            Items.DroppedItem.showItem(game, item, enemy, data.itemKey);
+            Items.DroppedItem.showItem(game, item, data.position, data.itemKey);
         });
 
         return this;

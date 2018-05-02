@@ -782,23 +782,25 @@ var Server;
          * @param player
          */
         IO.prototype.sceneEvents = function (socket, player) {
-            socket.on('refreshGateways', function () {
-                var character = player.getActiveCharacter();
-                var sceneType = player.activeScene;
-                var scene = Server.Scenes.Manager.factory(sceneType);
-                scene.refreshGatewaysData(character);
-                socket.emit('refreshGateways', scene);
-            });
+            // socket.on('refreshGateways', function () {
+            //     let character = player.getActiveCharacter();
+            //     let sceneType = player.activeScene;
+            //     let scene = Server.Scenes.Manager.factory(sceneType);
+            //     scene.refreshGatewaysData(character);
+            //
+            //     socket.emit('refreshGateways', scene);
+            // });
             socket.on('refreshQuests', function () {
                 var character = player.getActiveCharacter();
                 var sceneType = player.activeScene;
                 var scene = Server.Scenes.Manager.factory(sceneType);
                 socket.emit('refreshQuests', scene);
             });
-            socket.on('changeScene', function (sceneType) {
-                var scene = Server.Scenes.Manager.factory(sceneType);
-                socket.emit('changeScene', scene);
-            });
+            // socket.on('changeScene', function (sceneType) {
+            //     let scene = Server.Scenes.Manager.factory(sceneType);
+            //
+            //     socket.emit('changeScene', scene);
+            // });
             return this;
         };
         /**
@@ -1126,260 +1128,6 @@ var Server;
         return IO;
     }());
     Server.IO = IO;
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Orm;
-    (function (Orm) {
-        var Structure = /** @class */ (function () {
-            function Structure(db) {
-                this.user = db.define("user", {
-                    email: String,
-                    password: String
-                });
-                this.player = db.define("player", {
-                    name: String,
-                    type: String,
-                    lvl: Number,
-                    experience: Number,
-                    gold: Number,
-                    freeSkillPoints: Number,
-                    freeAttributesPoints: Number,
-                    scene: Number,
-                    positionX: Number,
-                    positionY: Number,
-                    positionZ: Number
-                });
-                this.player.hasOne("user", this.player, {
-                    reverse: "players"
-                });
-                this.playerAttributes = db.define("player_attributes", {
-                    attackSpeed: Number,
-                    defence: Number,
-                    damage: Number,
-                    health: Number,
-                    critic: Number,
-                    blockChance: Number
-                });
-                this.playerAttributes.hasOne("player", this.player, {
-                    reverse: "attributes"
-                });
-                this.playerSkills = db.define("player_skills", {
-                    skillType: Number,
-                    cooldown: Number,
-                    damage: Number,
-                    stock: Number
-                });
-                this.playerSkills.hasOne("player", this.player, {
-                    reverse: "skills"
-                });
-                this.playerOnline = db.define("player_online", {
-                    connectDate: Date,
-                    activityDate: Date
-                });
-                this.playerOnline.hasOne("player", this.player);
-                this.playerItems = db.define("player_items", {
-                    itemId: Number,
-                    improvement: Number,
-                    equip: Number
-                });
-                this.playerItems.hasOne("player", this.player, {
-                    reverse: "items"
-                });
-                this.playerQuest = db.define("player_quest", {
-                    questId: Number,
-                    date: Date
-                });
-                this.playerQuest.hasOne("player", this.player, {
-                    reverse: "activeQuests"
-                });
-                this.playerQuestRequirements = db.define("player_quest_requirements", {
-                    requirementId: Number,
-                    value: Number
-                });
-                this.playerQuestRequirements.hasOne("player", this.player, {
-                    reverse: "questRequirements"
-                });
-                this.playerSpecialItems = db.define("player_items_special", {
-                    type: Number,
-                    value: Number
-                });
-                this.playerSpecialItems.hasOne("player", this.player, {
-                    reverse: "specialItems"
-                });
-            }
-            return Structure;
-        }());
-        Orm.Structure = Structure;
-    })(Orm = Server.Orm || (Server.Orm = {}));
-})(Server || (Server = {}));
-var Server;
-(function (Server) {
-    var Orm;
-    (function (Orm) {
-        var TestData = /** @class */ (function () {
-            function TestData(ormManager) {
-                this.ormManager = ormManager;
-                ormManager.structure.user.exists({ email: "furcatomasz@gmail.com" }, function (err, exists) {
-                    if (err)
-                        throw err;
-                    if (!exists) {
-                        ormManager.structure.user.create({ email: "furcatomasz@gmail.com" }, function (err) {
-                            if (err)
-                                throw err;
-                        });
-                    }
-                });
-                ormManager.structure.user.find({ email: "furcatomasz@gmail.com" }, function (err, user) {
-                    if (err)
-                        throw err;
-                    var userId = user[0].id;
-                    ormManager.structure.player.exists({ name: "Mietek" }, function (err, exists) {
-                        if (err)
-                            throw err;
-                        if (!exists) {
-                            ormManager.structure.player.create({ name: "Mietek", type: 1, user_id: userId, lvl: 0 }, function (err, insertedPlayer) {
-                                if (err)
-                                    throw err;
-                                var insertedPlayerId = insertedPlayer.id;
-                                ormManager.structure.playerItems.create([
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 1,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 2,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 3,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 4,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 5,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 6,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 7,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 8,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 9,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                ], function (err) {
-                                    if (err)
-                                        throw err;
-                                });
-                            });
-                        }
-                    });
-                    ormManager.structure.player.exists({ name: "Tumek" }, function (err, exists) {
-                        if (err)
-                            throw err;
-                        if (!exists) {
-                            ormManager.structure.player.create({ name: "Tumek", type: 1, user_id: userId, lvl: 0 }, function (err, insertedPlayer) {
-                                if (err)
-                                    throw err;
-                                var insertedPlayerId = insertedPlayer.id;
-                                ormManager.structure.playerItems.create([
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 1,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 2,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 3,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 4,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 5,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 6,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 7,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 8,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                    {
-                                        player_id: insertedPlayerId,
-                                        itemId: 9,
-                                        improvement: 0,
-                                        equip: 0
-                                    },
-                                ], function (err) {
-                                    if (err)
-                                        throw err;
-                                });
-                            });
-                        }
-                    });
-                });
-            }
-            return TestData;
-        }());
-        Orm.TestData = TestData;
-    })(Orm = Server.Orm || (Server.Orm = {}));
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
@@ -1941,6 +1689,260 @@ var Server;
 })(Server || (Server = {}));
 var Server;
 (function (Server) {
+    var Orm;
+    (function (Orm) {
+        var Structure = /** @class */ (function () {
+            function Structure(db) {
+                this.user = db.define("user", {
+                    email: String,
+                    password: String
+                });
+                this.player = db.define("player", {
+                    name: String,
+                    type: String,
+                    lvl: Number,
+                    experience: Number,
+                    gold: Number,
+                    freeSkillPoints: Number,
+                    freeAttributesPoints: Number,
+                    scene: Number,
+                    positionX: Number,
+                    positionY: Number,
+                    positionZ: Number
+                });
+                this.player.hasOne("user", this.player, {
+                    reverse: "players"
+                });
+                this.playerAttributes = db.define("player_attributes", {
+                    attackSpeed: Number,
+                    defence: Number,
+                    damage: Number,
+                    health: Number,
+                    critic: Number,
+                    blockChance: Number
+                });
+                this.playerAttributes.hasOne("player", this.player, {
+                    reverse: "attributes"
+                });
+                this.playerSkills = db.define("player_skills", {
+                    skillType: Number,
+                    cooldown: Number,
+                    damage: Number,
+                    stock: Number
+                });
+                this.playerSkills.hasOne("player", this.player, {
+                    reverse: "skills"
+                });
+                this.playerOnline = db.define("player_online", {
+                    connectDate: Date,
+                    activityDate: Date
+                });
+                this.playerOnline.hasOne("player", this.player);
+                this.playerItems = db.define("player_items", {
+                    itemId: Number,
+                    improvement: Number,
+                    equip: Number
+                });
+                this.playerItems.hasOne("player", this.player, {
+                    reverse: "items"
+                });
+                this.playerQuest = db.define("player_quest", {
+                    questId: Number,
+                    date: Date
+                });
+                this.playerQuest.hasOne("player", this.player, {
+                    reverse: "activeQuests"
+                });
+                this.playerQuestRequirements = db.define("player_quest_requirements", {
+                    requirementId: Number,
+                    value: Number
+                });
+                this.playerQuestRequirements.hasOne("player", this.player, {
+                    reverse: "questRequirements"
+                });
+                this.playerSpecialItems = db.define("player_items_special", {
+                    type: Number,
+                    value: Number
+                });
+                this.playerSpecialItems.hasOne("player", this.player, {
+                    reverse: "specialItems"
+                });
+            }
+            return Structure;
+        }());
+        Orm.Structure = Structure;
+    })(Orm = Server.Orm || (Server.Orm = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
+    var Orm;
+    (function (Orm) {
+        var TestData = /** @class */ (function () {
+            function TestData(ormManager) {
+                this.ormManager = ormManager;
+                ormManager.structure.user.exists({ email: "furcatomasz@gmail.com" }, function (err, exists) {
+                    if (err)
+                        throw err;
+                    if (!exists) {
+                        ormManager.structure.user.create({ email: "furcatomasz@gmail.com" }, function (err) {
+                            if (err)
+                                throw err;
+                        });
+                    }
+                });
+                ormManager.structure.user.find({ email: "furcatomasz@gmail.com" }, function (err, user) {
+                    if (err)
+                        throw err;
+                    var userId = user[0].id;
+                    ormManager.structure.player.exists({ name: "Mietek" }, function (err, exists) {
+                        if (err)
+                            throw err;
+                        if (!exists) {
+                            ormManager.structure.player.create({ name: "Mietek", type: 1, user_id: userId, lvl: 0 }, function (err, insertedPlayer) {
+                                if (err)
+                                    throw err;
+                                var insertedPlayerId = insertedPlayer.id;
+                                ormManager.structure.playerItems.create([
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 1,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 2,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 3,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 4,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 5,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 6,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 7,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 8,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 9,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                ], function (err) {
+                                    if (err)
+                                        throw err;
+                                });
+                            });
+                        }
+                    });
+                    ormManager.structure.player.exists({ name: "Tumek" }, function (err, exists) {
+                        if (err)
+                            throw err;
+                        if (!exists) {
+                            ormManager.structure.player.create({ name: "Tumek", type: 1, user_id: userId, lvl: 0 }, function (err, insertedPlayer) {
+                                if (err)
+                                    throw err;
+                                var insertedPlayerId = insertedPlayer.id;
+                                ormManager.structure.playerItems.create([
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 1,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 2,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 3,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 4,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 5,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 6,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 7,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 8,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                    {
+                                        player_id: insertedPlayerId,
+                                        itemId: 9,
+                                        improvement: 0,
+                                        equip: 0
+                                    },
+                                ], function (err) {
+                                    if (err)
+                                        throw err;
+                                });
+                            });
+                        }
+                    });
+                });
+            }
+            return TestData;
+        }());
+        Orm.TestData = TestData;
+    })(Orm = Server.Orm || (Server.Orm = {}));
+})(Server || (Server = {}));
+var Server;
+(function (Server) {
     var Scenes;
     (function (Scenes) {
         var AbstractScene = /** @class */ (function () {
@@ -2312,6 +2314,80 @@ var Attributes;
     }(AbstractStatistics));
     Attributes.ItemStatistics = ItemStatistics;
 })(Attributes || (Attributes = {}));
+var Skills;
+(function (Skills) {
+    var AbstractSkill = /** @class */ (function () {
+        function AbstractSkill() {
+        }
+        AbstractSkill.prototype.setPower = function (cooldown, damage, stock) {
+            if (cooldown === void 0) { cooldown = 0; }
+            if (damage === void 0) { damage = 0; }
+            if (stock === void 0) { stock = 0; }
+            this.cooldown = cooldown;
+            this.damage = damage;
+            this.stock = stock;
+        };
+        AbstractSkill.TYPE = 0;
+        return AbstractSkill;
+    }());
+    Skills.AbstractSkill = AbstractSkill;
+})(Skills || (Skills = {}));
+var Skills;
+(function (Skills) {
+    var DoubleAttack = /** @class */ (function (_super) {
+        __extends(DoubleAttack, _super);
+        function DoubleAttack() {
+            var _this = this;
+            _this.name = 'Double Attack';
+            _this.type = Skills.DoubleAttack.TYPE;
+            return _this;
+        }
+        DoubleAttack.TYPE = 1;
+        return DoubleAttack;
+    }(Skills.AbstractSkill));
+    Skills.DoubleAttack = DoubleAttack;
+})(Skills || (Skills = {}));
+var Skills;
+(function (Skills) {
+    var SkillsManager = /** @class */ (function () {
+        function SkillsManager() {
+        }
+        /**
+         *
+         * @param type
+         * @returns {Skills.AbstractSkill}
+         */
+        SkillsManager.getSkill = function (type) {
+            var skill = null;
+            switch (type) {
+                case Skills.DoubleAttack.TYPE:
+                    skill = new Skills.DoubleAttack();
+                    break;
+                case Skills.Tornado.TYPE:
+                    skill = new Skills.Tornado();
+                    break;
+            }
+            return skill;
+        };
+        return SkillsManager;
+    }());
+    Skills.SkillsManager = SkillsManager;
+})(Skills || (Skills = {}));
+var Skills;
+(function (Skills) {
+    var Tornado = /** @class */ (function (_super) {
+        __extends(Tornado, _super);
+        function Tornado() {
+            var _this = this;
+            _this.name = 'Tornado';
+            _this.type = Skills.Tornado.TYPE;
+            return _this;
+        }
+        Tornado.TYPE = 2;
+        return Tornado;
+    }(Skills.AbstractSkill));
+    Skills.Tornado = Tornado;
+})(Skills || (Skills = {}));
 var Items;
 (function (Items) {
     var Item = /** @class */ (function () {
@@ -2396,80 +2472,6 @@ var Items;
     }());
     Items.ItemManager = ItemManager;
 })(Items || (Items = {}));
-var Skills;
-(function (Skills) {
-    var AbstractSkill = /** @class */ (function () {
-        function AbstractSkill() {
-        }
-        AbstractSkill.prototype.setPower = function (cooldown, damage, stock) {
-            if (cooldown === void 0) { cooldown = 0; }
-            if (damage === void 0) { damage = 0; }
-            if (stock === void 0) { stock = 0; }
-            this.cooldown = cooldown;
-            this.damage = damage;
-            this.stock = stock;
-        };
-        AbstractSkill.TYPE = 0;
-        return AbstractSkill;
-    }());
-    Skills.AbstractSkill = AbstractSkill;
-})(Skills || (Skills = {}));
-var Skills;
-(function (Skills) {
-    var DoubleAttack = /** @class */ (function (_super) {
-        __extends(DoubleAttack, _super);
-        function DoubleAttack() {
-            var _this = this;
-            _this.name = 'Double Attack';
-            _this.type = Skills.DoubleAttack.TYPE;
-            return _this;
-        }
-        DoubleAttack.TYPE = 1;
-        return DoubleAttack;
-    }(Skills.AbstractSkill));
-    Skills.DoubleAttack = DoubleAttack;
-})(Skills || (Skills = {}));
-var Skills;
-(function (Skills) {
-    var SkillsManager = /** @class */ (function () {
-        function SkillsManager() {
-        }
-        /**
-         *
-         * @param type
-         * @returns {Skills.AbstractSkill}
-         */
-        SkillsManager.getSkill = function (type) {
-            var skill = null;
-            switch (type) {
-                case Skills.DoubleAttack.TYPE:
-                    skill = new Skills.DoubleAttack();
-                    break;
-                case Skills.Tornado.TYPE:
-                    skill = new Skills.Tornado();
-                    break;
-            }
-            return skill;
-        };
-        return SkillsManager;
-    }());
-    Skills.SkillsManager = SkillsManager;
-})(Skills || (Skills = {}));
-var Skills;
-(function (Skills) {
-    var Tornado = /** @class */ (function (_super) {
-        __extends(Tornado, _super);
-        function Tornado() {
-            var _this = this;
-            _this.name = 'Tornado';
-            _this.type = Skills.Tornado.TYPE;
-            return _this;
-        }
-        Tornado.TYPE = 2;
-        return Tornado;
-    }(Skills.AbstractSkill));
-    Skills.Tornado = Tornado;
-})(Skills || (Skills = {}));
 var SpecialItems;
 (function (SpecialItems) {
     var AbstractSpecialItem = /** @class */ (function () {
@@ -2570,6 +2572,53 @@ var SpecialItems;
     }());
     SpecialItems.SpecialItemsManager = SpecialItemsManager;
 })(SpecialItems || (SpecialItems = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots = /** @class */ (function (_super) {
+        __extends(Boots, _super);
+        /**
+         * @param databaseId
+         */
+        function Boots(databaseId) {
+            var _this = this;
+            _this.type = Items.Boots.TYPE;
+            _this = _super.call(this, databaseId) || this;
+            return _this;
+        }
+        /**
+         * @returns {number}
+         */
+        Boots.prototype.getType = function () {
+            return Items.Boots.TYPE;
+        };
+        Boots.TYPE = 5;
+        return Boots;
+    }(Items.Item));
+    Items.Boots = Boots;
+})(Items || (Items = {}));
+/// <reference path="../Item.ts"/>
+var Items;
+(function (Items) {
+    var Boots;
+    (function (Boots) {
+        var LeatherBoots = /** @class */ (function (_super) {
+            __extends(LeatherBoots, _super);
+            function LeatherBoots(databaseId) {
+                var _this = _super.call(this, databaseId) || this;
+                _this.name = 'leatherBoots';
+                _this.image = 'Boots';
+                _this.itemId = Items.Boots.LeatherBoots.ITEM_ID;
+                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
+                _this.meshName = 'leatherBoots';
+                return _this;
+            }
+            LeatherBoots.ITEM_ID = 2;
+            return LeatherBoots;
+        }(Boots));
+        Boots.LeatherBoots = LeatherBoots;
+    })(Boots = Items.Boots || (Items.Boots = {}));
+})(Items || (Items = {}));
 /// <reference path="../ItesceneToDisposem.ts"/>
 var Items;
 (function (Items) {
@@ -2620,49 +2669,49 @@ var Items;
 /// <reference path="../Item.ts"/>
 var Items;
 (function (Items) {
-    var Boots = /** @class */ (function (_super) {
-        __extends(Boots, _super);
+    var Helm = /** @class */ (function (_super) {
+        __extends(Helm, _super);
         /**
          * @param databaseId
          */
-        function Boots(databaseId) {
+        function Helm(databaseId) {
             var _this = this;
-            _this.type = Items.Boots.TYPE;
+            _this.type = Items.Helm.TYPE;
             _this = _super.call(this, databaseId) || this;
             return _this;
         }
         /**
          * @returns {number}
          */
-        Boots.prototype.getType = function () {
-            return Items.Boots.TYPE;
+        Helm.prototype.getType = function () {
+            return Items.Helm.TYPE;
         };
-        Boots.TYPE = 5;
-        return Boots;
+        Helm.TYPE = 3;
+        return Helm;
     }(Items.Item));
-    Items.Boots = Boots;
+    Items.Helm = Helm;
 })(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
+/// <reference path="Helm.ts"/>
 var Items;
 (function (Items) {
-    var Boots;
-    (function (Boots) {
-        var LeatherBoots = /** @class */ (function (_super) {
-            __extends(LeatherBoots, _super);
-            function LeatherBoots(databaseId) {
+    var Helms;
+    (function (Helms) {
+        var LeatherHelm = /** @class */ (function (_super) {
+            __extends(LeatherHelm, _super);
+            function LeatherHelm(databaseId) {
                 var _this = _super.call(this, databaseId) || this;
-                _this.name = 'leatherBoots';
-                _this.image = 'Boots';
-                _this.itemId = Items.Boots.LeatherBoots.ITEM_ID;
+                _this.name = 'leatherHelm';
+                _this.image = 'Helm';
+                _this.itemId = Items.Helms.LeatherHelm.ITEM_ID;
                 _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'leatherBoots';
+                _this.meshName = 'leatherHelm';
                 return _this;
             }
-            LeatherBoots.ITEM_ID = 2;
-            return LeatherBoots;
-        }(Boots));
-        Boots.LeatherBoots = LeatherBoots;
-    })(Boots = Items.Boots || (Items.Boots = {}));
+            LeatherHelm.ITEM_ID = 4;
+            return LeatherHelm;
+        }(Items.Helm));
+        Helms.LeatherHelm = LeatherHelm;
+    })(Helms = Items.Helms || (Items.Helms = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;
@@ -2710,53 +2759,6 @@ var Items;
         }(Gloves));
         Gloves.LeatherGloves = LeatherGloves;
     })(Gloves = Items.Gloves || (Items.Gloves = {}));
-})(Items || (Items = {}));
-/// <reference path="../Item.ts"/>
-var Items;
-(function (Items) {
-    var Helm = /** @class */ (function (_super) {
-        __extends(Helm, _super);
-        /**
-         * @param databaseId
-         */
-        function Helm(databaseId) {
-            var _this = this;
-            _this.type = Items.Helm.TYPE;
-            _this = _super.call(this, databaseId) || this;
-            return _this;
-        }
-        /**
-         * @returns {number}
-         */
-        Helm.prototype.getType = function () {
-            return Items.Helm.TYPE;
-        };
-        Helm.TYPE = 3;
-        return Helm;
-    }(Items.Item));
-    Items.Helm = Helm;
-})(Items || (Items = {}));
-/// <reference path="Helm.ts"/>
-var Items;
-(function (Items) {
-    var Helms;
-    (function (Helms) {
-        var LeatherHelm = /** @class */ (function (_super) {
-            __extends(LeatherHelm, _super);
-            function LeatherHelm(databaseId) {
-                var _this = _super.call(this, databaseId) || this;
-                _this.name = 'leatherHelm';
-                _this.image = 'Helm';
-                _this.itemId = Items.Helms.LeatherHelm.ITEM_ID;
-                _this.statistics = new Attributes.ItemStatistics(0, 0, 0, 0, 5, 0, 0, 0);
-                _this.meshName = 'leatherHelm';
-                return _this;
-            }
-            LeatherHelm.ITEM_ID = 4;
-            return LeatherHelm;
-        }(Items.Helm));
-        Helms.LeatherHelm = LeatherHelm;
-    })(Helms = Items.Helms || (Items.Helms = {}));
 })(Items || (Items = {}));
 /// <reference path="../Item.ts"/>
 var Items;

@@ -313,14 +313,14 @@ namespace Server {
          * @param player
          */
         protected sceneEvents(socket, player) {
-            socket.on('refreshGateways', function () {
-                let character = player.getActiveCharacter();
-                let sceneType = player.activeScene;
-                let scene = Server.Scenes.Manager.factory(sceneType);
-                scene.refreshGatewaysData(character);
-
-                socket.emit('refreshGateways', scene);
-            });
+            // socket.on('refreshGateways', function () {
+            //     let character = player.getActiveCharacter();
+            //     let sceneType = player.activeScene;
+            //     let scene = Server.Scenes.Manager.factory(sceneType);
+            //     scene.refreshGatewaysData(character);
+            //
+            //     socket.emit('refreshGateways', scene);
+            // });
 
             socket.on('refreshQuests', function () {
                 let character = player.getActiveCharacter();
@@ -330,11 +330,11 @@ namespace Server {
                 socket.emit('refreshQuests', scene);
             });
 
-            socket.on('changeScene', function (sceneType) {
-                let scene = Server.Scenes.Manager.factory(sceneType);
-
-                socket.emit('changeScene', scene);
-            });
+            // socket.on('changeScene', function (sceneType) {
+            //     let scene = Server.Scenes.Manager.factory(sceneType);
+            //
+            //     socket.emit('changeScene', scene);
+            // });
             
             return this;
         }

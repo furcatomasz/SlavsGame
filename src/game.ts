@@ -43,25 +43,22 @@ class Game {
 
     constructor(canvasElement: HTMLCanvasElement) {
         let self = this;
-        this.modules = new Modules();
-        this.modules.loadModules(function() {
-            let serverUrl = window.location.hostname + ':'+gameServerPort;
+        let serverUrl = window.location.hostname + ':'+gameServerPort;
 
-            self.canvas = canvasElement;
-            self.engine = new BABYLON.Engine(self.canvas, false, null, false);
-            self.controller = new Mouse(self);
-            self.client = new SocketIOClient(self);
-            self.factories = [];
-            self.enemies = [];
-            self.quests = [];
-            self.npcs = [];
-            self.scenes = [];
-            self.activeScene = null;
-            self.events = new Events();
+        self.canvas = canvasElement;
+        self.engine = new BABYLON.Engine(self.canvas, false, null, false);
+        self.controller = new Mouse(self);
+        self.client = new SocketIOClient(self);
+        self.factories = [];
+        self.enemies = [];
+        self.quests = [];
+        self.npcs = [];
+        self.scenes = [];
+        self.activeScene = null;
+        self.events = new Events();
 
-            self.client.connect(serverUrl);
-            self.animate();
-        });
+        self.client.connect(serverUrl);
+        self.animate();
     }
 
     getScene(): BABYLON.Scene {

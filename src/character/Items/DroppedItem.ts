@@ -1,41 +1,48 @@
 namespace Items {
     export class DroppedItem {
 
-        public static showItem(game: Game, item: Item, enemy: AbstractCharacter, itemDropKey: number) {
+        public static showItem(game: Game, item: Item, position: Array<any>, itemDropKey: number) {
             let scene = game.getScene();
+console.log(item.mesh);
 
-            item.mesh.position.x = enemy.mesh.position.x;
-            item.mesh.position.z = enemy.mesh.position.z;
-            item.mesh.position.y = 0;
+            let droppedItemBox = BABYLON.Mesh.CreateBox(item.name+'_Box', 3, scene, false);
+            droppedItemBox.checkCollisions = false;
+            droppedItemBox.visibility = 0;
+
+            droppedItemBox.position.x = position.x;
+            droppedItemBox.position.z = position.z;
+            droppedItemBox.position.y = 0;
 
             item.mesh.outlineColor = new BABYLON.Color3(0,1,0);
             item.mesh.outlineWidth = 0.1;
             item.mesh.rotation = new BABYLON.Vector3(0,0,0);
-
-            item.mesh.actionManager = new BABYLON.ActionManager(scene);
-            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
+            item.mesh.visibility = 1;
+            item.mesh.parent = droppedItemBox;
+            item.mesh.setPositionWithLocalVector(new BABYLON.Vector3(0, 0, 0));
+            console.log(item.mesh.getPivotPoint());
+            droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
                 function () {
                     item.mesh.renderOutline = false;
                 }));
 
-            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
                 function () {
                     item.mesh.renderOutline = true;
                 }));
 
-            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
                 function () {
                     game.gui.playerLogsPanel.addText(item.name+'  has been picked up.', 'green');
-                    game.client.socket.emit('addDoppedItem', itemDropKey);
-                    item.mesh.dispose();
+                    game.client.socket.emit('addDroppedItem', itemDropKey);
+                    droppedItemBox.dispose();
                 }));
 
-            item.mesh.visibility = 1;
-            let particleSystem = new Particles.DroppedItem(game, item.mesh);
+            let particleSystem = new Particles.DroppedItem(game, droppedItemBox);
             particleSystem.particleSystem.start();
 
             if(game.sceneManager.octree) {
-                game.sceneManager.octree.dynamicContent.push(item.mesh);
+                game.sceneManager.octree.dynamicContent.push(droppedItemBox);
             }
         }
     }

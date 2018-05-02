@@ -24,23 +24,6 @@ var Events = /** @class */ (function () {
     Events.MONSTER_TO_ATTACK = 'monsterToAttack';
     return Events;
 }());
-/// <reference path="../shared/Character/Character"/>
-var Modules = /** @class */ (function () {
-    function Modules() {
-    }
-    Modules.prototype.loadModules = function (callback) {
-        var self = this;
-        new Promise(function (modulesIsLoaded) {
-            requirejs(["./../../shared/Character/Character"], function (CharacterModule) {
-                self.character = CharacterModule.Character;
-                modulesIsLoaded();
-            });
-        }).then(function (resolve) {
-            callback();
-        });
-    };
-    return Modules;
-}());
 /// <reference path="../game.ts"/>
 var Controller = /** @class */ (function () {
     function Controller(game) {
@@ -497,28 +480,27 @@ var SocketIOClient = /** @class */ (function () {
             game.remotePlayers = [];
             self.connectionId = data.connectionId;
             self
-                .updatePlayers()
-                .updateEnemies()
-                .removePlayer()
-                .connectPlayer()
                 .showPlayer()
+                .updatePlayers()
+                .removePlayer()
                 .refreshPlayerEquip()
-                .showDroppedItem()
-                .showPlayerQuests()
-                .refreshPlayerQuests()
                 .addExperience()
                 .newLvl()
                 .attributeAdded()
-                .skillsLearned()
-                .updateRooms()
-                .reloadScene()
                 .addSpecialItem()
+                .showDroppedItem()
                 .refreshGateways()
-                .refreshQuests()
-                .questRequirementInformation()
+                .updateEnemies()
                 .changeScene();
+            // .showPlayerQuests()
+            // .refreshPlayerQuests()
+            // .skillsLearned()
+            // .updateRooms()
+            // .reloadScene()
+            // .refreshQuests()
+            // .questRequirementInformation()
         });
-        this.socket.emit('changeScene', ForestHouse.TYPE);
+        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -696,7 +678,6 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         var self = this;
         this.socket.on('showPlayer', function (playerData) {
-            console.log(playerData);
             game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
             var octree = game.sceneManager.octree;
@@ -743,9 +724,9 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.showDroppedItem = function () {
         var game = this.game;
         this.socket.on('showDroppedItem', function (data) {
+            console.log(data);
             var item = new Items.Item(game, data.item);
-            var enemy = game.enemies[data.enemyId];
-            Items.DroppedItem.showItem(game, item, enemy, data.itemKey);
+            Items.DroppedItem.showItem(game, item, data.position, data.itemKey);
         });
         return this;
     };
@@ -1008,23 +989,20 @@ var SocketIOClient = /** @class */ (function () {
 var Game = /** @class */ (function () {
     function Game(canvasElement) {
         var self = this;
-        this.modules = new Modules();
-        this.modules.loadModules(function () {
-            var serverUrl = window.location.hostname + ':' + gameServerPort;
-            self.canvas = canvasElement;
-            self.engine = new BABYLON.Engine(self.canvas, false, null, false);
-            self.controller = new Mouse(self);
-            self.client = new SocketIOClient(self);
-            self.factories = [];
-            self.enemies = [];
-            self.quests = [];
-            self.npcs = [];
-            self.scenes = [];
-            self.activeScene = null;
-            self.events = new Events();
-            self.client.connect(serverUrl);
-            self.animate();
-        });
+        var serverUrl = window.location.hostname + ':' + gameServerPort;
+        self.canvas = canvasElement;
+        self.engine = new BABYLON.Engine(self.canvas, false, null, false);
+        self.controller = new Mouse(self);
+        self.client = new SocketIOClient(self);
+        self.factories = [];
+        self.enemies = [];
+        self.quests = [];
+        self.npcs = [];
+        self.scenes = [];
+        self.activeScene = null;
+        self.events = new Events();
+        self.client.connect(serverUrl);
+        self.animate();
     }
     Game.prototype.getScene = function () {
         return this.scenes[this.activeScene];
@@ -2619,11 +2597,11 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         DroppedItem.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 400 }, this.game.getScene());
+            var fireSystem = new BABYLON.GPUParticleSystem("DroppedItemParticles", { capacity: 50 }, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
-            fireSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 0);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1);
             fireSystem.color1 = new BABYLON.Color4(0, 0.5, 0, 1.0);
             fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);
             fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
@@ -2639,7 +2617,7 @@ var Particles;
             fireSystem.minAngularSpeed = -10;
             fireSystem.maxAngularSpeed = Math.PI;
             fireSystem.minEmitPower = 1;
-            fireSystem.maxEmitPower = 3;
+            fireSystem.maxEmitPower = 2;
             fireSystem.updateSpeed = 0.007;
             this.particleSystem = fireSystem;
         };
@@ -3245,6 +3223,24 @@ var ForestHouseTomb = /** @class */ (function (_super) {
                 .defaultPipeline(scene)
                 .executeWhenReady(function () {
                 self.environment = new EnvironmentForestHouseTomb(game, scene);
+                //
+                // let item = new Items.Item(game, {
+                //     name: 'LongSword',
+                //     image: 'sword',
+                //     type: 1,
+                //     statistics: {},
+                //     meshName: 'swordLong',
+                // });
+                // Items.DroppedItem.showItem(game, item, {x: 2, z:-3}, 0);
+                //
+                // let item = new Items.Item(game, {
+                //     name: 'shieldWoodenSmall',
+                //     image: 'shieldWoodenSmall',
+                //     type: 1,
+                //     statistics: {},
+                //     meshName: 'shieldWoodenSmall',
+                // });
+                // Items.DroppedItem.showItem(game, item, {x: 4, z:-7}, 0);
             }, null);
         });
     };
@@ -3501,31 +3497,38 @@ var Items;
     var DroppedItem = /** @class */ (function () {
         function DroppedItem() {
         }
-        DroppedItem.showItem = function (game, item, enemy, itemDropKey) {
+        DroppedItem.showItem = function (game, item, position, itemDropKey) {
             var scene = game.getScene();
-            item.mesh.position.x = enemy.mesh.position.x;
-            item.mesh.position.z = enemy.mesh.position.z;
-            item.mesh.position.y = 0;
+            console.log(item.mesh);
+            var droppedItemBox = BABYLON.Mesh.CreateBox(item.name + '_Box', 3, scene, false);
+            droppedItemBox.checkCollisions = false;
+            droppedItemBox.visibility = 0;
+            droppedItemBox.position.x = position.x;
+            droppedItemBox.position.z = position.z;
+            droppedItemBox.position.y = 0;
             item.mesh.outlineColor = new BABYLON.Color3(0, 1, 0);
             item.mesh.outlineWidth = 0.1;
             item.mesh.rotation = new BABYLON.Vector3(0, 0, 0);
-            item.mesh.actionManager = new BABYLON.ActionManager(scene);
-            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+            item.mesh.visibility = 1;
+            item.mesh.parent = droppedItemBox;
+            item.mesh.setPositionWithLocalVector(new BABYLON.Vector3(0, 0, 0));
+            console.log(item.mesh.getPivotPoint());
+            droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
                 item.mesh.renderOutline = false;
             }));
-            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
                 item.mesh.renderOutline = true;
             }));
-            item.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
                 game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
-                game.client.socket.emit('addDoppedItem', itemDropKey);
-                item.mesh.dispose();
+                game.client.socket.emit('addDroppedItem', itemDropKey);
+                droppedItemBox.dispose();
             }));
-            item.mesh.visibility = 1;
-            var particleSystem = new Particles.DroppedItem(game, item.mesh);
+            var particleSystem = new Particles.DroppedItem(game, droppedItemBox);
             particleSystem.particleSystem.start();
             if (game.sceneManager.octree) {
-                game.sceneManager.octree.dynamicContent.push(item.mesh);
+                game.sceneManager.octree.dynamicContent.push(droppedItemBox);
             }
         };
         return DroppedItem;
@@ -3539,10 +3542,12 @@ var Items;
             this.name = itemData.name;
             this.image = itemData.image;
             this.type = itemData.type;
-            this.databaseId = itemData.entity.id;
             this.statistics = itemData.statistics;
             this.mesh = game.factories['character'].createInstance(itemData.meshName);
             this.mesh.visibility = 0;
+            if (itemData.entity) {
+                this.databaseId = itemData.entity.id;
+            }
         }
         return Item;
     }());

@@ -139,7 +139,7 @@ class SocketIOClient {
     protected addExperience() {
         let game = this.game;
         this.socket.on('addExperience', function (data) {
-            game.player.addExperience(data.experience);
+            game.player.addExperience(data.experience, data.experiencePercentages);
             game.gui.playerLogsPanel.addText('You earned ' + data.experience + ' experience.', 'blue');
 
         });
@@ -197,8 +197,11 @@ class SocketIOClient {
      */
     protected newLvl() {
         let game = this.game;
-        this.socket.on('newLvl', function (data) {
-            game.player.freeAttributesPoints = data.freeAttributesPoints;
+        this.socket.on('newLvl', function (playerData) {
+            game.player.freeAttributesPoints = playerData.freeAttributesPoints;
+            game.player.freeSkillPoints = playerData.freeSkillPoints;
+            game.player.lvl = playerData.lvl;
+            game.player.experiencePercentages = 0;
             game.gui.attributes.refreshPopup();
 
             game.player.setNewLvl();
@@ -268,6 +271,7 @@ class SocketIOClient {
         let self = this;
 
         this.socket.on('showPlayer', function (playerData) {
+            console.log(playerData);
             game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
 

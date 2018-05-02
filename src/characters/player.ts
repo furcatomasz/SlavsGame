@@ -10,6 +10,7 @@ class Player extends AbstractCharacter {
     public skills: Array<any>;
     public statisticsAll: Array<any>;
     public experience: number;
+    public experiencePercentages: number;
     public lvl: number;
     public freeAttributesPoints: number;
     public freeSkillPoints: number;
@@ -68,6 +69,7 @@ class Player extends AbstractCharacter {
             game.gui = new GUI.Main(game, this);
 
             this.experience = serverData.activePlayer.experience;
+            this.experiencePercentages = serverData.activePlayer.experiencePercentages;
             this.lvl = serverData.activePlayer.lvl;
             this.freeAttributesPoints = serverData.activePlayer.freeAttributesPoints;
             this.freeSkillPoints = serverData.activePlayer.freeSkillPoints;
@@ -196,38 +198,17 @@ class Player extends AbstractCharacter {
     }
 
     public refreshExperienceInGui() {
-        this.game.gui.playerBottomPanel.expBar.value = this.getExperience(true);
+        this.game.gui.playerBottomPanel.expBar.value = this.experiencePercentages;
     }
 
-    /**
-     *
-     * @param percentage
-     * @returns {number}
-     */
-    public getExperience(percentage: boolean = false) {
-        let lvls = this.game.modules.character.getLvls();
-        let requiredToActualLvl = lvls[this.lvl];
-        let requiredToLvl = lvls[this.lvl + 1];
-
-        if (this.experience < 1) {
-            return 0;
-        }
-
-        let percentageValue = (this.lvl) ?
-            (((this.experience-requiredToActualLvl ) * 100) / (requiredToLvl-requiredToActualLvl)) :
-            (((this.experience) * 100) / (requiredToLvl));
-
-        return (percentage) ? percentageValue : this.experience;
-    }
-
-    public addExperience(experince: number) {
+    public addExperience(experince: number, experiencePercentages: number) {
         this.experience += experince;
+        this.experiencePercentages = experiencePercentages;
 
         this.refreshExperienceInGui();
     }
 
     public setNewLvl() {
-        this.lvl += 1;
         this.game.gui.playerLogsPanel.addText('New lvl '+this.lvl+'', 'red');
         this.game.gui.playerLogsPanel.addText('You got 5 attribute points', 'red');
         this.game.gui.playerLogsPanel.addText('You got 1 skill point '+this.lvl+'', 'red');

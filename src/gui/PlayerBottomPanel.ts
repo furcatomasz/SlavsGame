@@ -35,7 +35,7 @@ namespace GUI {
                 let expSlider = new BABYLON.GUI.Slider();
                 expSlider.minimum = 0;
                 expSlider.maximum = 100;
-                expSlider.value = game.player.getExperience(true);
+                expSlider.value = game.player.experiencePercentages;
                 expSlider.width = "100%";
                 expSlider.height = "20px";
                 expSlider.thumbWidth = 0;

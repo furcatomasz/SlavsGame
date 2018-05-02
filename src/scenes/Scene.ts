@@ -28,6 +28,7 @@ abstract class Scene {
     protected executeWhenReady(onReady: Function, onPlayerConnected: Function) {
         let scene = this.babylonScene;
         let assetsManager = this.assetManager;
+        let game = this.game;
 
         scene.executeWhenReady(function () {
             // game.client.socket.emit('createPlayer');
@@ -48,12 +49,9 @@ abstract class Scene {
                 }
 
                 game.controller.registerControls(scene);
-                game.client.socket.emit('getQuests');
-                game.client.showEnemies();
-
                 game.client.socket.emit('changeScenePost');
-
                 game.client.socket.emit('refreshGateways');
+                game.client.socket.emit('refreshQuests');
 
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };

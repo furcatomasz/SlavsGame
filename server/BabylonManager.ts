@@ -222,6 +222,7 @@ namespace Server {
 
                         player.mesh.dispose();
                         self.players.splice(key, 1);
+                        delete self.enemies[roomId];
                     }
                 });
             });

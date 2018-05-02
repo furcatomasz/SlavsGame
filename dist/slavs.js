@@ -98,6 +98,7 @@ var Scene = /** @class */ (function () {
     Scene.prototype.executeWhenReady = function (onReady, onPlayerConnected) {
         var scene = this.babylonScene;
         var assetsManager = this.assetManager;
+        var game = this.game;
         scene.executeWhenReady(function () {
             // game.client.socket.emit('createPlayer');
             assetsManager.onFinish = function (tasks) {
@@ -113,10 +114,9 @@ var Scene = /** @class */ (function () {
                     onPlayerConnected();
                 }
                 game.controller.registerControls(scene);
-                game.client.socket.emit('getQuests');
-                game.client.showEnemies();
                 game.client.socket.emit('changeScenePost');
                 game.client.socket.emit('refreshGateways');
+                game.client.socket.emit('refreshQuests');
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -488,19 +488,18 @@ var SocketIOClient = /** @class */ (function () {
                 .newLvl()
                 .attributeAdded()
                 .addSpecialItem()
+                .showEnemies()
                 .showDroppedItem()
                 .refreshGateways()
+                .refreshQuests()
                 .updateEnemies()
-                .changeScene();
-            // .showPlayerQuests()
-            // .refreshPlayerQuests()
+                .changeScene()
+                .questRequirementInformation();
             // .skillsLearned()
             // .updateRooms()
             // .reloadScene()
-            // .refreshQuests()
-            // .questRequirementInformation()
         });
-        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
+        this.socket.emit('changeScene', ForestHouseStart.TYPE);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -526,11 +525,20 @@ var SocketIOClient = /** @class */ (function () {
     };
     SocketIOClient.prototype.refreshQuests = function () {
         var game = this.game;
-        this.socket.on('refreshQuests', function (sceneServerData) {
-            var questsFromServer = sceneServerData.quests;
-            questsFromServer.forEach(function (quest) {
-                new Factories.Quests(game, quest.objectName);
+        var self = this;
+        this.socket.on('refreshQuests', function (data) {
+            game.quests.forEach(function (quest) {
+                quest.box.dispose();
             });
+            game.quests = [];
+            var activeQuest = data.sessionData.activeRoom.activeQuest;
+            data.quests.forEach(function (quest) {
+                game.quests.push(new Factories.Quests(game, quest, activeQuest));
+            });
+            self.socket.emit('refreshGateways');
+            if (activeQuest) {
+                self.game.gui.playerQuestInformation.addQuest(activeQuest);
+            }
         });
         return this;
     };
@@ -630,50 +638,6 @@ var SocketIOClient = /** @class */ (function () {
     /**
      * @returns {SocketIOClient}
      */
-    SocketIOClient.prototype.showPlayerQuests = function () {
-        var game = this.game;
-        var questManager = new Quests.QuestManager(game);
-        this.socket.on('quests', function (data) {
-            game.quests = [];
-            var questPromise = new Promise(function (resolve, reject) {
-                data.quests.forEach(function (quest, key) {
-                    if (quest) {
-                        var questObject_1 = questManager.transformQuestDatabaseDataToObject(quest);
-                        data.playerQuests.forEach(function (playerQuest, key) {
-                            if (playerQuest.questId == quest.questId) {
-                                questObject_1.isActive = true;
-                            }
-                        });
-                        game.quests.push(questObject_1);
-                    }
-                    resolve();
-                });
-            });
-            questPromise.then(function () {
-                document.dispatchEvent(game.events.questsReceived);
-            });
-        });
-        return this;
-    };
-    SocketIOClient.prototype.refreshPlayerQuests = function () {
-        var game = this.game;
-        this.socket.on('refreshQuestsStatus', function (quest) {
-            for (var _i = 0, _a = game.quests; _i < _a.length; _i++) {
-                var gameQuest = _a[_i];
-                if (gameQuest.getQuestId() == quest.questId) {
-                    gameQuest.isActive = true;
-                    for (var _b = 0, _c = game.npcs; _b < _c.length; _b++) {
-                        var npc = _c[_b];
-                        npc.refreshTooltipColor();
-                    }
-                }
-            }
-        });
-        return this;
-    };
-    /**
-     * @returns {SocketIOClient}
-     */
     SocketIOClient.prototype.showPlayer = function () {
         var game = this.game;
         var self = this;
@@ -736,8 +700,11 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.showEnemies = function () {
         var game = this.game;
         this.socket.on('showEnemies', function (data) {
+            console.log(data);
+            console.log(game.enemies);
             data.forEach(function (enemyData, key) {
                 var enemy = game.enemies[key];
+                console.log(enemy);
                 if (enemy) {
                     var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
                     enemy.target = enemyData.target;
@@ -745,8 +712,7 @@ var SocketIOClient = /** @class */ (function () {
                     enemy.runAnimationWalk();
                 }
                 else if (enemyData.statistics.hp > 0) {
-                    var newMonster = void 0;
-                    newMonster = new Monster(game, key, enemyData);
+                    var newMonster = new Monster(game, key, enemyData);
                     if (newMonster) {
                         if (game.sceneManager.octree) {
                             game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
@@ -1619,13 +1585,15 @@ var Factories;
             var gatewayParticleSystem = new Particles.Gateway(game, gateway, isActive).particleSystem;
             gatewayParticleSystem.start();
             this.particleSystem = gatewayParticleSystem;
-            game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                parameter: gateway
-            }, function () {
-                game.client.socket.emit('changeSceneTrigger', openSceneType);
-                return this;
-            }));
+            if (isActive) {
+                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: gateway
+                }, function () {
+                    game.client.socket.emit('changeSceneTrigger', openSceneType);
+                    return this;
+                }));
+            }
         }
         return Gateway;
     }());
@@ -1654,42 +1622,40 @@ var Factories;
         /**
          *
          * @param {Game} game
-         * @param {string} meshName
+         * @param serverData
+         * @param activeQuest
          */
-        function Quests(game, meshName) {
+        function Quests(game, serverData, activeQuest) {
             var self = this;
-            var gateway = game.getScene().getMeshByName(meshName);
-            gateway.isPickable = 1;
-            if (!gateway) {
+            var questPicker = game.getScene().getMeshByName(serverData.objectName);
+            if (!questPicker) {
                 throw new TypeError('Wrong quest mesh name.');
             }
+            questPicker.isPickable = true;
             this.game = game;
-            this.mesh = gateway;
+            this.mesh = questPicker;
             this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
-            self.createTooltip();
+            self.createTooltip(serverData, activeQuest);
             self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOverTrigger, self.box, 'scaling', new BABYLON.Vector3(2, 2, 2), 300));
             self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOutTrigger, self.box, 'scaling', new BABYLON.Vector3(1, 1, 1), 300));
-            // self.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-            //     BABYLON.ActionManager.OnPickTrigger,
-            //     function () {
-            //         let quest = new GUI.Quest(game.gui, self.quest, self.mesh);
-            //         quest.open();
-            //
-            //     })
-            // );
+            self.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                var quest = new GUI.NewQuest(game.gui, serverData);
+                quest.open();
+            }));
         }
-        Quests.prototype.refreshTooltipColor = function () {
-            // if(this.quest.isActive && !this.quest.hasRequrementsFinished) {
-            //     this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
-            // } else if(this.quest.isActive && this.quest.hasRequrementsFinished) {
-            //     this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
-            // } else {
-            //     this.tooltip.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
-            // }
-            this.tooltip.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+        Quests.prototype.refreshTooltipColor = function (serverData, activeQuest) {
+            if (activeQuest && activeQuest.questId != serverData.questId) {
+                this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            }
+            else if (activeQuest && activeQuest.questId == serverData.questId) {
+                this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
+            }
+            else {
+                this.tooltip.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+            }
             return this;
         };
-        Quests.prototype.createTooltip = function () {
+        Quests.prototype.createTooltip = function (serverData, activeQuest) {
             var box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
             box1.parent = this.mesh;
             box1.position.y += 3;
@@ -1714,7 +1680,7 @@ var Factories;
             this.box = box1;
             this.game.getScene().beginAnimation(box1, 0, 30, true);
             this.tooltip = box1;
-            this.refreshTooltipColor();
+            this.refreshTooltipColor(serverData, activeQuest);
         };
         return Quests;
     }());
@@ -2185,7 +2151,8 @@ var GUI;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
             this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
-            this.playerLogsQuests = new GUI.PlayerQuestsPanel(game);
+            this.playerLogsQuests = new GUI.PlayerQuestsPanel();
+            this.playerQuestInformation = new GUI.PlayerQuestInformation();
             this.characterTopHp = new GUI.ShowHp();
             this
                 .initInventory()
@@ -2405,6 +2372,42 @@ var GUI;
         return PlayerLogsPanel;
     }());
     GUI.PlayerLogsPanel = PlayerLogsPanel;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var PlayerQuestInformation = /** @class */ (function () {
+        function PlayerQuestInformation() {
+            var self = this;
+            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("PlayerQuestInformation");
+            var playerQuestsInformationPanel = new BABYLON.GUI.StackPanel();
+            playerQuestsInformationPanel.width = "25%";
+            playerQuestsInformationPanel.top = 40;
+            playerQuestsInformationPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            playerQuestsInformationPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            self.texture.addControl(playerQuestsInformationPanel);
+            self.guiPanel = playerQuestsInformationPanel;
+        }
+        PlayerQuestInformation.prototype.addQuest = function (questData) {
+            var self = this;
+            var title = new BABYLON.GUI.TextBlock();
+            title.text = questData.title;
+            title.height = "10%";
+            title.color = "white";
+            title.fontSize = 16;
+            this.guiPanel.addControl(title);
+            questData.chapters[1].requirements.forEach(function (requirement) {
+                var requirementDescription = new BABYLON.GUI.TextBlock();
+                requirementDescription.text = requirement.name;
+                requirementDescription.height = "10%";
+                requirementDescription.color = "white";
+                requirementDescription.fontSize = 14;
+                self.guiPanel.addControl(requirementDescription);
+            });
+        };
+        return PlayerQuestInformation;
+    }());
+    GUI.PlayerQuestInformation = PlayerQuestInformation;
 })(GUI || (GUI = {}));
 /// <reference path="../game.ts"/>
 var GUI;
@@ -3159,45 +3162,16 @@ var ForestHouseStart = /** @class */ (function (_super) {
         var self = this;
         game.sceneManager = this;
         BABYLON.SceneLoader.Load("assets/scenes/forestStartHouse/", "forestHouseStart.babylon", game.engine, function (scene) {
-            game.sceneManager = self;
             self
-                .setDefaults(game)
+                .setDefaults(game, scene)
                 .optimizeScene(scene)
                 .setCamera(scene)
                 .setFog(scene)
-                .defaultPipeline(scene);
-            scene.debugLayer.show({
-                initialTab: 2
-            });
-            scene.actionManager = new BABYLON.ActionManager(scene);
-            var assetsManager = new BABYLON.AssetsManager(scene);
-            var sceneIndex = game.scenes.push(scene);
-            game.activeScene = sceneIndex - 1;
-            scene.executeWhenReady(function () {
-                self.environment = new EnvironmentForestHouseStart(game, scene);
-                self.initFactories(scene, assetsManager);
-                assetsManager.onFinish = function (tasks) {
-                    game.client.socket.emit('changeScenePre', {
-                        sceneType: ForestHouseStart.TYPE
-                    });
-                };
-                assetsManager.load();
-                var listener = function listener() {
-                    game.controller.registerControls(scene);
-                    game.client.socket.emit('changeScenePost', {
-                        sceneType: ForestHouseStart.TYPE
-                    });
-                    game.client.socket.emit('getQuests');
-                    game.client.socket.emit('refreshGateways');
-                    game.client.socket.emit('refreshQuests');
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-                };
-                document.addEventListener(Events.PLAYER_CONNECTED, listener);
-            });
+                .defaultPipeline(scene)
+                .executeWhenReady(function () {
+                new EnvironmentForestHouseStart(game, scene);
+            }, null);
         });
-    };
-    ForestHouseStart.prototype.getType = function () {
-        return Castle.TYPE;
     };
     ForestHouseStart.TYPE = 1;
     return ForestHouseStart;
@@ -3499,7 +3473,6 @@ var Items;
         }
         DroppedItem.showItem = function (game, item, position, itemDropKey) {
             var scene = game.getScene();
-            console.log(item.mesh);
             var droppedItemBox = BABYLON.Mesh.CreateBox(item.name + '_Box', 3, scene, false);
             droppedItemBox.checkCollisions = false;
             droppedItemBox.visibility = 0;
@@ -4753,40 +4726,24 @@ var GUI;
 /// <reference path="Popup.ts"/>
 var GUI;
 (function (GUI) {
-    var Quest = /** @class */ (function (_super) {
-        __extends(Quest, _super);
-        function Quest(guiMain, quest, mesh) {
+    var NewQuest = /** @class */ (function (_super) {
+        __extends(NewQuest, _super);
+        function NewQuest(guiMain, questServerData) {
             var _this = _super.call(this, guiMain) || this;
-            _this.quest = quest;
-            _this.mesh = mesh;
+            _this.questData = questServerData;
             _this.name = 'Quest';
             _this.imageUrl = "assets/gui/attrs.png";
             _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             return _this;
         }
-        Quest.prototype.open = function () {
+        NewQuest.prototype.open = function () {
             var self = this;
-            if (self.quest.isActive && !self.quest.hasRequrementsFinished) {
-                new GUI.TooltipMesh(self.mesh, 'Quest requirements is not complete.');
-                return;
-            }
             this.opened = true;
             this.initTexture();
             this.guiTexture.addControl(this.container);
+            console.log(this.questData);
             this.showText();
-            var buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
-            buttonClose.color = "white";
-            buttonClose.background = "black";
-            buttonClose.width = "70px;";
-            buttonClose.height = "40px";
-            buttonClose.left = -60;
-            buttonClose.horizontalAlignment = this.position;
-            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            buttonClose.onPointerUpObservable.add(function () {
-                self.close();
-            });
-            this.guiTexture.addControl(buttonClose);
-            this.buttonClose = buttonClose;
+            this.createButtonClose();
             var buttonAccept = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Accept");
             buttonAccept.color = "white";
             buttonAccept.background = "black";
@@ -4796,21 +4753,22 @@ var GUI;
             buttonAccept.horizontalAlignment = this.position;
             buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             buttonAccept.onPointerUpObservable.add(function () {
-                self.guiMain.game.client.socket.emit('acceptQuest', { id: self.quest.getQuestId() });
+                self.guiMain.game.client.socket.emit('acceptQuest', self.questData.questId);
                 self.close();
             });
             this.guiTexture.addControl(buttonAccept);
         };
-        Quest.prototype.close = function () {
+        NewQuest.prototype.close = function () {
             this.opened = false;
             this.guiTexture.dispose();
             this.buttonClose = null;
         };
-        Quest.prototype.showText = function () {
+        NewQuest.prototype.showText = function () {
+            var self = this;
             var title = new BABYLON.GUI.TextBlock();
             title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            title.text = this.quest.title;
+            title.text = this.questData.title;
             title.color = "white";
             title.top = "0%";
             title.width = "25%";
@@ -4820,133 +4778,74 @@ var GUI;
             var description = new BABYLON.GUI.TextBlock();
             description.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             description.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            description.text = this.quest.description;
+            description.text = this.questData.description;
             description.color = "white";
             description.top = "5%";
             description.width = "25%";
             description.height = "20%";
             description.fontSize = 24;
-            var awardTitle = new BABYLON.GUI.TextBlock();
-            awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            awardTitle.text = 'Award';
-            awardTitle.top = "45%";
-            awardTitle.width = "25%";
-            awardTitle.height = "20%";
-            awardTitle.color = "green";
-            awardTitle.fontSize = 36;
-            this.guiTexture.addControl(awardTitle);
-            var awardTitle = new BABYLON.GUI.TextBlock();
-            awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            awardTitle.text = this.quest.awards[0].award.name;
-            awardTitle.top = "50%";
-            awardTitle.width = "25%";
-            awardTitle.height = "20%";
-            awardTitle.color = "green";
-            awardTitle.fontSize = 24;
-            this.guiTexture.addControl(awardTitle);
-            var image = this.guiMain.inventory.createItemImage(this.quest.awards[0].award);
-            image.height = 0.4;
-            this.guiTexture.addControl(image);
+            // let awardTitle = new BABYLON.GUI.TextBlock();
+            // awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            // awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            // awardTitle.text = 'Award';
+            // awardTitle.top = "45%";
+            // awardTitle.width = "25%";
+            // awardTitle.height = "20%";
+            // awardTitle.color = "green";
+            // awardTitle.fontSize = 36;
+            // this.guiTexture.addControl(awardTitle);
+            //
+            // let awardTitle = new BABYLON.GUI.TextBlock();
+            // awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            // awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            // awardTitle.text = this.quest.awards[0].award.name;
+            // awardTitle.top = "50%";
+            // awardTitle.width = "25%";
+            // awardTitle.height = "20%";
+            // awardTitle.color = "green";
+            // awardTitle.fontSize = 24;
+            // this.guiTexture.addControl(awardTitle);
+            // let image = this.guiMain.inventory.createItemImage(this.quest.awards[0].award);
+            // image.height = 0.4;
+            // this.guiTexture.addControl(image);
             this.guiTexture.addControl(description);
-            var requirementsTitle = new BABYLON.GUI.TextBlock();
-            requirementsTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            requirementsTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            requirementsTitle.text = 'Requirements';
-            requirementsTitle.top = "15%";
-            requirementsTitle.width = "25%";
-            requirementsTitle.height = "20%";
-            requirementsTitle.color = "red";
-            requirementsTitle.fontSize = 36;
-            this.guiTexture.addControl(requirementsTitle);
-            var requirementsTitle = new BABYLON.GUI.TextBlock();
-            requirementsTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            requirementsTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            requirementsTitle.text = 'Kill all bandits';
-            requirementsTitle.top = "20%";
-            requirementsTitle.width = "25%";
-            requirementsTitle.height = "20%";
-            requirementsTitle.color = "white";
-            requirementsTitle.fontSize = 18;
-            this.guiTexture.addControl(requirementsTitle);
+            var chapterHeader = new BABYLON.GUI.TextBlock();
+            chapterHeader.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            chapterHeader.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            chapterHeader.text = 'Chapter I';
+            chapterHeader.top = "15%";
+            chapterHeader.width = "25%";
+            chapterHeader.height = "20%";
+            chapterHeader.color = "red";
+            chapterHeader.fontSize = 36;
+            this.guiTexture.addControl(chapterHeader);
+            var chapterDescription = new BABYLON.GUI.TextBlock();
+            chapterDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            chapterDescription.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            chapterDescription.text = this.questData.chapters[1].description;
+            chapterDescription.top = "20%";
+            chapterDescription.width = "25%";
+            chapterDescription.height = "20%";
+            chapterDescription.color = "white";
+            chapterDescription.fontSize = 18;
+            this.guiTexture.addControl(chapterDescription);
+            this.questData.chapters[1].requirements.forEach(function (requirement) {
+                var requirementDescription = new BABYLON.GUI.TextBlock();
+                requirementDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                requirementDescription.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                requirementDescription.text = requirement.name;
+                requirementDescription.top = "25%";
+                requirementDescription.width = "25%";
+                requirementDescription.height = "20%";
+                requirementDescription.color = "white";
+                requirementDescription.fontSize = 18;
+                self.guiTexture.addControl(requirementDescription);
+            });
         };
-        return Quest;
+        return NewQuest;
     }(GUI.Popup));
-    GUI.Quest = Quest;
+    GUI.NewQuest = NewQuest;
 })(GUI || (GUI = {}));
-var Particles;
-(function (Particles) {
-    var DoubleAttack = /** @class */ (function (_super) {
-        __extends(DoubleAttack, _super);
-        function DoubleAttack() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        DoubleAttack.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
-            fireSystem.emitter = this.emitter;
-            fireSystem.minEmitBox = new BABYLON.Vector3(-2, 0, -2);
-            fireSystem.maxEmitBox = new BABYLON.Vector3(2, 4, 2);
-            fireSystem.color1 = new BABYLON.Color4(0, 0.5, 0, 1.0);
-            fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);
-            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-            fireSystem.minSize = 0.2;
-            fireSystem.maxSize = 0.7;
-            fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 0.4;
-            fireSystem.emitRate = 1000;
-            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
-            fireSystem.direction2 = new BABYLON.Vector3(0, 2, 0);
-            fireSystem.minAngularSpeed = -10;
-            fireSystem.maxAngularSpeed = Math.PI;
-            fireSystem.minEmitPower = 1;
-            fireSystem.maxEmitPower = 3;
-            fireSystem.updateSpeed = 0.007;
-            this.particleSystem = fireSystem;
-        };
-        return DoubleAttack;
-    }(Particles.AbstractParticle));
-    Particles.DoubleAttack = DoubleAttack;
-})(Particles || (Particles = {}));
-var Particles;
-(function (Particles) {
-    var Tornado = /** @class */ (function (_super) {
-        __extends(Tornado, _super);
-        function Tornado() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        Tornado.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
-            fireSystem.emitter = this.emitter;
-            fireSystem.minEmitBox = new BABYLON.Vector3(0, 3, 0);
-            fireSystem.maxEmitBox = new BABYLON.Vector3(0, 3, 0);
-            fireSystem.color1 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
-            fireSystem.color2 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
-            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-            fireSystem.minSize = 0.5;
-            fireSystem.maxSize = 1.5;
-            fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 0.4;
-            fireSystem.emitRate = 100;
-            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction2 = new BABYLON.Vector3(0, 0, -8);
-            fireSystem.minAngularSpeed = -10;
-            fireSystem.maxAngularSpeed = Math.PI;
-            fireSystem.minEmitPower = 1;
-            fireSystem.maxEmitPower = 3;
-            fireSystem.updateSpeed = 0.007;
-            this.particleSystem = fireSystem;
-        };
-        return Tornado;
-    }(Particles.AbstractParticle));
-    Particles.Tornado = Tornado;
-})(Particles || (Particles = {}));
 var Particles;
 (function (Particles) {
     var SolidParticleSystem;
@@ -5040,6 +4939,78 @@ var Particles;
         SolidParticleSystem.NatureBlock = NatureBlock;
     })(SolidParticleSystem = Particles.SolidParticleSystem || (Particles.SolidParticleSystem = {}));
 })(Particles || (Particles = {}));
+var Particles;
+(function (Particles) {
+    var DoubleAttack = /** @class */ (function (_super) {
+        __extends(DoubleAttack, _super);
+        function DoubleAttack() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        DoubleAttack.prototype.initParticleSystem = function () {
+            var fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.emitter = this.emitter;
+            fireSystem.minEmitBox = new BABYLON.Vector3(-2, 0, -2);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(2, 4, 2);
+            fireSystem.color1 = new BABYLON.Color4(0, 0.5, 0, 1.0);
+            fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);
+            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            fireSystem.minSize = 0.2;
+            fireSystem.maxSize = 0.7;
+            fireSystem.minLifeTime = 0.2;
+            fireSystem.maxLifeTime = 0.4;
+            fireSystem.emitRate = 1000;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 2, 0);
+            fireSystem.minAngularSpeed = -10;
+            fireSystem.maxAngularSpeed = Math.PI;
+            fireSystem.minEmitPower = 1;
+            fireSystem.maxEmitPower = 3;
+            fireSystem.updateSpeed = 0.007;
+            this.particleSystem = fireSystem;
+        };
+        return DoubleAttack;
+    }(Particles.AbstractParticle));
+    Particles.DoubleAttack = DoubleAttack;
+})(Particles || (Particles = {}));
+var Particles;
+(function (Particles) {
+    var Tornado = /** @class */ (function (_super) {
+        __extends(Tornado, _super);
+        function Tornado() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Tornado.prototype.initParticleSystem = function () {
+            var fireSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.emitter = this.emitter;
+            fireSystem.minEmitBox = new BABYLON.Vector3(0, 3, 0);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(0, 3, 0);
+            fireSystem.color1 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
+            fireSystem.color2 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
+            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            fireSystem.minSize = 0.5;
+            fireSystem.maxSize = 1.5;
+            fireSystem.minLifeTime = 0.2;
+            fireSystem.maxLifeTime = 0.4;
+            fireSystem.emitRate = 100;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 0, -8);
+            fireSystem.minAngularSpeed = -10;
+            fireSystem.maxAngularSpeed = Math.PI;
+            fireSystem.minEmitPower = 1;
+            fireSystem.maxEmitPower = 3;
+            fireSystem.updateSpeed = 0.007;
+            this.particleSystem = fireSystem;
+        };
+        return Tornado;
+    }(Particles.AbstractParticle));
+    Particles.Tornado = Tornado;
+})(Particles || (Particles = {}));
 var Quests;
 (function (Quests) {
     var Awards;
@@ -5063,6 +5034,24 @@ var Quests;
 })(Quests || (Quests = {}));
 var Quests;
 (function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var Monster = /** @class */ (function (_super) {
+            __extends(Monster, _super);
+            function Monster(monster, count) {
+                var _this = _super.call(this) || this;
+                _this.name = 'Kill ' + count + ' ' + monster.name + '';
+                _this.requirement = monster;
+                return _this;
+            }
+            Monster.REQUIREMENT_ID = 1;
+            return Monster;
+        }(Requirements.AbstractRequirement));
+        Requirements.Monster = Monster;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
     var KillWorms = /** @class */ (function (_super) {
         __extends(KillWorms, _super);
         function KillWorms(game) {
@@ -5082,24 +5071,6 @@ var Quests;
         return KillWorms;
     }(Quests.AbstractQuest));
     Quests.KillWorms = KillWorms;
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
-    var Requirements;
-    (function (Requirements) {
-        var Monster = /** @class */ (function (_super) {
-            __extends(Monster, _super);
-            function Monster(monster, count) {
-                var _this = _super.call(this) || this;
-                _this.name = 'Kill ' + count + ' ' + monster.name + '';
-                _this.requirement = monster;
-                return _this;
-            }
-            Monster.REQUIREMENT_ID = 1;
-            return Monster;
-        }(Requirements.AbstractRequirement));
-        Requirements.Monster = Monster;
-    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
 })(Quests || (Quests = {}));
 /// <reference path="../Inventory.ts"/>
 var GUI;

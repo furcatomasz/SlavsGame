@@ -25,14 +25,16 @@ namespace Factories {
             gatewayParticleSystem.start();
             this.particleSystem = gatewayParticleSystem;
 
-            game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
-                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                parameter: gateway
-            }, function () {
-                game.client.socket.emit('changeSceneTrigger', openSceneType);
+            if(isActive) {
+                game.player.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: gateway
+                }, function () {
+                    game.client.socket.emit('changeSceneTrigger', openSceneType);
 
-                return this;
-            }));
+                    return this;
+                }));
+            }
 
         }
     }

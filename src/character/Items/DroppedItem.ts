@@ -3,7 +3,6 @@ namespace Items {
 
         public static showItem(game: Game, item: Item, position: Array<any>, itemDropKey: number) {
             let scene = game.getScene();
-console.log(item.mesh);
 
             let droppedItemBox = BABYLON.Mesh.CreateBox(item.name+'_Box', 3, scene, false);
             droppedItemBox.checkCollisions = false;

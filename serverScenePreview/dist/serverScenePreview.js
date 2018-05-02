@@ -80,6 +80,7 @@ var Server;
         BabylonManager.prototype.socketShowEnemies = function () {
             var self = this;
             this.socket.on('createEnemies', function (data) {
+                console.log(data);
                 var roomId = data.roomId;
                 var scene = self.scenes[roomId];
                 if (!self.enemies[roomId]) {
@@ -189,6 +190,7 @@ var Server;
                         }
                         player.mesh.dispose();
                         self.players.splice(key, 1);
+                        delete self.enemies[roomId];
                     }
                 });
             });

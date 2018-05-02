@@ -15,6 +15,7 @@ namespace GUI {
         public teams: GUI.Rooms;
         public playerBottomPanel: GUI.PlayerBottomPanel;
         public playerLogsPanel: GUI.PlayerLogsPanel;
+        public playerQuestInformation: GUI.PlayerQuestInformation;
         public playerLogsQuests: GUI.PlayerLogsPanel;
         public characterTopHp: GUI.ShowHp;
 
@@ -26,9 +27,9 @@ namespace GUI {
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
             this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
-            this.playerLogsQuests = new GUI.PlayerQuestsPanel(game);
+            this.playerLogsQuests = new GUI.PlayerQuestsPanel();
+            this.playerQuestInformation = new GUI.PlayerQuestInformation();
             this.characterTopHp = new GUI.ShowHp();
-
             this
                 .initInventory()
                 .initAttributes()

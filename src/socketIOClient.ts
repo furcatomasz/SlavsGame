@@ -39,21 +39,19 @@ class SocketIOClient {
                 .addSpecialItem()
 
             ///Scene
+                .showEnemies()
                 .showDroppedItem()
                 .refreshGateways()
+                .refreshQuests()
                 .updateEnemies()
-                .changeScene();
-
-                // .showPlayerQuests()
-                // .refreshPlayerQuests()
+                .changeScene()
+                .questRequirementInformation();
                 // .skillsLearned()
                 // .updateRooms()
                 // .reloadScene()
-                // .refreshQuests()
-                // .questRequirementInformation()
         });
 
-        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
+        this.socket.emit('changeScene', ForestHouseStart.TYPE);
 
         return this;
     }
@@ -87,13 +85,23 @@ class SocketIOClient {
 
     protected refreshQuests() {
         let game = this.game;
-        this.socket.on('refreshQuests', function (sceneServerData) {
-            let questsFromServer = sceneServerData.quests;
+        let self = this;
+        this.socket.on('refreshQuests', function (data) {
+            game.quests.forEach(function(quest) {
+                quest.box.dispose();
+            });
+            game.quests = [];
 
-            questsFromServer.forEach(function(quest) {
-                new Factories.Quests(game, quest.objectName);
-            })
+            let activeQuest = data.sessionData.activeRoom.activeQuest;
+            data.quests.forEach(function(quest) {
+                game.quests.push(new Factories.Quests(game, quest, activeQuest));
+            });
 
+            self.socket.emit('refreshGateways');
+
+            if(activeQuest) {
+                self.game.gui.playerQuestInformation.addQuest(activeQuest);
+            }
         });
 
         return this;
@@ -218,59 +226,6 @@ class SocketIOClient {
     /**
      * @returns {SocketIOClient}
      */
-    protected showPlayerQuests() {
-        let game = this.game;
-        let questManager = new Quests.QuestManager(game);
-        this.socket.on('quests', function (data) {
-            game.quests = [];
-
-            let questPromise = new Promise(function (resolve, reject) {
-                data.quests.forEach(function (quest, key) {
-                    if (quest) {
-                        let questObject = questManager.transformQuestDatabaseDataToObject(quest);
-                        data.playerQuests.forEach(function (playerQuest, key) {
-                            if (playerQuest.questId == quest.questId) {
-                                questObject.isActive = true;
-                            }
-
-                        });
-
-                        game.quests.push(questObject);
-                    }
-                    resolve();
-                });
-
-            });
-
-            questPromise.then(function () {
-                document.dispatchEvent(game.events.questsReceived);
-            });
-
-        });
-
-        return this;
-    }
-
-    protected refreshPlayerQuests() {
-        let game = this.game;
-        this.socket.on('refreshQuestsStatus', function (quest) {
-            for (let gameQuest of game.quests) {
-                if (gameQuest.getQuestId() == quest.questId) {
-                    gameQuest.isActive = true;
-                    for (let npc of game.npcs) {
-                        npc.refreshTooltipColor();
-                    }
-
-                }
-            }
-        });
-
-        return this;
-    }
-
-    /**
-     * @returns {SocketIOClient}
-     */
     protected showPlayer() {
         let game = this.game;
         let self = this;
@@ -345,9 +300,11 @@ class SocketIOClient {
         let game = this.game;
 
         this.socket.on('showEnemies', function (data) {
+            console.log(data);
+            console.log(game.enemies);
             data.forEach(function (enemyData, key) {
                 let enemy = game.enemies[key];
-
+console.log(enemy);
                 if (enemy) {
                     let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
 
@@ -355,8 +312,7 @@ class SocketIOClient {
                     enemy.mesh.position = position;
                     enemy.runAnimationWalk();
                 } else if(enemyData.statistics.hp > 0) {
-                    let newMonster;
-                    newMonster = new Monster(game, key, enemyData);
+                    let newMonster = new Monster(game, key, enemyData);
 
                     if (newMonster) {
                         if (game.sceneManager.octree) {

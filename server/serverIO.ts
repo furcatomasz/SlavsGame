@@ -322,13 +322,13 @@ namespace Server {
             //     socket.emit('refreshGateways', scene);
             // });
 
-            socket.on('refreshQuests', function () {
-                let character = player.getActiveCharacter();
-                let sceneType = player.activeScene;
-                let scene = Server.Scenes.Manager.factory(sceneType);
-
-                socket.emit('refreshQuests', scene);
-            });
+            // socket.on('refreshQuests', function () {
+            //     let character = player.getActiveCharacter();
+            //     let sceneType = player.activeScene;
+            //     let scene = Server.Scenes.Manager.factory(sceneType);
+            //
+            //     socket.emit('refreshQuests', scene);
+            // });
 
             // socket.on('changeScene', function (sceneType) {
             //     let scene = Server.Scenes.Manager.factory(sceneType);
@@ -346,25 +346,25 @@ namespace Server {
          */
         protected characterEvents(socket, player) {
             let self = this;
-            socket.on('addDoppedItem', function (itemsKey) {
-                let playerId = player.characters[player.activeCharacter].id;
-                let itemId = player.getActiveCharacter().itemsDrop[itemsKey];
-                let itemManager = new Items.ItemManager();
-                let item = itemManager.getItemUsingId(itemId, 0);
-
-                if (itemId) {
-                    self.server.ormManager.structure.playerItems.create({
-                            player_id: playerId,
-                            itemId: itemId,
-                            improvement: 0,
-                            equip: 0
-                        },
-                        function (error, addedItem) {
-                            player.getActiveCharacter().inventory.items.push(item);
-                            socket.emit('updatePlayerEquip', player.getActiveCharacter().inventory.items);
-                        });
-                }
-            });
+            // socket.on('addDoppedItem', function (itemsKey) {
+            //     let playerId = player.characters[player.activeCharacter].id;
+            //     let itemId = player.getActiveCharacter().itemsDrop[itemsKey];
+            //     let itemManager = new Items.ItemManager();
+            //     let item = itemManager.getItemUsingId(itemId, 0);
+            //
+            //     if (itemId) {
+            //         self.server.ormManager.structure.playerItems.create({
+            //                 player_id: playerId,
+            //                 itemId: itemId,
+            //                 improvement: 0,
+            //                 equip: 0
+            //             },
+            //             function (error, addedItem) {
+            //                 player.getActiveCharacter().inventory.items.push(item);
+            //                 socket.emit('updatePlayerEquip', player.getActiveCharacter().inventory.items);
+            //             });
+            //     }
+            // });
 
             // socket.on('addAttribute', function (attribute) {
             //     let type = attribute.type;
@@ -482,26 +482,26 @@ namespace Server {
                 socket.emit('characterSelected', player);
 
             });
-
-            socket.on('itemEquip', function (item) {
-                let itemId = item.id;
-                let equip = item.equip;
-                self.server.ormManager.structure.playerItems.oneAsync({
-                    id: itemId,
-                    player_id: player.characters[player.activeCharacter].id
-                }).then(function (itemDatabase) {
-                    itemDatabase.equip = (item.equip) ? 1 : 0;
-                    itemDatabase.saveAsync().then(function () {
-                        server.ormManager.structure.playerItems.findAsync(
-                            {player_id: player.characters[player.activeCharacter].id}).then(
-                            function (playerItems) {
-                                player.characters[player.activeCharacter].items = playerItems;
-                                socket.broadcast.emit('updateEnemyEquip', player);
-                            });
-                    });
-                });
-
-            });
+            //
+            // socket.on('itemEquip', function (item) {
+            //     let itemId = item.id;
+            //     let equip = item.equip;
+            //     self.server.ormManager.structure.playerItems.oneAsync({
+            //         id: itemId,
+            //         player_id: player.characters[player.activeCharacter].id
+            //     }).then(function (itemDatabase) {
+            //         itemDatabase.equip = (item.equip) ? 1 : 0;
+            //         itemDatabase.saveAsync().then(function () {
+            //             server.ormManager.structure.playerItems.findAsync(
+            //                 {player_id: player.characters[player.activeCharacter].id}).then(
+            //                 function (playerItems) {
+            //                     player.characters[player.activeCharacter].items = playerItems;
+            //                     socket.broadcast.emit('updateEnemyEquip', player);
+            //                 });
+            //         });
+            //     });
+            //
+            // });
 
             return this;
         }

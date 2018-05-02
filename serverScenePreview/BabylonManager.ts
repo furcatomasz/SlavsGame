@@ -99,6 +99,7 @@ namespace Server {
         public socketShowEnemies() {
             let self = this;
             this.socket.on('createEnemies', function (data) {
+                console.log(data);
                 let roomId = data.roomId;
                 let scene = self.scenes[roomId];
 
@@ -225,6 +226,7 @@ namespace Server {
 
                         player.mesh.dispose();
                         self.players.splice(key, 1);
+                        delete self.enemies[roomId];
                     }
                 });
             });
@@ -353,66 +355,66 @@ namespace Server {
                 let player = self.players[updatedPlayer.activePlayer.id];
                 let scene = self.scenes[updatedPlayer.activeRoom.id];
 
-                    if (player) {
-                        if (updatedPlayer.attack == true) {
-                            console.log('BABYLON: attack player - '+ updatedPlayer.activePlayer.id);
+                if (player) {
+                    if (updatedPlayer.attack == true) {
+                        console.log('BABYLON: attack player - '+ updatedPlayer.activePlayer.id);
 
-                            return;
-                        }
+                        return;
+                    }
 
-                        if (player.registeredFunction !== undefined) {
-                            scene.unregisterBeforeRender(player.registeredFunction);
-                        }
+                    if (player.registeredFunction !== undefined) {
+                        scene.unregisterBeforeRender(player.registeredFunction);
+                    }
 
-                        if (updatedPlayer.targetPoint && !updatedPlayer.attack) {
-                            let mesh = player.mesh;
-                            let targetPoint = updatedPlayer.targetPoint;
-                            let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                            mesh.lookAt(targetPointVector3);
+                    if (updatedPlayer.targetPoint && !updatedPlayer.attack) {
+                        let mesh = player.mesh;
+                        let targetPoint = updatedPlayer.targetPoint;
+                        let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
+                        mesh.lookAt(targetPointVector3);
 
-                            player.registeredFunction = function () {
-                                if (mesh.intersectsPoint(targetPointVector3)) {
-                                    let player = self.players[updatedPlayer.activePlayer.id];
+                        player.registeredFunction = function () {
+                            if (mesh.intersectsPoint(targetPointVector3)) {
+                                let player = self.players[updatedPlayer.activePlayer.id];
 
-                                    console.log('BABYLON: player intersect target point - '+ updatedPlayer.id +', roomID:'+ player.roomId);
-                                    scene.unregisterBeforeRender(player.registeredFunction);
-                                    // self.socket.emit('updatePlayerPosition', {
-                                    //     playerSocketId: player.socketId,
-                                    //     position: player.position
-                                    // });
+                                console.log('BABYLON: player intersect target point - '+ updatedPlayer.id +', roomID:'+ player.roomId);
+                                scene.unregisterBeforeRender(player.registeredFunction);
+                                // self.socket.emit('updatePlayerPosition', {
+                                //     playerSocketId: player.socketId,
+                                //     position: player.position
+                                // });
 
-                                    /*
+                                /*
 
-                                     socket.on('setTargetPoint', function (targetPoint) {
-                                     let character = player.getActiveCharacter();
-                                     character.attack = null;
-                                     character.targetPoint = targetPoint.position;
-                                     socket.broadcast.emit('updatePlayer', character);
-                                     socket.emit('updatePlayer', character);
-                                     });
+                                 socket.on('setTargetPoint', function (targetPoint) {
+                                 let character = player.getActiveCharacter();
+                                 character.attack = null;
+                                 character.targetPoint = targetPoint.position;
+                                 socket.broadcast.emit('updatePlayer', character);
+                                 socket.emit('updatePlayer', character);
+                                 });
 
-                                     */
+                                 */
 
-                                } else {
-                                    let rotation = mesh.rotation;
-                                    if (mesh.rotationQuaternion) {
-                                        rotation = mesh.rotationQuaternion.toEulerAngles();
-                                    }
-                                    rotation.negate();
-                                    let animationRatio = scene.getAnimationRatio();
-                                    let walkSpeed = player.walkSpeed / animationRatio;
-
-                                    let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
-                                    mesh.moveWithCollisions(forwards);
-                                    mesh.position.y = 0;
-
+                            } else {
+                                let rotation = mesh.rotation;
+                                if (mesh.rotationQuaternion) {
+                                    rotation = mesh.rotationQuaternion.toEulerAngles();
                                 }
+                                rotation.negate();
+                                let animationRatio = scene.getAnimationRatio();
+                                let walkSpeed = player.walkSpeed / animationRatio;
+
+                                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                                mesh.moveWithCollisions(forwards);
+                                mesh.position.y = 0;
 
                             }
 
-                            scene.registerBeforeRender(player.registeredFunction);
                         }
+
+                        scene.registerBeforeRender(player.registeredFunction);
                     }
+                }
             });
 
             return this;

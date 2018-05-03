@@ -23,7 +23,7 @@ namespace GUI {
          */
         protected initTexture() {
             this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
-            let container = new BABYLON.GUI.StackPanel();
+            let container = new BABYLON.GUI.StackPanel('gui.panel.' + this.name);
             container.horizontalAlignment = this.position;
             container.width = 0.33;
             container.height = 1;

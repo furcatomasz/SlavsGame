@@ -45,7 +45,8 @@ class SocketIOClient {
                 .refreshQuests()
                 .updateEnemies()
                 .changeScene()
-                .questRequirementInformation();
+                .questRequirementInformation()
+                .questRequirementDoneInformation();
                 // .skillsLearned()
                 // .updateRooms()
                 // .reloadScene()
@@ -57,8 +58,20 @@ class SocketIOClient {
     }
 
     protected questRequirementInformation() {
+        let self = this;
         this.socket.on('questRequirementInformation', function (data) {
             game.gui.playerLogsQuests.addText(data);
+        });
+
+        return this;
+    }
+
+    protected questRequirementDoneInformation() {
+        let self = this;
+        this.socket.on('questRequirementDoneInformation', function (data) {
+            game.gui.playerLogsQuests.addText(data, 'orange');
+            self.socket.emit('refreshQuests');
+            self.socket.emit('refreshGateways');
         });
 
         return this;

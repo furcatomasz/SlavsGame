@@ -83,30 +83,53 @@ class Player extends AbstractCharacter {
     }
 
     public initGodRay() {
+        let engine = this.game.engine;
         let scene = this.game.getScene();
-        let fakeGodRay = BABYLON.Mesh.CreateCylinder("godRay", 25, 4, 10, 64, 1, scene);
-        fakeGodRay.position = new BABYLON.Vector3(0, 13, 0);
-        fakeGodRay.scaling = new BABYLON.Vector3(0, 1, 0);
-        fakeGodRay.parent = this.mesh;
-        fakeGodRay.material = new BABYLON.StandardMaterial("fakeGodRaymat", scene);
-        fakeGodRay.material.emissiveFresnelParameters = new BABYLON.FresnelParameters();
-        fakeGodRay.material.emissiveFresnelParameters.leftColor = BABYLON.Color3.Black();
-        fakeGodRay.material.emissiveFresnelParameters.rightColor = BABYLON.Color3.White();
-        fakeGodRay.material.emissiveFresnelParameters.bias = 0;
-        fakeGodRay.material.emissiveFresnelParameters.power = 2;
-        fakeGodRay.material.emissiveColor = new BABYLON.Color3(0.9, 0.9, 0.3);
-        fakeGodRay.material.useEmissiveAsIllumination = true;
-        fakeGodRay.material.alpha = 0.15;
-        fakeGodRay.material.alphaMode = 1;
+        let camera = this.game.getScene().activeCamera;
 
-        BABYLON.Animation.CreateAndStartAnimation("fadesphere", fakeGodRay, 'scaling.z', 30, 70, 0, 1,0);
-        BABYLON.Animation.CreateAndStartAnimation("fadesphere", fakeGodRay, 'scaling.x', 30, 70, 0, 1,0, null, function() {
+        var fireMaterial = new BABYLON.StandardMaterial("fontainSculptur2", scene);
+        var fireTexture = new BABYLON.Texture("assets/flare.png", scene);
+        fireTexture.hasAlpha = true;
+        fireMaterial.alpha = 0.1;
+        fireMaterial.emissiveTexture = fireTexture;
+        fireMaterial.diffuseTexture = fireTexture;
+        fireMaterial.opacityTexture = fireTexture;
+
+        fireMaterial.specularPower = 1;
+        fireMaterial.backFaceCulling = false;
+
+        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 12, scene, true);
+        box.visibility = 1;
+        box.renderingGroupId = 2;
+        box.parent = this.mesh;
+        // box.material = new BABYLON.StandardMaterial("bmat", scene);
+        // box.material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+        box.position = new BABYLON.Vector3(0, 0, 0);
+        box.scaling = new BABYLON.Vector3(0, 0, 0);
+        box.rotation = new BABYLON.Vector3(-Math.PI/2, 0, 0);
+        // box.parent = this.mesh;
+        box.material = fireMaterial;
+
+        var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 100, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
+        godrays.useCustomMeshPosition = true;
+        godrays.setCustomMeshPosition(new BABYLON.Vector3(0, -5.0, 0));
+        godrays.invert = true;
+        godrays.exposure = 0.8;
+        godrays.decay = 1;
+        godrays.weight = 0.3;
+        godrays.density = 0.5;
+        BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 60, 30, 0, 1,0, null);
+        BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 60, 30, 0, 1,0, null);
+            BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 60, 30, 0, 1,0, null, function() {
+            // godrays.invert = false;
             setTimeout(function() {
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", fakeGodRay, 'scaling.z', 30, 70, 1, 0,0);
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", fakeGodRay, 'scaling.x', 30, 70, 1, 0,0, null, function() {
-                    fakeGodRay.dispose();
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 60, 10, 1, 0,0, null);
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 60, 10, 1, 0,0, null);
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 60, 10, 1, 0,0, null, function() {
+                    godrays.dispose(camera);
+                    box.dispose();
                 } );
-            }, 2000);
+            }, 2500);
         } );
 
         return this;

@@ -99,9 +99,9 @@ abstract class Scene {
         scene.fogEnabled = true;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
-        scene.postProcessesEnabled = false;
+        scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
         scene.workerCollisions = false;
 
         return this;

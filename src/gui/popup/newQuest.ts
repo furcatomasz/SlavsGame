@@ -48,90 +48,60 @@ namespace GUI {
 
         protected showText() {
             let self = this;
-            let title = new BABYLON.GUI.TextBlock();
+            let title = new BABYLON.GUI.TextBlock('title');
             title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             title.text = this.questData.title;
+            title.top = "2%";
             title.color = "white";
-            title.top = "0%";
             title.width = "25%";
             title.height = "10%";
             title.fontSize = 36;
-
+            title.textWrapping = true;
             this.guiTexture.addControl(title);
 
-            let description = new BABYLON.GUI.TextBlock();
+            let description = new BABYLON.GUI.TextBlock('descrption');
             description.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             description.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             description.text = this.questData.description;
             description.color = "white";
-            description.top = "5%";
+            description.top = "10%";
             description.width = "25%";
-            description.height = "20%";
-            description.fontSize = 24;
-
-            // let awardTitle = new BABYLON.GUI.TextBlock();
-            // awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            // awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            // awardTitle.text = 'Award';
-            // awardTitle.top = "45%";
-            // awardTitle.width = "25%";
-            // awardTitle.height = "20%";
-            // awardTitle.color = "green";
-            // awardTitle.fontSize = 36;
-            // this.guiTexture.addControl(awardTitle);
-            //
-            // let awardTitle = new BABYLON.GUI.TextBlock();
-            // awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            // awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            // awardTitle.text = this.quest.awards[0].award.name;
-            // awardTitle.top = "50%";
-            // awardTitle.width = "25%";
-            // awardTitle.height = "20%";
-            // awardTitle.color = "green";
-            // awardTitle.fontSize = 24;
-            // this.guiTexture.addControl(awardTitle);
-
-            // let image = this.guiMain.inventory.createItemImage(this.quest.awards[0].award);
-            // image.height = 0.4;
-
-            // this.guiTexture.addControl(image);
+            description.height = "10%";
+            description.fontSize = 16;
+            description.textWrapping = true;
             this.guiTexture.addControl(description);
 
-            let chapterHeader = new BABYLON.GUI.TextBlock();
-            chapterHeader.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            chapterHeader.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            chapterHeader.text = 'Chapter I';
-            chapterHeader.top = "15%";
-            chapterHeader.width = "25%";
-            chapterHeader.height = "20%";
-            chapterHeader.color = "red";
-            chapterHeader.fontSize = 36;
-            this.guiTexture.addControl(chapterHeader);
+            Object.values(this.questData.chapters).forEach(function(chapterData, chapter) {
+                let topPadding = (chapter*15);
 
-            let chapterDescription = new BABYLON.GUI.TextBlock();
-            chapterDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            chapterDescription.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            chapterDescription.text = this.questData.chapters[1].description;
-            chapterDescription.top = "20%";
-            chapterDescription.width = "25%";
-            chapterDescription.height = "20%";
-            chapterDescription.color = "white";
-            chapterDescription.fontSize = 18;
-            this.guiTexture.addControl(chapterDescription);
+                let chapterHeader = new BABYLON.GUI.TextBlock();
+                chapterHeader.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                chapterHeader.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                chapterHeader.text = 'Chapter '+(chapter+1)
+                chapterHeader.top = topPadding+15+"%";
+                chapterHeader.width = "25%";
+                chapterHeader.height = "25%";
+                chapterHeader.color = "orange";
+                chapterHeader.fontSize = 28;
+                chapterHeader.textWrapping = true;
+                self.guiTexture.addControl(chapterHeader);
 
-            this.questData.chapters[1].requirements.forEach(function(requirement) {
-                let requirementDescription = new BABYLON.GUI.TextBlock();
-                requirementDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                requirementDescription.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                requirementDescription.text = requirement.name;
-                requirementDescription.top = "25%";
-                requirementDescription.width = "25%";
-                requirementDescription.height = "20%";
-                requirementDescription.color = "white";
-                requirementDescription.fontSize = 18;
-                self.guiTexture.addControl(requirementDescription);
+                let chapterDescription = new BABYLON.GUI.TextBlock();
+                chapterDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                chapterDescription.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                chapterDescription.text = chapterData.description;
+                chapterDescription.top = topPadding+22+"%";
+                chapterDescription.width = "25%";
+                chapterDescription.height = "25%";
+                chapterDescription.color = "white";
+                chapterDescription.fontSize = 18;
+                chapterDescription.textWrapping = true;
+
+                self.guiTexture.addControl(chapterDescription);
+
             });
+
         }
 
     }

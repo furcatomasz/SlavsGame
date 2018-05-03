@@ -9,7 +9,6 @@ class Game {
     static SHOW_DEBUG = 0;
 
     public sceneManager: Scene;
-    public modules: Modules;
     public controller: Controller;
     public canvas: HTMLCanvasElement;
     public engine: BABYLON.Engine;

@@ -153,9 +153,9 @@ var Scene = /** @class */ (function () {
         scene.fogEnabled = true;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
-        scene.postProcessesEnabled = false;
+        scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
         scene.workerCollisions = false;
         return this;
     };
@@ -494,7 +494,8 @@ var SocketIOClient = /** @class */ (function () {
                 .refreshQuests()
                 .updateEnemies()
                 .changeScene()
-                .questRequirementInformation();
+                .questRequirementInformation()
+                .questRequirementDoneInformation();
             // .skillsLearned()
             // .updateRooms()
             // .reloadScene()
@@ -503,8 +504,18 @@ var SocketIOClient = /** @class */ (function () {
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
+        var self = this;
         this.socket.on('questRequirementInformation', function (data) {
             game.gui.playerLogsQuests.addText(data);
+        });
+        return this;
+    };
+    SocketIOClient.prototype.questRequirementDoneInformation = function () {
+        var self = this;
+        this.socket.on('questRequirementDoneInformation', function (data) {
+            game.gui.playerLogsQuests.addText(data, 'orange');
+            self.socket.emit('refreshQuests');
+            self.socket.emit('refreshGateways');
         });
         return this;
     };
@@ -1233,29 +1244,49 @@ var Player = /** @class */ (function (_super) {
         return _this;
     }
     Player.prototype.initGodRay = function () {
+        var engine = this.game.engine;
         var scene = this.game.getScene();
-        var fakeGodRay = BABYLON.Mesh.CreateCylinder("godRay", 25, 4, 10, 64, 1, scene);
-        fakeGodRay.position = new BABYLON.Vector3(0, 13, 0);
-        fakeGodRay.scaling = new BABYLON.Vector3(0, 1, 0);
-        fakeGodRay.parent = this.mesh;
-        fakeGodRay.material = new BABYLON.StandardMaterial("fakeGodRaymat", scene);
-        fakeGodRay.material.emissiveFresnelParameters = new BABYLON.FresnelParameters();
-        fakeGodRay.material.emissiveFresnelParameters.leftColor = BABYLON.Color3.Black();
-        fakeGodRay.material.emissiveFresnelParameters.rightColor = BABYLON.Color3.White();
-        fakeGodRay.material.emissiveFresnelParameters.bias = 0;
-        fakeGodRay.material.emissiveFresnelParameters.power = 2;
-        fakeGodRay.material.emissiveColor = new BABYLON.Color3(0.9, 0.9, 0.3);
-        fakeGodRay.material.useEmissiveAsIllumination = true;
-        fakeGodRay.material.alpha = 0.15;
-        fakeGodRay.material.alphaMode = 1;
-        BABYLON.Animation.CreateAndStartAnimation("fadesphere", fakeGodRay, 'scaling.z', 30, 70, 0, 1, 0);
-        BABYLON.Animation.CreateAndStartAnimation("fadesphere", fakeGodRay, 'scaling.x', 30, 70, 0, 1, 0, null, function () {
+        var camera = this.game.getScene().activeCamera;
+        var fireMaterial = new BABYLON.StandardMaterial("fontainSculptur2", scene);
+        var fireTexture = new BABYLON.Texture("assets/flare.png", scene);
+        fireTexture.hasAlpha = true;
+        fireMaterial.alpha = 0.1;
+        fireMaterial.emissiveTexture = fireTexture;
+        fireMaterial.diffuseTexture = fireTexture;
+        fireMaterial.opacityTexture = fireTexture;
+        fireMaterial.specularPower = 1;
+        fireMaterial.backFaceCulling = false;
+        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 12, scene, true);
+        box.visibility = 1;
+        box.renderingGroupId = 2;
+        box.parent = this.mesh;
+        // box.material = new BABYLON.StandardMaterial("bmat", scene);
+        // box.material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+        box.position = new BABYLON.Vector3(0, 0, 0);
+        box.scaling = new BABYLON.Vector3(0, 0, 0);
+        box.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
+        // box.parent = this.mesh;
+        box.material = fireMaterial;
+        var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 100, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
+        godrays.useCustomMeshPosition = true;
+        godrays.setCustomMeshPosition(new BABYLON.Vector3(0, -5.0, 0));
+        godrays.invert = true;
+        godrays.exposure = 0.8;
+        godrays.decay = 1;
+        godrays.weight = 0.3;
+        godrays.density = 0.5;
+        BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 60, 30, 0, 1, 0, null);
+        BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 60, 30, 0, 1, 0, null);
+        BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 60, 30, 0, 1, 0, null, function () {
+            // godrays.invert = false;
             setTimeout(function () {
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", fakeGodRay, 'scaling.z', 30, 70, 1, 0, 0);
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", fakeGodRay, 'scaling.x', 30, 70, 1, 0, 0, null, function () {
-                    fakeGodRay.dispose();
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 60, 10, 1, 0, 0, null);
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 60, 10, 1, 0, 0, null);
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 60, 10, 1, 0, 0, null, function () {
+                    godrays.dispose(camera);
+                    box.dispose();
                 });
-            }, 2000);
+            }, 2500);
         });
         return this;
     };
@@ -2378,8 +2409,13 @@ var GUI;
 (function (GUI) {
     var PlayerQuestInformation = /** @class */ (function () {
         function PlayerQuestInformation() {
-            var self = this;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("PlayerQuestInformation");
+        }
+        PlayerQuestInformation.prototype.addQuest = function (questData) {
+            var self = this;
+            if (self.guiPanel) {
+                self.guiPanel.dispose();
+            }
             var playerQuestsInformationPanel = new BABYLON.GUI.StackPanel();
             playerQuestsInformationPanel.width = "25%";
             playerQuestsInformationPanel.top = 40;
@@ -2387,20 +2423,21 @@ var GUI;
             playerQuestsInformationPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             self.texture.addControl(playerQuestsInformationPanel);
             self.guiPanel = playerQuestsInformationPanel;
-        }
-        PlayerQuestInformation.prototype.addQuest = function (questData) {
-            var self = this;
             var title = new BABYLON.GUI.TextBlock();
+            title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             title.text = questData.title;
-            title.height = "10%";
-            title.color = "white";
-            title.fontSize = 16;
+            title.top = "0%";
+            title.color = "orange";
+            title.fontSize = 18;
+            title.resizeToFit = true;
             this.guiPanel.addControl(title);
-            questData.chapters[1].requirements.forEach(function (requirement) {
+            questData.chapters[questData.actualChapter].requirements.forEach(function (requirement) {
                 var requirementDescription = new BABYLON.GUI.TextBlock();
+                requirementDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
                 requirementDescription.text = requirement.name;
-                requirementDescription.height = "10%";
+                requirementDescription.resizeToFit = true;
                 requirementDescription.color = "white";
+                requirementDescription.top = "5%";
                 requirementDescription.fontSize = 14;
                 self.guiPanel.addControl(requirementDescription);
             });
@@ -4116,7 +4153,7 @@ var GUI;
          */
         Popup.prototype.initTexture = function () {
             this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
-            var container = new BABYLON.GUI.StackPanel();
+            var container = new BABYLON.GUI.StackPanel('gui.panel.' + this.name);
             container.horizontalAlignment = this.position;
             container.width = 0.33;
             container.height = 1;
@@ -4765,87 +4802,130 @@ var GUI;
         };
         NewQuest.prototype.showText = function () {
             var self = this;
-            var title = new BABYLON.GUI.TextBlock();
+            var title = new BABYLON.GUI.TextBlock('title');
             title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             title.text = this.questData.title;
+            title.top = "2%";
             title.color = "white";
-            title.top = "0%";
             title.width = "25%";
             title.height = "10%";
             title.fontSize = 36;
+            title.textWrapping = true;
             this.guiTexture.addControl(title);
-            var description = new BABYLON.GUI.TextBlock();
+            var description = new BABYLON.GUI.TextBlock('descrption');
             description.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             description.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             description.text = this.questData.description;
             description.color = "white";
-            description.top = "5%";
+            description.top = "10%";
             description.width = "25%";
-            description.height = "20%";
-            description.fontSize = 24;
-            // let awardTitle = new BABYLON.GUI.TextBlock();
-            // awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            // awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            // awardTitle.text = 'Award';
-            // awardTitle.top = "45%";
-            // awardTitle.width = "25%";
-            // awardTitle.height = "20%";
-            // awardTitle.color = "green";
-            // awardTitle.fontSize = 36;
-            // this.guiTexture.addControl(awardTitle);
-            //
-            // let awardTitle = new BABYLON.GUI.TextBlock();
-            // awardTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            // awardTitle.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            // awardTitle.text = this.quest.awards[0].award.name;
-            // awardTitle.top = "50%";
-            // awardTitle.width = "25%";
-            // awardTitle.height = "20%";
-            // awardTitle.color = "green";
-            // awardTitle.fontSize = 24;
-            // this.guiTexture.addControl(awardTitle);
-            // let image = this.guiMain.inventory.createItemImage(this.quest.awards[0].award);
-            // image.height = 0.4;
-            // this.guiTexture.addControl(image);
+            description.height = "10%";
+            description.fontSize = 16;
+            description.textWrapping = true;
             this.guiTexture.addControl(description);
-            var chapterHeader = new BABYLON.GUI.TextBlock();
-            chapterHeader.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            chapterHeader.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            chapterHeader.text = 'Chapter I';
-            chapterHeader.top = "15%";
-            chapterHeader.width = "25%";
-            chapterHeader.height = "20%";
-            chapterHeader.color = "red";
-            chapterHeader.fontSize = 36;
-            this.guiTexture.addControl(chapterHeader);
-            var chapterDescription = new BABYLON.GUI.TextBlock();
-            chapterDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            chapterDescription.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            chapterDescription.text = this.questData.chapters[1].description;
-            chapterDescription.top = "20%";
-            chapterDescription.width = "25%";
-            chapterDescription.height = "20%";
-            chapterDescription.color = "white";
-            chapterDescription.fontSize = 18;
-            this.guiTexture.addControl(chapterDescription);
-            this.questData.chapters[1].requirements.forEach(function (requirement) {
-                var requirementDescription = new BABYLON.GUI.TextBlock();
-                requirementDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                requirementDescription.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                requirementDescription.text = requirement.name;
-                requirementDescription.top = "25%";
-                requirementDescription.width = "25%";
-                requirementDescription.height = "20%";
-                requirementDescription.color = "white";
-                requirementDescription.fontSize = 18;
-                self.guiTexture.addControl(requirementDescription);
+            Object.values(this.questData.chapters).forEach(function (chapterData, chapter) {
+                var topPadding = (chapter * 15);
+                var chapterHeader = new BABYLON.GUI.TextBlock();
+                chapterHeader.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                chapterHeader.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                chapterHeader.text = 'Chapter ' + (chapter + 1);
+                chapterHeader.top = topPadding + 15 + "%";
+                chapterHeader.width = "25%";
+                chapterHeader.height = "25%";
+                chapterHeader.color = "orange";
+                chapterHeader.fontSize = 28;
+                chapterHeader.textWrapping = true;
+                self.guiTexture.addControl(chapterHeader);
+                var chapterDescription = new BABYLON.GUI.TextBlock();
+                chapterDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                chapterDescription.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                chapterDescription.text = chapterData.description;
+                chapterDescription.top = topPadding + 22 + "%";
+                chapterDescription.width = "25%";
+                chapterDescription.height = "25%";
+                chapterDescription.color = "white";
+                chapterDescription.fontSize = 18;
+                chapterDescription.textWrapping = true;
+                self.guiTexture.addControl(chapterDescription);
             });
         };
         return NewQuest;
     }(GUI.Popup));
     GUI.NewQuest = NewQuest;
 })(GUI || (GUI = {}));
+var Particles;
+(function (Particles) {
+    var DoubleAttack = /** @class */ (function (_super) {
+        __extends(DoubleAttack, _super);
+        function DoubleAttack() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        DoubleAttack.prototype.initParticleSystem = function () {
+            var fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.emitter = this.emitter;
+            fireSystem.minEmitBox = new BABYLON.Vector3(-2, 0, -2);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(2, 4, 2);
+            fireSystem.color1 = new BABYLON.Color4(0, 0.5, 0, 1.0);
+            fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);
+            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            fireSystem.minSize = 0.2;
+            fireSystem.maxSize = 0.7;
+            fireSystem.minLifeTime = 0.2;
+            fireSystem.maxLifeTime = 0.4;
+            fireSystem.emitRate = 1000;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 2, 0);
+            fireSystem.minAngularSpeed = -10;
+            fireSystem.maxAngularSpeed = Math.PI;
+            fireSystem.minEmitPower = 1;
+            fireSystem.maxEmitPower = 3;
+            fireSystem.updateSpeed = 0.007;
+            this.particleSystem = fireSystem;
+        };
+        return DoubleAttack;
+    }(Particles.AbstractParticle));
+    Particles.DoubleAttack = DoubleAttack;
+})(Particles || (Particles = {}));
+var Particles;
+(function (Particles) {
+    var Tornado = /** @class */ (function (_super) {
+        __extends(Tornado, _super);
+        function Tornado() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Tornado.prototype.initParticleSystem = function () {
+            var fireSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.emitter = this.emitter;
+            fireSystem.minEmitBox = new BABYLON.Vector3(0, 3, 0);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(0, 3, 0);
+            fireSystem.color1 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
+            fireSystem.color2 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
+            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+            fireSystem.minSize = 0.5;
+            fireSystem.maxSize = 1.5;
+            fireSystem.minLifeTime = 0.2;
+            fireSystem.maxLifeTime = 0.4;
+            fireSystem.emitRate = 100;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 0, -8);
+            fireSystem.minAngularSpeed = -10;
+            fireSystem.maxAngularSpeed = Math.PI;
+            fireSystem.minEmitPower = 1;
+            fireSystem.maxEmitPower = 3;
+            fireSystem.updateSpeed = 0.007;
+            this.particleSystem = fireSystem;
+        };
+        return Tornado;
+    }(Particles.AbstractParticle));
+    Particles.Tornado = Tornado;
+})(Particles || (Particles = {}));
 var Particles;
 (function (Particles) {
     var SolidParticleSystem;
@@ -4939,78 +5019,6 @@ var Particles;
         SolidParticleSystem.NatureBlock = NatureBlock;
     })(SolidParticleSystem = Particles.SolidParticleSystem || (Particles.SolidParticleSystem = {}));
 })(Particles || (Particles = {}));
-var Particles;
-(function (Particles) {
-    var DoubleAttack = /** @class */ (function (_super) {
-        __extends(DoubleAttack, _super);
-        function DoubleAttack() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        DoubleAttack.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
-            fireSystem.emitter = this.emitter;
-            fireSystem.minEmitBox = new BABYLON.Vector3(-2, 0, -2);
-            fireSystem.maxEmitBox = new BABYLON.Vector3(2, 4, 2);
-            fireSystem.color1 = new BABYLON.Color4(0, 0.5, 0, 1.0);
-            fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);
-            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-            fireSystem.minSize = 0.2;
-            fireSystem.maxSize = 0.7;
-            fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 0.4;
-            fireSystem.emitRate = 1000;
-            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
-            fireSystem.direction2 = new BABYLON.Vector3(0, 2, 0);
-            fireSystem.minAngularSpeed = -10;
-            fireSystem.maxAngularSpeed = Math.PI;
-            fireSystem.minEmitPower = 1;
-            fireSystem.maxEmitPower = 3;
-            fireSystem.updateSpeed = 0.007;
-            this.particleSystem = fireSystem;
-        };
-        return DoubleAttack;
-    }(Particles.AbstractParticle));
-    Particles.DoubleAttack = DoubleAttack;
-})(Particles || (Particles = {}));
-var Particles;
-(function (Particles) {
-    var Tornado = /** @class */ (function (_super) {
-        __extends(Tornado, _super);
-        function Tornado() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        Tornado.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
-            fireSystem.emitter = this.emitter;
-            fireSystem.minEmitBox = new BABYLON.Vector3(0, 3, 0);
-            fireSystem.maxEmitBox = new BABYLON.Vector3(0, 3, 0);
-            fireSystem.color1 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
-            fireSystem.color2 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
-            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-            fireSystem.minSize = 0.5;
-            fireSystem.maxSize = 1.5;
-            fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 0.4;
-            fireSystem.emitRate = 100;
-            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction2 = new BABYLON.Vector3(0, 0, -8);
-            fireSystem.minAngularSpeed = -10;
-            fireSystem.maxAngularSpeed = Math.PI;
-            fireSystem.minEmitPower = 1;
-            fireSystem.maxEmitPower = 3;
-            fireSystem.updateSpeed = 0.007;
-            this.particleSystem = fireSystem;
-        };
-        return Tornado;
-    }(Particles.AbstractParticle));
-    Particles.Tornado = Tornado;
-})(Particles || (Particles = {}));
 var Quests;
 (function (Quests) {
     var Awards;
@@ -5034,24 +5042,6 @@ var Quests;
 })(Quests || (Quests = {}));
 var Quests;
 (function (Quests) {
-    var Requirements;
-    (function (Requirements) {
-        var Monster = /** @class */ (function (_super) {
-            __extends(Monster, _super);
-            function Monster(monster, count) {
-                var _this = _super.call(this) || this;
-                _this.name = 'Kill ' + count + ' ' + monster.name + '';
-                _this.requirement = monster;
-                return _this;
-            }
-            Monster.REQUIREMENT_ID = 1;
-            return Monster;
-        }(Requirements.AbstractRequirement));
-        Requirements.Monster = Monster;
-    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
-})(Quests || (Quests = {}));
-var Quests;
-(function (Quests) {
     var KillWorms = /** @class */ (function (_super) {
         __extends(KillWorms, _super);
         function KillWorms(game) {
@@ -5071,6 +5061,24 @@ var Quests;
         return KillWorms;
     }(Quests.AbstractQuest));
     Quests.KillWorms = KillWorms;
+})(Quests || (Quests = {}));
+var Quests;
+(function (Quests) {
+    var Requirements;
+    (function (Requirements) {
+        var Monster = /** @class */ (function (_super) {
+            __extends(Monster, _super);
+            function Monster(monster, count) {
+                var _this = _super.call(this) || this;
+                _this.name = 'Kill ' + count + ' ' + monster.name + '';
+                _this.requirement = monster;
+                return _this;
+            }
+            Monster.REQUIREMENT_ID = 1;
+            return Monster;
+        }(Requirements.AbstractRequirement));
+        Requirements.Monster = Monster;
+    })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
 })(Quests || (Quests = {}));
 /// <reference path="../Inventory.ts"/>
 var GUI;

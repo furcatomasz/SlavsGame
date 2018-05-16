@@ -52,7 +52,7 @@ class SocketIOClient {
                 // .reloadScene()
         });
 
-        this.socket.emit('changeScene', ForestHouseStart.TYPE);
+        this.socket.emit('changeScene', SelectCharacter.TYPE);
 
         return this;
     }

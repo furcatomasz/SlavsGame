@@ -500,7 +500,7 @@ var SocketIOClient = /** @class */ (function () {
             // .updateRooms()
             // .reloadScene()
         });
-        this.socket.emit('changeScene', ForestHouseStart.TYPE);
+        this.socket.emit('changeScene', SelectCharacter.TYPE);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -1006,7 +1006,6 @@ var Game = /** @class */ (function () {
         }
         this.activeScene = null;
         this.controller.forward = false;
-        console.log();
         newScene.initScene(this);
     };
     Game.randomNumber = function (minimum, maximum) {
@@ -2159,15 +2158,15 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
             smokeSystem.start();
             var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
-            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-            sfxFireplace.attachToMesh(cone);
+            // let sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            //  sfxFireplace.attachToMesh(cone);
         }
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             sceneMesh.freezeWorldMatrix();
         }
-        new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.5 });
-        new BABYLON.Sound("Wind", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.4 });
+        // new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.5 });
+        // new BABYLON.Sound("Wind", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.4 });
     }
     return EnvironmentSelectCharacter;
 }());
@@ -3400,6 +3399,9 @@ var Scenes;
                 case ForestHouseTomb.TYPE:
                     scene = new ForestHouseTomb();
                     break;
+                case SelectCharacter.TYPE:
+                    scene = new SelectCharacter();
+                    break;
             }
             if (!scene) {
                 throw new TypeError('Wrong scene type.');
@@ -3410,9 +3412,6 @@ var Scenes;
     }());
     Scenes.Manager = Manager;
 })(Scenes || (Scenes = {}));
-/// <reference path="Scene.ts"/>
-/// <reference path="../game.ts"/>
-/// <reference path="../Events.ts"/>
 var SelectCharacter = /** @class */ (function (_super) {
     __extends(SelectCharacter, _super);
     function SelectCharacter() {
@@ -3420,38 +3419,31 @@ var SelectCharacter = /** @class */ (function (_super) {
     }
     SelectCharacter.prototype.initScene = function (game) {
         var self = this;
+        game.sceneManager = this;
         BABYLON.SceneLoader.Load("assets/scenes/Select_Map/", "Select_Map.babylon", game.engine, function (scene) {
-            game.sceneManager = self;
             self
-                .setDefaults(game)
-                .optimizeScene(scene);
-            //.setCamera(scene);
-            var sceneIndex = game.scenes.push(scene);
-            game.activeScene = sceneIndex - 1;
-            var assetsManager = new BABYLON.AssetsManager(scene);
-            scene.activeCamera = new BABYLON.FreeCamera("selectCharacterCamera", new BABYLON.Vector3(0, 0, 0), scene);
-            scene.activeCamera.maxZ = 200;
-            scene.activeCamera.minZ = -200;
-            //scene.activeCamera.mode = BABYLON.Camera.PERSPECTIVE_CAMERA;
-            scene.activeCamera.position = new BABYLON.Vector3(0, 14, -20);
-            scene.activeCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
-            scene.executeWhenReady(function () {
+                .setDefaults(game, scene)
+                .optimizeScene(scene)
+                .setCamera(scene)
+                .setFog(scene)
+                .defaultPipeline(scene)
+                .executeWhenReady(function () {
+                scene.activeCamera = new BABYLON.FreeCamera("selectCharacterCamera", new BABYLON.Vector3(0, 0, 0), scene);
+                scene.activeCamera.maxZ = 200;
+                scene.activeCamera.minZ = -200;
+                scene.activeCamera.position = new BABYLON.Vector3(0, 14, -20);
+                scene.activeCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
                 new EnvironmentSelectCharacter(game, scene);
-                game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
-                assetsManager.onFinish = function (tasks) {
-                    var playerCharacters = self.game.client.characters;
-                    for (var i = 0; i < playerCharacters.length; i++) {
-                        new SelectCharacter.Warrior(game, i);
+                game.client.socket.on('showPlayersToSelect', function (players) {
+                    for (var i = 0; i < players.length; i++) {
+                        var player = players[i];
+                        new SelectCharacter.Warrior(game, i, player);
                     }
-                };
-                assetsManager.load();
-                self.defaultPipeline(scene);
-            });
+                });
+            }, null);
         });
     };
-    SelectCharacter.prototype.getType = function () {
-    };
-    SelectCharacter.TYPE = 2;
+    SelectCharacter.TYPE = 4;
     return SelectCharacter;
 }(Scene));
 /// <reference path="Scene.ts"/>
@@ -4009,10 +4001,10 @@ var SelectCharacter;
 (function (SelectCharacter) {
     var Warrior = /** @class */ (function (_super) {
         __extends(Warrior, _super);
-        function Warrior(game, place) {
+        function Warrior(game, place, playerDatabase) {
             var _this = this;
             _this.name = 'Warrior';
-            _this.place = place;
+            _this.playerId = playerDatabase.id;
             var mesh = game.factories['character'].createInstance('Warrior', true);
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
             mesh.skeleton.enableBlending(0.2);
@@ -4029,7 +4021,7 @@ var SelectCharacter;
             }
             _this.mesh = mesh;
             _this = _super.call(this, name, game) || this;
-            _this.setItems(game.client.characters[_this.place].inventory.items);
+            _this.setItems(playerDatabase.items);
             _this.mesh.skeleton.beginAnimation('Sit');
             _this.registerActions();
             return _this;
@@ -4070,6 +4062,8 @@ var SelectCharacter;
                             sitDown();
                         }
                         else {
+                            console.log(1);
+                            self.game.client.socket.emit('selectCharacter', self.playerId);
                             self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                         }
                     });
@@ -4079,14 +4073,14 @@ var SelectCharacter;
                 sitDown();
                 pointerOut = true;
             }));
-            var client = self.game.client;
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                client.socket.emit('selectCharacter', self.place);
-                client.socket.on('characterSelected', function () {
-                    self.game.changeScene(new Castle());
-                    client.socket.emit('createPlayer');
-                });
-            }));
+            // this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+            //     BABYLON.ActionManager.OnPickUpTrigger,
+            //     function() {
+            //         console.log(self.playerId);
+            //         client.socket.emit('selectCharacter', self.playerId);
+            //
+            //     })
+            // );
         };
         return Warrior;
     }(AbstractCharacter));

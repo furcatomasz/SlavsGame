@@ -1,52 +1,40 @@
-/// <reference path="Scene.ts"/>
-/// <reference path="../game.ts"/>
-/// <reference path="../Events.ts"/>
-
 class SelectCharacter extends Scene {
 
-    static TYPE = 2;
+    static TYPE = 4;
 
     initScene(game:Game) {
+
         let self = this;
+        game.sceneManager = this;
 
         BABYLON.SceneLoader.Load("assets/scenes/Select_Map/", "Select_Map.babylon", game.engine, function (scene) {
-            game.sceneManager = self;
             self
-                .setDefaults(game)
-                .optimizeScene(scene);
-                //.setCamera(scene);
+                .setDefaults(game, scene)
+                .optimizeScene(scene)
+                .setCamera(scene)
+                .setFog(scene)
+                .defaultPipeline(scene)
+                .executeWhenReady(function () {
+                    scene.activeCamera = new BABYLON.FreeCamera("selectCharacterCamera", new BABYLON.Vector3(0, 0, 0), scene);
+                    scene.activeCamera.maxZ = 200;
+                    scene.activeCamera.minZ = -200;
 
-            let sceneIndex = game.scenes.push(scene);
-            game.activeScene = sceneIndex - 1;
-            let assetsManager = new BABYLON.AssetsManager(scene);
+                    scene.activeCamera.position = new BABYLON.Vector3(0, 14, -20);
+                    scene.activeCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
 
-            scene.activeCamera = new BABYLON.FreeCamera("selectCharacterCamera", new BABYLON.Vector3(0, 0, 0), scene);
-            scene.activeCamera.maxZ = 200;
-            scene.activeCamera.minZ = -200;
-            //scene.activeCamera.mode = BABYLON.Camera.PERSPECTIVE_CAMERA;
+                    new EnvironmentSelectCharacter(game, scene);
 
-            scene.activeCamera.position = new BABYLON.Vector3(0, 14, -20);
-            scene.activeCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
+                    game.client.socket.on('showPlayersToSelect', function(players) {
+                      for (let i = 0; i < players.length; i++) {
+                          let player = players[i];
+                          new SelectCharacter.Warrior(game, i, player);
+                      }
+                    });
 
-            scene.executeWhenReady(function () {
-                new EnvironmentSelectCharacter(game, scene);
-                game.factories['character'] = new Factories.Characters(game, scene, assetsManager).initFactory();
-                assetsManager.onFinish = function (tasks) {
-                    let playerCharacters = self.game.client.characters;
-                    for (let i = 0; i < playerCharacters.length; i++) {
-                        new SelectCharacter.Warrior(game, i);
-                    }
-
-                };
-                assetsManager.load();
-                self.defaultPipeline(scene);
-            });
-
+                }, null);
         });
 
 
     }
 
-    public getType() {
-    }
 }

@@ -19,6 +19,9 @@ namespace Scenes {
                 case ForestHouseTomb.TYPE:
                     scene = new ForestHouseTomb();
                     break;
+                case SelectCharacter.TYPE:
+                    scene = new SelectCharacter();
+                    break;
             }
 
             if (!scene) {

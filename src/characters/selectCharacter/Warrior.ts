@@ -4,11 +4,11 @@ namespace SelectCharacter {
 
         protected inventory: Character.Inventory;
         protected skeletonAnimation;
-        protected place: Number;
+        protected playerId: Number;
 
-        public constructor(game:Game, place: Number) {
+        public constructor(game:Game, place: Number, playerDatabase) {
             this.name = 'Warrior';
-            this.place = place;
+            this.playerId = playerDatabase.id;
 
             let mesh = game.factories['character'].createInstance('Warrior', true);
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
@@ -29,7 +29,7 @@ namespace SelectCharacter {
             this.mesh = mesh;
             super(name, game);
 
-            this.setItems(game.client.characters[this.place].inventory.items);
+            this.setItems(playerDatabase.items);
             this.mesh.skeleton.beginAnimation('Sit');
 
             this.registerActions();
@@ -79,6 +79,9 @@ namespace SelectCharacter {
                             if(pointerOut) {
                                 sitDown();
                             } else {
+                                console.log(1);
+                                self.game.client.socket.emit('selectCharacter', self.playerId);
+
                                 self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                             }
                         });
@@ -94,18 +97,15 @@ namespace SelectCharacter {
                 })
             );
 
-            let client = self.game.client;
 
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-                BABYLON.ActionManager.OnPickTrigger,
-                function() {
-                    client.socket.emit('selectCharacter', self.place);
-                    client.socket.on('characterSelected', function() {
-                        self.game.changeScene(new Castle());
-                        client.socket.emit('createPlayer');
-                    })
-                })
-            );
+            // this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+            //     BABYLON.ActionManager.OnPickUpTrigger,
+            //     function() {
+            //         console.log(self.playerId);
+            //         client.socket.emit('selectCharacter', self.playerId);
+            //
+            //     })
+            // );
         }
     }
 }

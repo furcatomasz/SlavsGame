@@ -88,7 +88,7 @@ class Game {
         }
         this.activeScene = null;
         this.controller.forward = false;
-    console.log();
+
         newScene.initScene(this);
     }
 

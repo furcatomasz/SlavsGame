@@ -52,7 +52,7 @@ class SocketIOClient {
                 // .reloadScene()
         });
 
-        this.socket.emit('changeScene', SelectCharacter.TYPE);
+        this.socket.emit('changeScene', ForestHouseStart.TYPE);
 
         return this;
     }
@@ -244,6 +244,7 @@ class SocketIOClient {
         let self = this;
 
         this.socket.on('showPlayer', function (playerData) {
+            console.log(playerData);
             game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
 

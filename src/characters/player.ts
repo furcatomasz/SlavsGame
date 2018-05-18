@@ -11,6 +11,8 @@ class Player extends AbstractCharacter {
     public statisticsAll: Array<any>;
     public experience: number;
     public experiencePercentages: number;
+    public gold: number;
+    public keys: number;
     public lvl: number;
     public freeAttributesPoints: number;
     public freeSkillPoints: number;
@@ -69,6 +71,8 @@ class Player extends AbstractCharacter {
             game.gui = new GUI.Main(game, this);
 
             this.experience = serverData.activePlayer.experience;
+            this.gold = serverData.activePlayer.gold;
+            this.keys = serverData.activePlayer.specialItems.length;
             this.experiencePercentages = serverData.activePlayer.experiencePercentages;
             this.lvl = serverData.activePlayer.lvl;
             this.freeAttributesPoints = serverData.activePlayer.freeAttributesPoints;

@@ -26,9 +26,35 @@ namespace GUI {
             this.guiTexture.addControl(this.container);
             this.showItems();
             this.showEquipedItems();
+            this.showSpecialItemsAndGold();
+
             this.createButtonClose();
 
             return this;
+        }
+
+        public showSpecialItemsAndGold() {
+            let image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", ''+this.guiMain.player.gold+'', "/assets/gui/gold.png");
+            image.thickness = 0;
+            image.color = 'white';
+            image.height = '80px';
+            image.width = '180px';
+            image.left = "-17%";
+            image.top = '-3%';
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            this.guiTexture.addControl(image);
+
+            let image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", ''+this.guiMain.player.keys+'', "/assets/gui/key.png");
+            image2.thickness = 0;
+            image2.color = 'white';
+            image2.height = '80px';
+            image2.width = '180px';
+            image2.left = "-3%";
+            image2.top = '-3%';
+            image2.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            this.guiTexture.addControl(image2);
         }
 
         public close() {
@@ -112,7 +138,15 @@ namespace GUI {
 
                 let tooltipButton = null;
                 result.onPointerEnterObservable.add(function () {
-                    tooltipButton = new GUI.TooltipButton(result, item.name);
+                    let text = item.name;
+                    if(item.statistics.damage > 0) {
+                        text += "\nDamage: "+item.statistics.damage+"";
+                    }
+                    if(item.statistics.armor > 0) {
+                        text += "\nArmor: "+item.statistics.armor+"";
+                    }
+
+                    tooltipButton = new GUI.TooltipButton(result, text);
                 });
 
                 result.onPointerOutObservable.add(function () {

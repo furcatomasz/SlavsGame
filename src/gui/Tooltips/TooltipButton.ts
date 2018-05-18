@@ -13,10 +13,13 @@ namespace GUI {
             rect1.cornerRadius = 20;
             rect1.thickness = 1;
             rect1.background = "black";
+            rect1.color = "white";
             baseControl.addControl(rect1);
 
             let label = new BABYLON.GUI.TextBlock();
+            label.textWrapping = true;
             label.text = text;
+            label.resizeToFit = true;
             rect1.addControl(label);
 
             this.container = rect1;

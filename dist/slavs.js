@@ -500,7 +500,7 @@ var SocketIOClient = /** @class */ (function () {
             // .updateRooms()
             // .reloadScene()
         });
-        this.socket.emit('changeScene', SelectCharacter.TYPE);
+        this.socket.emit('changeScene', ForestHouseStart.TYPE);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -653,6 +653,7 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         var self = this;
         this.socket.on('showPlayer', function (playerData) {
+            console.log(playerData);
             game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
             var octree = game.sceneManager.octree;
@@ -1231,6 +1232,8 @@ var Player = /** @class */ (function (_super) {
             _this.playerLight = playerLight;
             game.gui = new GUI.Main(game, _this);
             _this.experience = serverData.activePlayer.experience;
+            _this.gold = serverData.activePlayer.gold;
+            _this.keys = serverData.activePlayer.specialItems.length;
             _this.experiencePercentages = serverData.activePlayer.experiencePercentages;
             _this.lvl = serverData.activePlayer.lvl;
             _this.freeAttributesPoints = serverData.activePlayer.freeAttributesPoints;
@@ -4097,9 +4100,12 @@ var GUI;
             rect1.cornerRadius = 20;
             rect1.thickness = 1;
             rect1.background = "black";
+            rect1.color = "white";
             baseControl.addControl(rect1);
             var label = new BABYLON.GUI.TextBlock();
+            label.textWrapping = true;
             label.text = text;
+            label.resizeToFit = true;
             rect1.addControl(label);
             this.container = rect1;
             this.label = label;
@@ -4306,8 +4312,31 @@ var GUI;
             this.guiTexture.addControl(this.container);
             this.showItems();
             this.showEquipedItems();
+            this.showSpecialItemsAndGold();
             this.createButtonClose();
             return this;
+        };
+        Inventory.prototype.showSpecialItemsAndGold = function () {
+            var image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", '' + this.guiMain.player.gold + '', "/assets/gui/gold.png");
+            image.thickness = 0;
+            image.color = 'white';
+            image.height = '80px';
+            image.width = '180px';
+            image.left = "-17%";
+            image.top = '-3%';
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            this.guiTexture.addControl(image);
+            var image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", '' + this.guiMain.player.keys + '', "/assets/gui/key.png");
+            image2.thickness = 0;
+            image2.color = 'white';
+            image2.height = '80px';
+            image2.width = '180px';
+            image2.left = "-3%";
+            image2.top = '-3%';
+            image2.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            this.guiTexture.addControl(image2);
         };
         Inventory.prototype.close = function () {
             this.opened = false;
@@ -4379,7 +4408,14 @@ var GUI;
                 panelItems.addControl(result);
                 var tooltipButton = null;
                 result.onPointerEnterObservable.add(function () {
-                    tooltipButton = new GUI.TooltipButton(result, item.name);
+                    var text = item.name;
+                    if (item.statistics.damage > 0) {
+                        text += "\nDamage: " + item.statistics.damage + "";
+                    }
+                    if (item.statistics.armor > 0) {
+                        text += "\nArmor: " + item.statistics.armor + "";
+                    }
+                    tooltipButton = new GUI.TooltipButton(result, text);
                 });
                 result.onPointerOutObservable.add(function () {
                     result.children.forEach(function (value, key) {
@@ -5107,6 +5143,7 @@ var GUI;
              */
             EquipBlock.prototype.createImage = function () {
                 var self = this;
+                var item = this.item;
                 var image = this.inventory.createItemImage(this.item);
                 image.onPointerUpObservable.add(function () {
                     self.inventory.guiMain.game.player.inventory.emitEquip(self.item);
@@ -5115,6 +5152,23 @@ var GUI;
                     if (self.inventory.guiMain.attributesOpened) {
                         self.inventory.guiMain.attributes.refreshPopup();
                     }
+                });
+                image.onPointerEnterObservable.add(function () {
+                    var text = item.name;
+                    if (item.statistics.damage > 0) {
+                        text += "\nDamage: " + item.statistics.damage + "";
+                    }
+                    if (item.statistics.armor > 0) {
+                        text += "\nArmor: " + item.statistics.armor + "";
+                    }
+                    new GUI.TooltipButton(self.block, text);
+                });
+                image.onPointerOutObservable.add(function () {
+                    self.block.children.forEach(function (value, key) {
+                        if (value.name == 'tooltip') {
+                            self.block.removeControl(value);
+                        }
+                    });
                 });
                 this.block.addControl(image);
                 return this;

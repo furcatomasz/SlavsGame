@@ -43,6 +43,7 @@ namespace GUI.Inventory {
          */
         protected createImage() {
             let self = this;
+            let item = this.item;
             let image = this.inventory.createItemImage(this.item);
             image.onPointerUpObservable.add(function () {
                 self.inventory.guiMain.game.player.inventory.emitEquip(self.item);
@@ -52,6 +53,28 @@ namespace GUI.Inventory {
                     self.inventory.guiMain.attributes.refreshPopup();
                 }
             });
+
+            image.onPointerEnterObservable.add(function () {
+                let text = item.name;
+                if(item.statistics.damage > 0) {
+                    text += "\nDamage: "+item.statistics.damage+"";
+                }
+                if(item.statistics.armor > 0) {
+                    text += "\nArmor: "+item.statistics.armor+"";
+                }
+
+                new GUI.TooltipButton(self.block, text);
+            });
+
+            image.onPointerOutObservable.add(function () {
+                self.block.children.forEach(function(value, key) {
+                    if(value.name == 'tooltip') {
+                        self.block.removeControl(value);
+                    }
+                });
+            });
+
+
             this.block.addControl(image);
 
             return this;

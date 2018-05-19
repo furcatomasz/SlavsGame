@@ -52,6 +52,7 @@ abstract class Scene {
                 game.client.socket.emit('changeScenePost');
                 game.client.socket.emit('refreshGateways');
                 game.client.socket.emit('refreshQuests');
+                game.client.socket.emit('refreshChests');
 
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };

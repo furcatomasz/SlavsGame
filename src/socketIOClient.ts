@@ -43,6 +43,8 @@ class SocketIOClient {
                 .showDroppedItem()
                 .refreshGateways()
                 .refreshQuests()
+                .refreshChests()
+                .openedChest()
                 .updateEnemies()
                 .changeScene()
                 .questRequirementInformation()
@@ -52,7 +54,7 @@ class SocketIOClient {
                 // .reloadScene()
         });
 
-        this.socket.emit('changeScene', ForestHouseStart.TYPE);
+        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
 
         return this;
     }
@@ -120,6 +122,22 @@ class SocketIOClient {
         return this;
     }
 
+    protected refreshChests() {
+        let game = this.game;
+        this.socket.on('refreshChests', function (chests) {
+            game.chests.forEach(function(chest) {
+                chest.hightlightLayer.dispose();
+            });
+            game.chests = [];
+
+            chests.forEach(function(chest, chestKey) {
+                game.chests.push(new Factories.Chest(game, chest, chestKey));
+            });
+        });
+
+        return this;
+    }
+
     protected changeScene() {
         let game = this.game;
         this.socket.on('changeScene', function (sceneType) {
@@ -167,6 +185,36 @@ class SocketIOClient {
         this.socket.on('addExperience', function (data) {
             game.player.addExperience(data.experience, data.experiencePercentages);
             game.gui.playerLogsPanel.addText('You earned ' + data.experience + ' experience.', 'blue');
+
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
+    protected openedChest() {
+        let game = this.game;
+        this.socket.on('openChest', function (data) {
+            let opened = data.chest.opened;
+            if(!opened) {
+                game.gui.playerLogsQuests.addText('You do not have key to open chest', 'red');
+            } else {
+                game.gui.playerLogsQuests.addText('Chest has been opened', 'orange');
+
+                game.player.keys -= 1;
+                if(game.gui.inventory.opened) {
+                    game.gui.inventory.refreshPopup();
+                }
+
+                let chest = game.chests[data.chestKey];
+                chest.hightlightLayer.dispose();
+                chest.mesh.actionManager.actions.forEach(function(action) {
+                    chest.mesh.actionManager.unregisterAction(action);
+                });
+            }
+
 
         });
 
@@ -244,7 +292,6 @@ class SocketIOClient {
         let self = this;
 
         this.socket.on('showPlayer', function (playerData) {
-            console.log(playerData);
             game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
 
@@ -299,7 +346,6 @@ class SocketIOClient {
     protected showDroppedItem() {
         let game = this.game;
         this.socket.on('showDroppedItem', function (data) {
-            console.log(data);
             let item = new Items.Item(game, data.item);
             Items.DroppedItem.showItem(game, item, data.position, data.itemKey);
         });
@@ -314,11 +360,8 @@ class SocketIOClient {
         let game = this.game;
 
         this.socket.on('showEnemies', function (data) {
-            console.log(data);
-            console.log(game.enemies);
             data.forEach(function (enemyData, key) {
                 let enemy = game.enemies[key];
-console.log(enemy);
                 if (enemy) {
                     let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
 
@@ -423,7 +466,7 @@ console.log(enemy);
                     if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack' && updatedEnemy.attack == true) {
                         enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
                     } else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
-                        let targetMesh = null;
+                        let targetMeshgetMeshB = null;
                         if (enemy.animation) {
                             enemy.animation.stop();
                         }

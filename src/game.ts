@@ -29,6 +29,7 @@ class Game {
     public npcs: Array<NPC.AbstractNpc>;
     public enemies: Array<Monster>;
     public quests: Array<Quests.AbstractQuest>;
+    public chests: Array<Factories.Chest>;
 
     /**
      * States
@@ -53,6 +54,7 @@ class Game {
         self.quests = [];
         self.npcs = [];
         self.scenes = [];
+        self.chests = [];
         self.activeScene = null;
         self.events = new Events();
 

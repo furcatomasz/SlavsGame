@@ -117,6 +117,7 @@ var Scene = /** @class */ (function () {
                 game.client.socket.emit('changeScenePost');
                 game.client.socket.emit('refreshGateways');
                 game.client.socket.emit('refreshQuests');
+                game.client.socket.emit('refreshChests');
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -492,6 +493,8 @@ var SocketIOClient = /** @class */ (function () {
                 .showDroppedItem()
                 .refreshGateways()
                 .refreshQuests()
+                .refreshChests()
+                .openedChest()
                 .updateEnemies()
                 .changeScene()
                 .questRequirementInformation()
@@ -500,7 +503,7 @@ var SocketIOClient = /** @class */ (function () {
             // .updateRooms()
             // .reloadScene()
         });
-        this.socket.emit('changeScene', ForestHouseStart.TYPE);
+        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -553,6 +556,19 @@ var SocketIOClient = /** @class */ (function () {
         });
         return this;
     };
+    SocketIOClient.prototype.refreshChests = function () {
+        var game = this.game;
+        this.socket.on('refreshChests', function (chests) {
+            game.chests.forEach(function (chest) {
+                chest.hightlightLayer.dispose();
+            });
+            game.chests = [];
+            chests.forEach(function (chest, chestKey) {
+                game.chests.push(new Factories.Chest(game, chest, chestKey));
+            });
+        });
+        return this;
+    };
     SocketIOClient.prototype.changeScene = function () {
         var game = this.game;
         this.socket.on('changeScene', function (sceneType) {
@@ -592,6 +608,31 @@ var SocketIOClient = /** @class */ (function () {
         this.socket.on('addExperience', function (data) {
             game.player.addExperience(data.experience, data.experiencePercentages);
             game.gui.playerLogsPanel.addText('You earned ' + data.experience + ' experience.', 'blue');
+        });
+        return this;
+    };
+    /**
+     * @returns {SocketIOClient}
+     */
+    SocketIOClient.prototype.openedChest = function () {
+        var game = this.game;
+        this.socket.on('openChest', function (data) {
+            var opened = data.chest.opened;
+            if (!opened) {
+                game.gui.playerLogsQuests.addText('You do not have key to open chest', 'red');
+            }
+            else {
+                game.gui.playerLogsQuests.addText('Chest has been opened', 'orange');
+                game.player.keys -= 1;
+                if (game.gui.inventory.opened) {
+                    game.gui.inventory.refreshPopup();
+                }
+                var chest_1 = game.chests[data.chestKey];
+                chest_1.hightlightLayer.dispose();
+                chest_1.mesh.actionManager.actions.forEach(function (action) {
+                    chest_1.mesh.actionManager.unregisterAction(action);
+                });
+            }
         });
         return this;
     };
@@ -653,7 +694,6 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         var self = this;
         this.socket.on('showPlayer', function (playerData) {
-            console.log(playerData);
             game.player = new Player(game, true, playerData);
             document.dispatchEvent(game.events.playerConnected);
             var octree = game.sceneManager.octree;
@@ -700,7 +740,6 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.showDroppedItem = function () {
         var game = this.game;
         this.socket.on('showDroppedItem', function (data) {
-            console.log(data);
             var item = new Items.Item(game, data.item);
             Items.DroppedItem.showItem(game, item, data.position, data.itemKey);
         });
@@ -712,11 +751,8 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.showEnemies = function () {
         var game = this.game;
         this.socket.on('showEnemies', function (data) {
-            console.log(data);
-            console.log(game.enemies);
             data.forEach(function (enemyData, key) {
                 var enemy = game.enemies[key];
-                console.log(enemy);
                 if (enemy) {
                     var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
                     enemy.target = enemyData.target;
@@ -807,21 +843,21 @@ var SocketIOClient = /** @class */ (function () {
                         enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
                     }
                     else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
-                        var targetMesh_1 = null;
+                        var targetMeshgetMeshB = null;
                         if (enemy.animation) {
                             enemy.animation.stop();
                         }
                         game.remotePlayers.forEach(function (socketRemotePlayer) {
                             if (updatedEnemy.target == socketRemotePlayer.id) {
-                                targetMesh_1 = socketRemotePlayer.mesh;
+                                targetMesh = socketRemotePlayer.mesh;
                             }
                         });
-                        if (!targetMesh_1 && game.player.id == updatedEnemy.target) {
-                            targetMesh_1 = game.player.meshForMove;
+                        if (!targetMesh && game.player.id == updatedEnemy.target) {
+                            targetMesh = game.player.meshForMove;
                         }
-                        if (targetMesh_1) {
+                        if (targetMesh) {
                             activeTargetPoints[enemyKey] = function () {
-                                mesh_1.lookAt(targetMesh_1.position);
+                                mesh_1.lookAt(targetMesh.position);
                                 var rotation = mesh_1.rotation;
                                 if (mesh_1.rotationQuaternion) {
                                     rotation = mesh_1.rotationQuaternion.toEulerAngles();
@@ -977,6 +1013,7 @@ var Game = /** @class */ (function () {
         self.quests = [];
         self.npcs = [];
         self.scenes = [];
+        self.chests = [];
         self.activeScene = null;
         self.events = new Events();
         self.client.connect(serverUrl);
@@ -1552,6 +1589,42 @@ var Factories;
         return Boars;
     }(Factories.AbstractFactory));
     Factories.Boars = Boars;
+})(Factories || (Factories = {}));
+var Factories;
+(function (Factories) {
+    var Chest = /** @class */ (function () {
+        /**
+         *
+         * @param {Game} game
+         * @param chestData
+         */
+        function Chest(game, chestData, chestKey) {
+            var self = this;
+            var scene = game.getScene();
+            var opened = chestData.opened;
+            var name = chestData.name;
+            var meshName = chestData.objectName;
+            var chestMesh = game.getScene().getMeshByName(meshName);
+            if (!chestMesh) {
+                throw new TypeError('Wrong chest mesh name.');
+            }
+            chestMesh.isPickable = true;
+            chestMesh.checkCollisions = true;
+            if (!opened) {
+                var hl = new BABYLON.HighlightLayer("highlightLayer", scene);
+                hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
+                this.hightlightLayer = hl;
+            }
+            this.mesh = chestMesh;
+            this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                game.client.socket.emit('openChest', chestKey);
+                console.log(chestKey);
+            }));
+        }
+        return Chest;
+    }());
+    Factories.Chest = Chest;
 })(Factories || (Factories = {}));
 var Collisions = /** @class */ (function () {
     function Collisions() {

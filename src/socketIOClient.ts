@@ -54,7 +54,8 @@ class SocketIOClient {
                 // .reloadScene()
         });
 
-        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
+        // this.socket.emit('changeScene', ForestHouse.TYPE);
+        this.socket.emit('selectCharacter', 1);
 
         return this;
     }
@@ -360,15 +361,9 @@ class SocketIOClient {
         let game = this.game;
 
         this.socket.on('showEnemies', function (data) {
+            game.enemies = [];
             data.forEach(function (enemyData, key) {
-                let enemy = game.enemies[key];
-                if (enemy) {
-                    let position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
-
-                    enemy.target = enemyData.target;
-                    enemy.mesh.position = position;
-                    enemy.runAnimationWalk();
-                } else if(enemyData.statistics.hp > 0) {
+                if(enemyData.statistics.hp > 0) {
                     let newMonster = new Monster(game, key, enemyData);
 
                     if (newMonster) {
@@ -466,7 +461,7 @@ class SocketIOClient {
                     if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack' && updatedEnemy.attack == true) {
                         enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
                     } else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
-                        let targetMeshgetMeshB = null;
+                        let targetMesh = null;
                         if (enemy.animation) {
                             enemy.animation.stop();
                         }

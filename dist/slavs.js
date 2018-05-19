@@ -156,7 +156,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         scene.workerCollisions = false;
         return this;
     };
@@ -503,7 +503,8 @@ var SocketIOClient = /** @class */ (function () {
             // .updateRooms()
             // .reloadScene()
         });
-        this.socket.emit('changeScene', ForestHouseTomb.TYPE);
+        // this.socket.emit('changeScene', ForestHouse.TYPE);
+        this.socket.emit('selectCharacter', 1);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -751,15 +752,9 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.showEnemies = function () {
         var game = this.game;
         this.socket.on('showEnemies', function (data) {
+            game.enemies = [];
             data.forEach(function (enemyData, key) {
-                var enemy = game.enemies[key];
-                if (enemy) {
-                    var position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
-                    enemy.target = enemyData.target;
-                    enemy.mesh.position = position;
-                    enemy.runAnimationWalk();
-                }
-                else if (enemyData.statistics.hp > 0) {
+                if (enemyData.statistics.hp > 0) {
                     var newMonster = new Monster(game, key, enemyData);
                     if (newMonster) {
                         if (game.sceneManager.octree) {
@@ -843,21 +838,21 @@ var SocketIOClient = /** @class */ (function () {
                         enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
                     }
                     else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
-                        var targetMeshgetMeshB = null;
+                        var targetMesh_1 = null;
                         if (enemy.animation) {
                             enemy.animation.stop();
                         }
                         game.remotePlayers.forEach(function (socketRemotePlayer) {
                             if (updatedEnemy.target == socketRemotePlayer.id) {
-                                targetMesh = socketRemotePlayer.mesh;
+                                targetMesh_1 = socketRemotePlayer.mesh;
                             }
                         });
-                        if (!targetMesh && game.player.id == updatedEnemy.target) {
-                            targetMesh = game.player.meshForMove;
+                        if (!targetMesh_1 && game.player.id == updatedEnemy.target) {
+                            targetMesh_1 = game.player.meshForMove;
                         }
-                        if (targetMesh) {
+                        if (targetMesh_1) {
                             activeTargetPoints[enemyKey] = function () {
-                                mesh_1.lookAt(targetMesh.position);
+                                mesh_1.lookAt(targetMesh_1.position);
                                 var rotation = mesh_1.rotation;
                                 if (mesh_1.rotationQuaternion) {
                                     rotation = mesh_1.rotationQuaternion.toEulerAngles();

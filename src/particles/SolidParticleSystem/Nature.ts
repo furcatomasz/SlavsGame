@@ -3,6 +3,7 @@ namespace Particles.SolidParticleSystem {
 
         public buildSPS(count: number): AbstractSolidParticle {
             let self = this;
+            let game = this.game;
             let parentPositions = this.parent.getVerticesData(BABYLON.VertexBuffer.PositionKind);
             let myBuilder = function (particle, i, s) {
                 let randomPosition = Math.round(Math.random() * 10);

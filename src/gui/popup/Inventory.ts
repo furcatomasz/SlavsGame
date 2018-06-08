@@ -34,7 +34,7 @@ namespace GUI {
         }
 
         public showSpecialItemsAndGold() {
-            let image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", ''+this.guiMain.player.gold+'', "/assets/gui/gold.png");
+            let image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", ''+this.guiMain.player.gold+'', "assets/gui/gold.png");
             image.thickness = 0;
             image.color = 'white';
             image.height = '80px';
@@ -45,7 +45,7 @@ namespace GUI {
             image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             this.guiTexture.addControl(image);
 
-            let image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", ''+this.guiMain.player.keys+'', "/assets/gui/key.png");
+            let image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", ''+this.guiMain.player.keys+'', "assets/gui/key.png");
             image2.thickness = 0;
             image2.color = 'white';
             image2.height = '80px';

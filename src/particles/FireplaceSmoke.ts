@@ -5,7 +5,7 @@ namespace Particles {
 
         protected initParticleSystem() {
             var smokeSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 100 }, this.game.getScene());
-            smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            smokeSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             smokeSystem.emitter = this.emitter;
             smokeSystem.minEmitBox = new BABYLON.Vector3(0.5, 1.5, 0.5);
             smokeSystem.maxEmitBox = new BABYLON.Vector3(-0.5, 1.5, -0.5);

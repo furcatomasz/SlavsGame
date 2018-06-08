@@ -5,7 +5,7 @@ namespace Particles {
 
         protected initParticleSystem() {
             var fog = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
-            fog.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
+            fog.particleTexture = new BABYLON.Texture("assets/Smoke3.png", this.game.getScene());
             fog.emitter = this.emitter; // the starting object, the emitter
             fog.minEmitBox = new BABYLON.Vector3(-25, 1, -50); // Starting all from
             fog.maxEmitBox = new BABYLON.Vector3(25, -2, 50); // To...

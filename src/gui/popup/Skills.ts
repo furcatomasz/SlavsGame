@@ -118,7 +118,7 @@ namespace GUI {
             });
             panelSkill.addControl(image);
 
-            let button = BABYLON.GUI.Button.CreateImageButton("plus", 'Damage - '+skill.damage, "/assets/gui/plus.png");
+            let button = BABYLON.GUI.Button.CreateImageButton("plus", 'Damage - '+skill.damage, "assets/gui/plus.png");
             button.top = '15%';
             button.height = "10%";
             button.thickness = 0;
@@ -131,7 +131,7 @@ namespace GUI {
             });
             panelSkill.addControl(button);
 
-            let button = BABYLON.GUI.Button.CreateImageButton("plus", 'Cooldown - '+skill.cooldown, "/assets/gui/plus.png");
+            let button = BABYLON.GUI.Button.CreateImageButton("plus", 'Cooldown - '+skill.cooldown, "assets/gui/plus.png");
             button.height = "10%";
             button.top = '28%';
             button.thickness = 0;
@@ -144,7 +144,7 @@ namespace GUI {
             });
             panelSkill.addControl(button);
 
-            let button = BABYLON.GUI.Button.CreateImageButton("plus", 'Stock - '+skill.stock, "/assets/gui/plus.png");
+            let button = BABYLON.GUI.Button.CreateImageButton("plus", 'Stock - '+skill.stock, "assets/gui/plus.png");
             button.height = "10%";
             button.top = '41%';
             button.thickness = 0;

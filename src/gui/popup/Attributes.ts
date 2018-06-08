@@ -93,7 +93,7 @@ namespace GUI {
         protected createAttribute(type: number, text:string, control:BABYLON.GUI.StackPanel) {
             let self = this;
             if (this.guiMain.game.player.freeAttributesPoints) {
-                let button = BABYLON.GUI.Button.CreateImageButton("plus", text, "/assets/gui/plus.png");
+                let button = BABYLON.GUI.Button.CreateImageButton("plus", text, "assets/gui/plus.png");
                 button.height = "5%";
                 button.thickness = 0;
                 button.width = 0.4;

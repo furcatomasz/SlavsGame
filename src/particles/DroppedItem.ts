@@ -5,7 +5,7 @@ namespace Particles {
 
         protected initParticleSystem() {
             let fireSystem = new BABYLON.GPUParticleSystem("DroppedItemParticles", { capacity: 50 }, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
 
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);

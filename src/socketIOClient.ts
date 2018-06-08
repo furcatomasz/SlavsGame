@@ -63,7 +63,7 @@ class SocketIOClient {
     protected questRequirementInformation() {
         let self = this;
         this.socket.on('questRequirementInformation', function (data) {
-            game.gui.playerLogsQuests.addText(data);
+            self.game.gui.playerLogsQuests.addText(data);
         });
 
         return this;
@@ -72,7 +72,7 @@ class SocketIOClient {
     protected questRequirementDoneInformation() {
         let self = this;
         this.socket.on('questRequirementDoneInformation', function (data) {
-            game.gui.playerLogsQuests.addText(data, 'orange');
+            self.game.gui.playerLogsQuests.addText(data, 'orange');
             self.socket.emit('refreshQuests');
             self.socket.emit('refreshGateways');
         });

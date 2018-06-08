@@ -383,7 +383,7 @@ var Monster = /** @class */ (function (_super) {
         var mesh = game.factories[factoryName].createInstance(meshName, true);
         mesh.visibility = 1;
         mesh.isPickable = 0;
-        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/sounds/character/hit2.mp3", game.getScene(), null, {
+        _this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit2.mp3", game.getScene(), null, {
             loop: false,
             autoplay: false
         });
@@ -510,14 +510,14 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.questRequirementInformation = function () {
         var self = this;
         this.socket.on('questRequirementInformation', function (data) {
-            game.gui.playerLogsQuests.addText(data);
+            self.game.gui.playerLogsQuests.addText(data);
         });
         return this;
     };
     SocketIOClient.prototype.questRequirementDoneInformation = function () {
         var self = this;
         this.socket.on('questRequirementDoneInformation', function (data) {
-            game.gui.playerLogsQuests.addText(data, 'orange');
+            self.game.gui.playerLogsQuests.addText(data, 'orange');
             self.socket.emit('refreshQuests');
             self.socket.emit('refreshGateways');
         });
@@ -1231,11 +1231,11 @@ var Player = /** @class */ (function (_super) {
         _this.connectionId = serverData.connectionId;
         _this.isControllable = registerMoving;
         //
-        _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/sounds/character/walk/1.mp3", game.getScene(), null, {
+        _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "assets/sounds/character/walk/1.mp3", game.getScene(), null, {
             loop: true,
             autoplay: false
         });
-        _this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/sounds/character/hit.mp3", game.getScene(), null, {
+        _this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
             loop: false,
             autoplay: false
         });
@@ -2633,7 +2633,7 @@ var Particles;
         }
         Blood.prototype.initParticleSystem = function () {
             var particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 100 }, this.game.getScene());
-            particleSystem.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
+            particleSystem.particleTexture = new BABYLON.Texture("assets/Smoke3.png", this.game.getScene());
             particleSystem.emitter = this.emitter;
             particleSystem.minEmitBox = new BABYLON.Vector3(0, this.emitter.geometry.extend.maximum.y * 0.7, 0); // Starting all from
             particleSystem.maxEmitBox = new BABYLON.Vector3(0, this.emitter.geometry.extend.maximum.y * 0.7, 0); // To...
@@ -2671,7 +2671,7 @@ var Particles;
         }
         CaveEntrace.prototype.initParticleSystem = function () {
             var particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 150 }, this.game.getScene());
-            particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
             particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, -0.2); // To...
@@ -2708,7 +2708,7 @@ var Particles;
         }
         DroppedItem.prototype.initParticleSystem = function () {
             var fireSystem = new BABYLON.GPUParticleSystem("DroppedItemParticles", { capacity: 50 }, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
             fireSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1);
@@ -2745,7 +2745,7 @@ var Particles;
         }
         FireplaceFire.prototype.initParticleSystem = function () {
             var fireSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 50 }, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(0.5, 0, 0.5);
             fireSystem.maxEmitBox = new BABYLON.Vector3(-0.5, 0, -0.5);
@@ -2782,7 +2782,7 @@ var Particles;
         }
         FireplaceSmoke.prototype.initParticleSystem = function () {
             var smokeSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 100 }, this.game.getScene());
-            smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            smokeSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             smokeSystem.emitter = this.emitter;
             smokeSystem.minEmitBox = new BABYLON.Vector3(0.5, 1.5, 0.5);
             smokeSystem.maxEmitBox = new BABYLON.Vector3(-0.5, 1.5, -0.5);
@@ -2819,7 +2819,7 @@ var Particles;
         }
         Fog.prototype.initParticleSystem = function () {
             var fog = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
-            fog.particleTexture = new BABYLON.Texture("/assets/Smoke3.png", this.game.getScene());
+            fog.particleTexture = new BABYLON.Texture("assets/Smoke3.png", this.game.getScene());
             fog.emitter = this.emitter; // the starting object, the emitter
             fog.minEmitBox = new BABYLON.Vector3(-25, 1, -50); // Starting all from
             fog.maxEmitBox = new BABYLON.Vector3(25, -2, 50); // To...
@@ -2864,7 +2864,7 @@ var Particles;
         }
         Gateway.prototype.initParticleSystem = function () {
             var particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 150 }, this.game.getScene());
-            particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
             particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1); // To...
@@ -2936,7 +2936,7 @@ var Particles;
         }
         HouseExit.prototype.initParticleSystem = function () {
             var particleSystem = new BABYLON.GPUParticleSystem("castleExit", { capacity: 500 }, this.game.getScene());
-            particleSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
             particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1); // To...
@@ -2973,7 +2973,7 @@ var Particles;
         }
         TorchFire.prototype.initParticleSystem = function () {
             var fireSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 20 }, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(1, 0, 1);
             fireSystem.maxEmitBox = new BABYLON.Vector3(-1, 0, -1);
@@ -3010,7 +3010,7 @@ var Particles;
         }
         WalkSmoke.prototype.initParticleSystem = function () {
             var smokeSystem = new BABYLON.ParticleSystem("particles", 10, this.game.getScene());
-            smokeSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            smokeSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             smokeSystem.emitter = this.emitter;
             smokeSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0.8);
             smokeSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0.8);
@@ -3709,7 +3709,7 @@ var Character;
                 return Character.Skills.DoubleAttack.TYPE;
             };
             DoubleAttack.prototype.registerDefaults = function () {
-                this.image = '/assets/skills/skill01.png';
+                this.image = 'assets/skills/skill01.png';
                 this.name = 'Double attack';
             };
             DoubleAttack.prototype.registerHotKey = function (game) {
@@ -3777,7 +3777,7 @@ var Character;
                 return Character.Skills.Tornado.TYPE;
             };
             Tornado.prototype.registerDefaults = function () {
-                this.image = '/assets/skills/skill02.png';
+                this.image = 'assets/skills/skill02.png';
                 this.name = 'Tornado';
             };
             Tornado.prototype.registerHotKey = function (game) {
@@ -4341,7 +4341,7 @@ var GUI;
         Attributes.prototype.createAttribute = function (type, text, control) {
             var self = this;
             if (this.guiMain.game.player.freeAttributesPoints) {
-                var button = BABYLON.GUI.Button.CreateImageButton("plus", text, "/assets/gui/plus.png");
+                var button = BABYLON.GUI.Button.CreateImageButton("plus", text, "assets/gui/plus.png");
                 button.height = "5%";
                 button.thickness = 0;
                 button.width = 0.4;
@@ -4385,7 +4385,7 @@ var GUI;
             return this;
         };
         Inventory.prototype.showSpecialItemsAndGold = function () {
-            var image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", '' + this.guiMain.player.gold + '', "/assets/gui/gold.png");
+            var image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", '' + this.guiMain.player.gold + '', "assets/gui/gold.png");
             image.thickness = 0;
             image.color = 'white';
             image.height = '80px';
@@ -4395,7 +4395,7 @@ var GUI;
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             this.guiTexture.addControl(image);
-            var image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", '' + this.guiMain.player.keys + '', "/assets/gui/key.png");
+            var image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", '' + this.guiMain.player.keys + '', "assets/gui/key.png");
             image2.thickness = 0;
             image2.color = 'white';
             image2.height = '80px';
@@ -4697,7 +4697,7 @@ var GUI;
             self.guiTexture.addControl(panel);
             if (this.rooms) {
                 this.rooms.forEach(function (room, roomKey) {
-                    var buttonAccept = BABYLON.GUI.Button.CreateImageButton("plus", room.roomId, "/assets/gui/plus.png");
+                    var buttonAccept = BABYLON.GUI.Button.CreateImageButton("plus", room.roomId, "assets/gui/plus.png");
                     buttonAccept.color = "white";
                     buttonAccept.background = "black";
                     buttonAccept.width = 0.6;
@@ -4816,7 +4816,7 @@ var GUI;
                 });
             });
             panelSkill.addControl(image);
-            var button = BABYLON.GUI.Button.CreateImageButton("plus", 'Damage - ' + skill.damage, "/assets/gui/plus.png");
+            var button = BABYLON.GUI.Button.CreateImageButton("plus", 'Damage - ' + skill.damage, "assets/gui/plus.png");
             button.top = '15%';
             button.height = "10%";
             button.thickness = 0;
@@ -4828,7 +4828,7 @@ var GUI;
                 });
             });
             panelSkill.addControl(button);
-            var button = BABYLON.GUI.Button.CreateImageButton("plus", 'Cooldown - ' + skill.cooldown, "/assets/gui/plus.png");
+            var button = BABYLON.GUI.Button.CreateImageButton("plus", 'Cooldown - ' + skill.cooldown, "assets/gui/plus.png");
             button.height = "10%";
             button.top = '28%';
             button.thickness = 0;
@@ -4840,7 +4840,7 @@ var GUI;
                 });
             });
             panelSkill.addControl(button);
-            var button = BABYLON.GUI.Button.CreateImageButton("plus", 'Stock - ' + skill.stock, "/assets/gui/plus.png");
+            var button = BABYLON.GUI.Button.CreateImageButton("plus", 'Stock - ' + skill.stock, "assets/gui/plus.png");
             button.height = "10%";
             button.top = '41%';
             button.thickness = 0;
@@ -4961,7 +4961,7 @@ var Particles;
         }
         DoubleAttack.prototype.initParticleSystem = function () {
             var fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(-2, 0, -2);
             fireSystem.maxEmitBox = new BABYLON.Vector3(2, 4, 2);
@@ -4997,7 +4997,7 @@ var Particles;
         }
         Tornado.prototype.initParticleSystem = function () {
             var fireSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(0, 3, 0);
             fireSystem.maxEmitBox = new BABYLON.Vector3(0, 3, 0);
@@ -5056,6 +5056,7 @@ var Particles;
             }
             Nature.prototype.buildSPS = function (count) {
                 var self = this;
+                var game = this.game;
                 var parentPositions = this.parent.getVerticesData(BABYLON.VertexBuffer.PositionKind);
                 var myBuilder = function (particle, i, s) {
                     var randomPosition = Math.round(Math.random() * 10);

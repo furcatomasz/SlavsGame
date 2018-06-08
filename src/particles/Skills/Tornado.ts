@@ -4,7 +4,7 @@ namespace Particles {
         protected initParticleSystem() {
             let fireSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
 
-            fireSystem.particleTexture = new BABYLON.Texture("/assets/flare.png", this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
 
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(0, 3, 0);

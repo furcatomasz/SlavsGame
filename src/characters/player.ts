@@ -25,11 +25,11 @@ class Player extends AbstractCharacter {
         this.connectionId = serverData.connectionId;
         this.isControllable = registerMoving;
         //
-        this.sfxWalk = new BABYLON.Sound("CharacterWalk", "/assets/sounds/character/walk/1.mp3", game.getScene(), null, {
+        this.sfxWalk = new BABYLON.Sound("CharacterWalk", "assets/sounds/character/walk/1.mp3", game.getScene(), null, {
             loop: true,
             autoplay: false
         });
-        this.sfxHit = new BABYLON.Sound("CharacterHit", "/assets/sounds/character/hit.mp3", game.getScene(), null, {
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
             loop: false,
             autoplay: false
         });

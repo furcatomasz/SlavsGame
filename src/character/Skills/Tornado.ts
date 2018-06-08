@@ -8,7 +8,7 @@ namespace Character.Skills {
 
 
         protected registerDefaults() {
-            this.image = '/assets/skills/skill02.png';
+            this.image = 'assets/skills/skill02.png';
             this.name = 'Tornado';
         }
 

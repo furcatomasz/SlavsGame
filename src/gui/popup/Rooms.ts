@@ -70,7 +70,7 @@ namespace GUI {
 
             if(this.rooms) {
                 this.rooms.forEach(function (room, roomKey) {
-                    let buttonAccept = BABYLON.GUI.Button.CreateImageButton("plus", room.roomId, "/assets/gui/plus.png");
+                    let buttonAccept = BABYLON.GUI.Button.CreateImageButton("plus", room.roomId, "assets/gui/plus.png");
                     buttonAccept.color = "white";
                     buttonAccept.background = "black";
                     buttonAccept.width = 0.6;

@@ -64,11 +64,11 @@ abstract class Scene {
 
     public setCamera(scene:BABYLON.Scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
-        camera.rotation = new BABYLON.Vector3(0.79,0.79,0);
+        camera.rotation = new BABYLON.Vector3(0.75,0.75,0);
         camera.position = new BABYLON.Vector3(0,35,0);
         camera.maxZ = 110;
-        camera.minZ = 30;
-        camera.fov = 0.5;
+        camera.minZ = 20;
+        camera.fov = 13.25;
         camera.fovMode = 0;
 
         scene.activeCamera = camera;
@@ -84,8 +84,8 @@ abstract class Scene {
         scene.fogDensity = 1;
 
         //Only if LINEAR
-        scene.fogStart = 70;
-        scene.fogEnd = 93;
+        scene.fogStart = 50;
+        scene.fogEnd = 70;
 
 
         // scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
@@ -102,7 +102,7 @@ abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
         scene.workerCollisions = false;
 
         return this;

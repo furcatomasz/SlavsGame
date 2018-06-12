@@ -4,7 +4,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		selected layers only:  false
 		flat shading entire scene:  false
 		inline textures:  false
-		texture directory:  F:\Slavs\Babylon\Characters\Warrior_demo\
+		texture directory:  F:\Slavs\Babylon\Characters\Warrior_beta\
 	Python World class constructor completed
 	processing begun of skeleton:  metarig, id:  0
 		processing begun of bone:  root, index:  0
@@ -101,12 +101,77 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  180
 	WARNING: The following camera not visible in scene thus ignored: Camera
+	processing begun of mesh:  Warrior.006
+		processing begun of Standard material:  skirt
+			Diffuse texture found "Texture.014"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  belt
+			Diffuse texture found "Texture.016"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.014
+		processing begun of multimaterial:  Warrior.Multimaterial#0
+		num positions      :  419
+		num normals        :  419
+		num uvs            :  838
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1620
+		Skeleton stats:  
+			Total Influencers:  1249
+			Avg # of influencers per vertex:  2.9809
+			Highest # of influencers observed:  5, num vertices with this:  62
+			exported as 5 influencers
+			num skeletonWeights and skeletonIndices:  3352
+	processing begun of mesh:  Plane
+		registered as also a user of material:  Material.014
+		num positions      :  48
+		num normals        :  48
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  168
+		Skeleton stats:  
+			Total Influencers:  198
+			Avg # of influencers per vertex:  4.125
+			Highest # of influencers observed:  5, num vertices with this:  18
+			exported as 5 influencers
+			num skeletonWeights and skeletonIndices:  384
+	processing begun of mesh:  Warrior.004
+		processing begun of Standard material:  texture
+			Diffuse texture found "Texture.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  67
+		num normals        :  67
+		num uvs            :  134
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  156
+		Skeleton stats:  
+			Total Influencers:  262
+			Avg # of influencers per vertex:  3.9104
+			Highest # of influencers observed:  6, num vertices with this:  8
+			exported as 6 influencers
+			num skeletonWeights and skeletonIndices:  536
+	processing begun of mesh:  Warrior.003
+		processing begun of Standard material:  Material.015
+		num positions      :  232
+		num normals        :  232
+		num uvs            :  464
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  546
+		Skeleton stats:  
+			Total Influencers:  448
+			Avg # of influencers per vertex:  1.931
+			Highest # of influencers observed:  2, num vertices with this:  216
+			exported as 2 influencers
+			num skeletonWeights and skeletonIndices:  928
 	processing begun of mesh:  leatherHelm
 		processing begun of Standard material:  Hood
 			Diffuse texture found "Texture.012"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 		processing begun of Standard material:  Material.018
-		processing begun of multimaterial:  Warrior.Multimaterial#0
+		processing begun of multimaterial:  Warrior.Multimaterial#1
 		num positions      :  269
 		num normals        :  269
 		num uvs            :  538
@@ -120,19 +185,21 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 			exported as 4 influencers
 			num skeletonWeights and skeletonIndices:  1076
 	processing begun of mesh:  leatherBoots
-		registered as also a user of material:  Hood
-		num positions      :  244
-		num normals        :  244
-		num uvs            :  488
+		processing begun of Standard material:  boots
+			Diffuse texture found "boots"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  214
+		num normals        :  214
+		num uvs            :  428
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  528
+		num indices        :  624
 		Skeleton stats:  
-			Total Influencers:  523
-			Avg # of influencers per vertex:  2.1434
-			Highest # of influencers observed:  3, num vertices with this:  85
+			Total Influencers:  445
+			Avg # of influencers per vertex:  2.0794
+			Highest # of influencers observed:  3, num vertices with this:  53
 			exported as 3 influencers
-			num skeletonWeights and skeletonIndices:  976
+			num skeletonWeights and skeletonIndices:  856
 	processing begun of mesh:  leatherArmor
 		processing begun of Standard material:  Sash
 			Diffuse texture found "Texture.005"
@@ -141,19 +208,19 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Material.006
 			Diffuse texture found "Texture.003"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  Warrior.Multimaterial#1
-		num positions      :  131
-		num normals        :  131
-		num uvs            :  262
+		processing begun of multimaterial:  Warrior.Multimaterial#2
+		num positions      :  139
+		num normals        :  139
+		num uvs            :  278
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  330
 		Skeleton stats:  
-			Total Influencers:  471
-			Avg # of influencers per vertex:  3.5954
+			Total Influencers:  493
+			Avg # of influencers per vertex:  3.5468
 			Highest # of influencers observed:  8, num vertices with this:  1
 			exported as 8 influencers
-			num skeletonWeights and skeletonIndices:  1048
+			num skeletonWeights and skeletonIndices:  1112
 	processing begun of mesh:  Armor.001
 		processing begun of Standard material:  Armor
 		num positions      :  373
@@ -184,9 +251,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 			exported as 4 influencers
 			num skeletonWeights and skeletonIndices:  560
 	processing begun of mesh:  Warrior.002
-		processing begun of Standard material:  texture
-			Diffuse texture found "Texture.002"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		registered as also a user of material:  texture
 		num positions      :  228
 		num normals        :  228
 		num uvs            :  456
@@ -201,18 +266,18 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 			num skeletonWeights and skeletonIndices:  1824
 	processing begun of mesh:  sash
 		registered as also a user of material:  Sash
-		num positions      :  58
-		num normals        :  58
-		num uvs            :  116
+		num positions      :  75
+		num normals        :  75
+		num uvs            :  150
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  198
+		num indices        :  270
 		Skeleton stats:  
-			Total Influencers:  179
-			Avg # of influencers per vertex:  3.0862
-			Highest # of influencers observed:  5, num vertices with this:  6
+			Total Influencers:  251
+			Avg # of influencers per vertex:  3.3467
+			Highest # of influencers observed:  5, num vertices with this:  10
 			exported as 5 influencers
-			num skeletonWeights and skeletonIndices:  464
+			num skeletonWeights and skeletonIndices:  600
 	processing begun of mesh:  leatherGloves
 		registered as also a user of material:  Hood
 		num positions      :  162
@@ -229,24 +294,24 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 			num skeletonWeights and skeletonIndices:  648
 	processing begun of mesh:  Warrior
 		registered as also a user of material:  texture
-		num positions      :  1663
-		num normals        :  1663
-		num uvs            :  3326
+		num positions      :  4165
+		num normals        :  4165
+		num uvs            :  8330
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  3258
+		num indices        :  13308
 		Skeleton stats:  
-			Total Influencers:  4016
-			Avg # of influencers per vertex:  2.4149
-			Highest # of influencers observed:  7, num vertices with this:  4
-			exported as 7 influencers
-			num skeletonWeights and skeletonIndices:  13304
+			Total Influencers:  10998
+			Avg # of influencers per vertex:  2.6406
+			Highest # of influencers observed:  8, num vertices with this:  6
+			exported as 8 influencers
+			num skeletonWeights and skeletonIndices:  33320
 	processing begun of mesh:  hair
 		processing begun of Standard material:  Hair
 			Diffuse texture found "Texture.004"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of Standard material:  Material.001
-		processing begun of multimaterial:  Warrior.Multimaterial#2
+		registered as also a user of material:  Material.014
+		processing begun of multimaterial:  Warrior.Multimaterial#3
 		num positions      :  485
 		num normals        :  485
 		num uvs            :  970
@@ -265,7 +330,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 			Diffuse texture found "Texture.011"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 		processing begun of Standard material:  Material.007
-		processing begun of multimaterial:  Warrior.Multimaterial#3
+		processing begun of multimaterial:  Warrior.Multimaterial#4
 		num positions      :  517
 		num normals        :  517
 		num uvs            :  1034
@@ -309,7 +374,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Material.004
 		processing begun of Standard material:  Material
 		processing begun of Standard material:  Material.005
-		processing begun of multimaterial:  Warrior.Multimaterial#4
+		processing begun of multimaterial:  Warrior.Multimaterial#5
 		num positions      :  194
 		num normals        :  194
 		num uvs            :  388
@@ -367,7 +432,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 			processing action Stand_with_weapon:  in[0 - 60], out[220 - 280]
 		processing begun of Standard material:  Material.008
 		processing begun of Standard material:  Material.009
-		processing begun of multimaterial:  Warrior.Multimaterial#5
+		processing begun of multimaterial:  Warrior.Multimaterial#6
 		num positions      :  150
 		num normals        :  150
 		num uvs            :  0
@@ -457,7 +522,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Material.017
 		processing begun of Standard material:  Material.002
 		processing begun of Standard material:  Material.003
-		processing begun of multimaterial:  Warrior.Multimaterial#6
+		processing begun of multimaterial:  Warrior.Multimaterial#7
 		num positions      :  700
 		num normals        :  700
 		num uvs            :  0
@@ -525,8 +590,8 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 	processing begun of mesh:  armor
 		processing begun of Standard material:  armor
 			WARNING: Mesh has no UV maps, material:  "Texture.013" ignored
-		num positions      :  19876
-		num normals        :  19876
+		num positions      :  21881
+		num normals        :  21881
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
@@ -535,4 +600,4 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 35.83 secs
+elapsed time:  1 min, 5.136 secs

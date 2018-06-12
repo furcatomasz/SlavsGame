@@ -5,9 +5,13 @@ namespace Particles.SolidParticleSystem {
             let self = this;
             let game = this.game;
             let parentPositions = this.parent.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+            let positionLength = parentPositions.length;
+            console.log(parentPositions);
+
             let myBuilder = function (particle, i, s) {
-                let randomPosition = Math.round(Math.random() * 10);
-                let position = new BABYLON.Vector3(parentPositions[s * randomPosition * 3], parentPositions[s * randomPosition * 3 + 1], parentPositions[s * randomPosition * 3 + 2]);
+                let randomPosition = 2;
+
+                let position = new BABYLON.Vector3(parentPositions[(i * randomPosition + i)], parentPositions[i * randomPosition + i + 1], parentPositions[i * randomPosition + i + 2]);
 
                 if(self.collider) {
                     let newCollider = self.collider.createInstance('sps_nature_collision');
@@ -30,7 +34,7 @@ namespace Particles.SolidParticleSystem {
             sps.addShape(this.shape, count, {positionFunction: myBuilder});
             let spsMesh = sps.buildMesh();
             spsMesh.material = this.shape.material;
-            spsMesh.alwaysSelectAsActiveMesh = true;
+            // spsMesh.alwaysSelectAsActiveMesh = true;
 
             return this;
         }

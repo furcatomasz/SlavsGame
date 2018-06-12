@@ -6,21 +6,23 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		inline textures:  false
 		texture directory:  F:\Slavs\Babylon\Maps\forestStartHouse\
 	Python World class constructor completed
-	processing begun of mesh:  Box_Cube.004
-		processing begun of Standard material:  Box_Cube
-		num positions      :  8
-		num normals        :  8
-		num uvs            :  0
+	processing begun of mesh:  pitcher.002
+		processing begun of Standard material:  pitcher
+			Diffuse texture found "Texture.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  527
+		num normals        :  527
+		num uvs            :  1054
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  36
+		num indices        :  768
 	processing begun of mesh:  questLog
 		processing begun of Standard material:  materialQuestLog
 			Diffuse texture found "Texture"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  79
-		num normals        :  79
-		num uvs            :  158
+		num positions      :  75
+		num normals        :  75
+		num uvs            :  150
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  126
@@ -35,14 +37,6 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  6
-	processing begun of mesh:  Box_Cube.003
-		mesh is an instance of :  Box_Cube.004.  Processing halted.
-	processing begun of mesh:  Box_Cube.002
-		mesh is an instance of :  Box_Cube.004.  Processing halted.
-	processing begun of mesh:  Box_Cube.001
-		mesh is an instance of :  Box_Cube.004.  Processing halted.
-	processing begun of mesh:  Box_Cube
-		mesh is an instance of :  Box_Cube.004.  Processing halted.
 	processing begun of mesh:  exitHouse
 		WARNING: No materials have been assigned: 
 		num positions      :  5
@@ -51,7 +45,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  9
-	processing begun of camera (UniversalCamera):  Camera
+	WARNING: The following camera not visible in scene thus ignored: Camera
 	processing begun of mesh:  joinedHouse
 		processing begun of Standard material:  LOg_low
 			Diffuse texture found "Texture.007"
@@ -60,9 +54,9 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 			Diffuse texture found "Texture.006"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 		processing begun of multimaterial:  forestHouseStart.Multimaterial#0
-		num positions      :  2530
-		num normals        :  2530
-		num uvs            :  5060
+		num positions      :  2536
+		num normals        :  2536
+		num uvs            :  5072
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  3666
@@ -78,10 +72,21 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  1398
+	processing begun of mesh:  boarLeather
+		processing begun of Standard material:  Material.002
+			Diffuse texture found "Texture.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  249
+		num normals        :  249
+		num uvs            :  498
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  564
+	WARNING: The following lamp not visible in scene thus ignored: layer3
 	WARNING: The following lamp not visible in scene thus ignored: Point
-	processing begun of light (SPOT):  Spot
+	WARNING: The following lamp not visible in scene thus ignored: Spot
 	WARNING: The following lamp not visible in scene thus ignored: Lamp
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 1.322 secs
+elapsed time:  0 min, 1.051 secs

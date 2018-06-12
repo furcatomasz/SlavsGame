@@ -1,43 +1,33 @@
 Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 ========= Conversion from Blender to Babylon.js =========
 	Scene settings used:
-		selected layers only:  false
+		selected layers only:  true
 		flat shading entire scene:  false
 		inline textures:  false
 		texture directory:  F:\Slavs\Babylon\Maps\Forest_house\
 	Python World class constructor completed
-	processing begun of mesh:  particlesground4
+	processing begun of mesh:  sps_trees.003
 		WARNING: No materials have been assigned: 
-		num positions      :  306
-		num normals        :  306
-		num uvs            :  612
+		num positions      :  144
+		num normals        :  144
+		num uvs            :  288
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  1632
-	processing begun of mesh:  particlesground3
+		num indices        :  726
+	processing begun of mesh:  sps_trees.002
+		mesh is an instance of :  sps_trees.003.  Processing halted.
+	processing begun of mesh:  sps_trees.001
+		mesh is an instance of :  sps_trees.003.  Processing halted.
+	processing begun of mesh:  exit
 		WARNING: No materials have been assigned: 
-		num positions      :  302
-		num normals        :  302
-		num uvs            :  604
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  1572
-	processing begun of mesh:  particlesground2
-		WARNING: No materials have been assigned: 
-		num positions      :  306
-		num normals        :  306
-		num uvs            :  612
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1632
-	processing begun of mesh:  particlesground1
-		WARNING: No materials have been assigned: 
-		num positions      :  303
-		num normals        :  303
-		num uvs            :  606
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1584
+		num indices        :  6
+	processing begun of mesh:  sps_trees
+		mesh is an instance of :  sps_trees.003.  Processing halted.
 	processing begun of mesh:  Box_Cube.017
 		WARNING: No materials have been assigned: 
 		num positions      :  8
@@ -76,7 +66,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		mesh is an instance of :  Box_Cube.017.  Processing halted.
 	processing begun of mesh:  Box_Cube.002
 		mesh is an instance of :  Box_Cube.017.  Processing halted.
-	processing begun of mesh:  particle1
+	processing begun of mesh:  sps_treesBorder
 		WARNING: No materials have been assigned: 
 		num positions      :  2700
 		num normals        :  2700
@@ -113,23 +103,6 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		mesh is an instance of :  Box_Cube.017.  Processing halted.
 	processing begun of mesh:  Box_Cube
 		mesh is an instance of :  Box_Cube.017.  Processing halted.
-	processing begun of mesh:  joinedHouse
-		processing begun of Standard material:  wood
-			Diffuse texture found "Texture.010"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of Standard material:  LOg_low
-			Diffuse texture found "Texture.007"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of Standard material:  Material.003
-			Diffuse texture found "Texture.003"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  Forest_house.Multimaterial#0
-		num positions      :  1484
-		num normals        :  1484
-		num uvs            :  2968
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  2184
 	processing begun of mesh:  Entrace_House
 		WARNING: No materials have been assigned: 
 		num positions      :  4
@@ -138,79 +111,6 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  6
-	processing begun of mesh:  Cube.001
-		registered as also a user of material:  LOg_low
-		registered as also a user of material:  Material.003
-		processing begun of multimaterial:  Forest_house.Multimaterial#1
-		num positions      :  1483
-		num normals        :  1483
-		num uvs            :  2966
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  2184
-	processing begun of mesh:  Fern.001
-		processing begun of Standard material:  Fern
-			Diffuse texture found "Fern"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		num positions      :  64
-		num normals        :  64
-		num uvs            :  128
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  144
-	processing begun of mesh:  ground_plants.001
-		processing begun of Standard material:  ground_plants
-			Diffuse texture found "ground_plants"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		num positions      :  4
-		num normals        :  4
-		num uvs            :  8
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  6
-	processing begun of mesh:  Fern
-		registered as also a user of material:  Fern
-		num positions      :  80
-		num normals        :  80
-		num uvs            :  160
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  180
-	processing begun of mesh:  Spruce.001
-		processing begun of Standard material:  korona2.001
-			Diffuse texture found "korona2.001"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		processing begun of Standard material:  root.001
-			Diffuse texture found "Texture.000"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  Forest_house.Multimaterial#2
-		num positions      :  170
-		num normals        :  170
-		num uvs            :  340
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  330
-	processing begun of mesh:  Stone_noise.001
-		processing begun of Standard material:  Stone_noise
-			Diffuse texture found "Tex.001"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  62
-		num normals        :  62
-		num uvs            :  124
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  96
-	processing begun of mesh:  Stone_noise.002
-		registered as also a user of material:  Stone_noise
-		num positions      :  37
-		num normals        :  37
-		num uvs            :  74
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  96
 	WARNING: The following camera not visible in scene thus ignored: Camera
 	processing begun of mesh:  cryptGate
 		processing begun of Standard material:  Material.001
@@ -219,15 +119,72 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Material.002
 			Diffuse texture found "Texture"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  Forest_house.Multimaterial#3
+		processing begun of multimaterial:  Forest_house.Multimaterial#0
 		num positions      :  646
 		num normals        :  646
 		num uvs            :  1292
 		num uvs2           :  0
 		num colors         :  2584
 		num indices        :  1275
+	processing begun of mesh:  joinedHouse.001
+		processing begun of Standard material:  LOg_low.001
+			Diffuse texture found "Texture.008"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of Standard material:  Material.000
+			Diffuse texture found "Texture.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		processing begun of multimaterial:  Forest_house.Multimaterial#1
+		num positions      :  1695
+		num normals        :  1695
+		num uvs            :  3390
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2532
+	processing begun of mesh:  fern
+		processing begun of Standard material:  Fern.001
+			Diffuse texture found "Fern.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  80
+		num normals        :  80
+		num uvs            :  160
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  180
+	processing begun of mesh:  ground_plants
+		processing begun of Standard material:  ground_plants.002
+			Diffuse texture found "ground_plants.002"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  spruce
+		processing begun of Standard material:  korona2.000
+			Diffuse texture found "Texture.011"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  280
+		num normals        :  280
+		num uvs            :  560
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  852
+	processing begun of mesh:  stone
+		processing begun of Standard material:  Stone.001
+			Diffuse texture found "Texture.009"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  101
+		num normals        :  101
+		num uvs            :  202
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  156
 	WARNING: The following lamp not visible in scene thus ignored: Lamp
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 33.594 secs
+elapsed time:  0 min, 26.744 secs

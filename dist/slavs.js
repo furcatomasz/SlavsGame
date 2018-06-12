@@ -126,11 +126,11 @@ var Scene = /** @class */ (function () {
     };
     Scene.prototype.setCamera = function (scene) {
         var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
-        camera.rotation = new BABYLON.Vector3(0.79, 0.79, 0);
+        camera.rotation = new BABYLON.Vector3(0.75, 0.75, 0);
         camera.position = new BABYLON.Vector3(0, 35, 0);
         camera.maxZ = 110;
-        camera.minZ = 30;
-        camera.fov = 0.5;
+        camera.minZ = 20;
+        camera.fov = 13.25;
         camera.fovMode = 0;
         scene.activeCamera = camera;
         return this;
@@ -142,8 +142,8 @@ var Scene = /** @class */ (function () {
         scene.fogColor = new BABYLON.Color3(0, 0, 0);
         scene.fogDensity = 1;
         //Only if LINEAR
-        scene.fogStart = 70;
-        scene.fogEnd = 93;
+        scene.fogStart = 50;
+        scene.fogEnd = 70;
         // scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
         // scene.fogColor = new BABYLON.Color3(0, 0, 0);
         // scene.fogDensity = 0.01;
@@ -156,7 +156,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
         scene.workerCollisions = false;
         return this;
     };
@@ -503,7 +503,7 @@ var SocketIOClient = /** @class */ (function () {
             // .updateRooms()
             // .reloadScene()
         });
-        // this.socket.emit('changeScene', ForestHouse.TYPE);
+        // this.socket.emit('changeScene', SelectCharacter.TYPE);
         this.socket.emit('selectCharacter', 1);
         return this;
     };
@@ -1350,9 +1350,9 @@ var Player = /** @class */ (function (_super) {
     };
     Player.prototype.refreshCameraPosition = function () {
         this.game.getScene().activeCamera.position = this.meshForMove.position.clone();
-        this.game.getScene().activeCamera.position.y = 50;
-        this.game.getScene().activeCamera.position.z -= 34;
-        this.game.getScene().activeCamera.position.x -= 34;
+        this.game.getScene().activeCamera.position.y = 30;
+        this.game.getScene().activeCamera.position.z -= 22;
+        this.game.getScene().activeCamera.position.x -= 22;
     };
     /**
      *
@@ -2001,7 +2001,10 @@ var EnvironmentForestHouse = /** @class */ (function () {
     function EnvironmentForestHouse(game, scene) {
         var self = this;
         this.colliders = [];
-        var spsGround = [];
+        var spsTrees = [];
+        var spsPlants = [];
+        var spsStones = [];
+        var spsFern = [];
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh_1 = scene.meshes[i];
             var meshName_1 = scene.meshes[i]['name'];
@@ -2013,26 +2016,35 @@ var EnvironmentForestHouse = /** @class */ (function () {
                 terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
                 terrainMaterial.specularPower = 64;
                 terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/Forest_house/stencil.png", scene);
-                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.png", scene);
-                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.png", scene);
-                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.png", scene);
+                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
+                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/groundSeamless.jpg", scene);
                 terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 10;
                 terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 10;
-                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 10;
+                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 15;
                 sceneMesh_1.material = terrainMaterial;
             }
             else if (meshName_1.search("Box_Cube") >= 0) {
                 this.colliders.push(sceneMesh_1);
             }
-            else if (meshName_1.search("particlesground") >= 0) {
-                spsGround.push(sceneMesh_1);
+            else if (meshName_1.search("sps_trees") >= 0) {
+                spsTrees.push(sceneMesh_1);
+            }
+            else if (meshName_1.search("sps_groundPlants") >= 0) {
+                spsPlants.push(sceneMesh_1);
+            }
+            else if (meshName_1.search("sps_stones") >= 0) {
+                spsStones.push(sceneMesh_1);
+            }
+            else if (meshName_1.search("sps_fern") >= 0) {
+                spsFern.push(sceneMesh_1);
             }
             else {
                 sceneMesh_1.isPickable = false;
             }
         }
         //SPS Nature
-        var spruce = game.factories['nature_grain'].createInstance('spruce.001', false);
+        var spruce = game.factories['nature_grain'].createInstance('spruce', false);
         spruce.visibility = 0;
         var groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
         groundPlants.visibility = 0;
@@ -2040,35 +2052,47 @@ var EnvironmentForestHouse = /** @class */ (function () {
         fern.visibility = 0;
         var stone = game.factories['nature_grain'].createInstance('stone', false);
         stone.visibility = 0;
-        spsGround.forEach(function (parentSPS) {
-            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce, true);
-            spsSpruce.buildSPS(100);
-            var spsFern = new Particles.SolidParticleSystem.Nature(game, parentSPS, fern);
-            spsFern.buildSPS(200);
-            var spsPlants = new Particles.SolidParticleSystem.Nature(game, parentSPS, groundPlants);
-            spsPlants.buildSPS(300);
-            var spsStone = new Particles.SolidParticleSystem.Nature(game, parentSPS, stone, true);
-            spsStone.buildSPS(40);
+        spsTrees.forEach(function (parentSPS) {
+            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce, false);
+            spsSpruce.buildSPS(67);
         });
-        var spsToBlock = scene.getMeshByName("particle1");
+        spsPlants.forEach(function (parentSPS) {
+            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, groundPlants, false);
+            spsSpruce.buildSPS(40);
+        });
+        spsStones.forEach(function (parentSPS) {
+            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, stone, false);
+            spsSpruce.buildSPS(67);
+        });
+        spsFern.forEach(function (parentSPS) {
+            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, fern, false);
+            spsSpruce.buildSPS(67);
+        });
+        // let spsToBlock = scene.getMeshByName("sps_test");
+        // let spsSpruceBlock = new Particles.SolidParticleSystem.Nature(game, spsToBlock, spruce);
+        // spsSpruceBlock.buildSPS(50);
+        var spsToBlock = scene.getMeshByName("sps_border");
         var spsSpruceBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, spruce);
         spsSpruceBlock.buildSPS(500);
-        var spsPlantsBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, groundPlants);
-        spsPlantsBlock.buildSPS(500);
+        //
+        // let spsPlantsBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, groundPlants);
+        // spsPlantsBlock.buildSPS(500);
         var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
         light.intensity = 0.4;
         light.position = new BABYLON.Vector3(0, 80, -210);
         light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
         light.shadowMaxZ = 500;
-        var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
+        var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         // shadowGenerator.useBlurExponentialShadowMap = true;
         // shadowGenerator.useExponentialShadowMap = true;
-        shadowGenerator.usePoissonSampling = true;
-        shadowGenerator.frustumEdgeFalloff = 1.0;
-        shadowGenerator.useKernelBlur = true;
-        shadowGenerator.blurKernel = 32;
+        // shadowGenerator.usePoissonSampling = true;
+        // shadowGenerator.frustumEdgeFalloff = 1.0;
+        // shadowGenerator.useKernelBlur = true;
+        // shadowGenerator.blurKernel = 32;
+        shadowGenerator.usePercentageCloserFiltering = true;
+        shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
         shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
-        light.autoUpdateExtends = false;
+        // light.autoUpdateExtends = false;
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
@@ -2086,6 +2110,15 @@ var EnvironmentForestHouse = /** @class */ (function () {
         for (var i = 0; i < scene.meshes.length; i++) {
             scene.meshes[i].freezeWorldMatrix();
         }
+        //TODO: shadow player
+        // var shadowGeneratorDynamic = new BABYLON.ShadowGenerator(512, light);
+        //
+        // let listener = function listener() {
+        //     shadowGeneratorDynamic.usePercentageCloserFiltering = true;
+        //     shadowGeneratorDynamic.getShadowMap().renderList.push(game.player.mesh);
+        //
+        // };
+        // document.addEventListener(Events.PLAYER_CONNECTED, listener);
     }
     return EnvironmentForestHouse;
 }());
@@ -2096,24 +2129,45 @@ var EnvironmentForestHouseStart = /** @class */ (function () {
         this.fires = [];
         this.bushes = [];
         this.colliders = [];
-        for (var i = 0; i < scene.lights.length; i++) {
-            var light = scene.lights[i];
-            light.intensity = (light.intensity / 3);
-            light.range = 47;
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh_2 = scene.meshes[i];
+            var meshName_2 = scene.meshes[i]['name'];
+            if (meshName_2.search("Ground") >= 0) {
+                sceneMesh_2.actionManager = new BABYLON.ActionManager(scene);
+                sceneMesh_2.receiveShadows = true;
+                this.ground = sceneMesh_2;
+            }
+            else if (meshName_2.search("Box_Cube") >= 0) {
+                this.colliders.push(sceneMesh_2);
+            }
+            else {
+                sceneMesh_2.isPickable = false;
+            }
         }
+        var light = scene.lights[0];
+        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+        // light.intensity = 0.4;
+        light.position = new BABYLON.Vector3(0, 80, -210);
+        light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
+        light.shadowMaxZ = 500;
+        var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
+        // shadowGenerator.useBlurExponentialShadowMap = true;
+        // shadowGenerator.useExponentialShadowMap = true;
+        // shadowGenerator.usePoissonSampling = true;
+        // shadowGenerator.frustumEdgeFalloff = 1.0;
+        // shadowGenerator.useKernelBlur = true;
+        // shadowGenerator.blurKernel = 32;
+        shadowGenerator.usePercentageCloserFiltering = true;
+        shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
+        shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+        light.autoUpdateExtends = false;
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             var meshName = scene.meshes[i]['name'];
             if (meshName.search("Ground") >= 0) {
-                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
-                this.ground = sceneMesh;
+                continue;
             }
-            else if (meshName.search("Box_Cube") >= 0) {
-                this.colliders.push(sceneMesh);
-            }
-            else {
-                sceneMesh.isPickable = false;
-            }
+            shadowGenerator.getShadowMap().renderList.push(sceneMesh);
         }
         /////Freeze world matrix all static meshes
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -2138,8 +2192,8 @@ var EnvironmentForestHouseTomb = /** @class */ (function () {
             if (meshName.search("Ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 sceneMesh.receiveShadows = true;
-                sceneMesh.material.diffuseTexture.uScale = 1;
-                sceneMesh.material.diffuseTexture.vScale = 1;
+                sceneMesh.material.diffuseTexture.uScale = 1.2;
+                sceneMesh.material.diffuseTexture.vScale = 1.2;
                 this.ground = sceneMesh;
             }
             else if (meshName.search("Box_Cube") >= 0) {
@@ -5058,9 +5112,11 @@ var Particles;
                 var self = this;
                 var game = this.game;
                 var parentPositions = this.parent.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+                var positionLength = parentPositions.length;
+                console.log(parentPositions);
                 var myBuilder = function (particle, i, s) {
-                    var randomPosition = Math.round(Math.random() * 10);
-                    var position = new BABYLON.Vector3(parentPositions[s * randomPosition * 3], parentPositions[s * randomPosition * 3 + 1], parentPositions[s * randomPosition * 3 + 2]);
+                    var randomPosition = 2;
+                    var position = new BABYLON.Vector3(parentPositions[(i * randomPosition + i)], parentPositions[i * randomPosition + i + 1], parentPositions[i * randomPosition + i + 2]);
                     if (self.collider) {
                         var newCollider = self.collider.createInstance('sps_nature_collision');
                         newCollider.position.x = position.x;
@@ -5079,7 +5135,7 @@ var Particles;
                 sps.addShape(this.shape, count, { positionFunction: myBuilder });
                 var spsMesh = sps.buildMesh();
                 spsMesh.material = this.shape.material;
-                spsMesh.alwaysSelectAsActiveMesh = true;
+                // spsMesh.alwaysSelectAsActiveMesh = true;
                 return this;
             };
             return Nature;
@@ -5098,6 +5154,7 @@ var Particles;
             }
             NatureBlock.prototype.buildSPS = function (count) {
                 var positions = this.parent.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+                console.log(positions);
                 var myBuilder = function (particle, i, s) {
                     var randomPosition = Math.round(Math.random() * 5);
                     var position = new BABYLON.Vector3(positions[s * randomPosition * 3], positions[s * randomPosition * 3 + 1], positions[s * randomPosition * 3 + 2]);

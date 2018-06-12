@@ -6,17 +6,17 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		inline textures:  false
 		texture directory:  F:\Slavs\Babylon\Nature\Plants\
 	Python World class constructor completed
-	processing begun of mesh:  spruce.001
+	processing begun of mesh:  spruce
 		processing begun of Standard material:  korona2.001
 			Diffuse texture found "Texture"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		num positions      :  83
-		num normals        :  83
-		num uvs            :  166
+		num positions      :  280
+		num normals        :  280
+		num uvs            :  560
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  264
+		num indices        :  852
 	processing begun of mesh:  stone
 		processing begun of Standard material:  Stone
 			Diffuse texture found "Texture.002"
@@ -54,4 +54,4 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.345 secs
+elapsed time:  0 min, 0.232 secs

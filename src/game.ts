@@ -41,9 +41,9 @@ class Game {
      */
     public events: Events;
 
-    constructor(canvasElement: HTMLCanvasElement) {
+    constructor(canvasElement: HTMLCanvasElement, accessToken: string) {
         let self = this;
-        let serverUrl = window.location.hostname + ':'+gameServerPort;
+        let serverUrl = window.location.hostname + ':5000';
 
         self.canvas = canvasElement;
         self.engine = new BABYLON.Engine(self.canvas, false, null, false);
@@ -58,7 +58,7 @@ class Game {
         self.activeScene = null;
         self.events = new Events();
 
-        self.client.connect(serverUrl);
+        self.client.connect(serverUrl, accessToken);
         self.animate();
     }
 

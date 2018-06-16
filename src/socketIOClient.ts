@@ -10,8 +10,8 @@ class SocketIOClient {
         this.game = game;
     }
 
-    public connect(socketUrl:string) {
-        this.socket = io.connect(socketUrl);
+    public connect(socketUrl:string, accessToken: string) {
+        this.socket = io.connect(socketUrl, {query: 'gameToken='+accessToken});
         this.playerConnected();
     }
 
@@ -54,8 +54,8 @@ class SocketIOClient {
                 // .reloadScene()
         });
 
-        // this.socket.emit('changeScene', SelectCharacter.TYPE);
-        this.socket.emit('selectCharacter', 1);
+        this.socket.emit('changeScene', SelectCharacter.TYPE);
+        // this.socket.emit('selectCharacter', 1);
 
         return this;
     }

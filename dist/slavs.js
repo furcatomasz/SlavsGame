@@ -301,7 +301,7 @@ var AbstractCharacter = /** @class */ (function () {
         this.meshAdvancedTexture = advancedTexture;
     }
     AbstractCharacter.prototype.createBoxForMove = function (scene) {
-        this.meshForMove = BABYLON.Mesh.CreateBox(this.name + '_moveBox', 3, scene, false);
+        this.meshForMove = BABYLON.Mesh.CreateBox(this.name + '_moveBox', 4, scene, false);
         this.meshForMove.checkCollisions = true;
         this.meshForMove.visibility = 0;
         return this;
@@ -996,11 +996,15 @@ var SocketIOClient = /** @class */ (function () {
 /// <reference path="scenes/Simple.ts"/>
 /// <reference path="socketIOClient.ts"/>
 var Game = /** @class */ (function () {
-    function Game(canvasElement, accessToken) {
+    function Game(canvasElement, accessToken, isMobile) {
+        if (isMobile === void 0) { isMobile = false; }
         var self = this;
         var serverUrl = window.location.hostname + ':5000';
         self.canvas = canvasElement;
         self.engine = new BABYLON.Engine(self.canvas, false, null, false);
+        if (isMobile) {
+            self.engine.setHardwareScalingLevel(2);
+        }
         self.controller = new Mouse(self);
         self.client = new SocketIOClient(self);
         self.factories = [];
@@ -2283,12 +2287,13 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
             smokeSystem.start();
             var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
             fireSystem.start();
-            // let sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-            //  sfxFireplace.attachToMesh(cone);
+            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            sfxFireplace.attachToMesh(cone);
         }
         for (var i = 0; i < scene.meshes.length; i++) {
             var sceneMesh = scene.meshes[i];
             sceneMesh.freezeWorldMatrix();
+            sceneMesh.isPickable = false;
         }
         // new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.5 });
         // new BABYLON.Sound("Wind", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.4 });
@@ -4132,7 +4137,7 @@ var SelectCharacter;
             _this.playerId = playerDatabase.id;
             var mesh = game.factories['character'].createInstance('Warrior', true);
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
-            mesh.skeleton.enableBlending(0.2);
+            mesh.skeleton.enableBlending(0.3);
             mesh.alwaysSelectAsActiveMesh = true;
             switch (place) {
                 case 0:
@@ -4167,6 +4172,12 @@ var SelectCharacter;
         Warrior.prototype.registerActions = function () {
             var self = this;
             var pointerOut = false;
+            this.meshForMove = BABYLON.Mesh.CreateBox(this.name + '_selectBox', 2.5, this.game.getScene(), false);
+            this.meshForMove.scaling.y = 3;
+            this.meshForMove.checkCollisions = false;
+            this.meshForMove.visibility = 0;
+            this.meshForMove.isPickable = true;
+            this.meshForMove.parent = this.mesh;
             var sitDown = function () {
                 if (!self.skeletonAnimation) {
                     var animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
@@ -4176,9 +4187,9 @@ var SelectCharacter;
                     });
                 }
             };
-            this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
-            this.mesh.isPickable = true;
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+            this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
+            this.meshForMove.isPickable = true;
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
                 pointerOut = false;
                 if (!self.skeletonAnimation) {
                     self.skeletonAnimation = self.mesh.skeleton.beginAnimation('Select', false, 1, function () {
@@ -4187,25 +4198,27 @@ var SelectCharacter;
                             sitDown();
                         }
                         else {
-                            console.log(1);
-                            self.game.client.socket.emit('selectCharacter', self.playerId);
                             self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                         }
                     });
                 }
             }));
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
                 sitDown();
                 pointerOut = true;
             }));
-            // this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-            //     BABYLON.ActionManager.OnPickUpTrigger,
-            //     function() {
-            //         console.log(self.playerId);
-            //         client.socket.emit('selectCharacter', self.playerId);
-            //
-            //     })
-            // );
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function () {
+                console.log(1);
+                self.game.client.socket.emit('selectCharacter', self.playerId);
+            }));
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger, function () {
+                console.log(2);
+                self.game.client.socket.emit('selectCharacter', self.playerId);
+            }));
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                console.log(2);
+                self.game.client.socket.emit('selectCharacter', self.playerId);
+            }));
         };
         return Warrior;
     }(AbstractCharacter));

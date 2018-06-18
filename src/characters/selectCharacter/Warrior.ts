@@ -12,7 +12,7 @@ namespace SelectCharacter {
 
             let mesh = game.factories['character'].createInstance('Warrior', true);
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
-            mesh.skeleton.enableBlending(0.2);
+            mesh.skeleton.enableBlending(0.3);
             mesh.alwaysSelectAsActiveMesh = true;
 
             switch (place) {
@@ -31,7 +31,6 @@ namespace SelectCharacter {
 
             this.setItems(playerDatabase.items);
             this.mesh.skeleton.beginAnimation('Sit');
-
             this.registerActions();
         }
 
@@ -55,6 +54,14 @@ namespace SelectCharacter {
         protected registerActions() {
             let self = this;
             let pointerOut = false;
+
+            this.meshForMove = BABYLON.Mesh.CreateBox(this.name+'_selectBox', 2.5, this.game.getScene(), false);
+            this.meshForMove.scaling.y = 3;
+            this.meshForMove.checkCollisions = false;
+            this.meshForMove.visibility = 0;
+            this.meshForMove.isPickable = true;
+            this.meshForMove.parent = this.mesh;
+
             let sitDown = function() {
                 if(!self.skeletonAnimation) {
                     let animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
@@ -65,10 +72,10 @@ namespace SelectCharacter {
                 }
             };
 
-            this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
-            this.mesh.isPickable = true;
+            this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
+            this.meshForMove.isPickable = true;
 
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPointerOverTrigger,
                 function() {
                     pointerOut = false;
@@ -79,8 +86,6 @@ namespace SelectCharacter {
                             if(pointerOut) {
                                 sitDown();
                             } else {
-                                console.log(1);
-                                self.game.client.socket.emit('selectCharacter', self.playerId);
 
                                 self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                             }
@@ -89,7 +94,7 @@ namespace SelectCharacter {
                 })
             );
 
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPointerOutTrigger,
                 function() {
                     sitDown();
@@ -97,15 +102,29 @@ namespace SelectCharacter {
                 })
             );
 
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+                BABYLON.ActionManager.OnPickDownTrigger,
+                function() {
+                    console.log(1);
+                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                })
+            );
 
-            // this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-            //     BABYLON.ActionManager.OnPickUpTrigger,
-            //     function() {
-            //         console.log(self.playerId);
-            //         client.socket.emit('selectCharacter', self.playerId);
-            //
-            //     })
-            // );
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+                BABYLON.ActionManager.OnPickOutTrigger,
+                function() {
+                    console.log(2);
+                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                })
+            );
+
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+                BABYLON.ActionManager.OnPickTrigger,
+                function() {
+                    console.log(2);
+                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                })
+            );
         }
     }
 }

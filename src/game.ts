@@ -41,12 +41,15 @@ class Game {
      */
     public events: Events;
 
-    constructor(canvasElement: HTMLCanvasElement, accessToken: string) {
+    constructor(canvasElement: HTMLCanvasElement, accessToken: string, isMobile: boolean = false) {
         let self = this;
         let serverUrl = window.location.hostname + ':5000';
 
         self.canvas = canvasElement;
         self.engine = new BABYLON.Engine(self.canvas, false, null, false);
+        if(isMobile) {
+            self.engine.setHardwareScalingLevel(2);
+        }
         self.controller = new Mouse(self);
         self.client = new SocketIOClient(self);
         self.factories = [];

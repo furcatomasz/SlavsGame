@@ -3,7 +3,7 @@
 "materials":[{"name":"Plants.korona2.001","id":"Plants.korona2.001","ambient":[0.8,0.8,0.8],"diffuse":[0.64,0.64,0.64],"specular":[0,0,0],"emissive":[0,0,0],"specularPower":50,"alpha":1,"backFaceCulling":false,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4, 
 "diffuseTexture":{"name":"spruce.png","level":1,"hasAlpha":1,"coordinatesMode":0,"uOffset":0,"vOffset":0,"uScale":1,"vScale":1,"uAng":0,"vAng":0,"wAng":0,"wrapU":1,"wrapV":1,"coordinatesIndex":0}},
 {"name":"Plants.Stone","id":"Plants.Stone","ambient":[1,1,1],"diffuse":[0.8,0.8,0.8],"specular":[0,0,0],"emissive":[0,0,0],"specularPower":50,"alpha":1,"backFaceCulling":true,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4, 
-"diffuseTexture":{"name":"stone.png","level":1,"hasAlpha":1,"coordinatesMode":0,"uOffset":0,"vOffset":0,"uScale":1,"vScale":1,"uAng":0,"vAng":0,"wAng":0,"wrapU":1,"wrapV":1,"coordinatesIndex":0}},
+"diffuseTexture":{"name":"stone.jpg","level":1,"hasAlpha":1,"coordinatesMode":0,"uOffset":0,"vOffset":0,"uScale":1,"vScale":1,"uAng":0,"vAng":0,"wAng":0,"wrapU":1,"wrapV":1,"coordinatesIndex":0}},
 {"name":"Plants.Fern","id":"Plants.Fern","ambient":[0.8,0.8,0.8],"diffuse":[0.64,0.64,0.64],"specular":[0,0,0],"emissive":[0,0,0],"specularPower":50,"alpha":1,"backFaceCulling":false,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4, 
 "diffuseTexture":{"name":"Fern.png","level":1,"hasAlpha":1,"coordinatesMode":0,"uOffset":0,"vOffset":0,"uScale":1,"vScale":1,"uAng":0,"vAng":0,"wAng":0,"wrapU":0,"wrapV":0,"coordinatesIndex":0}},
 {"name":"Plants.ground_plants","id":"Plants.ground_plants","ambient":[0.8,0.8,0.8],"diffuse":[0.64,0.64,0.64],"specular":[0,0,0],"emissive":[0,0,0],"specularPower":50,"alpha":1,"backFaceCulling":false,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4, 
@@ -131,7 +131,7 @@
 ,"instances":[]}
 ],
 "morphTargetManagers":[],
-"cameras":[],"activeCamera":"Camera",
+"cameras":[],
 "lights":[],
 "shadowGenerators":[]
 }

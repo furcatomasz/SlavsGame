@@ -6,18 +6,379 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		inline textures:  false
 		texture directory:  F:\Slavs\Babylon\Maps\Forest_house\
 	Python World class constructor completed
-	processing begun of mesh:  sps_trees.003
-		WARNING: No materials have been assigned: 
-		num positions      :  144
-		num normals        :  144
-		num uvs            :  288
+	processing begun of mesh:  Box_Cube.084
+		processing begun of Standard material:  Material.003
+			WARNING: Mesh has no UV maps, material:  "Texture.003" ignored
+		num positions      :  8
+		num normals        :  8
+		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  726
-	processing begun of mesh:  sps_trees.002
-		mesh is an instance of :  sps_trees.003.  Processing halted.
+		num indices        :  36
+	processing begun of mesh:  Box_Cube.083
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.082
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.081
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.080
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.079
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.078
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.077
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.076
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.075
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.074
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.073
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.072
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.071
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.070
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.069
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.068
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.067
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.066
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.065
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.064
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.063
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.062
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.061
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.060
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.059
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.058
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.057
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.056
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.055
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.054
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.053
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.052
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.051
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.050
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.049
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.048
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.047
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.046
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.045
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.044
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.043
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.042
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.041
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.040
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.039
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.038
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.037
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.036
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.035
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.034
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.033
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.032
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.031
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  sps_groundPlants.010
+		processing begun of Standard material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.011
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.009
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.008
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.007
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.006
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.005
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.004
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.003
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.002
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.001
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  Box_Cube.030
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.029
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.028
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.027
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.026
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.025
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.024
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.023
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.022
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.021
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.020
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.019
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  Box_Cube.018
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  sps_trees.009
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_fern.003
+		processing begun of Standard material:  Material.004
+		num positions      :  87
+		num normals        :  87
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  300
+	processing begun of mesh:  sps_fern.002
+		registered as also a user of material:  Material.004
+		num positions      :  87
+		num normals        :  87
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  300
+	processing begun of mesh:  sps_fern.001
+		registered as also a user of material:  Material.004
+		num positions      :  87
+		num normals        :  87
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  300
+	processing begun of mesh:  sps_fern
+		registered as also a user of material:  Material.004
+		num positions      :  87
+		num normals        :  87
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  300
+	processing begun of mesh:  sps_stones.001
+		processing begun of Standard material:  Material
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_groundPlants.000
+		registered as also a user of material:  groundPlants
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_stones
+		registered as also a user of material:  Material
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_trees.008
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_trees.007
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_trees.006
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_trees.005
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
 	processing begun of mesh:  sps_trees.001
-		mesh is an instance of :  sps_trees.003.  Processing halted.
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_trees.004
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_trees.003
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_trees.002
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_trees001
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
+	processing begun of mesh:  sps_trees
+		WARNING: No materials have been assigned: 
+		num positions      :  70
+		num normals        :  70
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  288
 	processing begun of mesh:  exit
 		WARNING: No materials have been assigned: 
 		num positions      :  4
@@ -26,47 +387,39 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  6
-	processing begun of mesh:  sps_trees
-		mesh is an instance of :  sps_trees.003.  Processing halted.
 	processing begun of mesh:  Box_Cube.017
-		WARNING: No materials have been assigned: 
-		num positions      :  8
-		num normals        :  8
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  36
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.016
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.015
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.014
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.013
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.012
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.011
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.010
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.009
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.008
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.007
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.006
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.005
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.004
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.003
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube.002
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
-	processing begun of mesh:  sps_treesBorder
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
+	processing begun of mesh:  sps_border
 		WARNING: No materials have been assigned: 
 		num positions      :  2700
 		num normals        :  2700
@@ -74,14 +427,6 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  16188
-	processing begun of mesh:  particle
-		WARNING: No materials have been assigned: 
-		num positions      :  1082
-		num normals        :  1082
-		num uvs            :  2164
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  6036
 	processing begun of mesh:  Ground
 		processing begun of baked material:  Ground
 			Internal baking texture, type: TEXTURE, mapped using: UVMap
@@ -100,9 +445,9 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  24
 	processing begun of mesh:  Box_Cube.001
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Box_Cube
-		mesh is an instance of :  Box_Cube.017.  Processing halted.
+		mesh is an instance of :  Box_Cube.084.  Processing halted.
 	processing begun of mesh:  Entrace_House
 		WARNING: No materials have been assigned: 
 		num positions      :  4
@@ -111,7 +456,7 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  6
-	WARNING: The following camera not visible in scene thus ignored: Camera
+	processing begun of camera (UniversalCamera):  Camera
 	processing begun of mesh:  cryptGate
 		processing begun of Standard material:  Material.001
 			Diffuse texture found "Tex"
@@ -151,40 +496,8 @@ Exporter version: 5.5.0, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  180
-	processing begun of mesh:  ground_plants
-		processing begun of Standard material:  ground_plants.002
-			Diffuse texture found "ground_plants.002"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		num positions      :  4
-		num normals        :  4
-		num uvs            :  8
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  6
-	processing begun of mesh:  spruce
-		processing begun of Standard material:  korona2.000
-			Diffuse texture found "Texture.011"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		num positions      :  280
-		num normals        :  280
-		num uvs            :  560
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  852
-	processing begun of mesh:  stone
-		processing begun of Standard material:  Stone.001
-			Diffuse texture found "Texture.009"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  101
-		num normals        :  101
-		num uvs            :  202
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  156
 	WARNING: The following lamp not visible in scene thus ignored: Lamp
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 26.744 secs
+elapsed time:  0 min, 27.649 secs

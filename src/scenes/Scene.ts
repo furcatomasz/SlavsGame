@@ -9,11 +9,8 @@ abstract class Scene {
     protected setDefaults(game:Game, scene: BABYLON.Scene) {
         this.game = game;
         this.babylonScene = scene;
-
+        SlavsLoader.showLoaderWithText('Initializing scene...');
         scene.actionManager = new BABYLON.ActionManager(scene);
-
-        let sceneIndex = game.scenes.push(scene);
-        game.activeScene = sceneIndex - 1;
 
         this.assetManager = new BABYLON.AssetsManager(scene);
         this.initFactories(scene);
@@ -28,18 +25,25 @@ abstract class Scene {
     protected executeWhenReady(onReady: Function, onPlayerConnected: Function) {
         let scene = this.babylonScene;
         let assetsManager = this.assetManager;
+
         let game = this.game;
 
         scene.executeWhenReady(function () {
             // game.client.socket.emit('createPlayer');
-
             assetsManager.onFinish = function (tasks) {
-                if(onReady) {
-                    onReady();
-                }
                 // self.octree = scene.createOrUpdateSelectionOctree();
 
                 game.client.socket.emit('changeScenePre');
+
+                let sceneIndex = game.scenes.push(scene);
+                game.activeScene = sceneIndex - 1;
+
+                if(onReady) {
+                    onReady();
+                }
+            };
+            assetsManager.onProgress = function(remainingCount, totalCount, lastFinishedTask) {
+                SlavsLoader.showLoaderWithText('Loading assets... ' + remainingCount + ' out of ' + totalCount + ' items still need to be loaded.');
             };
             assetsManager.load();
 

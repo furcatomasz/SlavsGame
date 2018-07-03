@@ -50,6 +50,7 @@ class Game {
         if(isMobile) {
             self.engine.setHardwareScalingLevel(2);
         }
+        self.engine.loadingScreen = new SlavsLoader();
         self.controller = new Mouse(self);
         self.client = new SocketIOClient(self);
         self.factories = [];

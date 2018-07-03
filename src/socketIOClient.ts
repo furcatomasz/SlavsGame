@@ -12,6 +12,11 @@ class SocketIOClient {
 
     public connect(socketUrl:string, accessToken: string) {
         this.socket = io.connect(socketUrl, {query: 'gameToken='+accessToken});
+
+        this.socket.on('connect_error', function() {
+            SlavsLoader.showLoaderWithText('Problem with connection to server');
+        });
+
         this.playerConnected();
     }
 

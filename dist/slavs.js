@@ -24,6 +24,34 @@ var Events = /** @class */ (function () {
     Events.MONSTER_TO_ATTACK = 'monsterToAttack';
     return Events;
 }());
+var SlavsLoader = /** @class */ (function () {
+    function SlavsLoader(loadingUIText) {
+        this.loadingUIText = loadingUIText;
+    }
+    SlavsLoader.prototype.displayLoadingUI = function () {
+        var loader = document.getElementById("game-loader");
+        loader.style.display = "inline";
+        loader.style.opacity = "1";
+        SlavsLoader.changeLoadingText('Loading scene...');
+    };
+    SlavsLoader.prototype.hideLoadingUI = function () {
+        var loader = document.getElementById("game-loader");
+        var canvas = document.getElementById("renderCanvas");
+        loader.style.opacity = "0";
+        loader.style.display = "none";
+    };
+    SlavsLoader.changeLoadingText = function (text) {
+        var loaderText = document.getElementById("game-loader-text");
+        loaderText.innerHTML = text;
+    };
+    SlavsLoader.showLoaderWithText = function (text) {
+        var loader = document.getElementById("game-loader");
+        loader.style.opacity = "1";
+        loader.style.display = "inline";
+        SlavsLoader.changeLoadingText(text);
+    };
+    return SlavsLoader;
+}());
 /// <reference path="../game.ts"/>
 var Controller = /** @class */ (function () {
     function Controller(game) {
@@ -85,9 +113,8 @@ var Scene = /** @class */ (function () {
     Scene.prototype.setDefaults = function (game, scene) {
         this.game = game;
         this.babylonScene = scene;
+        SlavsLoader.showLoaderWithText('Initializing scene...');
         scene.actionManager = new BABYLON.ActionManager(scene);
-        var sceneIndex = game.scenes.push(scene);
-        game.activeScene = sceneIndex - 1;
         this.assetManager = new BABYLON.AssetsManager(scene);
         this.initFactories(scene);
         if (Game.SHOW_DEBUG) {
@@ -102,11 +129,16 @@ var Scene = /** @class */ (function () {
         scene.executeWhenReady(function () {
             // game.client.socket.emit('createPlayer');
             assetsManager.onFinish = function (tasks) {
+                // self.octree = scene.createOrUpdateSelectionOctree();
+                game.client.socket.emit('changeScenePre');
+                var sceneIndex = game.scenes.push(scene);
+                game.activeScene = sceneIndex - 1;
                 if (onReady) {
                     onReady();
                 }
-                // self.octree = scene.createOrUpdateSelectionOctree();
-                game.client.socket.emit('changeScenePre');
+            };
+            assetsManager.onProgress = function (remainingCount, totalCount, lastFinishedTask) {
+                SlavsLoader.showLoaderWithText('Loading assets... ' + remainingCount + ' out of ' + totalCount + ' items still need to be loaded.');
             };
             assetsManager.load();
             var listener = function listener() {
@@ -469,6 +501,9 @@ var SocketIOClient = /** @class */ (function () {
     }
     SocketIOClient.prototype.connect = function (socketUrl, accessToken) {
         this.socket = io.connect(socketUrl, { query: 'gameToken=' + accessToken });
+        this.socket.on('connect_error', function () {
+            SlavsLoader.showLoaderWithText('Problem with connection to server');
+        });
         this.playerConnected();
     };
     /**
@@ -1005,6 +1040,7 @@ var Game = /** @class */ (function () {
         if (isMobile) {
             self.engine.setHardwareScalingLevel(2);
         }
+        self.engine.loadingScreen = new SlavsLoader();
         self.controller = new Mouse(self);
         self.client = new SocketIOClient(self);
         self.factories = [];

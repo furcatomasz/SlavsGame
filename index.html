@@ -3,12 +3,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
     <title>Slavs</title>
-    <script src="/bower_components/babylonjs/dist/babylon.js"></script>
-    <script src="/bower_components/babylonjs/dist/inspector/babylon.inspector.bundle.js"></script>
-    <script src="/bower_components/babylonjs/dist/gui/babylon.gui.min.js"></script>
-    <script src="/bower_components/babylonjs/dist/materialsLibrary/babylon.terrainMaterial.min.js"></script>
-    <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
-    <script src="/dist/slavs.js"></script>
     <style>
         html, body {
             overflow: hidden;
@@ -23,10 +17,79 @@
             height: 100%;
             touch-action: none;
         }
+
+        .pulse {
+            animation: pulse 3s infinite;
+            margin: 0 auto;
+            display: table;
+            margin-top: 50px;
+            animation-direction: alternate;
+            -webkit-animation-name: pulse;
+            animation-name: pulse;
+        }
+
+        #game-loader {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+        }
+
+        .game-loader-content {
+            position: absolute;
+            left: 50%;
+            top: 30%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+        }
+
+        .game-loader-content img {
+            width: 506px;
+            height: 94px;
+        }
+
+        @-webkit-keyframes pulse {
+            0% {
+                -webkit-transform: scale(1);
+            }
+            50% {
+                -webkit-transform: scale(1.1);
+            }
+            100% {
+                -webkit-transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 <body>
+    <div id="game-loader">
+        <div class="game-loader-content">
+            <img src="/assets/logo.png" class="pulse">
+            <h2 id="game-loader-text">Loading engine...</h2>
+        </div>
+    </div>
     <canvas id="renderCanvas"></canvas>
+
+    <script src="/bower_components/babylonjs/dist/babylon.js"></script>
+    <script src="/bower_components/babylonjs/dist/inspector/babylon.inspector.bundle.js"></script>
+    <script src="/bower_components/babylonjs/dist/gui/babylon.gui.min.js"></script>
+    <script src="/bower_components/babylonjs/dist/materialsLibrary/babylon.terrainMaterial.min.js"></script>
+    <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
+    <script src="/dist/slavs.js"></script>
     <script>
         if (BABYLON.Engine.isSupported()) {
             var htmlElement = document.getElementById('renderCanvas');

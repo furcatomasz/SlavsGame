@@ -11,6 +11,8 @@ class SocketIOClient {
     }
 
     public connect(socketUrl:string, accessToken: string) {
+        SlavsLoader.showLoaderWithText('Establishing connection with server...');
+
         this.socket = io.connect(socketUrl, {query: 'gameToken='+accessToken});
 
         this.socket.on('connect_error', function() {
@@ -370,7 +372,7 @@ class SocketIOClient {
             data.forEach(function (enemyData, key) {
                 if(enemyData.statistics.hp > 0) {
                     let newMonster = new Monster(game, key, enemyData);
-
+                    game.enemies.push(newMonster);
                     if (newMonster) {
                         if (game.sceneManager.octree) {
                             game.sceneManager.octree.dynamicContent.push(newMonster.mesh);

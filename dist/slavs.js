@@ -500,6 +500,7 @@ var SocketIOClient = /** @class */ (function () {
         this.game = game;
     }
     SocketIOClient.prototype.connect = function (socketUrl, accessToken) {
+        SlavsLoader.showLoaderWithText('Establishing connection with server...');
         this.socket = io.connect(socketUrl, { query: 'gameToken=' + accessToken });
         this.socket.on('connect_error', function () {
             SlavsLoader.showLoaderWithText('Problem with connection to server');
@@ -791,6 +792,7 @@ var SocketIOClient = /** @class */ (function () {
             data.forEach(function (enemyData, key) {
                 if (enemyData.statistics.hp > 0) {
                     var newMonster = new Monster(game, key, enemyData);
+                    game.enemies.push(newMonster);
                     if (newMonster) {
                         if (game.sceneManager.octree) {
                             game.sceneManager.octree.dynamicContent.push(newMonster.mesh);
@@ -1091,7 +1093,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 0;
+    Game.SHOW_DEBUG = 1;
     return Game;
 }());
 var Effects;
@@ -5162,7 +5164,6 @@ var Particles;
                 var game = this.game;
                 var parentPositions = this.parent.getVerticesData(BABYLON.VertexBuffer.PositionKind);
                 var positionLength = parentPositions.length;
-                console.log(parentPositions);
                 var myBuilder = function (particle, i, s) {
                     var randomPosition = 2;
                     var position = new BABYLON.Vector3(parentPositions[(i * randomPosition + i)], parentPositions[i * randomPosition + i + 1], parentPositions[i * randomPosition + i + 2]);

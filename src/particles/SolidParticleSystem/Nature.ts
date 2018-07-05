@@ -6,7 +6,6 @@ namespace Particles.SolidParticleSystem {
             let game = this.game;
             let parentPositions = this.parent.getVerticesData(BABYLON.VertexBuffer.PositionKind);
             let positionLength = parentPositions.length;
-            console.log(parentPositions);
 
             let myBuilder = function (particle, i, s) {
                 let randomPosition = 2;

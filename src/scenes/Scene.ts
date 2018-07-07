@@ -31,11 +31,9 @@ abstract class Scene {
         }
 
         game.frumstrumEnemiesInterval = setInterval(function() {
-            console.log(1);
-            console.log(game.enemies);
             game.enemies.forEach(function(enemy) {
                 if(!enemy.animation && scene.isActiveMesh(enemy.mesh)) {
-                    enemy.animation = enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                    enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                 } else if(enemy.animation && !scene.isActiveMesh(enemy.mesh)) {
                     enemy.animation.stop();
                     enemy.animation = null;

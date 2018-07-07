@@ -37,6 +37,7 @@ class Player extends AbstractCharacter {
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.skeleton.enableBlending(0.2);
         mesh.alwaysSelectAsActiveMesh = true;
+        mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
 
         ///Create box mesh for moving
         this.createBoxForMove(game.getScene());

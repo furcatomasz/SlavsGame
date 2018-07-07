@@ -61,8 +61,8 @@ class SocketIOClient {
                 // .reloadScene()
         });
 
-        // this.socket.emit('changeScene', ForestHouse.TYPE);
-        this.socket.emit('selectCharacter', 5);
+        this.socket.emit('changeScene', SelectCharacter.TYPE);
+        // this.socket.emit('selectCharacter', 5);
 
         return this;
     }
@@ -372,7 +372,6 @@ class SocketIOClient {
             data.forEach(function (enemyData, key) {
                 if(enemyData.statistics.hp > 0) {
                     let newMonster = new Monster(game, key, enemyData);
-                    game.enemies.push(newMonster);
                     if (newMonster) {
                         if (game.sceneManager.octree) {
                             game.sceneManager.octree.dynamicContent.push(newMonster.mesh);

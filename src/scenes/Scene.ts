@@ -22,10 +22,34 @@ abstract class Scene {
         return this;
     }
 
+    protected playEnemiesAnimationsInFrumStrum() {
+        let game = this.game;
+        let scene = this.babylonScene;
+
+        if(game.frumstrumEnemiesInterval) {
+            clearInterval(game.frumstrumEnemiesInterval);
+        }
+
+        game.frumstrumEnemiesInterval = setInterval(function() {
+            console.log(1);
+            console.log(game.enemies);
+            game.enemies.forEach(function(enemy) {
+                if(!enemy.animation && scene.isActiveMesh(enemy.mesh)) {
+                    enemy.animation = enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                } else if(enemy.animation && !scene.isActiveMesh(enemy.mesh)) {
+                    enemy.animation.stop();
+                    enemy.animation = null;
+                }
+            });
+        }, 500);
+
+        return this;
+    }
+
     protected executeWhenReady(onReady: Function, onPlayerConnected: Function) {
         let scene = this.babylonScene;
         let assetsManager = this.assetManager;
-
+        let self = this;
         let game = this.game;
 
         scene.executeWhenReady(function () {
@@ -41,9 +65,11 @@ abstract class Scene {
                 if(onReady) {
                     onReady();
                 }
+
+                self.playEnemiesAnimationsInFrumStrum();
             };
             assetsManager.onProgress = function(remainingCount, totalCount, lastFinishedTask) {
-                SlavsLoader.showLoaderWithText('Loading assets... ' + remainingCount + ' out of ' + totalCount + ' items still need to be loaded.');
+                SlavsLoader.showLoaderWithText('Loading assets... ' + remainingCount + ' of ' + totalCount + '.');
             };
             assetsManager.load();
 

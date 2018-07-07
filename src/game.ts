@@ -6,7 +6,7 @@
 class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 1;
+    static SHOW_DEBUG = 0;
 
     public sceneManager: Scene;
     public controller: Controller;
@@ -40,6 +40,11 @@ class Game {
      * Events
      */
     public events: Events;
+
+    /**
+     *  Interval with checking enemies in frumstrum
+     */
+    public frumstrumEnemiesInterval;
 
     constructor(canvasElement: HTMLCanvasElement, accessToken: string, isMobile: boolean = false) {
         let self = this;

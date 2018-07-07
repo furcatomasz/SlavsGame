@@ -35,7 +35,7 @@ abstract class AbstractCharacter {
     constructor(name:string, game:Game) {
         this.name = name;
         this.game = game;
-        this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+        // this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
 
         let plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 4, height: 8}, game.getScene());
         let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);

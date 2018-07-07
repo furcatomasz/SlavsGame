@@ -357,6 +357,7 @@ var AbstractCharacter = /** @class */ (function () {
                 if (self.sfxHit) {
                     self.sfxHit.play();
                 }
+                console.log(this.statistics.attackSpeed);
                 self.animation = skeleton_1.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
                     if (callbackEnd) {
                         callbackEnd();
@@ -377,7 +378,7 @@ var AbstractCharacter = /** @class */ (function () {
             if (!this.animation && skeleton_2) {
                 self.sfxWalk.play();
                 self.onWalkStart();
-                self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.4, function () {
+                self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.3, function () {
                     skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();
@@ -3769,139 +3770,6 @@ var Items;
     }());
     Items.ItemManager = ItemManager;
 })(Items || (Items = {}));
-var Character;
-(function (Character) {
-    var Skills;
-    (function (Skills) {
-        var AbstractSkill = /** @class */ (function () {
-            function AbstractSkill(game, cooldown, damage, stock) {
-                if (cooldown === void 0) { cooldown = 0; }
-                if (damage === void 0) { damage = 0; }
-                if (stock === void 0) { stock = 0; }
-                this.cooldown = cooldown;
-                this.damage = damage;
-                this.stock = stock;
-                this.registerHotKey(game);
-                this.registerDefaults();
-            }
-            AbstractSkill.prototype.getImageUrl = function () {
-                return this.image;
-            };
-            AbstractSkill.TYPE = 0;
-            return AbstractSkill;
-        }());
-        Skills.AbstractSkill = AbstractSkill;
-    })(Skills = Character.Skills || (Character.Skills = {}));
-})(Character || (Character = {}));
-var Character;
-(function (Character) {
-    var Skills;
-    (function (Skills) {
-        var DoubleAttack = /** @class */ (function (_super) {
-            __extends(DoubleAttack, _super);
-            function DoubleAttack() {
-                return _super !== null && _super.apply(this, arguments) || this;
-            }
-            DoubleAttack.prototype.getType = function () {
-                return Character.Skills.DoubleAttack.TYPE;
-            };
-            DoubleAttack.prototype.registerDefaults = function () {
-                this.image = 'assets/skills/skill01.png';
-                this.name = 'Double attack';
-            };
-            DoubleAttack.prototype.registerHotKey = function (game) {
-                var listener = function listener() {
-                    var effectEmitter = new Particles.DoubleAttack(game, game.player.mesh);
-                    effectEmitter.initParticleSystem();
-                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                        if (event.sourceEvent.key == 1) {
-                            game.controller.attackPoint = null;
-                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
-                                //effectEmitter.particleSystem.start();
-                            }, function () {
-                                //effectEmitter.particleSystem.stop();
-                            });
-                        }
-                    }));
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-                };
-                document.addEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            DoubleAttack.TYPE = 1;
-            return DoubleAttack;
-        }(Character.Skills.AbstractSkill));
-        Skills.DoubleAttack = DoubleAttack;
-    })(Skills = Character.Skills || (Character.Skills = {}));
-})(Character || (Character = {}));
-var Character;
-(function (Character) {
-    var Skills;
-    (function (Skills) {
-        var SkillsManager = /** @class */ (function () {
-            function SkillsManager(game) {
-                this.game = game;
-            }
-            /**
-             * @param type
-             */
-            SkillsManager.prototype.getSkill = function (type) {
-                var skill = null;
-                switch (type) {
-                    case Character.Skills.DoubleAttack.TYPE:
-                        skill = new Character.Skills.DoubleAttack(this.game);
-                        break;
-                    case Character.Skills.Tornado.TYPE:
-                        skill = new Character.Skills.Tornado(this.game);
-                        break;
-                }
-                return skill;
-            };
-            return SkillsManager;
-        }());
-        Skills.SkillsManager = SkillsManager;
-    })(Skills = Character.Skills || (Character.Skills = {}));
-})(Character || (Character = {}));
-var Character;
-(function (Character) {
-    var Skills;
-    (function (Skills) {
-        var Tornado = /** @class */ (function (_super) {
-            __extends(Tornado, _super);
-            function Tornado() {
-                return _super !== null && _super.apply(this, arguments) || this;
-            }
-            Tornado.prototype.getType = function () {
-                return Character.Skills.Tornado.TYPE;
-            };
-            Tornado.prototype.registerDefaults = function () {
-                this.image = 'assets/skills/skill02.png';
-                this.name = 'Tornado';
-            };
-            Tornado.prototype.registerHotKey = function (game) {
-                var listener = function listener() {
-                    var effectEmitter = new Particles.Tornado(game, game.player.mesh);
-                    effectEmitter.initParticleSystem();
-                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                        if (event.sourceEvent.key == 2) {
-                            game.controller.attackPoint = null;
-                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_02, function () {
-                                //effectEmitter.particleSystem.start();
-                            }, function () {
-                                //effectEmitter.particleSystem.stop();
-                            });
-                            3;
-                        }
-                    }));
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-                };
-                document.addEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            Tornado.TYPE = 2;
-            return Tornado;
-        }(Character.Skills.AbstractSkill));
-        Skills.Tornado = Tornado;
-    })(Skills = Character.Skills || (Character.Skills = {}));
-})(Character || (Character = {}));
 /// <reference path="../AbstractCharacter.ts"/>
 var NPC;
 (function (NPC) {
@@ -4262,6 +4130,139 @@ var SelectCharacter;
     }(AbstractCharacter));
     SelectCharacter.Warrior = Warrior;
 })(SelectCharacter || (SelectCharacter = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var AbstractSkill = /** @class */ (function () {
+            function AbstractSkill(game, cooldown, damage, stock) {
+                if (cooldown === void 0) { cooldown = 0; }
+                if (damage === void 0) { damage = 0; }
+                if (stock === void 0) { stock = 0; }
+                this.cooldown = cooldown;
+                this.damage = damage;
+                this.stock = stock;
+                this.registerHotKey(game);
+                this.registerDefaults();
+            }
+            AbstractSkill.prototype.getImageUrl = function () {
+                return this.image;
+            };
+            AbstractSkill.TYPE = 0;
+            return AbstractSkill;
+        }());
+        Skills.AbstractSkill = AbstractSkill;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var DoubleAttack = /** @class */ (function (_super) {
+            __extends(DoubleAttack, _super);
+            function DoubleAttack() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            DoubleAttack.prototype.getType = function () {
+                return Character.Skills.DoubleAttack.TYPE;
+            };
+            DoubleAttack.prototype.registerDefaults = function () {
+                this.image = 'assets/skills/skill01.png';
+                this.name = 'Double attack';
+            };
+            DoubleAttack.prototype.registerHotKey = function (game) {
+                var listener = function listener() {
+                    var effectEmitter = new Particles.DoubleAttack(game, game.player.mesh);
+                    effectEmitter.initParticleSystem();
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == 1) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
+                                //effectEmitter.particleSystem.start();
+                            }, function () {
+                                //effectEmitter.particleSystem.stop();
+                            });
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            DoubleAttack.TYPE = 1;
+            return DoubleAttack;
+        }(Character.Skills.AbstractSkill));
+        Skills.DoubleAttack = DoubleAttack;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var SkillsManager = /** @class */ (function () {
+            function SkillsManager(game) {
+                this.game = game;
+            }
+            /**
+             * @param type
+             */
+            SkillsManager.prototype.getSkill = function (type) {
+                var skill = null;
+                switch (type) {
+                    case Character.Skills.DoubleAttack.TYPE:
+                        skill = new Character.Skills.DoubleAttack(this.game);
+                        break;
+                    case Character.Skills.Tornado.TYPE:
+                        skill = new Character.Skills.Tornado(this.game);
+                        break;
+                }
+                return skill;
+            };
+            return SkillsManager;
+        }());
+        Skills.SkillsManager = SkillsManager;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var Tornado = /** @class */ (function (_super) {
+            __extends(Tornado, _super);
+            function Tornado() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            Tornado.prototype.getType = function () {
+                return Character.Skills.Tornado.TYPE;
+            };
+            Tornado.prototype.registerDefaults = function () {
+                this.image = 'assets/skills/skill02.png';
+                this.name = 'Tornado';
+            };
+            Tornado.prototype.registerHotKey = function (game) {
+                var listener = function listener() {
+                    var effectEmitter = new Particles.Tornado(game, game.player.mesh);
+                    effectEmitter.initParticleSystem();
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == 2) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_02, function () {
+                                //effectEmitter.particleSystem.start();
+                            }, function () {
+                                //effectEmitter.particleSystem.stop();
+                            });
+                            3;
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            Tornado.TYPE = 2;
+            return Tornado;
+        }(Character.Skills.AbstractSkill));
+        Skills.Tornado = Tornado;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
 var GUI;
 (function (GUI) {
     var TooltipButton = /** @class */ (function () {

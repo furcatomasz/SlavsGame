@@ -74,6 +74,7 @@ abstract class AbstractCharacter {
                     if(self.sfxHit) {
                         self.sfxHit.play();
                     }
+
                     self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
                         if(callbackEnd) {
                             callbackEnd();
@@ -99,7 +100,7 @@ abstract class AbstractCharacter {
             if (!this.animation && skeleton) {
                 self.sfxWalk.play();
                 self.onWalkStart();
-                self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.4, function () {
+                self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.3, function () {
                     skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                     self.animation = null;
                     self.sfxWalk.stop();

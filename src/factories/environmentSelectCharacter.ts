@@ -94,8 +94,7 @@ class EnvironmentSelectCharacter {
             sceneMesh.isPickable = false;
         }
 
-        // new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.5 });
-        // new BABYLON.Sound("Wind", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.4 });
+        new BABYLON.Sound("Forest night", "assets/sounds/music/theme.mp3", scene, null, { loop: true, autoplay: true, volume: 1 });
 
     }
 }

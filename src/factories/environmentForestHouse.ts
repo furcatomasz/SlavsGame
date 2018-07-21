@@ -52,12 +52,19 @@ class EnvironmentForestHouse {
         //SPS Nature
         let spruce = game.factories['nature_grain'].createInstance('spruce', false);
         spruce.visibility = 0;
+        spruce.material.freeze();
+
         let groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
         groundPlants.visibility = 0;
+        groundPlants.material.freeze();
+
         let fern = game.factories['nature_grain'].createInstance('fern', false);
         fern.visibility = 0;
+        fern.material.freeze();
+
         let stone = game.factories['nature_grain'].createInstance('stone', false);
         stone.visibility = 0;
+        stone.material.freeze();
 
         spsTrees.forEach(function(parentSPS) {
             let spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce, false);
@@ -136,6 +143,8 @@ class EnvironmentForestHouse {
         //
         // };
         // document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        new BABYLON.Sound("Forest night", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.1 });
+        new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.3 });
     }
 
 }

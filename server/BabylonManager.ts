@@ -1,5 +1,3 @@
-let config = require("./../config.js");
-
 namespace Server {
 
     export class BabylonManager {
@@ -15,7 +13,7 @@ namespace Server {
         protected scenes = [];
 
         constructor() {
-            this.socket = socketIOClient.connect('http://127.0.0.1:' + config.server.port, {query: 'monsterServer=1'});
+            this.socket = socketIOClient.connect('http://127.0.0.1:5000', {query: 'monsterServer=1'});
             this.enemies = [];
             this.players = [];
             this.scenes = [];
@@ -210,7 +208,8 @@ namespace Server {
 
                         //clear enemies target if it is this player
                         self.enemies[roomId].forEach(function (enemy, key) {
-                            if (enemy.target == id) {
+                            if (enemy.target == remotePlayer.id) {
+                                clearInterval(enemy.attackInterval);
                                 enemy.target = false;
                             }
                             scene.unregisterBeforeRender(enemy.activeTargetPoints[id]);
@@ -374,22 +373,6 @@ namespace Server {
 
                                 console.log('BABYLON: player intersect target point - '+ updatedPlayer.id +', roomID:'+ player.roomId);
                                 scene.unregisterBeforeRender(player.registeredFunction);
-                                // self.socket.emit('updatePlayerPosition', {
-                                //     playerSocketId: player.socketId,
-                                //     position: player.position
-                                // });
-
-                                /*
-
-                                 socket.on('setTargetPoint', function (targetPoint) {
-                                 let character = player.getActiveCharacter();
-                                 character.attack = null;
-                                 character.targetPoint = targetPoint.position;
-                                 socket.broadcast.emit('updatePlayer', character);
-                                 socket.emit('updatePlayer', character);
-                                 });
-
-                                 */
 
                             } else {
                                 let rotation = mesh.rotation;

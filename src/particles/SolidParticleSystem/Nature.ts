@@ -33,7 +33,6 @@ namespace Particles.SolidParticleSystem {
             sps.addShape(this.shape, count, {positionFunction: myBuilder});
             let spsMesh = sps.buildMesh();
             spsMesh.material = this.shape.material;
-            // spsMesh.alwaysSelectAsActiveMesh = true;
 
             return this;
         }

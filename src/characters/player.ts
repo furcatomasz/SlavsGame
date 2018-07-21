@@ -37,7 +37,6 @@ class Player extends AbstractCharacter {
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.skeleton.enableBlending(0.2);
         mesh.alwaysSelectAsActiveMesh = true;
-        mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
 
         ///Create box mesh for moving
         this.createBoxForMove(game.getScene());
@@ -85,6 +84,8 @@ class Player extends AbstractCharacter {
         }
 
         super(serverData.activePlayer.name, game);
+
+        this.runAnimationStand();
     }
 
     public initGodRay() {
@@ -266,7 +267,6 @@ class Player extends AbstractCharacter {
                 if (self.animation) {
                     self.animation.stop();
                 }
-
             } else {
                 let rotation = mesh.rotation;
                 if (mesh.rotationQuaternion) {

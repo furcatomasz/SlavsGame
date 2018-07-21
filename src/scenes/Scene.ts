@@ -30,15 +30,32 @@ abstract class Scene {
             clearInterval(game.frumstrumEnemiesInterval);
         }
 
+        let battleMusic = new BABYLON.Sound("Forest night", "assets/sounds/music/battle.mp3", scene, null, { loop: true, autoplay: false, volume: 1 });
+
         game.frumstrumEnemiesInterval = setInterval(function() {
+            let activeEnemies = 0;
             game.enemies.forEach(function(enemy) {
-                if(!enemy.animation && scene.isActiveMesh(enemy.mesh)) {
-                    enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                } else if(enemy.animation && !scene.isActiveMesh(enemy.mesh)) {
+                let isActiveMesh = scene.isActiveMesh(enemy.mesh);
+                if(isActiveMesh) {
+                    activeEnemies = 1;
+                }
+
+                if(!enemy.animation && isActiveMesh) {
+                    enemy.runAnimationStand();
+                } else if(enemy.animation && !isActiveMesh) {
                     enemy.animation.stop();
                     enemy.animation = null;
                 }
             });
+
+            if(activeEnemies && !battleMusic.isPlaying) {
+                battleMusic.stop();
+                battleMusic.setVolume(1);
+                battleMusic.play();
+            } else if(!activeEnemies && battleMusic.isPlaying) {
+                battleMusic.setVolume(0, 2);
+                battleMusic.stop(2);
+            }
         }, 500);
 
         return this;

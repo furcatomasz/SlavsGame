@@ -1,0 +1,13 @@
+version: '2.3'
+services:
+  gulp:
+      build: .
+      volumes:
+        - .:/usr/app/
+        - ./bower_components:/usr/app/bower_components
+        - /usr/app/node_modules
+      ports:
+        - "3000:3000"
+      command: >
+           bash -c "gulp"
+

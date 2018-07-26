@@ -11,3 +11,7 @@ services:
       command: >
            bash -c "gulp"
 
+networks:
+  default:
+    external:
+      name: docker_default

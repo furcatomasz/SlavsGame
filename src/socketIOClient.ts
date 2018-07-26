@@ -61,8 +61,8 @@ class SocketIOClient {
                 // .reloadScene()
         });
 
-        this.socket.emit('changeScene', SelectCharacter.TYPE);
-        // this.socket.emit('selectCharacter', 5);
+        // this.socket.emit('changeScene', SelectCharacter.TYPE);
+        this.socket.emit('selectCharacter', 1);
 
         return this;
     }
@@ -463,7 +463,7 @@ class SocketIOClient {
                     if (activeTargetPoints[enemyKey] !== undefined) {
                         self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
                     }
-console.log(data);
+
                     if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack' && updatedEnemy.attack == true) {
                         if(data.attackIsDone == true) {
                             enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
@@ -613,7 +613,7 @@ console.log(data);
 
             }
 
-            if (updatedPlayer.attack == true && !player.isAttack) {
+            if (Number.isInteger(updatedPlayer.attack) && !player.isAttack) {
                 let targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {
                     let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
@@ -621,7 +621,6 @@ console.log(data);
                 }
 
                 let attackAnimation = (Game.randomNumber(1,2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
-                console.log('hit');
                 player.runAnimationHit(attackAnimation, null, null);
                 return;
             }

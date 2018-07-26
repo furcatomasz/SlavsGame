@@ -488,7 +488,7 @@ var Monster = /** @class */ (function (_super) {
         }));
         var intervalAttackFunction = function () {
             game.client.socket.emit('attack', {
-                attack: true,
+                attack: self.id,
                 targetPoint: self.game.controller.attackPoint.position,
                 rotation: self.game.controller.attackPoint.rotation
             });
@@ -548,6 +548,8 @@ var SocketIOClient = /** @class */ (function () {
             game.remotePlayers = [];
             self.connectionId = data.connectionId;
             self
+                ///PLAYER
+                // .connectPlayer()
                 .showPlayer()
                 .updatePlayers()
                 .removePlayer()
@@ -556,6 +558,7 @@ var SocketIOClient = /** @class */ (function () {
                 .newLvl()
                 .attributeAdded()
                 .addSpecialItem()
+                ///Scene
                 .showEnemies()
                 .showDroppedItem()
                 .refreshGateways()
@@ -571,7 +574,7 @@ var SocketIOClient = /** @class */ (function () {
             // .reloadScene()
         });
         // this.socket.emit('changeScene', SelectCharacter.TYPE);
-        this.socket.emit('selectCharacter', 5);
+        this.socket.emit('selectCharacter', 1);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -901,7 +904,6 @@ var SocketIOClient = /** @class */ (function () {
                     if (activeTargetPoints[enemyKey] !== undefined) {
                         self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
                     }
-                    console.log(data);
                     if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack' && updatedEnemy.attack == true) {
                         if (data.attackIsDone == true) {
                             enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
@@ -1028,14 +1030,13 @@ var SocketIOClient = /** @class */ (function () {
                     }, 1000);
                 }, 300);
             }
-            if (updatedPlayer.attack == true && !player.isAttack) {
+            if (Number.isInteger(updatedPlayer.attack) && !player.isAttack) {
                 var targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {
                     var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
                     player.meshForMove.lookAt(targetPointVector3);
                 }
                 var attackAnimation = (Game.randomNumber(1, 2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
-                console.log('hit');
                 player.runAnimationHit(attackAnimation, null, null);
                 return;
             }

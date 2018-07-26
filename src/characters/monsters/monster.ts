@@ -57,7 +57,7 @@ class Monster extends AbstractCharacter {
 
         let intervalAttackFunction = function () {
             game.client.socket.emit('attack', {
-                attack: true,
+                attack: self.id,
                 targetPoint: self.game.controller.attackPoint.position,
                 rotation: self.game.controller.attackPoint.rotation,
             });

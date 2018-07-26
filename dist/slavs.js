@@ -128,16 +128,31 @@ var Scene = /** @class */ (function () {
         if (game.frumstrumEnemiesInterval) {
             clearInterval(game.frumstrumEnemiesInterval);
         }
+        var battleMusic = new BABYLON.Sound("Forest night", "assets/sounds/music/battle.mp3", scene, null, { loop: true, autoplay: false, volume: 1 });
         game.frumstrumEnemiesInterval = setInterval(function () {
+            var activeEnemies = 0;
             game.enemies.forEach(function (enemy) {
-                if (!enemy.animation && scene.isActiveMesh(enemy.mesh)) {
-                    enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                var isActiveMesh = scene.isActiveMesh(enemy.mesh);
+                if (isActiveMesh) {
+                    activeEnemies = 1;
                 }
-                else if (enemy.animation && !scene.isActiveMesh(enemy.mesh)) {
+                if (!enemy.animation && isActiveMesh) {
+                    enemy.runAnimationStand();
+                }
+                else if (enemy.animation && !isActiveMesh) {
                     enemy.animation.stop();
                     enemy.animation = null;
                 }
             });
+            if (activeEnemies && !battleMusic.isPlaying) {
+                battleMusic.stop();
+                battleMusic.setVolume(1);
+                battleMusic.play();
+            }
+            else if (!activeEnemies && battleMusic.isPlaying) {
+                battleMusic.setVolume(0, 2);
+                battleMusic.stop(2);
+            }
         }, 500);
         return this;
     };
@@ -366,44 +381,48 @@ var AbstractCharacter = /** @class */ (function () {
             this.animation.stop();
         }
         var self = this;
-        var childMesh = this.mesh;
-        if (childMesh) {
-            var skeleton_1 = childMesh.skeleton;
-            if (skeleton_1) {
-                self.isAttack = true;
-                if (callbackEnd) {
-                    callbackStart();
-                }
-                if (self.sfxHit) {
-                    self.sfxHit.play();
-                }
-                self.animation = skeleton_1.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
-                    if (callbackEnd) {
-                        callbackEnd();
-                    }
-                    skeleton_1.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                    self.animation = null;
-                    self.isAttack = false;
-                });
-            }
+        var mesh = this.mesh;
+        var skeleton = mesh.skeleton;
+        this.isAttack = true;
+        if (callbackEnd) {
+            callbackStart();
         }
+        if (self.sfxHit) {
+            self.sfxHit.play();
+        }
+        self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
+            if (callbackEnd) {
+                callbackEnd();
+            }
+            self.runAnimationStand();
+            self.isAttack = false;
+        });
     };
     AbstractCharacter.prototype.runAnimationWalk = function () {
-        var self = this;
-        var childMesh = this.mesh;
-        var loopAnimation = true;
-        if (childMesh) {
-            var skeleton_2 = childMesh.skeleton;
-            if (!this.animation && skeleton_2) {
-                self.sfxWalk.play();
-                self.onWalkStart();
-                self.animation = skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.3, function () {
-                    skeleton_2.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                    self.animation = null;
-                    self.sfxWalk.stop();
-                    self.onWalkEnd();
-                });
-            }
+        if (!this.isWalk) {
+            var self_1 = this;
+            var skeleton = this.mesh.skeleton;
+            this.isWalk = true;
+            self_1.sfxWalk.play();
+            self_1.onWalkStart();
+            self_1.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, true, 1.3, function () {
+                self_1.runAnimationStand();
+                self_1.animation = null;
+                self_1.isWalk = false;
+                self_1.sfxWalk.stop();
+                self_1.onWalkEnd();
+            });
+        }
+    };
+    AbstractCharacter.prototype.runAnimationStand = function () {
+        if (!this.isStand) {
+            var self_2 = this;
+            var skeleton = this.mesh.skeleton;
+            this.isStand = true;
+            self_2.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true, 1, function () {
+                self_2.animation = null;
+                self_2.isStand = false;
+            });
         }
     };
     AbstractCharacter.prototype.getWalkSpeed = function () {
@@ -436,6 +455,10 @@ var Monster = /** @class */ (function (_super) {
         mesh.visibility = 1;
         mesh.isPickable = 0;
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit2.mp3", game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
+        _this.sfxWalk = new BABYLON.Sound("CharacterHit", null, game.getScene(), null, {
             loop: false,
             autoplay: false
         });
@@ -493,17 +516,6 @@ var Monster = /** @class */ (function (_super) {
         }));
         return _this;
     }
-    Monster.prototype.runAnimationWalk = function () {
-        var self = this;
-        var loopAnimation = this.isControllable;
-        var skeleton = this.mesh.skeleton;
-        if (!this.animation && skeleton) {
-            self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1, function () {
-                skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                self.animation = null;
-            });
-        }
-    };
     Monster.prototype.removeFromWorld = function () {
         if (this.intervalAttackRegisteredFunction) {
             clearInterval(this.intervalAttackRegisteredFunction);
@@ -558,8 +570,8 @@ var SocketIOClient = /** @class */ (function () {
             // .updateRooms()
             // .reloadScene()
         });
-        this.socket.emit('changeScene', SelectCharacter.TYPE);
-        // this.socket.emit('selectCharacter', 5);
+        // this.socket.emit('changeScene', SelectCharacter.TYPE);
+        this.socket.emit('selectCharacter', 5);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -889,8 +901,14 @@ var SocketIOClient = /** @class */ (function () {
                     if (activeTargetPoints[enemyKey] !== undefined) {
                         self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
                     }
+                    console.log(data);
                     if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack' && updatedEnemy.attack == true) {
-                        enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
+                        if (data.attackIsDone == true) {
+                            enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
+                        }
+                        else {
+                            enemy.runAnimationStand();
+                        }
                     }
                     else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
                         var targetMesh_1 = null;
@@ -923,7 +941,7 @@ var SocketIOClient = /** @class */ (function () {
                         }
                     }
                     else if (data.collisionEvent == 'OnIntersectionExitTriggerVisibility') {
-                        enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                        enemy.runAnimationStand();
                     }
                 }
                 setTimeout(function () {
@@ -1017,6 +1035,7 @@ var SocketIOClient = /** @class */ (function () {
                     player.meshForMove.lookAt(targetPointVector3);
                 }
                 var attackAnimation = (Game.randomNumber(1, 2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
+                console.log('hit');
                 player.runAnimationHit(attackAnimation, null, null);
                 return;
             }
@@ -1302,7 +1321,6 @@ var Player = /** @class */ (function (_super) {
         var mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.skeleton.enableBlending(0.2);
         mesh.alwaysSelectAsActiveMesh = true;
-        mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
         ///Create box mesh for moving
         _this.createBoxForMove(game.getScene());
         _this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
@@ -1336,6 +1354,7 @@ var Player = /** @class */ (function (_super) {
             _this.refreshCameraPosition();
         }
         _this = _super.call(this, serverData.activePlayer.name, game) || this;
+        _this.runAnimationStand();
         return _this;
     }
     Player.prototype.initGodRay = function () {
@@ -1421,26 +1440,26 @@ var Player = /** @class */ (function (_super) {
      */
     Player.prototype.setItems = function (inventoryItems) {
         if (inventoryItems) {
-            var self_1 = this;
+            var self_3 = this;
             var game_1 = this.game;
             var itemManager_1 = new Items.ItemManager(game_1);
             new Promise(function (resolve) {
-                self_1.inventory.deleteSashAndHair();
-                self_1.inventory.items.forEach(function (item) {
+                self_3.inventory.deleteSashAndHair();
+                self_3.inventory.items.forEach(function (item) {
                     item.mesh.dispose();
                 });
                 setTimeout(function () {
                     resolve();
                 });
             }).then(function () {
-                self_1.inventory.clearItems();
+                self_3.inventory.clearItems();
                 new Promise(function (resolve) {
-                    itemManager_1.initItemsFromDatabaseOnCharacter(inventoryItems, self_1.inventory);
+                    itemManager_1.initItemsFromDatabaseOnCharacter(inventoryItems, self_3.inventory);
                     setTimeout(function () {
                         resolve();
                     });
                 }).then(function () {
-                    if (self_1.isControllable && game_1.gui.inventory.opened) {
+                    if (self_3.isControllable && game_1.gui.inventory.opened) {
                         game_1.gui.inventory.refreshPopup();
                     }
                 });
@@ -2107,12 +2126,16 @@ var EnvironmentForestHouse = /** @class */ (function () {
         //SPS Nature
         var spruce = game.factories['nature_grain'].createInstance('spruce', false);
         spruce.visibility = 0;
+        spruce.material.freeze();
         var groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
         groundPlants.visibility = 0;
+        groundPlants.material.freeze();
         var fern = game.factories['nature_grain'].createInstance('fern', false);
         fern.visibility = 0;
+        fern.material.freeze();
         var stone = game.factories['nature_grain'].createInstance('stone', false);
         stone.visibility = 0;
+        stone.material.freeze();
         spsTrees.forEach(function (parentSPS) {
             var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce, false);
             spsSpruce.buildSPS(67);
@@ -2180,6 +2203,8 @@ var EnvironmentForestHouse = /** @class */ (function () {
         //
         // };
         // document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        new BABYLON.Sound("Forest night", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.1 });
+        new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.3 });
     }
     return EnvironmentForestHouse;
 }());
@@ -2239,6 +2264,7 @@ var EnvironmentForestHouseStart = /** @class */ (function () {
             var sceneMeshCollider = this.colliders[i];
             Collisions.setCollider(scene, sceneMeshCollider);
         }
+        new BABYLON.Sound("Forest night", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.3 });
     }
     return EnvironmentForestHouseStart;
 }());
@@ -2352,8 +2378,7 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
             sceneMesh.freezeWorldMatrix();
             sceneMesh.isPickable = false;
         }
-        // new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.5 });
-        // new BABYLON.Sound("Wind", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.4 });
+        new BABYLON.Sound("Forest night", "assets/sounds/music/theme.mp3", scene, null, { loop: true, autoplay: true, volume: 1 });
     }
     return EnvironmentSelectCharacter;
 }());
@@ -4137,55 +4162,6 @@ var NPC;
 /// <reference path="../AbstractCharacter.ts"/>
 var SelectCharacter;
 (function (SelectCharacter) {
-    var Bandit = /** @class */ (function (_super) {
-        __extends(Bandit, _super);
-        function Bandit(game) {
-            var _this = this;
-            _this.name = 'Warrior';
-            var mesh = game.factories['character'].createInstance('Warrior', true);
-            mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
-            mesh.position = new BABYLON.Vector3(2, 0.1, 10);
-            mesh.rotation = new BABYLON.Vector3(0, 0.2, 0);
-            _this.mesh = mesh;
-            _this.inventory = new Character.Inventory(game, _this);
-            var armor = new Items.Armors.Robe(game);
-            var gloves = new Items.Gloves.PrimaryGloves(game);
-            var boots = new Items.Boots.PrimaryBoots(game);
-            _this.inventory.mount(armor);
-            _this.inventory.mount(gloves);
-            _this.inventory.mount(boots);
-            _this = _super.call(this, name, game) || this;
-            _this.mesh.skeleton.beginAnimation('Sit');
-            _this.registerActions();
-            return _this;
-        }
-        Bandit.prototype.removeFromWorld = function () {
-        };
-        Bandit.prototype.registerActions = function () {
-            var self = this;
-            this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
-            this.mesh.isPickable = true;
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-                if (!self.skeletonAnimation) {
-                    self.skeletonAnimation = self.mesh.skeleton.beginAnimation('Select', false, 1, function () {
-                        self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                    });
-                }
-            }));
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-                //self.game.getScene().stopAnimation(self.mesh.skeleton);
-            }));
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                new Simple().initScene(self.game);
-            }));
-        };
-        return Bandit;
-    }(AbstractCharacter));
-    SelectCharacter.Bandit = Bandit;
-})(SelectCharacter || (SelectCharacter = {}));
-/// <reference path="../AbstractCharacter.ts"/>
-var SelectCharacter;
-(function (SelectCharacter) {
     var Warrior = /** @class */ (function (_super) {
         __extends(Warrior, _super);
         function Warrior(game, place, playerDatabase) {
@@ -5154,6 +5130,7 @@ var Particles;
     (function (SolidParticleSystem) {
         var AbstractSolidParticle = /** @class */ (function () {
             function AbstractSolidParticle(game, parent, shape, isCollider) {
+                if (isCollider === void 0) { isCollider = false; }
                 this.game = game;
                 this.parent = parent;
                 this.shape = shape;
@@ -5204,7 +5181,6 @@ var Particles;
                 sps.addShape(this.shape, count, { positionFunction: myBuilder });
                 var spsMesh = sps.buildMesh();
                 spsMesh.material = this.shape.material;
-                // spsMesh.alwaysSelectAsActiveMesh = true;
                 return this;
             };
             return Nature;

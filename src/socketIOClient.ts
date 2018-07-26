@@ -463,9 +463,13 @@ class SocketIOClient {
                     if (activeTargetPoints[enemyKey] !== undefined) {
                         self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
                     }
-
+console.log(data);
                     if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack' && updatedEnemy.attack == true) {
-                        enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
+                        if(data.attackIsDone == true) {
+                            enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
+                        } else {
+                            enemy.runAnimationStand();
+                        }
                     } else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
                         let targetMesh = null;
                         if (enemy.animation) {
@@ -497,13 +501,12 @@ class SocketIOClient {
 
                                 }
                                 enemy.runAnimationWalk();
-
-                            }
+                            };
 
                             self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
                         }
                     } else if (data.collisionEvent == 'OnIntersectionExitTriggerVisibility') {
-                        enemy.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                        enemy.runAnimationStand();
                     }
                 }
 
@@ -618,6 +621,7 @@ class SocketIOClient {
                 }
 
                 let attackAnimation = (Game.randomNumber(1,2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
+                console.log('hit');
                 player.runAnimationHit(attackAnimation, null, null);
                 return;
             }

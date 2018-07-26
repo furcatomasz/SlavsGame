@@ -7,7 +7,7 @@ namespace Particles.SolidParticleSystem {
         protected collider: BABYLON.AbstractMesh;
         public particleSystem: BABYLON.ParticleSystem;
 
-        constructor(game: Game, parent: BABYLON.AbstractMesh, shape: BABYLON.AbstractMesh, isCollider: boolean) {
+        constructor(game: Game, parent: BABYLON.AbstractMesh, shape: BABYLON.AbstractMesh, isCollider: boolean = false) {
             this.game = game;
             this.parent = parent;
             this.shape = shape;

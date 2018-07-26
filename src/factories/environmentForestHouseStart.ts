@@ -71,6 +71,7 @@ class EnvironmentForestHouseStart {
             Collisions.setCollider(scene, sceneMeshCollider);
         }
 
+        new BABYLON.Sound("Forest night", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.3 });
     }
 
 }

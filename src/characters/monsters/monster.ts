@@ -18,6 +18,11 @@ class Monster extends AbstractCharacter {
             autoplay: false
         });
 
+        this.sfxWalk = new BABYLON.Sound("CharacterHit", null, game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
+
         this.id = serverKey;
         this.mesh = mesh;
         this.statistics = serverData.statistics;
@@ -87,19 +92,6 @@ class Monster extends AbstractCharacter {
                 self.game.controller.attackPoint = null;
             }));
 
-    }
-
-    public runAnimationWalk():void {
-        let self = this;
-        let loopAnimation = this.isControllable;
-        let skeleton = this.mesh.skeleton;
-
-        if (!this.animation && skeleton) {
-            self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1, function () {
-                skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                self.animation = null;
-            });
-        }
     }
 
     public removeFromWorld() {

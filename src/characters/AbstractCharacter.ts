@@ -23,6 +23,8 @@ abstract class AbstractCharacter {
     public animation:BABYLON.Animatable;
     public isControllable:boolean;
     public isAttack: boolean;
+    public isWalk: boolean;
+    public isStand: boolean;
 
     public sfxWalk: BABYLON.Sound;
     protected sfxHit: BABYLON.Sound;
@@ -55,56 +57,64 @@ abstract class AbstractCharacter {
         return this;
     }
 
-    public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null, loop: boolean = false):void {
+    public runAnimationHit(animation: string, callbackStart = null, callbackEnd = null, loop: boolean = false): void {
         if (this.animation) {
             this.animation.stop();
         }
-        
-            let self = this;
-            var childMesh = this.mesh;
 
-            if (childMesh) {
-                let skeleton = childMesh.skeleton;
-                if(skeleton) {
-                     self.isAttack = true;
-                    if(callbackEnd) {
-                        callbackStart();
-                    }
-                    if(self.sfxHit) {
-                        self.sfxHit.play();
-                    }
+        let self = this;
+        let mesh = this.mesh;
+        let skeleton = mesh.skeleton;
+        this.isAttack = true;
 
-                    self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
-                        if(callbackEnd) {
-                            callbackEnd();
-                        }
+        if (callbackEnd) {
+            callbackStart();
+        }
 
-                        skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                        self.animation = null;
-                        self.isAttack = false;
-                    });
-                }
+        if (self.sfxHit) {
+            self.sfxHit.play();
+        }
+
+        self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
+            if (callbackEnd) {
+                callbackEnd();
             }
+
+            self.runAnimationStand();
+            self.isAttack = false;
+        });
 
     }
 
+
     public runAnimationWalk():void {
-        let self = this;
-        let childMesh = this.mesh;
-        let loopAnimation = true;
+        if(!this.isWalk) {
+            let self = this;
+            let skeleton = this.mesh.skeleton;
+            this.isWalk = true;
 
-        if (childMesh) {
-            let skeleton = childMesh.skeleton;
+            self.sfxWalk.play();
+            self.onWalkStart();
+            self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, true, 1.3, function () {
+                self.runAnimationStand();
+                self.animation = null;
+                self.isWalk = false;
+                self.sfxWalk.stop();
+                self.onWalkEnd();
+            });
+        }
+    }
 
-            if (!this.animation && skeleton) {
-                self.sfxWalk.play();
-                self.onWalkStart();
-                self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, loopAnimation, 1.3, function () {
-                    skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                    self.animation = null;
-                    self.sfxWalk.stop();
-                    self.onWalkEnd();
-                });
+    public runAnimationStand():void {
+        if(!this.isStand) {
+            let self = this;
+            let skeleton = this.mesh.skeleton;
+            this.isStand = true;
+
+            self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true, 1, function () {
+                self.animation = null;
+                self.isStand = false;
+            });
         }
     }
 

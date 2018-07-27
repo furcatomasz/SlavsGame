@@ -46,7 +46,7 @@ class Game {
      */
     public frumstrumEnemiesInterval;
 
-    constructor(canvasElement: HTMLCanvasElement, accessToken: string, isMobile: boolean = false) {
+    constructor(canvasElement: HTMLCanvasElement, accessToken: string, isMobile: boolean = false, isDebug: boolean = false) {
         let self = this;
         let serverUrl = window.location.hostname + ':5000';
 
@@ -54,6 +54,9 @@ class Game {
         self.engine = new BABYLON.Engine(self.canvas, false, null, false);
         if(isMobile) {
             self.engine.setHardwareScalingLevel(2);
+        }
+        if(isDebug) {
+            Game.SHOW_DEBUG = 1;
         }
         self.engine.loadingScreen = new SlavsLoader();
         self.controller = new Mouse(self);

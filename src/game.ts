@@ -46,9 +46,8 @@ class Game {
      */
     public frumstrumEnemiesInterval;
 
-    constructor(canvasElement: HTMLCanvasElement, accessToken: string, isMobile: boolean = false, isDebug: boolean = false) {
+    constructor(canvasElement: HTMLCanvasElement, serverUrl: string,  accessToken: string, isMobile: boolean = false, isDebug: boolean = false) {
         let self = this;
-        let serverUrl = window.location.hostname + ':5000';
 
         self.canvas = canvasElement;
         self.engine = new BABYLON.Engine(self.canvas, false, null, false);

@@ -33,10 +33,10 @@ namespace GUI {
             this
                 .initInventory()
                 .initAttributes()
-                .initSkills()
-                .initFullscreen()
-                .initQuests()
-                .initTeams();
+                // .initSkills()
+                .initFullscreen();
+                // .initQuests()
+                // .initTeams();
         }
 
         protected initInventory() {

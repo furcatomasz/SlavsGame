@@ -573,8 +573,8 @@ var SocketIOClient = /** @class */ (function () {
             // .updateRooms()
             // .reloadScene()
         });
-        // this.socket.emit('changeScene', SelectCharacter.TYPE);
-        this.socket.emit('selectCharacter', 1);
+        this.socket.emit('changeScene', SelectCharacter.TYPE);
+        // this.socket.emit('selectCharacter', 1);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -1071,11 +1071,10 @@ var SocketIOClient = /** @class */ (function () {
 /// <reference path="scenes/Simple.ts"/>
 /// <reference path="socketIOClient.ts"/>
 var Game = /** @class */ (function () {
-    function Game(canvasElement, accessToken, isMobile, isDebug) {
+    function Game(canvasElement, serverUrl, accessToken, isMobile, isDebug) {
         if (isMobile === void 0) { isMobile = false; }
         if (isDebug === void 0) { isDebug = false; }
         var self = this;
-        var serverUrl = window.location.hostname + ':5000';
         self.canvas = canvasElement;
         self.engine = new BABYLON.Engine(self.canvas, false, null, false);
         if (isMobile) {
@@ -1186,6 +1185,124 @@ var Effects;
     }());
     Effects.GodRay = GodRay;
 })(Effects || (Effects = {}));
+var Character;
+(function (Character) {
+    var Inventory = /** @class */ (function () {
+        function Inventory(game, player) {
+            this.game = game;
+            this.player = player;
+            this.items = [];
+        }
+        Inventory.prototype.clearItems = function () {
+            this.weapon = null;
+            this.shield = null;
+            this.helm = null;
+            this.gloves = null;
+            this.boots = null;
+            this.armor = null;
+            this.items = [];
+            return this;
+        };
+        /**
+         * @param item
+         * @param setItem
+         */
+        Inventory.prototype.equipItem = function (item, setItem) {
+            if (setItem) {
+                item.mesh.parent = this.player.mesh;
+                item.mesh.skeleton = this.player.mesh.skeleton;
+                item.mesh.visibility = 1;
+                switch (item.type) {
+                    case 1:
+                        this.weapon = item;
+                        break;
+                    case 2:
+                        this.shield = item;
+                        break;
+                    case 3:
+                        this.helm = item;
+                        break;
+                    case 4:
+                        this.gloves = item;
+                        break;
+                    case 5:
+                        this.boots = item;
+                        break;
+                    case 6:
+                        this.armor = item;
+                        break;
+                }
+            }
+            else {
+                item.mesh.visibility = 0;
+            }
+        };
+        /**
+         * @param item
+
+         * @returns {AbstractCharacter.Inventory}
+         */
+        Inventory.prototype.emitEquip = function (item) {
+            this.game.client.socket.emit('itemEquip', {
+                id: item.databaseId
+            });
+            return this;
+        };
+        /**
+         * @returns {Array}
+         */
+        Inventory.prototype.getEquipedItems = function () {
+            var equipedItems = [];
+            equipedItems.push(this.helm);
+            equipedItems.push(this.armor);
+            equipedItems.push(this.weapon);
+            equipedItems.push(this.shield);
+            equipedItems.push(this.gloves);
+            equipedItems.push(this.boots);
+            return equipedItems;
+        };
+        /**
+         *
+         * @param {boolean} showHair
+         * @param {boolean} showSash
+         */
+        Inventory.prototype.showSashOrHair = function (showHair, showSash) {
+            if (showHair) {
+                var helm = new Items.Item(this.game, {
+                    name: "Hair",
+                    image: 'hair',
+                    meshName: 'hair',
+                    type: 3,
+                    entity: { id: 0 },
+                    statistics: null
+                });
+                this.equipItem(helm, true);
+            }
+            if (showSash) {
+                var armor = new Items.Item(this.game, {
+                    name: "Sash",
+                    image: 'sash',
+                    meshName: 'sash',
+                    type: 6,
+                    entity: { id: 0 },
+                    statistics: null
+                });
+                this.equipItem(armor, true);
+            }
+        };
+        Inventory.prototype.deleteSashAndHair = function () {
+            if (this.helm && this.helm.name == "Hair") {
+                this.helm.mesh.dispose();
+            }
+            if (this.armor && this.armor.name == "Sash") {
+                this.armor.mesh.dispose();
+            }
+            return this;
+        };
+        return Inventory;
+    }());
+    Character.Inventory = Inventory;
+})(Character || (Character = {}));
 var Player = /** @class */ (function (_super) {
     __extends(Player, _super);
     function Player(game, registerMoving, serverData) {
@@ -1419,124 +1536,6 @@ var Player = /** @class */ (function (_super) {
     };
     return Player;
 }(AbstractCharacter));
-var Character;
-(function (Character) {
-    var Inventory = /** @class */ (function () {
-        function Inventory(game, player) {
-            this.game = game;
-            this.player = player;
-            this.items = [];
-        }
-        Inventory.prototype.clearItems = function () {
-            this.weapon = null;
-            this.shield = null;
-            this.helm = null;
-            this.gloves = null;
-            this.boots = null;
-            this.armor = null;
-            this.items = [];
-            return this;
-        };
-        /**
-         * @param item
-         * @param setItem
-         */
-        Inventory.prototype.equipItem = function (item, setItem) {
-            if (setItem) {
-                item.mesh.parent = this.player.mesh;
-                item.mesh.skeleton = this.player.mesh.skeleton;
-                item.mesh.visibility = 1;
-                switch (item.type) {
-                    case 1:
-                        this.weapon = item;
-                        break;
-                    case 2:
-                        this.shield = item;
-                        break;
-                    case 3:
-                        this.helm = item;
-                        break;
-                    case 4:
-                        this.gloves = item;
-                        break;
-                    case 5:
-                        this.boots = item;
-                        break;
-                    case 6:
-                        this.armor = item;
-                        break;
-                }
-            }
-            else {
-                item.mesh.visibility = 0;
-            }
-        };
-        /**
-         * @param item
-
-         * @returns {AbstractCharacter.Inventory}
-         */
-        Inventory.prototype.emitEquip = function (item) {
-            this.game.client.socket.emit('itemEquip', {
-                id: item.databaseId
-            });
-            return this;
-        };
-        /**
-         * @returns {Array}
-         */
-        Inventory.prototype.getEquipedItems = function () {
-            var equipedItems = [];
-            equipedItems.push(this.helm);
-            equipedItems.push(this.armor);
-            equipedItems.push(this.weapon);
-            equipedItems.push(this.shield);
-            equipedItems.push(this.gloves);
-            equipedItems.push(this.boots);
-            return equipedItems;
-        };
-        /**
-         *
-         * @param {boolean} showHair
-         * @param {boolean} showSash
-         */
-        Inventory.prototype.showSashOrHair = function (showHair, showSash) {
-            if (showHair) {
-                var helm = new Items.Item(this.game, {
-                    name: "Hair",
-                    image: 'hair',
-                    meshName: 'hair',
-                    type: 3,
-                    entity: { id: 0 },
-                    statistics: null
-                });
-                this.equipItem(helm, true);
-            }
-            if (showSash) {
-                var armor = new Items.Item(this.game, {
-                    name: "Sash",
-                    image: 'sash',
-                    meshName: 'sash',
-                    type: 6,
-                    entity: { id: 0 },
-                    statistics: null
-                });
-                this.equipItem(armor, true);
-            }
-        };
-        Inventory.prototype.deleteSashAndHair = function () {
-            if (this.helm && this.helm.name == "Hair") {
-                this.helm.mesh.dispose();
-            }
-            if (this.armor && this.armor.name == "Sash") {
-                this.armor.mesh.dispose();
-            }
-            return this;
-        };
-        return Inventory;
-    }());
-    Character.Inventory = Inventory;
-})(Character || (Character = {}));
 /// <reference path="Controller.ts"/>
 var Mouse = /** @class */ (function (_super) {
     __extends(Mouse, _super);
@@ -1614,374 +1613,6 @@ var Mouse = /** @class */ (function (_super) {
     };
     return Mouse;
 }(Controller));
-/// <reference path="../../babylon/babylon.d.ts"/>
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var Main = /** @class */ (function () {
-        function Main(game, player) {
-            this.game = game;
-            this.player = player;
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
-            this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
-            this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
-            this.playerLogsQuests = new GUI.PlayerQuestsPanel();
-            this.playerQuestInformation = new GUI.PlayerQuestInformation();
-            this.characterTopHp = new GUI.ShowHp();
-            this
-                .initInventory()
-                .initAttributes()
-                .initSkills()
-                .initFullscreen()
-                .initQuests()
-                .initTeams();
-        }
-        Main.prototype.initInventory = function () {
-            var self = this;
-            this.inventory = new GUI.Inventory(this);
-            var buttonPanel = new BABYLON.GUI.StackPanel();
-            buttonPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            buttonPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            buttonPanel.width = 0.2;
-            buttonPanel.isPointerBlocker = true;
-            this.buttonpanel = buttonPanel;
-            this.texture.addControl(buttonPanel);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.inventory", "Inventory");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            button.isPointerBlocker = true;
-            buttonPanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.inventory.opened) {
-                    self.inventory.open();
-                }
-            });
-            return this;
-        };
-        Main.prototype.initFullscreen = function () {
-            var self = this;
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Fullscreen");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            button.isPointerBlocker = true;
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                self.game.engine.switchFullscreen(false);
-                // self.game.engine.resize();
-            });
-            return this;
-        };
-        Main.prototype.initQuests = function () {
-            var self = this;
-            this.playerQuests = new GUI.PlayerQuests(this);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Quests");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            button.isPointerBlocker = true;
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.playerQuests.opened) {
-                    self.playerQuests.open();
-                }
-            });
-            return this;
-        };
-        Main.prototype.initAttributes = function () {
-            var self = this;
-            this.attributes = new GUI.Attributes(this);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Attributes");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.attributes.opened) {
-                    self.attributes.open();
-                }
-            });
-            return this;
-        };
-        Main.prototype.initSkills = function () {
-            var self = this;
-            this.skills = new GUI.Skills(this);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Skills");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.skills.opened) {
-                    self.skills.open();
-                }
-            });
-            return this;
-        };
-        Main.prototype.initTeams = function () {
-            var self = this;
-            this.teams = new GUI.Rooms(this);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Teams");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.teams.opened) {
-                    self.teams.open();
-                }
-            });
-            return this;
-        };
-        return Main;
-    }());
-    GUI.Main = Main;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var PlayerBottomPanel = /** @class */ (function () {
-        function PlayerBottomPanel(game) {
-            var self = this;
-            var listener = function listener() {
-                self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
-                var characterBottomPanel = new BABYLON.GUI.StackPanel();
-                characterBottomPanel.width = "50%";
-                characterBottomPanel.top = -10;
-                characterBottomPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                self.texture.addControl(characterBottomPanel);
-                self.guiPanel = characterBottomPanel;
-                var hpSlider = new BABYLON.GUI.Slider();
-                hpSlider.minimum = 0;
-                hpSlider.maximum = game.player.statistics.hpMax;
-                hpSlider.value = game.player.statistics.hp;
-                hpSlider.width = "100%";
-                hpSlider.height = "10px";
-                hpSlider.thumbWidth = 0;
-                hpSlider.barOffset = 0;
-                hpSlider.background = 'black';
-                hpSlider.color = "red";
-                hpSlider.borderColor = 'black';
-                self.hpBar = hpSlider;
-                var expSlider = new BABYLON.GUI.Slider();
-                expSlider.minimum = 0;
-                expSlider.maximum = 100;
-                expSlider.value = game.player.experiencePercentages;
-                expSlider.width = "100%";
-                expSlider.height = "20px";
-                expSlider.thumbWidth = 0;
-                expSlider.barOffset = 0;
-                expSlider.background = 'black';
-                expSlider.color = "blue";
-                expSlider.borderColor = 'yellow';
-                self.expBar = expSlider;
-                characterBottomPanel.addControl(hpSlider);
-                characterBottomPanel.addControl(expSlider);
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
-        }
-        PlayerBottomPanel.prototype.setHpOnPanel = function (hp) {
-            this.hpBar.value = hp;
-        };
-        return PlayerBottomPanel;
-    }());
-    GUI.PlayerBottomPanel = PlayerBottomPanel;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var PlayerLogsPanel = /** @class */ (function () {
-        function PlayerLogsPanel(game) {
-            this.texts = [];
-            var self = this;
-            var listener = function listener() {
-                self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameLogsUi");
-                var characterLogsPanel = new BABYLON.GUI.StackPanel();
-                characterLogsPanel.width = "15%";
-                characterLogsPanel.left = "1%";
-                characterLogsPanel.top = "-5%";
-                characterLogsPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                characterLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                self.texture.addControl(characterLogsPanel);
-                self.guiPanel = characterLogsPanel;
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
-        }
-        /**
-         * @param message
-         * @param color
-         */
-        PlayerLogsPanel.prototype.addText = function (message, color) {
-            if (color === void 0) { color = 'white'; }
-            var text = new BABYLON.GUI.TextBlock();
-            text.text = message;
-            text.color = color;
-            text.textWrapping = true;
-            text.height = "25px";
-            text.width = "100%";
-            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            text.fontSize = 14;
-            this.guiPanel.addControl(text);
-            this.texts.push(text);
-            this.removeOldText();
-        };
-        PlayerLogsPanel.prototype.removeOldText = function () {
-            if (this.texts.length >= GUI.PlayerLogsPanel.TEXT_COUNT) {
-                var textToDispose = this.texts.shift();
-                this.guiPanel.removeControl(textToDispose);
-                textToDispose = null;
-            }
-            return this;
-        };
-        PlayerLogsPanel.TEXT_COUNT = 6;
-        return PlayerLogsPanel;
-    }());
-    GUI.PlayerLogsPanel = PlayerLogsPanel;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var PlayerQuestInformation = /** @class */ (function () {
-        function PlayerQuestInformation() {
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("PlayerQuestInformation");
-        }
-        PlayerQuestInformation.prototype.addQuest = function (questData) {
-            var self = this;
-            if (self.guiPanel) {
-                self.guiPanel.dispose();
-            }
-            var playerQuestsInformationPanel = new BABYLON.GUI.StackPanel();
-            playerQuestsInformationPanel.width = "25%";
-            playerQuestsInformationPanel.top = 40;
-            playerQuestsInformationPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            playerQuestsInformationPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            self.texture.addControl(playerQuestsInformationPanel);
-            self.guiPanel = playerQuestsInformationPanel;
-            var title = new BABYLON.GUI.TextBlock();
-            title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            title.text = questData.title;
-            title.top = "0%";
-            title.color = "orange";
-            title.fontSize = 18;
-            title.resizeToFit = true;
-            this.guiPanel.addControl(title);
-            questData.chapters[questData.actualChapter].requirements.forEach(function (requirement) {
-                var requirementDescription = new BABYLON.GUI.TextBlock();
-                requirementDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                requirementDescription.text = requirement.name;
-                requirementDescription.resizeToFit = true;
-                requirementDescription.color = "white";
-                requirementDescription.top = "5%";
-                requirementDescription.fontSize = 14;
-                self.guiPanel.addControl(requirementDescription);
-            });
-        };
-        return PlayerQuestInformation;
-    }());
-    GUI.PlayerQuestInformation = PlayerQuestInformation;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var PlayerQuestsPanel = /** @class */ (function () {
-        function PlayerQuestsPanel() {
-            this.texts = [];
-            var self = this;
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("playersQuestsLogsUi");
-            var playerQuestsLogsPanel = new BABYLON.GUI.StackPanel();
-            playerQuestsLogsPanel.width = "25%";
-            playerQuestsLogsPanel.top = 40;
-            playerQuestsLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            self.texture.addControl(playerQuestsLogsPanel);
-            self.guiPanel = playerQuestsLogsPanel;
-        }
-        /**
-         * @param message
-         * @param color
-         */
-        PlayerQuestsPanel.prototype.addText = function (message, color) {
-            if (color === void 0) { color = 'white'; }
-            var text = new BABYLON.GUI.TextBlock();
-            text.text = message;
-            text.color = color;
-            text.textWrapping = true;
-            text.height = "25px";
-            text.width = "100%";
-            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            text.fontSize = 14;
-            this.guiPanel.addControl(text);
-            this.texts.push(text);
-            var self = this;
-            setTimeout(function () {
-                var textToDispose = self.texts.shift();
-                self.guiPanel.removeControl(textToDispose);
-            }, 4000);
-        };
-        return PlayerQuestsPanel;
-    }());
-    GUI.PlayerQuestsPanel = PlayerQuestsPanel;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-/// <reference path="../characters/AbstractCharacter.ts"/>
-var GUI;
-(function (GUI) {
-    var ShowHp = /** @class */ (function () {
-        function ShowHp() {
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("characterShowHp");
-        }
-        ShowHp.prototype.showHpCharacter = function (character) {
-            if (this.guiPanel) {
-                this.texture.removeControl(this.guiPanel);
-            }
-            this.character = character;
-            var characterPanel = new BABYLON.GUI.StackPanel();
-            characterPanel.width = "25%";
-            characterPanel.top = 10;
-            characterPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            this.guiPanel = characterPanel;
-            this.texture.addControl(characterPanel);
-            var textBlock = new BABYLON.GUI.TextBlock("gui.panelhp.name", character.name);
-            textBlock.color = 'white';
-            textBlock.height = "20px";
-            textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            var hpSlider = new BABYLON.GUI.Slider();
-            hpSlider.minimum = 0;
-            hpSlider.maximum = character.statistics.hpMax;
-            hpSlider.value = character.statistics.hp;
-            hpSlider.width = "100%";
-            hpSlider.height = "10px";
-            hpSlider.thumbWidth = 0;
-            hpSlider.barOffset = 0;
-            hpSlider.background = 'black';
-            hpSlider.color = "red";
-            hpSlider.borderColor = 'black';
-            this.hpBar = hpSlider;
-            characterPanel.addControl(textBlock);
-            characterPanel.addControl(hpSlider);
-        };
-        ShowHp.prototype.refreshPanel = function () {
-            if (this.character) {
-                this.hpBar.value = this.character.statistics.hp;
-            }
-        };
-        ShowHp.prototype.hideHpBar = function () {
-            if (this.guiPanel) {
-                this.texture.removeControl(this.guiPanel);
-            }
-        };
-        return ShowHp;
-    }());
-    GUI.ShowHp = ShowHp;
-})(GUI || (GUI = {}));
 /// <reference path="../game.ts"/>
 var Factories;
 (function (Factories) {
@@ -2755,6 +2386,374 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
     }
     return EnvironmentSelectCharacter;
 }());
+/// <reference path="../../babylon/babylon.d.ts"/>
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var Main = /** @class */ (function () {
+        function Main(game, player) {
+            this.game = game;
+            this.player = player;
+            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
+            this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
+            this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
+            this.playerLogsQuests = new GUI.PlayerQuestsPanel();
+            this.playerQuestInformation = new GUI.PlayerQuestInformation();
+            this.characterTopHp = new GUI.ShowHp();
+            this
+                .initInventory()
+                .initAttributes()
+                // .initSkills()
+                .initFullscreen();
+            // .initQuests()
+            // .initTeams();
+        }
+        Main.prototype.initInventory = function () {
+            var self = this;
+            this.inventory = new GUI.Inventory(this);
+            var buttonPanel = new BABYLON.GUI.StackPanel();
+            buttonPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            buttonPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            buttonPanel.width = 0.2;
+            buttonPanel.isPointerBlocker = true;
+            this.buttonpanel = buttonPanel;
+            this.texture.addControl(buttonPanel);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.inventory", "Inventory");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            button.isPointerBlocker = true;
+            buttonPanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.inventory.opened) {
+                    self.inventory.open();
+                }
+            });
+            return this;
+        };
+        Main.prototype.initFullscreen = function () {
+            var self = this;
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Fullscreen");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            button.isPointerBlocker = true;
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                self.game.engine.switchFullscreen(false);
+                // self.game.engine.resize();
+            });
+            return this;
+        };
+        Main.prototype.initQuests = function () {
+            var self = this;
+            this.playerQuests = new GUI.PlayerQuests(this);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Quests");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            button.isPointerBlocker = true;
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.playerQuests.opened) {
+                    self.playerQuests.open();
+                }
+            });
+            return this;
+        };
+        Main.prototype.initAttributes = function () {
+            var self = this;
+            this.attributes = new GUI.Attributes(this);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Attributes");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.attributes.opened) {
+                    self.attributes.open();
+                }
+            });
+            return this;
+        };
+        Main.prototype.initSkills = function () {
+            var self = this;
+            this.skills = new GUI.Skills(this);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Skills");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.skills.opened) {
+                    self.skills.open();
+                }
+            });
+            return this;
+        };
+        Main.prototype.initTeams = function () {
+            var self = this;
+            this.teams = new GUI.Rooms(this);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Teams");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.teams.opened) {
+                    self.teams.open();
+                }
+            });
+            return this;
+        };
+        return Main;
+    }());
+    GUI.Main = Main;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var PlayerBottomPanel = /** @class */ (function () {
+        function PlayerBottomPanel(game) {
+            var self = this;
+            var listener = function listener() {
+                self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
+                var characterBottomPanel = new BABYLON.GUI.StackPanel();
+                characterBottomPanel.width = "50%";
+                characterBottomPanel.top = -10;
+                characterBottomPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                self.texture.addControl(characterBottomPanel);
+                self.guiPanel = characterBottomPanel;
+                var hpSlider = new BABYLON.GUI.Slider();
+                hpSlider.minimum = 0;
+                hpSlider.maximum = game.player.statistics.hpMax;
+                hpSlider.value = game.player.statistics.hp;
+                hpSlider.width = "100%";
+                hpSlider.height = "10px";
+                hpSlider.thumbWidth = 0;
+                hpSlider.barOffset = 0;
+                hpSlider.background = 'black';
+                hpSlider.color = "red";
+                hpSlider.borderColor = 'black';
+                self.hpBar = hpSlider;
+                var expSlider = new BABYLON.GUI.Slider();
+                expSlider.minimum = 0;
+                expSlider.maximum = 100;
+                expSlider.value = game.player.experiencePercentages;
+                expSlider.width = "100%";
+                expSlider.height = "20px";
+                expSlider.thumbWidth = 0;
+                expSlider.barOffset = 0;
+                expSlider.background = 'black';
+                expSlider.color = "blue";
+                expSlider.borderColor = 'yellow';
+                self.expBar = expSlider;
+                characterBottomPanel.addControl(hpSlider);
+                characterBottomPanel.addControl(expSlider);
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        }
+        PlayerBottomPanel.prototype.setHpOnPanel = function (hp) {
+            this.hpBar.value = hp;
+        };
+        return PlayerBottomPanel;
+    }());
+    GUI.PlayerBottomPanel = PlayerBottomPanel;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var PlayerLogsPanel = /** @class */ (function () {
+        function PlayerLogsPanel(game) {
+            this.texts = [];
+            var self = this;
+            var listener = function listener() {
+                self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameLogsUi");
+                var characterLogsPanel = new BABYLON.GUI.StackPanel();
+                characterLogsPanel.width = "15%";
+                characterLogsPanel.left = "1%";
+                characterLogsPanel.top = "-5%";
+                characterLogsPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                characterLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                self.texture.addControl(characterLogsPanel);
+                self.guiPanel = characterLogsPanel;
+                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        }
+        /**
+         * @param message
+         * @param color
+         */
+        PlayerLogsPanel.prototype.addText = function (message, color) {
+            if (color === void 0) { color = 'white'; }
+            var text = new BABYLON.GUI.TextBlock();
+            text.text = message;
+            text.color = color;
+            text.textWrapping = true;
+            text.height = "25px";
+            text.width = "100%";
+            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            text.fontSize = 14;
+            this.guiPanel.addControl(text);
+            this.texts.push(text);
+            this.removeOldText();
+        };
+        PlayerLogsPanel.prototype.removeOldText = function () {
+            if (this.texts.length >= GUI.PlayerLogsPanel.TEXT_COUNT) {
+                var textToDispose = this.texts.shift();
+                this.guiPanel.removeControl(textToDispose);
+                textToDispose = null;
+            }
+            return this;
+        };
+        PlayerLogsPanel.TEXT_COUNT = 6;
+        return PlayerLogsPanel;
+    }());
+    GUI.PlayerLogsPanel = PlayerLogsPanel;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var PlayerQuestInformation = /** @class */ (function () {
+        function PlayerQuestInformation() {
+            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("PlayerQuestInformation");
+        }
+        PlayerQuestInformation.prototype.addQuest = function (questData) {
+            var self = this;
+            if (self.guiPanel) {
+                self.guiPanel.dispose();
+            }
+            var playerQuestsInformationPanel = new BABYLON.GUI.StackPanel();
+            playerQuestsInformationPanel.width = "25%";
+            playerQuestsInformationPanel.top = 40;
+            playerQuestsInformationPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            playerQuestsInformationPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            self.texture.addControl(playerQuestsInformationPanel);
+            self.guiPanel = playerQuestsInformationPanel;
+            var title = new BABYLON.GUI.TextBlock();
+            title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            title.text = questData.title;
+            title.top = "0%";
+            title.color = "orange";
+            title.fontSize = 18;
+            title.resizeToFit = true;
+            this.guiPanel.addControl(title);
+            questData.chapters[questData.actualChapter].requirements.forEach(function (requirement) {
+                var requirementDescription = new BABYLON.GUI.TextBlock();
+                requirementDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                requirementDescription.text = requirement.name;
+                requirementDescription.resizeToFit = true;
+                requirementDescription.color = "white";
+                requirementDescription.top = "5%";
+                requirementDescription.fontSize = 14;
+                self.guiPanel.addControl(requirementDescription);
+            });
+        };
+        return PlayerQuestInformation;
+    }());
+    GUI.PlayerQuestInformation = PlayerQuestInformation;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var PlayerQuestsPanel = /** @class */ (function () {
+        function PlayerQuestsPanel() {
+            this.texts = [];
+            var self = this;
+            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("playersQuestsLogsUi");
+            var playerQuestsLogsPanel = new BABYLON.GUI.StackPanel();
+            playerQuestsLogsPanel.width = "25%";
+            playerQuestsLogsPanel.top = 40;
+            playerQuestsLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            self.texture.addControl(playerQuestsLogsPanel);
+            self.guiPanel = playerQuestsLogsPanel;
+        }
+        /**
+         * @param message
+         * @param color
+         */
+        PlayerQuestsPanel.prototype.addText = function (message, color) {
+            if (color === void 0) { color = 'white'; }
+            var text = new BABYLON.GUI.TextBlock();
+            text.text = message;
+            text.color = color;
+            text.textWrapping = true;
+            text.height = "25px";
+            text.width = "100%";
+            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            text.fontSize = 14;
+            this.guiPanel.addControl(text);
+            this.texts.push(text);
+            var self = this;
+            setTimeout(function () {
+                var textToDispose = self.texts.shift();
+                self.guiPanel.removeControl(textToDispose);
+            }, 4000);
+        };
+        return PlayerQuestsPanel;
+    }());
+    GUI.PlayerQuestsPanel = PlayerQuestsPanel;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+/// <reference path="../characters/AbstractCharacter.ts"/>
+var GUI;
+(function (GUI) {
+    var ShowHp = /** @class */ (function () {
+        function ShowHp() {
+            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("characterShowHp");
+        }
+        ShowHp.prototype.showHpCharacter = function (character) {
+            if (this.guiPanel) {
+                this.texture.removeControl(this.guiPanel);
+            }
+            this.character = character;
+            var characterPanel = new BABYLON.GUI.StackPanel();
+            characterPanel.width = "25%";
+            characterPanel.top = 10;
+            characterPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            this.guiPanel = characterPanel;
+            this.texture.addControl(characterPanel);
+            var textBlock = new BABYLON.GUI.TextBlock("gui.panelhp.name", character.name);
+            textBlock.color = 'white';
+            textBlock.height = "20px";
+            textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            var hpSlider = new BABYLON.GUI.Slider();
+            hpSlider.minimum = 0;
+            hpSlider.maximum = character.statistics.hpMax;
+            hpSlider.value = character.statistics.hp;
+            hpSlider.width = "100%";
+            hpSlider.height = "10px";
+            hpSlider.thumbWidth = 0;
+            hpSlider.barOffset = 0;
+            hpSlider.background = 'black';
+            hpSlider.color = "red";
+            hpSlider.borderColor = 'black';
+            this.hpBar = hpSlider;
+            characterPanel.addControl(textBlock);
+            characterPanel.addControl(hpSlider);
+        };
+        ShowHp.prototype.refreshPanel = function () {
+            if (this.character) {
+                this.hpBar.value = this.character.statistics.hp;
+            }
+        };
+        ShowHp.prototype.hideHpBar = function () {
+            if (this.guiPanel) {
+                this.texture.removeControl(this.guiPanel);
+            }
+        };
+        return ShowHp;
+    }());
+    GUI.ShowHp = ShowHp;
+})(GUI || (GUI = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var Particles;
@@ -3712,6 +3711,245 @@ var SimpleBandit = /** @class */ (function (_super) {
     SimpleBandit.TYPE = 0;
     return SimpleBandit;
 }(Scene));
+var Items;
+(function (Items) {
+    var DroppedItem = /** @class */ (function () {
+        function DroppedItem() {
+        }
+        DroppedItem.showItem = function (game, item, position, itemDropKey) {
+            var scene = game.getScene();
+            var droppedItemBox = BABYLON.Mesh.CreateBox(item.name + '_Box', 3, scene, false);
+            droppedItemBox.checkCollisions = false;
+            droppedItemBox.visibility = 0;
+            droppedItemBox.position.x = position.x;
+            droppedItemBox.position.z = position.z;
+            droppedItemBox.position.y = 0;
+            item.mesh.outlineColor = new BABYLON.Color3(0, 1, 0);
+            item.mesh.outlineWidth = 0.1;
+            item.mesh.rotation = new BABYLON.Vector3(0, 0, 0);
+            item.mesh.visibility = 1;
+            item.mesh.parent = droppedItemBox;
+            item.mesh.setPositionWithLocalVector(new BABYLON.Vector3(0, 0, 0));
+            console.log(item.mesh.getPivotPoint());
+            droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+                item.mesh.renderOutline = false;
+            }));
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+                item.mesh.renderOutline = true;
+            }));
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
+                game.client.socket.emit('addDroppedItem', itemDropKey);
+                droppedItemBox.dispose();
+            }));
+            var particleSystem = new Particles.DroppedItem(game, droppedItemBox);
+            particleSystem.particleSystem.start();
+            if (game.sceneManager.octree) {
+                game.sceneManager.octree.dynamicContent.push(droppedItemBox);
+            }
+        };
+        return DroppedItem;
+    }());
+    Items.DroppedItem = DroppedItem;
+})(Items || (Items = {}));
+var Items;
+(function (Items) {
+    var Item = /** @class */ (function () {
+        function Item(game, itemData) {
+            this.name = itemData.name;
+            this.image = itemData.image;
+            this.type = itemData.type;
+            this.statistics = itemData.statistics;
+            this.mesh = game.factories['character'].createInstance(itemData.meshName);
+            this.mesh.visibility = 0;
+            if (itemData.entity) {
+                this.databaseId = itemData.entity.id;
+            }
+        }
+        return Item;
+    }());
+    Items.Item = Item;
+})(Items || (Items = {}));
+var Items;
+(function (Items) {
+    var ItemManager = /** @class */ (function () {
+        function ItemManager(game) {
+            this.game = game;
+        }
+        /**
+         * @param inventoryItems
+         * @param inventory
+         * @param hideShieldAndWeapon
+         */
+        ItemManager.prototype.initItemsFromDatabaseOnCharacter = function (inventoryItems, inventory, hideShieldAndWeapon) {
+            if (hideShieldAndWeapon === void 0) { hideShieldAndWeapon = false; }
+            var self = this;
+            var showSash = true;
+            var showHair = true;
+            new Promise(function (resolve) {
+                inventoryItems.forEach(function (itemDatabase) {
+                    if (hideShieldAndWeapon && (itemDatabase.type == 2 || itemDatabase.type == 1)) {
+                        return;
+                    }
+                    var item = new Items.Item(self.game, itemDatabase);
+                    if (self.game.sceneManager.octree) {
+                        self.game.sceneManager.octree.dynamicContent.push(item.mesh);
+                    }
+                    item.mesh.alwaysSelectAsActiveMesh = true;
+                    inventory.items.push(item);
+                    inventory.equipItem(item, itemDatabase.entity.equip);
+                    if (item.type == 3 && itemDatabase.entity.equip) {
+                        showHair = false;
+                    }
+                    if (item.type == 6 && itemDatabase.entity.equip) {
+                        showSash = false;
+                    }
+                });
+                setTimeout(function () {
+                    resolve();
+                });
+            }).then(function () {
+                inventory.showSashOrHair(showHair, showSash);
+            });
+        };
+        return ItemManager;
+    }());
+    Items.ItemManager = ItemManager;
+})(Items || (Items = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var AbstractSkill = /** @class */ (function () {
+            function AbstractSkill(game, cooldown, damage, stock) {
+                if (cooldown === void 0) { cooldown = 0; }
+                if (damage === void 0) { damage = 0; }
+                if (stock === void 0) { stock = 0; }
+                this.cooldown = cooldown;
+                this.damage = damage;
+                this.stock = stock;
+                this.registerHotKey(game);
+                this.registerDefaults();
+            }
+            AbstractSkill.prototype.getImageUrl = function () {
+                return this.image;
+            };
+            AbstractSkill.TYPE = 0;
+            return AbstractSkill;
+        }());
+        Skills.AbstractSkill = AbstractSkill;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var DoubleAttack = /** @class */ (function (_super) {
+            __extends(DoubleAttack, _super);
+            function DoubleAttack() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            DoubleAttack.prototype.getType = function () {
+                return Character.Skills.DoubleAttack.TYPE;
+            };
+            DoubleAttack.prototype.registerDefaults = function () {
+                this.image = 'assets/skills/skill01.png';
+                this.name = 'Double attack';
+            };
+            DoubleAttack.prototype.registerHotKey = function (game) {
+                var listener = function listener() {
+                    var effectEmitter = new Particles.DoubleAttack(game, game.player.mesh);
+                    effectEmitter.initParticleSystem();
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == 1) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
+                                //effectEmitter.particleSystem.start();
+                            }, function () {
+                                //effectEmitter.particleSystem.stop();
+                            });
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            DoubleAttack.TYPE = 1;
+            return DoubleAttack;
+        }(Character.Skills.AbstractSkill));
+        Skills.DoubleAttack = DoubleAttack;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var SkillsManager = /** @class */ (function () {
+            function SkillsManager(game) {
+                this.game = game;
+            }
+            /**
+             * @param type
+             */
+            SkillsManager.prototype.getSkill = function (type) {
+                var skill = null;
+                switch (type) {
+                    case Character.Skills.DoubleAttack.TYPE:
+                        skill = new Character.Skills.DoubleAttack(this.game);
+                        break;
+                    case Character.Skills.Tornado.TYPE:
+                        skill = new Character.Skills.Tornado(this.game);
+                        break;
+                }
+                return skill;
+            };
+            return SkillsManager;
+        }());
+        Skills.SkillsManager = SkillsManager;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var Tornado = /** @class */ (function (_super) {
+            __extends(Tornado, _super);
+            function Tornado() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            Tornado.prototype.getType = function () {
+                return Character.Skills.Tornado.TYPE;
+            };
+            Tornado.prototype.registerDefaults = function () {
+                this.image = 'assets/skills/skill02.png';
+                this.name = 'Tornado';
+            };
+            Tornado.prototype.registerHotKey = function (game) {
+                var listener = function listener() {
+                    var effectEmitter = new Particles.Tornado(game, game.player.mesh);
+                    effectEmitter.initParticleSystem();
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == 2) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_02, function () {
+                                //effectEmitter.particleSystem.start();
+                            }, function () {
+                                //effectEmitter.particleSystem.stop();
+                            });
+                            3;
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            Tornado.TYPE = 2;
+            return Tornado;
+        }(Character.Skills.AbstractSkill));
+        Skills.Tornado = Tornado;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
 /// <reference path="../AbstractCharacter.ts"/>
 var NPC;
 (function (NPC) {
@@ -4023,245 +4261,6 @@ var SelectCharacter;
     }(AbstractCharacter));
     SelectCharacter.Warrior = Warrior;
 })(SelectCharacter || (SelectCharacter = {}));
-var Items;
-(function (Items) {
-    var DroppedItem = /** @class */ (function () {
-        function DroppedItem() {
-        }
-        DroppedItem.showItem = function (game, item, position, itemDropKey) {
-            var scene = game.getScene();
-            var droppedItemBox = BABYLON.Mesh.CreateBox(item.name + '_Box', 3, scene, false);
-            droppedItemBox.checkCollisions = false;
-            droppedItemBox.visibility = 0;
-            droppedItemBox.position.x = position.x;
-            droppedItemBox.position.z = position.z;
-            droppedItemBox.position.y = 0;
-            item.mesh.outlineColor = new BABYLON.Color3(0, 1, 0);
-            item.mesh.outlineWidth = 0.1;
-            item.mesh.rotation = new BABYLON.Vector3(0, 0, 0);
-            item.mesh.visibility = 1;
-            item.mesh.parent = droppedItemBox;
-            item.mesh.setPositionWithLocalVector(new BABYLON.Vector3(0, 0, 0));
-            console.log(item.mesh.getPivotPoint());
-            droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-                item.mesh.renderOutline = false;
-            }));
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-                item.mesh.renderOutline = true;
-            }));
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
-                game.client.socket.emit('addDroppedItem', itemDropKey);
-                droppedItemBox.dispose();
-            }));
-            var particleSystem = new Particles.DroppedItem(game, droppedItemBox);
-            particleSystem.particleSystem.start();
-            if (game.sceneManager.octree) {
-                game.sceneManager.octree.dynamicContent.push(droppedItemBox);
-            }
-        };
-        return DroppedItem;
-    }());
-    Items.DroppedItem = DroppedItem;
-})(Items || (Items = {}));
-var Items;
-(function (Items) {
-    var Item = /** @class */ (function () {
-        function Item(game, itemData) {
-            this.name = itemData.name;
-            this.image = itemData.image;
-            this.type = itemData.type;
-            this.statistics = itemData.statistics;
-            this.mesh = game.factories['character'].createInstance(itemData.meshName);
-            this.mesh.visibility = 0;
-            if (itemData.entity) {
-                this.databaseId = itemData.entity.id;
-            }
-        }
-        return Item;
-    }());
-    Items.Item = Item;
-})(Items || (Items = {}));
-var Items;
-(function (Items) {
-    var ItemManager = /** @class */ (function () {
-        function ItemManager(game) {
-            this.game = game;
-        }
-        /**
-         * @param inventoryItems
-         * @param inventory
-         * @param hideShieldAndWeapon
-         */
-        ItemManager.prototype.initItemsFromDatabaseOnCharacter = function (inventoryItems, inventory, hideShieldAndWeapon) {
-            if (hideShieldAndWeapon === void 0) { hideShieldAndWeapon = false; }
-            var self = this;
-            var showSash = true;
-            var showHair = true;
-            new Promise(function (resolve) {
-                inventoryItems.forEach(function (itemDatabase) {
-                    if (hideShieldAndWeapon && (itemDatabase.type == 2 || itemDatabase.type == 1)) {
-                        return;
-                    }
-                    var item = new Items.Item(self.game, itemDatabase);
-                    if (self.game.sceneManager.octree) {
-                        self.game.sceneManager.octree.dynamicContent.push(item.mesh);
-                    }
-                    item.mesh.alwaysSelectAsActiveMesh = true;
-                    inventory.items.push(item);
-                    inventory.equipItem(item, itemDatabase.entity.equip);
-                    if (item.type == 3 && itemDatabase.entity.equip) {
-                        showHair = false;
-                    }
-                    if (item.type == 6 && itemDatabase.entity.equip) {
-                        showSash = false;
-                    }
-                });
-                setTimeout(function () {
-                    resolve();
-                });
-            }).then(function () {
-                inventory.showSashOrHair(showHair, showSash);
-            });
-        };
-        return ItemManager;
-    }());
-    Items.ItemManager = ItemManager;
-})(Items || (Items = {}));
-var Character;
-(function (Character) {
-    var Skills;
-    (function (Skills) {
-        var AbstractSkill = /** @class */ (function () {
-            function AbstractSkill(game, cooldown, damage, stock) {
-                if (cooldown === void 0) { cooldown = 0; }
-                if (damage === void 0) { damage = 0; }
-                if (stock === void 0) { stock = 0; }
-                this.cooldown = cooldown;
-                this.damage = damage;
-                this.stock = stock;
-                this.registerHotKey(game);
-                this.registerDefaults();
-            }
-            AbstractSkill.prototype.getImageUrl = function () {
-                return this.image;
-            };
-            AbstractSkill.TYPE = 0;
-            return AbstractSkill;
-        }());
-        Skills.AbstractSkill = AbstractSkill;
-    })(Skills = Character.Skills || (Character.Skills = {}));
-})(Character || (Character = {}));
-var Character;
-(function (Character) {
-    var Skills;
-    (function (Skills) {
-        var DoubleAttack = /** @class */ (function (_super) {
-            __extends(DoubleAttack, _super);
-            function DoubleAttack() {
-                return _super !== null && _super.apply(this, arguments) || this;
-            }
-            DoubleAttack.prototype.getType = function () {
-                return Character.Skills.DoubleAttack.TYPE;
-            };
-            DoubleAttack.prototype.registerDefaults = function () {
-                this.image = 'assets/skills/skill01.png';
-                this.name = 'Double attack';
-            };
-            DoubleAttack.prototype.registerHotKey = function (game) {
-                var listener = function listener() {
-                    var effectEmitter = new Particles.DoubleAttack(game, game.player.mesh);
-                    effectEmitter.initParticleSystem();
-                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                        if (event.sourceEvent.key == 1) {
-                            game.controller.attackPoint = null;
-                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
-                                //effectEmitter.particleSystem.start();
-                            }, function () {
-                                //effectEmitter.particleSystem.stop();
-                            });
-                        }
-                    }));
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-                };
-                document.addEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            DoubleAttack.TYPE = 1;
-            return DoubleAttack;
-        }(Character.Skills.AbstractSkill));
-        Skills.DoubleAttack = DoubleAttack;
-    })(Skills = Character.Skills || (Character.Skills = {}));
-})(Character || (Character = {}));
-var Character;
-(function (Character) {
-    var Skills;
-    (function (Skills) {
-        var SkillsManager = /** @class */ (function () {
-            function SkillsManager(game) {
-                this.game = game;
-            }
-            /**
-             * @param type
-             */
-            SkillsManager.prototype.getSkill = function (type) {
-                var skill = null;
-                switch (type) {
-                    case Character.Skills.DoubleAttack.TYPE:
-                        skill = new Character.Skills.DoubleAttack(this.game);
-                        break;
-                    case Character.Skills.Tornado.TYPE:
-                        skill = new Character.Skills.Tornado(this.game);
-                        break;
-                }
-                return skill;
-            };
-            return SkillsManager;
-        }());
-        Skills.SkillsManager = SkillsManager;
-    })(Skills = Character.Skills || (Character.Skills = {}));
-})(Character || (Character = {}));
-var Character;
-(function (Character) {
-    var Skills;
-    (function (Skills) {
-        var Tornado = /** @class */ (function (_super) {
-            __extends(Tornado, _super);
-            function Tornado() {
-                return _super !== null && _super.apply(this, arguments) || this;
-            }
-            Tornado.prototype.getType = function () {
-                return Character.Skills.Tornado.TYPE;
-            };
-            Tornado.prototype.registerDefaults = function () {
-                this.image = 'assets/skills/skill02.png';
-                this.name = 'Tornado';
-            };
-            Tornado.prototype.registerHotKey = function (game) {
-                var listener = function listener() {
-                    var effectEmitter = new Particles.Tornado(game, game.player.mesh);
-                    effectEmitter.initParticleSystem();
-                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                        if (event.sourceEvent.key == 2) {
-                            game.controller.attackPoint = null;
-                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_02, function () {
-                                //effectEmitter.particleSystem.start();
-                            }, function () {
-                                //effectEmitter.particleSystem.stop();
-                            });
-                            3;
-                        }
-                    }));
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-                };
-                document.addEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            Tornado.TYPE = 2;
-            return Tornado;
-        }(Character.Skills.AbstractSkill));
-        Skills.Tornado = Tornado;
-    })(Skills = Character.Skills || (Character.Skills = {}));
-})(Character || (Character = {}));
 var GUI;
 (function (GUI) {
     var TooltipButton = /** @class */ (function () {

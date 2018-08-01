@@ -70,8 +70,6 @@ abstract class Scene {
         scene.executeWhenReady(function () {
             // game.client.socket.emit('createPlayer');
             assetsManager.onFinish = function (tasks) {
-                // self.octree = scene.createOrUpdateSelectionOctree();
-
                 game.client.socket.emit('changeScenePre');
 
                 let sceneIndex = game.scenes.push(scene);
@@ -128,7 +126,6 @@ abstract class Scene {
         scene.fogColor = new BABYLON.Color3(0, 0, 0);
         scene.fogDensity = 1;
 
-        //Only if LINEAR
         scene.fogStart = 50;
         scene.fogEnd = 70;
 
@@ -145,7 +142,7 @@ abstract class Scene {
         scene.fogEnabled = true;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
-        scene.postProcessesEnabled = true;
+        scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
         scene.audioEnabled = true;
         scene.workerCollisions = false;

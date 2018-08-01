@@ -25,6 +25,8 @@ namespace Factories {
                 for (let i = 0; i < self.loadedMeshes.length; i++) {
                     let loadedMesh = self.loadedMeshes[i];
                     loadedMesh.visibility = 0;
+                    loadedMesh.freezeWorldMatrix();
+                    loadedMesh.setEnabled(false);
                 }
             }
 
@@ -35,13 +37,13 @@ namespace Factories {
             for (let i = 0; i < this.loadedMeshes.length; i++) {
                 let mesh = this.loadedMeshes[i];
                 if(mesh.name == name) {
-                        let clonedMesh = mesh.clone('clone_'+name);
-
+                    let clonedMesh = mesh.clone('clone_'+name);
                         if(cloneSkeleton) {
                             clonedMesh.skeleton = mesh.skeleton.clone('clone_skeleton_'+name);
                         }
                         clonedMesh.visibility = 1;
-                        return clonedMesh;
+
+                    return clonedMesh;
                     }
             }
         }

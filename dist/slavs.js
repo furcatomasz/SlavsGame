@@ -164,7 +164,6 @@ var Scene = /** @class */ (function () {
         scene.executeWhenReady(function () {
             // game.client.socket.emit('createPlayer');
             assetsManager.onFinish = function (tasks) {
-                // self.octree = scene.createOrUpdateSelectionOctree();
                 game.client.socket.emit('changeScenePre');
                 var sceneIndex = game.scenes.push(scene);
                 game.activeScene = sceneIndex - 1;
@@ -209,7 +208,6 @@ var Scene = /** @class */ (function () {
         scene.fogColor = new BABYLON.Color3(0.02, 0.05, 0.2);
         scene.fogColor = new BABYLON.Color3(0, 0, 0);
         scene.fogDensity = 1;
-        //Only if LINEAR
         scene.fogStart = 50;
         scene.fogEnd = 70;
         // scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
@@ -222,7 +220,7 @@ var Scene = /** @class */ (function () {
         scene.fogEnabled = true;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
-        scene.postProcessesEnabled = true;
+        scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
         scene.audioEnabled = true;
         scene.workerCollisions = false;
@@ -548,8 +546,6 @@ var SocketIOClient = /** @class */ (function () {
             game.remotePlayers = [];
             self.connectionId = data.connectionId;
             self
-                ///PLAYER
-                // .connectPlayer()
                 .showPlayer()
                 .updatePlayers()
                 .removePlayer()
@@ -558,7 +554,6 @@ var SocketIOClient = /** @class */ (function () {
                 .newLvl()
                 .attributeAdded()
                 .addSpecialItem()
-                ///Scene
                 .showEnemies()
                 .showDroppedItem()
                 .refreshGateways()
@@ -573,8 +568,8 @@ var SocketIOClient = /** @class */ (function () {
             // .updateRooms()
             // .reloadScene()
         });
-        this.socket.emit('changeScene', SelectCharacter.TYPE);
-        // this.socket.emit('selectCharacter', 1);
+        // this.socket.emit('changeScene', SelectCharacter.TYPE);
+        this.socket.emit('selectCharacter', 2);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -1134,7 +1129,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 0;
+    Game.SHOW_DEBUG = 1;
     return Game;
 }());
 var Effects;
@@ -1434,9 +1429,9 @@ var Player = /** @class */ (function (_super) {
     };
     Player.prototype.refreshCameraPosition = function () {
         this.game.getScene().activeCamera.position = this.meshForMove.position.clone();
-        this.game.getScene().activeCamera.position.y = 30;
-        this.game.getScene().activeCamera.position.z -= 22;
-        this.game.getScene().activeCamera.position.x -= 22;
+        this.game.getScene().activeCamera.position.y = 35;
+        this.game.getScene().activeCamera.position.z -= 26;
+        this.game.getScene().activeCamera.position.x -= 26;
     };
     /**
      *
@@ -1630,6 +1625,8 @@ var Factories;
                 for (var i = 0; i < self.loadedMeshes.length; i++) {
                     var loadedMesh = self.loadedMeshes[i];
                     loadedMesh.visibility = 0;
+                    loadedMesh.freezeWorldMatrix();
+                    loadedMesh.setEnabled(false);
                 }
             };
             return this;
@@ -2156,15 +2153,13 @@ var EnvironmentForestHouse = /** @class */ (function () {
             var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, fern, false);
             spsSpruce.buildSPS(67);
         });
-        // let spsToBlock = scene.getMeshByName("sps_test");
-        // let spsSpruceBlock = new Particles.SolidParticleSystem.Nature(game, spsToBlock, spruce);
-        // spsSpruceBlock.buildSPS(50);
         var spsToBlock = scene.getMeshByName("sps_border");
         var spsSpruceBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, spruce);
         spsSpruceBlock.buildSPS(500);
-        //
-        // let spsPlantsBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, groundPlants);
-        // spsPlantsBlock.buildSPS(500);
+        stone.dispose();
+        spruce.dispose();
+        groundPlants.dispose();
+        fern.dispose();
         var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
         light.intensity = 0.4;
         light.position = new BABYLON.Vector3(0, 80, -210);
@@ -2403,7 +2398,6 @@ var GUI;
             this
                 .initInventory()
                 .initAttributes()
-                // .initSkills()
                 .initFullscreen();
             // .initQuests()
             // .initTeams();

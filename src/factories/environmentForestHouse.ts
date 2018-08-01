@@ -86,16 +86,13 @@ class EnvironmentForestHouse {
             spsSpruce.buildSPS(67);
         });
 
-        // let spsToBlock = scene.getMeshByName("sps_test");
-        // let spsSpruceBlock = new Particles.SolidParticleSystem.Nature(game, spsToBlock, spruce);
-        // spsSpruceBlock.buildSPS(50);
-
         let spsToBlock = scene.getMeshByName("sps_border");
         let spsSpruceBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, spruce);
         spsSpruceBlock.buildSPS(500);
-        //
-        // let spsPlantsBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, groundPlants);
-        // spsPlantsBlock.buildSPS(500);
+        stone.dispose();
+        spruce.dispose();
+        groundPlants.dispose();
+        fern.dispose();
 
         var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
         light.intensity = 0.4;

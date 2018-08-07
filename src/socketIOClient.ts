@@ -405,42 +405,16 @@ class SocketIOClient {
                     enemy.statistics.hp = updatedEnemy.statistics.hp;
 
                     setTimeout(function() {
-
                         enemy.bloodParticles.start();
-
-                        let label = new BABYLON.GUI.TextBlock();
-                        label.text = '-'+damage+'';
-                        label.width = 1;
-                        label.height = 1;
-                        label.color = 'white';
-                        label.fontSize = 200;
-                        label.shadowOffsetX = 0;
-                        label.shadowOffsetY = 0;
-                        label.shadowBlur = 1;
-                        let paddingTop = -150;
-                        label.top = paddingTop;
-
-                        let alpha = 1;
-                        let animateText = function() {
-                            label.top = paddingTop;
-                            label.alpha = alpha;
-                            alpha -= (2/100);
-                            if(alpha < 0) {
-                                alpha = 0;
-                            }
-                            paddingTop -= 5;
-                        }
-                        enemy.meshAdvancedTexture.addControl(label);
-                        game.getScene().registerAfterRender(animateText);
+                        enemy.showDamage(damage);
 
                         if(enemy.statistics.hp <= 0) {
                             if (enemy.animation) {
                                 enemy.animation.stop();
                             }
                         }
+
                         setTimeout(function() {
-                            game.getScene().unregisterAfterRender(animateText);
-                            enemy.meshAdvancedTexture.removeControl(label);
                             enemy.bloodParticles.rebuild();
                             enemy.bloodParticles.stop();
                             enemy.bloodParticles.reset();
@@ -565,31 +539,7 @@ class SocketIOClient {
                 setTimeout(function() {
 
                     player.bloodParticles.start();
-
-                    let label = new BABYLON.GUI.TextBlock();
-                    label.text = '-'+damage+'';
-                    label.width = 2;
-                    label.height = 2;
-                    label.color = 'red';
-                    label.fontSize = 200;
-                    label.shadowOffsetX = 0;
-                    label.shadowOffsetY = 0;
-                    label.shadowBlur = 1;
-                    let paddingTop = -300;
-                    label.top = paddingTop;
-
-                    let alpha = 1;
-                    let animateText = function() {
-                        label.top = paddingTop;
-                        label.alpha = alpha;
-                        alpha -= (2/100);
-                        if(alpha < 0) {
-                            alpha = 0;
-                        }
-                        paddingTop -= 5;
-                    }
-                    player.meshAdvancedTexture.addControl(label);
-                    game.getScene().registerAfterRender(animateText);
+                    player.showDamage(damage);
 
                     if(player.isControllable) {
                         game.gui.playerBottomPanel.setHpOnPanel(player.statistics.hp);
@@ -601,8 +551,6 @@ class SocketIOClient {
                     }
 
                     setTimeout(function() {
-                        game.getScene().unregisterAfterRender(animateText);
-                        player.meshAdvancedTexture.removeControl(label);
                         player.bloodParticles.rebuild();
                         player.bloodParticles.stop();
                         player.bloodParticles.reset();

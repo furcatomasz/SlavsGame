@@ -30,24 +30,56 @@ abstract class AbstractCharacter {
     protected sfxHit: BABYLON.Sound;
 
     public bloodParticles: BABYLON.GPUParticleSystem;
-    public meshCharacterTexture: BABYLON.AbstractMesh;
-    public meshAdvancedTexture: BABYLON.AbstractMesh;
     public dynamicFunction;
+
+    public particleSystemEmitter;
 
     constructor(name:string, game:Game) {
         this.name = name;
         this.game = game;
 
-        let plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 4, height: 8}, game.getScene());
-        let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
-
-        plane.isPickable = false;
-        plane.parent = this.mesh;
-        plane.position.y = 2;
-        plane.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
-        this.meshCharacterTexture = plane;
-        this.meshAdvancedTexture = advancedTexture;
+        this.initPatricleSystemDamage();
     }
+
+    private initPatricleSystemDamage() {
+        let emitterDamage = BABYLON.Mesh.CreateBox("emitter0", 0.1, this.game.getScene());
+        emitterDamage.parent = this.mesh;
+        emitterDamage.position.y = 4;
+        emitterDamage.visibility = 0;
+        this.particleSystemEmitter = emitterDamage;
+
+        return this;
+    }
+
+    public showDamage(damage) {
+        let self = this;
+        let dynamicTexture = new BABYLON.DynamicTexture(null, 128, this.game.getScene(), true);
+        // dynamicTexture.hasAlpha = true;
+        let font = "bold 24px sans";
+        dynamicTexture.drawText(damage, 64, 80, font, "white", null, true, true);
+
+        let particleSystemDamage = new BABYLON.ParticleSystem(null, 1 /*Capacity, i.e. max of 1 at a time*/, this.game.getScene());
+        particleSystemDamage.emitter = this.particleSystemEmitter;
+        particleSystemDamage.emitRate = 100;
+        particleSystemDamage.minSize = 2.0;
+        particleSystemDamage.maxSize = 4.0;
+        particleSystemDamage.gravity = new BABYLON.Vector3(0, -9.81*2, 0);
+        particleSystemDamage.direction1 = new BABYLON.Vector3(0, 10, 0);
+        particleSystemDamage.direction2 = new BABYLON.Vector3(0,10, 0);
+        particleSystemDamage.minAngularSpeed = -Math.PI;
+        particleSystemDamage.maxAngularSpeed = Math.PI;
+        particleSystemDamage.minLifeTime = 1;
+        particleSystemDamage.maxLifeTime = 1;
+        particleSystemDamage.targetStopDuration = 0.8;
+        particleSystemDamage.particleTexture = dynamicTexture;
+        particleSystemDamage.start();
+
+        setTimeout(function() {
+            dynamicTexture.dispose();
+            particleSystemDamage.dispose();
+        },1500);
+    }
+
 
     protected createBoxForMove(scene: BABYLON.Scene) {
         this.meshForMove = BABYLON.Mesh.CreateBox(this.name+'_moveBox', 4, scene, false);

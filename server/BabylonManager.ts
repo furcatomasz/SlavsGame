@@ -110,7 +110,7 @@ namespace Server {
                     let enemy = self.enemies[roomId][key];
                     if (enemyData.statistics.hp > 0 && !enemy) {
                         let box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
-                        box.checkCollisions = true;
+                        box.checkCollisions = false;
                         box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
 
                         let visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {

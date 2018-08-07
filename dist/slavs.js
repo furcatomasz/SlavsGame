@@ -222,7 +222,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         scene.workerCollisions = false;
         return this;
     };
@@ -356,15 +356,42 @@ var AbstractCharacter = /** @class */ (function () {
     function AbstractCharacter(name, game) {
         this.name = name;
         this.game = game;
-        var plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 4, height: 8 }, game.getScene());
-        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
-        plane.isPickable = false;
-        plane.parent = this.mesh;
-        plane.position.y = 2;
-        plane.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
-        this.meshCharacterTexture = plane;
-        this.meshAdvancedTexture = advancedTexture;
+        this.initPatricleSystemDamage();
     }
+    AbstractCharacter.prototype.initPatricleSystemDamage = function () {
+        var emitterDamage = BABYLON.Mesh.CreateBox("emitter0", 0.1, this.game.getScene());
+        emitterDamage.parent = this.mesh;
+        emitterDamage.position.y = 4;
+        emitterDamage.visibility = 0;
+        this.particleSystemEmitter = emitterDamage;
+        return this;
+    };
+    AbstractCharacter.prototype.showDamage = function (damage) {
+        var self = this;
+        var dynamicTexture = new BABYLON.DynamicTexture(null, 128, this.game.getScene(), true);
+        // dynamicTexture.hasAlpha = true;
+        var font = "bold 24px sans";
+        dynamicTexture.drawText(damage, 64, 80, font, "white", null, true, true);
+        var particleSystemDamage = new BABYLON.ParticleSystem(null, 1 /*Capacity, i.e. max of 1 at a time*/, this.game.getScene());
+        particleSystemDamage.emitter = this.particleSystemEmitter;
+        particleSystemDamage.emitRate = 100;
+        particleSystemDamage.minSize = 2.0;
+        particleSystemDamage.maxSize = 4.0;
+        particleSystemDamage.gravity = new BABYLON.Vector3(0, -9.81 * 2, 0);
+        particleSystemDamage.direction1 = new BABYLON.Vector3(0, 10, 0);
+        particleSystemDamage.direction2 = new BABYLON.Vector3(0, 10, 0);
+        particleSystemDamage.minAngularSpeed = -Math.PI;
+        particleSystemDamage.maxAngularSpeed = Math.PI;
+        particleSystemDamage.minLifeTime = 1;
+        particleSystemDamage.maxLifeTime = 1;
+        particleSystemDamage.targetStopDuration = 0.8;
+        particleSystemDamage.particleTexture = dynamicTexture;
+        particleSystemDamage.start();
+        setTimeout(function () {
+            dynamicTexture.dispose();
+            particleSystemDamage.dispose();
+        }, 1500);
+    };
     AbstractCharacter.prototype.createBoxForMove = function (scene) {
         this.meshForMove = BABYLON.Mesh.CreateBox(this.name + '_moveBox', 4, scene, false);
         this.meshForMove.checkCollisions = true;
@@ -546,6 +573,8 @@ var SocketIOClient = /** @class */ (function () {
             game.remotePlayers = [];
             self.connectionId = data.connectionId;
             self
+                ///PLAYER
+                // .connectPlayer()
                 .showPlayer()
                 .updatePlayers()
                 .removePlayer()
@@ -554,6 +583,7 @@ var SocketIOClient = /** @class */ (function () {
                 .newLvl()
                 .attributeAdded()
                 .addSpecialItem()
+                ///Scene
                 .showEnemies()
                 .showDroppedItem()
                 .refreshGateways()
@@ -850,37 +880,13 @@ var SocketIOClient = /** @class */ (function () {
                     enemy.statistics.hp = updatedEnemy.statistics.hp;
                     setTimeout(function () {
                         enemy.bloodParticles.start();
-                        var label = new BABYLON.GUI.TextBlock();
-                        label.text = '-' + damage_1 + '';
-                        label.width = 1;
-                        label.height = 1;
-                        label.color = 'white';
-                        label.fontSize = 200;
-                        label.shadowOffsetX = 0;
-                        label.shadowOffsetY = 0;
-                        label.shadowBlur = 1;
-                        var paddingTop = -150;
-                        label.top = paddingTop;
-                        var alpha = 1;
-                        var animateText = function () {
-                            label.top = paddingTop;
-                            label.alpha = alpha;
-                            alpha -= (2 / 100);
-                            if (alpha < 0) {
-                                alpha = 0;
-                            }
-                            paddingTop -= 5;
-                        };
-                        enemy.meshAdvancedTexture.addControl(label);
-                        game.getScene().registerAfterRender(animateText);
+                        enemy.showDamage(damage_1);
                         if (enemy.statistics.hp <= 0) {
                             if (enemy.animation) {
                                 enemy.animation.stop();
                             }
                         }
                         setTimeout(function () {
-                            game.getScene().unregisterAfterRender(animateText);
-                            enemy.meshAdvancedTexture.removeControl(label);
                             enemy.bloodParticles.rebuild();
                             enemy.bloodParticles.stop();
                             enemy.bloodParticles.reset();
@@ -986,29 +992,7 @@ var SocketIOClient = /** @class */ (function () {
                 player.statistics.hp = updatedPlayer.activePlayer.statistics.hp;
                 setTimeout(function () {
                     player.bloodParticles.start();
-                    var label = new BABYLON.GUI.TextBlock();
-                    label.text = '-' + damage_2 + '';
-                    label.width = 2;
-                    label.height = 2;
-                    label.color = 'red';
-                    label.fontSize = 200;
-                    label.shadowOffsetX = 0;
-                    label.shadowOffsetY = 0;
-                    label.shadowBlur = 1;
-                    var paddingTop = -300;
-                    label.top = paddingTop;
-                    var alpha = 1;
-                    var animateText = function () {
-                        label.top = paddingTop;
-                        label.alpha = alpha;
-                        alpha -= (2 / 100);
-                        if (alpha < 0) {
-                            alpha = 0;
-                        }
-                        paddingTop -= 5;
-                    };
-                    player.meshAdvancedTexture.addControl(label);
-                    game.getScene().registerAfterRender(animateText);
+                    player.showDamage(damage_2);
                     if (player.isControllable) {
                         game.gui.playerBottomPanel.setHpOnPanel(player.statistics.hp);
                     }
@@ -1017,8 +1001,6 @@ var SocketIOClient = /** @class */ (function () {
                         player.mesh.skeleton.beginAnimation('death', false);
                     }
                     setTimeout(function () {
-                        game.getScene().unregisterAfterRender(animateText);
-                        player.meshAdvancedTexture.removeControl(label);
                         player.bloodParticles.rebuild();
                         player.bloodParticles.stop();
                         player.bloodParticles.reset();
@@ -1429,9 +1411,9 @@ var Player = /** @class */ (function (_super) {
     };
     Player.prototype.refreshCameraPosition = function () {
         this.game.getScene().activeCamera.position = this.meshForMove.position.clone();
-        this.game.getScene().activeCamera.position.y = 35;
-        this.game.getScene().activeCamera.position.z -= 26;
-        this.game.getScene().activeCamera.position.x -= 26;
+        this.game.getScene().activeCamera.position.y = 30;
+        this.game.getScene().activeCamera.position.z -= 22;
+        this.game.getScene().activeCamera.position.x -= 22;
     };
     /**
      *
@@ -2398,6 +2380,7 @@ var GUI;
             this
                 .initInventory()
                 .initAttributes()
+                // .initSkills()
                 .initFullscreen();
             // .initQuests()
             // .initTeams();

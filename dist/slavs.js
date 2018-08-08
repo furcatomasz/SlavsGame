@@ -423,6 +423,33 @@ var AbstractCharacter = /** @class */ (function () {
             self.isAttack = false;
         });
     };
+    AbstractCharacter.prototype.runAnimationSpecialHit = function (animation, callbackStart, callbackEnd, loop, speed) {
+        if (callbackStart === void 0) { callbackStart = null; }
+        if (callbackEnd === void 0) { callbackEnd = null; }
+        if (loop === void 0) { loop = false; }
+        if (speed === void 0) { speed = 1; }
+        if (this.animation) {
+            this.animation.stop();
+        }
+        var self = this;
+        var mesh = this.mesh;
+        var skeleton = mesh.skeleton;
+        this.isAttack = true;
+        if (callbackEnd) {
+            callbackStart();
+        }
+        if (self.sfxHit) {
+            self.sfxHit.play();
+        }
+        self.animation = skeleton.beginAnimation(animation, loop, 1 * speed, function () {
+            if (callbackEnd) {
+                callbackEnd();
+            }
+            self.runAnimationStand();
+            self.isAttack = false;
+            // mesh.skeleton.enableBlending(0.3);
+        });
+    };
     AbstractCharacter.prototype.runAnimationWalk = function () {
         if (!this.isWalk) {
             var self_1 = this;
@@ -491,7 +518,7 @@ var Monster = /** @class */ (function (_super) {
         _this.mesh = mesh;
         _this.statistics = serverData.statistics;
         game.enemies[_this.id] = _this;
-        mesh.skeleton.enableBlending(0.2);
+        mesh.skeleton.enableBlending(0.1);
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         mesh.scaling = new BABYLON.Vector3(serverData.scale, serverData.scale, serverData.scale);
         _this = _super.call(this, serverData.name, game) || this;
@@ -573,8 +600,6 @@ var SocketIOClient = /** @class */ (function () {
             game.remotePlayers = [];
             self.connectionId = data.connectionId;
             self
-                ///PLAYER
-                // .connectPlayer()
                 .showPlayer()
                 .updatePlayers()
                 .removePlayer()
@@ -583,7 +608,6 @@ var SocketIOClient = /** @class */ (function () {
                 .newLvl()
                 .attributeAdded()
                 .addSpecialItem()
-                ///Scene
                 .showEnemies()
                 .showDroppedItem()
                 .refreshGateways()
@@ -1288,6 +1312,26 @@ var Player = /** @class */ (function (_super) {
         _this.game = game;
         _this.isAlive = true;
         _this.setCharacterStatistics(serverData.activePlayer);
+        _this.setCharacterSkills([
+            {
+                type: 1,
+                damage: 1,
+                cooldown: 1,
+                stock: 1
+            },
+            {
+                type: 2,
+                damage: 1,
+                cooldown: 1,
+                stock: 1
+            },
+            {
+                type: 3,
+                damage: 1,
+                cooldown: 1,
+                stock: 1
+            }
+        ]);
         _this.connectionId = serverData.connectionId;
         _this.isControllable = registerMoving;
         //
@@ -1300,7 +1344,7 @@ var Player = /** @class */ (function (_super) {
             autoplay: false
         });
         var mesh = game.factories['character'].createInstance('Warrior', true);
-        mesh.skeleton.enableBlending(0.2);
+        mesh.skeleton.enableBlending(0.1);
         mesh.alwaysSelectAsActiveMesh = true;
         ///Create box mesh for moving
         _this.createBoxForMove(game.getScene());
@@ -2380,7 +2424,6 @@ var GUI;
             this
                 .initInventory()
                 .initAttributes()
-                // .initSkills()
                 .initFullscreen();
             // .initQuests()
             // .initTeams();
@@ -3842,9 +3885,9 @@ var Character;
                         if (event.sourceEvent.key == 1) {
                             game.controller.attackPoint = null;
                             game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
-                                //effectEmitter.particleSystem.start();
+                                effectEmitter.particleSystem.start();
                             }, function () {
-                                //effectEmitter.particleSystem.stop();
+                                effectEmitter.particleSystem.stop();
                             });
                         }
                     }));
@@ -3856,6 +3899,46 @@ var Character;
             return DoubleAttack;
         }(Character.Skills.AbstractSkill));
         Skills.DoubleAttack = DoubleAttack;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var Heal = /** @class */ (function (_super) {
+            __extends(Heal, _super);
+            function Heal() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            Heal.prototype.getType = function () {
+                return Character.Skills.Heal.TYPE;
+            };
+            Heal.prototype.registerDefaults = function () {
+                this.image = 'assets/skills/skill01.png';
+                this.name = 'Heal';
+            };
+            Heal.prototype.registerHotKey = function (game) {
+                var listener = function listener() {
+                    var effectEmitter = new Particles.Heal(game, game.player.mesh);
+                    console.log(effectEmitter);
+                    effectEmitter.initParticleSystem();
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == 3) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationSpecialHit(AbstractCharacter.ANIMATION_STAND_WEAPON, function () {
+                                effectEmitter.particleSystem.start();
+                            }, function () {
+                            }, false, 2);
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            Heal.TYPE = 3;
+            return Heal;
+        }(Character.Skills.AbstractSkill));
+        Skills.Heal = Heal;
     })(Skills = Character.Skills || (Character.Skills = {}));
 })(Character || (Character = {}));
 var Character;
@@ -3877,6 +3960,9 @@ var Character;
                         break;
                     case Character.Skills.Tornado.TYPE:
                         skill = new Character.Skills.Tornado(this.game);
+                        break;
+                    case Character.Skills.Heal.TYPE:
+                        skill = new Character.Skills.Heal(this.game);
                         break;
                 }
                 return skill;
@@ -3910,9 +3996,9 @@ var Character;
                         if (event.sourceEvent.key == 2) {
                             game.controller.attackPoint = null;
                             game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_02, function () {
-                                //effectEmitter.particleSystem.start();
+                                effectEmitter.particleSystem.start();
                             }, function () {
-                                //effectEmitter.particleSystem.stop();
+                                effectEmitter.particleSystem.stop();
                             });
                             3;
                         }
@@ -5041,33 +5127,80 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         DoubleAttack.prototype.initParticleSystem = function () {
+            var box = BABYLON.MeshBuilder.CreateBox("bx0", { size: 1 }, this.game.getScene());
+            box.visibility = 0;
+            box.scaling = new BABYLON.Vector3(1, 1, 0.1);
+            box.position = new BABYLON.Vector3(0, 0, 0.1);
+            box.parent = this.emitter;
+            box.attachToBone(this.emitter.skeleton.bones[13], this.emitter);
             var fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
-            fireSystem.emitter = this.emitter;
-            fireSystem.minEmitBox = new BABYLON.Vector3(-2, 0, -2);
-            fireSystem.maxEmitBox = new BABYLON.Vector3(2, 4, 2);
-            fireSystem.color1 = new BABYLON.Color4(0, 0.5, 0, 1.0);
-            fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);
-            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-            fireSystem.minSize = 0.2;
-            fireSystem.maxSize = 0.7;
+            fireSystem.emitter = box;
+            fireSystem.minSize = 1;
+            fireSystem.maxSize = 1;
+            fireSystem.minEmitPower = 0;
+            fireSystem.maxEmitPower = 1;
             fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 0.4;
-            fireSystem.emitRate = 1000;
+            fireSystem.maxLifeTime = 0.2;
+            fireSystem.emitRate = 150;
             fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.minEmitBox = new BABYLON.Vector3(-1, -1, -1);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(1, 1, 1);
             fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
-            fireSystem.direction2 = new BABYLON.Vector3(0, 2, 0);
-            fireSystem.minAngularSpeed = -10;
-            fireSystem.maxAngularSpeed = Math.PI;
-            fireSystem.minEmitPower = 1;
-            fireSystem.maxEmitPower = 3;
-            fireSystem.updateSpeed = 0.007;
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.color1 = new BABYLON.Color4(1, 1, 1, 1);
+            fireSystem.color2 = new BABYLON.Color4(1, 1, 1, 1);
+            fireSystem.updateSpeed = 0.01;
             this.particleSystem = fireSystem;
         };
         return DoubleAttack;
     }(Particles.AbstractParticle));
     Particles.DoubleAttack = DoubleAttack;
+})(Particles || (Particles = {}));
+var Particles;
+(function (Particles) {
+    var Heal = /** @class */ (function (_super) {
+        __extends(Heal, _super);
+        function Heal() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Heal.prototype.initParticleSystem = function () {
+            var scene = this.game.getScene();
+            var emitter = BABYLON.Mesh.CreateBox("emitter0", 0.1, scene);
+            emitter.isVisible = false;
+            emitter.parent = this.emitter;
+            var fireSystem = new BABYLON.ParticleSystem("particles", 1000, scene);
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", scene);
+            fireSystem.minSize = 0.3;
+            fireSystem.maxSize = 0.3;
+            fireSystem.minEmitPower = 1.0;
+            fireSystem.maxEmitPower = 1;
+            fireSystem.minLifeTime = 1;
+            fireSystem.maxLifeTime = 1;
+            fireSystem.emitRate = 200;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.gravity = new BABYLON.Vector3(0, 9, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
+            fireSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+            fireSystem.targetStopDuration = 0.8;
+            fireSystem.emitter = emitter;
+            this.particleSystem = fireSystem;
+            var alpha = 0;
+            scene.registerBeforeRender(function () {
+                emitter.position.x = 2 * Math.cos(alpha);
+                emitter.position.y = 1;
+                emitter.position.z = 2 * Math.sin(alpha);
+                alpha += 0.24 * scene.getAnimationRatio();
+            });
+        };
+        return Heal;
+    }(Particles.AbstractParticle));
+    Particles.Heal = Heal;
 })(Particles || (Particles = {}));
 var Particles;
 (function (Particles) {
@@ -5077,28 +5210,31 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         Tornado.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.ParticleSystem("particles", 100, this.game.getScene());
+            var box = BABYLON.MeshBuilder.CreateBox("bx0", { size: 1 }, this.game.getScene());
+            box.visibility = 0;
+            box.scaling = new BABYLON.Vector3(1, 1, 1);
+            box.position = new BABYLON.Vector3(0, 0, 0);
+            box.parent = this.emitter;
+            box.attachToBone(this.emitter.skeleton.bones[13], this.emitter);
+            var fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
-            fireSystem.emitter = this.emitter;
-            fireSystem.minEmitBox = new BABYLON.Vector3(0, 3, 0);
-            fireSystem.maxEmitBox = new BABYLON.Vector3(0, 3, 0);
-            fireSystem.color1 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
-            fireSystem.color2 = new BABYLON.Color4(0.5, 0.5, 0, 1.0);
-            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
-            fireSystem.minSize = 0.5;
-            fireSystem.maxSize = 1.5;
+            fireSystem.emitter = box;
+            fireSystem.minSize = 1;
+            fireSystem.maxSize = 1;
+            fireSystem.minEmitPower = 0;
+            fireSystem.maxEmitPower = 1;
             fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 0.4;
-            fireSystem.emitRate = 100;
+            fireSystem.maxLifeTime = 0.2;
+            fireSystem.emitRate = 150;
             fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0);
             fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction2 = new BABYLON.Vector3(0, 0, -8);
-            fireSystem.minAngularSpeed = -10;
-            fireSystem.maxAngularSpeed = Math.PI;
-            fireSystem.minEmitPower = 1;
-            fireSystem.maxEmitPower = 3;
-            fireSystem.updateSpeed = 0.007;
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 1);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 0, 1);
+            fireSystem.color1 = new BABYLON.Color4(1, 1, 1, 1);
+            fireSystem.color2 = new BABYLON.Color4(1, 1, 1, 1);
+            fireSystem.updateSpeed = 0.01;
             this.particleSystem = fireSystem;
         };
         return Tornado;

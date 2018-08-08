@@ -107,6 +107,7 @@ abstract class AbstractCharacter {
             self.sfxHit.play();
         }
 
+
         self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
             if (callbackEnd) {
                 callbackEnd();
@@ -115,7 +116,35 @@ abstract class AbstractCharacter {
             self.runAnimationStand();
             self.isAttack = false;
         });
+    }
 
+    public runAnimationSpecialHit(animation: string, callbackStart = null, callbackEnd = null, loop: boolean = false, speed: number = 1): void {
+        if (this.animation) {
+            this.animation.stop();
+        }
+
+        let self = this;
+        let mesh = this.mesh;
+        let skeleton = mesh.skeleton;
+        this.isAttack = true;
+
+        if (callbackEnd) {
+            callbackStart();
+        }
+
+        if (self.sfxHit) {
+            self.sfxHit.play();
+        }
+
+        self.animation = skeleton.beginAnimation(animation, loop, 1*speed, function () {
+            if (callbackEnd) {
+                callbackEnd();
+            }
+
+            self.runAnimationStand();
+            self.isAttack = false;
+            // mesh.skeleton.enableBlending(0.3);
+        });
     }
 
 

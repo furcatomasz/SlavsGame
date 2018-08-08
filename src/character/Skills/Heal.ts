@@ -1,31 +1,31 @@
 namespace Character.Skills {
-    export class Tornado extends Character.Skills.AbstractSkill {
-        static TYPE = 2;
+    export class Heal extends Character.Skills.AbstractSkill {
+        static TYPE = 3;
 
         public getType() {
-            return Character.Skills.Tornado.TYPE;
+            return Character.Skills.Heal.TYPE;
         }
 
 
         protected registerDefaults() {
-            this.image = 'assets/skills/skill02.png';
-            this.name = 'Tornado';
+            this.image = 'assets/skills/skill01.png';
+            this.name = 'Heal';
         }
 
         protected registerHotKey(game: Game) {
             let listener = function listener() {
-                let effectEmitter = new Particles.Tornado(game, game.player.mesh);
+                let effectEmitter = new Particles.Heal(game, game.player.mesh);
+                console.log(effectEmitter);
                 effectEmitter.initParticleSystem();
 
                 game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                    if (event.sourceEvent.key == 2) {
+                    if (event.sourceEvent.key == 3) {
                         game.controller.attackPoint = null;
 
-                        game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_02, function () {
+                        game.player.runAnimationSpecialHit(AbstractCharacter.ANIMATION_STAND_WEAPON, function () {
                             effectEmitter.particleSystem.start();
                         }, function () {
-                            effectEmitter.particleSystem.stop();
-                        });3
+                        }, false, 2);
                     }
                 }));
 
@@ -33,5 +33,6 @@ namespace Character.Skills {
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
+
     }
 }

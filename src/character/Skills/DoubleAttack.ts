@@ -22,9 +22,9 @@ namespace Character.Skills {
                         game.controller.attackPoint = null;
 
                         game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
-                            //effectEmitter.particleSystem.start();
+                            effectEmitter.particleSystem.start();
                         }, function () {
-                            //effectEmitter.particleSystem.stop();
+                            effectEmitter.particleSystem.stop();
                         });
                     }
                 }));

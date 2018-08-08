@@ -22,6 +22,26 @@ class Player extends AbstractCharacter {
         this.game = game;
         this.isAlive = true;
         this.setCharacterStatistics(serverData.activePlayer);
+        this.setCharacterSkills([
+            {
+                type: 1,
+                damage: 1,
+                cooldown: 1,
+                stock: 1
+            },
+            {
+                type: 2,
+                damage: 1,
+                cooldown: 1,
+                stock: 1
+            },
+            {
+                type: 3,
+                damage: 1,
+                cooldown: 1,
+                stock: 1
+            }
+        ]);
         this.connectionId = serverData.connectionId;
         this.isControllable = registerMoving;
         //
@@ -35,7 +55,7 @@ class Player extends AbstractCharacter {
         });
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
-        mesh.skeleton.enableBlending(0.2);
+        mesh.skeleton.enableBlending(0.1);
         mesh.alwaysSelectAsActiveMesh = true;
 
         ///Create box mesh for moving

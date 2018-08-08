@@ -19,6 +19,9 @@ namespace Character.Skills {
                 case Character.Skills.Tornado.TYPE:
                     skill = new Character.Skills.Tornado(this.game);
                     break;
+                case Character.Skills.Heal.TYPE:
+                    skill = new Character.Skills.Heal(this.game);
+                    break;
             }
 
             return skill;

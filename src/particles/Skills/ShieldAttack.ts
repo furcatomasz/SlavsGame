@@ -1,5 +1,5 @@
 namespace Particles {
-    export class DoubleAttack extends AbstractParticle {
+    export class ShieldAttack extends AbstractParticle {
 
         protected initParticleSystem() {
             let box = BABYLON.MeshBuilder.CreateBox("bx0", {size:1}, this.game.getScene());

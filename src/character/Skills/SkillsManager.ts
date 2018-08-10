@@ -13,14 +13,17 @@ namespace Character.Skills {
         public getSkill(type: number) {
             let skill = null;
             switch (type) {
-                case Character.Skills.DoubleAttack.TYPE:
-                    skill = new Character.Skills.DoubleAttack(this.game);
+                case Character.Skills.FastAttack.TYPE:
+                    skill = new Character.Skills.FastAttack(this.game);
                     break;
                 case Character.Skills.Tornado.TYPE:
                     skill = new Character.Skills.Tornado(this.game);
                     break;
                 case Character.Skills.Heal.TYPE:
                     skill = new Character.Skills.Heal(this.game);
+                    break;
+                case Character.Skills.ShieldAttack.TYPE:
+                    skill = new Character.Skills.ShieldAttack(this.game);
                     break;
             }
 

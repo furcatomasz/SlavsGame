@@ -11,7 +11,7 @@ namespace GUI.Inventory {
             this.blockTop = "-27%";
             this.blockLeft = "-22.5%";
 
-            this.item = inventory.guiMain.player.inventory.weapon;
+            this.item = inventory.guiMain.game.player.inventory.weapon;
 
             this.createBlockWithImage();
         }

@@ -4,7 +4,6 @@ namespace GUI {
     export class Main {
 
         public game: Game;
-        public player: Player;
         protected texture: BABYLON.GUI.AdvancedDynamicTexture;
 
         public inventory: GUI.Inventory;
@@ -21,9 +20,8 @@ namespace GUI {
 
         protected buttonpanel: BABYLON.GUI.StackPanel;
 
-        constructor(game: Game, player: Player) {
+        constructor(game: Game) {
             this.game = game;
-            this.player = player;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
             this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
@@ -32,9 +30,9 @@ namespace GUI {
             this.characterTopHp = new GUI.ShowHp();
             this
                 .initInventory()
-                .initAttributes()
+                .initAttributes();
                 // .initSkills()
-                .initFullscreen();
+                // .initFullscreen();
                 // .initQuests()
                 // .initTeams();
         }

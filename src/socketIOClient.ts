@@ -542,7 +542,7 @@ class SocketIOClient {
                     player.showDamage(damage);
 
                     if(player.isControllable) {
-                        game.gui.playerBottomPanel.setHpOnPanel(player.statistics.hp);
+                        player.refreshHpInGui();
                     }
 
                     if(player.isAlive && player.statistics.hp <= 0) {

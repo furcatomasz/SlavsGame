@@ -27,7 +27,7 @@ class Monster extends AbstractCharacter {
         this.mesh = mesh;
         this.statistics = serverData.statistics;
         game.enemies[this.id] = this;
-        mesh.skeleton.enableBlending(0.1);
+        mesh.skeleton.enableBlending(0.2);
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
         mesh.scaling = new BABYLON.Vector3(serverData.scale, serverData.scale, serverData.scale);
         super(serverData.name, game);

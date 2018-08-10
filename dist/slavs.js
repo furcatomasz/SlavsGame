@@ -518,7 +518,7 @@ var Monster = /** @class */ (function (_super) {
         _this.mesh = mesh;
         _this.statistics = serverData.statistics;
         game.enemies[_this.id] = _this;
-        mesh.skeleton.enableBlending(0.1);
+        mesh.skeleton.enableBlending(0.2);
         _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
         mesh.scaling = new BABYLON.Vector3(serverData.scale, serverData.scale, serverData.scale);
         _this = _super.call(this, serverData.name, game) || this;
@@ -1021,7 +1021,7 @@ var SocketIOClient = /** @class */ (function () {
                     player.bloodParticles.start();
                     player.showDamage(damage_2);
                     if (player.isControllable) {
-                        game.gui.playerBottomPanel.setHpOnPanel(player.statistics.hp);
+                        player.refreshHpInGui();
                     }
                     if (player.isAlive && player.statistics.hp <= 0) {
                         player.isAlive = false;
@@ -1315,26 +1315,6 @@ var Player = /** @class */ (function (_super) {
         _this.game = game;
         _this.isAlive = true;
         _this.setCharacterStatistics(serverData.activePlayer);
-        _this.setCharacterSkills([
-            {
-                type: 1,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
-            },
-            {
-                type: 2,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
-            },
-            {
-                type: 3,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
-            }
-        ]);
         _this.connectionId = serverData.connectionId;
         _this.isControllable = registerMoving;
         //
@@ -1347,7 +1327,7 @@ var Player = /** @class */ (function (_super) {
             autoplay: false
         });
         var mesh = game.factories['character'].createInstance('Warrior', true);
-        mesh.skeleton.enableBlending(0.1);
+        mesh.skeleton.enableBlending(0.2);
         mesh.alwaysSelectAsActiveMesh = true;
         ///Create box mesh for moving
         _this.createBoxForMove(game.getScene());
@@ -1369,7 +1349,7 @@ var Player = /** @class */ (function (_super) {
             playerLight.intensity = 0.8;
             playerLight.parent = _this.mesh;
             _this.playerLight = playerLight;
-            game.gui = new GUI.Main(game, _this);
+            game.gui = new GUI.Main(game);
             _this.experience = serverData.activePlayer.experience;
             _this.gold = serverData.activePlayer.gold;
             _this.keys = serverData.activePlayer.specialItems.length;
@@ -1379,6 +1359,32 @@ var Player = /** @class */ (function (_super) {
             _this.freeSkillPoints = serverData.activePlayer.freeSkillPoints;
             _this.name = serverData.activePlayer.name;
             // this.setCharacterSkills(serverData.skills);
+            _this.setCharacterSkills([
+                {
+                    type: 1,
+                    damage: 1,
+                    cooldown: 1,
+                    stock: 1
+                },
+                {
+                    type: 2,
+                    damage: 1,
+                    cooldown: 1,
+                    stock: 1
+                },
+                {
+                    type: 3,
+                    damage: 1,
+                    cooldown: 1,
+                    stock: 1
+                },
+                {
+                    type: 4,
+                    damage: 1,
+                    cooldown: 1,
+                    stock: 1
+                }
+            ]);
             _this.refreshCameraPosition();
         }
         _this = _super.call(this, serverData.activePlayer.name, game) || this;
@@ -1506,6 +1512,10 @@ var Player = /** @class */ (function (_super) {
     };
     Player.prototype.refreshExperienceInGui = function () {
         this.game.gui.playerBottomPanel.expBar.value = this.experiencePercentages;
+    };
+    Player.prototype.refreshHpInGui = function () {
+        this.game.gui.playerBottomPanel.hpBar.maximum = this.statistics.hpMax;
+        this.game.gui.playerBottomPanel.hpBar.value = this.statistics.hp;
     };
     Player.prototype.addExperience = function (experince, experiencePercentages) {
         this.experience += experince;
@@ -1637,6 +1647,372 @@ var Mouse = /** @class */ (function (_super) {
     };
     return Mouse;
 }(Controller));
+/// <reference path="../../babylon/babylon.d.ts"/>
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var Main = /** @class */ (function () {
+        function Main(game) {
+            this.game = game;
+            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
+            this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
+            this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
+            this.playerLogsQuests = new GUI.PlayerQuestsPanel();
+            this.playerQuestInformation = new GUI.PlayerQuestInformation();
+            this.characterTopHp = new GUI.ShowHp();
+            this
+                .initInventory()
+                .initAttributes();
+            // .initSkills()
+            // .initFullscreen();
+            // .initQuests()
+            // .initTeams();
+        }
+        Main.prototype.initInventory = function () {
+            var self = this;
+            this.inventory = new GUI.Inventory(this);
+            var buttonPanel = new BABYLON.GUI.StackPanel();
+            buttonPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            buttonPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            buttonPanel.width = 0.2;
+            buttonPanel.isPointerBlocker = true;
+            this.buttonpanel = buttonPanel;
+            this.texture.addControl(buttonPanel);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.inventory", "Inventory");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            button.isPointerBlocker = true;
+            buttonPanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.inventory.opened) {
+                    self.inventory.open();
+                }
+            });
+            return this;
+        };
+        Main.prototype.initFullscreen = function () {
+            var self = this;
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Fullscreen");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            button.isPointerBlocker = true;
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                self.game.engine.switchFullscreen(false);
+                // self.game.engine.resize();
+            });
+            return this;
+        };
+        Main.prototype.initQuests = function () {
+            var self = this;
+            this.playerQuests = new GUI.PlayerQuests(this);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Quests");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            button.isPointerBlocker = true;
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.playerQuests.opened) {
+                    self.playerQuests.open();
+                }
+            });
+            return this;
+        };
+        Main.prototype.initAttributes = function () {
+            var self = this;
+            this.attributes = new GUI.Attributes(this);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Attributes");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.attributes.opened) {
+                    self.attributes.open();
+                }
+            });
+            return this;
+        };
+        Main.prototype.initSkills = function () {
+            var self = this;
+            this.skills = new GUI.Skills(this);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Skills");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.skills.opened) {
+                    self.skills.open();
+                }
+            });
+            return this;
+        };
+        Main.prototype.initTeams = function () {
+            var self = this;
+            this.teams = new GUI.Rooms(this);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Teams");
+            button.width = 1;
+            button.height = "20px";
+            button.color = "white";
+            button.background = "black";
+            this.buttonpanel.addControl(button);
+            button.onPointerUpObservable.add(function () {
+                if (!self.teams.opened) {
+                    self.teams.open();
+                }
+            });
+            return this;
+        };
+        return Main;
+    }());
+    GUI.Main = Main;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var PlayerBottomPanel = /** @class */ (function () {
+        function PlayerBottomPanel(game) {
+            var self = this;
+            var texture = self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
+            var grid = new BABYLON.GUI.Grid();
+            grid.width = 0.4;
+            grid.height = 0.1;
+            grid.top = -10;
+            grid.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            grid.addRowDefinition(1);
+            grid.addRowDefinition(0.4);
+            grid.addRowDefinition(0.4);
+            texture.addControl(grid);
+            var gridSpecials = new BABYLON.GUI.Grid();
+            gridSpecials.addColumnDefinition(1);
+            gridSpecials.addColumnDefinition(1);
+            gridSpecials.addColumnDefinition(1);
+            gridSpecials.addColumnDefinition(1);
+            gridSpecials.addColumnDefinition(1);
+            gridSpecials.addColumnDefinition(1);
+            grid.addControl(gridSpecials, 0, 0);
+            self.guiGridSkills = gridSpecials;
+            var hpSlider = new BABYLON.GUI.Slider();
+            hpSlider.minimum = 0;
+            hpSlider.maximum = 1;
+            hpSlider.value = 1;
+            hpSlider.width = 1;
+            hpSlider.height = 1;
+            hpSlider.thumbWidth = 0;
+            hpSlider.barOffset = 0;
+            hpSlider.background = 'black';
+            hpSlider.color = "red";
+            hpSlider.borderColor = 'black';
+            grid.addControl(hpSlider, 1, 0);
+            var expSlider = new BABYLON.GUI.Slider();
+            expSlider.minimum = 0;
+            expSlider.maximum = 100;
+            expSlider.value = 0;
+            expSlider.width = 1;
+            expSlider.height = 1;
+            expSlider.thumbWidth = 0;
+            expSlider.barOffset = 0;
+            expSlider.background = 'black';
+            expSlider.color = "blue";
+            expSlider.borderColor = 'yellow';
+            grid.addControl(expSlider, 2, 0);
+        }
+        return PlayerBottomPanel;
+    }());
+    GUI.PlayerBottomPanel = PlayerBottomPanel;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var PlayerLogsPanel = /** @class */ (function () {
+        function PlayerLogsPanel(game) {
+            this.texts = [];
+            var self = this;
+            self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameLogsUi");
+            var characterLogsPanel = new BABYLON.GUI.StackPanel();
+            characterLogsPanel.width = "15%";
+            characterLogsPanel.left = "1%";
+            characterLogsPanel.top = "-5%";
+            characterLogsPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            characterLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            self.texture.addControl(characterLogsPanel);
+            self.guiPanel = characterLogsPanel;
+        }
+        /**
+         * @param message
+         * @param color
+         */
+        PlayerLogsPanel.prototype.addText = function (message, color) {
+            if (color === void 0) { color = 'white'; }
+            var text = new BABYLON.GUI.TextBlock();
+            text.text = message;
+            text.color = color;
+            text.textWrapping = true;
+            text.height = "25px";
+            text.width = "100%";
+            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            text.fontSize = 14;
+            this.guiPanel.addControl(text);
+            this.texts.push(text);
+            this.removeOldText();
+        };
+        PlayerLogsPanel.prototype.removeOldText = function () {
+            if (this.texts.length >= GUI.PlayerLogsPanel.TEXT_COUNT) {
+                var textToDispose = this.texts.shift();
+                this.guiPanel.removeControl(textToDispose);
+                textToDispose = null;
+            }
+            return this;
+        };
+        PlayerLogsPanel.TEXT_COUNT = 6;
+        return PlayerLogsPanel;
+    }());
+    GUI.PlayerLogsPanel = PlayerLogsPanel;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var PlayerQuestInformation = /** @class */ (function () {
+        function PlayerQuestInformation() {
+            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("PlayerQuestInformation");
+        }
+        PlayerQuestInformation.prototype.addQuest = function (questData) {
+            var self = this;
+            if (self.guiPanel) {
+                self.guiPanel.dispose();
+            }
+            var playerQuestsInformationPanel = new BABYLON.GUI.StackPanel();
+            playerQuestsInformationPanel.width = "25%";
+            playerQuestsInformationPanel.top = 40;
+            playerQuestsInformationPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            playerQuestsInformationPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            self.texture.addControl(playerQuestsInformationPanel);
+            self.guiPanel = playerQuestsInformationPanel;
+            var title = new BABYLON.GUI.TextBlock();
+            title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            title.text = questData.title;
+            title.top = "0%";
+            title.color = "orange";
+            title.fontSize = 18;
+            title.resizeToFit = true;
+            this.guiPanel.addControl(title);
+            questData.chapters[questData.actualChapter].requirements.forEach(function (requirement) {
+                var requirementDescription = new BABYLON.GUI.TextBlock();
+                requirementDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                requirementDescription.text = requirement.name;
+                requirementDescription.resizeToFit = true;
+                requirementDescription.color = "white";
+                requirementDescription.top = "5%";
+                requirementDescription.fontSize = 14;
+                self.guiPanel.addControl(requirementDescription);
+            });
+        };
+        return PlayerQuestInformation;
+    }());
+    GUI.PlayerQuestInformation = PlayerQuestInformation;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+var GUI;
+(function (GUI) {
+    var PlayerQuestsPanel = /** @class */ (function () {
+        function PlayerQuestsPanel() {
+            this.texts = [];
+            var self = this;
+            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("playersQuestsLogsUi");
+            var playerQuestsLogsPanel = new BABYLON.GUI.StackPanel();
+            playerQuestsLogsPanel.width = "25%";
+            playerQuestsLogsPanel.top = 40;
+            playerQuestsLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            self.texture.addControl(playerQuestsLogsPanel);
+            self.guiPanel = playerQuestsLogsPanel;
+        }
+        /**
+         * @param message
+         * @param color
+         */
+        PlayerQuestsPanel.prototype.addText = function (message, color) {
+            if (color === void 0) { color = 'white'; }
+            var text = new BABYLON.GUI.TextBlock();
+            text.text = message;
+            text.color = color;
+            text.textWrapping = true;
+            text.height = "25px";
+            text.width = "100%";
+            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            text.fontSize = 14;
+            this.guiPanel.addControl(text);
+            this.texts.push(text);
+            var self = this;
+            setTimeout(function () {
+                var textToDispose = self.texts.shift();
+                self.guiPanel.removeControl(textToDispose);
+            }, 4000);
+        };
+        return PlayerQuestsPanel;
+    }());
+    GUI.PlayerQuestsPanel = PlayerQuestsPanel;
+})(GUI || (GUI = {}));
+/// <reference path="../game.ts"/>
+/// <reference path="../characters/AbstractCharacter.ts"/>
+var GUI;
+(function (GUI) {
+    var ShowHp = /** @class */ (function () {
+        function ShowHp() {
+            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("characterShowHp");
+        }
+        ShowHp.prototype.showHpCharacter = function (character) {
+            if (this.guiPanel) {
+                this.texture.removeControl(this.guiPanel);
+            }
+            this.character = character;
+            var characterPanel = new BABYLON.GUI.StackPanel();
+            characterPanel.width = "25%";
+            characterPanel.top = 10;
+            characterPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            this.guiPanel = characterPanel;
+            this.texture.addControl(characterPanel);
+            var textBlock = new BABYLON.GUI.TextBlock("gui.panelhp.name", character.name);
+            textBlock.color = 'white';
+            textBlock.height = "20px";
+            textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            var hpSlider = new BABYLON.GUI.Slider();
+            hpSlider.minimum = 0;
+            hpSlider.maximum = character.statistics.hpMax;
+            hpSlider.value = character.statistics.hp;
+            hpSlider.width = "100%";
+            hpSlider.height = "10px";
+            hpSlider.thumbWidth = 0;
+            hpSlider.barOffset = 0;
+            hpSlider.background = 'black';
+            hpSlider.color = "red";
+            hpSlider.borderColor = 'black';
+            this.hpBar = hpSlider;
+            characterPanel.addControl(textBlock);
+            characterPanel.addControl(hpSlider);
+        };
+        ShowHp.prototype.refreshPanel = function () {
+            if (this.character) {
+                this.hpBar.value = this.character.statistics.hp;
+            }
+        };
+        ShowHp.prototype.hideHpBar = function () {
+            if (this.guiPanel) {
+                this.texture.removeControl(this.guiPanel);
+            }
+        };
+        return ShowHp;
+    }());
+    GUI.ShowHp = ShowHp;
+})(GUI || (GUI = {}));
 /// <reference path="../game.ts"/>
 var Factories;
 (function (Factories) {
@@ -2410,406 +2786,6 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
     }
     return EnvironmentSelectCharacter;
 }());
-/// <reference path="../../babylon/babylon.d.ts"/>
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var Main = /** @class */ (function () {
-        function Main(game, player) {
-            this.game = game;
-            this.player = player;
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
-            this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
-            this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
-            this.playerLogsQuests = new GUI.PlayerQuestsPanel();
-            this.playerQuestInformation = new GUI.PlayerQuestInformation();
-            this.characterTopHp = new GUI.ShowHp();
-            this
-                .initInventory()
-                .initAttributes()
-                // .initSkills()
-                .initFullscreen();
-            // .initQuests()
-            // .initTeams();
-        }
-        Main.prototype.initInventory = function () {
-            var self = this;
-            this.inventory = new GUI.Inventory(this);
-            var buttonPanel = new BABYLON.GUI.StackPanel();
-            buttonPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            buttonPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            buttonPanel.width = 0.2;
-            buttonPanel.isPointerBlocker = true;
-            this.buttonpanel = buttonPanel;
-            this.texture.addControl(buttonPanel);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.inventory", "Inventory");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            button.isPointerBlocker = true;
-            buttonPanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.inventory.opened) {
-                    self.inventory.open();
-                }
-            });
-            return this;
-        };
-        Main.prototype.initFullscreen = function () {
-            var self = this;
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Fullscreen");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            button.isPointerBlocker = true;
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                self.game.engine.switchFullscreen(false);
-                // self.game.engine.resize();
-            });
-            return this;
-        };
-        Main.prototype.initQuests = function () {
-            var self = this;
-            this.playerQuests = new GUI.PlayerQuests(this);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Quests");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            button.isPointerBlocker = true;
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.playerQuests.opened) {
-                    self.playerQuests.open();
-                }
-            });
-            return this;
-        };
-        Main.prototype.initAttributes = function () {
-            var self = this;
-            this.attributes = new GUI.Attributes(this);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Attributes");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.attributes.opened) {
-                    self.attributes.open();
-                }
-            });
-            return this;
-        };
-        Main.prototype.initSkills = function () {
-            var self = this;
-            this.skills = new GUI.Skills(this);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Skills");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.skills.opened) {
-                    self.skills.open();
-                }
-            });
-            return this;
-        };
-        Main.prototype.initTeams = function () {
-            var self = this;
-            this.teams = new GUI.Rooms(this);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Teams");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.teams.opened) {
-                    self.teams.open();
-                }
-            });
-            return this;
-        };
-        return Main;
-    }());
-    GUI.Main = Main;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var PlayerBottomPanel = /** @class */ (function () {
-        function PlayerBottomPanel(game) {
-            var self = this;
-            var listener = function listener() {
-                var texture = self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
-                var grid = new BABYLON.GUI.Grid();
-                grid.width = 0.5;
-                grid.height = 0.1;
-                grid.top = -10;
-                grid.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                grid.addRowDefinition(1);
-                grid.addRowDefinition(0.4);
-                grid.addRowDefinition(0.4);
-                texture.addControl(grid);
-                var gridSpecials = new BABYLON.GUI.Grid();
-                gridSpecials.addColumnDefinition(1);
-                gridSpecials.addColumnDefinition(1);
-                gridSpecials.addColumnDefinition(1);
-                gridSpecials.addColumnDefinition(1);
-                gridSpecials.addColumnDefinition(1);
-                gridSpecials.addColumnDefinition(1);
-                gridSpecials.addColumnDefinition(1);
-                gridSpecials.addColumnDefinition(1);
-                gridSpecials.addColumnDefinition(1);
-                grid.addControl(gridSpecials, 0, 0);
-                var image = new BABYLON.GUI.Image("but", "https://rawgit.com/furcatomasz/slavs/master/tornado.png");
-                image.width = 1;
-                image.height = 1;
-                image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-                gridSpecials.addControl(image, 0, 0);
-                var image = new BABYLON.GUI.Image("but", "https://rawgit.com/furcatomasz/slavs/master/shieldAttack.png");
-                image.width = 1;
-                image.height = 1;
-                image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-                gridSpecials.addControl(image, 0, 1);
-                var image = new BABYLON.GUI.Image("but", "https://rawgit.com/furcatomasz/slavs/master/34035328_1915153681862120_9155447399651475456_n.png");
-                image.width = 1;
-                image.height = 1;
-                image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-                var textBlock = new BABYLON.GUI.TextBlock("mixture", '1');
-                textBlock.color = 'white';
-                textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                gridSpecials.addControl(image, 0, 2);
-                gridSpecials.addControl(textBlock, 0, 2);
-                var hpSlider = new BABYLON.GUI.Slider();
-                hpSlider.minimum = 0;
-                hpSlider.maximum = game.player.statistics.hpMax;
-                hpSlider.value = game.player.statistics.hp;
-                hpSlider.width = 1;
-                hpSlider.height = 1;
-                hpSlider.thumbWidth = 0;
-                hpSlider.barOffset = 0;
-                hpSlider.background = 'black';
-                hpSlider.color = "red";
-                hpSlider.borderColor = 'black';
-                grid.addControl(hpSlider, 1, 0);
-                var expSlider = new BABYLON.GUI.Slider();
-                expSlider.minimum = 0;
-                expSlider.maximum = 100;
-                expSlider.value = game.player.experiencePercentages;
-                expSlider.width = 1;
-                expSlider.height = 1;
-                expSlider.thumbWidth = 0;
-                expSlider.barOffset = 0;
-                expSlider.background = 'black';
-                expSlider.color = "blue";
-                expSlider.borderColor = 'yellow';
-                grid.addControl(expSlider, 2, 0);
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
-        }
-        PlayerBottomPanel.prototype.setHpOnPanel = function (hp) {
-            this.hpBar.value = hp;
-        };
-        return PlayerBottomPanel;
-    }());
-    GUI.PlayerBottomPanel = PlayerBottomPanel;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var PlayerLogsPanel = /** @class */ (function () {
-        function PlayerLogsPanel(game) {
-            this.texts = [];
-            var self = this;
-            var listener = function listener() {
-                self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameLogsUi");
-                var characterLogsPanel = new BABYLON.GUI.StackPanel();
-                characterLogsPanel.width = "15%";
-                characterLogsPanel.left = "1%";
-                characterLogsPanel.top = "-5%";
-                characterLogsPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                characterLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                self.texture.addControl(characterLogsPanel);
-                self.guiPanel = characterLogsPanel;
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
-        }
-        /**
-         * @param message
-         * @param color
-         */
-        PlayerLogsPanel.prototype.addText = function (message, color) {
-            if (color === void 0) { color = 'white'; }
-            var text = new BABYLON.GUI.TextBlock();
-            text.text = message;
-            text.color = color;
-            text.textWrapping = true;
-            text.height = "25px";
-            text.width = "100%";
-            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            text.fontSize = 14;
-            this.guiPanel.addControl(text);
-            this.texts.push(text);
-            this.removeOldText();
-        };
-        PlayerLogsPanel.prototype.removeOldText = function () {
-            if (this.texts.length >= GUI.PlayerLogsPanel.TEXT_COUNT) {
-                var textToDispose = this.texts.shift();
-                this.guiPanel.removeControl(textToDispose);
-                textToDispose = null;
-            }
-            return this;
-        };
-        PlayerLogsPanel.TEXT_COUNT = 6;
-        return PlayerLogsPanel;
-    }());
-    GUI.PlayerLogsPanel = PlayerLogsPanel;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var PlayerQuestInformation = /** @class */ (function () {
-        function PlayerQuestInformation() {
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("PlayerQuestInformation");
-        }
-        PlayerQuestInformation.prototype.addQuest = function (questData) {
-            var self = this;
-            if (self.guiPanel) {
-                self.guiPanel.dispose();
-            }
-            var playerQuestsInformationPanel = new BABYLON.GUI.StackPanel();
-            playerQuestsInformationPanel.width = "25%";
-            playerQuestsInformationPanel.top = 40;
-            playerQuestsInformationPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            playerQuestsInformationPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            self.texture.addControl(playerQuestsInformationPanel);
-            self.guiPanel = playerQuestsInformationPanel;
-            var title = new BABYLON.GUI.TextBlock();
-            title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            title.text = questData.title;
-            title.top = "0%";
-            title.color = "orange";
-            title.fontSize = 18;
-            title.resizeToFit = true;
-            this.guiPanel.addControl(title);
-            questData.chapters[questData.actualChapter].requirements.forEach(function (requirement) {
-                var requirementDescription = new BABYLON.GUI.TextBlock();
-                requirementDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                requirementDescription.text = requirement.name;
-                requirementDescription.resizeToFit = true;
-                requirementDescription.color = "white";
-                requirementDescription.top = "5%";
-                requirementDescription.fontSize = 14;
-                self.guiPanel.addControl(requirementDescription);
-            });
-        };
-        return PlayerQuestInformation;
-    }());
-    GUI.PlayerQuestInformation = PlayerQuestInformation;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-var GUI;
-(function (GUI) {
-    var PlayerQuestsPanel = /** @class */ (function () {
-        function PlayerQuestsPanel() {
-            this.texts = [];
-            var self = this;
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("playersQuestsLogsUi");
-            var playerQuestsLogsPanel = new BABYLON.GUI.StackPanel();
-            playerQuestsLogsPanel.width = "25%";
-            playerQuestsLogsPanel.top = 40;
-            playerQuestsLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            self.texture.addControl(playerQuestsLogsPanel);
-            self.guiPanel = playerQuestsLogsPanel;
-        }
-        /**
-         * @param message
-         * @param color
-         */
-        PlayerQuestsPanel.prototype.addText = function (message, color) {
-            if (color === void 0) { color = 'white'; }
-            var text = new BABYLON.GUI.TextBlock();
-            text.text = message;
-            text.color = color;
-            text.textWrapping = true;
-            text.height = "25px";
-            text.width = "100%";
-            text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            text.fontSize = 14;
-            this.guiPanel.addControl(text);
-            this.texts.push(text);
-            var self = this;
-            setTimeout(function () {
-                var textToDispose = self.texts.shift();
-                self.guiPanel.removeControl(textToDispose);
-            }, 4000);
-        };
-        return PlayerQuestsPanel;
-    }());
-    GUI.PlayerQuestsPanel = PlayerQuestsPanel;
-})(GUI || (GUI = {}));
-/// <reference path="../game.ts"/>
-/// <reference path="../characters/AbstractCharacter.ts"/>
-var GUI;
-(function (GUI) {
-    var ShowHp = /** @class */ (function () {
-        function ShowHp() {
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("characterShowHp");
-        }
-        ShowHp.prototype.showHpCharacter = function (character) {
-            if (this.guiPanel) {
-                this.texture.removeControl(this.guiPanel);
-            }
-            this.character = character;
-            var characterPanel = new BABYLON.GUI.StackPanel();
-            characterPanel.width = "25%";
-            characterPanel.top = 10;
-            characterPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            this.guiPanel = characterPanel;
-            this.texture.addControl(characterPanel);
-            var textBlock = new BABYLON.GUI.TextBlock("gui.panelhp.name", character.name);
-            textBlock.color = 'white';
-            textBlock.height = "20px";
-            textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            var hpSlider = new BABYLON.GUI.Slider();
-            hpSlider.minimum = 0;
-            hpSlider.maximum = character.statistics.hpMax;
-            hpSlider.value = character.statistics.hp;
-            hpSlider.width = "100%";
-            hpSlider.height = "10px";
-            hpSlider.thumbWidth = 0;
-            hpSlider.barOffset = 0;
-            hpSlider.background = 'black';
-            hpSlider.color = "red";
-            hpSlider.borderColor = 'black';
-            this.hpBar = hpSlider;
-            characterPanel.addControl(textBlock);
-            characterPanel.addControl(hpSlider);
-        };
-        ShowHp.prototype.refreshPanel = function () {
-            if (this.character) {
-                this.hpBar.value = this.character.statistics.hp;
-            }
-        };
-        ShowHp.prototype.hideHpBar = function () {
-            if (this.guiPanel) {
-                this.texture.removeControl(this.guiPanel);
-            }
-        };
-        return ShowHp;
-    }());
-    GUI.ShowHp = ShowHp;
-})(GUI || (GUI = {}));
 /// <reference path="../../babylon/babylon.d.ts"/>
 /// <reference path="../game.ts"/>
 var Particles;
@@ -3885,11 +3861,100 @@ var Character;
                 this.cooldown = cooldown;
                 this.damage = damage;
                 this.stock = stock;
+                this.animationTime = 0;
+                this.animationLoop = false;
+                this.registerDefaults(game);
                 this.registerHotKey(game);
-                this.registerDefaults();
+                this.registerAnimations();
+                this.createSkillImageInGUI(game);
             }
             AbstractSkill.prototype.getImageUrl = function () {
                 return this.image;
+            };
+            AbstractSkill.prototype.registerHotKey = function (game) {
+                var self = this;
+                var listener = function listener() {
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == self.getType()) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationSpecialHit(self.animationName, function () {
+                                self.effectEmitter.particleSystem.start();
+                                game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function () {
+                                    game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
+                                });
+                            }, function () {
+                                self.effectEmitter.particleSystem.stop();
+                            }, self.animationLoop, self.animationSpeed);
+                            if (self.animationTime) {
+                                setTimeout(function () {
+                                    game.player.animation.stop();
+                                }, self.animationTime);
+                            }
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            AbstractSkill.prototype.createSkillImageInGUI = function (game) {
+                var image = this.getImageUrl();
+                var number = this.getType();
+                var grid = game.gui.playerBottomPanel.guiGridSkills;
+                var imageSkill = new BABYLON.GUI.Image('image_' + number, image);
+                imageSkill.width = 1;
+                imageSkill.height = 1;
+                imageSkill.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
+                var textBlock = new BABYLON.GUI.TextBlock('shortcut_' + number, '' + number + '');
+                textBlock.color = 'white';
+                textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                var overlay = new BABYLON.GUI.Rectangle();
+                overlay.width = 1;
+                overlay.height = 0;
+                overlay.alpha = 0.7;
+                overlay.color = "black";
+                overlay.background = "black";
+                overlay.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                imageSkill.animations = [];
+                imageSkill.animations.push(this.animationAlpha);
+                overlay.animations = [];
+                overlay.animations.push(this.animationOverlay);
+                grid.addControl(imageSkill, 0, number - 1);
+                grid.addControl(textBlock, 0, number - 1);
+                grid.addControl(overlay, 0, number - 1);
+                this.guiImage = imageSkill;
+                this.guiOverlay = overlay;
+                this.guiText = textBlock;
+            };
+            AbstractSkill.prototype.registerAnimations = function () {
+                var animationAlpha = new BABYLON.Animation("animationAlpha", "alpha", 60, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+                animationAlpha.setKeys([
+                    {
+                        frame: 0,
+                        value: 1
+                    },
+                    {
+                        frame: 15,
+                        value: 0
+                    },
+                    {
+                        frame: 30,
+                        value: 1
+                    }
+                ]);
+                var animationOverlay = new BABYLON.Animation("animationOverlay", "height", 15, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+                animationOverlay.setKeys([
+                    {
+                        frame: 0,
+                        value: 1
+                    },
+                    {
+                        frame: 30,
+                        value: 0
+                    },
+                ]);
+                this.animationOverlay = animationOverlay;
+                this.animationAlpha = animationAlpha;
             };
             AbstractSkill.TYPE = 0;
             return AbstractSkill;
@@ -3901,40 +3966,34 @@ var Character;
 (function (Character) {
     var Skills;
     (function (Skills) {
-        var DoubleAttack = /** @class */ (function (_super) {
-            __extends(DoubleAttack, _super);
-            function DoubleAttack() {
+        var FastAttack = /** @class */ (function (_super) {
+            __extends(FastAttack, _super);
+            function FastAttack() {
                 return _super !== null && _super.apply(this, arguments) || this;
             }
-            DoubleAttack.prototype.getType = function () {
-                return Character.Skills.DoubleAttack.TYPE;
+            FastAttack.prototype.getType = function () {
+                return Character.Skills.FastAttack.TYPE;
             };
-            DoubleAttack.prototype.registerDefaults = function () {
-                this.image = 'assets/skills/skill01.png';
-                this.name = 'Double attack';
-            };
-            DoubleAttack.prototype.registerHotKey = function (game) {
+            FastAttack.prototype.registerDefaults = function (game) {
+                this.image = 'assets/skills/fastAttack.png';
+                this.name = 'Fast attack';
+                this.animationName = AbstractCharacter.ANIMATION_ATTACK_01;
+                this.animationSpeed = 1.5;
+                this.animationLoop = true;
+                this.animationTime = 1000;
+                var self = this;
                 var listener = function listener() {
-                    var effectEmitter = new Particles.DoubleAttack(game, game.player.mesh);
+                    var effectEmitter = new Particles.FastAttack(game, game.player.mesh);
                     effectEmitter.initParticleSystem();
-                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                        if (event.sourceEvent.key == 1) {
-                            game.controller.attackPoint = null;
-                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_01, function () {
-                                effectEmitter.particleSystem.start();
-                            }, function () {
-                                effectEmitter.particleSystem.stop();
-                            });
-                        }
-                    }));
+                    self.effectEmitter = effectEmitter;
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
             };
-            DoubleAttack.TYPE = 1;
-            return DoubleAttack;
+            FastAttack.TYPE = 2;
+            return FastAttack;
         }(Character.Skills.AbstractSkill));
-        Skills.DoubleAttack = DoubleAttack;
+        Skills.FastAttack = FastAttack;
     })(Skills = Character.Skills || (Character.Skills = {}));
 })(Character || (Character = {}));
 var Character;
@@ -3949,32 +4008,56 @@ var Character;
             Heal.prototype.getType = function () {
                 return Character.Skills.Heal.TYPE;
             };
-            Heal.prototype.registerDefaults = function () {
-                this.image = 'assets/skills/skill01.png';
+            Heal.prototype.registerDefaults = function (game) {
+                this.image = 'assets/skills/heal.png';
                 this.name = 'Heal';
-            };
-            Heal.prototype.registerHotKey = function (game) {
+                this.animationName = AbstractCharacter.ANIMATION_STAND_WEAPON;
+                this.animationSpeed = 2;
+                var self = this;
                 var listener = function listener() {
                     var effectEmitter = new Particles.Heal(game, game.player.mesh);
-                    console.log(effectEmitter);
                     effectEmitter.initParticleSystem();
-                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                        if (event.sourceEvent.key == 3) {
-                            game.controller.attackPoint = null;
-                            game.player.runAnimationSpecialHit(AbstractCharacter.ANIMATION_STAND_WEAPON, function () {
-                                effectEmitter.particleSystem.start();
-                            }, function () {
-                            }, false, 2);
-                        }
-                    }));
+                    self.effectEmitter = effectEmitter;
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
             };
-            Heal.TYPE = 3;
+            Heal.TYPE = 1;
             return Heal;
         }(Character.Skills.AbstractSkill));
         Skills.Heal = Heal;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var ShieldAttack = /** @class */ (function (_super) {
+            __extends(ShieldAttack, _super);
+            function ShieldAttack() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            ShieldAttack.prototype.getType = function () {
+                return Character.Skills.ShieldAttack.TYPE;
+            };
+            ShieldAttack.prototype.registerDefaults = function (game) {
+                this.image = 'assets/skills/shieldAttack.png';
+                this.name = 'Shield attack';
+                this.animationName = AbstractCharacter.ANIMATION_SKILL_01;
+                this.animationSpeed = 1;
+                var self = this;
+                var listener = function listener() {
+                    var effectEmitter = new Particles.ShieldAttack(game, game.player.mesh);
+                    effectEmitter.initParticleSystem();
+                    self.effectEmitter = effectEmitter;
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            ShieldAttack.TYPE = 4;
+            return ShieldAttack;
+        }(Character.Skills.AbstractSkill));
+        Skills.ShieldAttack = ShieldAttack;
     })(Skills = Character.Skills || (Character.Skills = {}));
 })(Character || (Character = {}));
 var Character;
@@ -3991,14 +4074,17 @@ var Character;
             SkillsManager.prototype.getSkill = function (type) {
                 var skill = null;
                 switch (type) {
-                    case Character.Skills.DoubleAttack.TYPE:
-                        skill = new Character.Skills.DoubleAttack(this.game);
+                    case Character.Skills.FastAttack.TYPE:
+                        skill = new Character.Skills.FastAttack(this.game);
                         break;
                     case Character.Skills.Tornado.TYPE:
                         skill = new Character.Skills.Tornado(this.game);
                         break;
                     case Character.Skills.Heal.TYPE:
                         skill = new Character.Skills.Heal(this.game);
+                        break;
+                    case Character.Skills.ShieldAttack.TYPE:
+                        skill = new Character.Skills.ShieldAttack(this.game);
                         break;
                 }
                 return skill;
@@ -4020,30 +4106,23 @@ var Character;
             Tornado.prototype.getType = function () {
                 return Character.Skills.Tornado.TYPE;
             };
-            Tornado.prototype.registerDefaults = function () {
-                this.image = 'assets/skills/skill02.png';
+            Tornado.prototype.registerDefaults = function (game) {
+                this.image = 'assets/skills/tornado.png';
                 this.name = 'Tornado';
-            };
-            Tornado.prototype.registerHotKey = function (game) {
+                this.animationName = AbstractCharacter.ANIMATION_SKILL_02;
+                this.animationSpeed = 1.5;
+                this.animationLoop = true;
+                this.animationTime = 1000;
+                var self = this;
                 var listener = function listener() {
                     var effectEmitter = new Particles.Tornado(game, game.player.mesh);
                     effectEmitter.initParticleSystem();
-                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                        if (event.sourceEvent.key == 2) {
-                            game.controller.attackPoint = null;
-                            game.player.runAnimationHit(AbstractCharacter.ANIMATION_SKILL_02, function () {
-                                effectEmitter.particleSystem.start();
-                            }, function () {
-                                effectEmitter.particleSystem.stop();
-                            });
-                            3;
-                        }
-                    }));
+                    self.effectEmitter = effectEmitter;
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
             };
-            Tornado.TYPE = 2;
+            Tornado.TYPE = 3;
             return Tornado;
         }(Character.Skills.AbstractSkill));
         Skills.Tornado = Tornado;
@@ -4588,7 +4667,7 @@ var GUI;
             return this;
         };
         Inventory.prototype.showSpecialItemsAndGold = function () {
-            var image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", '' + this.guiMain.player.gold + '', "assets/gui/gold.png");
+            var image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", '' + this.guiMain.game.player.gold + '', "assets/gui/gold.png");
             image.thickness = 0;
             image.color = 'white';
             image.height = '80px';
@@ -4598,7 +4677,7 @@ var GUI;
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             this.guiTexture.addControl(image);
-            var image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", '' + this.guiMain.player.keys + '', "assets/gui/key.png");
+            var image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", '' + this.guiMain.game.player.keys + '', "assets/gui/key.png");
             image2.thickness = 0;
             image2.color = 'white';
             image2.height = '80px';
@@ -4624,7 +4703,7 @@ var GUI;
         };
         Inventory.prototype.showItems = function () {
             var self = this;
-            var inventory = this.guiMain.player.inventory;
+            var inventory = this.guiMain.game.player.inventory;
             if (this.panelItems) {
                 this.guiTexture.removeControl(this.panelItems);
             }
@@ -5157,42 +5236,41 @@ var GUI;
 })(GUI || (GUI = {}));
 var Particles;
 (function (Particles) {
-    var DoubleAttack = /** @class */ (function (_super) {
-        __extends(DoubleAttack, _super);
-        function DoubleAttack() {
+    var FastAttack = /** @class */ (function (_super) {
+        __extends(FastAttack, _super);
+        function FastAttack() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
-        DoubleAttack.prototype.initParticleSystem = function () {
+        FastAttack.prototype.initParticleSystem = function () {
             var box = BABYLON.MeshBuilder.CreateBox("bx0", { size: 1 }, this.game.getScene());
             box.visibility = 0;
             box.scaling = new BABYLON.Vector3(1, 1, 0.1);
             box.position = new BABYLON.Vector3(0, 0, 0.1);
             box.parent = this.emitter;
-            box.attachToBone(this.emitter.skeleton.bones[13], this.emitter);
+            box.attachToBone(this.emitter.skeleton.bones[25], this.emitter);
             var fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             fireSystem.emitter = box;
             fireSystem.minSize = 1;
-            fireSystem.maxSize = 1;
+            fireSystem.maxSize = 1.5;
             fireSystem.minEmitPower = 0;
             fireSystem.maxEmitPower = 1;
-            fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 0.2;
+            fireSystem.minLifeTime = 0.15;
+            fireSystem.maxLifeTime = 0.25;
             fireSystem.emitRate = 150;
             fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-            fireSystem.minEmitBox = new BABYLON.Vector3(-1, -1, -1);
-            fireSystem.maxEmitBox = new BABYLON.Vector3(1, 1, 1);
+            fireSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0);
             fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
             fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
             fireSystem.direction2 = new BABYLON.Vector3(0, 0, 0);
             fireSystem.color1 = new BABYLON.Color4(1, 1, 1, 1);
             fireSystem.color2 = new BABYLON.Color4(1, 1, 1, 1);
-            fireSystem.updateSpeed = 0.01;
             this.particleSystem = fireSystem;
         };
-        return DoubleAttack;
+        return FastAttack;
     }(Particles.AbstractParticle));
-    Particles.DoubleAttack = DoubleAttack;
+    Particles.FastAttack = FastAttack;
 })(Particles || (Particles = {}));
 var Particles;
 (function (Particles) {
@@ -5240,6 +5318,45 @@ var Particles;
 })(Particles || (Particles = {}));
 var Particles;
 (function (Particles) {
+    var ShieldAttack = /** @class */ (function (_super) {
+        __extends(ShieldAttack, _super);
+        function ShieldAttack() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        ShieldAttack.prototype.initParticleSystem = function () {
+            var box = BABYLON.MeshBuilder.CreateBox("bx0", { size: 1 }, this.game.getScene());
+            box.visibility = 0;
+            box.scaling = new BABYLON.Vector3(1, 1, 0.1);
+            box.position = new BABYLON.Vector3(0, 0, 0.1);
+            box.parent = this.emitter;
+            box.attachToBone(this.emitter.skeleton.bones[13], this.emitter);
+            var fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
+            fireSystem.emitter = box;
+            fireSystem.minSize = 1;
+            fireSystem.maxSize = 1;
+            fireSystem.minEmitPower = 0;
+            fireSystem.maxEmitPower = 1;
+            fireSystem.minLifeTime = 0.2;
+            fireSystem.maxLifeTime = 0.2;
+            fireSystem.emitRate = 150;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.minEmitBox = new BABYLON.Vector3(-1, -1, -1);
+            fireSystem.maxEmitBox = new BABYLON.Vector3(1, 1, 1);
+            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.color1 = new BABYLON.Color4(1, 1, 1, 1);
+            fireSystem.color2 = new BABYLON.Color4(1, 1, 1, 1);
+            fireSystem.updateSpeed = 0.01;
+            this.particleSystem = fireSystem;
+        };
+        return ShieldAttack;
+    }(Particles.AbstractParticle));
+    Particles.ShieldAttack = ShieldAttack;
+})(Particles || (Particles = {}));
+var Particles;
+(function (Particles) {
     var Tornado = /** @class */ (function (_super) {
         __extends(Tornado, _super);
         function Tornado() {
@@ -5256,8 +5373,8 @@ var Particles;
             fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             fireSystem.emitter = box;
             fireSystem.minSize = 1;
-            fireSystem.maxSize = 1;
-            fireSystem.minEmitPower = 0;
+            fireSystem.maxSize = 1.5;
+            fireSystem.minEmitPower = 1;
             fireSystem.maxEmitPower = 1;
             fireSystem.minLifeTime = 0.2;
             fireSystem.maxLifeTime = 0.2;
@@ -5265,9 +5382,9 @@ var Particles;
             fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
             fireSystem.minEmitBox = new BABYLON.Vector3(0, 0, 0);
             fireSystem.maxEmitBox = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 1);
-            fireSystem.direction2 = new BABYLON.Vector3(0, 0, 1);
+            fireSystem.gravity = new BABYLON.Vector3(0, -25, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 0, 0);
             fireSystem.color1 = new BABYLON.Color4(1, 1, 1, 1);
             fireSystem.color2 = new BABYLON.Color4(1, 1, 1, 1);
             fireSystem.updateSpeed = 0.01;
@@ -5514,7 +5631,7 @@ var GUI;
                 _this.blockHeight = "30%";
                 _this.blockTop = "-25%";
                 _this.blockLeft = "-8%";
-                _this.item = inventory.guiMain.player.inventory.armor;
+                _this.item = inventory.guiMain.game.player.inventory.armor;
                 _this.createBlockWithImage();
                 return _this;
             }
@@ -5536,7 +5653,7 @@ var GUI;
                 _this.blockHeight = "20%";
                 _this.blockTop = "-10%";
                 _this.blockLeft = "-23.5%";
-                _this.item = inventory.guiMain.player.inventory.boots;
+                _this.item = inventory.guiMain.game.player.inventory.boots;
                 _this.createBlockWithImage();
                 return _this;
             }
@@ -5558,7 +5675,7 @@ var GUI;
                 _this.blockHeight = "20%";
                 _this.blockTop = "-11%";
                 _this.blockLeft = "-4%";
-                _this.item = inventory.guiMain.player.inventory.gloves;
+                _this.item = inventory.guiMain.game.player.inventory.gloves;
                 _this.createBlockWithImage();
                 return _this;
             }
@@ -5580,7 +5697,7 @@ var GUI;
                 _this.blockHeight = "20%";
                 _this.blockTop = "-44%";
                 _this.blockLeft = "-13%";
-                _this.item = inventory.guiMain.player.inventory.helm;
+                _this.item = inventory.guiMain.game.player.inventory.helm;
                 _this.createBlockWithImage();
                 return _this;
             }
@@ -5602,7 +5719,7 @@ var GUI;
                 _this.blockHeight = "20%";
                 _this.blockTop = "-27%";
                 _this.blockLeft = "-3%";
-                _this.item = inventory.guiMain.player.inventory.shield;
+                _this.item = inventory.guiMain.game.player.inventory.shield;
                 _this.createBlockWithImage();
                 return _this;
             }
@@ -5624,7 +5741,7 @@ var GUI;
                 _this.blockHeight = "20%";
                 _this.blockTop = "-27%";
                 _this.blockLeft = "-22.5%";
-                _this.item = inventory.guiMain.player.inventory.weapon;
+                _this.item = inventory.guiMain.game.player.inventory.weapon;
                 _this.createBlockWithImage();
                 return _this;
             }

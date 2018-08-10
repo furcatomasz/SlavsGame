@@ -1,22 +1,22 @@
 namespace Character.Skills {
-    export class Tornado extends Character.Skills.AbstractSkill {
-        static TYPE = 3;
+    export class FastAttack extends Character.Skills.AbstractSkill {
+        static TYPE = 2;
 
         public getType() {
-            return Character.Skills.Tornado.TYPE;
+            return Character.Skills.FastAttack.TYPE;
         }
 
         protected registerDefaults(game: Game) {
-            this.image = 'assets/skills/tornado.png';
-            this.name = 'Tornado';
-            this.animationName = AbstractCharacter.ANIMATION_SKILL_02;
+            this.image = 'assets/skills/fastAttack.png';
+            this.name = 'Fast attack';
+            this.animationName = AbstractCharacter.ANIMATION_ATTACK_01;
             this.animationSpeed = 1.5;
             this.animationLoop = true;
             this.animationTime = 1000;
 
             let self = this;
             let listener = function listener() {
-                let effectEmitter = new Particles.Tornado(game, game.player.mesh);
+                let effectEmitter = new Particles.FastAttack(game, game.player.mesh);
                 effectEmitter.initParticleSystem();
                 self.effectEmitter = effectEmitter;
 
@@ -24,6 +24,7 @@ namespace Character.Skills {
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
+
 
     }
 }

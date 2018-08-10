@@ -22,26 +22,6 @@ class Player extends AbstractCharacter {
         this.game = game;
         this.isAlive = true;
         this.setCharacterStatistics(serverData.activePlayer);
-        this.setCharacterSkills([
-            {
-                type: 1,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
-            },
-            {
-                type: 2,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
-            },
-            {
-                type: 3,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
-            }
-        ]);
         this.connectionId = serverData.connectionId;
         this.isControllable = registerMoving;
         //
@@ -55,7 +35,7 @@ class Player extends AbstractCharacter {
         });
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
-        mesh.skeleton.enableBlending(0.1);
+        mesh.skeleton.enableBlending(0.2);
         mesh.alwaysSelectAsActiveMesh = true;
 
         ///Create box mesh for moving
@@ -88,7 +68,7 @@ class Player extends AbstractCharacter {
             playerLight.parent = this.mesh;
             this.playerLight = playerLight;
 
-            game.gui = new GUI.Main(game, this);
+            game.gui = new GUI.Main(game);
 
             this.experience = serverData.activePlayer.experience;
             this.gold = serverData.activePlayer.gold;
@@ -99,6 +79,32 @@ class Player extends AbstractCharacter {
             this.freeSkillPoints = serverData.activePlayer.freeSkillPoints;
             this.name = serverData.activePlayer.name;
             // this.setCharacterSkills(serverData.skills);
+            this.setCharacterSkills([
+                {
+                    type: 1,
+                    damage: 1,
+                    cooldown: 1,
+                    stock: 1
+                },
+                {
+                    type: 2,
+                    damage: 1,
+                    cooldown: 1,
+                    stock: 1
+                },
+                {
+                    type: 3,
+                    damage: 1,
+                    cooldown: 1,
+                    stock: 1
+                },
+                {
+                    type: 4,
+                    damage: 1,
+                    cooldown: 1,
+                    stock: 1
+                }
+            ]);
 
             this.refreshCameraPosition();
         }
@@ -248,6 +254,11 @@ class Player extends AbstractCharacter {
 
     public refreshExperienceInGui() {
         this.game.gui.playerBottomPanel.expBar.value = this.experiencePercentages;
+    }
+
+    public refreshHpInGui() {
+        this.game.gui.playerBottomPanel.hpBar.maximum = this.statistics.hpMax;
+        this.game.gui.playerBottomPanel.hpBar.value = this.statistics.hp;
     }
 
     public addExperience(experince: number, experiencePercentages: number) {

@@ -2,9 +2,10 @@
 namespace GUI {
     export class PlayerBottomPanel {
 
-        public hpBar;
-        public expBar;
-        public guiPanel;
+        public hpBar: BABYLON.GUI.Image;
+        public hpBarText: BABYLON.GUI.TextBlock;
+        public expBar: BABYLON.GUI.Image;
+        public expBarText: BABYLON.GUI.TextBlock;
         public guiGridSkills: BABYLON.GUI.Grid;
         protected texture: BABYLON.GUI.AdvancedDynamicTexture;
 
@@ -12,52 +13,74 @@ namespace GUI {
             let self = this;
             let texture = self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
 
-            let grid = new BABYLON.GUI.Grid();
-            grid.width = 0.4;
-            grid.height = 0.1;
-            grid.top = -10;
-            grid.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            grid.addRowDefinition(1);
-            grid.addRowDefinition(0.4);
-            grid.addRowDefinition(0.4);
-            texture.addControl(grid);
+            let container = new BABYLON.GUI.Rectangle('gui.panel.bottom');
+            container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            container.width = '606px';
+            container.height = '90px';
+            container.isPointerBlocker = true;
+            container.thickness = 0;
+            texture.addControl(container);
+
+            let toolbar = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar.png');
+            toolbar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            toolbar.height = '60px';
+            container.addControl(toolbar);
+
+            let toolbarHp = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar_hp.png');
+            toolbarHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            toolbarHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            toolbarHp.width = 1;
+            toolbarHp.height = '14px';
+            toolbarHp.top = '-60px';
+            this.hpBar = toolbarHp;
+            console.log(1);
+            container.addControl(toolbarHp);
+
+            let textBlockHp = new BABYLON.GUI.TextBlock();
+            textBlockHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            textBlockHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            textBlockHp.top = '-60px';
+            textBlockHp.width = 1;
+            textBlockHp.height = '14px';
+            textBlockHp.color = "white";
+            textBlockHp.fontSize = 10;
+            this.hpBarText = textBlockHp;
+            container.addControl(textBlockHp);
+
+            let toolbarExp = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar_exp.png');
+            toolbarExp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            toolbarExp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            toolbarExp.width = 1;
+            toolbarExp.height = '14px';
+            toolbarExp.top = '-74px';
+            this.expBar = toolbarExp;
+            container.addControl(toolbarExp);
+
+            let textBlockExp = new BABYLON.GUI.TextBlock();
+            textBlockExp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            textBlockExp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            textBlockExp.top = '-74px';
+            textBlockExp.width = 1;
+            textBlockExp.height = '14px';
+            textBlockExp.color = "white";
+            textBlockExp.fontSize = 10;
+            this.expBarText = textBlockExp;
+            container.addControl(textBlockExp);
 
             let gridSpecials = new BABYLON.GUI.Grid();
+            gridSpecials.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            gridSpecials.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            gridSpecials.width = '215px';
+            gridSpecials.height ='44px';
+            gridSpecials.top = '-9px';
+            gridSpecials.left = '-1px';
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);
-            gridSpecials.addColumnDefinition(1);
-            gridSpecials.addColumnDefinition(1);
-            grid.addControl(gridSpecials, 0, 0);
+            container.addControl(gridSpecials);
             self.guiGridSkills = gridSpecials;
-
-            let hpSlider = new BABYLON.GUI.Slider();
-            hpSlider.minimum = 0;
-            hpSlider.maximum = 1;
-            hpSlider.value = 1;
-            hpSlider.width = 1;
-            hpSlider.height = 1;
-            hpSlider.thumbWidth = 0;
-            hpSlider.barOffset = 0;
-            hpSlider.background = 'black';
-            hpSlider.color = "red";
-            hpSlider.borderColor = 'black';
-            grid.addControl(hpSlider, 1, 0);
-
-            let expSlider = new BABYLON.GUI.Slider();
-            expSlider.minimum = 0;
-            expSlider.maximum = 100;
-            expSlider.value = 0;
-            expSlider.width = 1;
-            expSlider.height = 1;
-            expSlider.thumbWidth = 0;
-            expSlider.barOffset = 0;
-            expSlider.background = 'black';
-            expSlider.color = "blue";
-            expSlider.borderColor = 'yellow';
-            grid.addControl(expSlider, 2, 0);
-
         }
 
     }

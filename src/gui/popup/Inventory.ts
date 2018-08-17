@@ -37,24 +37,69 @@ namespace GUI {
             let image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", ''+this.guiMain.game.player.gold+'', "assets/gui/gold.png");
             image.thickness = 0;
             image.color = 'white';
-            image.height = '80px';
-            image.width = '180px';
-            image.left = "-17%";
-            image.top = '-3%';
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            this.guiTexture.addControl(image);
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            this.container.addControl(image);
 
             let image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", ''+this.guiMain.game.player.keys+'', "assets/gui/key.png");
             image2.thickness = 0;
             image2.color = 'white';
-            image2.height = '80px';
-            image2.width = '180px';
-            image2.left = "-3%";
-            image2.top = '-3%';
             image2.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            this.guiTexture.addControl(image2);
+            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            this.container.addControl(image2);
+
+            let image3 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.wine", ''+this.guiMain.game.player.keys+'', "assets/skills/heal.png");
+            image3.thickness = 0;
+            image3.color = 'white';
+            image3.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image3.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            this.container.addControl(image3);
+
+            let checkSizeListener = function (width) {
+                if (width > 1819) {
+                    image.height = '24px';
+                    image.width = '150px';
+                    image.left = "60px";
+                    image.top = '-48px';
+                    image.fontSize = 18;
+
+                    image2.height = '24px';
+                    image2.width = '150px';
+                    image2.left = "235px";
+                    image2.top = '-48px';
+                    image2.fontSize = 18;
+
+                    image3.height = '24px';
+                    image3.width = '150px';
+                    image3.left = "435px";
+                    image3.top = '-48px';
+                    image3.fontSize = 18;
+
+                } else {
+                    image.width = '75px';
+                    image.height = '12px';
+                    image.top = '-24px';
+                    image.left = '30px';
+                    image.fontSize = 9;
+
+                    image2.height = '12px';
+                    image2.width = '75px';
+                    image2.left = "120px";
+                    image2.top = '-24px';
+                    image2.fontSize = 9;
+
+                    image3.height = '12px';
+                    image3.width = '75px';
+                    image3.left = "210px";
+                    image3.top = '-24px';
+                    image3.fontSize = 9;
+                }
+            }
+            checkSizeListener(window.innerWidth);
+            window.addEventListener("resize", function () {
+                let width = window.innerWidth;
+                checkSizeListener(width);
+            });
         }
 
         public close() {
@@ -82,25 +127,35 @@ namespace GUI {
 
             let eqiupedItems = inventory.getEquipedItems();
 
-            ////items
+
+            let grid = new BABYLON.GUI.Grid();
+            grid.width = '568px';
+            grid.height ='288px';
+            grid.top = '247px';
+            grid.addColumnDefinition(1);
+            grid.addColumnDefinition(1);
+            grid.addColumnDefinition(1);
+            grid.addColumnDefinition(1);
+            grid.addColumnDefinition(1);
+            grid.addColumnDefinition(1);
+            grid.addColumnDefinition(1);
+            grid.addColumnDefinition(1);
+
+            grid.addRowDefinition(1);
+            grid.addRowDefinition(1);
+            grid.addRowDefinition(1);
+            grid.addRowDefinition(1);
+
+            this.container.addControl(grid);
+
+
             let itemCount = 0;
-            let left = -42;
-            let level = 1;
-            let top = 0;
-            let panelItems = new BABYLON.GUI.Rectangle();
-            panelItems.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            panelItems.width = "32%";
-            panelItems.height = "45%";
-            panelItems.top = "26%";
-            panelItems.thickness = 0;
-            panelItems.isPointerBlocker = true;
-            this.panelItems = panelItems;
+            let row = -1;
+            let collumn = -1;
 
             for (let i = 0; i < inventory.items.length; i++) {
-
                 let breakDisplayItem;
                 let item = inventory.items[i];
-
                 for (let equipedItem of eqiupedItems) {
                     if (equipedItem == item) {
                         breakDisplayItem = true;
@@ -112,32 +167,25 @@ namespace GUI {
                     continue;
                 }
 
-                if (itemCount == 0) {
-                    top = -35;
-                } else if (itemCount % 5 == 0) {
-                    left = -42;
-                    top = (30 * level) - 35;
-                    level++;
-                } else {
-                    left += 20;
+                if (itemCount % 8 == 0) {
+                    row++;
+                    collumn = -1;
                 }
+
                 itemCount++;
+                collumn++;
 
-                let result = new BABYLON.GUI.Button(name);
-                result.width = 0.20;
-                result.height = 0.3;
-                result.left = left + "%";
-                result.top = top + "%";
-                result.thickness = 0;
-                result.fontSize = '14';
+                let image = BABYLON.GUI.Button.CreateImageOnlyButton('gui.popup.image.' + item.name, 'assets/Miniatures/' + item.image + '.png');
+                image.height = 1;
+                image.width = 1;
+                image.thickness = 0;
+                image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
 
-                let image = this.createItemImage(item);
-
-                result.addControl(image);
-                panelItems.addControl(result);
+                grid.addControl(image, row, collumn);
 
                 let tooltipButton = null;
-                result.onPointerEnterObservable.add(function () {
+                image.onPointerEnterObservable.add(function () {
                     let text = item.name;
                     if(item.statistics.damage > 0) {
                         text += "\nDamage: "+item.statistics.damage+"";
@@ -146,18 +194,18 @@ namespace GUI {
                         text += "\nArmor: "+item.statistics.armor+"";
                     }
 
-                    tooltipButton = new GUI.TooltipButton(result, text);
+                    tooltipButton = new GUI.TooltipButton(image, text);
                 });
 
-                result.onPointerOutObservable.add(function () {
-                    result.children.forEach(function(value, key) {
+                image.onPointerOutObservable.add(function () {
+                    image.children.forEach(function(value, key) {
                        if(value.name == 'tooltip') {
-                           result.removeControl(value);
+                           image.removeControl(value);
                        }
                     });
                 });
 
-                result.onPointerUpObservable.add(function () {
+                image.onPointerUpObservable.add(function () {
                     self.guiMain.game.player.inventory.emitEquip(item);
                     self.onPointerUpItemImage(item);
                     self.showItems();
@@ -167,20 +215,21 @@ namespace GUI {
                 });
             }
 
-            this.guiTexture.addControl(panelItems);
-
-            window.addEventListener('resize', function () {
-                if (window.innerWidth > 1600) {
-                    panelItems.height = "45%";
-                    panelItems.top = "26%";
-                } else if (window.innerWidth > 1200) {
-                    panelItems.height = "30%";
-                    panelItems.top = "20%";
+            let checkSizeListener = function (width) {
+                if (width > 1819) {
+                    grid.width = '568px';
+                    grid.height = '288px';
+                    grid.top = '247px';
                 } else {
-                    panelItems.height = "20%";
-                    panelItems.top = "15%";
+                    grid.width = '284px';
+                    grid.height = '144px';
+                    grid.top = '123px';
                 }
-
+            }
+            checkSizeListener(window.innerWidth);
+            window.addEventListener("resize", function () {
+                let width = window.innerWidth;
+                checkSizeListener(width);
             });
 
             return this;
@@ -245,10 +294,7 @@ namespace GUI {
          */
         public createItemImage(item:Items.Item) {
             let image = new BABYLON.GUI.Image('gui.popup.image.' + item.name, 'assets/Miniatures/' + item.image + '.png');
-            image.height = 0.6;
-
             image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
             return image;
         }

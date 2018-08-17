@@ -132,9 +132,6 @@ abstract class AbstractCharacter {
             callbackStart();
         }
 
-        if (self.sfxHit) {
-            self.sfxHit.play();
-        }
 
         self.animation = skeleton.beginAnimation(animation, loop, 1*speed, function () {
             if (callbackEnd) {

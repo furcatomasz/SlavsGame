@@ -5,12 +5,12 @@ namespace GUI {
 
         public guiMain: GUI.Main;
         public guiTexture: BABYLON.GUI.AdvancedDynamicTexture;
+        public container: BABYLON.GUI.Rectangle;
         public opened: boolean;
 
         protected name: string;
         protected imageUrl: string;
         protected position: number;
-        protected container: BABYLON.GUI.StackPanel;
         protected containerBackground: BABYLON.GUI.Image;
         protected buttonClose: BABYLON.GUI.Control;
 
@@ -23,40 +23,81 @@ namespace GUI {
          */
         protected initTexture() {
             this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
-            let container = new BABYLON.GUI.StackPanel('gui.panel.' + this.name);
+            let container = new BABYLON.GUI.Rectangle('gui.panel.');
             container.horizontalAlignment = this.position;
-            container.width = 0.33;
-            container.height = 1;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            container.thickness = 0;
             container.isPointerBlocker = true;
             this.container = container;
+            this.guiTexture.addControl(container);
 
-            let image = new BABYLON.GUI.Image('gui.popup.image.' + this.name, this.imageUrl);
-            image.horizontalAlignment = this.position;
-            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            let image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             image.width = 1;
             image.height = 1;
+            container.addControl(image);
 
             this.container.addControl(image);
             this.containerBackground = image;
+
+            let widthContainer = '607px';
+            let heightContainer = '960px';
+            let checklSizeListener = function (width) {
+                if (width > 1819) {
+                    container.width = parseInt(widthContainer)+'px';
+                    container.height = parseInt(heightContainer)+'px';
+                // } else if(width >= 1416 && width <= 1819) {
+                //     container.width = parseInt(widthContainer)/1.5+'px';
+                //     container.height = parseInt(heightContainer)/1.5+'px';
+                } else {
+                    container.width = parseInt(widthContainer)/2+'px';
+                    container.height = parseInt(heightContainer)/2+'px';
+                }
+            };
+            checklSizeListener(window.innerWidth);
+            window.addEventListener("resize", function () {
+                let width = window.innerWidth;
+                checklSizeListener(width);
+            });
 
             return this;
         }
 
         protected createButtonClose() {
             let self = this;
-            let buttonClose = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Close");
+            let buttonClose = BABYLON.GUI.Button.CreateImageWithCenterTextButton("attributesButtonClose", "Close", "assets/gui/button.png");
             buttonClose.color = "white";
             buttonClose.background = "black";
-            buttonClose.width = "70px;";
-            buttonClose.height = "40px";
+            buttonClose.width = "180px;";
+            buttonClose.height = "48px";
+            buttonClose.thickness = 0;
             buttonClose.horizontalAlignment = this.position;
             buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonClose.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
 
             buttonClose.onPointerUpObservable.add(function () {
                 self.close();
             });
 
-            this.guiTexture.addControl(buttonClose);
+            let checkSize = function(width) {
+                if(width > 1819) {
+                    buttonClose.width = '180px';
+                    buttonClose.height = '48px';
+                    buttonClose.fontSize = 20;
+                } else {
+                    buttonClose.width = '90px';
+                    buttonClose.height = '23px';
+                    buttonClose.fontSize = 12;
+                }
+            };
+            checkSize(window.innerWidth);
+            window.addEventListener("resize",function(){
+                let width = window.innerWidth;
+                checkSize(width);
+            });
+
+            this.container.addControl(buttonClose);
             this.buttonClose = buttonClose;
 
             return this;

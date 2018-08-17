@@ -107,6 +107,8 @@ class Player extends AbstractCharacter {
             ]);
 
             this.refreshCameraPosition();
+            this.refreshHpInGui();
+            this.refreshExperienceInGui();
         }
 
         super(serverData.activePlayer.name, game);
@@ -253,12 +255,16 @@ class Player extends AbstractCharacter {
     }
 
     public refreshExperienceInGui() {
-        this.game.gui.playerBottomPanel.expBar.value = this.experiencePercentages;
+        this.game.gui.playerBottomPanel.expBar.width = this.experiencePercentages/100;
+        this.game.gui.playerBottomPanel.expBarText.text = this.experiencePercentages+'%';
+
     }
 
     public refreshHpInGui() {
-        this.game.gui.playerBottomPanel.hpBar.maximum = this.statistics.hpMax;
-        this.game.gui.playerBottomPanel.hpBar.value = this.statistics.hp;
+        let percentage = Math.round(this.statistics.hp * 100 / this.statistics.hpMax);
+        this.game.gui.playerBottomPanel.hpBar.width = percentage/100;
+        this.game.gui.playerBottomPanel.hpBarText.text = this.statistics.hp+' / '+ this.statistics.hpMax;
+
     }
 
     public addExperience(experince: number, experiencePercentages: number) {

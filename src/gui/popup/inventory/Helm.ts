@@ -6,10 +6,10 @@ namespace GUI.Inventory {
         constructor(inventory: GUI.Inventory) {
             super(inventory);
 
-            this.blockWidth = "6%";
-            this.blockHeight = "20%";
-            this.blockTop = "-44%";
-            this.blockLeft = "-13%";
+            this.blockWidth = "96px";
+            this.blockHeight = "92px";
+            this.blockTop = "121px";
+            this.blockLeft = "257px";
 
             this.item = inventory.guiMain.game.player.inventory.helm;
 

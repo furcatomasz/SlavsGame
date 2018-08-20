@@ -10,9 +10,9 @@ namespace GUI {
 
         constructor(game:Game) {
             this.texts = [];
-            let self = this;
-            self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameLogsUi");
+            this.texture = game.gui.texture;
 
+            let self = this;
             let characterLogsPanel = new BABYLON.GUI.StackPanel();
             characterLogsPanel.width = "15%";
             characterLogsPanel.left = "1%";

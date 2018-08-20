@@ -9,8 +9,8 @@ namespace GUI {
         protected texture:BABYLON.GUI.AdvancedDynamicTexture;
         protected character: AbstractCharacter
 
-        constructor() {
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("characterShowHp");
+        constructor(game: Game) {
+            this.texture = game.gui.texture;
         }
 
         public showHpCharacter(character:AbstractCharacter) {

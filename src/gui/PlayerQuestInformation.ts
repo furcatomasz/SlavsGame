@@ -5,8 +5,8 @@ namespace GUI {
         public guiPanel:BABYLON.GUI.StackPanel;
         protected texture:BABYLON.GUI.AdvancedDynamicTexture;
 
-        constructor() {
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("PlayerQuestInformation");
+        constructor(game: Game) {
+            this.texture = game.gui.texture;
         }
         
         public addQuest(questData) {

@@ -11,7 +11,6 @@ namespace GUI {
         }
 
         public open() {
-            let self = this;
             this.opened = true;
             this.initTexture();
 
@@ -30,52 +29,47 @@ namespace GUI {
             let panel = new BABYLON.GUI.StackPanel('attributes.panel');
             panel.isPointerBlocker = true;
             panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            panel.width = "33%";
-            panel.top = "5%";
+            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            panel.width = 1;
+            panel.height = 0.9;
+            panel.top = '10%';
 
-            this.guiTexture.addControl(panel);
+            this.container.addControl(panel);
 
             let textPlayerName = this.createText(this.guiMain.game.player.name);
-            textPlayerName.color = 'yellow';
-            textPlayerName.height = '8%';
-            textPlayerName.fontSize = 36;
+            textPlayerName.color = 'green';
+            textPlayerName.fontSize = 18;
             panel.addControl(textPlayerName);
 
             let textPlayerLVL = this.createText(this.guiMain.game.player.lvl+' LVL');
-            textPlayerLVL.color = 'yellow';
-            textPlayerLVL.height = '8%';
-            textPlayerLVL.fontSize = 28;
+            textPlayerLVL.color = 'green';
+            textPlayerLVL.fontSize = 18;
             panel.addControl(textPlayerLVL);
 
-            let textAttributes = this.createText('Attributes');
-            textAttributes.color = 'green';
-            textAttributes.height = '8%';
-            textAttributes.fontSize = 36;
-            panel.addControl(textAttributes);
-
-            this.createAttribute(1, 'Damage:' + this.guiMain.player.statistics.damage, panel);
-            this.createAttribute(2, 'Armor:' + this.guiMain.player.statistics.armor, panel);
-            this.createAttribute(3, 'HP:' + this.guiMain.player.statistics.hp, panel);
-            this.createAttribute(4, 'Attack speed:' + this.guiMain.player.statistics.attackSpeed, panel);
-            this.createAttribute(6, 'Block chance:' + this.guiMain.player.statistics.blockChance, panel);
+            this.createAttribute(1, 'Damage:' + this.guiMain.game.player.statistics.damage, panel);
+            this.createAttribute(2, 'Armor:' + this.guiMain.game.player.statistics.armor, panel);
+            this.createAttribute(3, 'HP:' + this.guiMain.game.player.statistics.hp, panel);
+            this.createAttribute(4, 'Attack speed:' + this.guiMain.game.player.statistics.attackSpeed, panel);
+            this.createAttribute(6, 'Block chance:' + this.guiMain.game.player.statistics.blockChance, panel);
 
             if (this.guiMain.game.player.freeAttributesPoints) {
                 let textAttributes = this.createText('You have ' + this.guiMain.game.player.freeAttributesPoints + ' free attribute points.');
                 textAttributes.color = 'red';
+                textAttributes.fontSize = 16;
+
                 panel.addControl(textAttributes);
             }
 
             let textStatistics = this.createText('Statistics');
             textStatistics.color = 'green';
             textStatistics.height = '8%';
-            textStatistics.fontSize = 36;
+            textStatistics.fontSize = 18;
             panel.addControl(textStatistics);
 
-            let damage = this.createText('Damage:' + this.guiMain.player.statisticsAll.damage);
+            let damage = this.createText('Damage:' + this.guiMain.game.player.statisticsAll.damage);
             panel.addControl(damage);
 
-            let armor = this.createText('Armor:' + this.guiMain.player.statisticsAll.armor);
+            let armor = this.createText('Armor:' + this.guiMain.game.player.statisticsAll.armor);
             panel.addControl(armor);
 
         }
@@ -96,8 +90,9 @@ namespace GUI {
                 let button = BABYLON.GUI.Button.CreateImageButton("plus", text, "assets/gui/plus.png");
                 button.height = "5%";
                 button.thickness = 0;
-                button.width = 0.4;
+                button.width = 0.8;
                 button.color = 'white';
+                button.fontSize = 16;
                 control.addControl(button);
 
                 button.onPointerUpObservable.add(function () {

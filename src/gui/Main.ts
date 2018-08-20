@@ -4,7 +4,7 @@ namespace GUI {
     export class Main {
 
         public game: Game;
-        protected texture: BABYLON.GUI.AdvancedDynamicTexture;
+        public texture: BABYLON.GUI.AdvancedDynamicTexture;
 
         public inventory: GUI.Inventory;
         public attributes: GUI.Attributes;
@@ -22,49 +22,16 @@ namespace GUI {
 
         constructor(game: Game) {
             this.game = game;
+            game.gui = this;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
             this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
-            this.playerLogsQuests = new GUI.PlayerQuestsPanel();
-            this.playerQuestInformation = new GUI.PlayerQuestInformation();
-            this.characterTopHp = new GUI.ShowHp();
-            this
-                .initInventory()
-                .initAttributes();
-                // .initSkills()
-                // .initFullscreen();
-                // .initQuests()
-                // .initTeams();
-        }
+            this.playerLogsQuests = new GUI.PlayerQuestsPanel(game);
+            this.playerQuestInformation = new GUI.PlayerQuestInformation(game);
+            this.characterTopHp = new GUI.ShowHp(game);
 
-        protected initInventory() {
-            let self = this;
+            this.attributes = new GUI.Attributes(this);
             this.inventory = new GUI.Inventory(this);
-            let buttonPanel = new BABYLON.GUI.StackPanel();
-            buttonPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            buttonPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            buttonPanel.width = 0.2;
-            buttonPanel.isPointerBlocker = true;
-            this.buttonpanel = buttonPanel;
-            this.texture.addControl(buttonPanel);
-
-            let button = BABYLON.GUI.Button.CreateSimpleButton("button.inventory", "Inventory");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            button.isPointerBlocker = true;
-
-            buttonPanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.inventory.opened) {
-                    self.inventory.open();
-                }
-            });
-
-
-
-            return this;
         }
 
         protected initFullscreen() {
@@ -110,45 +77,6 @@ namespace GUI {
             return this;
         }
 
-        protected initAttributes() {
-            let self = this;
-            this.attributes = new GUI.Attributes(this);
-
-            let button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Attributes");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.attributes.opened) {
-                    self.attributes.open();
-                }
-            });
-
-            return this;
-        }
-
-        protected initSkills() {
-            let self = this;
-            this.skills = new GUI.Skills(this);
-
-            let button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Skills");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.skills.opened) {
-                    self.skills.open();
-                }
-            });
-
-
-
-            return this;
-        }
 
         protected initTeams() {
             let self = this;

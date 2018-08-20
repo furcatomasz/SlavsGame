@@ -68,7 +68,7 @@ class Player extends AbstractCharacter {
             playerLight.parent = this.mesh;
             this.playerLight = playerLight;
 
-            game.gui = new GUI.Main(game);
+            new GUI.Main(game);
 
             this.experience = serverData.activePlayer.experience;
             this.gold = serverData.activePlayer.gold;

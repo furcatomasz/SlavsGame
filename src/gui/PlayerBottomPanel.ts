@@ -11,76 +11,136 @@ namespace GUI {
 
         constructor(game: Game) {
             let self = this;
-            let texture = self.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("gameUI");
+            let texture = game.gui.texture;
 
             let container = new BABYLON.GUI.Rectangle('gui.panel.bottom');
             container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            container.width = '606px';
-            container.height = '90px';
+            container.width = '685px';
+            container.height = '95px';
             container.isPointerBlocker = true;
             container.thickness = 0;
             texture.addControl(container);
 
             let toolbar = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar.png');
             toolbar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            toolbar.height = '60px';
+            toolbar.height = '65px';
             container.addControl(toolbar);
 
+            let containerSliders = new BABYLON.GUI.Rectangle('gui.panel.bottom');
+            containerSliders.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            containerSliders.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            containerSliders.width = '605px';
+            containerSliders.height = '32px';
+            containerSliders.isPointerBlocker = true;
+            containerSliders.thickness = 0;
+            container.addControl(containerSliders);
+
             let toolbarHp = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar_hp.png');
-            toolbarHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            toolbarHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             toolbarHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            toolbarHp.width = 1;
+            toolbarHp.width = 0;
             toolbarHp.height = '14px';
-            toolbarHp.top = '-60px';
+            toolbarHp.top = '16px';
             this.hpBar = toolbarHp;
-            console.log(1);
-            container.addControl(toolbarHp);
+            containerSliders.addControl(toolbarHp);
 
             let textBlockHp = new BABYLON.GUI.TextBlock();
-            textBlockHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            textBlockHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             textBlockHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textBlockHp.top = '-60px';
+            textBlockHp.top = '16px';
             textBlockHp.width = 1;
             textBlockHp.height = '14px';
             textBlockHp.color = "white";
             textBlockHp.fontSize = 10;
             this.hpBarText = textBlockHp;
-            container.addControl(textBlockHp);
+            containerSliders.addControl(textBlockHp);
 
             let toolbarExp = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar_exp.png');
-            toolbarExp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            toolbarExp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             toolbarExp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             toolbarExp.width = 1;
             toolbarExp.height = '14px';
-            toolbarExp.top = '-74px';
+            toolbarExp.top = '0px';
             this.expBar = toolbarExp;
-            container.addControl(toolbarExp);
+            containerSliders.addControl(toolbarExp);
 
             let textBlockExp = new BABYLON.GUI.TextBlock();
-            textBlockExp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            textBlockExp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             textBlockExp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textBlockExp.top = '-74px';
+            textBlockExp.top = '0px';
             textBlockExp.width = 1;
             textBlockExp.height = '14px';
             textBlockExp.color = "white";
             textBlockExp.fontSize = 10;
             this.expBarText = textBlockExp;
-            container.addControl(textBlockExp);
+            containerSliders.addControl(textBlockExp);
 
             let gridSpecials = new BABYLON.GUI.Grid();
             gridSpecials.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             gridSpecials.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             gridSpecials.width = '215px';
             gridSpecials.height ='44px';
-            gridSpecials.top = '-9px';
-            gridSpecials.left = '-1px';
+            gridSpecials.top = '-11px';
+            gridSpecials.left = '4px';
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);
             container.addControl(gridSpecials);
             self.guiGridSkills = gridSpecials;
+
+            let buttonAttributes = BABYLON.GUI.Button.CreateImageOnlyButton("button.attributes", "assets/gui/buttons/attributes.png");
+            buttonAttributes.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            buttonAttributes.width = '112px';
+            buttonAttributes.height = '21px';
+            buttonAttributes.thickness = 0;
+            // buttonAttributes.top = '7px';
+            buttonAttributes.left = '93px';
+            container.addControl(buttonAttributes);
+            buttonAttributes.onPointerUpObservable.add(function () {
+                if (!game.gui.attributes.opened) {
+                    game.gui.attributes.open();
+                }
+            });
+
+            let buttonSkills = BABYLON.GUI.Button.CreateImageOnlyButton("button.skills", "assets/gui/buttons/skills.png");
+            buttonSkills.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            buttonSkills.width = '112px';
+            buttonSkills.height = '21px';
+            buttonSkills.thickness = 0;
+            buttonSkills.top = '27px';
+            buttonSkills.left = '93px';
+            container.addControl(buttonSkills);
+            buttonSkills.onPointerUpObservable.add(function () {
+                // if (!game.gui.skills.opened) {
+                //     game.gui.skills.open();
+                // }
+            });
+
+            let buttonInventory = BABYLON.GUI.Button.CreateImageOnlyButton("button.skills", "assets/gui/buttons/inventory.png");
+            buttonInventory.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            buttonInventory.width = '112px';
+            buttonInventory.height = '21px';
+            buttonInventory.thickness = 0;
+            buttonInventory.top = '0px';
+            buttonInventory.left = '479px';
+            container.addControl(buttonInventory);
+            buttonInventory.onPointerUpObservable.add(function () {
+                if (!game.gui.inventory.opened) {
+                    game.gui.inventory.open();
+                }
+            });
+
+            let buttonOptions = BABYLON.GUI.Button.CreateImageOnlyButton("button.skills", "assets/gui/buttons/options.png");
+            buttonOptions.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            buttonOptions.width = '112px';
+            buttonOptions.height = '21px';
+            buttonOptions.thickness = 0;
+            buttonOptions.top = '27px';
+            buttonOptions.left = '479px';
+            container.addControl(buttonOptions);
+
         }
 
     }

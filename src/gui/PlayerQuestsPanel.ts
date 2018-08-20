@@ -6,10 +6,11 @@ namespace GUI {
         protected texts:Array;
         protected texture:BABYLON.GUI.AdvancedDynamicTexture;
 
-        constructor() {
+        constructor(game: Game) {
             this.texts = [];
+            this.texture = game.gui.texture;
+
             let self = this;
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("playersQuestsLogsUi");
 
             let playerQuestsLogsPanel = new BABYLON.GUI.StackPanel();
             playerQuestsLogsPanel.width = "25%";

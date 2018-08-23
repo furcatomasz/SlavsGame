@@ -1,5 +1,3 @@
-/// <reference path="../Main.ts"/>
-/// <reference path="../../../bower_components/babylonjs/dist/gui/babylon.gui.d.ts"/>
 namespace GUI {
     export abstract class Popup {
 

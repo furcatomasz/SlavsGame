@@ -1,3 +1,8 @@
+/// <reference path="scenes/Scene.ts"/>
+/// <reference path="game.ts"/>
+/// <reference path="gui/popup/Popup.ts"/>
+/// <reference path="gui/popup/inventory/EquipBlock.ts"/>
+
 class Events {
     static PLAYER_CONNECTED = 'playerConnected';
     public playerConnected:Event;

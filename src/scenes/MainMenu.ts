@@ -1,11 +1,3 @@
-/// <reference path="../../babylon/babylon.d.ts"/>
-/// <reference path="../../babylon/ts/babylon.gui.d.ts"/>
-/// <reference path="Scene.ts"/>
-/// <reference path="../game.ts"/>
-/// <reference path="../objects/characters.ts"/>
-/// <reference path="../objects/items.ts"/>
-/// <reference path="../objects/environment.ts"/>
-
 class MainMenu extends Scene {
 
     constructor(game:Game) {

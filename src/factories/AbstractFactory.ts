@@ -1,4 +1,3 @@
-/// <reference path="../game.ts"/>
 namespace Factories {
     export abstract class AbstractFactory {
 

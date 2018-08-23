@@ -1,5 +1,3 @@
-/// <reference path="Controller.ts"/>
-
 class Mouse extends Controller {
 
     public registerControls(scene: BABYLON.Scene) {

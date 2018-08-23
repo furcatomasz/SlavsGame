@@ -1,5 +1,4 @@
-/// <reference path="game.ts"/>
-/// <reference path="characters/monsters/monster.ts"/>
+/// <reference path="game.ts" />
 
 class SocketIOClient {
     protected game:Game;

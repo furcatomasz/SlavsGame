@@ -1,5 +1,3 @@
-/// <reference path="../game.ts"/>
-
 class EnvironmentSelectCharacter {
 
     shadowGenerator: BABYLON.ShadowGenerator;

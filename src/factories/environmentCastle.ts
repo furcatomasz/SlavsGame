@@ -1,5 +1,3 @@
-/// <reference path="../game.ts"/>
-
 class EnvironmentCastle {
 
     bushes:Array<BABYLON.AbstractMesh>;

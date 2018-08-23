@@ -1,4 +1,3 @@
-/// <reference path="../AbstractCharacter.ts"/>
 namespace NPC {
     export abstract class AbstractNpc extends AbstractCharacter {
 

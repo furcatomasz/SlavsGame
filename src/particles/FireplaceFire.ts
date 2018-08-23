@@ -1,5 +1,3 @@
-/// <reference path="AbstractParticle.ts"/>
-
 namespace Particles {
     export class FireplaceFire extends AbstractParticle {
 

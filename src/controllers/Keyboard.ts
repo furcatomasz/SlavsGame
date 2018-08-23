@@ -1,5 +1,3 @@
-/// <reference path="Controller.ts"/>
-
 class Keyboard extends Controller {
 
     protected animation;

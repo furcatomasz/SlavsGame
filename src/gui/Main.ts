@@ -1,5 +1,3 @@
-/// <reference path="../../babylon/babylon.d.ts"/>
-/// <reference path="../game.ts"/>
 namespace GUI {
     export class Main {
 

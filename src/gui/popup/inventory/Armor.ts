@@ -1,5 +1,3 @@
-/// <reference path="EquipBlock.ts"/>
-
 namespace GUI.Inventory {
     export class Armor extends EquipBlock {
 

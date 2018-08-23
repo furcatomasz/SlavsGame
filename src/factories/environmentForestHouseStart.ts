@@ -1,5 +1,3 @@
-/// <reference path="../game.ts"/>
-
 class EnvironmentForestHouseStart {
 
     bushes:Array<BABYLON.AbstractMesh>;

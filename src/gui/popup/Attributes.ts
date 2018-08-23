@@ -1,5 +1,3 @@
-/// <reference path="Popup.ts"/>
-
 namespace GUI {
     export class Attributes extends Popup {
 

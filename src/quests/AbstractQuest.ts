@@ -1,6 +1,3 @@
-/// <reference path="awards/AbstractAward.ts"/>
-/// <reference path="requirements/AbstractRequirement.ts"/>
-
 namespace Quests {
     export abstract class AbstractQuest {
         static QUEST_ID = 0;

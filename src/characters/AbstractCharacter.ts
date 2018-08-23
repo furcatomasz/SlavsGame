@@ -1,6 +1,3 @@
-/// <reference path="../../babylon/babylon.d.ts"/>
-/// <reference path="../game.ts"/>
-
 abstract class AbstractCharacter {
 
     public static ANIMATION_WALK:string = 'Run';

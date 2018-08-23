@@ -1,5 +1,3 @@
-/// <reference path="../game.ts"/>
-
 class EnvironmentForestHouseTomb {
 
     colliders: Array<BABYLON.AbstractMesh>;

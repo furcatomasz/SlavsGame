@@ -1,7 +1,3 @@
-/// <reference path="Scene.ts"/>
-/// <reference path="../game.ts"/>
-/// <reference path="../Events.ts"/>
-
 class ForestHouseStart extends Scene {
 
     static TYPE = 1;

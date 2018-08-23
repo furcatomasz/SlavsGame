@@ -1,4 +1,3 @@
-/// <reference path="../game.ts"/>
 namespace GUI {
     export class PlayerLogsPanel {
 

@@ -1,5 +1,3 @@
-/// <reference path="../Inventory.ts"/>
-
 namespace GUI.Inventory {
     export abstract class EquipBlock {
         protected inventory: GUI.Inventory;

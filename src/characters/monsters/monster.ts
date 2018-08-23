@@ -1,5 +1,3 @@
-/// <reference path="../AbstractCharacter.ts"/>
-
 class Monster extends AbstractCharacter {
 
     protected target:string;

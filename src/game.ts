@@ -1,7 +1,4 @@
-/// <reference path="../bower_components/babylonjs/dist/babylon.d.ts"/>
-/// <reference path="controllers/Keyboard.ts"/>
-/// <reference path="scenes/Simple.ts"/>
-/// <reference path="socketIOClient.ts"/>
+/// <reference path="../bower_components/babylonjs/dist/preview release/babylon.d.ts" />
 
 class Game {
 

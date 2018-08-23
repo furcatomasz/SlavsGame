@@ -1,6 +1,3 @@
-/// <reference path="../game.ts"/>
-/// <reference path="../characters/AbstractCharacter.ts"/>
-
 namespace GUI {
     export class ShowHp {
 

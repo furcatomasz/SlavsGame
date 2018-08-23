@@ -1,4 +1,3 @@
-/// <reference path="../AbstractCharacter.ts"/>
 namespace SelectCharacter {
     export class Warrior extends AbstractCharacter {
 

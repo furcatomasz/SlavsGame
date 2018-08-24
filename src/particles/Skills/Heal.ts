@@ -28,15 +28,6 @@ namespace Particles {
             fireSystem.emitter = emitter;
 
             this.particleSystem = fireSystem;
-            let alpha = 0;
-            scene.registerBeforeRender(function () {
-                emitter.position.x = 2 * Math.cos(alpha);
-                emitter.position.y = 1;
-                emitter.position.z = 2 * Math.sin(alpha);
-
-                alpha += 0.24 * scene.getAnimationRatio();
-            });
-
         }
     }
 }

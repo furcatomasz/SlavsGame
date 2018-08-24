@@ -348,97 +348,90 @@ var GUI;
     }());
     GUI.Popup = Popup;
 })(GUI || (GUI = {}));
-var GUI;
-(function (GUI) {
-    var Inventory;
-    (function (Inventory) {
-        var EquipBlock = /** @class */ (function () {
-            function EquipBlock(inventory) {
-                this.inventory = inventory;
-            }
-            /**
-             * @returns {GUI.Inventory.EquipBlock}
-             */
-            EquipBlock.prototype.createBlockWithImage = function () {
-                if (this.item) {
-                    var panelItem_1 = new BABYLON.GUI.Rectangle();
-                    panelItem_1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    panelItem_1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                    panelItem_1.thickness = 0;
-                    panelItem_1.width = this.blockWidth;
-                    panelItem_1.height = this.blockHeight;
-                    panelItem_1.top = this.blockTop;
-                    panelItem_1.left = this.blockLeft;
-                    panelItem_1.isPointerBlocker = true;
-                    this.inventory.container.addControl(panelItem_1);
-                    this.block = panelItem_1;
-                    this.createImage();
-                    var blockWidth_1 = this.blockWidth;
-                    var blockHeight_1 = this.blockHeight;
-                    var blockTop_1 = this.blockTop;
-                    var blockLeft_1 = this.blockLeft;
-                    var checkSizeListener_1 = function (width) {
-                        if (width > 1819) {
-                            panelItem_1.width = blockWidth_1;
-                            panelItem_1.height = blockHeight_1;
-                            panelItem_1.top = blockTop_1;
-                            panelItem_1.left = blockLeft_1;
-                        }
-                        else {
-                            panelItem_1.width = parseInt(blockWidth_1) / 2 + 'px';
-                            panelItem_1.height = parseInt(blockHeight_1) / 2 + 'px';
-                            panelItem_1.top = parseInt(blockTop_1) / 2 + 'px';
-                            panelItem_1.left = parseInt(blockLeft_1) / 2 + 'px';
-                        }
-                    };
-                    checkSizeListener_1(window.innerWidth);
-                    window.addEventListener("resize", function () {
-                        var width = window.innerWidth;
-                        checkSizeListener_1(width);
-                    });
+var EquipBlock = /** @class */ (function () {
+    function EquipBlock(inventory) {
+        this.inventory = inventory;
+    }
+    /**
+     * @returns {GUI.Inventory.EquipBlock}
+     */
+    EquipBlock.prototype.createBlockWithImage = function () {
+        if (this.item) {
+            var panelItem_1 = new BABYLON.GUI.Rectangle();
+            panelItem_1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            panelItem_1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            panelItem_1.thickness = 0;
+            panelItem_1.width = this.blockWidth;
+            panelItem_1.height = this.blockHeight;
+            panelItem_1.top = this.blockTop;
+            panelItem_1.left = this.blockLeft;
+            panelItem_1.isPointerBlocker = true;
+            this.inventory.container.addControl(panelItem_1);
+            this.block = panelItem_1;
+            this.createImage();
+            var blockWidth_1 = this.blockWidth;
+            var blockHeight_1 = this.blockHeight;
+            var blockTop_1 = this.blockTop;
+            var blockLeft_1 = this.blockLeft;
+            var checkSizeListener_1 = function (width) {
+                if (width > 1819) {
+                    panelItem_1.width = blockWidth_1;
+                    panelItem_1.height = blockHeight_1;
+                    panelItem_1.top = blockTop_1;
+                    panelItem_1.left = blockLeft_1;
                 }
-                return this;
+                else {
+                    panelItem_1.width = parseInt(blockWidth_1) / 2 + 'px';
+                    panelItem_1.height = parseInt(blockHeight_1) / 2 + 'px';
+                    panelItem_1.top = parseInt(blockTop_1) / 2 + 'px';
+                    panelItem_1.left = parseInt(blockLeft_1) / 2 + 'px';
+                }
             };
-            /**
-             * @returns {GUI.Inventory.EquipBlock}
-             */
-            EquipBlock.prototype.createImage = function () {
-                var self = this;
-                var item = this.item;
-                var image = this.inventory.createItemImage(this.item);
-                image.onPointerUpObservable.add(function () {
-                    self.inventory.guiMain.game.player.inventory.emitEquip(self.item);
-                    self.inventory.guiTexture.removeControl(self.block);
-                    self.inventory.showItems();
-                    if (self.inventory.guiMain.attributes.opened) {
-                        self.inventory.guiMain.attributes.refreshPopup();
-                    }
-                });
-                image.onPointerEnterObservable.add(function () {
-                    var text = item.name;
-                    if (item.statistics.damage > 0) {
-                        text += "\nDamage: " + item.statistics.damage + "";
-                    }
-                    if (item.statistics.armor > 0) {
-                        text += "\nArmor: " + item.statistics.armor + "";
-                    }
-                    new GUI.TooltipButton(self.block, text);
-                });
-                image.onPointerOutObservable.add(function () {
-                    self.block.children.forEach(function (value, key) {
-                        if (value.name == 'tooltip') {
-                            self.block.removeControl(value);
-                        }
-                    });
-                });
-                this.block.addControl(image);
-                return this;
-            };
-            return EquipBlock;
-        }());
-        Inventory.EquipBlock = EquipBlock;
-    })(Inventory = GUI.Inventory || (GUI.Inventory = {}));
-})(GUI || (GUI = {}));
+            checkSizeListener_1(window.innerWidth);
+            window.addEventListener("resize", function () {
+                var width = window.innerWidth;
+                checkSizeListener_1(width);
+            });
+        }
+        return this;
+    };
+    /**
+     * @returns {GUI.Inventory.EquipBlock}
+     */
+    EquipBlock.prototype.createImage = function () {
+        var self = this;
+        var item = this.item;
+        var image = this.inventory.createItemImage(this.item);
+        image.onPointerUpObservable.add(function () {
+            self.inventory.guiMain.game.player.inventory.emitEquip(self.item);
+            self.inventory.guiTexture.removeControl(self.block);
+            self.inventory.showItems();
+            if (self.inventory.guiMain.attributes.opened) {
+                self.inventory.guiMain.attributes.refreshPopup();
+            }
+        });
+        image.onPointerEnterObservable.add(function () {
+            var text = item.name;
+            if (item.statistics.damage > 0) {
+                text += "\nDamage: " + item.statistics.damage + "";
+            }
+            if (item.statistics.armor > 0) {
+                text += "\nArmor: " + item.statistics.armor + "";
+            }
+            new GUI.TooltipButton(self.block, text);
+        });
+        image.onPointerOutObservable.add(function () {
+            self.block.children.forEach(function (value, key) {
+                if (value.name == 'tooltip') {
+                    self.block.removeControl(value);
+                }
+            });
+        });
+        this.block.addControl(image);
+        return this;
+    };
+    return EquipBlock;
+}());
 /// <reference path="scenes/Scene.ts"/>
 /// <reference path="game.ts"/>
 /// <reference path="gui/popup/Popup.ts"/>
@@ -4038,6 +4031,40 @@ var Character;
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
             };
+            Heal.prototype.registerHotKey = function (game) {
+                var self = this;
+                var alpha = 0;
+                var animateFunction = function () {
+                    self.effectEmitter.particleSystem.emitter.position.x = 2 * Math.cos(alpha);
+                    self.effectEmitter.particleSystem.emitter.position.y = 1;
+                    self.effectEmitter.particleSystem.emitter.position.z = 2 * Math.sin(alpha);
+                    alpha += 0.24 * game.getScene().getAnimationRatio();
+                };
+                var listener = function listener() {
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == self.getType()) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationSpecialHit(self.animationName, function () {
+                                self.effectEmitter.particleSystem.start();
+                                game.getScene().registerBeforeRender(animateFunction);
+                                game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function () {
+                                    game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
+                                });
+                            }, function () {
+                                self.effectEmitter.particleSystem.stop();
+                                game.getScene().unregisterBeforeRender(animateFunction);
+                            }, self.animationLoop, self.animationSpeed);
+                            if (self.animationTime) {
+                                setTimeout(function () {
+                                    game.player.animation.stop();
+                                }, self.animationTime);
+                            }
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
             Heal.TYPE = 1;
             return Heal;
         }(Character.Skills.AbstractSkill));
@@ -4531,6 +4558,56 @@ var SelectCharacter;
 })(SelectCharacter || (SelectCharacter = {}));
 var GUI;
 (function (GUI) {
+    var TooltipButton = /** @class */ (function () {
+        function TooltipButton(baseControl, text) {
+            var rect1 = new BABYLON.GUI.Rectangle('tooltip');
+            rect1.top = '-25%';
+            rect1.width = 1;
+            rect1.height = "40px";
+            rect1.cornerRadius = 20;
+            rect1.thickness = 1;
+            rect1.background = "black";
+            rect1.color = "white";
+            baseControl.addControl(rect1);
+            var label = new BABYLON.GUI.TextBlock();
+            label.textWrapping = true;
+            label.text = text;
+            label.resizeToFit = true;
+            rect1.addControl(label);
+            this.container = rect1;
+            this.label = label;
+        }
+        return TooltipButton;
+    }());
+    GUI.TooltipButton = TooltipButton;
+})(GUI || (GUI = {}));
+var GUI;
+(function (GUI) {
+    var TooltipMesh = /** @class */ (function () {
+        function TooltipMesh(mesh, text) {
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("tooltip");
+            var rect1 = new BABYLON.GUI.Rectangle();
+            rect1.width = 0.4;
+            rect1.height = "40px";
+            rect1.cornerRadius = 20;
+            rect1.thickness = 2;
+            rect1.background = "black";
+            advancedTexture.addControl(rect1);
+            rect1.linkWithMesh(mesh);
+            rect1.linkOffsetY = -100;
+            var label = new BABYLON.GUI.TextBlock();
+            label.text = text;
+            rect1.addControl(label);
+            setTimeout(function () {
+                advancedTexture.dispose();
+            }, 2000);
+        }
+        return TooltipMesh;
+    }());
+    GUI.TooltipMesh = TooltipMesh;
+})(GUI || (GUI = {}));
+var GUI;
+(function (GUI) {
     var Attributes = /** @class */ (function (_super) {
         __extends(Attributes, _super);
         function Attributes(guiMain) {
@@ -4711,12 +4788,12 @@ var GUI;
             this.buttonClose = null;
         };
         Inventory.prototype.showEquipedItems = function () {
-            this.weaponImage = new GUI.Inventory.Weapon(this);
-            this.shieldImage = new GUI.Inventory.Shield(this);
-            this.glovesImage = new GUI.Inventory.Gloves(this);
-            this.bootsImage = new GUI.Inventory.Boots(this);
-            this.armorImage = new GUI.Inventory.Armor(this);
-            this.helmImage = new GUI.Inventory.Helm(this);
+            this.weaponImage = new Weapon(this);
+            this.shieldImage = new Shield(this);
+            this.glovesImage = new Gloves(this);
+            this.bootsImage = new Boots(this);
+            this.armorImage = new Armor(this);
+            this.helmImage = new Helm(this);
         };
         Inventory.prototype.showItems = function () {
             var self = this;
@@ -4830,37 +4907,37 @@ var GUI;
                     if (this.weaponImage.block) {
                         this.guiTexture.removeControl(this.weaponImage.block);
                     }
-                    this.weaponImage = new GUI.Inventory.Weapon(this);
+                    this.weaponImage = new Weapon(this);
                     break;
                 case 2:
                     if (this.shieldImage.block) {
                         this.guiTexture.removeControl(this.shieldImage.block);
                     }
-                    this.shieldImage = new GUI.Inventory.Shield(this);
+                    this.shieldImage = new Shield(this);
                     break;
                 case 3:
                     if (this.helmImage.block) {
                         this.guiTexture.removeControl(this.helmImage.block);
                     }
-                    this.helmImage = new GUI.Inventory.Helm(this);
+                    this.helmImage = new Helm(this);
                     break;
                 case 4:
                     if (this.glovesImage.block) {
                         this.guiTexture.removeControl(this.glovesImage.block);
                     }
-                    this.glovesImage = new GUI.Inventory.Gloves(this);
+                    this.glovesImage = new Gloves(this);
                     break;
                 case 5:
                     if (this.bootsImage.block) {
                         this.guiTexture.removeControl(this.bootsImage.block);
                     }
-                    this.bootsImage = new GUI.Inventory.Boots(this);
+                    this.bootsImage = new Boots(this);
                     break;
                 case 6:
                     if (this.armorImage.block) {
                         this.guiTexture.removeControl(this.armorImage.block);
                     }
-                    this.armorImage = new GUI.Inventory.Armor(this);
+                    this.armorImage = new Armor(this);
                     break;
             }
             return this;
@@ -5244,56 +5321,6 @@ var GUI;
     }(GUI.Popup));
     GUI.NewQuest = NewQuest;
 })(GUI || (GUI = {}));
-var GUI;
-(function (GUI) {
-    var TooltipButton = /** @class */ (function () {
-        function TooltipButton(baseControl, text) {
-            var rect1 = new BABYLON.GUI.Rectangle('tooltip');
-            rect1.top = '-25%';
-            rect1.width = 1;
-            rect1.height = "40px";
-            rect1.cornerRadius = 20;
-            rect1.thickness = 1;
-            rect1.background = "black";
-            rect1.color = "white";
-            baseControl.addControl(rect1);
-            var label = new BABYLON.GUI.TextBlock();
-            label.textWrapping = true;
-            label.text = text;
-            label.resizeToFit = true;
-            rect1.addControl(label);
-            this.container = rect1;
-            this.label = label;
-        }
-        return TooltipButton;
-    }());
-    GUI.TooltipButton = TooltipButton;
-})(GUI || (GUI = {}));
-var GUI;
-(function (GUI) {
-    var TooltipMesh = /** @class */ (function () {
-        function TooltipMesh(mesh, text) {
-            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("tooltip");
-            var rect1 = new BABYLON.GUI.Rectangle();
-            rect1.width = 0.4;
-            rect1.height = "40px";
-            rect1.cornerRadius = 20;
-            rect1.thickness = 2;
-            rect1.background = "black";
-            advancedTexture.addControl(rect1);
-            rect1.linkWithMesh(mesh);
-            rect1.linkOffsetY = -100;
-            var label = new BABYLON.GUI.TextBlock();
-            label.text = text;
-            rect1.addControl(label);
-            setTimeout(function () {
-                advancedTexture.dispose();
-            }, 2000);
-        }
-        return TooltipMesh;
-    }());
-    GUI.TooltipMesh = TooltipMesh;
-})(GUI || (GUI = {}));
 var Particles;
 (function (Particles) {
     var FastAttack = /** @class */ (function (_super) {
@@ -5364,13 +5391,6 @@ var Particles;
             fireSystem.targetStopDuration = 0.8;
             fireSystem.emitter = emitter;
             this.particleSystem = fireSystem;
-            var alpha = 0;
-            scene.registerBeforeRender(function () {
-                emitter.position.x = 2 * Math.cos(alpha);
-                emitter.position.y = 1;
-                emitter.position.z = 2 * Math.sin(alpha);
-                alpha += 0.24 * scene.getAnimationRatio();
-            });
         };
         return Heal;
     }(Particles.AbstractParticle));
@@ -5636,130 +5656,88 @@ var Quests;
         Requirements.Monster = Monster;
     })(Requirements = Quests.Requirements || (Quests.Requirements = {}));
 })(Quests || (Quests = {}));
-var GUI;
-(function (GUI) {
-    var Inventory;
-    (function (Inventory) {
-        var Armor = /** @class */ (function (_super) {
-            __extends(Armor, _super);
-            function Armor(inventory) {
-                var _this = _super.call(this, inventory) || this;
-                _this.blockWidth = "153px";
-                _this.blockHeight = "250px";
-                _this.blockTop = "270px";
-                _this.blockLeft = "228px";
-                _this.item = inventory.guiMain.game.player.inventory.armor;
-                // this.block
-                _this.createBlockWithImage();
-                return _this;
-            }
-            return Armor;
-        }(Inventory.EquipBlock));
-        Inventory.Armor = Armor;
-    })(Inventory = GUI.Inventory || (GUI.Inventory = {}));
-})(GUI || (GUI = {}));
-var GUI;
-(function (GUI) {
-    var Inventory;
-    (function (Inventory) {
-        var Boots = /** @class */ (function (_super) {
-            __extends(Boots, _super);
-            function Boots(inventory) {
-                var _this = _super.call(this, inventory) || this;
-                _this.blockWidth = "96px";
-                _this.blockHeight = "92px";
-                _this.blockTop = "442px";
-                _this.blockLeft = "82px";
-                _this.item = inventory.guiMain.game.player.inventory.boots;
-                _this.createBlockWithImage();
-                return _this;
-            }
-            return Boots;
-        }(Inventory.EquipBlock));
-        Inventory.Boots = Boots;
-    })(Inventory = GUI.Inventory || (GUI.Inventory = {}));
-})(GUI || (GUI = {}));
-var GUI;
-(function (GUI) {
-    var Inventory;
-    (function (Inventory) {
-        var Gloves = /** @class */ (function (_super) {
-            __extends(Gloves, _super);
-            function Gloves(inventory) {
-                var _this = _super.call(this, inventory) || this;
-                _this.blockWidth = "96px";
-                _this.blockHeight = "92px";
-                _this.blockTop = "442px";
-                _this.blockLeft = "428px";
-                _this.item = inventory.guiMain.game.player.inventory.gloves;
-                _this.createBlockWithImage();
-                return _this;
-            }
-            return Gloves;
-        }(Inventory.EquipBlock));
-        Inventory.Gloves = Gloves;
-    })(Inventory = GUI.Inventory || (GUI.Inventory = {}));
-})(GUI || (GUI = {}));
-var GUI;
-(function (GUI) {
-    var Inventory;
-    (function (Inventory) {
-        var Helm = /** @class */ (function (_super) {
-            __extends(Helm, _super);
-            function Helm(inventory) {
-                var _this = _super.call(this, inventory) || this;
-                _this.blockWidth = "96px";
-                _this.blockHeight = "92px";
-                _this.blockTop = "121px";
-                _this.blockLeft = "257px";
-                _this.item = inventory.guiMain.game.player.inventory.helm;
-                _this.createBlockWithImage();
-                return _this;
-            }
-            return Helm;
-        }(Inventory.EquipBlock));
-        Inventory.Helm = Helm;
-    })(Inventory = GUI.Inventory || (GUI.Inventory = {}));
-})(GUI || (GUI = {}));
-var GUI;
-(function (GUI) {
-    var Inventory;
-    (function (Inventory) {
-        var Shield = /** @class */ (function (_super) {
-            __extends(Shield, _super);
-            function Shield(inventory) {
-                var _this = _super.call(this, inventory) || this;
-                _this.blockWidth = "90px";
-                _this.blockHeight = "146px";
-                _this.blockTop = "248px";
-                _this.blockLeft = "435px";
-                _this.item = inventory.guiMain.game.player.inventory.shield;
-                _this.createBlockWithImage();
-                return _this;
-            }
-            return Shield;
-        }(Inventory.EquipBlock));
-        Inventory.Shield = Shield;
-    })(Inventory = GUI.Inventory || (GUI.Inventory = {}));
-})(GUI || (GUI = {}));
-var GUI;
-(function (GUI) {
-    var Inventory;
-    (function (Inventory) {
-        var Weapon = /** @class */ (function (_super) {
-            __extends(Weapon, _super);
-            function Weapon(inventory) {
-                var _this = _super.call(this, inventory) || this;
-                _this.blockWidth = "90px";
-                _this.blockHeight = "146px";
-                _this.blockTop = "248px";
-                _this.blockLeft = "85px";
-                _this.item = inventory.guiMain.game.player.inventory.weapon;
-                _this.createBlockWithImage();
-                return _this;
-            }
-            return Weapon;
-        }(Inventory.EquipBlock));
-        Inventory.Weapon = Weapon;
-    })(Inventory = GUI.Inventory || (GUI.Inventory = {}));
-})(GUI || (GUI = {}));
+var Armor = /** @class */ (function (_super) {
+    __extends(Armor, _super);
+    function Armor(inventory) {
+        var _this = _super.call(this, inventory) || this;
+        _this.blockWidth = "153px";
+        _this.blockHeight = "250px";
+        _this.blockTop = "270px";
+        _this.blockLeft = "228px";
+        _this.item = inventory.guiMain.game.player.inventory.armor;
+        // this.block
+        _this.createBlockWithImage();
+        return _this;
+    }
+    return Armor;
+}(EquipBlock));
+var Boots = /** @class */ (function (_super) {
+    __extends(Boots, _super);
+    function Boots(inventory) {
+        var _this = _super.call(this, inventory) || this;
+        _this.blockWidth = "96px";
+        _this.blockHeight = "92px";
+        _this.blockTop = "442px";
+        _this.blockLeft = "82px";
+        _this.item = inventory.guiMain.game.player.inventory.boots;
+        _this.createBlockWithImage();
+        return _this;
+    }
+    return Boots;
+}(EquipBlock));
+var Gloves = /** @class */ (function (_super) {
+    __extends(Gloves, _super);
+    function Gloves(inventory) {
+        var _this = _super.call(this, inventory) || this;
+        _this.blockWidth = "96px";
+        _this.blockHeight = "92px";
+        _this.blockTop = "442px";
+        _this.blockLeft = "428px";
+        _this.item = inventory.guiMain.game.player.inventory.gloves;
+        _this.createBlockWithImage();
+        return _this;
+    }
+    return Gloves;
+}(EquipBlock));
+var Helm = /** @class */ (function (_super) {
+    __extends(Helm, _super);
+    function Helm(inventory) {
+        var _this = _super.call(this, inventory) || this;
+        _this.blockWidth = "96px";
+        _this.blockHeight = "92px";
+        _this.blockTop = "121px";
+        _this.blockLeft = "257px";
+        _this.item = inventory.guiMain.game.player.inventory.helm;
+        _this.createBlockWithImage();
+        return _this;
+    }
+    return Helm;
+}(EquipBlock));
+var Shield = /** @class */ (function (_super) {
+    __extends(Shield, _super);
+    function Shield(inventory) {
+        var _this = _super.call(this, inventory) || this;
+        _this.blockWidth = "90px";
+        _this.blockHeight = "146px";
+        _this.blockTop = "248px";
+        _this.blockLeft = "435px";
+        _this.item = inventory.guiMain.game.player.inventory.shield;
+        _this.createBlockWithImage();
+        return _this;
+    }
+    return Shield;
+}(EquipBlock));
+var Weapon = /** @class */ (function (_super) {
+    __extends(Weapon, _super);
+    function Weapon(inventory) {
+        var _this = _super.call(this, inventory) || this;
+        _this.blockWidth = "90px";
+        _this.blockHeight = "146px";
+        _this.blockTop = "248px";
+        _this.blockLeft = "85px";
+        _this.item = inventory.guiMain.game.player.inventory.weapon;
+        _this.createBlockWithImage();
+        return _this;
+    }
+    return Weapon;
+}(EquipBlock));

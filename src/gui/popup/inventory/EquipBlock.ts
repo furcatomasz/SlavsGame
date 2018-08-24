@@ -1,5 +1,4 @@
-namespace GUI.Inventory {
-    export abstract class EquipBlock {
+abstract class EquipBlock {
         protected inventory: GUI.Inventory;
 
         protected item: Items.Item;
@@ -104,4 +103,3 @@ namespace GUI.Inventory {
         }
 
     }
-}

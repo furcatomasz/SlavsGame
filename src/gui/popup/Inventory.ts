@@ -1,12 +1,12 @@
 namespace GUI {
     export class Inventory extends Popup {
 
-        protected weaponImage:GUI.Inventory.EquipBlock;
-        protected shieldImage:GUI.Inventory.EquipBlock;
-        protected armorImage:GUI.Inventory.EquipBlock;
-        protected glovesImage:GUI.Inventory.EquipBlock;
-        protected bootsImage:GUI.Inventory.EquipBlock;
-        protected helmImage:GUI.Inventory.EquipBlock;
+        protected weaponImage: EquipBlock;
+        protected shieldImage: EquipBlock;
+        protected armorImage: EquipBlock;
+        protected glovesImage: EquipBlock;
+        protected bootsImage: EquipBlock;
+        protected helmImage: EquipBlock;
 
         protected panelItems:BABYLON.GUI.Rectangle;
 
@@ -107,12 +107,12 @@ namespace GUI {
         }
 
         protected showEquipedItems() {
-            this.weaponImage = new GUI.Inventory.Weapon(this);
-            this.shieldImage = new GUI.Inventory.Shield(this);
-            this.glovesImage = new GUI.Inventory.Gloves(this);
-            this.bootsImage = new GUI.Inventory.Boots(this);
-            this.armorImage = new GUI.Inventory.Armor(this);
-            this.helmImage = new GUI.Inventory.Helm(this);
+            this.weaponImage = new Weapon(this);
+            this.shieldImage = new Shield(this);
+            this.glovesImage = new Gloves(this);
+            this.bootsImage = new Boots(this);
+            this.armorImage = new Armor(this);
+            this.helmImage = new Helm(this);
         }
 
         public showItems() {
@@ -244,42 +244,42 @@ namespace GUI {
                         this.guiTexture.removeControl(this.weaponImage.block);
                     }
 
-                    this.weaponImage = new GUI.Inventory.Weapon(this);
+                    this.weaponImage = new Weapon(this);
                     break;
                 case 2:
                     if (this.shieldImage.block) {
                         this.guiTexture.removeControl(this.shieldImage.block);
                     }
 
-                    this.shieldImage = new GUI.Inventory.Shield(this);
+                    this.shieldImage = new Shield(this);
                     break;
                 case 3:
                     if (this.helmImage.block) {
                         this.guiTexture.removeControl(this.helmImage.block);
                     }
 
-                    this.helmImage = new GUI.Inventory.Helm(this);
+                    this.helmImage = new Helm(this);
                     break;
                 case 4:
                     if (this.glovesImage.block) {
                         this.guiTexture.removeControl(this.glovesImage.block);
                     }
 
-                    this.glovesImage = new GUI.Inventory.Gloves(this);
+                    this.glovesImage = new Gloves(this);
                     break;
                 case 5:
                     if (this.bootsImage.block) {
                         this.guiTexture.removeControl(this.bootsImage.block);
                     }
 
-                    this.bootsImage = new GUI.Inventory.Boots(this);
+                    this.bootsImage = new Boots(this);
                     break;
                 case 6:
                     if (this.armorImage.block) {
                         this.guiTexture.removeControl(this.armorImage.block);
                     }
 
-                    this.armorImage = new GUI.Inventory.Armor(this);
+                    this.armorImage = new Armor(this);
                     break;
             }
 

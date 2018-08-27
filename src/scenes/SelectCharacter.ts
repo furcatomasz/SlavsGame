@@ -25,7 +25,7 @@ class SelectCharacter extends Scene {
                     new EnvironmentSelectCharacter(game, scene);
 
                     game.client.socket.on('showPlayersToSelect', function(players) {
-                      for (let i = 0; i < players.length; i++) {
+                      for (let i = 0; Battleground < players.length; i++) {
                           let player = players[i];
                           new SelectCharacter.Warrior(game, i, player);
                       }

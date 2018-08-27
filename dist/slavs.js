@@ -252,7 +252,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 0;
+    Game.SHOW_DEBUG = 1;
     return Game;
 }());
 var GUI;
@@ -3311,6 +3311,39 @@ var Quests;
     }());
     Quests.QuestManager = QuestManager;
 })(Quests || (Quests = {}));
+var Battleground = /** @class */ (function (_super) {
+    __extends(Battleground, _super);
+    function Battleground() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Battleground.prototype.initScene = function (game) {
+        var self = this;
+        game.sceneManager = this;
+        var scene = new BABYLON.Scene(game.engine);
+        self
+            .setDefaults(game, scene)
+            .optimizeScene(scene)
+            .setCamera(scene)
+            .setFog(scene)
+            .defaultPipeline(scene)
+            .executeWhenReady(function () {
+            scene.audioEnabled = false;
+            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
+            light.intensity = 1;
+            var ground = BABYLON.MeshBuilder.CreateGround("Ground", { width: 50, height: 50 }, scene);
+            ground.actionManager = new BABYLON.ActionManager(scene);
+            var terrainMaterial = new BABYLON.StandardMaterial("GroundMaterial", scene);
+            terrainMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            terrainMaterial.specularPower = 64;
+            terrainMaterial.diffuseTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+            ground.material = terrainMaterial;
+        }, function () {
+            game.player.playerLight.dispose();
+        });
+    };
+    Battleground.TYPE = 99;
+    return Battleground;
+}(Scene));
 var Castle = /** @class */ (function (_super) {
     __extends(Castle, _super);
     function Castle() {
@@ -3601,6 +3634,9 @@ var Scenes;
                 case SelectCharacter.TYPE:
                     scene = new SelectCharacter();
                     break;
+                case Battleground.TYPE:
+                    scene = new Battleground();
+                    break;
             }
             if (!scene) {
                 throw new TypeError('Wrong scene type.');
@@ -3634,7 +3670,7 @@ var SelectCharacter = /** @class */ (function (_super) {
                 scene.activeCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
                 new EnvironmentSelectCharacter(game, scene);
                 game.client.socket.on('showPlayersToSelect', function (players) {
-                    for (var i = 0; i < players.length; i++) {
+                    for (var i = 0; Battleground < players.length; i++) {
                         var player = players[i];
                         new SelectCharacter.Warrior(game, i, player);
                     }

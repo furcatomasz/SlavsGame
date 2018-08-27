@@ -22,6 +22,9 @@ namespace Scenes {
                 case SelectCharacter.TYPE:
                     scene = new SelectCharacter();
                     break;
+                case Battleground.TYPE:
+                    scene = new Battleground();
+                    break;
             }
 
             if (!scene) {

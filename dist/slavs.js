@@ -1,7 +1,10 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -252,7 +255,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 1;
+    Game.SHOW_DEBUG = 0;
     return Game;
 }());
 var GUI;
@@ -1202,7 +1205,7 @@ var AbstractCharacter = /** @class */ (function () {
         if (self.sfxHit) {
             self.sfxHit.play();
         }
-        self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
+        self.animation = skeleton.beginAnimation(animation, loop, 1, function () {
             if (callbackEnd) {
                 callbackEnd();
             }
@@ -1210,18 +1213,15 @@ var AbstractCharacter = /** @class */ (function () {
             self.isAttack = false;
         });
     };
-    AbstractCharacter.prototype.runAnimationSpecialHit = function (animation, callbackStart, callbackEnd, loop, speed) {
+    AbstractCharacter.prototype.runAnimationSkill = function (animation, callbackStart, callbackEnd, loop, speed, standAnimationOnFinish) {
         if (callbackStart === void 0) { callbackStart = null; }
         if (callbackEnd === void 0) { callbackEnd = null; }
         if (loop === void 0) { loop = false; }
         if (speed === void 0) { speed = 1; }
-        if (this.animation) {
-            this.animation.stop();
-        }
+        if (standAnimationOnFinish === void 0) { standAnimationOnFinish = true; }
         var self = this;
         var mesh = this.mesh;
         var skeleton = mesh.skeleton;
-        this.isAttack = true;
         if (callbackEnd) {
             callbackStart();
         }
@@ -1229,9 +1229,9 @@ var AbstractCharacter = /** @class */ (function () {
             if (callbackEnd) {
                 callbackEnd();
             }
-            self.runAnimationStand();
-            self.isAttack = false;
-            // mesh.skeleton.enableBlending(0.3);
+            if (standAnimationOnFinish) {
+                self.runAnimationStand();
+            }
         });
     };
     AbstractCharacter.prototype.runAnimationWalk = function () {
@@ -1361,6 +1361,7 @@ var Player = /** @class */ (function (_super) {
             _this.refreshCameraPosition();
             _this.refreshHpInGui();
             _this.refreshExperienceInGui();
+            _this.refreshEnergyInGui();
         }
         _this = _super.call(this, serverData.activePlayer.name, game) || this;
         _this.runAnimationStand();
@@ -1488,6 +1489,11 @@ var Player = /** @class */ (function (_super) {
     Player.prototype.refreshExperienceInGui = function () {
         this.game.gui.playerBottomPanel.expBar.width = this.experiencePercentages / 100;
         this.game.gui.playerBottomPanel.expBarText.text = this.experiencePercentages + '%';
+    };
+    Player.prototype.refreshEnergyInGui = function () {
+        var percentage = Math.round(this.statistics.energy * 100 / this.statistics.energyMax);
+        this.game.gui.playerBottomPanel.energyBar.width = percentage / 100;
+        this.game.gui.playerBottomPanel.energyBarText.text = this.statistics.energy + ' / ' + this.statistics.energyMax;
     };
     Player.prototype.refreshHpInGui = function () {
         var percentage = Math.round(this.statistics.hp * 100 / this.statistics.hpMax);
@@ -1644,8 +1650,7 @@ var Mouse = /** @class */ (function (_super) {
                     meshFlag.visibility = 0;
                     self.game.player.runPlayerToPosition(self.targetPoint);
                     self.game.client.socket.emit('setTargetPoint', {
-                        position: self.targetPoint,
-                        playerPosition: self.game.player.mesh.position
+                        position: self.targetPoint
                     });
                 }
             }
@@ -1662,11 +1667,10 @@ var Mouse = /** @class */ (function (_super) {
                         self.targetPoint.y = 0;
                         self.ball.position = self.targetPoint;
                         self.game.player.runPlayerToPosition(self.targetPoint);
-                        if (lastUpdate < (new Date().getTime() / 1000) - 0.3) {
-                            lastUpdate = (new Date().getTime() / 1000);
+                        if (lastUpdate < (new Date().getTime() / 500) - 0.3) {
+                            lastUpdate = (new Date().getTime() / 500);
                             self.game.client.socket.emit('setTargetPoint', {
-                                position: self.targetPoint,
-                                playerPosition: self.game.player.mesh.position
+                                position: self.targetPoint
                             });
                         }
                     }
@@ -2502,7 +2506,7 @@ var GUI;
             container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             container.width = '685px';
-            container.height = '95px';
+            container.height = '115px';
             container.isPointerBlocker = true;
             container.thickness = 0;
             texture.addControl(container);
@@ -2514,7 +2518,7 @@ var GUI;
             containerSliders.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             containerSliders.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             containerSliders.width = '605px';
-            containerSliders.height = '32px';
+            containerSliders.height = '48px';
             containerSliders.isPointerBlocker = true;
             containerSliders.thickness = 0;
             container.addControl(containerSliders);
@@ -2523,13 +2527,13 @@ var GUI;
             toolbarHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             toolbarHp.width = 0;
             toolbarHp.height = '14px';
-            toolbarHp.top = '16px';
+            toolbarHp.top = '32px';
             this.hpBar = toolbarHp;
             containerSliders.addControl(toolbarHp);
             var textBlockHp = new BABYLON.GUI.TextBlock();
             textBlockHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             textBlockHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textBlockHp.top = '16px';
+            textBlockHp.top = '32px';
             textBlockHp.width = 1;
             textBlockHp.height = '14px';
             textBlockHp.color = "white";
@@ -2541,19 +2545,37 @@ var GUI;
             toolbarExp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             toolbarExp.width = 1;
             toolbarExp.height = '14px';
-            toolbarExp.top = '0px';
+            toolbarExp.top = '16px';
             this.expBar = toolbarExp;
             containerSliders.addControl(toolbarExp);
             var textBlockExp = new BABYLON.GUI.TextBlock();
             textBlockExp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             textBlockExp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textBlockExp.top = '0px';
+            textBlockExp.top = '16px';
             textBlockExp.width = 1;
             textBlockExp.height = '14px';
             textBlockExp.color = "white";
             textBlockExp.fontSize = 10;
             this.expBarText = textBlockExp;
             containerSliders.addControl(textBlockExp);
+            var toolbarEnergy = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar_exp.png');
+            toolbarEnergy.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            toolbarEnergy.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            toolbarEnergy.width = 1;
+            toolbarEnergy.height = '14px';
+            toolbarEnergy.top = '0px';
+            this.energyBar = toolbarEnergy;
+            containerSliders.addControl(toolbarEnergy);
+            var textToolbarEnergy = new BABYLON.GUI.TextBlock();
+            textToolbarEnergy.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            textToolbarEnergy.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            textToolbarEnergy.top = '0px';
+            textToolbarEnergy.width = 1;
+            textToolbarEnergy.height = '14px';
+            textToolbarEnergy.color = "white";
+            textToolbarEnergy.fontSize = 10;
+            this.energyBarText = textToolbarEnergy;
+            containerSliders.addControl(textToolbarEnergy);
             var gridSpecials = new BABYLON.GUI.Grid();
             gridSpecials.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             gridSpecials.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
@@ -2572,7 +2594,7 @@ var GUI;
             buttonAttributes.width = '112px';
             buttonAttributes.height = '21px';
             buttonAttributes.thickness = 0;
-            // buttonAttributes.top = '7px';
+            buttonAttributes.top = '10px';
             buttonAttributes.left = '93px';
             container.addControl(buttonAttributes);
             buttonAttributes.onPointerUpObservable.add(function () {
@@ -2585,7 +2607,7 @@ var GUI;
             buttonSkills.width = '112px';
             buttonSkills.height = '21px';
             buttonSkills.thickness = 0;
-            buttonSkills.top = '27px';
+            buttonSkills.top = '37px';
             buttonSkills.left = '93px';
             container.addControl(buttonSkills);
             buttonSkills.onPointerUpObservable.add(function () {
@@ -2598,7 +2620,7 @@ var GUI;
             buttonInventory.width = '112px';
             buttonInventory.height = '21px';
             buttonInventory.thickness = 0;
-            buttonInventory.top = '0px';
+            buttonInventory.top = '10px';
             buttonInventory.left = '479px';
             container.addControl(buttonInventory);
             buttonInventory.onPointerUpObservable.add(function () {
@@ -2611,7 +2633,7 @@ var GUI;
             buttonOptions.width = '112px';
             buttonOptions.height = '21px';
             buttonOptions.thickness = 0;
-            buttonOptions.top = '27px';
+            buttonOptions.top = '37px';
             buttonOptions.left = '479px';
             container.addControl(buttonOptions);
         }
@@ -3922,7 +3944,7 @@ var Character;
                     game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
                         if (event.sourceEvent.key == self.getType()) {
                             game.controller.attackPoint = null;
-                            game.player.runAnimationSpecialHit(self.animationName, function () {
+                            game.player.runAnimationSkill(self.animationName, function () {
                                 self.effectEmitter.particleSystem.start();
                                 game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function () {
                                     game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
@@ -4011,6 +4033,55 @@ var Character;
 (function (Character) {
     var Skills;
     (function (Skills) {
+        var Block = /** @class */ (function (_super) {
+            __extends(Block, _super);
+            function Block() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            Block.prototype.getType = function () {
+                return Character.Skills.Block.TYPE;
+            };
+            Block.prototype.registerDefaults = function (game) {
+                this.image = 'assets/skills/block.png';
+                this.name = 'Block';
+                this.animationName = 'blockA';
+                this.animationSpeed = 1;
+                this.animationTime = 2000;
+                this.animationLoop = false;
+            };
+            Block.prototype.registerHotKey = function (game) {
+                var self = this;
+                var listener = function listener() {
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == self.getType()) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationSkill(self.animationName, function () {
+                            }, function () {
+                                console.log(game.player.mesh.skeleton);
+                                game.player.mesh.skeleton.createAnimationRange('loopBlock', 70, 80);
+                                game.player.mesh.skeleton.beginAnimation('loopBlock', true);
+                            }, self.animationLoop, self.animationSpeed, false);
+                            if (self.animationTime) {
+                                setTimeout(function () {
+                                    game.player.runAnimationSkill('blockB');
+                                }, self.animationTime);
+                            }
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            Block.TYPE = 2;
+            return Block;
+        }(Character.Skills.AbstractSkill));
+        Skills.Block = Block;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
         var FastAttack = /** @class */ (function (_super) {
             __extends(FastAttack, _super);
             function FastAttack() {
@@ -4035,7 +4106,7 @@ var Character;
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
             };
-            FastAttack.TYPE = 2;
+            FastAttack.TYPE = 3;
             return FastAttack;
         }(Character.Skills.AbstractSkill));
         Skills.FastAttack = FastAttack;
@@ -4080,7 +4151,7 @@ var Character;
                     game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
                         if (event.sourceEvent.key == self.getType()) {
                             game.controller.attackPoint = null;
-                            game.player.runAnimationSpecialHit(self.animationName, function () {
+                            game.player.runAnimationSkill(self.animationName, function () {
                                 self.effectEmitter.particleSystem.start();
                                 game.getScene().registerBeforeRender(animateFunction);
                                 game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function () {
@@ -4153,14 +4224,20 @@ var Character;
             SkillsManager.prototype.getSkill = function (type) {
                 var skill = null;
                 switch (type) {
+                    // case Character.Skills.Tornado.TYPE:
+                    //     skill = new Character.Skills.Tornado(this.game);
+                    //     break;
+                    // case Character.Skills.Heal.TYPE:
+                    //     skill = new Character.Skills.Heal(this.game);
+                    //     break;
+                    case Character.Skills.StrongAttack.TYPE:
+                        skill = new Character.Skills.StrongAttack(this.game);
+                        break;
+                    case Character.Skills.Block.TYPE:
+                        skill = new Character.Skills.Block(this.game);
+                        break;
                     case Character.Skills.FastAttack.TYPE:
                         skill = new Character.Skills.FastAttack(this.game);
-                        break;
-                    case Character.Skills.Tornado.TYPE:
-                        skill = new Character.Skills.Tornado(this.game);
-                        break;
-                    case Character.Skills.Heal.TYPE:
-                        skill = new Character.Skills.Heal(this.game);
                         break;
                     case Character.Skills.ShieldAttack.TYPE:
                         skill = new Character.Skills.ShieldAttack(this.game);
@@ -4171,6 +4248,54 @@ var Character;
             return SkillsManager;
         }());
         Skills.SkillsManager = SkillsManager;
+    })(Skills = Character.Skills || (Character.Skills = {}));
+})(Character || (Character = {}));
+var Character;
+(function (Character) {
+    var Skills;
+    (function (Skills) {
+        var StrongAttack = /** @class */ (function (_super) {
+            __extends(StrongAttack, _super);
+            function StrongAttack() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            StrongAttack.prototype.getType = function () {
+                return Character.Skills.StrongAttack.TYPE;
+            };
+            StrongAttack.prototype.registerDefaults = function (game) {
+                this.image = 'assets/skills/strongAttack.png';
+                this.name = 'Block';
+                this.animationName = 'strongAttackA';
+                this.animationSpeed = 1;
+                this.animationTime = 2000;
+                this.animationLoop = false;
+            };
+            StrongAttack.prototype.registerHotKey = function (game) {
+                var self = this;
+                var listener = function listener() {
+                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+                        if (event.sourceEvent.key == self.getType()) {
+                            game.controller.attackPoint = null;
+                            game.player.runAnimationSkill(self.animationName, function () {
+                            }, function () {
+                                game.player.mesh.skeleton.createAnimationRange('loopStrongAttack', 340, 350);
+                                game.player.mesh.skeleton.beginAnimation('loopStrongAttack', true);
+                            }, self.animationLoop, self.animationSpeed, false);
+                            if (self.animationTime) {
+                                setTimeout(function () {
+                                    game.player.runAnimationSkill('strongAttackB');
+                                }, self.animationTime);
+                            }
+                        }
+                    }));
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            StrongAttack.TYPE = 1;
+            return StrongAttack;
+        }(Character.Skills.AbstractSkill));
+        Skills.StrongAttack = StrongAttack;
     })(Skills = Character.Skills || (Character.Skills = {}));
 })(Character || (Character = {}));
 var Character;
@@ -4685,8 +4810,7 @@ var GUI;
             this.createAttribute(1, 'Damage:' + this.guiMain.game.player.statistics.damage, panel);
             this.createAttribute(2, 'Armor:' + this.guiMain.game.player.statistics.armor, panel);
             this.createAttribute(3, 'HP:' + this.guiMain.game.player.statistics.hp, panel);
-            this.createAttribute(4, 'Attack speed:' + this.guiMain.game.player.statistics.attackSpeed, panel);
-            this.createAttribute(6, 'Block chance:' + this.guiMain.game.player.statistics.blockChance, panel);
+            this.createAttribute(4, 'Energy:' + this.guiMain.game.player.statistics.energy, panel);
             if (this.guiMain.game.player.freeAttributesPoints) {
                 var textAttributes = this.createText('You have ' + this.guiMain.game.player.freeAttributesPoints + ' free attribute points.');
                 textAttributes.color = 'red';
@@ -4702,6 +4826,10 @@ var GUI;
             panel.addControl(damage);
             var armor = this.createText('Armor:' + this.guiMain.game.player.statisticsAll.armor);
             panel.addControl(armor);
+            var attackSpeed = this.createText('Attack chance:' + this.guiMain.game.player.statistics.hitChance);
+            panel.addControl(attackSpeed);
+            var blockChance = this.createText('Block chance:' + this.guiMain.game.player.statistics.blockChance);
+            panel.addControl(blockChance);
         };
         Attributes.prototype.createText = function (text) {
             var textBlock = new BABYLON.GUI.TextBlock();

@@ -90,7 +90,6 @@ abstract class AbstractCharacter {
         if (this.animation) {
             this.animation.stop();
         }
-
         let self = this;
         let mesh = this.mesh;
         let skeleton = mesh.skeleton;
@@ -105,7 +104,7 @@ abstract class AbstractCharacter {
         }
 
 
-        self.animation = skeleton.beginAnimation(animation, loop, this.statistics.attackSpeed / 100, function () {
+        self.animation = skeleton.beginAnimation(animation, loop, 1, function () {
             if (callbackEnd) {
                 callbackEnd();
             }
@@ -115,29 +114,23 @@ abstract class AbstractCharacter {
         });
     }
 
-    public runAnimationSpecialHit(animation: string, callbackStart = null, callbackEnd = null, loop: boolean = false, speed: number = 1): void {
-        if (this.animation) {
-            this.animation.stop();
-        }
-
+    public runAnimationSkill(animation: string, callbackStart = null, callbackEnd = null, loop: boolean = false, speed: number = 1, standAnimationOnFinish: boolean = true): void {
         let self = this;
         let mesh = this.mesh;
         let skeleton = mesh.skeleton;
-        this.isAttack = true;
 
         if (callbackEnd) {
             callbackStart();
         }
-
 
         self.animation = skeleton.beginAnimation(animation, loop, 1*speed, function () {
             if (callbackEnd) {
                 callbackEnd();
             }
 
-            self.runAnimationStand();
-            self.isAttack = false;
-            // mesh.skeleton.enableBlending(0.3);
+            if(standAnimationOnFinish) {
+                self.runAnimationStand();
+            }
         });
     }
 

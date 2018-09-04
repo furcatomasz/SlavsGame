@@ -1,6 +1,6 @@
 namespace Character.Skills {
     export class FastAttack extends Character.Skills.AbstractSkill {
-        static TYPE = 2;
+        static TYPE = 3;
 
         public getType() {
             return Character.Skills.FastAttack.TYPE;

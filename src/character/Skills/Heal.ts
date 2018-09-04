@@ -42,7 +42,7 @@ namespace Character.Skills {
                     if (event.sourceEvent.key == self.getType()) {
                         game.controller.attackPoint = null;
 
-                        game.player.runAnimationSpecialHit(self.animationName, function () {
+                        game.player.runAnimationSkill(self.animationName, function () {
                             self.effectEmitter.particleSystem.start();
                             game.getScene().registerBeforeRender(animateFunction);
                             game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function() {

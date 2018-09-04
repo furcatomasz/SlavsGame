@@ -109,6 +109,7 @@ class Player extends AbstractCharacter {
             this.refreshCameraPosition();
             this.refreshHpInGui();
             this.refreshExperienceInGui();
+            this.refreshEnergyInGui();
         }
 
         super(serverData.activePlayer.name, game);
@@ -257,7 +258,12 @@ class Player extends AbstractCharacter {
     public refreshExperienceInGui() {
         this.game.gui.playerBottomPanel.expBar.width = this.experiencePercentages/100;
         this.game.gui.playerBottomPanel.expBarText.text = this.experiencePercentages+'%';
+    }
 
+    public refreshEnergyInGui() {
+        let percentage = Math.round(this.statistics.energy * 100 / this.statistics.energyMax);
+        this.game.gui.playerBottomPanel.energyBar.width = percentage/100;
+        this.game.gui.playerBottomPanel.energyBarText.text = this.statistics.energy+' / '+ this.statistics.energyMax;
     }
 
     public refreshHpInGui() {

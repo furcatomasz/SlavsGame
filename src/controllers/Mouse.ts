@@ -46,8 +46,7 @@ class Mouse extends Controller {
 
                     self.game.player.runPlayerToPosition(self.targetPoint);
                     self.game.client.socket.emit('setTargetPoint', {
-                        position: self.targetPoint,
-                        playerPosition: self.game.player.mesh.position
+                        position: self.targetPoint
                     });
                 }
 
@@ -68,11 +67,10 @@ class Mouse extends Controller {
 
                         self.game.player.runPlayerToPosition(self.targetPoint);
 
-                        if(lastUpdate < (new Date().getTime() / 1000)-0.3) {
-                            lastUpdate = (new Date().getTime() / 1000);
+                        if(lastUpdate < (new Date().getTime() / 500)-0.3) {
+                            lastUpdate = (new Date().getTime() / 500);
                             self.game.client.socket.emit('setTargetPoint', {
-                                position: self.targetPoint,
-                                playerPosition: self.game.player.mesh.position
+                                position: self.targetPoint
                             });
                         }
                     }

@@ -47,8 +47,7 @@ namespace GUI {
             this.createAttribute(1, 'Damage:' + this.guiMain.game.player.statistics.damage, panel);
             this.createAttribute(2, 'Armor:' + this.guiMain.game.player.statistics.armor, panel);
             this.createAttribute(3, 'HP:' + this.guiMain.game.player.statistics.hp, panel);
-            this.createAttribute(4, 'Attack speed:' + this.guiMain.game.player.statistics.attackSpeed, panel);
-            this.createAttribute(6, 'Block chance:' + this.guiMain.game.player.statistics.blockChance, panel);
+            this.createAttribute(4, 'Energy:' + this.guiMain.game.player.statistics.energy, panel);
 
             if (this.guiMain.game.player.freeAttributesPoints) {
                 let textAttributes = this.createText('You have ' + this.guiMain.game.player.freeAttributesPoints + ' free attribute points.');
@@ -69,6 +68,12 @@ namespace GUI {
 
             let armor = this.createText('Armor:' + this.guiMain.game.player.statisticsAll.armor);
             panel.addControl(armor);
+
+            let attackSpeed = this.createText('Attack chance:' + this.guiMain.game.player.statistics.hitChance);
+            panel.addControl(attackSpeed);
+
+            let blockChance = this.createText('Block chance:' + this.guiMain.game.player.statistics.blockChance);
+            panel.addControl(blockChance);
 
         }
 

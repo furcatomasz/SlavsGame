@@ -94,8 +94,9 @@ class EnvironmentForestHouse {
 
         var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
         light.intensity = 0.4;
-        light.position = new BABYLON.Vector3(0, 80, -210);
-        light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
+        light.position = new BABYLON.Vector3(0, 50, 0);
+        light.direction = new BABYLON.Vector3(0.45, -2.5, 0);
+
         light.shadowMaxZ = 500;
         var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
         // shadowGenerator.useBlurExponentialShadowMap = true;

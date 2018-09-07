@@ -10,9 +10,9 @@ class Monster extends AbstractCharacter {
         let mesh = game.factories[factoryName].createInstance(meshName, true);
         mesh.visibility = 1;
         mesh.isPickable = 0;
-
-
-        game.player.playerShadowGenerator.getShadowMap().renderList.push(mesh);
+        if(game.player.playerShadowGenerator) {
+            game.player.playerShadowGenerator.getShadowMap().renderList.push(mesh);
+        }
 
         this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit2.mp3", game.getScene(), null, {
             loop: false,
@@ -57,11 +57,13 @@ class Monster extends AbstractCharacter {
             }));
 
         let intervalAttackFunction = function () {
-            game.client.socket.emit('attack', {
-                attack: self.id,
-                targetPoint: self.game.controller.attackPoint.position,
-                rotation: self.game.controller.attackPoint.rotation,
-            });
+            if(!game.player.isAttack) {
+                game.client.socket.emit('attack', {
+                    attack: self.id,
+                    targetPoint: self.game.controller.attackPoint.position,
+                    rotation: self.game.controller.attackPoint.rotation,
+                });
+            }
         };
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
@@ -70,7 +72,7 @@ class Monster extends AbstractCharacter {
                     game.controller.attackPoint = pointer.meshUnderPointer;
                     game.controller.targetPoint = null;
                     game.controller.ball.visibility = 0;
-                    self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 200);
+                    self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
                     intervalAttackFunction();
                 }
             }));

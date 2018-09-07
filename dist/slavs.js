@@ -2205,6 +2205,8 @@ var EnvironmentForestHouse = /** @class */ (function () {
         light.intensity = 0.4;
         light.position = new BABYLON.Vector3(0, 80, -210);
         light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
+        light.position = new BABYLON.Vector3(0, 50, 0);
+        light.direction = new BABYLON.Vector3(0.45, -2.5, 0);
         light.shadowMaxZ = 500;
         var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
         // shadowGenerator.useBlurExponentialShadowMap = true;
@@ -4348,7 +4350,9 @@ var Monster = /** @class */ (function (_super) {
         var mesh = game.factories[factoryName].createInstance(meshName, true);
         mesh.visibility = 1;
         mesh.isPickable = 0;
-        game.player.playerShadowGenerator.getShadowMap().renderList.push(mesh);
+        if (game.player.playerShadowGenerator) {
+            game.player.playerShadowGenerator.getShadowMap().renderList.push(mesh);
+        }
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit2.mp3", game.getScene(), null, {
             loop: false,
             autoplay: false
@@ -4382,18 +4386,20 @@ var Monster = /** @class */ (function (_super) {
             self.game.gui.characterTopHp.showHpCharacter(self);
         }));
         var intervalAttackFunction = function () {
-            game.client.socket.emit('attack', {
-                attack: self.id,
-                targetPoint: self.game.controller.attackPoint.position,
-                rotation: self.game.controller.attackPoint.rotation
-            });
+            if (!game.player.isAttack) {
+                game.client.socket.emit('attack', {
+                    attack: self.id,
+                    targetPoint: self.game.controller.attackPoint.position,
+                    rotation: self.game.controller.attackPoint.rotation
+                });
+            }
         };
         _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function (pointer) {
             if (self.game.player.isAlive) {
                 game.controller.attackPoint = pointer.meshUnderPointer;
                 game.controller.targetPoint = null;
                 game.controller.ball.visibility = 0;
-                self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 200);
+                self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
                 intervalAttackFunction();
             }
         }));

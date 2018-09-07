@@ -1,10 +1,7 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -126,7 +123,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         scene.workerCollisions = false;
         return this;
     };
@@ -255,7 +252,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 0;
+    Game.SHOW_DEBUG = 1;
     return Game;
 }());
 var GUI;
@@ -1315,13 +1312,6 @@ var Player = /** @class */ (function (_super) {
         _this.setItems(serverData.activePlayer.items);
         if (_this.isControllable) {
             _this.mesh.isPickable = false;
-            var playerLight = new BABYLON.SpotLight("playerLightSpot", new BABYLON.Vector3(0, 50, 0), new BABYLON.Vector3(0, -1, 0), null, null, game.getScene());
-            playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-            playerLight.angle = 0.7;
-            playerLight.exponent = 50;
-            playerLight.intensity = 0.8;
-            playerLight.parent = _this.mesh;
-            _this.playerLight = playerLight;
             new GUI.Main(game);
             _this.experience = serverData.activePlayer.experience;
             _this.gold = serverData.activePlayer.gold;
@@ -2216,15 +2206,15 @@ var EnvironmentForestHouse = /** @class */ (function () {
         light.position = new BABYLON.Vector3(0, 80, -210);
         light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
         light.shadowMaxZ = 500;
-        var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+        var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
         // shadowGenerator.useBlurExponentialShadowMap = true;
-        // shadowGenerator.useExponentialShadowMap = true;
-        // shadowGenerator.usePoissonSampling = true;
+        shadowGenerator.useExponentialShadowMap = true;
+        shadowGenerator.usePoissonSampling = true;
         // shadowGenerator.frustumEdgeFalloff = 1.0;
         // shadowGenerator.useKernelBlur = true;
-        // shadowGenerator.blurKernel = 32;
-        shadowGenerator.usePercentageCloserFiltering = true;
-        shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
+        // shadowGenerator.blurKernel = 16;
+        // shadowGenerator.usePercentageCloserFiltering = true;
+        // shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
         shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
         // light.autoUpdateExtends = false;
         for (var i = 0; i < scene.meshes.length; i++) {
@@ -2245,14 +2235,31 @@ var EnvironmentForestHouse = /** @class */ (function () {
             scene.meshes[i].freezeWorldMatrix();
         }
         //TODO: shadow player
-        // var shadowGeneratorDynamic = new BABYLON.ShadowGenerator(512, light);
-        //
-        // let listener = function listener() {
-        //     shadowGeneratorDynamic.usePercentageCloserFiltering = true;
-        //     shadowGeneratorDynamic.getShadowMap().renderList.push(game.player.mesh);
-        //
-        // };
-        // document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        var listener = function listener() {
+            var playerLight = new BABYLON.SpotLight("playerLightSpot", new BABYLON.Vector3(0, 45, 0), new BABYLON.Vector3(0, -1, 0), null, null, game.getScene());
+            // var playerLight = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(0, 80, 0),
+            //     game.getScene());
+            playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
+            playerLight.angle = 0.7;
+            playerLight.exponent = 70;
+            playerLight.intensity = 0.8;
+            playerLight.parent = game.player.mesh;
+            game.player.playerLight = playerLight;
+            var shadowGenerator = new BABYLON.ShadowGenerator(512, playerLight);
+            // shadowGenerator.useBlurExponentialShadowMap = true;
+            shadowGenerator.useBlurExponentialShadowMap = true;
+            shadowGenerator.useExponentialShadowMap = true;
+            shadowGenerator.usePoissonSampling = true;
+            // shadowGenerator.frustumEdgeFalloff = 1.0;
+            shadowGenerator.useKernelBlur = true;
+            shadowGenerator.blurKernel = 32;
+            // shadowGenerator.usePercentageCloserFiltering = true;
+            // shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
+            // shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+            game.player.playerShadowGenerator = shadowGenerator;
+            shadowGenerator.getShadowMap().renderList.push(game.player.mesh);
+        };
+        document.addEventListener(Events.PLAYER_CONNECTED, listener);
         new BABYLON.Sound("Forest night", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.1 });
         new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.3 });
     }
@@ -4341,6 +4348,7 @@ var Monster = /** @class */ (function (_super) {
         var mesh = game.factories[factoryName].createInstance(meshName, true);
         mesh.visibility = 1;
         mesh.isPickable = 0;
+        game.player.playerShadowGenerator.getShadowMap().renderList.push(mesh);
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit2.mp3", game.getScene(), null, {
             loop: false,
             autoplay: false

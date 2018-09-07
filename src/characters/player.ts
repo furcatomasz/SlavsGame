@@ -5,6 +5,7 @@ class Player extends AbstractCharacter {
     public walkSmoke:BABYLON.ParticleSystem;
     public inventory:Character.Inventory;
     public playerLight:BABYLON.PointLight;
+    public playerShadowGenerator:BABYLON.ShadowGenerator;
     public isAlive:boolean;
 
     public skills: Array<any>;
@@ -54,19 +55,6 @@ class Player extends AbstractCharacter {
 
         if (this.isControllable) {
             this.mesh.isPickable = false;
-
-            let playerLight = new BABYLON.SpotLight("playerLightSpot",
-                new BABYLON.Vector3(0, 50, 0),
-                new BABYLON.Vector3(0, -1, 0),
-                null,
-                null,
-                game.getScene());
-            playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-            playerLight.angle = 0.7;
-            playerLight.exponent = 50;
-            playerLight.intensity = 0.8;
-            playerLight.parent = this.mesh;
-            this.playerLight = playerLight;
 
             new GUI.Main(game);
 

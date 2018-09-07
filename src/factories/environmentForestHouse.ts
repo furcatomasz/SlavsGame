@@ -97,15 +97,15 @@ class EnvironmentForestHouse {
         light.position = new BABYLON.Vector3(0, 80, -210);
         light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
         light.shadowMaxZ = 500;
-        var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+        var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
         // shadowGenerator.useBlurExponentialShadowMap = true;
-        // shadowGenerator.useExponentialShadowMap = true;
-        // shadowGenerator.usePoissonSampling = true;
+        shadowGenerator.useExponentialShadowMap = true;
+        shadowGenerator.usePoissonSampling = true;
         // shadowGenerator.frustumEdgeFalloff = 1.0;
         // shadowGenerator.useKernelBlur = true;
-        // shadowGenerator.blurKernel = 32;
-        shadowGenerator.usePercentageCloserFiltering = true;
-        shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
+        // shadowGenerator.blurKernel = 16;
+        // shadowGenerator.usePercentageCloserFiltering = true;
+        // shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
 
         shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
         // light.autoUpdateExtends = false;
@@ -130,14 +130,40 @@ class EnvironmentForestHouse {
         }
 
         //TODO: shadow player
-        // var shadowGeneratorDynamic = new BABYLON.ShadowGenerator(512, light);
-        //
-        // let listener = function listener() {
-        //     shadowGeneratorDynamic.usePercentageCloserFiltering = true;
-        //     shadowGeneratorDynamic.getShadowMap().renderList.push(game.player.mesh);
-        //
-        // };
-        // document.addEventListener(Events.PLAYER_CONNECTED, listener);
+
+        let listener = function listener() {
+            let playerLight = new BABYLON.SpotLight("playerLightSpot",
+                new BABYLON.Vector3(0, 45, 0),
+                new BABYLON.Vector3(0, -1, 0),
+                null,
+                null,
+                game.getScene());
+            // var playerLight = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(0, 80, 0),
+            //     game.getScene());
+            playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
+            playerLight.angle = 0.7;
+            playerLight.exponent = 70;
+            playerLight.intensity = 0.8;
+            playerLight.parent = game.player.mesh;
+            game.player.playerLight = playerLight;
+
+            let shadowGenerator = new BABYLON.ShadowGenerator(512, playerLight);
+            // shadowGenerator.useBlurExponentialShadowMap = true;
+            shadowGenerator.useBlurExponentialShadowMap = true;
+            shadowGenerator.useExponentialShadowMap = true;
+            shadowGenerator.usePoissonSampling = true;
+            // shadowGenerator.frustumEdgeFalloff = 1.0;
+            shadowGenerator.useKernelBlur = true;
+            shadowGenerator.blurKernel = 32;
+            // shadowGenerator.usePercentageCloserFiltering = true;
+            // shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
+
+            // shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+
+            game.player.playerShadowGenerator = shadowGenerator;
+            shadowGenerator.getShadowMap().renderList.push(game.player.mesh);
+        };
+        document.addEventListener(Events.PLAYER_CONNECTED, listener);
         new BABYLON.Sound("Forest night", "assets/sounds/fx/wind.mp3", scene, null, { loop: true, autoplay: true, volume: 0.1 });
         new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, { loop: true, autoplay: true, volume: 0.3 });
     }

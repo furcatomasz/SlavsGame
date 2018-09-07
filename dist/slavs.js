@@ -123,7 +123,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = false;
         scene.spritesEnabled = false;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
         scene.workerCollisions = false;
         return this;
     };
@@ -2203,8 +2203,6 @@ var EnvironmentForestHouse = /** @class */ (function () {
         fern.dispose();
         var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
         light.intensity = 0.4;
-        light.position = new BABYLON.Vector3(0, 80, -210);
-        light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
         light.position = new BABYLON.Vector3(0, 50, 0);
         light.direction = new BABYLON.Vector3(0.45, -2.5, 0);
         light.shadowMaxZ = 500;
@@ -4353,7 +4351,7 @@ var Monster = /** @class */ (function (_super) {
         if (game.player.playerShadowGenerator) {
             game.player.playerShadowGenerator.getShadowMap().renderList.push(mesh);
         }
-        _this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit2.mp3", game.getScene(), null, {
+        _this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
             loop: false,
             autoplay: false
         });

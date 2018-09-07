@@ -14,7 +14,7 @@ class Monster extends AbstractCharacter {
             game.player.playerShadowGenerator.getShadowMap().renderList.push(mesh);
         }
 
-        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit2.mp3", game.getScene(), null, {
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
             loop: false,
             autoplay: false
         });

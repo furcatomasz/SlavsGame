@@ -24,13 +24,13 @@ class EnvironmentMountainsPass {
                 let terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
                 terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
                 terrainMaterial.specularPower = 64;
-                terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/Forest_house/stencil.png", scene);
-                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
-                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
-                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/groundSeamless.jpg", scene);
-                terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 10;
-                terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 10;
-                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 15;
+                terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/MountainsPass/stencil.png", scene);
+                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
+                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+                terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 20;
+                terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 20;
+                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 20;
                 sceneMesh.material = terrainMaterial;
             } else if (meshName.search("Box_Cube") >= 0) {
                 this.colliders.push(sceneMesh);
@@ -66,8 +66,8 @@ class EnvironmentMountainsPass {
         //
         console.log(spsTrees);
         spsTrees.forEach(function(parentSPS) {
-            let spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce, false);
-            spsSpruce.buildSPS(67);
+            let spsSpruce = new Particles.SolidParticleSystem.NatureSmall(game, parentSPS, spruce, false);
+            spsSpruce.buildSPS(10);
         });
         //
         // spsPlants.forEach(function(parentSPS) {

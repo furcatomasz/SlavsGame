@@ -11,27 +11,27 @@ namespace NPC {
 
             let items = [
                 {
-                    meshName: 'Armor.001',
+                    meshName: 'leatherArmor',
                     equip: 1,
                 },
                 {
-                    meshName: 'Hood',
+                    meshName: 'leatherHelm',
                     equip: 1,
                 },
                 {
-                    meshName: 'Boots',
+                    meshName: 'leatherBoots',
                     equip: 1,
                 },
                 {
-                    meshName: 'Gloves',
+                    meshName: 'leatherGloves',
                     equip: 1,
                 },
                 {
-                    meshName: 'Shield',
+                    meshName: 'shieldWoodenMedium',
                     equip: 1,
                 },
                 {
-                    meshName: 'Axe.001',
+                    meshName: 'swordLong',
                     equip: 1,
                 }
             ];

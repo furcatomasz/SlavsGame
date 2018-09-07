@@ -252,7 +252,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 1;
+    Game.SHOW_DEBUG = 0;
     return Game;
 }());
 var GUI;
@@ -2380,13 +2380,13 @@ var EnvironmentMountainsPass = /** @class */ (function () {
                 var terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
                 terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
                 terrainMaterial.specularPower = 64;
-                terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/Forest_house/stencil.png", scene);
-                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
-                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
-                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/groundSeamless.jpg", scene);
-                terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 10;
-                terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 10;
-                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 15;
+                terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/MountainsPass/stencil.png", scene);
+                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
+                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+                terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 20;
+                terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 20;
+                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 20;
                 sceneMesh_3.material = terrainMaterial;
             }
             else if (meshName_3.search("Box_Cube") >= 0) {
@@ -2427,8 +2427,8 @@ var EnvironmentMountainsPass = /** @class */ (function () {
         //
         console.log(spsTrees);
         spsTrees.forEach(function (parentSPS) {
-            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce, false);
-            spsSpruce.buildSPS(67);
+            var spsSpruce = new Particles.SolidParticleSystem.NatureSmall(game, parentSPS, spruce, false);
+            spsSpruce.buildSPS(10);
         });
         //
         // spsPlants.forEach(function(parentSPS) {
@@ -3870,7 +3870,11 @@ var MountainsPass = /** @class */ (function (_super) {
                 .defaultPipeline(scene)
                 .executeWhenReady(function () {
                 self.environment = new EnvironmentMountainsPass(game, scene);
-            }, null);
+            }, function () {
+                new NPC.Guard(game, new BABYLON.Vector3(-117, 0, 128), new BABYLON.Vector3(0, -4.3, 0));
+                // new NPC.Trader(game, new BABYLON.Vector3(-122, 0, -16), new BABYLON.Vector3(0, 0.7, 0));
+                // new NPC.BigWarrior(game, new BABYLON.Vector3(-10, 0, -53), new BABYLON.Vector3(0, 1.54, 0));
+            });
         });
     };
     MountainsPass.TYPE = 5;
@@ -4104,11 +4108,12 @@ var Items;
                     }
                     item.mesh.alwaysSelectAsActiveMesh = true;
                     inventory.items.push(item);
-                    inventory.equipItem(item, itemDatabase.entity.equip);
-                    if (item.type == 3 && itemDatabase.entity.equip) {
+                    var equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip;
+                    inventory.equipItem(item, equip);
+                    if (item.type == 3 && equip) {
                         showHair = false;
                     }
-                    if (item.type == 6 && itemDatabase.entity.equip) {
+                    if (item.type == 6 && equip) {
                         showSash = false;
                     }
                 });
@@ -4774,27 +4779,27 @@ var NPC;
             _this = _super.call(this, game, name, position, rotation) || this;
             var items = [
                 {
-                    meshName: 'Armor.001',
+                    meshName: 'leatherArmor',
                     equip: 1
                 },
                 {
-                    meshName: 'Hood',
+                    meshName: 'leatherHelm',
                     equip: 1
                 },
                 {
-                    meshName: 'Boots',
+                    meshName: 'leatherBoots',
                     equip: 1
                 },
                 {
-                    meshName: 'Gloves',
+                    meshName: 'leatherGloves',
                     equip: 1
                 },
                 {
-                    meshName: 'Shield',
+                    meshName: 'shieldWoodenMedium',
                     equip: 1
                 },
                 {
-                    meshName: 'Axe.001',
+                    meshName: 'swordLong',
                     equip: 1
                 }
             ];
@@ -5943,6 +5948,48 @@ var Particles;
             return NatureBlock;
         }(SolidParticleSystem.AbstractSolidParticle));
         SolidParticleSystem.NatureBlock = NatureBlock;
+    })(SolidParticleSystem = Particles.SolidParticleSystem || (Particles.SolidParticleSystem = {}));
+})(Particles || (Particles = {}));
+var Particles;
+(function (Particles) {
+    var SolidParticleSystem;
+    (function (SolidParticleSystem) {
+        var NatureSmall = /** @class */ (function (_super) {
+            __extends(NatureSmall, _super);
+            function NatureSmall() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            NatureSmall.prototype.buildSPS = function (count) {
+                var self = this;
+                var game = this.game;
+                var parentPositions = this.parent.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+                var positionLength = parentPositions.length;
+                var myBuilder = function (particle, i, s) {
+                    var randomPosition = 4;
+                    var position = new BABYLON.Vector3(parentPositions[(i * randomPosition + i)], parentPositions[i * randomPosition + i + 1], parentPositions[i * randomPosition + i + 2]);
+                    if (self.collider) {
+                        var newCollider = self.collider.createInstance('sps_nature_collision');
+                        newCollider.position.x = position.x;
+                        newCollider.position.y = position.y;
+                        newCollider.position.z = position.z;
+                        newCollider.visibility = 1;
+                        Collisions.setCollider(game.getScene(), newCollider);
+                    }
+                    particle.position = position;
+                    var random = Math.random() + 0.3;
+                    particle.scaling.y = random;
+                    particle.scaling.x = random;
+                    particle.scaling.z = random;
+                };
+                var sps = new BABYLON.SolidParticleSystem('spsNature', this.game.getScene(), { updatable: false });
+                sps.addShape(this.shape, count, { positionFunction: myBuilder });
+                var spsMesh = sps.buildMesh();
+                spsMesh.material = this.shape.material;
+                return this;
+            };
+            return NatureSmall;
+        }(SolidParticleSystem.AbstractSolidParticle));
+        SolidParticleSystem.NatureSmall = NatureSmall;
     })(SolidParticleSystem = Particles.SolidParticleSystem || (Particles.SolidParticleSystem = {}));
 })(Particles || (Particles = {}));
 var Quests;

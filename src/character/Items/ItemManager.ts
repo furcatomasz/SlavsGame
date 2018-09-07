@@ -31,13 +31,14 @@ namespace Items {
                     item.mesh.alwaysSelectAsActiveMesh = true;
 
                     inventory.items.push(item);
-                    inventory.equipItem(item, itemDatabase.entity.equip);
+                    const equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip
+                    inventory.equipItem(item, equip);
 
-                    if (item.type == 3 && itemDatabase.entity.equip) {
+                    if (item.type == 3 && equip) {
                         showHair = false;
                     }
 
-                    if (item.type == 6 && itemDatabase.entity.equip) {
+                    if (item.type == 6 && equip) {
                         showSash = false;
                     }
                 });

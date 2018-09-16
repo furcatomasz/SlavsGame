@@ -130,25 +130,8 @@ class EnvironmentForestHouse {
             scene.meshes[i].freezeWorldMatrix();
         }
 
-        //TODO: shadow player
-
         let listener = function listener() {
-            let playerLight = new BABYLON.SpotLight("playerLightSpot",
-                new BABYLON.Vector3(0, 45, 0),
-                new BABYLON.Vector3(0, -1, 0),
-                null,
-                null,
-                game.getScene());
-            // var playerLight = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(0, 80, 0),
-            //     game.getScene());
-            playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-            playerLight.angle = 0.7;
-            playerLight.exponent = 70;
-            playerLight.intensity = 0.8;
-            playerLight.parent = game.player.mesh;
-            game.player.playerLight = playerLight;
-
-            let shadowGenerator = new BABYLON.ShadowGenerator(512, playerLight);
+            let shadowGenerator = new BABYLON.ShadowGenerator(512, game.player.playerLight);
             // shadowGenerator.useBlurExponentialShadowMap = true;
             shadowGenerator.useBlurExponentialShadowMap = true;
             shadowGenerator.useExponentialShadowMap = true;

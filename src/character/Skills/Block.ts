@@ -11,38 +11,24 @@ namespace Character.Skills {
             this.name = 'Block';
             this.animationName = 'blockA';
             this.animationSpeed = 1;
-            this.animationTime = 2000;
+            this.animationTime = 0;
             this.animationLoop = false;
         }
 
-        protected registerHotKey(game: Game) {
-            let self = this;
+        public showAnimation(skillTime: number, cooldownTime: number) {
+            const game = this.game;
+            this.showReloadInGUI(cooldownTime);
+            game.player.runAnimationSkill(this.animationName, function () {
+            }, function () {
+                game.player.mesh.skeleton.createAnimationRange('loopBlock', 70, 80);
+                game.player.mesh.skeleton.beginAnimation('loopBlock', true);
+            }, this.animationLoop, this.animationSpeed, false);
 
-            let listener = function listener() {
-                game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                    if (event.sourceEvent.key == self.getType()) {
-                        game.controller.attackPoint = null;
-
-                        game.player.runAnimationSkill(self.animationName, function () {
-                        }, function () {
-                            console.log(game.player.mesh.skeleton);
-                            game.player.mesh.skeleton.createAnimationRange('loopBlock', 70, 80);
-                            game.player.mesh.skeleton.beginAnimation('loopBlock', true);
-                        }, self.animationLoop, self.animationSpeed, false);
-
-                        if (self.animationTime) {
-                            setTimeout(function () {
-                                game.player.runAnimationSkill('blockB');
-                            }, self.animationTime);
-                        }
-
-                    }
-                }));
-
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            setTimeout(function () {
+                game.player.runAnimationSkill('blockB');
+            }, skillTime);
         }
+
 
 
     }

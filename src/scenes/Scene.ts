@@ -142,9 +142,9 @@ abstract class Scene {
         scene.fogEnabled = true;
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
-        scene.postProcessesEnabled = false;
+        scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         scene.workerCollisions = false;
 
         return this;
@@ -166,50 +166,178 @@ abstract class Scene {
     public defaultPipeline(scene: BABYLON.Scene) {
         // let self = this;
         // let camera = scene.activeCamera;
-    //var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [scene.activeCamera]);
-    //defaultPipeline.bloomEnabled = false;
-    //defaultPipeline.fxaaEnabled = true;
-    //defaultPipeline.imageProcessingEnabled = false;
-    //defaultPipeline.bloomWeight = 0.05;
+        //
+        // var bgCamera = camera;
+        //
+        // var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        //
+        // var rightPanel = new BABYLON.GUI.StackPanel();
+        // rightPanel.width = "300px";
+        // rightPanel.isVertical = true;
+        // rightPanel.isPointerBlocker = true;
+        //
+        // rightPanel.paddingRight = "20px";
+        // rightPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        // rightPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        // advancedTexture.addControl(rightPanel);
+        //
+        // var leftPanel = new BABYLON.GUI.StackPanel();
+        // leftPanel.width = "300px";
+        // // leftPanel.isVertical = true;
+        // leftPanel.paddingRight = "20px";
+        // leftPanel.isPointerBlocker = true;
+        //
+        // leftPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        // leftPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        // advancedTexture.addControl(leftPanel);
+        //
+        // var addCheckbox = function(text, func, initialValue, left, panel) {
+        //     if(!panel){
+        //         panel = leftPanel
+        //     }
+        //     var checkbox = new BABYLON.GUI.Checkbox();
+        //     checkbox.width = "20px";
+        //     checkbox.height = "20px";
+        //     checkbox.isChecked = initialValue;
+        //     checkbox.color = "green";
+        //     checkbox.isPointerBlocker = true;
+        //
+        //     checkbox.onIsCheckedChangedObservable.add(function(value) {
+        //         func(value);
+        //     });
+        //
+        //     var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "280px", { isHorizontal: true, controlFirst: true});
+        //     header.height = "30px";
+        //     header.color = "white";
+        //     header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        //
+        //     if (left) {
+        //         header.left = left;
+        //     }
+        //
+        //     panel.addControl(header);
+        // }
+        //
+        // var addSlider = function(text, func, initialValue, min, max, left, panel) {
+        //     if(!panel){
+        //         panel = leftPanel
+        //     }
+        //     var header = new BABYLON.GUI.TextBlock();
+        //     header.text = text;
+        //     header.height = "30px";
+        //     header.color = "white";
+        //     header.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        //     panel.addControl(header);
+        //     if (left) {
+        //         header.left = left;
+        //     }
+        //
+        //     var slider = new BABYLON.GUI.Slider();
+        //     slider.minimum = min;
+        //     slider.maximum = max;
+        //     slider.value = initialValue;
+        //     slider.height = "20px";
+        //     slider.color = "green";
+        //     slider.background = "white";
+        //     slider.isPointerBlocker = true;
+        //
+        //     slider.onValueChangedObservable.add(function(value) {
+        //         func(value);
+        //     });
+        //
+        //     if (left) {
+        //         slider.paddingLeft = left;
+        //     }
+        //
+        //     panel.addControl(slider);
+        // }
+        //
+        // var addColorPicker = function(text, func, initialValue, left, panel) {
+        //     if(!panel){
+        //         panel = leftPanel
+        //     }
+        //     var header = new BABYLON.GUI.TextBlock();
+        //     header.text = text;
+        //     header.height = "30px";
+        //     header.color = "white";
+        //     header.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        //     panel.addControl(header);
+        //
+        //     if (left) {
+        //         header.left = left;
+        //     }
+        //
+        //     var colorPicker = new BABYLON.GUI.ColorPicker();
+        //     colorPicker.value = initialValue;
+        //     colorPicker.size = "100px";
+        //     colorPicker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        //     colorPicker.onValueChangedObservable.add(function(value) {
+        //         func(value);
+        //     });
+        //
+        //     if (left) {
+        //         colorPicker.left = left;
+        //     }
+        //
+        //     panel.addControl(colorPicker);
+        // }
+        //
+        // // Create default pipeline
+        // var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", false, scene, [camera]);
+        // defaultPipeline.fxaaEnabled = true;
+        // defaultPipeline.depthOfFieldEnabled = true;
+        // defaultPipeline.depthOfField.focalLength = 300;
+        // defaultPipeline.depthOfField.fStop = 0;
+        // defaultPipeline.depthOfField.depthOfFieldBlurLevel = 2;
+        // defaultPipeline.depthOfField.focusDistance = 25000;
+        //
+        // addCheckbox("Multisample Anti-Aliasing", function(value) {
+        //     defaultPipeline.samples = defaultPipeline.samples == 1 ? 4 : 1;
+        // }, defaultPipeline.samples == 4 );
+        //
+        // addCheckbox("Fast Approximate Anti-Aliasing", function(value) {
+        //     defaultPipeline.fxaaEnabled = value;
+        //
+        // }, defaultPipeline.fxaaEnabled );
+        //
+        // addCheckbox("Tone Mapping", function(value) {
+        //     defaultPipeline.imageProcessing.toneMappingEnabled = value;
+        // }, defaultPipeline.imageProcessing.toneMappingEnabled);
+        //
+        // addSlider("camera contrast", function(value) {
+        //     defaultPipeline.imageProcessing.contrast = value;
+        // }, defaultPipeline.imageProcessing.contrast, 0, 4);
+        //
+        // addSlider("camera exposure", function(value) {
+        //     defaultPipeline.imageProcessing.exposure = value;
+        // }, defaultPipeline.imageProcessing.exposure, 0, 4);
+        //
+        // addCheckbox("Depth Of Field", function(value) {
+        //     defaultPipeline.depthOfFieldEnabled = value;
+        // }, defaultPipeline.depthOfFieldEnabled);
+        //
+        // addSlider("Blur Level", function(value) {
+        //     if(value < 1){
+        //         defaultPipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Low;
+        //     }else if(value < 2){
+        //         defaultPipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
+        //     }else if(value < 3){
+        //         defaultPipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.High;
+        //     }
+        // }, 1, 0, 3, "20px");
+        //
+        // addSlider("Focus Distance", function(value) {
+        //     defaultPipeline.depthOfField.focusDistance = value;
+        // }, defaultPipeline.depthOfField.focusDistance, 1, 50000, "20px");
+        //
+        // addSlider("F-Stop", function(value) {
+        //     defaultPipeline.depthOfField.fStop = value;
+        // }, defaultPipeline.depthOfField.fStop, 1.0, 10, "20px");
+        //
+        // addSlider("Focal Length", function(value) {
+        //     defaultPipeline.depthOfField.focalLength = value;
+        // }, defaultPipeline.depthOfField.focalLength, 1.0, 300, "20px");
 
-
-    // var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    //
-    // var panel = new BABYLON.GUI.StackPanel();
-    // panel.width = "200px";
-    // panel.isVertical = true;
-    // panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    // panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-    // advancedTexture.addControl(panel)
-    //
-    // var addCheckbox = function(text, func, initialValue) {
-    //     var checkbox = new BABYLON.GUI.Checkbox();
-    //     checkbox.width = "20px";
-    //     checkbox.height = "20px";
-    //     checkbox.isChecked = initialValue;
-    //     checkbox.color = "green";
-    //     checkbox.onIsCheckedChangedObservable.add(function(value) {
-    //         func(value);
-    //     });
-    //     var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "180px", { isHorizontal: true, controlFirst: true});
-    //     header.height = "30px";
-    //     header.color = "white";
-    //     header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-    //
-    //     panel.addControl(header);
-    // }
-    //     let postProcessFxaa = null;
-    //     let kernel = 4;
-    //     let postProcessBloom1 = null;
-    //     let postProcessBloom2 = null;
-    //     addCheckbox("fxaa", function(value) {
-    //         if(value) {
-    //             postProcess = new BABYLON.FxaaPostProcess("fxaa", 2.0, camera);
-    //         } else {
-    //             scene.activeCamera.detachPostProcess(postProcess);
-    //         }
-    //     }, false );
-    //
 
         return this;
     }

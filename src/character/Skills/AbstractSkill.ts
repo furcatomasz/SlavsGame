@@ -2,6 +2,8 @@ namespace Character.Skills {
     export abstract class  AbstractSkill {
         static TYPE = 0;
 
+        protected game: Game;
+
         public cooldown: number;
         public damage: number;
         public stock: number;
@@ -28,6 +30,7 @@ namespace Character.Skills {
             this.stock = stock;
             this.animationTime = 0;
             this.animationLoop = false;
+            this.game = game;
             this.registerDefaults(game);
             this.registerHotKey(game);
             this.registerAnimations();
@@ -41,32 +44,17 @@ namespace Character.Skills {
 
         public abstract getType();
 
+        public abstract showAnimation(skillTime: number, cooldownTime: number);
+
         protected abstract registerDefaults(game: Game);
 
         protected registerHotKey(game: Game) {
             let self = this;
+
             let listener = function listener() {
                 game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
                     if (event.sourceEvent.key == self.getType()) {
-                        game.controller.attackPoint = null;
-
-                        game.player.runAnimationSkill(self.animationName, function () {
-                            self.effectEmitter.particleSystem.start();
-                            game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function() {
-                                game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
-                            });
-
-                        }, function () {
-                            self.effectEmitter.particleSystem.stop();
-
-                        }, self.animationLoop, self.animationSpeed);
-
-                        if(self.animationTime) {
-                            setTimeout(function() {
-                                game.player.animation.stop();
-                            }, self.animationTime);
-                        }
-
+                        game.client.socket.emit('useSkill', self.getType());
                     }
                 }));
 
@@ -74,6 +62,47 @@ namespace Character.Skills {
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
+
+        protected showReloadInGUI(cooldownTime: number) {
+            const game = this.game;
+            const self = this;
+
+            game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function() {
+                game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
+            });
+        }
+
+        // protected registerHotKey(game: Game) {
+        //     let self = this;
+        //     let listener = function listener() {
+        //         game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
+        //             if (event.sourceEvent.key == self.getType()) {
+        //                 game.controller.attackPoint = null;
+        //
+        //                 game.player.runAnimationSkill(self.animationName, function () {
+        //                     self.effectEmitter.particleSystem.start();
+        //                     game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function() {
+        //                         game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
+        //                     });
+        //
+        //                 }, function () {
+        //                     self.effectEmitter.particleSystem.stop();
+        //
+        //                 }, self.animationLoop, self.animationSpeed);
+        //
+        //                 if(self.animationTime) {
+        //                     setTimeout(function() {
+        //                         game.player.animation.stop();
+        //                     }, self.animationTime);
+        //                 }
+        //
+        //             }
+        //         }));
+        //
+        //         document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+        //     };
+        //     document.addEventListener(Events.PLAYER_CONNECTED, listener);
+        // }
 
         protected createSkillImageInGUI(game) {
             let image = this.getImageUrl();

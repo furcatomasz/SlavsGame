@@ -15,32 +15,22 @@ namespace Character.Skills {
             this.animationLoop = false;
         }
 
-        protected registerHotKey(game: Game) {
-            let self = this;
+        public showAnimation(skillTime: number, cooldownTime: number) {
+            const game = this.game;
+            this.showReloadInGUI(cooldownTime);
 
-            let listener = function listener() {
-                game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                    if (event.sourceEvent.key == self.getType()) {
-                        game.controller.attackPoint = null;
+            game.player.runAnimationSkill(this.animationName, function () {
+            }, function () {
+                game.player.mesh.skeleton.createAnimationRange('loopStrongAttack', 340, 350);
+                game.player.mesh.skeleton.beginAnimation('loopStrongAttack', true);
+            }, this.animationLoop, this.animationSpeed, false);
 
-                        game.player.runAnimationSkill(self.animationName, function () {
-                        }, function () {
-                            game.player.mesh.skeleton.createAnimationRange('loopStrongAttack', 340, 350);
-                            game.player.mesh.skeleton.beginAnimation('loopStrongAttack', true);
-                        }, self.animationLoop, self.animationSpeed, false);
-
-                        if (self.animationTime) {
-                            setTimeout(function () {
-                                game.player.runAnimationSkill('strongAttackB');
-                            }, self.animationTime);
-                        }
-
-                    }
-                }));
-
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            setTimeout(function () {
+                game.player.runAnimationSkill('strongAttackB');
+                game.client.socket.emit('attack', {
+                    targetPoint: null
+                });
+            }, skillTime);
         }
 
 

@@ -8,7 +8,7 @@ namespace Character.Skills {
         }
 
         /**
-         * @param type
+         * @param Character.Skills.AbstractSkill
          */
         public getSkill(type: number) {
             let skill = null;

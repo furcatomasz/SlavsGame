@@ -64,7 +64,6 @@ class EnvironmentMountainsPass {
         // stone.visibility = 0;
         // stone.material.freeze();
         //
-        console.log(spsTrees);
         spsTrees.forEach(function(parentSPS) {
             let spsSpruce = new Particles.SolidParticleSystem.NatureSmall(game, parentSPS, spruce, false);
             spsSpruce.buildSPS(10);
@@ -94,7 +93,6 @@ class EnvironmentMountainsPass {
         // fern.dispose();
 
         let cone = scene.getMeshByName("fireplace.002");
-        console.log(cone);
         if (cone) {
             let smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
             smokeSystem.start();
@@ -136,7 +134,7 @@ class EnvironmentMountainsPass {
         ///register colliders
         for (let i = 0; i < this.colliders.length; i++) {
             let sceneMeshCollider = this.colliders[i];
-            Collisions.setCollider(scene, sceneMeshCollider);
+            // Collisions.setCollider(scene, sceneMeshCollider);
         }
 
         // Freeze world matrix all static meshes
@@ -145,22 +143,7 @@ class EnvironmentMountainsPass {
         }
 
         let listener = function listener() {
-            let playerLight = new BABYLON.SpotLight("playerLightSpot",
-                new BABYLON.Vector3(0, 45, 0),
-                new BABYLON.Vector3(0, -1, 0),
-                null,
-                null,
-                game.getScene());
-            // var playerLight = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(0, 80, 0),
-            //     game.getScene());
-            playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-            playerLight.angle = 0.7;
-            playerLight.exponent = 70;
-            playerLight.intensity = 0.8;
-            playerLight.parent = game.player.mesh;
-            game.player.playerLight = playerLight;
-
-            let shadowGenerator = new BABYLON.ShadowGenerator(512, playerLight);
+            let shadowGenerator = new BABYLON.ShadowGenerator(512, game.player.playerLight);
             // shadowGenerator.useBlurExponentialShadowMap = true;
             shadowGenerator.useBlurExponentialShadowMap = true;
             shadowGenerator.useExponentialShadowMap = true;

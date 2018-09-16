@@ -37,6 +37,7 @@ class SocketIOClient {
             // .connectPlayer()
                 .showPlayer()
                 .updatePlayers()
+                .updatePlayersSkills()
                 .removePlayer()
                 .refreshPlayerEquip()
                 .addExperience()
@@ -513,6 +514,41 @@ class SocketIOClient {
     /**
      * @returns {SocketIOClient}
      */
+    protected updatePlayersSkills() {
+        let self = this;
+        let game = this.game;
+        const skillsManager = new Character.Skills.SkillsManager(game);
+
+        this.socket.on('updatePlayerSkill', function (updatedPlayer) {
+            let player = null;
+            if (updatedPlayer.activePlayer.id == game.player.id) {
+                player = game.player;
+            } else {
+                game.remotePlayers.forEach(function (remotePlayer, key) {
+                    if (remotePlayer.id == updatedPlayer.activePlayer.id) {
+                        player = game.remotePlayers[key];
+                        return;
+                    }
+                });
+            }
+
+            ///action on use skill
+            if(updatedPlayer.activeSkill) {
+                console.log(updatedPlayer);
+                player.statistics.energy = updatedPlayer.activePlayer.statistics.energy;
+                player.refreshEnergyInGui();
+                const skill = skillsManager.getSkill(updatedPlayer.activeSkill.type);
+                skill.showAnimation(updatedPlayer.activeSkill.duration*1000, updatedPlayer.activeSkill.cooldownTime*1000);
+            }
+
+        });
+
+        return this;
+    }
+
+    /**
+     * @returns {SocketIOClient}
+     */
     protected updatePlayers() {
         let self = this;
         let game = this.game;
@@ -569,6 +605,9 @@ class SocketIOClient {
 
                 let attackAnimation = (Game.randomNumber(1,2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
                 player.runAnimationHit(attackAnimation, null, null);
+
+                player.statistics.energy = updatedPlayer.activePlayer.statistics.energy;
+                player.refreshEnergyInGui();
                 return;
             }
 

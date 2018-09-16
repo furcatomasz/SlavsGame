@@ -29,7 +29,7 @@ class Battleground extends Scene {
                 ground.material = terrainMaterial;
 
             }, function() {
-                game.player.playerLight.dispose();
+                // game.player.playerLight.dispose();
             });
 
     }

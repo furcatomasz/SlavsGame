@@ -80,7 +80,7 @@ abstract class AbstractCharacter {
 
     protected createBoxForMove(scene: BABYLON.Scene) {
         this.meshForMove = BABYLON.Mesh.CreateBox(this.name+'_moveBox', 4, scene, false);
-        this.meshForMove.checkCollisions = true;
+        this.meshForMove.checkCollisions = false;
         this.meshForMove.visibility = 0;
 
         return this;

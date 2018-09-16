@@ -4,7 +4,7 @@ class Player extends AbstractCharacter {
 
     public walkSmoke:BABYLON.ParticleSystem;
     public inventory:Character.Inventory;
-    public playerLight:BABYLON.PointLight;
+    public playerLight:BABYLON.SpotLight;
     public playerShadowGenerator:BABYLON.ShadowGenerator;
     public isAlive:boolean;
 
@@ -98,6 +98,19 @@ class Player extends AbstractCharacter {
             this.refreshHpInGui();
             this.refreshExperienceInGui();
             this.refreshEnergyInGui();
+
+            const playerLight = new BABYLON.SpotLight("playerLightSpot",
+                new BABYLON.Vector3(0, 45, 0),
+                new BABYLON.Vector3(0, -1, 0),
+                null,
+                null,
+                game.getScene());
+            playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
+            playerLight.angle = 0.7;
+            playerLight.exponent = 70;
+            playerLight.intensity = 0.8;
+            playerLight.parent = this.mesh;
+            this.playerLight = playerLight;
         }
 
         super(serverData.activePlayer.name, game);

@@ -21,7 +21,7 @@ namespace GUI {
          */
         protected initTexture() {
             this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
-            let container = new BABYLON.GUI.Rectangle('gui.panel.');
+            let container = new BABYLON.GUI.Rectangle('gui.panel.'+ this.name);
             container.horizontalAlignment = this.position;
             container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             container.thickness = 0;

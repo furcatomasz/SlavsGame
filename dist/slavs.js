@@ -141,179 +141,6 @@ var Scene = /** @class */ (function () {
         return this;
     };
     Scene.prototype.defaultPipeline = function (scene) {
-        // let self = this;
-        // let camera = scene.activeCamera;
-        //
-        // var bgCamera = camera;
-        //
-        // var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        //
-        // var rightPanel = new BABYLON.GUI.StackPanel();
-        // rightPanel.width = "300px";
-        // rightPanel.isVertical = true;
-        // rightPanel.isPointerBlocker = true;
-        //
-        // rightPanel.paddingRight = "20px";
-        // rightPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        // rightPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-        // advancedTexture.addControl(rightPanel);
-        //
-        // var leftPanel = new BABYLON.GUI.StackPanel();
-        // leftPanel.width = "300px";
-        // // leftPanel.isVertical = true;
-        // leftPanel.paddingRight = "20px";
-        // leftPanel.isPointerBlocker = true;
-        //
-        // leftPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        // leftPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-        // advancedTexture.addControl(leftPanel);
-        //
-        // var addCheckbox = function(text, func, initialValue, left, panel) {
-        //     if(!panel){
-        //         panel = leftPanel
-        //     }
-        //     var checkbox = new BABYLON.GUI.Checkbox();
-        //     checkbox.width = "20px";
-        //     checkbox.height = "20px";
-        //     checkbox.isChecked = initialValue;
-        //     checkbox.color = "green";
-        //     checkbox.isPointerBlocker = true;
-        //
-        //     checkbox.onIsCheckedChangedObservable.add(function(value) {
-        //         func(value);
-        //     });
-        //
-        //     var header = BABYLON.GUI.Control.AddHeader(checkbox, text, "280px", { isHorizontal: true, controlFirst: true});
-        //     header.height = "30px";
-        //     header.color = "white";
-        //     header.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        //
-        //     if (left) {
-        //         header.left = left;
-        //     }
-        //
-        //     panel.addControl(header);
-        // }
-        //
-        // var addSlider = function(text, func, initialValue, min, max, left, panel) {
-        //     if(!panel){
-        //         panel = leftPanel
-        //     }
-        //     var header = new BABYLON.GUI.TextBlock();
-        //     header.text = text;
-        //     header.height = "30px";
-        //     header.color = "white";
-        //     header.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        //     panel.addControl(header);
-        //     if (left) {
-        //         header.left = left;
-        //     }
-        //
-        //     var slider = new BABYLON.GUI.Slider();
-        //     slider.minimum = min;
-        //     slider.maximum = max;
-        //     slider.value = initialValue;
-        //     slider.height = "20px";
-        //     slider.color = "green";
-        //     slider.background = "white";
-        //     slider.isPointerBlocker = true;
-        //
-        //     slider.onValueChangedObservable.add(function(value) {
-        //         func(value);
-        //     });
-        //
-        //     if (left) {
-        //         slider.paddingLeft = left;
-        //     }
-        //
-        //     panel.addControl(slider);
-        // }
-        //
-        // var addColorPicker = function(text, func, initialValue, left, panel) {
-        //     if(!panel){
-        //         panel = leftPanel
-        //     }
-        //     var header = new BABYLON.GUI.TextBlock();
-        //     header.text = text;
-        //     header.height = "30px";
-        //     header.color = "white";
-        //     header.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        //     panel.addControl(header);
-        //
-        //     if (left) {
-        //         header.left = left;
-        //     }
-        //
-        //     var colorPicker = new BABYLON.GUI.ColorPicker();
-        //     colorPicker.value = initialValue;
-        //     colorPicker.size = "100px";
-        //     colorPicker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        //     colorPicker.onValueChangedObservable.add(function(value) {
-        //         func(value);
-        //     });
-        //
-        //     if (left) {
-        //         colorPicker.left = left;
-        //     }
-        //
-        //     panel.addControl(colorPicker);
-        // }
-        //
-        // // Create default pipeline
-        // var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", false, scene, [camera]);
-        // defaultPipeline.fxaaEnabled = true;
-        // defaultPipeline.depthOfFieldEnabled = true;
-        // defaultPipeline.depthOfField.focalLength = 300;
-        // defaultPipeline.depthOfField.fStop = 0;
-        // defaultPipeline.depthOfField.depthOfFieldBlurLevel = 2;
-        // defaultPipeline.depthOfField.focusDistance = 25000;
-        //
-        // addCheckbox("Multisample Anti-Aliasing", function(value) {
-        //     defaultPipeline.samples = defaultPipeline.samples == 1 ? 4 : 1;
-        // }, defaultPipeline.samples == 4 );
-        //
-        // addCheckbox("Fast Approximate Anti-Aliasing", function(value) {
-        //     defaultPipeline.fxaaEnabled = value;
-        //
-        // }, defaultPipeline.fxaaEnabled );
-        //
-        // addCheckbox("Tone Mapping", function(value) {
-        //     defaultPipeline.imageProcessing.toneMappingEnabled = value;
-        // }, defaultPipeline.imageProcessing.toneMappingEnabled);
-        //
-        // addSlider("camera contrast", function(value) {
-        //     defaultPipeline.imageProcessing.contrast = value;
-        // }, defaultPipeline.imageProcessing.contrast, 0, 4);
-        //
-        // addSlider("camera exposure", function(value) {
-        //     defaultPipeline.imageProcessing.exposure = value;
-        // }, defaultPipeline.imageProcessing.exposure, 0, 4);
-        //
-        // addCheckbox("Depth Of Field", function(value) {
-        //     defaultPipeline.depthOfFieldEnabled = value;
-        // }, defaultPipeline.depthOfFieldEnabled);
-        //
-        // addSlider("Blur Level", function(value) {
-        //     if(value < 1){
-        //         defaultPipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Low;
-        //     }else if(value < 2){
-        //         defaultPipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
-        //     }else if(value < 3){
-        //         defaultPipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.High;
-        //     }
-        // }, 1, 0, 3, "20px");
-        //
-        // addSlider("Focus Distance", function(value) {
-        //     defaultPipeline.depthOfField.focusDistance = value;
-        // }, defaultPipeline.depthOfField.focusDistance, 1, 50000, "20px");
-        //
-        // addSlider("F-Stop", function(value) {
-        //     defaultPipeline.depthOfField.fStop = value;
-        // }, defaultPipeline.depthOfField.fStop, 1.0, 10, "20px");
-        //
-        // addSlider("Focal Length", function(value) {
-        //     defaultPipeline.depthOfField.focalLength = value;
-        // }, defaultPipeline.depthOfField.focalLength, 1.0, 300, "20px");
         return this;
     };
     Scene.TYPE = 0;
@@ -398,7 +225,7 @@ var GUI;
          */
         Popup.prototype.initTexture = function () {
             this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
-            var container = new BABYLON.GUI.Rectangle('gui.panel.');
+            var container = new BABYLON.GUI.Rectangle('gui.panel.' + this.name);
             container.horizontalAlignment = this.position;
             container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             container.thickness = 0;
@@ -2766,55 +2593,8 @@ var GUI;
             this.characterTopHp = new GUI.ShowHp(game);
             this.attributes = new GUI.Attributes(this);
             this.inventory = new GUI.Inventory(this);
+            this.options = new GUI.Options(this);
         }
-        Main.prototype.initFullscreen = function () {
-            var self = this;
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Fullscreen");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            button.isPointerBlocker = true;
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                self.game.engine.switchFullscreen(false);
-                // self.game.engine.resize();
-            });
-            return this;
-        };
-        Main.prototype.initQuests = function () {
-            var self = this;
-            this.playerQuests = new GUI.PlayerQuests(this);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.fullscreen", "Quests");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            button.isPointerBlocker = true;
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.playerQuests.opened) {
-                    self.playerQuests.open();
-                }
-            });
-            return this;
-        };
-        Main.prototype.initTeams = function () {
-            var self = this;
-            this.teams = new GUI.Rooms(this);
-            var button = BABYLON.GUI.Button.CreateSimpleButton("button.attributes", "Teams");
-            button.width = 1;
-            button.height = "20px";
-            button.color = "white";
-            button.background = "black";
-            this.buttonpanel.addControl(button);
-            button.onPointerUpObservable.add(function () {
-                if (!self.teams.opened) {
-                    self.teams.open();
-                }
-            });
-            return this;
-        };
         return Main;
     }());
     GUI.Main = Main;
@@ -2958,6 +2738,11 @@ var GUI;
             buttonOptions.thickness = 0;
             buttonOptions.top = '37px';
             buttonOptions.left = '479px';
+            buttonOptions.onPointerUpObservable.add(function () {
+                if (!game.gui.options.opened) {
+                    game.gui.options.open();
+                }
+            });
             container.addControl(buttonOptions);
         }
         return PlayerBottomPanel;
@@ -5495,6 +5280,96 @@ var GUI;
         return Inventory;
     }(GUI.Popup));
     GUI.Inventory = Inventory;
+})(GUI || (GUI = {}));
+var GUI;
+(function (GUI) {
+    var Options = /** @class */ (function (_super) {
+        __extends(Options, _super);
+        function Options(guiMain) {
+            var _this = _super.call(this, guiMain) || this;
+            _this.name = 'Inventory';
+            _this.imageUrl = "assets/gui/attrs.png";
+            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            return _this;
+        }
+        Options.prototype.open = function () {
+            this.opened = true;
+            this.initTexture();
+            this.guiTexture.addControl(this.container);
+            this.showText();
+            this.createButtonClose();
+        };
+        Options.prototype.close = function () {
+            this.opened = false;
+            this.guiTexture.dispose();
+            this.buttonClose = null;
+        };
+        Options.prototype.showText = function () {
+            var panel = new BABYLON.GUI.StackPanel('attributes.panel');
+            panel.isPointerBlocker = true;
+            panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            panel.width = 1;
+            panel.height = 0.9;
+            panel.top = '10%';
+            this.container.addControl(panel);
+            var self = this;
+            var scene = this.guiMain.game.getScene();
+            var camera = scene.activeCamera;
+            var postProccessGroup = new BABYLON.GUI.CheckboxGroup("Post proccessing");
+            postProccessGroup.color = "white";
+            postProccessGroup.addCheckbox("Enabled", function (isChecked) {
+                if (isChecked) {
+                    self.renderingPipeline = new BABYLON.DefaultRenderingPipeline("default", false, scene, [camera]);
+                }
+                else {
+                    self.renderingPipeline.dispose();
+                }
+            });
+            postProccessGroup.addCheckbox("FXAA", function (isChecked) {
+                if (isChecked) {
+                    self.renderingPipeline.fxaaEnabled = true;
+                }
+                else {
+                    self.renderingPipeline.fxaaEnabled = false;
+                }
+            });
+            postProccessGroup.addCheckbox("Depth Of Field", function (isChecked) {
+                if (isChecked) {
+                    self.renderingPipeline.depthOfFieldEnabled = true;
+                    self.renderingPipeline.depthOfField.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
+                }
+                else {
+                    self.renderingPipeline.depthOfFieldEnabled = false;
+                }
+            });
+            var dofGroup = new BABYLON.GUI.SliderGroup("DOF", "S");
+            dofGroup.addSlider("fStop", function (value) {
+                self.renderingPipeline.depthOfField.fStop = value;
+            }, "", 0.01, 32.00, 0, function (value) {
+                return value;
+            });
+            dofGroup.addSlider("focusDistance", function (value) {
+                self.renderingPipeline.depthOfField.focusDistance = value;
+            }, "", 0, 5000, 0, function (value) {
+                return value;
+            });
+            dofGroup.addSlider("focalLength", function (value) {
+                self.renderingPipeline.depthOfField.focalLength = value;
+            }, "", 0.01, 500.00, 0, function (value) {
+                return value;
+            });
+            var selectBox = new BABYLON.GUI.SelectionPanel("sp", [postProccessGroup, dofGroup]);
+            selectBox.width = 0.8;
+            selectBox.height = 0.8;
+            selectBox.thickness = 0;
+            selectBox.color = "white";
+            selectBox.headerColor = "white";
+            panel.addControl(selectBox);
+        };
+        return Options;
+    }(GUI.Popup));
+    GUI.Options = Options;
 })(GUI || (GUI = {}));
 var GUI;
 (function (GUI) {

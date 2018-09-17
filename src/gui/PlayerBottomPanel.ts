@@ -160,6 +160,11 @@ namespace GUI {
             buttonOptions.thickness = 0;
             buttonOptions.top = '37px';
             buttonOptions.left = '479px';
+            buttonOptions.onPointerUpObservable.add(function () {
+                if (!game.gui.options.opened) {
+                    game.gui.options.open();
+                }
+            });
             container.addControl(buttonOptions);
 
         }

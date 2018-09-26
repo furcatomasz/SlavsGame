@@ -52,7 +52,7 @@ abstract class AbstractCharacter {
         let self = this;
         let dynamicTexture = new BABYLON.DynamicTexture(null, 128, this.game.getScene(), true);
         // dynamicTexture.hasAlpha = true;
-        let font = "bold 24px sans";
+        let font = "44px RuslanDisplay";
         dynamicTexture.drawText(damage, 64, 80, font, "white", null, true, true);
 
         let particleSystemDamage = new BABYLON.ParticleSystem(null, 1 /*Capacity, i.e. max of 1 at a time*/, this.game.getScene());
@@ -80,7 +80,7 @@ abstract class AbstractCharacter {
 
     protected createBoxForMove(scene: BABYLON.Scene) {
         this.meshForMove = BABYLON.Mesh.CreateBox(this.name+'_moveBox', 4, scene, false);
-        this.meshForMove.checkCollisions = false;
+        this.meshForMove.checkCollisions = true;
         this.meshForMove.visibility = 0;
 
         return this;

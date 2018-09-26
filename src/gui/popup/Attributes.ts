@@ -83,6 +83,7 @@ namespace GUI {
             textBlock.color = "white";
             textBlock.width = "100%";
             textBlock.height = "5%";
+            textBlock.fontFamily = "RuslanDisplay";
 
             return textBlock;
         }

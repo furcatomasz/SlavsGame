@@ -12,9 +12,8 @@ class ForestHouseStart extends Scene {
                 .optimizeScene(scene)
                 .setCamera(scene)
                 .setFog(scene)
-                .defaultPipeline(scene)
                 .executeWhenReady(function () {
-                    new EnvironmentForestHouseStart(game, scene);
+                    self.environment = new EnvironmentForestHouseStart(game);
                 }, null);
         });
     }

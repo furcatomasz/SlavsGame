@@ -26,6 +26,8 @@ namespace GUI {
             let textBlock = new BABYLON.GUI.TextBlock("gui.panelhp.name", character.name);
             textBlock.color = 'white';
             textBlock.height = "20px";
+            textBlock.fontFamily = "RuslanDisplay";
+
             textBlock.textVerticalAlignment = 	BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
 
             let hpSlider = new BABYLON.GUI.Slider();

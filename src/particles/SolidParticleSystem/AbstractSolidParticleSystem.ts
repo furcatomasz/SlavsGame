@@ -6,6 +6,7 @@ namespace Particles.SolidParticleSystem {
         protected parent: BABYLON.AbstractMesh;
         protected collider: BABYLON.AbstractMesh;
         public particleSystem: BABYLON.ParticleSystem;
+        public spsMesh: BABYLON.Mesh;
 
         constructor(game: Game, parent: BABYLON.AbstractMesh, shape: BABYLON.AbstractMesh, isCollider: boolean = false) {
             this.game = game;

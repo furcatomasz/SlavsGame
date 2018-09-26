@@ -49,11 +49,13 @@ namespace GUI {
             let textBlockHp = new BABYLON.GUI.TextBlock();
             textBlockHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             textBlockHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textBlockHp.top = '32px';
+            textBlockHp.top = '31px';
             textBlockHp.width = 1;
             textBlockHp.height = '14px';
             textBlockHp.color = "white";
-            textBlockHp.fontSize = 10;
+            textBlockHp.fontSize = 12;
+            textBlockHp.fontFamily = "RuslanDisplay";
+
             this.hpBarText = textBlockHp;
             containerSliders.addControl(textBlockHp);
 
@@ -69,11 +71,13 @@ namespace GUI {
             let textBlockExp = new BABYLON.GUI.TextBlock();
             textBlockExp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             textBlockExp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textBlockExp.top = '16px';
+            textBlockExp.top = '15px';
             textBlockExp.width = 1;
             textBlockExp.height = '14px';
             textBlockExp.color = "white";
-            textBlockExp.fontSize = 10;
+            textBlockExp.fontSize = 12;
+            textBlockExp.fontFamily = "RuslanDisplay";
+
             this.expBarText = textBlockExp;
             containerSliders.addControl(textBlockExp);
 
@@ -89,11 +93,13 @@ namespace GUI {
             let textToolbarEnergy = new BABYLON.GUI.TextBlock();
             textToolbarEnergy.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             textToolbarEnergy.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textToolbarEnergy.top = '0px';
+            textToolbarEnergy.top = '-1px';
             textToolbarEnergy.width = 1;
             textToolbarEnergy.height = '14px';
             textToolbarEnergy.color = "white";
-            textToolbarEnergy.fontSize = 10;
+            textToolbarEnergy.fontSize = 12;
+            textToolbarEnergy.fontFamily = "RuslanDisplay";
+
             this.energyBarText = textToolbarEnergy;
             containerSliders.addControl(textToolbarEnergy);
 

@@ -25,7 +25,6 @@ class MountainsPass extends Scene {
                 .optimizeScene(scene)
                 .setCamera(scene)
                 .setFog(scene)
-                .defaultPipeline(scene)
                 .executeWhenReady(function () {
                     self.environment = new EnvironmentMountainsPass(game, scene);
                 }, function() {

@@ -13,7 +13,6 @@ class SelectCharacter extends Scene {
                 .optimizeScene(scene)
                 .setCamera(scene)
                 .setFog(scene)
-                .defaultPipeline(scene)
                 .executeWhenReady(function () {
                     scene.activeCamera = new BABYLON.FreeCamera("selectCharacterCamera", new BABYLON.Vector3(0, 0, 0), scene);
                     scene.activeCamera.maxZ = 200;

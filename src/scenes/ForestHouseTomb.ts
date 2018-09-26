@@ -13,7 +13,6 @@ class ForestHouseTomb extends Scene {
                 .optimizeScene(scene)
                 .setCamera(scene)
                 .setFog(scene)
-                .defaultPipeline(scene)
                 .executeWhenReady(function () {
                     self.environment = new EnvironmentForestHouseTomb(game, scene);
 

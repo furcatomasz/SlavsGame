@@ -1,8 +1,6 @@
 namespace GUI {
     export class Options extends Popup {
 
-        protected renderingPipeline: BABYLON.DefaultRenderingPipeline;
-
         constructor(guiMain: GUI.Main) {
             super(guiMain);
             this.name = 'Inventory';
@@ -26,7 +24,7 @@ namespace GUI {
         }
 
         protected showText() {
-            let panel = new BABYLON.GUI.StackPanel('attributes.panel');
+            let panel = new BABYLON.GUI.StackPanel('options.panel');
             panel.isPointerBlocker = true;
             panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
@@ -34,64 +32,59 @@ namespace GUI {
             panel.height = 0.9;
             panel.top = '10%';
             this.container.addControl(panel);
-            let self = this;
-            const scene = this.guiMain.game.getScene();
-            let camera = scene.activeCamera;
+            const game = this.guiMain.game;
+
+            const shadowsGroup = new BABYLON.GUI.CheckboxGroup("Shadows");
+            shadowsGroup.color = "white";
+            shadowsGroup.addCheckbox("Static shadows", (isChecked) => {
+                GameOptions.saveInLocalStorage('staticShadows', isChecked, game);
+            }, game.sceneManager.options.staticShadows);
+            shadowsGroup.addCheckbox("Dynamic Shadows", (isChecked) => {
+                GameOptions.saveInLocalStorage('dynamicShadows', isChecked, game);
+            }, game.sceneManager.options.dynamicShadows);
+
 
             const postProccessGroup = new BABYLON.GUI.CheckboxGroup("Post proccessing");
             postProccessGroup.color = "white";
             postProccessGroup.addCheckbox("Enabled", (isChecked) => {
-                if (isChecked) {
-                    self.renderingPipeline = new BABYLON.DefaultRenderingPipeline("default", false, scene, [camera]);
-                } else {
-                    self.renderingPipeline.dispose();
-                }
-            });
+                GameOptions.saveInLocalStorage('postProccessing', isChecked, game);
+            }, game.sceneManager.options.postProccessing);
 
             postProccessGroup.addCheckbox("FXAA", (isChecked) => {
-                if (isChecked) {
-                    self.renderingPipeline.fxaaEnabled = true;
-                } else {
-                    self.renderingPipeline.fxaaEnabled = false;
-                }
-            });
+                GameOptions.saveInLocalStorage('fxaa', isChecked, game);
+            }, game.sceneManager.options.fxaa);
 
             postProccessGroup.addCheckbox("Depth Of Field", (isChecked) => {
-                if (isChecked) {
-                    self.renderingPipeline.depthOfFieldEnabled = true;
-                    self.renderingPipeline.depthOfField.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
-                } else {
-                    self.renderingPipeline.depthOfFieldEnabled = false;
-                }
-            });
+                GameOptions.saveInLocalStorage('dof', isChecked, game);
+            }, game.sceneManager.options.dof);
 
             let dofGroup = new BABYLON.GUI.SliderGroup("DOF", "S");
             dofGroup.addSlider("fStop", (value) => {
-                self.renderingPipeline.depthOfField.fStop = value;
-            }, "", 0.01, 32.00, 0, (value) => {
+                GameOptions.saveInLocalStorage('fStop', value, game);
+            }, "", 0.01, 32.00, game.sceneManager.options.fStop, (value) => {
                 return value;
             });
 
             dofGroup.addSlider("focusDistance", (value) => {
-                self.renderingPipeline.depthOfField.focusDistance = value;
-            }, "", 0, 5000, 0, (value) => {
-                return value;
-            });
-            dofGroup.addSlider("focalLength", (value) => {
-                self.renderingPipeline.depthOfField.focalLength = value;
-            }, "", 0.01, 500.00, 0, (value) => {
+                GameOptions.saveInLocalStorage('focusDistance', value, game);
+            }, "", 0, 5000, game.sceneManager.options.focusDistance, (value) => {
                 return value;
             });
 
-            let selectBox = new BABYLON.GUI.SelectionPanel("sp", [postProccessGroup, dofGroup]);
+            dofGroup.addSlider("focalLength", (value) => {
+                GameOptions.saveInLocalStorage('focalLength', value, game);
+            }, "", 0.01, 500.00, game.sceneManager.options.focalLength, (value) => {
+                return value;
+            });
+
+            let selectBox = new BABYLON.GUI.SelectionPanel("sp", [shadowsGroup, postProccessGroup, dofGroup]);
             selectBox.width = 0.8;
             selectBox.height = 0.8;
             selectBox.thickness = 0;
             selectBox.color = "white";
             selectBox.headerColor = "white";
+            selectBox.fontFamily = "RuslanDisplay";
             panel.addControl(selectBox);
-
-
         }
 
     }

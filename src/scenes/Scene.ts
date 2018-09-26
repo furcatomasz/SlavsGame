@@ -5,13 +5,14 @@ abstract class Scene {
     protected babylonScene: BABYLON.Scene;
     protected assetManager: BABYLON.AssetsManager;
     public octree: BABYLON.Octree;
+    public options: GameOptions;
+    public environment: AbstractEnvironment;
 
     protected setDefaults(game:Game, scene: BABYLON.Scene) {
         this.game = game;
         this.babylonScene = scene;
         SlavsLoader.showLoaderWithText('Initializing scene...');
         scene.actionManager = new BABYLON.ActionManager(scene);
-
         this.assetManager = new BABYLON.AssetsManager(scene);
         this.initFactories(scene);
 
@@ -97,6 +98,8 @@ abstract class Scene {
                 game.client.socket.emit('refreshQuests');
                 game.client.socket.emit('refreshChests');
 
+                self.options = new GameOptions(game);
+
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -150,7 +153,7 @@ abstract class Scene {
         return this;
     }
 
-    protected initFactories(scene: BABYLON.Scene, assetsManager: BABYLON.AssetsManager) {
+    protected initFactories(scene: BABYLON.Scene) {
         let assetsManager = this.assetManager;
 
         this.game.factories['character'] = new Factories.Characters(this.game, scene, assetsManager).initFactory();
@@ -159,11 +162,6 @@ abstract class Scene {
         this.game.factories['skeletonBoss'] = new Factories.SkeletonBoss(this.game, scene, assetsManager).initFactory();
         this.game.factories['flag'] = new Factories.Flags(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
-
-        return this;
-    }
-
-    public defaultPipeline(scene: BABYLON.Scene) {
 
         return this;
     }

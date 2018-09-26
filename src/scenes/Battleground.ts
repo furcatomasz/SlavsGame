@@ -13,7 +13,6 @@ class Battleground extends Scene {
             .optimizeScene(scene)
             .setCamera(scene)
             .setFog(scene)
-            .defaultPipeline(scene)
             .executeWhenReady(function () {
                 scene.audioEnabled = false;
 

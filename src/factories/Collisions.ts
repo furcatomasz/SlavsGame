@@ -5,7 +5,7 @@ class Collisions {
         // let parentBoundBox = parent.getBoundingInfo();
         // collider.scaling = new BABYLON.Vector3(parentBoundBox.boundingBox.maximum.x * 2, parentBoundBox.boundingBox.maximum.y * 2, parentBoundBox.boundingBox.maximum.z * 2);
         // collider.parent = parent;
-        parent.isPickable = true;
+        parent.isPickable = false;
         if (Game.SHOW_COLLIDERS) {
             // collider.material = new BABYLON.StandardMaterial("collidermat", scene);
             // collider.material.alpha = 0.3;

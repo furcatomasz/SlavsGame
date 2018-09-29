@@ -1,8 +1,9 @@
 class GameOptions {
 
     protected renderingPipeline: BABYLON.DefaultRenderingPipeline;
-    protected dynamicShadowGenerator: BABYLON.ShadowGenerator;
     protected staticShadowGenerator: BABYLON.ShadowGenerator;
+
+    public dynamicShadowGenerator: BABYLON.ShadowGenerator;
     public staticShadows: boolean;
     public dynamicShadows: boolean;
     public postProccessing: boolean;
@@ -11,6 +12,7 @@ class GameOptions {
     public fStop: boolean;
     public focusDistance: boolean;
     public focalLength: boolean;
+    public lensSize: boolean;
 
     constructor(game: Game) {
         this.refreshAllData();
@@ -26,6 +28,7 @@ class GameOptions {
         this.fStop = this.getFromLocalStorage('fStop');
         this.focusDistance = this.getFromLocalStorage('focusDistance');
         this.focalLength = this.getFromLocalStorage('focalLength');
+        this.lensSize = this.getFromLocalStorage('lensSize');
     }
 
     protected getFromLocalStorage(key) {
@@ -36,6 +39,12 @@ class GameOptions {
         localStorage.setItem('options.' + key, JSON.stringify(value));
 
         game.sceneManager.options.initInScene(game);
+    }
+
+    public addMeshToDynamicShadowGenerator(game: Game, mesh: BABYLON.AbstractMesh) {
+        if(this.dynamicShadowGenerator) {
+            this.dynamicShadowGenerator.getShadowMap().renderList.push(mesh);
+        }
     }
 
     public initInScene(game: Game) {
@@ -55,7 +64,6 @@ class GameOptions {
                 shadowGenerator.getShadowMap().renderList.push(shadowedMesh);
             }
         } else if (!this.staticShadows && this.staticShadowGenerator) {
-            console.log('destroy');
             this.staticShadowGenerator.dispose();
             this.staticShadowGenerator = null;
         }
@@ -63,7 +71,6 @@ class GameOptions {
         if (this.dynamicShadows && !this.dynamicShadowGenerator) {
             this.dynamicShadowGenerator = new BABYLON.ShadowGenerator(512, game.player.playerLight);
             this.dynamicShadowGenerator.getShadowMap().renderList.push(game.player.mesh);
-            ///TODO: add monsters to shadow generator
         } else if (!this.dynamicShadows && this.dynamicShadowGenerator) {
             this.dynamicShadowGenerator.dispose();
             this.dynamicShadowGenerator = null;
@@ -83,6 +90,7 @@ class GameOptions {
             this.renderingPipeline.depthOfField.fStop = this.fStop;
             this.renderingPipeline.depthOfField.focusDistance = this.focusDistance;
             this.renderingPipeline.depthOfField.focalLength = this.focalLength;
+            this.renderingPipeline.depthOfField.lensSize = this.lensSize;
         }
     }
 }

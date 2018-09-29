@@ -45,7 +45,29 @@ namespace GUI {
 
             characterPanel.addControl(textBlock);
             characterPanel.addControl(hpSlider);
+        }
 
+        public showGateway(entranceName: string) {
+            if (this.guiPanel) {
+                this.texture.removeControl(this.guiPanel);
+            }
+            if(this.character) {
+                this.character = null;
+            }
+            let characterPanel = new BABYLON.GUI.StackPanel();
+            characterPanel.width = "25%";
+            characterPanel.top = 10;
+            characterPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            this.guiPanel = characterPanel;
+            this.texture.addControl(characterPanel);
+
+            let textBlock = new BABYLON.GUI.TextBlock("gui.panelhp.name", entranceName);
+            textBlock.color = 'white';
+            textBlock.height = "20px";
+            textBlock.fontFamily = "RuslanDisplay";
+            textBlock.textVerticalAlignment = 	BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+
+            characterPanel.addControl(textBlock);
         }
 
         public refreshPanel() {

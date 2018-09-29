@@ -32,6 +32,7 @@ abstract class Scene {
         }
 
         let battleMusic = new BABYLON.Sound("Forest night", "assets/sounds/music/battle.mp3", scene, null, { loop: true, autoplay: false, volume: 1 });
+        let timeoutNumber;
 
         game.frumstrumEnemiesInterval = setInterval(function() {
             let activeEnemies = 0;
@@ -50,12 +51,18 @@ abstract class Scene {
             });
 
             if(activeEnemies && !battleMusic.isPlaying) {
-                battleMusic.stop();
-                battleMusic.setVolume(1);
-                battleMusic.play();
-            } else if(!activeEnemies && battleMusic.isPlaying) {
+                if(timeoutNumber) {
+                    timeoutNumber = clearTimeout(timeoutNumber);
+                    battleMusic.setVolume(1, 1);
+                } else {
+                    battleMusic.setVolume(1, 1);
+                    battleMusic.play();
+                }
+            } else if(!activeEnemies && battleMusic.isPlaying && !timeoutNumber) {
                 battleMusic.setVolume(0, 2);
-                battleMusic.stop(2);
+                timeoutNumber = setTimeout(() => {
+                    battleMusic.stop();
+                }, 2000)
             }
         }, 500);
 
@@ -91,14 +98,12 @@ abstract class Scene {
                 if(onPlayerConnected) {
                     onPlayerConnected();
                 }
-
+                self.options = new GameOptions(game);
                 game.controller.registerControls(scene);
                 game.client.socket.emit('changeScenePost');
                 game.client.socket.emit('refreshGateways');
                 game.client.socket.emit('refreshQuests');
                 game.client.socket.emit('refreshChests');
-
-                self.options = new GameOptions(game);
 
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };
@@ -147,7 +152,7 @@ abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
         scene.workerCollisions = false;
 
         return this;

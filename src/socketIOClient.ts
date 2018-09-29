@@ -97,7 +97,7 @@ class SocketIOClient {
 
             let gatewaysFromServer = sceneServerData.gateways;
             gatewaysFromServer.forEach(function(gateway) {
-                let gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType);
+                let gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType, gateway.entranceName);
                 gateways.push(gatewayInGame);
             })
 
@@ -171,19 +171,6 @@ class SocketIOClient {
 
         return this;
     }
-
-    /**
-     * @returns {SocketIOClient}
-     */
-    protected reloadScene() {
-        let game = this.game;
-        this.socket.on('reloadScene', function (data) {
-            game.changeScene(new Mountains());
-        });
-
-        return this;
-    }
-
 
     /**
      * @returns {SocketIOClient}

@@ -7,7 +7,7 @@ namespace GUI {
         constructor(game: Game) {
             this.texture = game.gui.texture;
         }
-        
+
         public addQuest(questData) {
             let self = this;
 
@@ -28,7 +28,8 @@ namespace GUI {
             title.text = questData.title;
             title.top = "0%";
             title.color = "orange";
-            title.fontSize = 18;
+            title.fontFamily = "RuslanDisplay";
+            title.fontSize = 22;
             title.resizeToFit = true;
             this.guiPanel.addControl(title);
 
@@ -38,8 +39,9 @@ namespace GUI {
                 requirementDescription.text = requirement.name;
                 requirementDescription.resizeToFit = true;
                 requirementDescription.color = "white";
+                requirementDescription.fontFamily = "RuslanDisplay";
                 requirementDescription.top = "5%";
-                requirementDescription.fontSize = 14;
+                requirementDescription.fontSize = 18;
                 self.guiPanel.addControl(requirementDescription);
             });
         }

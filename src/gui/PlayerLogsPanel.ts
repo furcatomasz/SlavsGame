@@ -34,6 +34,7 @@ namespace GUI {
             text.textWrapping = true;
             text.height = "25px";
             text.width = "100%";
+            text.fontFamily = "RuslanDisplay";
             text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             text.fontSize = 14;
 

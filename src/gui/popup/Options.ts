@@ -61,7 +61,7 @@ namespace GUI {
             let dofGroup = new BABYLON.GUI.SliderGroup("DOF", "S");
             dofGroup.addSlider("fStop", (value) => {
                 GameOptions.saveInLocalStorage('fStop', value, game);
-            }, "", 0.01, 32.00, game.sceneManager.options.fStop, (value) => {
+            }, "", 0.01, 500.00, game.sceneManager.options.fStop, (value) => {
                 return value;
             });
 
@@ -76,6 +76,13 @@ namespace GUI {
             }, "", 0.01, 500.00, game.sceneManager.options.focalLength, (value) => {
                 return value;
             });
+
+            dofGroup.addSlider("lensSize", (value) => {
+                GameOptions.saveInLocalStorage('lensSize', value, game);
+            }, "", 0.01, 500.00, game.sceneManager.options.lensSize, (value) => {
+                return value;
+            });
+
 
             let selectBox = new BABYLON.GUI.SelectionPanel("sp", [shadowsGroup, postProccessGroup, dofGroup]);
             selectBox.width = 0.8;

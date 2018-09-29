@@ -1,4 +1,5 @@
 /// <reference path="../bower_components/babylonjs/dist/preview release/babylon.d.ts" />
+/// <reference path="../bower_components/babylonjs/dist/preview release/gui/babylon.gui.d.ts" />
 
 class Game {
 

@@ -10,934 +10,83 @@ Exporter version: 5.6.3, Blender version: 2.79 (sub 0)
 		Mat Weight Precision:  2
 		texture directory   :  F:\Slavs\Babylon\Maps\MountainsPass\
 	Python World class constructor completed
-	processing begun of mesh:  Landscape.370
-		processing begun of Standard material:  Material.003
-			Diffuse texture found "Texture.017"
+	processing begun of mesh:  abaits.003
+		processing begun of Standard material:  abaits
+			Diffuse texture found "Texture.015"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  169
-		num normals        :  169
-		num uvs            :  338
+		num positions      :  1347
+		num normals        :  1347
+		num uvs            :  2694
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  222
-	processing begun of mesh:  Landscape.369
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.368
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.367
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.366
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.365
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.364
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.363
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.362
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.361
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.360
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.359
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.358
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.357
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.356
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.355
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.354
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.353
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.352
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.351
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.350
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.349
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.348
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.347
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.346
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.345
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.344
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.343
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.342
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.341
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.340
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.339
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.338
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.337
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.336
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.335
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.334
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.333
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.332
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.331
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.330
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.329
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.328
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.327
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.326
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.325
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.324
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.323
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.322
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.321
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.320
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.319
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.318
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.317
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.316
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.315
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.314
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.313
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.312
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.311
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.310
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.309
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.308
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.307
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.306
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.305
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.304
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.303
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.302
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.301
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.300
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.299
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.298
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.297
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.296
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.295
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.294
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.293
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.292
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.291
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.290
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.289
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.288
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.287
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.286
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.285
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.284
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.283
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.282
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.281
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.280
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.279
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.278
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.277
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.276
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.275
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.274
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.273
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.272
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.271
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.270
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.269
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.268
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.267
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.266
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.265
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.264
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.263
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.262
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.261
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.260
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.259
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.258
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.257
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.256
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.255
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.254
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.253
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.252
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.251
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.250
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.249
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.248
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.247
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.246
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.245
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.244
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.243
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.242
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.241
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.240
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.239
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.238
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.237
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.236
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.235
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.234
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.233
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.232
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.231
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.230
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.229
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.228
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.227
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.226
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.225
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.224
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.223
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.222
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.221
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.220
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.219
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.218
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.217
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.216
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.215
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.214
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.213
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.212
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.211
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.210
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.209
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.208
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.207
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.206
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.205
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.204
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.203
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.202
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.201
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.200
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.199
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.198
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.197
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.196
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.195
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.194
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.193
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.192
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.191
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.190
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.189
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.188
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.187
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.186
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.185
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.184
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.183
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.182
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.181
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.180
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.179
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.178
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.177
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.176
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.175
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.174
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.173
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.172
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  Landscape.171
-		registered as also a user of material:  Material.003
-		num positions      :  168
-		num normals        :  168
-		num uvs            :  336
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  222
-	processing begun of mesh:  Landscape.170
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.169
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.168
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.167
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.166
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.165
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.164
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.163
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.162
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.161
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.160
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.159
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.158
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.157
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.156
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.155
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.154
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.153
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.152
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.151
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.150
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.149
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.148
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.147
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.146
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.145
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.144
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.143
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.142
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.141
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.140
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.139
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.138
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.137
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.136
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.135
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.134
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.133
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.132
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.131
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.130
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.129
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.128
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.127
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.126
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.125
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.124
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.123
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.122
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.121
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.120
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.119
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.118
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.117
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape.116
-		registered as also a user of material:  Material.003
-		num positions      :  168
-		num normals        :  168
-		num uvs            :  336
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  222
-	processing begun of mesh:  Landscape.115
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.114
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.113
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.112
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.111
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.110
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.109
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.108
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.107
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.106
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.105
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.104
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.103
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.102
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.101
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.100
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.099
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.098
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.097
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.096
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.095
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.094
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.093
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.092
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.091
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.090
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.089
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.088
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.087
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.086
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.085
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.084
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.083
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.082
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.081
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.080
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.079
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.078
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.077
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.076
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.075
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.074
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.073
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.072
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.071
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.070
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.069
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.068
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.067
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.066
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.065
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.064
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.063
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.062
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.061
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.060
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.059
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.058
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.057
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.056
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.055
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.054
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.053
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.052
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.051
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.050
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.049
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.048
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.047
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.046
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.045
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.044
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.043
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.042
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.041
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.040
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.039
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.038
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.037
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.036
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.035
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.034
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.033
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.032
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.031
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.030
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.029
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.028
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.027
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.026
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.025
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.024
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.023
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.022
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.021
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.020
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.019
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.018
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.017
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.016
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.015
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.014
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.013
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.012
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.011
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.010
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.009
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.008
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.007
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.006
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.005
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.004
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.003
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Ground.002
-		processing begun of Standard material:  Material.001
-			Diffuse texture found "Texture.016"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  650
-		num normals        :  650
-		num uvs            :  1300
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1476
-	processing begun of mesh:  Landscape.002
-		mesh is an instance of :  Landscape.116.  Processing halted.
-	processing begun of mesh:  Landscape.001
-		mesh is an instance of :  Landscape.171.  Processing halted.
-	processing begun of mesh:  Landscape
-		mesh is an instance of :  Landscape.370.  Processing halted.
-	processing begun of mesh:  fireplace.002
-		processing begun of Standard material:  hearth
-			Diffuse texture found "Texture.012"
+		num indices        :  4092
+	processing begun of mesh:  ground_plants.051
+		processing begun of Standard material:  ground_plants
+			Diffuse texture found "ground_plants"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
 				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
-		num positions      :  1741
-		num normals        :  1741
-		num uvs            :  3482
+		num positions      :  12
+		num normals        :  12
+		num uvs            :  24
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  4344
-	processing begun of mesh:  Ground.001
-		processing begun of Standard material:  Material.002
-		num positions      :  553
-		num normals        :  553
-		num uvs            :  0
+		num indices        :  18
+	processing begun of mesh:  ground_plants.050
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.049
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.048
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.047
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.046
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.045
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.044
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.043
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.042
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.041
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.040
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.039
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.038
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.037
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.036
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.035
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.034
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.033
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  spruce.064
+		processing begun of Standard material:  spruceRandom
+			Diffuse texture found "spruceRandom"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
+		num positions      :  1339
+		num normals        :  1339
+		num uvs            :  2678
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  3228
-	processing begun of mesh:  sps_tress.016
-		registered as also a user of material:  Material.001
-		num positions      :  149
-		num normals        :  149
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  732
-	processing begun of mesh:  sps_tress.015
-		registered as also a user of material:  Material.001
-		num positions      :  22
-		num normals        :  22
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  78
-	processing begun of mesh:  sps_tress.014
-		registered as also a user of material:  Material.001
-		num positions      :  20
-		num normals        :  20
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  66
-	processing begun of mesh:  sps_tress.013
-		registered as also a user of material:  Material.001
-		num positions      :  32
-		num normals        :  32
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  114
-	processing begun of mesh:  sps_tress.012
-		registered as also a user of material:  Material.001
-		num positions      :  37
-		num normals        :  37
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  138
-	processing begun of mesh:  sps_tress.011
-		registered as also a user of material:  Material.001
-		num positions      :  70
-		num normals        :  70
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  312
-	processing begun of mesh:  sps_tress.010
-		registered as also a user of material:  Material.001
-		num positions      :  45
-		num normals        :  45
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  186
-	processing begun of mesh:  sps_tress.009
-		registered as also a user of material:  Material.001
-		num positions      :  156
-		num normals        :  156
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  750
-	processing begun of mesh:  sps_tress.008
-		registered as also a user of material:  Material.001
-		num positions      :  27
-		num normals        :  27
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  96
-	processing begun of mesh:  sps_tress.007
-		registered as also a user of material:  Material.001
-		num positions      :  24
-		num normals        :  24
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  72
-	processing begun of mesh:  sps_tress.006
-		registered as also a user of material:  Material.001
-		num positions      :  33
-		num normals        :  33
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  114
-	processing begun of mesh:  sps_tress.005
-		registered as also a user of material:  Material.001
-		num positions      :  4
-		num normals        :  4
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  6
-	processing begun of mesh:  sps_tress.004
-		registered as also a user of material:  Material.001
-		num positions      :  23
-		num normals        :  23
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  84
-	processing begun of mesh:  sps_tress.003
-		registered as also a user of material:  Material.001
-		num positions      :  78
-		num normals        :  78
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  348
-	processing begun of mesh:  sps_tress.002
-		registered as also a user of material:  Material.001
-		num positions      :  140
-		num normals        :  140
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  672
-	processing begun of mesh:  sps_tress.001
-		registered as also a user of material:  Material.001
-		num positions      :  65
-		num normals        :  65
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  234
-	processing begun of mesh:  sps_tress
-		registered as also a user of material:  Material.001
-		num positions      :  0
-		num normals        :  0
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  0
-	processing begun of mesh:  dam.007
+		num indices        :  4038
+	processing begun of mesh:  spruce.063
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.060
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.059
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  abaits.002
+		mesh is an instance of :  abaits.003.  Processing halted.
+	processing begun of mesh:  dam.008
 		processing begun of Standard material:  dam
 			Diffuse texture found "Texture.014"
 				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
@@ -947,22 +96,340 @@ Exporter version: 5.6.3, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  1998
+	processing begun of mesh:  dam.001
+		mesh is an instance of :  dam.008.  Processing halted.
+	processing begun of mesh:  barrel.008
+		processing begun of Standard material:  barrel
+			Diffuse texture found "Texture.013"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  107
+		num normals        :  107
+		num uvs            :  214
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  204
+	processing begun of mesh:  barrel.007
+		mesh is an instance of :  barrel.008.  Processing halted.
+	processing begun of mesh:  barrel.006
+		mesh is an instance of :  barrel.008.  Processing halted.
+	processing begun of mesh:  barrel.005
+		mesh is an instance of :  barrel.008.  Processing halted.
+	processing begun of mesh:  barrel.004
+		mesh is an instance of :  barrel.008.  Processing halted.
+	processing begun of mesh:  box.008
+		processing begun of Standard material:  box
+			Diffuse texture found "Texture.005"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  87
+		num normals        :  87
+		num uvs            :  174
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  108
+	processing begun of mesh:  box.007
+		mesh is an instance of :  box.008.  Processing halted.
+	processing begun of mesh:  box.006
+		mesh is an instance of :  box.008.  Processing halted.
+	processing begun of mesh:  box.005
+		mesh is an instance of :  box.008.  Processing halted.
+	processing begun of mesh:  box.004
+		mesh is an instance of :  box.008.  Processing halted.
+	processing begun of mesh:  ground_plants.032
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.031
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.030
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.029
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.028
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.027
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.026
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.025
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.024
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.023
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  Rock.044
+		processing begun of Standard material:  Rock
+			Diffuse texture found "Texture.001"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+		num positions      :  587
+		num normals        :  587
+		num uvs            :  1174
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2268
+	processing begun of mesh:  spruce.058
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.057
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.056
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  Rock.043
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  spruce.055
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.054
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.053
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.052
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.051
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.050
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  Rock.042
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.041
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.040
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.039
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.038
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.037
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  spruce.049
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.048
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.047
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.046
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.045
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.044
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.043
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.042
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.041
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.040
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.039
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.038
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.037
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.036
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.035
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.034
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.033
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.032
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.005
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.004
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  Rock.036
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.035
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.034
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.033
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.032
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.031
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.030
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.029
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.028
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  barrel.003
+		mesh is an instance of :  barrel.008.  Processing halted.
+	processing begun of mesh:  barrel.002
+		mesh is an instance of :  barrel.008.  Processing halted.
+	processing begun of mesh:  spruce.003
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  Rock.027
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.026
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.025
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.024
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.023
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.022
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.021
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.020
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.019
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.018
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.017
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.016
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.015
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.014
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.013
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.012
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.011
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.010
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.009
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.008
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.007
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.006
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.005
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.004
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.003
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.002
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  Rock.001
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  ground_plants.022
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.021
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.020
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.019
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.018
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.017
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.016
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.015
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.014
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  spruce.031
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.030
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.029
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.028
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.027
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.026
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.025
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.024
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.023
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.022
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.021
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.020
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.019
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.018
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.017
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.015
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.014
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  ground_plants.013
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.012
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.011
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.010
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.009
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.008
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.007
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.006
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.005
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  box.003
+		mesh is an instance of :  box.008.  Processing halted.
+	processing begun of mesh:  box.000
+		mesh is an instance of :  box.008.  Processing halted.
+	processing begun of mesh:  spruce.012
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.011
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.009
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.007
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.006
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.002
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.001
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  ground_plants.004
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.003
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.002
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  ground_plants.001
+		mesh is an instance of :  ground_plants.051.  Processing halted.
+	processing begun of mesh:  box.002
+		mesh is an instance of :  box.008.  Processing halted.
+	processing begun of mesh:  spruce.016
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.013
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.010
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.008
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  spruce.000
+		mesh is an instance of :  spruce.064.  Processing halted.
+	processing begun of mesh:  Rock.000
+		mesh is an instance of :  Rock.044.  Processing halted.
+	processing begun of mesh:  dam.007
+		mesh is an instance of :  dam.008.  Processing halted.
 	processing begun of mesh:  dam.006
-		registered as also a user of material:  dam
-		num positions      :  692
-		num normals        :  692
-		num uvs            :  1384
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1998
+		mesh is an instance of :  dam.008.  Processing halted.
 	processing begun of mesh:  dam.005
-		registered as also a user of material:  dam
-		num positions      :  692
-		num normals        :  692
-		num uvs            :  1384
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1998
+		mesh is an instance of :  dam.008.  Processing halted.
 	processing begun of mesh:  tentSmall.004
 		processing begun of Standard material:  tentSmall
 			Diffuse texture found "Texture.010"
@@ -975,7 +442,10 @@ Exporter version: 5.6.3, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  4068
 	processing begun of mesh:  fireplace.001
-		registered as also a user of material:  hearth
+		processing begun of Standard material:  hearth
+			Diffuse texture found "Texture.012"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+				WARNING: Opacity non-std way to indicate opacity, use material alpha to also use Opacity texture
 		num positions      :  1741
 		num normals        :  1741
 		num uvs            :  3482
@@ -983,18 +453,12 @@ Exporter version: 5.6.3, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  4344
 	processing begun of mesh:  dam.004
-		registered as also a user of material:  dam
-		num positions      :  692
-		num normals        :  692
-		num uvs            :  1384
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1998
+		mesh is an instance of :  dam.008.  Processing halted.
 	processing begun of mesh:  dam.003
 		registered as also a user of material:  dam
-		num positions      :  692
-		num normals        :  692
-		num uvs            :  1384
+		num positions      :  691
+		num normals        :  691
+		num uvs            :  1382
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  1998
@@ -1007,71 +471,11 @@ Exporter version: 5.6.3, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  4068
 	processing begun of mesh:  abaits.005
-		processing begun of Standard material:  abaits
-			Diffuse texture found "Texture.015"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  1347
-		num normals        :  1347
-		num uvs            :  2694
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  4092
+		mesh is an instance of :  abaits.003.  Processing halted.
 	processing begun of mesh:  abaits.004
-		registered as also a user of material:  abaits
-		num positions      :  1347
-		num normals        :  1347
-		num uvs            :  2694
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  4092
-	processing begun of mesh:  abaits.003
-		registered as also a user of material:  abaits
-		num positions      :  1347
-		num normals        :  1347
-		num uvs            :  2694
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  4092
+		mesh is an instance of :  abaits.003.  Processing halted.
 	processing begun of mesh:  dam.002
-		registered as also a user of material:  dam
-		num positions      :  692
-		num normals        :  692
-		num uvs            :  1384
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1998
-	processing begun of mesh:  dam.001
-		registered as also a user of material:  dam
-		num positions      :  692
-		num normals        :  692
-		num uvs            :  1384
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1998
-	processing begun of mesh:  abaits.002
-		registered as also a user of material:  abaits
-		num positions      :  1347
-		num normals        :  1347
-		num uvs            :  2694
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  4092
-	processing begun of mesh:  abaits.001
-		registered as also a user of material:  abaits
-		num positions      :  1347
-		num normals        :  1347
-		num uvs            :  2694
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  4092
-	processing begun of mesh:  tentSmall.002
-		registered as also a user of material:  tentSmall
-		num positions      :  1505
-		num normals        :  1505
-		num uvs            :  3010
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  4068
+		mesh is an instance of :  dam.008.  Processing halted.
 	processing begun of mesh:  tentSmall.001
 		registered as also a user of material:  tentSmall
 		num positions      :  1505
@@ -1081,7 +485,8 @@ Exporter version: 5.6.3, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  4068
 	processing begun of mesh:  Ground
-		registered as also a user of material:  Material.001
+		processing begun of baked material:  Ground
+			Internal baking texture, type: TEXTURE, mapped using: UVMap
 		num positions      :  16384
 		num normals        :  16384
 		num uvs            :  32768
@@ -1089,124 +494,12 @@ Exporter version: 5.6.3, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  96774
 	processing begun of camera (UniversalCamera):  Camera
-	processing begun of mesh:  Cube.001
-		WARNING: No materials have been assigned: 
-		num positions      :  196
-		num normals        :  196
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1164
-	processing begun of mesh:  Cube.005
-		processing begun of Standard material:  wood
-			Diffuse texture found "Texture"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  58
-		num normals        :  58
-		num uvs            :  116
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  336
-	processing begun of mesh:  Cube
-		WARNING: No materials have been assigned: 
-		num positions      :  8
-		num normals        :  8
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  36
-	processing begun of mesh:  Cylinder
-		processing begun of Standard material:  door
-			Diffuse texture found "Texture.004"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  40
-		num normals        :  40
-		num uvs            :  80
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  78
-	processing begun of mesh:  joinedHouse
-		processing begun of Standard material:  LOg_low
-			Diffuse texture found "Texture.007"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of Standard material:  Material.009
-			Diffuse texture found "Texture.000"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		processing begun of multimaterial:  MountainsPass.Multimaterial#0
-		num positions      :  2252
-		num normals        :  2252
-		num uvs            :  4504
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  3270
-	processing begun of mesh:  ozdobnik
-		WARNING: No materials have been assigned: 
-		num positions      :  37
-		num normals        :  37
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  168
-	processing begun of mesh:  Plane.003
-		WARNING: No materials have been assigned: 
-		num positions      :  4
-		num normals        :  4
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  6
-	processing begun of mesh:  Plane.004
-		WARNING: No materials have been assigned: 
-		num positions      :  153
-		num normals        :  153
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  744
-	processing begun of mesh:  Plane.005
-		WARNING: No materials have been assigned: 
-		num positions      :  87
-		num normals        :  87
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  408
 	processing begun of mesh:  abaits
-		registered as also a user of material:  abaits
-		num positions      :  1347
-		num normals        :  1347
-		num uvs            :  2694
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  4092
+		mesh is an instance of :  abaits.003.  Processing halted.
 	processing begun of mesh:  barrel
-		processing begun of Standard material:  barrel
-			Diffuse texture found "Texture.013"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  107
-		num normals        :  107
-		num uvs            :  214
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  204
-	processing begun of mesh:  box
-		processing begun of Standard material:  box
-			Diffuse texture found "Texture.005"
-				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
-		num positions      :  29
-		num normals        :  29
-		num uvs            :  58
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  36
+		mesh is an instance of :  barrel.008.  Processing halted.
 	processing begun of mesh:  dam
-		registered as also a user of material:  dam
-		num positions      :  692
-		num normals        :  692
-		num uvs            :  1384
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1998
+		mesh is an instance of :  dam.008.  Processing halted.
 	processing begun of mesh:  fireplace
 		registered as also a user of material:  hearth
 		num positions      :  1741
@@ -1234,8 +527,10 @@ Exporter version: 5.6.3, Blender version: 2.79 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  4068
+	processing begun of mesh:  ground_plants.000
+		mesh is an instance of :  ground_plants.051.  Processing halted.
 	processing begun of light (SUN):  Lamp
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 22.246 secs
+elapsed time:  0 min, 29.859 secs

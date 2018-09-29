@@ -3,6 +3,7 @@ namespace Factories {
 
         public mesh: BABYLON.AbstractMesh;
         public box: BABYLON.AbstractMesh;
+        public tooltip: BABYLON.AbstractMesh;
         protected game: Game;
 
         /**

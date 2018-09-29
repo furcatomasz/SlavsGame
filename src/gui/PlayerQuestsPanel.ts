@@ -31,8 +31,9 @@ namespace GUI {
             text.textWrapping = true;
             text.height = "25px";
             text.width = "100%";
+            text.fontFamily = "RuslanDisplay";
             text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            text.fontSize = 14;
+            text.fontSize = 16;
 
             this.guiPanel.addControl(text);
 

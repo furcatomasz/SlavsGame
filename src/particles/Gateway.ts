@@ -10,9 +10,9 @@ namespace Particles {
         public initParticleSystem() {
             let particleSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 150 }, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
-            particleSystem.emitter = this.emitter; // the starting object, the emitter
-            particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
-            particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1); // To...
+            particleSystem.emitter = this.emitter;
+            particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
+            particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1);
 
             if(this.isActive) {
                 particleSystem.color1 = new BABYLON.Color3(0.7, 0.8, 1.0);
@@ -29,7 +29,7 @@ namespace Particles {
             particleSystem.minLifeTime = 0.3;
             particleSystem.maxLifeTime = 1;
 
-            particleSystem.emitRate = 500;
+            particleSystem.emitRate = 150;
 
             particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
 

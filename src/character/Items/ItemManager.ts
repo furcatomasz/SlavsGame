@@ -28,7 +28,6 @@ namespace Items {
                     if (self.game.sceneManager.octree) {
                         self.game.sceneManager.octree.dynamicContent.push(item.mesh);
                     }
-                    item.mesh.alwaysSelectAsActiveMesh = true;
 
                     inventory.items.push(item);
                     const equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip

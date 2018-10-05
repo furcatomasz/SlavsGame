@@ -31,10 +31,12 @@ namespace Factories {
 
             return this;
         }
-        
+
         public createInstance(name: string, cloneSkeleton: boolean = false): BABYLON.AbstractMesh {
             for (let i = 0; i < this.loadedMeshes.length; i++) {
                 let mesh = this.loadedMeshes[i];
+                mesh.layerMask = 2;
+
                 if(mesh.name == name) {
                     let clonedMesh = mesh.clone('clone_'+name);
                         if(cloneSkeleton) {

@@ -50,13 +50,14 @@ class GameOptions {
     public initInScene(game: Game) {
         this.refreshAllData();
         const scene = game.getScene();
-        const camera = scene.activeCamera;
+        const camera = scene.getCameraByName('gameCamera');
 
         if(this.staticShadows && !this.staticShadowGenerator) {
             let shadowGenerator = new BABYLON.ShadowGenerator(2048, game.sceneManager.environment.light);
             shadowGenerator.usePercentageCloserFiltering = true;
             shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
             shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+            game.sceneManager.environment.light.autoUpdateExtends = false;
             this.staticShadowGenerator = shadowGenerator;
             const staticShadowMeshes = game.sceneManager.environment.staticShadowObjects;
             for (let i = 0; i < staticShadowMeshes.length; i++) {
@@ -87,10 +88,14 @@ class GameOptions {
             this.renderingPipeline.fxaaEnabled = this.fxaa;
             this.renderingPipeline.depthOfFieldEnabled = this.dof;
             this.renderingPipeline.depthOfField.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
-            this.renderingPipeline.depthOfField.fStop = this.fStop;
-            this.renderingPipeline.depthOfField.focusDistance = this.focusDistance;
-            this.renderingPipeline.depthOfField.focalLength = this.focalLength;
-            this.renderingPipeline.depthOfField.lensSize = this.lensSize;
+            // this.renderingPipeline.depthOfField.fStop = this.fStop;
+            // this.renderingPipeline.depthOfField.focusDistance = this.focusDistance;
+            // this.renderingPipeline.depthOfField.focalLength = this.focalLength;
+            // this.renderingPipeline.depthOfField.lensSize = this.lensSize;
+            this.renderingPipeline.depthOfField.fStop = 0.27;
+            this.renderingPipeline.depthOfField.focusDistance = 43050;
+            this.renderingPipeline.depthOfField.focalLength = 292;
+            this.renderingPipeline.depthOfField.lensSize = 136;
         }
     }
 }

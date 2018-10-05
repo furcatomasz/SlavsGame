@@ -1,5 +1,5 @@
-/// <reference path="../bower_components/babylonjs/dist/preview release/babylon.d.ts" />
-/// <reference path="../bower_components/babylonjs/dist/preview release/gui/babylon.gui.d.ts" />
+/// <reference path="../bower_components/babylonjs/dist/babylon.d.ts" />
+/// <reference path="../bower_components/babylonjs/dist/gui/babylon.gui.d.ts" />
 
 class Game {
 
@@ -26,7 +26,7 @@ class Game {
     public remotePlayers: Array<Player>;
     public npcs: Array<NPC.AbstractNpc>;
     public enemies: Array<Monster>;
-    public quests: Array<Quests.AbstractQuest>;
+    public quests: Array<0>;
     public chests: Array<Factories.Chest>;
 
     /**
@@ -55,7 +55,7 @@ class Game {
         if(isDebug) {
             Game.SHOW_DEBUG = 1;
         }
-        self.engine.loadingScreen = new SlavsLoader();
+        self.engine.loadingScreen = new SlavsLoader('');
         self.controller = new Mouse(self);
         self.client = new SocketIOClient(self);
         self.factories = [];
@@ -78,7 +78,7 @@ class Game {
     animate(): Game {
         let self = this;
         this.engine.runRenderLoop(() => {
-            if (this.activeScene != null) {
+            if (this.activeScene != null && self.getScene().activeCamera) {
                 self.getScene().render();
             }
         });

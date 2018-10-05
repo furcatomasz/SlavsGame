@@ -1,4 +1,4 @@
-class SlavsLoader implements ILoadingScreen {
+class SlavsLoader implements BABYLON.ILoadingScreen {
 
     public loadingUIBackgroundColor: string
     constructor(public loadingUIText: string) {}

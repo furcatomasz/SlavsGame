@@ -58,33 +58,33 @@ namespace GUI {
                 GameOptions.saveInLocalStorage('dof', isChecked, game);
             }, game.sceneManager.options.dof);
 
-            let dofGroup = new BABYLON.GUI.SliderGroup("DOF", "S");
-            dofGroup.addSlider("fStop", (value) => {
-                GameOptions.saveInLocalStorage('fStop', value, game);
-            }, "", 0.01, 500.00, game.sceneManager.options.fStop, (value) => {
-                return value;
-            });
+            // let dofGroup = new BABYLON.GUI.SliderGroup("DOF", "S");
+            // dofGroup.addSlider("fStop", (value) => {
+            //     GameOptions.saveInLocalStorage('fStop', value, game);
+            // }, "", 0.01, 10, game.sceneManager.options.fStop, (value) => {
+            //     return value;
+            // });
+            //
+            // dofGroup.addSlider("focusDistance", (value) => {
+            //     GameOptions.saveInLocalStorage('focusDistance', value, game);
+            // }, "", 0, 45000, game.sceneManager.options.focusDistance, (value) => {
+            //     return value;
+            // });
+            //
+            // dofGroup.addSlider("focalLength", (value) => {
+            //     GameOptions.saveInLocalStorage('focalLength', value, game);
+            // }, "", 0.01, 500.00, game.sceneManager.options.focalLength, (value) => {
+            //     return value;
+            // });
+            //
+            // dofGroup.addSlider("lensSize", (value) => {
+            //     GameOptions.saveInLocalStorage('lensSize', value, game);
+            // }, "", 0.01, 500.00, game.sceneManager.options.lensSize, (value) => {
+            //     return value;
+            // });
 
-            dofGroup.addSlider("focusDistance", (value) => {
-                GameOptions.saveInLocalStorage('focusDistance', value, game);
-            }, "", 0, 5000, game.sceneManager.options.focusDistance, (value) => {
-                return value;
-            });
 
-            dofGroup.addSlider("focalLength", (value) => {
-                GameOptions.saveInLocalStorage('focalLength', value, game);
-            }, "", 0.01, 500.00, game.sceneManager.options.focalLength, (value) => {
-                return value;
-            });
-
-            dofGroup.addSlider("lensSize", (value) => {
-                GameOptions.saveInLocalStorage('lensSize', value, game);
-            }, "", 0.01, 500.00, game.sceneManager.options.lensSize, (value) => {
-                return value;
-            });
-
-
-            let selectBox = new BABYLON.GUI.SelectionPanel("sp", [shadowsGroup, postProccessGroup, dofGroup]);
+            let selectBox = new BABYLON.GUI.SelectionPanel("sp", [shadowsGroup, postProccessGroup]);
             selectBox.width = 0.8;
             selectBox.height = 0.8;
             selectBox.thickness = 0;

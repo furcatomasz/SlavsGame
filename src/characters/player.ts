@@ -37,7 +37,6 @@ class Player extends AbstractCharacter {
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.skeleton.enableBlending(0.2);
-        mesh.alwaysSelectAsActiveMesh = true;
 
         ///Create box mesh for moving
         this.createBoxForMove(game.getScene());
@@ -201,10 +200,19 @@ class Player extends AbstractCharacter {
 
 
     public refreshCameraPosition() {
-        this.game.getScene().activeCamera.position = this.meshForMove.position.clone();
-        this.game.getScene().activeCamera.position.y = 30;
-        this.game.getScene().activeCamera.position.z -= 22;
-        this.game.getScene().activeCamera.position.x -= 22;
+        const camera = this.game.getScene().getCameraByName('gameCamera');
+        const guiCamera = this.game.getScene().getCameraByName('GUICamera');
+        const newPosition = this.meshForMove.position.clone();
+
+        camera.position = newPosition.clone();
+        camera.position.y = 30;
+        camera.position.z -= 22;
+        camera.position.x -= 22;
+
+        guiCamera.position = newPosition.clone();
+        guiCamera.position.y = 30;
+        guiCamera.position.z -= 22;
+        guiCamera.position.x -= 22;
     }
 
     /**
@@ -229,7 +237,6 @@ class Player extends AbstractCharacter {
                 self.inventory.clearItems();
 
                 new Promise(function (resolve) {
-
                     itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
                     setTimeout(function () {
                         resolve();

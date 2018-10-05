@@ -23,12 +23,13 @@ class Mouse extends Controller {
                 clickTrigger = false;
 
                 let pickedMesh = pickResult.pickedMesh;
-                if (pickedMesh && (pickedMesh.name.search("Ground") >= 0) {
+
+                if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
                     meshFlag.visibility = 1;
                 }
             }
         }
-        
+
         scene.onPointerDown = function (evt, pickResult) {
             let pickedMesh = pickResult.pickedMesh;
             if(self.game.player.isAttack || !self.game.player.isAlive) {
@@ -37,7 +38,7 @@ class Mouse extends Controller {
             clickTrigger = true;
 
             if (pickedMesh) {
-                if ((pickedMesh.name.search("Ground") >= 0) {
+                if ((pickedMesh.name.search("Ground") >= 0)) {
                     self.attackPoint = null;
                     self.targetPoint = pickResult.pickedPoint;
                     self.targetPoint.y = 0;

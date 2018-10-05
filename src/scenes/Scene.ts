@@ -114,15 +114,28 @@ abstract class Scene {
     }
 
     public setCamera(scene:BABYLON.Scene) {
-        var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, 0), scene);
-        camera.rotation = new BABYLON.Vector3(0.75,0.75,0);
-        camera.position = new BABYLON.Vector3(0,35,0);
-        camera.maxZ = 110;
-        camera.minZ = 20;
-        camera.fov = 13.25;
-        camera.fovMode = 0;
+        scene.getCameraByName('Camera').dispose();
+        let gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
+        gameCamera.rotation = new BABYLON.Vector3(0.75,0.75,0);
+        gameCamera.maxZ = 110;
+        gameCamera.minZ = 20;
+        // camera.fov = 13.25;
+        gameCamera.fovMode = 0;
+        gameCamera.layerMask = 2;
 
-        scene.activeCamera = camera;
+        let guiCamera = new BABYLON.FreeCamera("GUICamera", new BABYLON.Vector3(0, 0, 0), scene);
+        guiCamera.layerMask = 1;
+        guiCamera.rotation = new BABYLON.Vector3(0.75,0.75,0);
+        guiCamera.maxZ = 110;
+        guiCamera.minZ = 20;
+        guiCamera.fovMode = 0;
+        scene.activeCameras = [gameCamera, guiCamera];
+
+        for (let i = 0; i < scene.meshes.length; i++) {
+            let sceneMesh = scene.meshes[i];
+            sceneMesh.layerMask = 2;
+        }
+
 
         return this;
     }
@@ -152,7 +165,7 @@ abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         scene.workerCollisions = false;
 
         return this;

@@ -12,7 +12,6 @@ namespace SelectCharacter {
             let mesh = game.factories['character'].createInstance('Warrior', true);
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
             mesh.skeleton.enableBlending(0.3);
-            mesh.alwaysSelectAsActiveMesh = true;
 
             switch (place) {
                 case 0:

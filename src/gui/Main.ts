@@ -17,6 +17,8 @@ namespace GUI {
             this.game = game;
             game.gui = this;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
+            this.texture.layer.layerMask = 1;
+
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
             this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
             this.playerLogsQuests = new GUI.PlayerQuestsPanel(game);
@@ -26,6 +28,12 @@ namespace GUI {
             this.attributes = new GUI.Attributes(this);
             this.inventory = new GUI.Inventory(this);
             this.options = new GUI.Options(this);
+
+            this.createCameraForGUI();
+        }
+
+        protected createCameraForGUI() {
+
         }
 
     }

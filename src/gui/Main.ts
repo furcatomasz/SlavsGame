@@ -10,7 +10,7 @@ namespace GUI {
         public playerBottomPanel: GUI.PlayerBottomPanel;
         public playerLogsPanel: GUI.PlayerLogsPanel;
         public playerQuestInformation: GUI.PlayerQuestInformation;
-        public playerLogsQuests: GUI.PlayerLogsPanel;
+        public playerLogsQuests: GUI.PlayerQuestsPanel;
         public characterTopHp: GUI.ShowHp;
 
         constructor(game: Game) {
@@ -28,11 +28,6 @@ namespace GUI {
             this.attributes = new GUI.Attributes(this);
             this.inventory = new GUI.Inventory(this);
             this.options = new GUI.Options(this);
-
-            this.createCameraForGUI();
-        }
-
-        protected createCameraForGUI() {
 
         }
 

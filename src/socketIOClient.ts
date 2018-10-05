@@ -61,8 +61,8 @@ class SocketIOClient {
                 // .reloadScene()
         });
 
-        // this.socket.emit('changeScene', SelectCharacter.TYPE);
-        this.socket.emit('selectCharacter', 2);
+        this.socket.emit('changeScene', SelectCharacter.TYPE);
+        // this.socket.emit('selectCharacter', 2);
 
         return this;
     }

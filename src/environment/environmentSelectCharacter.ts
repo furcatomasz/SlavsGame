@@ -8,7 +8,7 @@ class EnvironmentSelectCharacter {
         light.dispose();
         let fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 2.5, 0), scene);
         fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-        fireplaceLight.range = 40;
+        fireplaceLight.range = 50;
 
         let intensityAnimation = new BABYLON.Animation(
             "mainLightIntensity",

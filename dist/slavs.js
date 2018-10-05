@@ -587,8 +587,8 @@ var SocketIOClient = /** @class */ (function () {
             // .updateRooms()
             // .reloadScene()
         });
-        // this.socket.emit('changeScene', SelectCharacter.TYPE);
-        this.socket.emit('selectCharacter', 2);
+        this.socket.emit('changeScene', SelectCharacter.TYPE);
+        // this.socket.emit('selectCharacter', 2);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -1991,7 +1991,7 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
         light.dispose();
         var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 2.5, 0), scene);
         fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-        fireplaceLight.range = 40;
+        fireplaceLight.range = 50;
         var intensityAnimation = new BABYLON.Animation("mainLightIntensity", "intensity", 50, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
         intensityAnimation.setKeys([
             {
@@ -2421,10 +2421,7 @@ var GUI;
             this.attributes = new GUI.Attributes(this);
             this.inventory = new GUI.Inventory(this);
             this.options = new GUI.Options(this);
-            this.createCameraForGUI();
         }
-        Main.prototype.createCameraForGUI = function () {
-        };
         return Main;
     }());
     GUI.Main = Main;
@@ -2713,6 +2710,50 @@ var GUI;
         return PlayerQuestsPanel;
     }());
     GUI.PlayerQuestsPanel = PlayerQuestsPanel;
+})(GUI || (GUI = {}));
+var GUI;
+(function (GUI) {
+    var SelectCharacter = /** @class */ (function () {
+        function SelectCharacter(game) {
+            this.game = game;
+            game.gui = this;
+            var texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
+            var container = new BABYLON.GUI.Rectangle('gui.panel.bottom');
+            container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            container.width = '685px';
+            container.height = '80px';
+            container.isPointerBlocker = true;
+            container.thickness = 0;
+            texture.addControl(container);
+            var buttonCreateCharacter = BABYLON.GUI.Button.CreateImageWithCenterTextButton("button.create_character", 'Create character', "assets/gui/buttons/blank.png");
+            buttonCreateCharacter.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            buttonCreateCharacter.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonCreateCharacter.width = 0.5;
+            buttonCreateCharacter.height = '40px';
+            buttonCreateCharacter.thickness = 0;
+            buttonCreateCharacter.color = 'white';
+            buttonCreateCharacter.fontSize = 16;
+            container.addControl(buttonCreateCharacter);
+            buttonCreateCharacter.onPointerUpObservable.add(function () {
+                var characterName = input.text;
+                if (characterName.length > 2) {
+                    game.client.socket.emit('createCharacter', characterName);
+                }
+            });
+            var input = new BABYLON.GUI.InputText();
+            input.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            input.width = 0.5;
+            input.maxWidth = 0.5;
+            input.height = "30px";
+            input.color = "white";
+            input.background = "black";
+            container.addControl(input);
+            this.texture = texture;
+        }
+        return SelectCharacter;
+    }());
+    GUI.SelectCharacter = SelectCharacter;
 })(GUI || (GUI = {}));
 var GUI;
 (function (GUI) {
@@ -3515,6 +3556,8 @@ var SelectCharacter = /** @class */ (function (_super) {
     SelectCharacter.prototype.initScene = function (game) {
         var self = this;
         game.sceneManager = this;
+        var playersToSelect = [];
+        var gui = null;
         BABYLON.SceneLoader.Load("assets/scenes/Select_Map/", "Select_Map.babylon", game.engine, function (scene) {
             self
                 .setDefaults(game, scene)
@@ -3522,20 +3565,37 @@ var SelectCharacter = /** @class */ (function (_super) {
                 .setCamera(scene)
                 .setFog(scene)
                 .executeWhenReady(function () {
-                scene.activeCamera = new BABYLON.FreeCamera("selectCharacterCamera", new BABYLON.Vector3(0, 0, 0), scene);
-                scene.activeCamera.maxZ = 200;
-                scene.activeCamera.minZ = -200;
-                scene.activeCamera.position = new BABYLON.Vector3(0, 14, -20);
-                scene.activeCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
                 new EnvironmentSelectCharacter(game, scene);
                 game.client.socket.on('showPlayersToSelect', function (players) {
-                    for (var i = 0; Battleground < players.length; i++) {
+                    playersToSelect.forEach(function (playerSelect) {
+                        playerSelect.mesh.dispose();
+                    });
+                    playersToSelect = [];
+                    for (var i = 0; i < players.length; i++) {
                         var player = players[i];
-                        new SelectCharacter.Warrior(game, i, player);
+                        playersToSelect.push(new SelectCharacter.Warrior(game, i, player));
+                    }
+                    if (gui) {
+                        gui.texture.dispose();
+                    }
+                    if (playersToSelect.length < 2) {
+                        gui = new GUI.SelectCharacter(game);
                     }
                 });
             }, null);
         });
+    };
+    SelectCharacter.prototype.setCamera = function (scene) {
+        var gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
+        gameCamera.position = new BABYLON.Vector3(0, 14, -20);
+        gameCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
+        gameCamera.maxZ = 200;
+        gameCamera.minZ = -200;
+        // camera.fov = 13.25;
+        gameCamera.fovMode = 0;
+        gameCamera.layerMask = 2;
+        scene.activeCameras = [gameCamera];
+        return this;
     };
     SelectCharacter.TYPE = 4;
     return SelectCharacter;
@@ -4070,6 +4130,88 @@ var Character;
         Skills.Tornado = Tornado;
     })(Skills = Character.Skills || (Character.Skills = {}));
 })(Character || (Character = {}));
+var Monster = /** @class */ (function (_super) {
+    __extends(Monster, _super);
+    function Monster(game, serverKey, serverData) {
+        var _this = this;
+        var meshName = serverData.meshName;
+        var factoryName = serverData.type;
+        var mesh = game.factories[factoryName].createInstance(meshName, true);
+        mesh.visibility = 1;
+        mesh.isPickable = 0;
+        game.sceneManager.options.addMeshToDynamicShadowGenerator(game, mesh);
+        _this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
+        _this.sfxWalk = new BABYLON.Sound("CharacterHit", null, game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
+        _this.id = serverKey;
+        _this.mesh = mesh;
+        _this.statistics = serverData.statistics;
+        game.enemies[_this.id] = _this;
+        mesh.skeleton.enableBlending(0.2);
+        _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
+        mesh.scaling = new BABYLON.Vector3(serverData.scale, serverData.scale, serverData.scale);
+        _this = _super.call(this, serverData.name, game) || this;
+        ///Create box mesh for moving
+        _this.createBoxForMove(game.getScene());
+        _this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
+        mesh.parent = _this.meshForMove;
+        _this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
+        _this.mesh.outlineWidth = 0.1;
+        var self = _this;
+        _this.meshForMove.actionManager = new BABYLON.ActionManager(_this.game.getScene());
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+            self.mesh.renderOutline = false;
+            self.game.gui.characterTopHp.hideHpBar();
+        }));
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+            self.mesh.renderOutline = true;
+            self.game.gui.characterTopHp.showHpCharacter(self);
+        }));
+        var intervalAttackFunction = function () {
+            if (!game.player.isAttack) {
+                game.client.socket.emit('attack', {
+                    attack: self.id,
+                    targetPoint: self.game.controller.attackPoint.position,
+                    rotation: self.game.controller.attackPoint.rotation
+                });
+            }
+        };
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function (pointer) {
+            if (self.game.player.isAlive) {
+                game.controller.attackPoint = pointer.meshUnderPointer;
+                game.controller.targetPoint = null;
+                game.controller.ball.visibility = 0;
+                self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
+                intervalAttackFunction();
+            }
+        }));
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function (pointer) {
+            clearInterval(self.intervalAttackRegisteredFunction);
+            self.game.controller.attackPoint = null;
+        }));
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger, function (pointer) {
+            clearInterval(self.intervalAttackRegisteredFunction);
+            self.game.controller.attackPoint = null;
+        }));
+        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function (pointer) {
+            clearInterval(self.intervalAttackRegisteredFunction);
+            self.game.controller.attackPoint = null;
+        }));
+        return _this;
+    }
+    Monster.prototype.removeFromWorld = function () {
+        if (this.intervalAttackRegisteredFunction) {
+            clearInterval(this.intervalAttackRegisteredFunction);
+        }
+        this.meshForMove.dispose();
+    };
+    return Monster;
+}(AbstractCharacter));
 var NPC;
 (function (NPC) {
     var AbstractNpc = /** @class */ (function (_super) {
@@ -4375,88 +4517,6 @@ var SelectCharacter;
     }(AbstractCharacter));
     SelectCharacter.Warrior = Warrior;
 })(SelectCharacter || (SelectCharacter = {}));
-var Monster = /** @class */ (function (_super) {
-    __extends(Monster, _super);
-    function Monster(game, serverKey, serverData) {
-        var _this = this;
-        var meshName = serverData.meshName;
-        var factoryName = serverData.type;
-        var mesh = game.factories[factoryName].createInstance(meshName, true);
-        mesh.visibility = 1;
-        mesh.isPickable = 0;
-        game.sceneManager.options.addMeshToDynamicShadowGenerator(game, mesh);
-        _this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
-            loop: false,
-            autoplay: false
-        });
-        _this.sfxWalk = new BABYLON.Sound("CharacterHit", null, game.getScene(), null, {
-            loop: false,
-            autoplay: false
-        });
-        _this.id = serverKey;
-        _this.mesh = mesh;
-        _this.statistics = serverData.statistics;
-        game.enemies[_this.id] = _this;
-        mesh.skeleton.enableBlending(0.2);
-        _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
-        mesh.scaling = new BABYLON.Vector3(serverData.scale, serverData.scale, serverData.scale);
-        _this = _super.call(this, serverData.name, game) || this;
-        ///Create box mesh for moving
-        _this.createBoxForMove(game.getScene());
-        _this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
-        mesh.parent = _this.meshForMove;
-        _this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
-        _this.mesh.outlineWidth = 0.1;
-        var self = _this;
-        _this.meshForMove.actionManager = new BABYLON.ActionManager(_this.game.getScene());
-        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-            self.mesh.renderOutline = false;
-            self.game.gui.characterTopHp.hideHpBar();
-        }));
-        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-            self.mesh.renderOutline = true;
-            self.game.gui.characterTopHp.showHpCharacter(self);
-        }));
-        var intervalAttackFunction = function () {
-            if (!game.player.isAttack) {
-                game.client.socket.emit('attack', {
-                    attack: self.id,
-                    targetPoint: self.game.controller.attackPoint.position,
-                    rotation: self.game.controller.attackPoint.rotation
-                });
-            }
-        };
-        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function (pointer) {
-            if (self.game.player.isAlive) {
-                game.controller.attackPoint = pointer.meshUnderPointer;
-                game.controller.targetPoint = null;
-                game.controller.ball.visibility = 0;
-                self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
-                intervalAttackFunction();
-            }
-        }));
-        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function (pointer) {
-            clearInterval(self.intervalAttackRegisteredFunction);
-            self.game.controller.attackPoint = null;
-        }));
-        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger, function (pointer) {
-            clearInterval(self.intervalAttackRegisteredFunction);
-            self.game.controller.attackPoint = null;
-        }));
-        _this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function (pointer) {
-            clearInterval(self.intervalAttackRegisteredFunction);
-            self.game.controller.attackPoint = null;
-        }));
-        return _this;
-    }
-    Monster.prototype.removeFromWorld = function () {
-        if (this.intervalAttackRegisteredFunction) {
-            clearInterval(this.intervalAttackRegisteredFunction);
-        }
-        this.meshForMove.dispose();
-    };
-    return Monster;
-}(AbstractCharacter));
 var GUI;
 (function (GUI) {
     var TooltipButton = /** @class */ (function () {

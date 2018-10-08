@@ -34,6 +34,7 @@ namespace Particles {
             fireSystem.minEmitPower = 1;
             fireSystem.maxEmitPower = 2;
             fireSystem.updateSpeed = 0.007;
+            fireSystem.layerMask = 2;
 
             this.particleSystem = fireSystem;
         }

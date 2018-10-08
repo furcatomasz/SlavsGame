@@ -2,7 +2,7 @@ namespace Particles {
     export class Blood extends AbstractParticle {
 
         protected initParticleSystem() {
-            var particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 100 } , this.game.getScene());
+            let particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 100 } , this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("assets/Smoke3.png", this.game.getScene());
             particleSystem.emitter = this.emitter;
 
@@ -34,7 +34,7 @@ namespace Particles {
             particleSystem.minEmitPower = 0.5;
             particleSystem.maxEmitPower = 1;
             particleSystem.updateSpeed = 0.02;
-
+            particleSystem.layerMask = 2;
             this.particleSystem = particleSystem;
         }
     }

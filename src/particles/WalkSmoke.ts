@@ -33,6 +33,7 @@ namespace Particles {
             smokeSystem.minEmitPower = 1;
             smokeSystem.maxEmitPower = 1;
             smokeSystem.updateSpeed = 0.004;
+            smokeSystem.layerMask = 2;
 
             this.particleSystem = smokeSystem;
         }

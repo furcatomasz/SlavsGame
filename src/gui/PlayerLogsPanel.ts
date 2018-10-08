@@ -1,10 +1,11 @@
 namespace GUI {
     export class PlayerLogsPanel {
 
-        static TEXT_COUNT = 6;
+        static TEXT_COUNT = 12;
 
-        public guiPanel:BABYLON.GUI.StackPanel;
-        protected texts:Array<>;
+        public guiPanel:BABYLON.GUI.Rectangle;
+        protected textContainer:BABYLON.GUI.StackPanel;
+        protected texts:Array<BABYLON.GUI.TextBlock>;
         protected texture:BABYLON.GUI.AdvancedDynamicTexture;
 
         constructor(game:Game) {
@@ -12,15 +13,34 @@ namespace GUI {
             this.texture = game.gui.texture;
 
             let self = this;
-            let characterLogsPanel = new BABYLON.GUI.StackPanel();
-            characterLogsPanel.width = "15%";
-            characterLogsPanel.left = "1%";
-            characterLogsPanel.top = "-5%";
-            characterLogsPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            characterLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            self.texture.addControl(characterLogsPanel);
-            self.guiPanel = characterLogsPanel;
+            let container = new BABYLON.GUI.Rectangle('gui.chat');
+            container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            container.width = '302px';
+            container.height = '302px';
+            container.isPointerBlocker = true;
+            container.thickness = 0;
 
+            let background = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/chat.png');
+            background.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            background.height = 1;
+            background.width = 1;
+            container.addControl(background);
+
+            let textsContainer = new BABYLON.GUI.StackPanel();
+            textsContainer.width = 1;
+            textsContainer.left = "3%";
+            textsContainer.top = "-7%";
+            textsContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            textsContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            container.addControl(textsContainer);
+
+            self.texture.addControl(container);
+            self.guiPanel = container;
+            self.textContainer = textsContainer;
+
+            this.addText('You are logged into game', 'gold');
+            this.addText('Welcome in Slavs alpha test!');
         }
 
         /**
@@ -34,11 +54,10 @@ namespace GUI {
             text.textWrapping = true;
             text.height = "25px";
             text.width = "100%";
-            text.fontFamily = "RuslanDisplay";
             text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            text.fontSize = 14;
+            text.fontSize = 12;
 
-            this.guiPanel.addControl(text);
+            this.textContainer.addControl(text);
 
             this.texts.push(text);
             this.removeOldText();
@@ -47,7 +66,7 @@ namespace GUI {
         public removeOldText() {
             if(this.texts.length >= GUI.PlayerLogsPanel.TEXT_COUNT) {
                 let textToDispose = this.texts.shift();
-                this.guiPanel.removeControl(textToDispose);
+                this.textContainer.removeControl(textToDispose);
                 textToDispose = null;
             }
 

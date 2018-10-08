@@ -39,6 +39,7 @@ namespace Particles {
 
             // Low updateSpeed gives a more natural look and feel.
             fog.updateSpeed = 0.0025;
+            fog.layerMask = 2;
 
 
             this.particleSystem = fog;

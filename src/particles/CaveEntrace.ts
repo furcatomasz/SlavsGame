@@ -33,6 +33,7 @@ namespace Particles {
             particleSystem.minEmitPower = 0.5;
             particleSystem.maxEmitPower = 1.5;
             particleSystem.updateSpeed = 0.004;
+            particleSystem.layerMask = 2;
 
             this.particleSystem = particleSystem;
         }

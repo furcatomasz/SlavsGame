@@ -4,7 +4,7 @@
 class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 1;
+    static SHOW_DEBUG = 0;
 
     public sceneManager: Scene;
     public controller: Controller;

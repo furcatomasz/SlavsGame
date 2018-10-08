@@ -61,8 +61,8 @@ class SocketIOClient {
                 // .reloadScene()
         });
 
-        this.socket.emit('changeScene', SelectCharacter.TYPE);
-        // this.socket.emit('selectCharacter', 2);
+        // this.socket.emit('changeScene', SelectCharacter.TYPE);
+        this.socket.emit('selectCharacter', 2);
 
         return this;
     }
@@ -179,7 +179,7 @@ class SocketIOClient {
         let game = this.game;
         this.socket.on('addExperience', function (data) {
             game.player.addExperience(data.experience, data.experiencePercentages);
-            game.gui.playerLogsPanel.addText('You earned ' + data.experience + ' experience.', 'blue');
+            game.gui.playerLogsPanel.addText('You earned ' + data.experience + ' experience.', 'gold');
 
         });
 

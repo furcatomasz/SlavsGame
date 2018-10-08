@@ -4,7 +4,7 @@ abstract class Scene {
     protected game:Game;
     protected babylonScene: BABYLON.Scene;
     protected assetManager: BABYLON.AssetsManager;
-    public octree: BABYLON.Octree;
+    public octree: BABYLON.Octree<0>;
     public options: GameOptions;
     public environment: AbstractEnvironment;
 
@@ -76,7 +76,6 @@ abstract class Scene {
         let game = this.game;
 
         scene.executeWhenReady(function () {
-            // game.client.socket.emit('createPlayer');
             assetsManager.onFinish = function (tasks) {
                 game.client.socket.emit('changeScenePre');
 
@@ -85,6 +84,11 @@ abstract class Scene {
 
                 if(onReady) {
                     onReady();
+                }
+
+                for (let i = 0; i < scene.meshes.length; i++) {
+                    let sceneMesh = scene.meshes[i];
+                    sceneMesh.layerMask = 2;
                 }
 
                 self.playEnemiesAnimationsInFrumStrum();
@@ -125,17 +129,8 @@ abstract class Scene {
 
         let guiCamera = new BABYLON.FreeCamera("GUICamera", new BABYLON.Vector3(0, 0, 0), scene);
         guiCamera.layerMask = 1;
-        guiCamera.rotation = new BABYLON.Vector3(0.75,0.75,0);
-        guiCamera.maxZ = 110;
-        guiCamera.minZ = 20;
-        guiCamera.fovMode = 0;
         scene.activeCameras = [gameCamera, guiCamera];
-
-        for (let i = 0; i < scene.meshes.length; i++) {
-            let sceneMesh = scene.meshes[i];
-            sceneMesh.layerMask = 2;
-        }
-
+        scene.cameraToUseForPointers = gameCamera;
 
         return this;
     }
@@ -149,11 +144,6 @@ abstract class Scene {
 
         scene.fogStart = 50;
         scene.fogEnd = 70;
-
-
-        // scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
-        // scene.fogColor = new BABYLON.Color3(0, 0, 0);
-        // scene.fogDensity = 0.01;
 
         return this;
     }

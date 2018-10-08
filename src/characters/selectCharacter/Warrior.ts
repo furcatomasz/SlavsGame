@@ -53,12 +53,16 @@ namespace SelectCharacter {
             let self = this;
             let pointerOut = false;
 
-            this.meshForMove = BABYLON.Mesh.CreateBox(this.name+'_selectBox', 2.5, this.game.getScene(), false);
-            this.meshForMove.scaling.y = 3;
+            this.meshForMove = BABYLON.MeshBuilder.CreateBox(this.name+'_selectBox', {
+                width: 2,
+                height: 5,
+                size: 2
+            }, this.game.getScene());
             this.meshForMove.checkCollisions = false;
             this.meshForMove.visibility = 0;
             this.meshForMove.isPickable = true;
             this.meshForMove.parent = this.mesh;
+            this.meshForMove.position.y = 2;
 
             let sitDown = function() {
                 if(!self.skeletonAnimation) {
@@ -84,7 +88,6 @@ namespace SelectCharacter {
                             if(pointerOut) {
                                 sitDown();
                             } else {
-
                                 self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
                             }
                         });
@@ -103,7 +106,6 @@ namespace SelectCharacter {
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickDownTrigger,
                 function() {
-                    console.log(1);
                     self.game.client.socket.emit('selectCharacter', self.playerId);
                 })
             );
@@ -111,7 +113,6 @@ namespace SelectCharacter {
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickOutTrigger,
                 function() {
-                    console.log(2);
                     self.game.client.socket.emit('selectCharacter', self.playerId);
                 })
             );
@@ -119,7 +120,6 @@ namespace SelectCharacter {
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger,
                 function() {
-                    console.log(2);
                     self.game.client.socket.emit('selectCharacter', self.playerId);
                 })
             );

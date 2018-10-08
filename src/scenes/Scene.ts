@@ -118,7 +118,11 @@ abstract class Scene {
     }
 
     public setCamera(scene:BABYLON.Scene) {
-        scene.getCameraByName('Camera').dispose();
+        const cameraByName = scene.getCameraByName('Camera');
+        if(cameraByName) {
+            cameraByName.dispose();
+        }
+
         let gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
         gameCamera.rotation = new BABYLON.Vector3(0.75,0.75,0);
         gameCamera.maxZ = 110;

@@ -120,10 +120,10 @@ class Player extends AbstractCharacter {
     public initGodRay() {
         let engine = this.game.engine;
         let scene = this.game.getScene();
-        let camera = this.game.getScene().activeCamera;
+        let camera = this.game.getScene().getCameraByName('gameCamera');
 
         var fireMaterial = new BABYLON.StandardMaterial("fontainSculptur2", scene);
-        var fireTexture = new BABYLON.Texture("assets/flare.png", scene);
+        var fireTexture = new BABYLON.Texture("assets/Smoke3.png", scene);
         fireTexture.hasAlpha = true;
         fireMaterial.alpha = 0.1;
         fireMaterial.emissiveTexture = fireTexture;
@@ -133,22 +133,24 @@ class Player extends AbstractCharacter {
         fireMaterial.specularPower = 1;
         fireMaterial.backFaceCulling = false;
 
-        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 12, scene, true);
+        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 16, scene, true);
         box.visibility = 1;
-        box.renderingGroupId = 2;
-        box.parent = this.mesh;
-        // box.material = new BABYLON.StandardMaterial("bmat", scene);
-        // box.material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-        box.position = new BABYLON.Vector3(0, 0, 0);
         box.scaling = new BABYLON.Vector3(0, 0, 0);
         box.rotation = new BABYLON.Vector3(-Math.PI/2, 0, 0);
-        // box.parent = this.mesh;
         box.material = fireMaterial;
 
-        var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 100, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
+        var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 128, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
         godrays.useCustomMeshPosition = true;
-        godrays.setCustomMeshPosition(new BABYLON.Vector3(0, -5.0, 0));
-        godrays.invert = true;
+        godrays.setCustomMeshPosition(new BABYLON.Vector3(0, 15.0, 0));
+
+        const godRayPosition = () => {
+            box.position = this.meshForMove.position.clone();
+            godrays.setCustomMeshPosition(this.meshForMove.position.clone());
+            godrays.customMeshPosition.y = 15;
+        };
+        scene.registerBeforeRender(godRayPosition);
+
+        godrays.invert = false;
         godrays.exposure = 0.8;
         godrays.decay = 1;
         godrays.weight = 0.3;
@@ -156,13 +158,13 @@ class Player extends AbstractCharacter {
         BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 60, 30, 0, 1,0, null);
         BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 60, 30, 0, 1,0, null);
             BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 60, 30, 0, 1,0, null, function() {
-            // godrays.invert = false;
             setTimeout(function() {
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 60, 10, 1, 0,0, null);
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 60, 10, 1, 0,0, null);
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 60, 10, 1, 0,0, null, function() {
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 30, 10, 1, 0,0, null);
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 30, 10, 1, 0,0, null);
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 30, 10, 1, 0,0, null, function() {
                     godrays.dispose(camera);
                     box.dispose();
+                    scene.unregisterBeforeRender(godRayPosition);
                 } );
             }, 2500);
         } );

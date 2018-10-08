@@ -51,7 +51,6 @@ abstract class AbstractCharacter {
     public showDamage(damage) {
         let self = this;
         let dynamicTexture = new BABYLON.DynamicTexture(null, 128, this.game.getScene(), true);
-        // dynamicTexture.hasAlpha = true;
         let font = "44px RuslanDisplay";
         dynamicTexture.drawText(damage, 64, 80, font, "white", null, true, true);
 
@@ -69,6 +68,7 @@ abstract class AbstractCharacter {
         particleSystemDamage.maxLifeTime = 1;
         particleSystemDamage.targetStopDuration = 0.8;
         particleSystemDamage.particleTexture = dynamicTexture;
+        particleSystemDamage.layerMask = 2;
         particleSystemDamage.start();
 
         setTimeout(function() {

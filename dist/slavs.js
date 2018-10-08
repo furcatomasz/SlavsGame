@@ -108,7 +108,10 @@ var Scene = /** @class */ (function () {
         return this;
     };
     Scene.prototype.setCamera = function (scene) {
-        scene.getCameraByName('Camera').dispose();
+        var cameraByName = scene.getCameraByName('Camera');
+        if (cameraByName) {
+            cameraByName.dispose();
+        }
         var gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
         gameCamera.rotation = new BABYLON.Vector3(0.75, 0.75, 0);
         gameCamera.maxZ = 110;
@@ -455,7 +458,7 @@ var GameOptions = /** @class */ (function () {
         this.refreshAllData();
         var scene = game.getScene();
         var camera = scene.getCameraByName('gameCamera');
-        if (this.staticShadows && !this.staticShadowGenerator) {
+        if (this.staticShadows && !this.staticShadowGenerator && game.sceneManager.environment) {
             var shadowGenerator = new BABYLON.ShadowGenerator(2048, game.sceneManager.environment.light);
             shadowGenerator.usePercentageCloserFiltering = true;
             shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
@@ -1231,7 +1234,6 @@ var AbstractCharacter = /** @class */ (function () {
     AbstractCharacter.prototype.showDamage = function (damage) {
         var self = this;
         var dynamicTexture = new BABYLON.DynamicTexture(null, 128, this.game.getScene(), true);
-        // dynamicTexture.hasAlpha = true;
         var font = "44px RuslanDisplay";
         dynamicTexture.drawText(damage, 64, 80, font, "white", null, true, true);
         var particleSystemDamage = new BABYLON.ParticleSystem(null, 1 /*Capacity, i.e. max of 1 at a time*/, this.game.getScene());
@@ -1248,6 +1250,7 @@ var AbstractCharacter = /** @class */ (function () {
         particleSystemDamage.maxLifeTime = 1;
         particleSystemDamage.targetStopDuration = 0.8;
         particleSystemDamage.particleTexture = dynamicTexture;
+        particleSystemDamage.layerMask = 2;
         particleSystemDamage.start();
         setTimeout(function () {
             dynamicTexture.dispose();
@@ -1439,11 +1442,12 @@ var Player = /** @class */ (function (_super) {
         return _this;
     }
     Player.prototype.initGodRay = function () {
+        var _this = this;
         var engine = this.game.engine;
         var scene = this.game.getScene();
-        var camera = this.game.getScene().activeCamera;
+        var camera = this.game.getScene().getCameraByName('gameCamera');
         var fireMaterial = new BABYLON.StandardMaterial("fontainSculptur2", scene);
-        var fireTexture = new BABYLON.Texture("assets/flare.png", scene);
+        var fireTexture = new BABYLON.Texture("assets/Smoke3.png", scene);
         fireTexture.hasAlpha = true;
         fireMaterial.alpha = 0.1;
         fireMaterial.emissiveTexture = fireTexture;
@@ -1451,21 +1455,21 @@ var Player = /** @class */ (function (_super) {
         fireMaterial.opacityTexture = fireTexture;
         fireMaterial.specularPower = 1;
         fireMaterial.backFaceCulling = false;
-        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 12, scene, true);
+        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 16, scene, true);
         box.visibility = 1;
-        box.renderingGroupId = 2;
-        box.parent = this.mesh;
-        // box.material = new BABYLON.StandardMaterial("bmat", scene);
-        // box.material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-        box.position = new BABYLON.Vector3(0, 0, 0);
         box.scaling = new BABYLON.Vector3(0, 0, 0);
         box.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
-        // box.parent = this.mesh;
         box.material = fireMaterial;
-        var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 100, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
+        var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 128, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
         godrays.useCustomMeshPosition = true;
-        godrays.setCustomMeshPosition(new BABYLON.Vector3(0, -5.0, 0));
-        godrays.invert = true;
+        godrays.setCustomMeshPosition(new BABYLON.Vector3(0, 15.0, 0));
+        var godRayPosition = function () {
+            box.position = _this.meshForMove.position.clone();
+            godrays.setCustomMeshPosition(_this.meshForMove.position.clone());
+            godrays.customMeshPosition.y = 15;
+        };
+        scene.registerBeforeRender(godRayPosition);
+        godrays.invert = false;
         godrays.exposure = 0.8;
         godrays.decay = 1;
         godrays.weight = 0.3;
@@ -1473,13 +1477,13 @@ var Player = /** @class */ (function (_super) {
         BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 60, 30, 0, 1, 0, null);
         BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 60, 30, 0, 1, 0, null);
         BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 60, 30, 0, 1, 0, null, function () {
-            // godrays.invert = false;
             setTimeout(function () {
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 60, 10, 1, 0, 0, null);
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 60, 10, 1, 0, 0, null);
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 60, 10, 1, 0, 0, null, function () {
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 30, 10, 1, 0, 0, null);
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 30, 10, 1, 0, 0, null);
+                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 30, 10, 1, 0, 0, null, function () {
                     godrays.dispose(camera);
                     box.dispose();
+                    scene.unregisterBeforeRender(godRayPosition);
                 });
             }, 2500);
         });
@@ -2610,7 +2614,6 @@ var GUI;
             text.textWrapping = true;
             text.height = "25px";
             text.width = "100%";
-            // text.fontFamily = "RuslanDisplay";
             text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             text.fontSize = 12;
             this.textContainer.addControl(text);
@@ -3552,6 +3555,9 @@ var MountainsPass = /** @class */ (function (_super) {
                 .executeWhenReady(function () {
                 self.environment = new EnvironmentMountainsPass(game, scene);
             }, function () {
+                setInterval(function () {
+                    game.player.initGodRay();
+                }, 6000);
                 new NPC.Guard(game, new BABYLON.Vector3(-117, 0, 128), new BABYLON.Vector3(0, -4.3, 0));
                 // new NPC.Trader(game, new BABYLON.Vector3(-122, 0, -16), new BABYLON.Vector3(0, 0.7, 0));
                 // new NPC.BigWarrior(game, new BABYLON.Vector3(-10, 0, -53), new BABYLON.Vector3(0, 1.54, 0));

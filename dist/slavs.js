@@ -1446,7 +1446,7 @@ var Player = /** @class */ (function (_super) {
         var engine = this.game.engine;
         var scene = this.game.getScene();
         var camera = this.game.getScene().getCameraByName('gameCamera');
-        var fireMaterial = new BABYLON.StandardMaterial("fontainSculptur2", scene);
+        var fireMaterial = new BABYLON.StandardMaterial("godrayMaterial", scene);
         var fireTexture = new BABYLON.Texture("assets/Smoke3.png", scene);
         fireTexture.hasAlpha = true;
         fireMaterial.alpha = 0.1;
@@ -1457,36 +1457,41 @@ var Player = /** @class */ (function (_super) {
         fireMaterial.backFaceCulling = false;
         var box = BABYLON.Mesh.CreatePlane("godRayPlane", 16, scene, true);
         box.visibility = 1;
-        box.scaling = new BABYLON.Vector3(0, 0, 0);
         box.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
         box.material = fireMaterial;
         var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 128, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
         godrays.useCustomMeshPosition = true;
         godrays.setCustomMeshPosition(new BABYLON.Vector3(0, 15.0, 0));
-        var godRayPosition = function () {
-            box.position = _this.meshForMove.position.clone();
-            godrays.setCustomMeshPosition(_this.meshForMove.position.clone());
-            godrays.customMeshPosition.y = 15;
-        };
-        scene.registerBeforeRender(godRayPosition);
         godrays.invert = false;
         godrays.exposure = 0.8;
         godrays.decay = 1;
-        godrays.weight = 0.3;
+        godrays.weight = 0;
         godrays.density = 0.5;
-        BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 60, 30, 0, 1, 0, null);
-        BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 60, 30, 0, 1, 0, null);
-        BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 60, 30, 0, 1, 0, null, function () {
-            setTimeout(function () {
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.z', 30, 10, 1, 0, 0, null);
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.x', 30, 10, 1, 0, 0, null);
-                BABYLON.Animation.CreateAndStartAnimation("fadesphere", box, 'scaling.y', 30, 10, 1, 0, 0, null, function () {
+        var startHiding = false;
+        var timeoutFunction;
+        var showGodRay = function () {
+            box.position = _this.meshForMove.position.clone();
+            godrays.setCustomMeshPosition(_this.meshForMove.position.clone());
+            godrays.customMeshPosition.y = 15;
+            box.rotate(new BABYLON.Vector3(0, 5, 0), 0.02, BABYLON.Space.WORLD);
+            if (godrays.weight >= 0.3 && !timeoutFunction) {
+                timeoutFunction = setTimeout(function () {
+                    startHiding = true;
+                }, 4000);
+            }
+            if (startHiding) {
+                godrays.weight -= 0.01;
+                if (godrays.weight <= 0) {
                     godrays.dispose(camera);
                     box.dispose();
-                    scene.unregisterBeforeRender(godRayPosition);
-                });
-            }, 2500);
-        });
+                    scene.unregisterBeforeRender(showGodRay);
+                }
+            }
+            else if (godrays.weight <= 0.3) {
+                godrays.weight += 0.02;
+            }
+        };
+        scene.registerBeforeRender(showGodRay);
         return this;
     };
     Player.prototype.setCharacterStatistics = function (playerServerData) {
@@ -3553,11 +3558,8 @@ var MountainsPass = /** @class */ (function (_super) {
                 .setCamera(scene)
                 .setFog(scene)
                 .executeWhenReady(function () {
-                self.environment = new EnvironmentMountainsPass(game, scene);
+                self.environment = new EnvironmentMountainsPass(game);
             }, function () {
-                setInterval(function () {
-                    game.player.initGodRay();
-                }, 6000);
                 new NPC.Guard(game, new BABYLON.Vector3(-117, 0, 128), new BABYLON.Vector3(0, -4.3, 0));
                 // new NPC.Trader(game, new BABYLON.Vector3(-122, 0, -16), new BABYLON.Vector3(0, 0.7, 0));
                 // new NPC.BigWarrior(game, new BABYLON.Vector3(-10, 0, -53), new BABYLON.Vector3(0, 1.54, 0));

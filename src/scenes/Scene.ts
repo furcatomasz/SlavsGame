@@ -161,6 +161,7 @@ abstract class Scene {
         scene.spritesEnabled = false;
         scene.audioEnabled = false;
         scene.workerCollisions = false;
+        scene.blockMaterialDirtyMechanism = true;
 
         return this;
     }
@@ -173,6 +174,7 @@ abstract class Scene {
         this.game.factories['skeletonWarrior'] = new Factories.SkeletonWarrior(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeletonBoss'] = new Factories.SkeletonBoss(this.game, scene, assetsManager).initFactory();
         this.game.factories['flag'] = new Factories.Flags(this.game, scene, assetsManager).initFactory();
+        this.game.factories['chest'] = new Factories.Chest(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
 
         return this;

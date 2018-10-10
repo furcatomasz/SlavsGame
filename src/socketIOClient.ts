@@ -139,7 +139,7 @@ class SocketIOClient {
             game.chests = [];
 
             chests.forEach(function(chest, chestKey) {
-                game.chests.push(new Factories.Chest(game, chest, chestKey));
+                game.chests.push(new Initializers.Chest(game, chest, chestKey));
             });
         });
 
@@ -205,6 +205,7 @@ class SocketIOClient {
 
                 let chest = game.chests[data.chestKey];
                 chest.hightlightLayer.dispose();
+                chest.mesh.skeleton.beginAnimation('action', false);
                 chest.mesh.actionManager.actions.forEach(function(action) {
                     chest.mesh.actionManager.unregisterAction(action);
                 });

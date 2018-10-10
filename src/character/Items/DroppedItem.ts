@@ -16,9 +16,9 @@ namespace Items {
             item.mesh.outlineWidth = 0.1;
             item.mesh.rotation = new BABYLON.Vector3(0,0,0);
             item.mesh.visibility = 1;
+            item.mesh.isVisible = true;
             item.mesh.parent = droppedItemBox;
-            item.mesh.setPositionWithLocalVector(new BABYLON.Vector3(0, 0, 0));
-            console.log(item.mesh.getPivotPoint());
+
             droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
             droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
                 function () {

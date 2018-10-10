@@ -144,6 +144,7 @@ var Scene = /** @class */ (function () {
         scene.spritesEnabled = false;
         scene.audioEnabled = false;
         scene.workerCollisions = false;
+        scene.blockMaterialDirtyMechanism = true;
         return this;
     };
     Scene.prototype.initFactories = function (scene) {
@@ -153,6 +154,7 @@ var Scene = /** @class */ (function () {
         this.game.factories['skeletonWarrior'] = new Factories.SkeletonWarrior(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeletonBoss'] = new Factories.SkeletonBoss(this.game, scene, assetsManager).initFactory();
         this.game.factories['flag'] = new Factories.Flags(this.game, scene, assetsManager).initFactory();
+        this.game.factories['chest'] = new Factories.Chest(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
         return this;
     };
@@ -225,7 +227,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 0;
+    Game.SHOW_DEBUG = 1;
     return Game;
 }());
 var GUI;
@@ -645,7 +647,7 @@ var SocketIOClient = /** @class */ (function () {
             });
             game.chests = [];
             chests.forEach(function (chest, chestKey) {
-                game.chests.push(new Factories.Chest(game, chest, chestKey));
+                game.chests.push(new Initializers.Chest(game, chest, chestKey));
             });
         });
         return this;
@@ -700,6 +702,7 @@ var SocketIOClient = /** @class */ (function () {
                 }
                 var chest_1 = game.chests[data.chestKey];
                 chest_1.hightlightLayer.dispose();
+                chest_1.mesh.skeleton.beginAnimation('action', false);
                 chest_1.mesh.actionManager.actions.forEach(function (action) {
                     chest_1.mesh.actionManager.unregisterAction(action);
                 });
@@ -2097,53 +2100,17 @@ var Factories;
 })(Factories || (Factories = {}));
 var Factories;
 (function (Factories) {
-    var Boars = /** @class */ (function (_super) {
-        __extends(Boars, _super);
-        function Boars(game, scene, assetsManager) {
+    var Chest = /** @class */ (function (_super) {
+        __extends(Chest, _super);
+        function Chest(game, scene, assetsManager) {
             var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'boar.worm';
-            _this.dir = 'assets/Characters/Boar/';
-            _this.fileName = 'Boar.babylon';
+            _this.taskName = 'chest';
+            _this.dir = 'assets/Environment/chest/';
+            _this.fileName = 'chest.babylon';
             return _this;
         }
-        return Boars;
-    }(Factories.AbstractFactory));
-    Factories.Boars = Boars;
-})(Factories || (Factories = {}));
-var Factories;
-(function (Factories) {
-    var Chest = /** @class */ (function () {
-        /**
-         *
-         * @param {Game} game
-         * @param chestData
-         */
-        function Chest(game, chestData, chestKey) {
-            var self = this;
-            var scene = game.getScene();
-            var opened = chestData.opened;
-            var name = chestData.name;
-            var meshName = chestData.objectName;
-            var chestMesh = game.getScene().getMeshByName(meshName);
-            if (!chestMesh) {
-                throw new TypeError('Wrong chest mesh name.');
-            }
-            chestMesh.isPickable = true;
-            chestMesh.checkCollisions = true;
-            if (!opened) {
-                var hl = new BABYLON.HighlightLayer("highlightLayer", scene);
-                hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
-                this.hightlightLayer = hl;
-            }
-            this.mesh = chestMesh;
-            this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
-            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                game.client.socket.emit('openChest', chestKey);
-                console.log(chestKey);
-            }));
-        }
         return Chest;
-    }());
+    }(Factories.AbstractFactory));
     Factories.Chest = Chest;
 })(Factories || (Factories = {}));
 var Collisions = /** @class */ (function () {
@@ -2355,36 +2322,6 @@ var Factories;
         return Skeletons;
     }(Factories.AbstractFactory));
     Factories.Skeletons = Skeletons;
-})(Factories || (Factories = {}));
-var Factories;
-(function (Factories) {
-    var Worms = /** @class */ (function (_super) {
-        __extends(Worms, _super);
-        function Worms(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'factory.worm';
-            _this.dir = 'assets/Characters/Worm/';
-            _this.fileName = 'worm.babylon';
-            return _this;
-        }
-        return Worms;
-    }(Factories.AbstractFactory));
-    Factories.Worms = Worms;
-})(Factories || (Factories = {}));
-var Factories;
-(function (Factories) {
-    var Zombies = /** @class */ (function (_super) {
-        __extends(Zombies, _super);
-        function Zombies(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'zombie';
-            _this.dir = 'assets/Characters/Zombie/';
-            _this.fileName = 'Zombie.babylon';
-            return _this;
-        }
-        return Zombies;
-    }(Factories.AbstractFactory));
-    Factories.Zombies = Zombies;
 })(Factories || (Factories = {}));
 var Factories;
 (function (Factories) {
@@ -2837,6 +2774,47 @@ var GUI;
     }());
     GUI.ShowHp = ShowHp;
 })(GUI || (GUI = {}));
+var Initializers;
+(function (Initializers) {
+    var Chest = /** @class */ (function () {
+        /**
+         *
+         * @param {Game} game
+         * @param chestData
+         * @param chestKey
+         */
+        function Chest(game, chestData, chestKey) {
+            var self = this;
+            var scene = game.getScene();
+            var opened = chestData.opened;
+            var position = chestData.position;
+            var rotation = chestData.rotation;
+            var chestMesh = game.factories['chest'].createInstance('chest', true);
+            if (!chestMesh) {
+                throw new TypeError('Wrong chest mesh name.');
+            }
+            chestMesh.position = new BABYLON.Vector3(position.x, position.y, position.z);
+            chestMesh.rotation = new BABYLON.Vector3(rotation.x, rotation.y, rotation.z);
+            chestMesh.isPickable = true;
+            chestMesh.checkCollisions = true;
+            chestMesh.material.backFaceCulling = false;
+            if (!opened) {
+                setTimeout(function () {
+                    var hl = new BABYLON.HighlightLayer("highlightLayer", scene);
+                    hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
+                    self.hightlightLayer = hl;
+                }, 2000);
+            }
+            this.mesh = chestMesh;
+            this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                game.client.socket.emit('openChest', chestKey);
+            }));
+        }
+        return Chest;
+    }());
+    Initializers.Chest = Chest;
+})(Initializers || (Initializers = {}));
 var Particles;
 (function (Particles) {
     var AbstractParticle = /** @class */ (function () {
@@ -3638,9 +3616,8 @@ var Items;
             item.mesh.outlineWidth = 0.1;
             item.mesh.rotation = new BABYLON.Vector3(0, 0, 0);
             item.mesh.visibility = 1;
+            item.mesh.isVisible = true;
             item.mesh.parent = droppedItemBox;
-            item.mesh.setPositionWithLocalVector(new BABYLON.Vector3(0, 0, 0));
-            console.log(item.mesh.getPivotPoint());
             droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
             droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
                 item.mesh.renderOutline = false;

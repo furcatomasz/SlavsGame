@@ -5,7 +5,6 @@ class Player extends AbstractCharacter {
     public walkSmoke:BABYLON.ParticleSystem;
     public inventory:Character.Inventory;
     public playerLight:BABYLON.SpotLight;
-    public playerShadowGenerator:BABYLON.ShadowGenerator;
     public isAlive:boolean;
 
     public skills: Array<any>;

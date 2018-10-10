@@ -4,7 +4,7 @@
 class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 0;
+    static SHOW_DEBUG = 1;
 
     public sceneManager: Scene;
     public controller: Controller;
@@ -27,7 +27,7 @@ class Game {
     public npcs: Array<NPC.AbstractNpc>;
     public enemies: Array<Monster>;
     public quests: Array<0>;
-    public chests: Array<Factories.Chest>;
+    public chests: Array<Initializers.Chest>;
 
     /**
      * States

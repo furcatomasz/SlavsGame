@@ -1,10 +1,7 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -227,7 +224,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 1;
+    Game.SHOW_DEBUG = 0;
     return Game;
 }());
 var GUI;
@@ -5289,31 +5286,53 @@ var GUI;
             var _this = _super.call(this, guiMain) || this;
             _this.questData = questServerData;
             _this.name = 'Quest';
-            _this.imageUrl = "assets/gui/attrs.png";
+            _this.imageUrl = "assets/gui/content.png";
             _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             return _this;
         }
+        NewQuest.prototype.initTexture = function () {
+            this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
+            this.guiTexture.layer.layerMask = 1;
+            var container = new BABYLON.GUI.Rectangle('gui.panel.' + this.name);
+            container.horizontalAlignment = this.position;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            container.thickness = 0;
+            container.isPointerBlocker = true;
+            this.container = container;
+            this.guiTexture.addControl(container);
+            var image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image.width = 1;
+            image.height = 1;
+            container.addControl(image);
+            this.container.addControl(image);
+            this.containerBackground = image;
+            container.width = '685px';
+            container.height = '80%';
+            return this;
+        };
         NewQuest.prototype.open = function () {
             var self = this;
             this.opened = true;
             this.initTexture();
             this.guiTexture.addControl(this.container);
-            console.log(this.questData);
             this.showText();
             this.createButtonClose();
-            var buttonAccept = BABYLON.GUI.Button.CreateSimpleButton("attributesButtonClose", "Accept");
+            var buttonAccept = BABYLON.GUI.Button.CreateImageWithCenterTextButton("questsButtonAccept", "Accept", "assets/gui/button.png");
             buttonAccept.color = "white";
             buttonAccept.background = "black";
-            buttonAccept.width = "70px;";
-            buttonAccept.height = "40px";
-            buttonAccept.left = 60;
-            buttonAccept.horizontalAlignment = this.position;
+            buttonAccept.width = "180px;";
+            buttonAccept.height = "48px";
+            buttonAccept.left = 120;
+            buttonAccept.thickness = 0;
+            buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             buttonAccept.onPointerUpObservable.add(function () {
                 self.guiMain.game.client.socket.emit('acceptQuest', self.questData.questId);
                 self.close();
             });
-            this.guiTexture.addControl(buttonAccept);
+            this.container.addControl(buttonAccept);
         };
         NewQuest.prototype.close = function () {
             this.opened = false;
@@ -5327,23 +5346,25 @@ var GUI;
             title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             title.text = this.questData.title;
             title.top = "2%";
-            title.color = "white";
-            title.width = "25%";
+            title.color = "brown";
+            title.width = "70%";
             title.height = "10%";
             title.fontSize = 36;
+            title.fontFamily = "RuslanDisplay";
             title.textWrapping = true;
-            this.guiTexture.addControl(title);
+            this.container.addControl(title);
             var description = new BABYLON.GUI.TextBlock('descrption');
             description.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             description.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             description.text = this.questData.description;
-            description.color = "white";
+            description.color = "black";
             description.top = "10%";
-            description.width = "25%";
+            description.width = "70%";
             description.height = "10%";
-            description.fontSize = 16;
+            description.fontSize = 14;
+            description.fontFamily = "RuslanDisplay";
             description.textWrapping = true;
-            this.guiTexture.addControl(description);
+            this.container.addControl(description);
             Object.values(this.questData.chapters).forEach(function (chapterData, chapter) {
                 var topPadding = (chapter * 15);
                 var chapterHeader = new BABYLON.GUI.TextBlock();
@@ -5351,23 +5372,25 @@ var GUI;
                 chapterHeader.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 chapterHeader.text = 'Chapter ' + (chapter + 1);
                 chapterHeader.top = topPadding + 15 + "%";
-                chapterHeader.width = "25%";
+                chapterHeader.width = "70%";
                 chapterHeader.height = "25%";
-                chapterHeader.color = "orange";
+                chapterHeader.color = "green";
                 chapterHeader.fontSize = 28;
+                chapterHeader.fontFamily = "RuslanDisplay";
                 chapterHeader.textWrapping = true;
-                self.guiTexture.addControl(chapterHeader);
+                self.container.addControl(chapterHeader);
                 var chapterDescription = new BABYLON.GUI.TextBlock();
                 chapterDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
                 chapterDescription.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 chapterDescription.text = chapterData.description;
                 chapterDescription.top = topPadding + 22 + "%";
-                chapterDescription.width = "25%";
+                chapterDescription.width = "70%";
                 chapterDescription.height = "25%";
-                chapterDescription.color = "white";
-                chapterDescription.fontSize = 18;
+                chapterDescription.color = "black";
+                chapterDescription.fontSize = 14;
+                chapterDescription.fontFamily = "RuslanDisplay";
                 chapterDescription.textWrapping = true;
-                self.guiTexture.addControl(chapterDescription);
+                self.container.addControl(chapterDescription);
             });
         };
         return NewQuest;

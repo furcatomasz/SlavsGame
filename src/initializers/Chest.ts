@@ -27,12 +27,10 @@ namespace Initializers {
             chestMesh.material.backFaceCulling = false;
 
             if (!opened) {
-                setTimeout(function() {
                 let hl = new BABYLON.HighlightLayer("highlightLayer", scene);
                 hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
 
                 self.hightlightLayer = hl;
-                },2000);
             }
 
             this.mesh = chestMesh;

@@ -43,6 +43,7 @@ namespace Factories {
                             clonedMesh.skeleton = mesh.skeleton.clone('clone_skeleton_'+name);
                         }
                         clonedMesh.visibility = 1;
+                        clonedMesh.isVisible = true;
 
                     return clonedMesh;
                     }

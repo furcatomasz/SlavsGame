@@ -9,8 +9,8 @@ class Monster extends AbstractCharacter {
 
         let mesh = game.factories[factoryName].createInstance(meshName, true);
         mesh.visibility = 1;
-        mesh.isPickable = 0;
-        game.sceneManager.options.addMeshToDynamicShadowGenerator(game, mesh);
+        mesh.isPickable = false;
+        // game.sceneManager.options.addMeshToDynamicShadowGenerator(mesh);
 
         this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
             loop: false,

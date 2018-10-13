@@ -4,6 +4,7 @@ class GameOptions {
     protected staticShadowGenerator: BABYLON.ShadowGenerator;
 
     public dynamicShadowGenerator: BABYLON.ShadowGenerator;
+    public dynamicShadowsArray: Array<BABYLON.AbstractMesh>;
     public staticShadows: boolean;
     public dynamicShadows: boolean;
     public postProccessing: boolean;
@@ -15,6 +16,7 @@ class GameOptions {
     public lensSize: boolean;
 
     constructor(game: Game) {
+        this.dynamicShadowsArray = [];
         this.refreshAllData();
         this.initInScene(game);
     }
@@ -41,7 +43,9 @@ class GameOptions {
         game.sceneManager.options.initInScene(game);
     }
 
-    public addMeshToDynamicShadowGenerator(game: Game, mesh: BABYLON.AbstractMesh) {
+    public addMeshToDynamicShadowGenerator(mesh: BABYLON.AbstractMesh) {
+        this.dynamicShadowsArray.push(mesh);
+
         if(this.dynamicShadowGenerator) {
             this.dynamicShadowGenerator.getShadowMap().renderList.push(mesh);
         }
@@ -50,6 +54,7 @@ class GameOptions {
     public initInScene(game: Game) {
         this.refreshAllData();
         const scene = game.getScene();
+        const self = this;
         const camera = scene.getCameraByName('gameCamera');
 
         if(this.staticShadows && !this.staticShadowGenerator && game.sceneManager.environment) {
@@ -70,8 +75,10 @@ class GameOptions {
         }
 
         if (this.dynamicShadows && !this.dynamicShadowGenerator) {
-            this.dynamicShadowGenerator = new BABYLON.ShadowGenerator(512, game.player.playerLight);
-            this.dynamicShadowGenerator.getShadowMap().renderList.push(game.player.mesh);
+            self.dynamicShadowGenerator = new BABYLON.ShadowGenerator(512, game.player.playerLight);
+            self.dynamicShadowsArray.forEach((mesh) => {
+                self.dynamicShadowGenerator.getShadowMap().renderList.push(mesh);
+            });
         } else if (!this.dynamicShadows && this.dynamicShadowGenerator) {
             this.dynamicShadowGenerator.dispose();
             this.dynamicShadowGenerator = null;

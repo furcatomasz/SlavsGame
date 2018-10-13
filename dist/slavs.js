@@ -1,7 +1,10 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -93,6 +96,7 @@ var Scene = /** @class */ (function () {
                     onPlayerConnected();
                 }
                 self.options = new GameOptions(game);
+                game.sceneManager.options.addMeshToDynamicShadowGenerator(game.player.mesh);
                 game.controller.registerControls(scene);
                 game.client.socket.emit('changeScenePost');
                 game.client.socket.emit('refreshGateways');
@@ -427,6 +431,7 @@ var Events = /** @class */ (function () {
 }());
 var GameOptions = /** @class */ (function () {
     function GameOptions(game) {
+        this.dynamicShadowsArray = [];
         this.refreshAllData();
         this.initInScene(game);
     }
@@ -448,7 +453,8 @@ var GameOptions = /** @class */ (function () {
         localStorage.setItem('options.' + key, JSON.stringify(value));
         game.sceneManager.options.initInScene(game);
     };
-    GameOptions.prototype.addMeshToDynamicShadowGenerator = function (game, mesh) {
+    GameOptions.prototype.addMeshToDynamicShadowGenerator = function (mesh) {
+        this.dynamicShadowsArray.push(mesh);
         if (this.dynamicShadowGenerator) {
             this.dynamicShadowGenerator.getShadowMap().renderList.push(mesh);
         }
@@ -456,6 +462,7 @@ var GameOptions = /** @class */ (function () {
     GameOptions.prototype.initInScene = function (game) {
         this.refreshAllData();
         var scene = game.getScene();
+        var self = this;
         var camera = scene.getCameraByName('gameCamera');
         if (this.staticShadows && !this.staticShadowGenerator && game.sceneManager.environment) {
             var shadowGenerator = new BABYLON.ShadowGenerator(2048, game.sceneManager.environment.light);
@@ -475,8 +482,10 @@ var GameOptions = /** @class */ (function () {
             this.staticShadowGenerator = null;
         }
         if (this.dynamicShadows && !this.dynamicShadowGenerator) {
-            this.dynamicShadowGenerator = new BABYLON.ShadowGenerator(512, game.player.playerLight);
-            this.dynamicShadowGenerator.getShadowMap().renderList.push(game.player.mesh);
+            self.dynamicShadowGenerator = new BABYLON.ShadowGenerator(512, game.player.playerLight);
+            self.dynamicShadowsArray.forEach(function (mesh) {
+                self.dynamicShadowGenerator.getShadowMap().renderList.push(mesh);
+            });
         }
         else if (!this.dynamicShadows && this.dynamicShadowGenerator) {
             this.dynamicShadowGenerator.dispose();
@@ -1714,346 +1723,6 @@ var Mouse = /** @class */ (function (_super) {
     };
     return Mouse;
 }(Controller));
-var AbstractEnvironment = /** @class */ (function () {
-    function AbstractEnvironment() {
-        this.staticShadowObjects = [];
-        this.colliders = [];
-    }
-    AbstractEnvironment.prototype.registerColliders = function (scene) {
-        for (var i = 0; i < this.colliders.length; i++) {
-            var sceneMeshCollider = this.colliders[i];
-            Collisions.setCollider(scene, sceneMeshCollider);
-        }
-    };
-    AbstractEnvironment.prototype.freezeAllMeshes = function (scene) {
-        for (var i = 0; i < scene.meshes.length; i++) {
-            scene.meshes[i].freezeWorldMatrix();
-        }
-    };
-    return AbstractEnvironment;
-}());
-var EnvironmentForestHouse = /** @class */ (function (_super) {
-    __extends(EnvironmentForestHouse, _super);
-    function EnvironmentForestHouse(game) {
-        var _this = _super.call(this) || this;
-        var scene = game.getScene();
-        var self = _this;
-        var spsTrees = [];
-        var spsPlants = [];
-        var spsStones = [];
-        var spsFern = [];
-        for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
-            var meshName = scene.meshes[i]['name'];
-            if (meshName.search("Ground") >= 0) {
-                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
-                sceneMesh.receiveShadows = true;
-                _this.ground = sceneMesh;
-                var terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
-                terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
-                terrainMaterial.specularPower = 64;
-                terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/Forest_house/stencil.png", scene);
-                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
-                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
-                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/groundSeamless.jpg", scene);
-                terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 10;
-                terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 10;
-                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 15;
-                sceneMesh.material = terrainMaterial;
-            }
-            else if (meshName.search("Box_Cube") >= 0) {
-                _this.colliders.push(sceneMesh);
-            }
-            else if (meshName.search("sps_trees") >= 0) {
-                spsTrees.push(sceneMesh);
-            }
-            else if (meshName.search("sps_groundPlants") >= 0) {
-                spsPlants.push(sceneMesh);
-            }
-            else if (meshName.search("sps_stones") >= 0) {
-                spsStones.push(sceneMesh);
-            }
-            else if (meshName.search("sps_fern") >= 0) {
-                spsFern.push(sceneMesh);
-            }
-            else {
-                sceneMesh.isPickable = false;
-                self.staticShadowObjects.push(sceneMesh);
-            }
-        }
-        //SPS Nature
-        var spruce = game.factories['nature_grain'].createInstance('spruce', false);
-        spruce.visibility = 0;
-        spruce.material.freeze();
-        var groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
-        groundPlants.visibility = 0;
-        groundPlants.material.freeze();
-        var fern = game.factories['nature_grain'].createInstance('fern', false);
-        fern.visibility = 0;
-        fern.material.freeze();
-        var stone = game.factories['nature_grain'].createInstance('stone', false);
-        stone.visibility = 0;
-        stone.material.freeze();
-        spsTrees.forEach(function (parentSPS) {
-            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce, false);
-            spsSpruce.buildSPS(67);
-            self.staticShadowObjects.push(spsSpruce.spsMesh);
-        });
-        spsPlants.forEach(function (parentSPS) {
-            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, groundPlants, false);
-            spsSpruce.buildSPS(40);
-            self.staticShadowObjects.push(spsSpruce.spsMesh);
-        });
-        spsStones.forEach(function (parentSPS) {
-            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, stone, false);
-            spsSpruce.buildSPS(67);
-            self.staticShadowObjects.push(spsSpruce.spsMesh);
-        });
-        spsFern.forEach(function (parentSPS) {
-            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, fern, false);
-            spsSpruce.buildSPS(67);
-            self.staticShadowObjects.push(spsSpruce.spsMesh);
-        });
-        var spsToBlock = scene.getMeshByName("sps_border");
-        var spsSpruceBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, spruce);
-        spsSpruceBlock.buildSPS(500);
-        self.staticShadowObjects.push(spsSpruceBlock.spsMesh);
-        stone.dispose();
-        spruce.dispose();
-        groundPlants.dispose();
-        fern.dispose();
-        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
-        light.intensity = 0.4;
-        light.position = new BABYLON.Vector3(0, 50, 0);
-        light.direction = new BABYLON.Vector3(0.45, -2.5, 0);
-        light.shadowMaxZ = 500;
-        _this.light = light;
-        ///register colliders
-        _this.registerColliders(scene);
-        _this.freezeAllMeshes(scene);
-        new BABYLON.Sound("Forest night", "assets/sounds/fx/wind.mp3", scene, null, {
-            loop: true,
-            autoplay: true,
-            volume: 0.1
-        });
-        new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, {
-            loop: true,
-            autoplay: true,
-            volume: 0.3
-        });
-        return _this;
-    }
-    return EnvironmentForestHouse;
-}(AbstractEnvironment));
-var EnvironmentForestHouseStart = /** @class */ (function (_super) {
-    __extends(EnvironmentForestHouseStart, _super);
-    function EnvironmentForestHouseStart(game) {
-        var _this = _super.call(this) || this;
-        var scene = game.getScene();
-        for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
-            var meshName = scene.meshes[i]['name'];
-            if (meshName.search("Ground") >= 0) {
-                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
-                sceneMesh.receiveShadows = true;
-            }
-            else if (meshName.search("Box_Cube") >= 0) {
-                _this.colliders.push(sceneMesh);
-            }
-            else {
-                sceneMesh.isPickable = false;
-                _this.staticShadowObjects.push(sceneMesh);
-            }
-        }
-        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
-        light.position = new BABYLON.Vector3(0, 80, -210);
-        light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
-        light.shadowMaxZ = 500;
-        light.autoUpdateExtends = false;
-        _this.light = light;
-        _this.freezeAllMeshes(scene);
-        _this.registerColliders(scene);
-        new BABYLON.Sound("Forest night", "assets/sounds/fx/wind.mp3", scene, null, {
-            loop: true,
-            autoplay: true,
-            volume: 0.3
-        });
-        return _this;
-    }
-    return EnvironmentForestHouseStart;
-}(AbstractEnvironment));
-var EnvironmentForestHouseTomb = /** @class */ (function () {
-    function EnvironmentForestHouseTomb(game, scene) {
-        var self = this;
-        this.colliders = [];
-        for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
-            var meshName = scene.meshes[i]['name'];
-            if (meshName.search("Ground") >= 0) {
-                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
-                sceneMesh.receiveShadows = true;
-                sceneMesh.material.diffuseTexture.uScale = 1.2;
-                sceneMesh.material.diffuseTexture.vScale = 1.2;
-                this.ground = sceneMesh;
-            }
-            else if (meshName.search("Box_Cube") >= 0) {
-                this.colliders.push(sceneMesh);
-            }
-            else {
-                sceneMesh.isPickable = false;
-                ///others
-            }
-        }
-        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
-        light.intensity = 0.4;
-        light.position = new BABYLON.Vector3(0, 80, -210);
-        light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
-        ///register colliders
-        for (var i = 0; i < this.colliders.length; i++) {
-            var sceneMeshCollider = this.colliders[i];
-            Collisions.setCollider(scene, sceneMeshCollider);
-        }
-        //Freeze world matrix all static meshes
-        for (var i = 0; i < scene.meshes.length; i++) {
-            scene.meshes[i].freezeWorldMatrix();
-        }
-    }
-    return EnvironmentForestHouseTomb;
-}());
-var EnvironmentMountainsPass = /** @class */ (function (_super) {
-    __extends(EnvironmentMountainsPass, _super);
-    function EnvironmentMountainsPass(game) {
-        var _this = _super.call(this) || this;
-        var scene = game.getScene();
-        _this.colliders = [];
-        for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
-            var meshName = scene.meshes[i]['name'];
-            if (meshName.search("Ground") >= 0) {
-                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
-                sceneMesh.receiveShadows = true;
-                var terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
-                terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
-                terrainMaterial.specularPower = 64;
-                terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/MountainsPass/stencil.jpg", scene);
-                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
-                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
-                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
-                terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 20;
-                terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 20;
-                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 20;
-                sceneMesh.material = terrainMaterial;
-            }
-            else if (meshName.search("Box_Cube") >= 0) {
-                _this.colliders.push(sceneMesh);
-            }
-            else {
-                sceneMesh.isPickable = false;
-                if (meshName.search("Rock") >= 0) {
-                    continue;
-                }
-                _this.staticShadowObjects.push(sceneMesh);
-            }
-        }
-        // let cone = scene.getMeshByName("fireplace.002");
-        // if (cone) {
-        //     let smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
-        //     smokeSystem.start();
-        //
-        //     let fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
-        //     fireSystem.start();
-        //
-        //     let sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-        //     sfxFireplace.attachToMesh(cone);
-        // }
-        //TODO: delete in bledner
-        scene.getLightByName('Lamp').dispose();
-        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
-        light.intensity = 0.6;
-        light.position = new BABYLON.Vector3(0, 50, 0);
-        light.direction = new BABYLON.Vector3(0.45, -2.5, 0);
-        light.shadowMaxZ = 500;
-        _this.light = light;
-        _this.registerColliders(scene);
-        _this.freezeAllMeshes(scene);
-        return _this;
-    }
-    return EnvironmentMountainsPass;
-}(AbstractEnvironment));
-var EnvironmentSelectCharacter = /** @class */ (function () {
-    function EnvironmentSelectCharacter(game, scene) {
-        ////LIGHT
-        var light = game.getScene().lights[0];
-        light.dispose();
-        var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 2.5, 0), scene);
-        fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-        fireplaceLight.range = 50;
-        var intensityAnimation = new BABYLON.Animation("mainLightIntensity", "intensity", 50, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
-        intensityAnimation.setKeys([
-            {
-                frame: 0,
-                value: 0.85
-            },
-            {
-                frame: 5,
-                value: 0.9
-            },
-            {
-                frame: 10,
-                value: 0.82
-            }
-        ]);
-        var colorAnimation = new BABYLON.Animation("mainLightColor", "specular", 50, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
-        colorAnimation.setKeys([
-            {
-                frame: 20,
-                value: new BABYLON.Color3(1, 1, 1)
-            },
-            {
-                frame: 25,
-                value: new BABYLON.Color3(1, 0, 1)
-            },
-            {
-                frame: 30,
-                value: new BABYLON.Color3(1, 1, 1)
-            }
-        ]);
-        fireplaceLight.animations = [];
-        fireplaceLight.animations.push(intensityAnimation);
-        game.getScene().beginAnimation(fireplaceLight, 0, 10, true);
-        var shadowGenerator = new BABYLON.ShadowGenerator(1024, fireplaceLight);
-        shadowGenerator.getShadowMap().refreshRate = 0;
-        this.shadowGenerator = shadowGenerator;
-        for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
-            var meshName = scene.meshes[i]['name'];
-            if (meshName.search("Forest_ground") >= 0) {
-                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
-                sceneMesh.receiveShadows = true;
-                sceneMesh.material.emissiveColor = new BABYLON.Vector3(0.05, 0.05, 0.05);
-                continue;
-            }
-            shadowGenerator.getShadowMap().renderList.push(sceneMesh);
-        }
-        var cone = scene.getMeshByName("Fireplace");
-        if (cone) {
-            fireplaceLight.parent = cone;
-            var smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
-            smokeSystem.start();
-            var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
-            fireSystem.start();
-            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
-            sfxFireplace.attachToMesh(cone);
-        }
-        for (var i = 0; i < scene.meshes.length; i++) {
-            var sceneMesh = scene.meshes[i];
-            sceneMesh.freezeWorldMatrix();
-            sceneMesh.isPickable = false;
-        }
-        new BABYLON.Sound("Forest night", "assets/sounds/music/theme.mp3", scene, null, { loop: true, autoplay: true, volume: 1 });
-    }
-    return EnvironmentSelectCharacter;
-}());
 var Factories;
 (function (Factories) {
     var AbstractFactory = /** @class */ (function () {
@@ -2087,6 +1756,7 @@ var Factories;
                         clonedMesh.skeleton = mesh.skeleton.clone('clone_skeleton_' + name);
                     }
                     clonedMesh.visibility = 1;
+                    clonedMesh.isVisible = true;
                     return clonedMesh;
                 }
             }
@@ -2796,11 +2466,9 @@ var Initializers;
             chestMesh.checkCollisions = true;
             chestMesh.material.backFaceCulling = false;
             if (!opened) {
-                setTimeout(function () {
-                    var hl = new BABYLON.HighlightLayer("highlightLayer", scene);
-                    hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
-                    self.hightlightLayer = hl;
-                }, 2000);
+                var hl = new BABYLON.HighlightLayer("highlightLayer", scene);
+                hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
+                self.hightlightLayer = hl;
             }
             this.mesh = chestMesh;
             this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
@@ -2812,6 +2480,705 @@ var Initializers;
     }());
     Initializers.Chest = Chest;
 })(Initializers || (Initializers = {}));
+var AbstractEnvironment = /** @class */ (function () {
+    function AbstractEnvironment() {
+        this.staticShadowObjects = [];
+        this.colliders = [];
+    }
+    AbstractEnvironment.prototype.registerColliders = function (scene) {
+        for (var i = 0; i < this.colliders.length; i++) {
+            var sceneMeshCollider = this.colliders[i];
+            Collisions.setCollider(scene, sceneMeshCollider);
+        }
+    };
+    AbstractEnvironment.prototype.freezeAllMeshes = function (scene) {
+        for (var i = 0; i < scene.meshes.length; i++) {
+            scene.meshes[i].freezeWorldMatrix();
+        }
+    };
+    return AbstractEnvironment;
+}());
+var EnvironmentForestHouse = /** @class */ (function (_super) {
+    __extends(EnvironmentForestHouse, _super);
+    function EnvironmentForestHouse(game) {
+        var _this = _super.call(this) || this;
+        var scene = game.getScene();
+        var self = _this;
+        var spsTrees = [];
+        var spsPlants = [];
+        var spsStones = [];
+        var spsFern = [];
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh = scene.meshes[i];
+            var meshName = scene.meshes[i]['name'];
+            if (meshName.search("Ground") >= 0) {
+                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
+                sceneMesh.receiveShadows = true;
+                _this.ground = sceneMesh;
+                var terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
+                terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+                terrainMaterial.specularPower = 64;
+                terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/Forest_house/stencil.png", scene);
+                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
+                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/groundSeamless.jpg", scene);
+                terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 10;
+                terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 10;
+                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 15;
+                sceneMesh.material = terrainMaterial;
+            }
+            else if (meshName.search("Box_Cube") >= 0) {
+                _this.colliders.push(sceneMesh);
+            }
+            else if (meshName.search("sps_trees") >= 0) {
+                spsTrees.push(sceneMesh);
+            }
+            else if (meshName.search("sps_groundPlants") >= 0) {
+                spsPlants.push(sceneMesh);
+            }
+            else if (meshName.search("sps_stones") >= 0) {
+                spsStones.push(sceneMesh);
+            }
+            else if (meshName.search("sps_fern") >= 0) {
+                spsFern.push(sceneMesh);
+            }
+            else {
+                sceneMesh.isPickable = false;
+                self.staticShadowObjects.push(sceneMesh);
+            }
+        }
+        //SPS Nature
+        var spruce = game.factories['nature_grain'].createInstance('spruce', false);
+        spruce.visibility = 0;
+        spruce.material.freeze();
+        var groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
+        groundPlants.visibility = 0;
+        groundPlants.material.freeze();
+        var fern = game.factories['nature_grain'].createInstance('fern', false);
+        fern.visibility = 0;
+        fern.material.freeze();
+        var stone = game.factories['nature_grain'].createInstance('stone', false);
+        stone.visibility = 0;
+        stone.material.freeze();
+        spsTrees.forEach(function (parentSPS) {
+            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, spruce, false);
+            spsSpruce.buildSPS(67);
+            self.staticShadowObjects.push(spsSpruce.spsMesh);
+        });
+        spsPlants.forEach(function (parentSPS) {
+            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, groundPlants, false);
+            spsSpruce.buildSPS(40);
+            self.staticShadowObjects.push(spsSpruce.spsMesh);
+        });
+        spsStones.forEach(function (parentSPS) {
+            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, stone, false);
+            spsSpruce.buildSPS(67);
+            self.staticShadowObjects.push(spsSpruce.spsMesh);
+        });
+        spsFern.forEach(function (parentSPS) {
+            var spsSpruce = new Particles.SolidParticleSystem.Nature(game, parentSPS, fern, false);
+            spsSpruce.buildSPS(67);
+            self.staticShadowObjects.push(spsSpruce.spsMesh);
+        });
+        var spsToBlock = scene.getMeshByName("sps_border");
+        var spsSpruceBlock = new Particles.SolidParticleSystem.NatureBlock(game, spsToBlock, spruce);
+        spsSpruceBlock.buildSPS(500);
+        self.staticShadowObjects.push(spsSpruceBlock.spsMesh);
+        stone.dispose();
+        spruce.dispose();
+        groundPlants.dispose();
+        fern.dispose();
+        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+        light.intensity = 0.4;
+        light.position = new BABYLON.Vector3(0, 50, 0);
+        light.direction = new BABYLON.Vector3(0.45, -2.5, 0);
+        light.shadowMaxZ = 500;
+        _this.light = light;
+        ///register colliders
+        _this.registerColliders(scene);
+        _this.freezeAllMeshes(scene);
+        new BABYLON.Sound("Forest night", "assets/sounds/fx/wind.mp3", scene, null, {
+            loop: true,
+            autoplay: true,
+            volume: 0.1
+        });
+        new BABYLON.Sound("Forest night", "assets/sounds/forest_night.mp3", scene, null, {
+            loop: true,
+            autoplay: true,
+            volume: 0.3
+        });
+        return _this;
+    }
+    return EnvironmentForestHouse;
+}(AbstractEnvironment));
+var EnvironmentForestHouseStart = /** @class */ (function (_super) {
+    __extends(EnvironmentForestHouseStart, _super);
+    function EnvironmentForestHouseStart(game) {
+        var _this = _super.call(this) || this;
+        var scene = game.getScene();
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh = scene.meshes[i];
+            var meshName = scene.meshes[i]['name'];
+            if (meshName.search("Ground") >= 0) {
+                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
+                sceneMesh.receiveShadows = true;
+            }
+            else if (meshName.search("Box_Cube") >= 0) {
+                _this.colliders.push(sceneMesh);
+            }
+            else {
+                sceneMesh.isPickable = false;
+                _this.staticShadowObjects.push(sceneMesh);
+            }
+        }
+        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+        light.position = new BABYLON.Vector3(0, 80, -210);
+        light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
+        light.shadowMaxZ = 500;
+        light.autoUpdateExtends = false;
+        _this.light = light;
+        _this.freezeAllMeshes(scene);
+        _this.registerColliders(scene);
+        new BABYLON.Sound("Forest night", "assets/sounds/fx/wind.mp3", scene, null, {
+            loop: true,
+            autoplay: true,
+            volume: 0.3
+        });
+        return _this;
+    }
+    return EnvironmentForestHouseStart;
+}(AbstractEnvironment));
+var EnvironmentForestHouseTomb = /** @class */ (function () {
+    function EnvironmentForestHouseTomb(game, scene) {
+        var self = this;
+        this.colliders = [];
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh = scene.meshes[i];
+            var meshName = scene.meshes[i]['name'];
+            if (meshName.search("Ground") >= 0) {
+                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
+                sceneMesh.receiveShadows = true;
+                sceneMesh.material.diffuseTexture.uScale = 1.2;
+                sceneMesh.material.diffuseTexture.vScale = 1.2;
+                this.ground = sceneMesh;
+            }
+            else if (meshName.search("Box_Cube") >= 0) {
+                this.colliders.push(sceneMesh);
+            }
+            else {
+                sceneMesh.isPickable = false;
+                ///others
+            }
+        }
+        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+        light.intensity = 0.4;
+        light.position = new BABYLON.Vector3(0, 80, -210);
+        light.direction = new BABYLON.Vector3(0.45, -0.45, 0.45);
+        ///register colliders
+        for (var i = 0; i < this.colliders.length; i++) {
+            var sceneMeshCollider = this.colliders[i];
+            Collisions.setCollider(scene, sceneMeshCollider);
+        }
+        //Freeze world matrix all static meshes
+        for (var i = 0; i < scene.meshes.length; i++) {
+            scene.meshes[i].freezeWorldMatrix();
+        }
+    }
+    return EnvironmentForestHouseTomb;
+}());
+var EnvironmentMountainsPass = /** @class */ (function (_super) {
+    __extends(EnvironmentMountainsPass, _super);
+    function EnvironmentMountainsPass(game) {
+        var _this = _super.call(this) || this;
+        var scene = game.getScene();
+        _this.colliders = [];
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh = scene.meshes[i];
+            var meshName = scene.meshes[i]['name'];
+            if (meshName.search("Ground") >= 0) {
+                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
+                sceneMesh.receiveShadows = true;
+                var terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
+                terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+                terrainMaterial.specularPower = 64;
+                terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/MountainsPass/stencil.jpg", scene);
+                terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+                terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
+                terrainMaterial.diffuseTexture3 = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+                terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 20;
+                terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 20;
+                terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 20;
+                sceneMesh.material = terrainMaterial;
+            }
+            else if (meshName.search("Box_Cube") >= 0) {
+                _this.colliders.push(sceneMesh);
+            }
+            else {
+                sceneMesh.isPickable = false;
+                if (meshName.search("Rock") >= 0) {
+                    continue;
+                }
+                _this.staticShadowObjects.push(sceneMesh);
+            }
+        }
+        // let cone = scene.getMeshByName("fireplace.002");
+        // if (cone) {
+        //     let smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
+        //     smokeSystem.start();
+        //
+        //     let fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
+        //     fireSystem.start();
+        //
+        //     let sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+        //     sfxFireplace.attachToMesh(cone);
+        // }
+        //TODO: delete in bledner
+        scene.getLightByName('Lamp').dispose();
+        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+        light.intensity = 0.6;
+        light.position = new BABYLON.Vector3(0, 50, 0);
+        light.direction = new BABYLON.Vector3(0.45, -2.5, 0);
+        light.shadowMaxZ = 500;
+        _this.light = light;
+        _this.registerColliders(scene);
+        _this.freezeAllMeshes(scene);
+        return _this;
+    }
+    return EnvironmentMountainsPass;
+}(AbstractEnvironment));
+var EnvironmentSelectCharacter = /** @class */ (function () {
+    function EnvironmentSelectCharacter(game, scene) {
+        ////LIGHT
+        var light = game.getScene().lights[0];
+        light.dispose();
+        var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 2.5, 0), scene);
+        fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
+        fireplaceLight.range = 50;
+        var intensityAnimation = new BABYLON.Animation("mainLightIntensity", "intensity", 50, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        intensityAnimation.setKeys([
+            {
+                frame: 0,
+                value: 0.85
+            },
+            {
+                frame: 5,
+                value: 0.9
+            },
+            {
+                frame: 10,
+                value: 0.82
+            }
+        ]);
+        var colorAnimation = new BABYLON.Animation("mainLightColor", "specular", 50, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        colorAnimation.setKeys([
+            {
+                frame: 20,
+                value: new BABYLON.Color3(1, 1, 1)
+            },
+            {
+                frame: 25,
+                value: new BABYLON.Color3(1, 0, 1)
+            },
+            {
+                frame: 30,
+                value: new BABYLON.Color3(1, 1, 1)
+            }
+        ]);
+        fireplaceLight.animations = [];
+        fireplaceLight.animations.push(intensityAnimation);
+        game.getScene().beginAnimation(fireplaceLight, 0, 10, true);
+        var shadowGenerator = new BABYLON.ShadowGenerator(1024, fireplaceLight);
+        shadowGenerator.getShadowMap().refreshRate = 0;
+        this.shadowGenerator = shadowGenerator;
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh = scene.meshes[i];
+            var meshName = scene.meshes[i]['name'];
+            if (meshName.search("Forest_ground") >= 0) {
+                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
+                sceneMesh.receiveShadows = true;
+                sceneMesh.material.emissiveColor = new BABYLON.Vector3(0.05, 0.05, 0.05);
+                continue;
+            }
+            shadowGenerator.getShadowMap().renderList.push(sceneMesh);
+        }
+        var cone = scene.getMeshByName("Fireplace");
+        if (cone) {
+            fireplaceLight.parent = cone;
+            var smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
+            smokeSystem.start();
+            var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
+            fireSystem.start();
+            var sfxFireplace = new BABYLON.Sound("Fire", "assets/sounds/fireplace.mp3", scene, null, { loop: true, autoplay: true });
+            sfxFireplace.attachToMesh(cone);
+        }
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh = scene.meshes[i];
+            sceneMesh.freezeWorldMatrix();
+            sceneMesh.isPickable = false;
+        }
+        new BABYLON.Sound("Forest night", "assets/sounds/music/theme.mp3", scene, null, { loop: true, autoplay: true, volume: 1 });
+    }
+    return EnvironmentSelectCharacter;
+}());
+var Battleground = /** @class */ (function (_super) {
+    __extends(Battleground, _super);
+    function Battleground() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Battleground.prototype.initScene = function (game) {
+        var self = this;
+        game.sceneManager = this;
+        var scene = new BABYLON.Scene(game.engine);
+        self
+            .setDefaults(game, scene)
+            .optimizeScene(scene)
+            .setCamera(scene)
+            .setFog(scene)
+            .executeWhenReady(function () {
+            scene.audioEnabled = false;
+            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
+            light.intensity = 1;
+            var ground = BABYLON.MeshBuilder.CreateGround("Ground", { width: 50, height: 50 }, scene);
+            ground.actionManager = new BABYLON.ActionManager(scene);
+            var terrainMaterial = new BABYLON.StandardMaterial("GroundMaterial", scene);
+            terrainMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            terrainMaterial.specularPower = 64;
+            terrainMaterial.diffuseTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+            ground.material = terrainMaterial;
+        }, function () {
+            // game.player.playerLight.dispose();
+        });
+    };
+    Battleground.TYPE = 99;
+    return Battleground;
+}(Scene));
+var ForestHouse = /** @class */ (function (_super) {
+    __extends(ForestHouse, _super);
+    function ForestHouse() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ForestHouse.prototype.initScene = function (game) {
+        var self = this;
+        game.sceneManager = this;
+        BABYLON.SceneLoader.Load("assets/scenes/Forest_house/", "Forest_house.babylon", game.engine, function (scene) {
+            self
+                .setDefaults(game, scene)
+                .optimizeScene(scene)
+                .setCamera(scene)
+                .setFog(scene)
+                .executeWhenReady(function () {
+                self.environment = new EnvironmentForestHouse(game);
+            }, null);
+        });
+    };
+    ForestHouse.TYPE = 2;
+    return ForestHouse;
+}(Scene));
+var ForestHouseStart = /** @class */ (function (_super) {
+    __extends(ForestHouseStart, _super);
+    function ForestHouseStart() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ForestHouseStart.prototype.initScene = function (game) {
+        var self = this;
+        game.sceneManager = this;
+        BABYLON.SceneLoader.Load("assets/scenes/forestStartHouse/", "forestHouseStart.babylon", game.engine, function (scene) {
+            self
+                .setDefaults(game, scene)
+                .optimizeScene(scene)
+                .setCamera(scene)
+                .setFog(scene)
+                .executeWhenReady(function () {
+                self.environment = new EnvironmentForestHouseStart(game);
+            }, null);
+        });
+    };
+    ForestHouseStart.TYPE = 1;
+    return ForestHouseStart;
+}(Scene));
+var ForestHouseTomb = /** @class */ (function (_super) {
+    __extends(ForestHouseTomb, _super);
+    function ForestHouseTomb() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ForestHouseTomb.prototype.initScene = function (game) {
+        var self = this;
+        game.sceneManager = this;
+        BABYLON.SceneLoader.Load("assets/scenes/Forest_House_Tomb/", "Forest_House_Tomb.babylon", game.engine, function (scene) {
+            game.sceneManager = self;
+            self
+                .setDefaults(game, scene)
+                .optimizeScene(scene)
+                .setCamera(scene)
+                .setFog(scene)
+                .executeWhenReady(function () {
+                self.environment = new EnvironmentForestHouseTomb(game, scene);
+                //
+                // let item = new Items.Item(game, {
+                //     name: 'LongSword',
+                //     image: 'sword',
+                //     type: 1,
+                //     statistics: {},
+                //     meshName: 'swordLong',
+                // });
+                // Items.DroppedItem.showItem(game, item, {x: 2, z:-3}, 0);
+                //
+                // let item = new Items.Item(game, {
+                //     name: 'shieldWoodenSmall',
+                //     image: 'shieldWoodenSmall',
+                //     type: 1,
+                //     statistics: {},
+                //     meshName: 'shieldWoodenSmall',
+                // });
+                // Items.DroppedItem.showItem(game, item, {x: 4, z:-7}, 0);
+            }, null);
+        });
+    };
+    ForestHouseTomb.TYPE = 3;
+    return ForestHouseTomb;
+}(Scene));
+var MainMenu = /** @class */ (function (_super) {
+    __extends(MainMenu, _super);
+    function MainMenu(game) {
+        var _this = _super.call(this, game) || this;
+        var scene = new BABYLON.Scene(game.engine);
+        scene.clearColor = new BABYLON.Color3(0, 0, 0);
+        var camera = new BABYLON.ArcRotateCamera("Camera", -1, 0.8, 100, BABYLON.Vector3.Zero(), scene);
+        var background = new BABYLON.Layer("back", "assets/logo.png", scene);
+        background.isBackground = true;
+        background.texture.level = 0;
+        background.texture.wAng = 0;
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        var buttonStart = BABYLON.GUI.Button.CreateSimpleButton("buttonStart", "Start game");
+        buttonStart.width = "250px";
+        buttonStart.height = "40px";
+        buttonStart.color = "white";
+        buttonStart.cornerRadius = 20;
+        buttonStart.top = 150;
+        buttonStart.background = "orange";
+        buttonStart.zIndex = 1;
+        buttonStart.onPointerUpObservable.add(function () {
+            new Simple(game);
+            game.activeScene = 1;
+        });
+        advancedTexture.addControl(buttonStart);
+        var buttonOptions = BABYLON.GUI.Button.CreateSimpleButton("buttonOptions", "Options");
+        buttonOptions.width = "250px";
+        buttonOptions.height = "40px";
+        buttonOptions.color = "white";
+        buttonOptions.cornerRadius = 20;
+        buttonOptions.top = 200;
+        buttonOptions.background = "orange";
+        buttonOptions.zIndex = 1;
+        buttonOptions.onPointerUpObservable.add(function () {
+            var optionsPanel = new BABYLON.GUI.StackPanel();
+            optionsPanel.alpha = 0.8;
+            optionsPanel.width = "220px";
+            optionsPanel.background = "#edecd7";
+            optionsPanel.zIndex = 2;
+            advancedTexture.addControl(optionsPanel);
+            var header = new BABYLON.GUI.TextBlock();
+            header.text = "Shadows quality: 1024";
+            header.height = "30px";
+            header.color = "white";
+            var slider = new BABYLON.GUI.Slider();
+            slider.minimum = 1024;
+            slider.maximum = 4096;
+            slider.value = 0;
+            slider.height = "20px";
+            slider.width = "200px";
+            slider.onValueChangedObservable.add(function (value) {
+                header.text = "Shadows quality: " + value + "";
+            });
+            var optionsButtonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
+            optionsButtonClose.width = "150px";
+            optionsButtonClose.height = "40px";
+            optionsButtonClose.color = "white";
+            optionsButtonClose.cornerRadius = 20;
+            optionsButtonClose.top = 50;
+            optionsButtonClose.background = "orange";
+            optionsButtonClose.zIndex = 3;
+            optionsButtonClose.onPointerUpObservable.add(function () {
+                advancedTexture.removeControl(optionsPanel);
+            });
+            optionsPanel
+                .addControl(header)
+                .addControl(slider)
+                .addControl(optionsButtonClose);
+        });
+        advancedTexture.addControl(buttonOptions);
+        var buttonAboutUs = BABYLON.GUI.Button.CreateSimpleButton("buttonAboutUs", "About us");
+        buttonAboutUs.width = "250px";
+        buttonAboutUs.height = "40px";
+        buttonAboutUs.color = "white";
+        buttonAboutUs.cornerRadius = 20;
+        buttonAboutUs.top = 250;
+        buttonAboutUs.background = "orange";
+        buttonAboutUs.zIndex = 1;
+        buttonAboutUs.onPointerUpObservable.add(function () {
+            var aboutUsBackground = new BABYLON.GUI.Rectangle();
+            aboutUsBackground.alpha = 0.8;
+            aboutUsBackground.width = 0.5;
+            aboutUsBackground.height = "180px";
+            aboutUsBackground.cornerRadius = 20;
+            aboutUsBackground.color = "Orange";
+            aboutUsBackground.thickness = 1;
+            aboutUsBackground.background = "#edecd7";
+            aboutUsBackground.zIndex = 2;
+            advancedTexture.addControl(aboutUsBackground);
+            var aboutUsText = new BABYLON.GUI.TextBlock();
+            aboutUsText.text = "Tomasz Furca & Artur Owsianowski";
+            aboutUsText.color = "black";
+            aboutUsText.fontSize = 20;
+            aboutUsText.zIndex = 2;
+            var aboutUsButtonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
+            aboutUsButtonClose.width = "150px";
+            aboutUsButtonClose.height = "40px";
+            aboutUsButtonClose.color = "white";
+            aboutUsButtonClose.cornerRadius = 20;
+            aboutUsButtonClose.top = 50;
+            aboutUsButtonClose.background = "orange";
+            aboutUsButtonClose.zIndex = 3;
+            aboutUsButtonClose.onPointerUpObservable.add(function () {
+                advancedTexture.removeControl(aboutUsBackground);
+            });
+            aboutUsBackground.addControl(aboutUsButtonClose).addControl(aboutUsText);
+        });
+        advancedTexture.addControl(buttonAboutUs);
+        game.scenes.push(scene);
+        return _this;
+    }
+    return MainMenu;
+}(Scene));
+var Scenes;
+(function (Scenes) {
+    var Manager = /** @class */ (function () {
+        function Manager() {
+        }
+        /**
+         *
+         * @param {int} sceneType
+         * @returns {AbstractScene}
+         */
+        Manager.factory = function (sceneType) {
+            var scene = null;
+            switch (sceneType) {
+                case ForestHouse.TYPE:
+                    scene = new ForestHouse();
+                    break;
+                case ForestHouseStart.TYPE:
+                    scene = new ForestHouseStart();
+                    break;
+                case ForestHouseTomb.TYPE:
+                    scene = new ForestHouseTomb();
+                    break;
+                case SelectCharacter.TYPE:
+                    scene = new SelectCharacter();
+                    break;
+                case Battleground.TYPE:
+                    scene = new Battleground();
+                    break;
+                case MountainsPass.TYPE:
+                    scene = new MountainsPass();
+                    break;
+            }
+            if (!scene) {
+                throw new TypeError('Wrong scene type.');
+            }
+            return scene;
+        };
+        return Manager;
+    }());
+    Scenes.Manager = Manager;
+})(Scenes || (Scenes = {}));
+var MountainsPass = /** @class */ (function (_super) {
+    __extends(MountainsPass, _super);
+    function MountainsPass() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    MountainsPass.prototype.setFog = function (scene) {
+        scene.clearColor = new BABYLON.Color3(0, 0, 0);
+        scene.fogMode = BABYLON.Scene.FOGMODE_LINEAR;
+        scene.fogColor = new BABYLON.Color3(0.02, 0.05, 0.2);
+        scene.fogColor = new BABYLON.Color3(0, 0, 0);
+        scene.fogDensity = 1;
+        scene.fogStart = 50;
+        scene.fogEnd = 100;
+        return this;
+    };
+    MountainsPass.prototype.initScene = function (game) {
+        var self = this;
+        game.sceneManager = this;
+        BABYLON.SceneLoader.Load("assets/scenes/MountainsPass/", "MountainsPass.babylon", game.engine, function (scene) {
+            self
+                .setDefaults(game, scene)
+                .optimizeScene(scene)
+                .setCamera(scene)
+                .setFog(scene)
+                .executeWhenReady(function () {
+                self.environment = new EnvironmentMountainsPass(game);
+            }, function () {
+                new NPC.Guard(game, new BABYLON.Vector3(-117, 0, 128), new BABYLON.Vector3(0, -4.3, 0));
+                // new NPC.Trader(game, new BABYLON.Vector3(-122, 0, -16), new BABYLON.Vector3(0, 0.7, 0));
+                // new NPC.BigWarrior(game, new BABYLON.Vector3(-10, 0, -53), new BABYLON.Vector3(0, 1.54, 0));
+            });
+        });
+    };
+    MountainsPass.TYPE = 5;
+    return MountainsPass;
+}(Scene));
+var SelectCharacter = /** @class */ (function (_super) {
+    __extends(SelectCharacter, _super);
+    function SelectCharacter() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    SelectCharacter.prototype.initScene = function (game) {
+        var self = this;
+        game.sceneManager = this;
+        var playersToSelect = [];
+        var gui = null;
+        BABYLON.SceneLoader.Load("assets/scenes/Select_Map/", "Select_Map.babylon", game.engine, function (scene) {
+            self
+                .setDefaults(game, scene)
+                .optimizeScene(scene)
+                .setCamera(scene)
+                .setFog(scene)
+                .executeWhenReady(function () {
+                new EnvironmentSelectCharacter(game, scene);
+                game.client.socket.on('showPlayersToSelect', function (players) {
+                    playersToSelect.forEach(function (playerSelect) {
+                        playerSelect.mesh.dispose();
+                    });
+                    playersToSelect = [];
+                    for (var i = 0; i < players.length; i++) {
+                        var player = players[i];
+                        playersToSelect.push(new SelectCharacter.Warrior(game, i, player));
+                    }
+                    if (gui) {
+                        gui.texture.dispose();
+                    }
+                    if (playersToSelect.length < 2) {
+                        gui = new GUI.SelectCharacter(game);
+                    }
+                });
+            }, null);
+        });
+    };
+    SelectCharacter.prototype.setCamera = function (scene) {
+        var gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
+        gameCamera.position = new BABYLON.Vector3(0, 14, -20);
+        gameCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
+        gameCamera.maxZ = 200;
+        gameCamera.minZ = -200;
+        // camera.fov = 13.25;
+        gameCamera.fovMode = 0;
+        gameCamera.layerMask = 2;
+        scene.activeCameras = [gameCamera];
+        return this;
+    };
+    SelectCharacter.TYPE = 4;
+    return SelectCharacter;
+}(Scene));
 var Particles;
 (function (Particles) {
     var AbstractParticle = /** @class */ (function () {
@@ -3237,365 +3604,6 @@ var Particles;
     }(Particles.AbstractParticle));
     Particles.WalkSmoke = WalkSmoke;
 })(Particles || (Particles = {}));
-var Battleground = /** @class */ (function (_super) {
-    __extends(Battleground, _super);
-    function Battleground() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Battleground.prototype.initScene = function (game) {
-        var self = this;
-        game.sceneManager = this;
-        var scene = new BABYLON.Scene(game.engine);
-        self
-            .setDefaults(game, scene)
-            .optimizeScene(scene)
-            .setCamera(scene)
-            .setFog(scene)
-            .executeWhenReady(function () {
-            scene.audioEnabled = false;
-            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
-            light.intensity = 1;
-            var ground = BABYLON.MeshBuilder.CreateGround("Ground", { width: 50, height: 50 }, scene);
-            ground.actionManager = new BABYLON.ActionManager(scene);
-            var terrainMaterial = new BABYLON.StandardMaterial("GroundMaterial", scene);
-            terrainMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-            terrainMaterial.specularPower = 64;
-            terrainMaterial.diffuseTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
-            ground.material = terrainMaterial;
-        }, function () {
-            // game.player.playerLight.dispose();
-        });
-    };
-    Battleground.TYPE = 99;
-    return Battleground;
-}(Scene));
-var ForestHouse = /** @class */ (function (_super) {
-    __extends(ForestHouse, _super);
-    function ForestHouse() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    ForestHouse.prototype.initScene = function (game) {
-        var self = this;
-        game.sceneManager = this;
-        BABYLON.SceneLoader.Load("assets/scenes/Forest_house/", "Forest_house.babylon", game.engine, function (scene) {
-            self
-                .setDefaults(game, scene)
-                .optimizeScene(scene)
-                .setCamera(scene)
-                .setFog(scene)
-                .executeWhenReady(function () {
-                self.environment = new EnvironmentForestHouse(game);
-            }, null);
-        });
-    };
-    ForestHouse.TYPE = 2;
-    return ForestHouse;
-}(Scene));
-var ForestHouseStart = /** @class */ (function (_super) {
-    __extends(ForestHouseStart, _super);
-    function ForestHouseStart() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    ForestHouseStart.prototype.initScene = function (game) {
-        var self = this;
-        game.sceneManager = this;
-        BABYLON.SceneLoader.Load("assets/scenes/forestStartHouse/", "forestHouseStart.babylon", game.engine, function (scene) {
-            self
-                .setDefaults(game, scene)
-                .optimizeScene(scene)
-                .setCamera(scene)
-                .setFog(scene)
-                .executeWhenReady(function () {
-                self.environment = new EnvironmentForestHouseStart(game);
-            }, null);
-        });
-    };
-    ForestHouseStart.TYPE = 1;
-    return ForestHouseStart;
-}(Scene));
-var ForestHouseTomb = /** @class */ (function (_super) {
-    __extends(ForestHouseTomb, _super);
-    function ForestHouseTomb() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    ForestHouseTomb.prototype.initScene = function (game) {
-        var self = this;
-        game.sceneManager = this;
-        BABYLON.SceneLoader.Load("assets/scenes/Forest_House_Tomb/", "Forest_House_Tomb.babylon", game.engine, function (scene) {
-            game.sceneManager = self;
-            self
-                .setDefaults(game, scene)
-                .optimizeScene(scene)
-                .setCamera(scene)
-                .setFog(scene)
-                .executeWhenReady(function () {
-                self.environment = new EnvironmentForestHouseTomb(game, scene);
-                //
-                // let item = new Items.Item(game, {
-                //     name: 'LongSword',
-                //     image: 'sword',
-                //     type: 1,
-                //     statistics: {},
-                //     meshName: 'swordLong',
-                // });
-                // Items.DroppedItem.showItem(game, item, {x: 2, z:-3}, 0);
-                //
-                // let item = new Items.Item(game, {
-                //     name: 'shieldWoodenSmall',
-                //     image: 'shieldWoodenSmall',
-                //     type: 1,
-                //     statistics: {},
-                //     meshName: 'shieldWoodenSmall',
-                // });
-                // Items.DroppedItem.showItem(game, item, {x: 4, z:-7}, 0);
-            }, null);
-        });
-    };
-    ForestHouseTomb.TYPE = 3;
-    return ForestHouseTomb;
-}(Scene));
-var MainMenu = /** @class */ (function (_super) {
-    __extends(MainMenu, _super);
-    function MainMenu(game) {
-        var _this = _super.call(this, game) || this;
-        var scene = new BABYLON.Scene(game.engine);
-        scene.clearColor = new BABYLON.Color3(0, 0, 0);
-        var camera = new BABYLON.ArcRotateCamera("Camera", -1, 0.8, 100, BABYLON.Vector3.Zero(), scene);
-        var background = new BABYLON.Layer("back", "assets/logo.png", scene);
-        background.isBackground = true;
-        background.texture.level = 0;
-        background.texture.wAng = 0;
-        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        var buttonStart = BABYLON.GUI.Button.CreateSimpleButton("buttonStart", "Start game");
-        buttonStart.width = "250px";
-        buttonStart.height = "40px";
-        buttonStart.color = "white";
-        buttonStart.cornerRadius = 20;
-        buttonStart.top = 150;
-        buttonStart.background = "orange";
-        buttonStart.zIndex = 1;
-        buttonStart.onPointerUpObservable.add(function () {
-            new Simple(game);
-            game.activeScene = 1;
-        });
-        advancedTexture.addControl(buttonStart);
-        var buttonOptions = BABYLON.GUI.Button.CreateSimpleButton("buttonOptions", "Options");
-        buttonOptions.width = "250px";
-        buttonOptions.height = "40px";
-        buttonOptions.color = "white";
-        buttonOptions.cornerRadius = 20;
-        buttonOptions.top = 200;
-        buttonOptions.background = "orange";
-        buttonOptions.zIndex = 1;
-        buttonOptions.onPointerUpObservable.add(function () {
-            var optionsPanel = new BABYLON.GUI.StackPanel();
-            optionsPanel.alpha = 0.8;
-            optionsPanel.width = "220px";
-            optionsPanel.background = "#edecd7";
-            optionsPanel.zIndex = 2;
-            advancedTexture.addControl(optionsPanel);
-            var header = new BABYLON.GUI.TextBlock();
-            header.text = "Shadows quality: 1024";
-            header.height = "30px";
-            header.color = "white";
-            var slider = new BABYLON.GUI.Slider();
-            slider.minimum = 1024;
-            slider.maximum = 4096;
-            slider.value = 0;
-            slider.height = "20px";
-            slider.width = "200px";
-            slider.onValueChangedObservable.add(function (value) {
-                header.text = "Shadows quality: " + value + "";
-            });
-            var optionsButtonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
-            optionsButtonClose.width = "150px";
-            optionsButtonClose.height = "40px";
-            optionsButtonClose.color = "white";
-            optionsButtonClose.cornerRadius = 20;
-            optionsButtonClose.top = 50;
-            optionsButtonClose.background = "orange";
-            optionsButtonClose.zIndex = 3;
-            optionsButtonClose.onPointerUpObservable.add(function () {
-                advancedTexture.removeControl(optionsPanel);
-            });
-            optionsPanel
-                .addControl(header)
-                .addControl(slider)
-                .addControl(optionsButtonClose);
-        });
-        advancedTexture.addControl(buttonOptions);
-        var buttonAboutUs = BABYLON.GUI.Button.CreateSimpleButton("buttonAboutUs", "About us");
-        buttonAboutUs.width = "250px";
-        buttonAboutUs.height = "40px";
-        buttonAboutUs.color = "white";
-        buttonAboutUs.cornerRadius = 20;
-        buttonAboutUs.top = 250;
-        buttonAboutUs.background = "orange";
-        buttonAboutUs.zIndex = 1;
-        buttonAboutUs.onPointerUpObservable.add(function () {
-            var aboutUsBackground = new BABYLON.GUI.Rectangle();
-            aboutUsBackground.alpha = 0.8;
-            aboutUsBackground.width = 0.5;
-            aboutUsBackground.height = "180px";
-            aboutUsBackground.cornerRadius = 20;
-            aboutUsBackground.color = "Orange";
-            aboutUsBackground.thickness = 1;
-            aboutUsBackground.background = "#edecd7";
-            aboutUsBackground.zIndex = 2;
-            advancedTexture.addControl(aboutUsBackground);
-            var aboutUsText = new BABYLON.GUI.TextBlock();
-            aboutUsText.text = "Tomasz Furca & Artur Owsianowski";
-            aboutUsText.color = "black";
-            aboutUsText.fontSize = 20;
-            aboutUsText.zIndex = 2;
-            var aboutUsButtonClose = BABYLON.GUI.Button.CreateSimpleButton("aboutUsBackground", "Close");
-            aboutUsButtonClose.width = "150px";
-            aboutUsButtonClose.height = "40px";
-            aboutUsButtonClose.color = "white";
-            aboutUsButtonClose.cornerRadius = 20;
-            aboutUsButtonClose.top = 50;
-            aboutUsButtonClose.background = "orange";
-            aboutUsButtonClose.zIndex = 3;
-            aboutUsButtonClose.onPointerUpObservable.add(function () {
-                advancedTexture.removeControl(aboutUsBackground);
-            });
-            aboutUsBackground.addControl(aboutUsButtonClose).addControl(aboutUsText);
-        });
-        advancedTexture.addControl(buttonAboutUs);
-        game.scenes.push(scene);
-        return _this;
-    }
-    return MainMenu;
-}(Scene));
-var Scenes;
-(function (Scenes) {
-    var Manager = /** @class */ (function () {
-        function Manager() {
-        }
-        /**
-         *
-         * @param {int} sceneType
-         * @returns {AbstractScene}
-         */
-        Manager.factory = function (sceneType) {
-            var scene = null;
-            switch (sceneType) {
-                case ForestHouse.TYPE:
-                    scene = new ForestHouse();
-                    break;
-                case ForestHouseStart.TYPE:
-                    scene = new ForestHouseStart();
-                    break;
-                case ForestHouseTomb.TYPE:
-                    scene = new ForestHouseTomb();
-                    break;
-                case SelectCharacter.TYPE:
-                    scene = new SelectCharacter();
-                    break;
-                case Battleground.TYPE:
-                    scene = new Battleground();
-                    break;
-                case MountainsPass.TYPE:
-                    scene = new MountainsPass();
-                    break;
-            }
-            if (!scene) {
-                throw new TypeError('Wrong scene type.');
-            }
-            return scene;
-        };
-        return Manager;
-    }());
-    Scenes.Manager = Manager;
-})(Scenes || (Scenes = {}));
-var MountainsPass = /** @class */ (function (_super) {
-    __extends(MountainsPass, _super);
-    function MountainsPass() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    MountainsPass.prototype.setFog = function (scene) {
-        scene.clearColor = new BABYLON.Color3(0, 0, 0);
-        scene.fogMode = BABYLON.Scene.FOGMODE_LINEAR;
-        scene.fogColor = new BABYLON.Color3(0.02, 0.05, 0.2);
-        scene.fogColor = new BABYLON.Color3(0, 0, 0);
-        scene.fogDensity = 1;
-        scene.fogStart = 50;
-        scene.fogEnd = 100;
-        return this;
-    };
-    MountainsPass.prototype.initScene = function (game) {
-        var self = this;
-        game.sceneManager = this;
-        BABYLON.SceneLoader.Load("assets/scenes/MountainsPass/", "MountainsPass.babylon", game.engine, function (scene) {
-            self
-                .setDefaults(game, scene)
-                .optimizeScene(scene)
-                .setCamera(scene)
-                .setFog(scene)
-                .executeWhenReady(function () {
-                self.environment = new EnvironmentMountainsPass(game);
-            }, function () {
-                new NPC.Guard(game, new BABYLON.Vector3(-117, 0, 128), new BABYLON.Vector3(0, -4.3, 0));
-                // new NPC.Trader(game, new BABYLON.Vector3(-122, 0, -16), new BABYLON.Vector3(0, 0.7, 0));
-                // new NPC.BigWarrior(game, new BABYLON.Vector3(-10, 0, -53), new BABYLON.Vector3(0, 1.54, 0));
-            });
-        });
-    };
-    MountainsPass.TYPE = 5;
-    return MountainsPass;
-}(Scene));
-var SelectCharacter = /** @class */ (function (_super) {
-    __extends(SelectCharacter, _super);
-    function SelectCharacter() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    SelectCharacter.prototype.initScene = function (game) {
-        var self = this;
-        game.sceneManager = this;
-        var playersToSelect = [];
-        var gui = null;
-        BABYLON.SceneLoader.Load("assets/scenes/Select_Map/", "Select_Map.babylon", game.engine, function (scene) {
-            self
-                .setDefaults(game, scene)
-                .optimizeScene(scene)
-                .setCamera(scene)
-                .setFog(scene)
-                .executeWhenReady(function () {
-                new EnvironmentSelectCharacter(game, scene);
-                game.client.socket.on('showPlayersToSelect', function (players) {
-                    playersToSelect.forEach(function (playerSelect) {
-                        playerSelect.mesh.dispose();
-                    });
-                    playersToSelect = [];
-                    for (var i = 0; i < players.length; i++) {
-                        var player = players[i];
-                        playersToSelect.push(new SelectCharacter.Warrior(game, i, player));
-                    }
-                    if (gui) {
-                        gui.texture.dispose();
-                    }
-                    if (playersToSelect.length < 2) {
-                        gui = new GUI.SelectCharacter(game);
-                    }
-                });
-            }, null);
-        });
-    };
-    SelectCharacter.prototype.setCamera = function (scene) {
-        var gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
-        gameCamera.position = new BABYLON.Vector3(0, 14, -20);
-        gameCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
-        gameCamera.maxZ = 200;
-        gameCamera.minZ = -200;
-        // camera.fov = 13.25;
-        gameCamera.fovMode = 0;
-        gameCamera.layerMask = 2;
-        scene.activeCameras = [gameCamera];
-        return this;
-    };
-    SelectCharacter.TYPE = 4;
-    return SelectCharacter;
-}(Scene));
 var Items;
 (function (Items) {
     var DroppedItem = /** @class */ (function () {
@@ -4133,8 +4141,8 @@ var Monster = /** @class */ (function (_super) {
         var factoryName = serverData.type;
         var mesh = game.factories[factoryName].createInstance(meshName, true);
         mesh.visibility = 1;
-        mesh.isPickable = 0;
-        game.sceneManager.options.addMeshToDynamicShadowGenerator(game, mesh);
+        mesh.isPickable = false;
+        // game.sceneManager.options.addMeshToDynamicShadowGenerator(mesh);
         _this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
             loop: false,
             autoplay: false

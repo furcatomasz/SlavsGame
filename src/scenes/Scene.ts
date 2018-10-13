@@ -103,6 +103,7 @@ abstract class Scene {
                     onPlayerConnected();
                 }
                 self.options = new GameOptions(game);
+                game.sceneManager.options.addMeshToDynamicShadowGenerator(game.player.mesh);
                 game.controller.registerControls(scene);
                 game.client.socket.emit('changeScenePost');
                 game.client.socket.emit('refreshGateways');

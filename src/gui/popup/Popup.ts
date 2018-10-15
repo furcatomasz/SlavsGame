@@ -65,35 +65,28 @@ namespace GUI {
 
         protected createButtonClose() {
             let self = this;
-            let buttonClose = BABYLON.GUI.Button.CreateImageWithCenterTextButton("attributesButtonClose", "Close", "assets/gui/button.png");
-            buttonClose.color = "white";
-            buttonClose.background = "black";
-            buttonClose.width = "180px;";
-            buttonClose.height = "48px";
+            let buttonClose = BABYLON.GUI.Button.CreateImageOnlyButton("buttonClose", "assets/gui/buttons/close.png");
+            buttonClose.width = "20px;";
+            buttonClose.height = "21px";
             buttonClose.thickness = 0;
-            buttonClose.horizontalAlignment = this.position;
-            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            buttonClose.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            buttonClose.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
 
             buttonClose.onPointerUpObservable.add(function () {
                 self.close();
             });
 
-            let checkSize = function(width) {
-                if(width > 1819) {
-                    buttonClose.width = '180px';
-                    buttonClose.height = '48px';
-                    buttonClose.fontSize = 20;
+            let checklSizeListener = function (width) {
+                if (width > 1819) {
+                    buttonClose.left = "-20px";
                 } else {
-                    buttonClose.width = '90px';
-                    buttonClose.height = '23px';
-                    buttonClose.fontSize = 12;
+                    buttonClose.left = "-10px";
                 }
             };
-            checkSize(window.innerWidth);
-            window.addEventListener("resize",function(){
+            checklSizeListener(window.innerWidth);
+            window.addEventListener("resize", function () {
                 let width = window.innerWidth;
-                checkSize(width);
+                checklSizeListener(width);
             });
 
             this.container.addControl(buttonClose);

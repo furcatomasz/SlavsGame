@@ -7,14 +7,14 @@ class EnvironmentMountainsPass extends AbstractEnvironment {
         super();
         const scene = game.getScene();
         this.colliders = [];
-
+        scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
         for (let i = 0; i < scene.meshes.length; i++) {
             let sceneMesh = scene.meshes[i];
             let meshName = scene.meshes[i]['name'];
-
             if (meshName.search("Ground") >= 0) {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 sceneMesh.receiveShadows = true;
+                sceneMesh.alwaysSelectAsActiveMesh = true;
                 let terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
                 terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
                 terrainMaterial.specularPower = 64;

@@ -36,12 +36,12 @@ class Player extends AbstractCharacter {
 
         let mesh = game.factories['character'].createInstance('Warrior', true);
         mesh.skeleton.enableBlending(0.2);
+        mesh.alwaysSelectAsActiveMesh = true;
 
         ///Create box mesh for moving
         this.createBoxForMove(game.getScene());
         this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
         mesh.parent = this.meshForMove;
-        // Collisions.setCollider(game.getScene(), mesh, null, false);
 
         this.mesh = mesh;
         this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
@@ -108,6 +108,7 @@ class Player extends AbstractCharacter {
             playerLight.exponent = 70;
             playerLight.intensity = 0.8;
             playerLight.parent = this.mesh;
+            playerLight.autoExtends = false;
             this.playerLight = playerLight;
         }
 

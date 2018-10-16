@@ -20,6 +20,8 @@ abstract class Scene {
             scene.debugLayer.show();
         }
 
+        BABYLON.SceneLoader.CleanBoneMatrixWeights = true;
+
         return this;
     }
 

@@ -49,6 +49,7 @@ class Game {
 
         self.canvas = canvasElement;
         self.engine = new BABYLON.Engine(self.canvas, false, null, false);
+
         if(isMobile) {
             self.engine.setHardwareScalingLevel(2);
         }

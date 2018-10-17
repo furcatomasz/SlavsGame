@@ -28,7 +28,7 @@ abstract class Scene {
     protected playEnemiesAnimationsInFrumStrum() {
         let game = this.game;
         let scene = this.babylonScene;
-
+        const gameCamera = scene.getCameraByName('gameCamera');
         if(game.frumstrumEnemiesInterval) {
             clearInterval(game.frumstrumEnemiesInterval);
         }
@@ -39,7 +39,7 @@ abstract class Scene {
         game.frumstrumEnemiesInterval = setInterval(function() {
             let activeEnemies = 0;
             game.enemies.forEach(function(enemy) {
-                let isActiveMesh = scene.isActiveMesh(enemy.mesh);
+                let isActiveMesh = gameCamera.isInFrustum(enemy.mesh);
                 if(isActiveMesh) {
                     activeEnemies = 1;
                 }
@@ -66,7 +66,7 @@ abstract class Scene {
                     battleMusic.stop();
                 }, 2000)
             }
-        }, 500);
+        }, 1000);
 
         return this;
     }
@@ -162,9 +162,8 @@ abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
         scene.workerCollisions = false;
-        scene.blockMaterialDirtyMechanism = true;
 
         return this;
     }

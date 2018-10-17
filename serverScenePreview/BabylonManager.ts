@@ -23,11 +23,6 @@ namespace Server {
         public initEngine(canvas) {
             let self = this;
             this.engine = new BABYLON.Engine(canvas);
-
-            //let scene = new BABYLON.Scene(this.engine);
-            //this.scene = scene;
-            // let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
-            // camera.attachControl(canvas, true);
             this
                 .socketShowEnemies()
                 .socketUpdateEnemy()
@@ -115,7 +110,7 @@ namespace Server {
                     let enemy = self.enemies[roomId][key];
                     if (enemyData.statistics.hp > 0 && !enemy) {
                         let box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
-                        box.checkCollisions = true;
+                        box.checkCollisions = false;
                         box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
 
                         let visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
@@ -149,8 +144,8 @@ namespace Server {
                     console.log('BABYLON: crate new room with scene - '+ roomId);
 
                     let sceneForRoom = new BABYLON.Scene(self.engine);
-                    sceneForRoom.collisionsEnabled = true;
-                    let camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 400, 0, sceneForRoom);
+                    sceneForRoom.collisionsEnabled = false;
+                    let camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 200, 0, sceneForRoom);
                     camera.rotation = new BABYLON.Vector3(1.5,1,1);
                     self.scenes[roomId] = sceneForRoom;
                 } else {
@@ -176,7 +171,7 @@ namespace Server {
                 if (playerData.connectionId !== self.socket.id) {
                     //if user not exists create scene and box with action manager
                     let box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
-                    box.checkCollisions = true;
+                    box.checkCollisions = false;
                     box.position = new BABYLON.Vector3(playerData.position.x, playerData.position.y, playerData.position.z);
                     box.actionManager = new BABYLON.ActionManager(scene);
 

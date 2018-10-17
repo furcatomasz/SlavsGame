@@ -103,7 +103,6 @@ abstract class AbstractCharacter {
             self.sfxHit.play();
         }
 
-
         self.animation = skeleton.beginAnimation(animation, loop, 1, function () {
             if (callbackEnd) {
                 callbackEnd();
@@ -136,7 +135,7 @@ abstract class AbstractCharacter {
 
 
     public runAnimationWalk():void {
-        if(!this.isWalk) {
+        if(!this.isWalk && !this.isAttack) {
             let self = this;
             let skeleton = this.mesh.skeleton;
             this.isWalk = true;

@@ -417,7 +417,7 @@ class SocketIOClient {
 
                 ///antylag rule
                 let distanceBetweenObjects = Game.distanceVector(mesh.position, updatedEnemy.position);
-                if(distanceBetweenObjects > 8) {
+                if(distanceBetweenObjects > 16) {
                     mesh.position = new BABYLON.Vector3(updatedEnemy.position.x, updatedEnemy.position.y, updatedEnemy.position.z);
                 }
 
@@ -426,17 +426,11 @@ class SocketIOClient {
                         self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
                     }
 
-                    if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack' && updatedEnemy.attack == true) {
-                        if(data.attackIsDone == true) {
-                            enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
-                        } else {
-                            enemy.runAnimationStand();
-                        }
+                    if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack' && updatedEnemy.attack == true && data.attackIsDone == true) {
+                        enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
                     } else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
                         let targetMesh = null;
-                        if (enemy.animation) {
-                            enemy.animation.stop();
-                        }
+
                         game.remotePlayers.forEach(function (socketRemotePlayer) {
                             if (updatedEnemy.target == socketRemotePlayer.id) {
                                 targetMesh = socketRemotePlayer.mesh;
@@ -458,10 +452,6 @@ class SocketIOClient {
                                 rotation.negate();
                                 let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / enemy.getWalkSpeed());
                                 mesh.moveWithCollisions(forwards);
-
-                                if (enemy.animation) {
-
-                                }
                                 enemy.runAnimationWalk();
                             };
 

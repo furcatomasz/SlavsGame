@@ -10,25 +10,24 @@ namespace SelectCharacter {
             this.playerId = playerDatabase.id;
 
             let mesh = game.factories['character'].createInstance('Warrior', true);
-            mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
             mesh.skeleton.enableBlending(0.3);
 
             switch (place) {
                 case 0:
-                    mesh.position = new BABYLON.Vector3(-0.3, 0, 10.5);
+                    mesh.position = new BABYLON.Vector3(12, -1, -8);
                     mesh.rotation = new BABYLON.Vector3(0, 0, 0);
                     break;
                 case 1:
-                    mesh.position = new BABYLON.Vector3(2.7, 0, 10);
+                    mesh.position = new BABYLON.Vector3(11, -1, -10);
                     mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
                     break;
             }
-
+            mesh.lookAt(game.getScene().getMeshByName('fireplace').position.clone());
             this.mesh = mesh;
             super(name, game);
 
             this.setItems(playerDatabase.items);
-            this.mesh.skeleton.beginAnimation('Sit');
+            this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
             this.registerActions();
         }
 
@@ -65,35 +64,35 @@ namespace SelectCharacter {
             this.meshForMove.position.y = 2;
 
             let sitDown = function() {
-                if(!self.skeletonAnimation) {
-                    let animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
-                    self.skeletonAnimation = self.game.getScene().beginAnimation(self.mesh, animationSelectRange.to, animationSelectRange.from+1, false, -1, function() {
-                        self.mesh.skeleton.beginAnimation('Sit');
-                        self.skeletonAnimation = null;
-                    });
-                }
+                // if(!self.skeletonAnimation) {
+                //     let animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
+                //     self.skeletonAnimation = self.game.getScene().beginAnimation(self.mesh, animationSelectRange.to, animationSelectRange.from+1, false, -1, function() {
+                //         self.mesh.skeleton.beginAnimation('Sit');
+                //         self.skeletonAnimation = null;
+                //     });
+                // }
             };
 
             this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
             this.meshForMove.isPickable = true;
 
-            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-                BABYLON.ActionManager.OnPointerOverTrigger,
-                function() {
-                    pointerOut = false;
-                    if(!self.skeletonAnimation) {
-                        self.skeletonAnimation = self.mesh.skeleton.beginAnimation('Select', false, 1, function () {
-                            self.skeletonAnimation = null;
-
-                            if(pointerOut) {
-                                sitDown();
-                            } else {
-                                self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-                            }
-                        });
-                    }
-                })
-            );
+            // this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+            //     BABYLON.ActionManager.OnPointerOverTrigger,
+            //     function() {
+            //         pointerOut = false;
+            //         if(!self.skeletonAnimation) {
+            //             self.skeletonAnimation = self.mesh.skeleton.beginAnimation('Select', false, 1, function () {
+            //                 self.skeletonAnimation = null;
+            //
+            //                 if(pointerOut) {
+            //                     sitDown();
+            //                 } else {
+            //                     self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+            //                 }
+            //             });
+            //         }
+            //     })
+            // );
 
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPointerOutTrigger,

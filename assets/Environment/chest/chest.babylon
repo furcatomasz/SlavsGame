@@ -1,7 +1,7 @@
 {"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.3","file":"chest.babylon"},
 "autoClear":true,"clearColor":[0,0,0],"ambientColor":[0,0,0],"gravity":[0,-9.81,0],
 "materials":[{"name":"chest.chest","id":"chest.chest","ambient":[0.8,0.8,0.8],"diffuse":[0.64,0.64,0.64],"specular":[0,0,0],"emissive":[0,0,0],"specularPower":50,"alpha":1,"backFaceCulling":true,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4, 
-"diffuseTexture":{"name":"chest2.png","level":1,"hasAlpha":1,"coordinatesMode":0,"uOffset":0,"vOffset":0,"uScale":1,"vScale":1,"uAng":0,"vAng":0,"wAng":0,"wrapU":1,"wrapV":1,"coordinatesIndex":0}}],
+"diffuseTexture":{"name":"chest.jpg","level":1,"hasAlpha":1,"coordinatesMode":0,"uOffset":0,"vOffset":0,"uScale":1,"vScale":1,"uAng":0,"vAng":0,"wAng":0,"wrapU":1,"wrapV":1,"coordinatesIndex":0}}],
 "multiMaterials":[],
 "skeletons":[{"name":"Armature","id":0,"dimensionsAtRest":[1.2523,1.3848,0],"bones":[
 {"name":"Bone","index":0,"matrix":[0.9103,0.4139,0,0,-0.4139,0.9103,0,0,0,0,-1,0,0,0,0,1],"rest":[0.9103,0.4139,0,0,-0.4139,0.9103,0,0,0,0,-1,0,0,0,0,1],"parentBoneIndex":-1,"length":1.5212

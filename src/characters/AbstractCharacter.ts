@@ -142,7 +142,7 @@ abstract class AbstractCharacter {
 
             self.sfxWalk.play();
             self.onWalkStart();
-            self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, true, 1.3, function () {
+            self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, true, 1.2, function () {
                 self.runAnimationStand();
                 self.animation = null;
                 self.isWalk = false;

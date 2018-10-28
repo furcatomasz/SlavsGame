@@ -13,7 +13,7 @@ namespace Items {
          * @param inventory
          * @param hideShieldAndWeapon
          */
-        public initItemsFromDatabaseOnCharacter(inventoryItems: Array, inventory:Character.Inventory, hideShieldAndWeapon:boolean = false) {
+        public initItemsFromDatabaseOnCharacter(inventoryItems: Array<Object>, inventory:Character.Inventory, hideShieldAndWeapon:boolean = false) {
             let self = this;
             let showSash = true;
             let showHair = true;

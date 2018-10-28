@@ -4,10 +4,10 @@
 class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 0;
+    static SHOW_DEBUG = 1;
 
     public sceneManager: Scene;
-    public controller: Controller;
+    public controller: Mouse;
     public canvas: HTMLCanvasElement;
     public engine: BABYLON.Engine;
     public player: Player;

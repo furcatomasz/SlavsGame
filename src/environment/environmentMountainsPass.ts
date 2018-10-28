@@ -52,7 +52,7 @@ class EnvironmentMountainsPass extends AbstractEnvironment {
         // }
 
         //TODO: delete in bledner
-        scene.getLightByName('Lamp').dispose();
+        // scene.getLightByName('Lamp').dispose();
 
         let light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
         light.intensity = 0.6;

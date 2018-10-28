@@ -21,7 +21,6 @@ abstract class Scene {
         }
 
         BABYLON.SceneLoader.CleanBoneMatrixWeights = true;
-
         return this;
     }
 

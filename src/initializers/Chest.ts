@@ -35,7 +35,6 @@ namespace Initializers {
 
             this.mesh = chestMesh;
             this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
-
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger,
                 function () {

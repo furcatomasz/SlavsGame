@@ -13,7 +13,7 @@ class SelectCharacter extends Scene {
                 .setDefaults(game, scene)
                 .optimizeScene(scene)
                 .setCamera(scene)
-                .setFog(scene)
+                // .setFog(scene)
                 .executeWhenReady(function () {
                     new EnvironmentSelectCharacter(game, scene);
 
@@ -43,14 +43,14 @@ class SelectCharacter extends Scene {
 
     public setCamera(scene:BABYLON.Scene) {
         let gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
-        gameCamera.position = new BABYLON.Vector3(0, 14, -20);
-        gameCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
+        gameCamera.position = new BABYLON.Vector3(-8.5, 17.36, -51);
+        gameCamera.rotation = new BABYLON.Vector3(0.31, 0.4, 0);
         gameCamera.maxZ = 200;
         gameCamera.minZ = -200;
-        // camera.fov = 13.25;
+        gameCamera.fov = 0.25;
         gameCamera.fovMode = 0;
         gameCamera.layerMask = 2;
-
+        gameCamera.attachControl(this.game.canvas, true);
 
         scene.activeCameras = [gameCamera];
 

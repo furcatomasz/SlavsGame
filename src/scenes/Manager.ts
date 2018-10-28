@@ -1,4 +1,6 @@
 namespace Scenes {
+    import int = BABYLON.int;
+
     export class Manager {
 
         /**
@@ -27,6 +29,9 @@ namespace Scenes {
                     break;
                 case MountainsPass.TYPE:
                     scene = new MountainsPass();
+                    break;
+                case CaveExit.TYPE:
+                    scene = new CaveExit();
                     break;
             }
 

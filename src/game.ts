@@ -28,6 +28,7 @@ class Game {
     public enemies: Array<Monster>;
     public quests: Array<0>;
     public chests: Array<Initializers.Chest>;
+    public mushrooms: Array<Initializers.Chest>;
 
     /**
      * States
@@ -64,6 +65,7 @@ class Game {
         self.quests = [];
         self.npcs = [];
         self.scenes = [];
+        self.mushrooms = [];
         self.chests = [];
         self.activeScene = null;
         self.events = new Events();

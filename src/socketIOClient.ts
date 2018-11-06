@@ -51,6 +51,7 @@ class SocketIOClient {
                 .refreshGateways()
                 .refreshQuests()
                 .refreshChests()
+                .refreshMushrooms()
                 .openedChest()
                 .updateEnemies()
                 .changeScene()
@@ -61,8 +62,8 @@ class SocketIOClient {
                 // .reloadScene()
         });
 
-        this.socket.emit('changeScene', SelectCharacter.TYPE);
-        // this.socket.emit('selectCharacter', 2);
+        // this.socket.emit('changeScene', SelectCharacter.TYPE);
+        this.socket.emit('selectCharacter', 2);
 
         return this;
     }
@@ -140,6 +141,25 @@ class SocketIOClient {
 
             chests.forEach(function(chest, chestKey) {
                 game.chests.push(new Initializers.Chest(game, chest, chestKey));
+            });
+        });
+
+        return this;
+    }
+
+    protected refreshMushrooms() {
+        let game = this.game;
+        this.socket.on('refreshMushrooms', function (mushrooms) {
+            console.log(mushrooms);
+            game.mushrooms.forEach(function(mushroom) {
+                mushroom.hightlightLayer.dispose();
+            });
+            game.mushrooms = [];
+
+            mushrooms.forEach(function(mushroom, mushroomKey) {
+                if(mushroom) {
+                    game.mushrooms.push(new Mushroom(game, mushroom, mushroomKey));
+                }
             });
         });
 

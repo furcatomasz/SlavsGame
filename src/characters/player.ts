@@ -34,7 +34,7 @@ class Player extends AbstractCharacter {
             autoplay: false
         });
 
-        let mesh = game.factories['character'].createInstance('Warrior', true);
+        let mesh = game.factories['character'].createClone('Warrior', true);
         mesh.skeleton.enableBlending(0.2);
         mesh.alwaysSelectAsActiveMesh = true;
 

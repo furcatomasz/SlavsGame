@@ -16,7 +16,9 @@ namespace Initializers {
             let opened = chestData.opened;
             let position = chestData.position;
             let rotation = chestData.rotation;
-            let chestMesh = game.factories['chest'].createInstance('chest', true);
+            let chestMesh = game.factories['chest'].createClone('chest', true);
+            const gameCamera = scene.getCameraByName('gameCamera');
+
             if (!chestMesh) {
                 throw new TypeError('Wrong chest mesh name.');
             }
@@ -27,7 +29,7 @@ namespace Initializers {
             chestMesh.material.backFaceCulling = false;
 
             if (!opened) {
-                let hl = new BABYLON.HighlightLayer("highlightLayer", scene);
+                let hl = new BABYLON.HighlightLayer("highlightLayer", scene, { camera: gameCamera});
                 hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
 
                 self.hightlightLayer = hl;

@@ -5,7 +5,7 @@ namespace NPC {
 
             this.name = 'Guard';
 
-            this.mesh = game.factories['character'].createInstance('Warrior', true);
+            this.mesh = game.factories['character'].createClone('Warrior', true);
 
             super(game, name, position, rotation);
 

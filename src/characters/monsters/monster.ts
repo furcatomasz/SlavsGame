@@ -7,7 +7,7 @@ class Monster extends AbstractCharacter {
         let meshName = serverData.meshName;
         let factoryName = serverData.type;
 
-        let mesh = game.factories[factoryName].createInstance(meshName, true);
+        let mesh = game.factories[factoryName].createClone(meshName, true);
         mesh.visibility = 1;
         mesh.isPickable = false;
         // game.sceneManager.options.addMeshToDynamicShadowGenerator(mesh);

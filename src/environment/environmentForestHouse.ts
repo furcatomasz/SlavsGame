@@ -47,19 +47,19 @@ class EnvironmentForestHouse extends AbstractEnvironment {
         }
 
         //SPS Nature
-        let spruce = game.factories['nature_grain'].createInstance('spruce', false);
+        let spruce = game.factories['nature_grain'].createClone('spruce', false);
         spruce.visibility = 0;
         spruce.material.freeze();
 
-        let groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
+        let groundPlants = game.factories['nature_grain'].createClone('ground_plants', false);
         groundPlants.visibility = 0;
         groundPlants.material.freeze();
 
-        let fern = game.factories['nature_grain'].createInstance('fern', false);
+        let fern = game.factories['nature_grain'].createClone('fern', false);
         fern.visibility = 0;
         fern.material.freeze();
 
-        let stone = game.factories['nature_grain'].createInstance('stone', false);
+        let stone = game.factories['nature_grain'].createClone('stone', false);
         stone.visibility = 0;
         stone.material.freeze();
 

@@ -9,7 +9,7 @@ namespace SelectCharacter {
             this.name = 'Warrior';
             this.playerId = playerDatabase.id;
 
-            let mesh = game.factories['character'].createInstance('Warrior', true);
+            let mesh = game.factories['character'].createClone('Warrior', true);
             mesh.skeleton.enableBlending(0.3);
 
             switch (place) {

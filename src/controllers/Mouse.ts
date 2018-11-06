@@ -21,7 +21,7 @@ class Mouse {
         let lastUpdate = new Date().getTime() / 1000;
         let ball = BABYLON.Mesh.CreateBox("mouseBox", 0.4, scene);
 
-        let meshFlag = this.game.factories['flag'].createInstance('Flag', false);
+        let meshFlag = this.game.factories['flag'].createClone('Flag', false);
         meshFlag.visibility = 0;
         meshFlag.isPickable = false;
         meshFlag.parent = ball;

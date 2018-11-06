@@ -110,6 +110,7 @@ abstract class Scene {
                 game.client.socket.emit('refreshGateways');
                 game.client.socket.emit('refreshQuests');
                 game.client.socket.emit('refreshChests');
+                game.client.socket.emit('refreshMushrooms');
 
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };
@@ -161,7 +162,7 @@ abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         scene.workerCollisions = false;
 
         return this;

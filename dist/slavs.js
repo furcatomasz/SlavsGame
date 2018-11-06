@@ -104,6 +104,7 @@ var Scene = /** @class */ (function () {
                 game.client.socket.emit('refreshGateways');
                 game.client.socket.emit('refreshQuests');
                 game.client.socket.emit('refreshChests');
+                game.client.socket.emit('refreshMushrooms');
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -145,7 +146,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = false;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         scene.workerCollisions = false;
         return this;
     };
@@ -186,6 +187,7 @@ var Game = /** @class */ (function () {
         self.quests = [];
         self.npcs = [];
         self.scenes = [];
+        self.mushrooms = [];
         self.chests = [];
         self.activeScene = null;
         self.events = new Events();
@@ -571,6 +573,7 @@ var SocketIOClient = /** @class */ (function () {
                 .refreshGateways()
                 .refreshQuests()
                 .refreshChests()
+                .refreshMushrooms()
                 .openedChest()
                 .updateEnemies()
                 .changeScene()
@@ -580,8 +583,8 @@ var SocketIOClient = /** @class */ (function () {
             // .updateRooms()
             // .reloadScene()
         });
-        this.socket.emit('changeScene', SelectCharacter.TYPE);
-        // this.socket.emit('selectCharacter', 2);
+        // this.socket.emit('changeScene', SelectCharacter.TYPE);
+        this.socket.emit('selectCharacter', 2);
         return this;
     };
     SocketIOClient.prototype.questRequirementInformation = function () {
@@ -643,6 +646,22 @@ var SocketIOClient = /** @class */ (function () {
             game.chests = [];
             chests.forEach(function (chest, chestKey) {
                 game.chests.push(new Initializers.Chest(game, chest, chestKey));
+            });
+        });
+        return this;
+    };
+    SocketIOClient.prototype.refreshMushrooms = function () {
+        var game = this.game;
+        this.socket.on('refreshMushrooms', function (mushrooms) {
+            console.log(mushrooms);
+            game.mushrooms.forEach(function (mushroom) {
+                mushroom.hightlightLayer.dispose();
+            });
+            game.mushrooms = [];
+            mushrooms.forEach(function (mushroom, mushroomKey) {
+                if (mushroom) {
+                    game.mushrooms.push(new Mushroom(game, mushroom, mushroomKey));
+                }
             });
         });
         return this;
@@ -1370,7 +1389,7 @@ var Player = /** @class */ (function (_super) {
             loop: false,
             autoplay: false
         });
-        var mesh = game.factories['character'].createInstance('Warrior', true);
+        var mesh = game.factories['character'].createClone('Warrior', true);
         mesh.skeleton.enableBlending(0.2);
         mesh.alwaysSelectAsActiveMesh = true;
         ///Create box mesh for moving
@@ -1591,7 +1610,7 @@ var Mouse = /** @class */ (function () {
         var clickTrigger = false;
         var lastUpdate = new Date().getTime() / 1000;
         var ball = BABYLON.Mesh.CreateBox("mouseBox", 0.4, scene);
-        var meshFlag = this.game.factories['flag'].createInstance('Flag', false);
+        var meshFlag = this.game.factories['flag'].createClone('Flag', false);
         meshFlag.visibility = 0;
         meshFlag.isPickable = false;
         meshFlag.parent = ball;
@@ -1731,16 +1750,16 @@ var EnvironmentForestHouse = /** @class */ (function (_super) {
             }
         }
         //SPS Nature
-        var spruce = game.factories['nature_grain'].createInstance('spruce', false);
+        var spruce = game.factories['nature_grain'].createClone('spruce', false);
         spruce.visibility = 0;
         spruce.material.freeze();
-        var groundPlants = game.factories['nature_grain'].createInstance('ground_plants', false);
+        var groundPlants = game.factories['nature_grain'].createClone('ground_plants', false);
         groundPlants.visibility = 0;
         groundPlants.material.freeze();
-        var fern = game.factories['nature_grain'].createInstance('fern', false);
+        var fern = game.factories['nature_grain'].createClone('fern', false);
         fern.visibility = 0;
         fern.material.freeze();
-        var stone = game.factories['nature_grain'].createInstance('stone', false);
+        var stone = game.factories['nature_grain'].createClone('stone', false);
         stone.visibility = 0;
         stone.material.freeze();
         spsTrees.forEach(function (parentSPS) {
@@ -1978,7 +1997,7 @@ var Factories;
             };
             return this;
         };
-        AbstractFactory.prototype.createInstance = function (name, cloneSkeleton) {
+        AbstractFactory.prototype.createClone = function (name, cloneSkeleton) {
             if (cloneSkeleton === void 0) { cloneSkeleton = false; }
             for (var i = 0; i < this.loadedMeshes.length; i++) {
                 var mesh = this.loadedMeshes[i];
@@ -1990,7 +2009,21 @@ var Factories;
                     }
                     clonedMesh.visibility = 1;
                     clonedMesh.isVisible = true;
+                    clonedMesh.setEnabled(true);
                     return clonedMesh;
+                }
+            }
+        };
+        AbstractFactory.prototype.createInstance = function (name) {
+            for (var i = 0; i < this.loadedMeshes.length; i++) {
+                var mesh = this.loadedMeshes[i];
+                mesh.layerMask = 2;
+                if (mesh.name == name) {
+                    var instancedMesh = mesh.createInstance('instance_' + name);
+                    instancedMesh.visibility = 1;
+                    instancedMesh.isVisible = true;
+                    instancedMesh.setEnabled(true);
+                    return instancedMesh;
                 }
             }
         };
@@ -2687,7 +2720,8 @@ var Initializers;
             var opened = chestData.opened;
             var position = chestData.position;
             var rotation = chestData.rotation;
-            var chestMesh = game.factories['chest'].createInstance('chest', true);
+            var chestMesh = game.factories['chest'].createClone('chest', true);
+            var gameCamera = scene.getCameraByName('gameCamera');
             if (!chestMesh) {
                 throw new TypeError('Wrong chest mesh name.');
             }
@@ -2697,7 +2731,7 @@ var Initializers;
             chestMesh.checkCollisions = true;
             chestMesh.material.backFaceCulling = false;
             if (!opened) {
-                var hl = new BABYLON.HighlightLayer("highlightLayer", scene);
+                var hl = new BABYLON.HighlightLayer("highlightLayer", scene, { camera: gameCamera });
                 hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
                 self.hightlightLayer = hl;
             }
@@ -2711,6 +2745,36 @@ var Initializers;
     }());
     Initializers.Chest = Chest;
 })(Initializers || (Initializers = {}));
+var Mushroom = /** @class */ (function () {
+    /**
+     *
+     * @param {Game} game
+     * @param mushroomData
+     * @param mushroomKey
+     */
+    function Mushroom(game, mushroomData, mushroomKey) {
+        var scene = game.getScene();
+        var position = mushroomData.position;
+        var mushroomMesh = game.factories['nature_grain'].createClone('mushrooms');
+        var gameCamera = scene.getCameraByName('gameCamera');
+        mushroomMesh.position = new BABYLON.Vector3(position.x, position.y, position.z);
+        mushroomMesh.isPickable = true;
+        var hl = new BABYLON.HighlightLayer("highlightLayer", scene, { camera: gameCamera });
+        hl.addMesh(mushroomMesh, BABYLON.Color3.Green());
+        this.hightlightLayer = hl;
+        hl.outerGlow = true;
+        hl.innerGlow = false;
+        hl.blurHorizontalSize = 0.4;
+        hl.blurVerticalSize = 0.2;
+        this.mesh = mushroomMesh;
+        this.mesh.actionManager = new BABYLON.ActionManager(scene);
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+            console.log('pick');
+            // game.client.socket.emit('openChest', mushroomKey);
+        }));
+    }
+    return Mushroom;
+}());
 var Particles;
 (function (Particles) {
     var AbstractParticle = /** @class */ (function () {
@@ -3550,7 +3614,7 @@ var Items;
             this.image = itemData.image;
             this.type = itemData.type;
             this.statistics = itemData.statistics;
-            this.mesh = game.factories['character'].createInstance(itemData.meshName);
+            this.mesh = game.factories['character'].createClone(itemData.meshName);
             this.mesh.visibility = 0;
             if (itemData.entity) {
                 this.databaseId = itemData.entity.id;
@@ -4036,7 +4100,7 @@ var Monster = /** @class */ (function (_super) {
         var _this = this;
         var meshName = serverData.meshName;
         var factoryName = serverData.type;
-        var mesh = game.factories[factoryName].createInstance(meshName, true);
+        var mesh = game.factories[factoryName].createClone(meshName, true);
         mesh.visibility = 1;
         mesh.isPickable = false;
         // game.sceneManager.options.addMeshToDynamicShadowGenerator(mesh);
@@ -4218,7 +4282,7 @@ var NPC;
         function BigWarrior(game, position, rotation) {
             var _this = this;
             _this.name = 'Lech';
-            var mesh = game.factories['character'].createInstance('Warrior', true);
+            var mesh = game.factories['character'].createClone('Warrior', true);
             mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
             _this.mesh = mesh;
             _this.questId = Quests.KillWorms.QUEST_ID;
@@ -4259,7 +4323,7 @@ var NPC;
         function Guard(game, position, rotation) {
             var _this = this;
             _this.name = 'Guard';
-            _this.mesh = game.factories['character'].createInstance('Warrior', true);
+            _this.mesh = game.factories['character'].createClone('Warrior', true);
             _this = _super.call(this, game, name, position, rotation) || this;
             var items = [
                 {
@@ -4301,7 +4365,7 @@ var NPC;
         function Trader(game, position, rotation) {
             var _this = this;
             _this.name = 'Trader';
-            _this.mesh = game.factories['character'].createInstance('Warrior', true);
+            _this.mesh = game.factories['character'].createClone('Warrior', true);
             _this = _super.call(this, game, name, position, rotation) || this;
             var items = [
                 {
@@ -4329,7 +4393,7 @@ var SelectCharacter;
             var _this = this;
             _this.name = 'Warrior';
             _this.playerId = playerDatabase.id;
-            var mesh = game.factories['character'].createInstance('Warrior', true);
+            var mesh = game.factories['character'].createClone('Warrior', true);
             mesh.skeleton.enableBlending(0.3);
             switch (place) {
                 case 0:

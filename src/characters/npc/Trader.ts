@@ -4,7 +4,7 @@ namespace NPC {
         public constructor(game:Game, position:BABYLON.Vector3, rotation:BABYLON.Vector3) {
             this.name = 'Trader';
 
-            this.mesh = game.factories['character'].createInstance('Warrior', true);
+            this.mesh = game.factories['character'].createClone('Warrior', true);
 
             super(game, name, position, rotation);
 

@@ -2,7 +2,7 @@ namespace Particles {
     export class Blood extends AbstractParticle {
 
         protected initParticleSystem() {
-            let particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 100 } , this.game.getScene());
+            let particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 50 } , this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("assets/Smoke3.png", this.game.getScene());
             particleSystem.emitter = this.emitter;
 
@@ -19,15 +19,14 @@ namespace Particles {
             particleSystem.minLifeTime = 1;
             particleSystem.maxLifeTime = 1;
 
-            particleSystem.emitRate = 100;
+            particleSystem.emitRate = 50;
 
             particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
 
             particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
 
-            particleSystem.direction1 = new BABYLON.Vector3(-1, 8, -1);
-            particleSystem.direction2 = new BABYLON.Vector3(4, 8, 4);
-            //particleSystem.targetStopDuration = 0.6;
+            particleSystem.direction1 = new BABYLON.Vector3(-1, 4, -1);
+            particleSystem.direction2 = new BABYLON.Vector3(4, 4, 4);
             particleSystem.minAngularSpeed = -10.0;
             particleSystem.maxAngularSpeed = 10.0;
 

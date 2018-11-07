@@ -1,7 +1,7 @@
 abstract class AbstractCharacter {
 
     public static ANIMATION_WALK:string = 'Run';
-    public static ANIMATION_STAND:string = 'stand';
+    public static ANIMATION_DEATH:string = 'death';
     public static ANIMATION_STAND_WEAPON:string = 'Stand_with_weapon';
     public static ANIMATION_ATTACK_01:string = 'Attack';
     public static ANIMATION_ATTACK_02:string = 'Attack02';
@@ -22,6 +22,7 @@ abstract class AbstractCharacter {
     public isAttack: boolean;
     public isWalk: boolean;
     public isStand: boolean;
+    public isDeath: boolean;
 
     public sfxWalk: BABYLON.Sound;
     protected sfxHit: BABYLON.Sound;
@@ -108,7 +109,7 @@ abstract class AbstractCharacter {
                 callbackEnd();
             }
 
-            self.runAnimationStand();
+            self.runAnimationDeathOrStand();
             self.isAttack = false;
         });
     }
@@ -128,7 +129,7 @@ abstract class AbstractCharacter {
             }
 
             if(standAnimationOnFinish) {
-                self.runAnimationStand();
+                self.runAnimationDeathOrStand();
             }
         });
     }
@@ -143,7 +144,7 @@ abstract class AbstractCharacter {
             self.sfxWalk.play();
             self.onWalkStart();
             self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, true, 1.2, function () {
-                self.runAnimationStand();
+                self.runAnimationDeathOrStand();
                 self.animation = null;
                 self.isWalk = false;
                 self.sfxWalk.stop();
@@ -161,7 +162,22 @@ abstract class AbstractCharacter {
             self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true, 1, function () {
                 self.animation = null;
                 self.isStand = false;
+                if(self.isDeath) {
+                    self.runAnimationDeath();
+                }
             });
+        }
+    }
+
+    public runAnimationDeath():void {
+        this.animation = this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_DEATH);
+    }
+
+    public runAnimationDeathOrStand():void {
+        if(this.isDeath) {
+            this.runAnimationDeath();
+        } else {
+            this.runAnimationStand();
         }
     }
 

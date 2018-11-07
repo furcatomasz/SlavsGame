@@ -231,7 +231,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 1;
+    Game.SHOW_DEBUG = 0;
     return Game;
 }());
 var GUI;
@@ -653,13 +653,13 @@ var SocketIOClient = /** @class */ (function () {
     SocketIOClient.prototype.refreshMushrooms = function () {
         var game = this.game;
         this.socket.on('refreshMushrooms', function (mushrooms) {
-            console.log(mushrooms);
             game.mushrooms.forEach(function (mushroom) {
                 mushroom.hightlightLayer.dispose();
+                mushroom.mesh.dispose();
             });
             game.mushrooms = [];
             mushrooms.forEach(function (mushroom, mushroomKey) {
-                if (mushroom) {
+                if (!mushroom.picked) {
                     game.mushrooms.push(new Mushroom(game, mushroom, mushroomKey));
                 }
             });
@@ -872,21 +872,20 @@ var SocketIOClient = /** @class */ (function () {
                     enemy.statistics.hp = updatedEnemy.statistics.hp;
                     setTimeout(function () {
                         enemy.bloodParticles.start();
+                        setTimeout(function () {
+                            enemy.bloodParticles.stop();
+                        }, 100);
                         enemy.showDamage(damage_1);
                         if (enemy.statistics.hp <= 0) {
-                            if (enemy.animation) {
-                                enemy.animation.stop();
-                            }
+                            enemy.isDeath = true;
+                            enemy.animation.stop();
                         }
                         setTimeout(function () {
-                            enemy.bloodParticles.rebuild();
-                            enemy.bloodParticles.stop();
-                            enemy.bloodParticles.reset();
                             if (enemy.statistics.hp <= 0) {
                                 enemy.removeFromWorld();
                             }
-                        }, 1000);
-                    }, 300);
+                        }, 6000);
+                    }, 400);
                 }
                 ///antylag rule
                 var distanceBetweenObjects = Game.distanceVector(mesh_1.position, updatedEnemy.position);
@@ -971,7 +970,6 @@ var SocketIOClient = /** @class */ (function () {
             }
             ///action on use skill
             if (updatedPlayer.activeSkill) {
-                console.log(updatedPlayer);
                 player.statistics.energy = updatedPlayer.activePlayer.statistics.energy;
                 player.refreshEnergyInGui();
                 var skill = skillsManager.getSkill(updatedPlayer.activeSkill.type);
@@ -1005,6 +1003,9 @@ var SocketIOClient = /** @class */ (function () {
                 player.statistics.hp = updatedPlayer.activePlayer.statistics.hp;
                 setTimeout(function () {
                     player.bloodParticles.start();
+                    setTimeout(function () {
+                        player.bloodParticles.stop();
+                    }, 100);
                     player.showDamage(damage_2);
                     if (player.isControllable) {
                         player.refreshHpInGui();
@@ -1013,12 +1014,7 @@ var SocketIOClient = /** @class */ (function () {
                         player.isAlive = false;
                         player.mesh.skeleton.beginAnimation('death', false);
                     }
-                    setTimeout(function () {
-                        player.bloodParticles.rebuild();
-                        player.bloodParticles.stop();
-                        player.bloodParticles.reset();
-                    }, 1000);
-                }, 300);
+                }, 400);
             }
             if (Number.isInteger(updatedPlayer.attack) && !player.isAttack) {
                 var targetPoint = updatedPlayer.targetPoint;
@@ -1299,7 +1295,7 @@ var AbstractCharacter = /** @class */ (function () {
             if (callbackEnd) {
                 callbackEnd();
             }
-            self.runAnimationStand();
+            self.runAnimationDeathOrStand();
             self.isAttack = false;
         });
     };
@@ -1320,7 +1316,7 @@ var AbstractCharacter = /** @class */ (function () {
                 callbackEnd();
             }
             if (standAnimationOnFinish) {
-                self.runAnimationStand();
+                self.runAnimationDeathOrStand();
             }
         });
     };
@@ -1332,7 +1328,7 @@ var AbstractCharacter = /** @class */ (function () {
             self_1.sfxWalk.play();
             self_1.onWalkStart();
             self_1.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, true, 1.2, function () {
-                self_1.runAnimationStand();
+                self_1.runAnimationDeathOrStand();
                 self_1.animation = null;
                 self_1.isWalk = false;
                 self_1.sfxWalk.stop();
@@ -1348,7 +1344,21 @@ var AbstractCharacter = /** @class */ (function () {
             self_2.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true, 1, function () {
                 self_2.animation = null;
                 self_2.isStand = false;
+                if (self_2.isDeath) {
+                    self_2.runAnimationDeath();
+                }
             });
+        }
+    };
+    AbstractCharacter.prototype.runAnimationDeath = function () {
+        this.animation = this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_DEATH);
+    };
+    AbstractCharacter.prototype.runAnimationDeathOrStand = function () {
+        if (this.isDeath) {
+            this.runAnimationDeath();
+        }
+        else {
+            this.runAnimationStand();
         }
     };
     AbstractCharacter.prototype.getWalkSpeed = function () {
@@ -1362,7 +1372,7 @@ var AbstractCharacter = /** @class */ (function () {
     AbstractCharacter.prototype.onWalkEnd = function () { };
     ;
     AbstractCharacter.ANIMATION_WALK = 'Run';
-    AbstractCharacter.ANIMATION_STAND = 'stand';
+    AbstractCharacter.ANIMATION_DEATH = 'death';
     AbstractCharacter.ANIMATION_STAND_WEAPON = 'Stand_with_weapon';
     AbstractCharacter.ANIMATION_ATTACK_01 = 'Attack';
     AbstractCharacter.ANIMATION_ATTACK_02 = 'Attack02';
@@ -2769,8 +2779,7 @@ var Mushroom = /** @class */ (function () {
         this.mesh = mushroomMesh;
         this.mesh.actionManager = new BABYLON.ActionManager(scene);
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-            console.log('pick');
-            // game.client.socket.emit('openChest', mushroomKey);
+            game.client.socket.emit('pickRandomItem', mushroomKey);
         }));
     }
     return Mushroom;
@@ -2795,7 +2804,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         Blood.prototype.initParticleSystem = function () {
-            var particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 100 }, this.game.getScene());
+            var particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 50 }, this.game.getScene());
             particleSystem.particleTexture = new BABYLON.Texture("assets/Smoke3.png", this.game.getScene());
             particleSystem.emitter = this.emitter;
             particleSystem.minEmitBox = new BABYLON.Vector3(0, this.emitter.geometry.extend.maximum.y * 0.7, 0); // Starting all from
@@ -2807,12 +2816,11 @@ var Particles;
             particleSystem.maxSize = 0.5;
             particleSystem.minLifeTime = 1;
             particleSystem.maxLifeTime = 1;
-            particleSystem.emitRate = 100;
+            particleSystem.emitRate = 50;
             particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
             particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
-            particleSystem.direction1 = new BABYLON.Vector3(-1, 8, -1);
-            particleSystem.direction2 = new BABYLON.Vector3(4, 8, 4);
-            //particleSystem.targetStopDuration = 0.6;
+            particleSystem.direction1 = new BABYLON.Vector3(-1, 4, -1);
+            particleSystem.direction2 = new BABYLON.Vector3(4, 4, 4);
             particleSystem.minAngularSpeed = -10.0;
             particleSystem.maxAngularSpeed = 10.0;
             particleSystem.minEmitPower = 0.5;

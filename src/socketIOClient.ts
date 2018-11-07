@@ -150,14 +150,14 @@ class SocketIOClient {
     protected refreshMushrooms() {
         let game = this.game;
         this.socket.on('refreshMushrooms', function (mushrooms) {
-            console.log(mushrooms);
             game.mushrooms.forEach(function(mushroom) {
                 mushroom.hightlightLayer.dispose();
+                mushroom.mesh.dispose();
             });
             game.mushrooms = [];
 
             mushrooms.forEach(function(mushroom, mushroomKey) {
-                if(mushroom) {
+                if(!mushroom.picked) {
                     game.mushrooms.push(new Mushroom(game, mushroom, mushroomKey));
                 }
             });
@@ -414,25 +414,23 @@ class SocketIOClient {
 
                     setTimeout(function() {
                         enemy.bloodParticles.start();
+                        setTimeout(function() {
+                            enemy.bloodParticles.stop();
+                        }, 100);
                         enemy.showDamage(damage);
 
                         if(enemy.statistics.hp <= 0) {
-                            if (enemy.animation) {
-                                enemy.animation.stop();
-                            }
+                            enemy.isDeath = true;
+                            enemy.animation.stop();
                         }
 
                         setTimeout(function() {
-                            enemy.bloodParticles.rebuild();
-                            enemy.bloodParticles.stop();
-                            enemy.bloodParticles.reset();
-
                             if(enemy.statistics.hp <= 0) {
                                 enemy.removeFromWorld();
                             }
-                        }, 1000);
+                        }, 6000);
 
-                    }, 300);
+                    }, 400);
                 }
 
                 ///antylag rule
@@ -532,7 +530,6 @@ class SocketIOClient {
 
             ///action on use skill
             if(updatedPlayer.activeSkill) {
-                console.log(updatedPlayer);
                 player.statistics.energy = updatedPlayer.activePlayer.statistics.energy;
                 player.refreshEnergyInGui();
                 const skill = skillsManager.getSkill(updatedPlayer.activeSkill.type);
@@ -570,8 +567,10 @@ class SocketIOClient {
                 let damage = (player.statistics.hp-updatedPlayer.activePlayer.statistics.hp);
                 player.statistics.hp = updatedPlayer.activePlayer.statistics.hp;
                 setTimeout(function() {
-
                     player.bloodParticles.start();
+                    setTimeout(function() {
+                        player.bloodParticles.stop();
+                    }, 100);
                     player.showDamage(damage);
 
                     if(player.isControllable) {
@@ -583,14 +582,7 @@ class SocketIOClient {
                         player.mesh.skeleton.beginAnimation('death', false);
                     }
 
-                    setTimeout(function() {
-                        player.bloodParticles.rebuild();
-                        player.bloodParticles.stop();
-                        player.bloodParticles.reset();
-
-                    }, 1000);
-
-                }, 300);
+                }, 400);
 
             }
 

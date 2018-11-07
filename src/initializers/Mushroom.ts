@@ -30,8 +30,7 @@ class Mushroom {
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPickTrigger,
             function () {
-                console.log('pick');
-                // game.client.socket.emit('openChest', mushroomKey);
+                game.client.socket.emit('pickRandomItem', mushroomKey);
             })
         );
 

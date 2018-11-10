@@ -67,35 +67,13 @@ abstract class EquipBlock {
             let self = this;
             let item = this.item;
             let image = this.inventory.createItemImage(this.item);
-            image.onPointerUpObservable.add(function () {
+
+            TooltipHelper.createTooltipOnInventoryItemButton(self.inventory.guiTexture, item, image, function() {
                 self.inventory.guiMain.game.player.inventory.emitEquip(self.item);
                 self.inventory.guiTexture.removeControl(self.block);
                 self.inventory.showItems();
-                if(self.inventory.guiMain.attributes.opened) {
-                    self.inventory.guiMain.attributes.refreshPopup();
-                }
+                self.inventory.guiMain.attributes.refreshPopup();
             });
-
-            image.onPointerEnterObservable.add(function () {
-                let text = item.name;
-                if(item.statistics.damage > 0) {
-                    text += "\nDamage: "+item.statistics.damage+"";
-                }
-                if(item.statistics.armor > 0) {
-                    text += "\nArmor: "+item.statistics.armor+"";
-                }
-
-                new GUI.TooltipButton(self.block, text);
-            });
-
-            image.onPointerOutObservable.add(function () {
-                self.block.children.forEach(function(value, key) {
-                    if(value.name == 'tooltip') {
-                        self.block.removeControl(value);
-                    }
-                });
-            });
-
 
             this.block.addControl(image);
 

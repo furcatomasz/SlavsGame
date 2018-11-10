@@ -1,30 +1,33 @@
-namespace GUI {
-    export class TooltipButton {
+class TooltipButton {
 
-        public container: BABYLON.GUI.Rectangle;
-        public label: BABYLON.GUI.TextBlock;
+    public container: BABYLON.GUI.Rectangle;
 
-        constructor(baseControl: BABYLON.GUI.Control, text: string) {
+    constructor(baseControl: BABYLON.GUI.AdvancedDynamicTexture, text: string, parentPosition: BABYLON.Vector2) {
+        let panel = new BABYLON.GUI.Rectangle('tooltip');
+        panel.top = parentPosition.y;
+        panel.left = parentPosition.x;
+        panel.width = 0;
+        panel.height = 0;
+        panel.cornerRadius = 20;
+        panel.thickness = 1;
+        panel.background = "black";
+        panel.color = "white";
+        panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        panel.adaptHeightToChildren = true;
+        panel.adaptWidthToChildren = true;
+        panel.paddingRight = '-80px';
+        panel.paddingBottom = '-40px';
+        panel.alpha = 0.8;
+        panel.isHitTestVisible = false;
+        baseControl.addControl(panel);
+        this.container = panel;
 
-            let rect1 = new BABYLON.GUI.Rectangle('tooltip')
-            rect1.top = '-25%';
-            rect1.width = 1;
-            rect1.height = "40px";
-            rect1.cornerRadius = 20;
-            rect1.thickness = 1;
-            rect1.background = "black";
-            rect1.color = "white";
-            baseControl.addControl(rect1);
-
-            let label = new BABYLON.GUI.TextBlock();
-            label.textWrapping = true;
-            label.text = text;
-            label.resizeToFit = true;
-            rect1.addControl(label);
-
-            this.container = rect1;
-            this.label = label;
-        }
-
+        let label = new BABYLON.GUI.TextBlock();
+        label.textWrapping = true;
+        label.resizeToFit = true;
+        label.text = text;
+        label.fontFamily = "RuslanDisplay";
+        panel.addControl(label);
     }
 }

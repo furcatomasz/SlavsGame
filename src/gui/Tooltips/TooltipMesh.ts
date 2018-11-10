@@ -1,30 +1,33 @@
-namespace GUI {
-    export class TooltipMesh {
+class TooltipMesh {
 
-        protected texture: BABYLON.GUI.AdvancedDynamicTexture;
+    protected container: BABYLON.GUI.AdvancedDynamicTexture;
 
-        constructor(mesh: BABYLON.AbstractMesh, text: string) {
-            let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("tooltip");
+    constructor(mesh: BABYLON.AbstractMesh, text: string) {
+        let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        advancedTexture.layer.layerMask = 2;
+        this.container = advancedTexture;
 
-            let rect1 = new BABYLON.GUI.Rectangle();
-            rect1.width = 0.4;
-            rect1.height = "40px";
-            rect1.cornerRadius = 20;
-            rect1.thickness = 2;
-            rect1.background = "black";
-            advancedTexture.addControl(rect1);
+        let panel = new BABYLON.GUI.Rectangle('tooltip');
+        panel.cornerRadius = 20;
+        panel.thickness = 1;
+        panel.background = "black";
+        panel.color = "white";
+        panel.adaptHeightToChildren = true;
+        panel.adaptWidthToChildren = true;
+        panel.paddingRight = '-40px';
+        panel.paddingBottom = '-20px';
+        panel.alpha = 0.8;
+        advancedTexture.addControl(panel);
 
-            rect1.linkWithMesh(mesh);
-            rect1.linkOffsetY = -100;
+        let label = new BABYLON.GUI.TextBlock();
+        label.textWrapping = true;
+        label.resizeToFit = true;
+        label.text = text;
+        label.fontFamily = "RuslanDisplay";
+        panel.addControl(label);
 
-            let label = new BABYLON.GUI.TextBlock();
-            label.text = text;
-            rect1.addControl(label);
-
-            setTimeout(function() {
-                advancedTexture.dispose();
-            }, 2000);
-        }
-
+        panel.linkWithMesh(mesh);
+        panel.linkOffsetY = -80;
     }
+
 }

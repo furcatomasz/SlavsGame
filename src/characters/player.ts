@@ -9,6 +9,7 @@ class Player extends AbstractCharacter {
 
     public skills: Array<any>;
     public statisticsAll: Array<any>;
+    public attributes: Array<any>;
     public experience: number;
     public experiencePercentages: number;
     public gold: number;
@@ -24,7 +25,6 @@ class Player extends AbstractCharacter {
         this.setCharacterStatistics(serverData.activePlayer);
         this.connectionId = serverData.connectionId;
         this.isControllable = registerMoving;
-        //
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "assets/sounds/character/walk/1.mp3", game.getScene(), null, {
             loop: true,
             autoplay: false
@@ -126,6 +126,7 @@ class Player extends AbstractCharacter {
     public setCharacterStatistics(playerServerData) {
         this.statistics = playerServerData.statistics;
         this.statisticsAll = playerServerData.allStatistics;
+        this.attributes = playerServerData.attributes;
     };
 
     public setCharacterSkills(skills) {

@@ -44,10 +44,10 @@ namespace GUI {
             textPlayerLVL.fontSize = 18;
             panel.addControl(textPlayerLVL);
 
-            this.createAttribute(1, 'Damage:' + this.guiMain.game.player.statistics.damage, panel);
-            this.createAttribute(2, 'Armor:' + this.guiMain.game.player.statistics.armor, panel);
-            this.createAttribute(3, 'HP:' + this.guiMain.game.player.statistics.hp, panel);
-            this.createAttribute(4, 'Energy:' + this.guiMain.game.player.statistics.energy, panel);
+            this.createAttribute(1, 'Strength:' + this.guiMain.game.player.attributes.strength, panel);
+            this.createAttribute(2, 'Durability:' + this.guiMain.game.player.attributes.durability, panel);
+            this.createAttribute(3, 'Vitality:' + this.guiMain.game.player.attributes.vitality, panel);
+            this.createAttribute(4, 'Stamina:' + this.guiMain.game.player.attributes.stamina, panel);
 
             if (this.guiMain.game.player.freeAttributesPoints) {
                 let textAttributes = this.createText('You have ' + this.guiMain.game.player.freeAttributesPoints + ' free attribute points.');
@@ -63,16 +63,16 @@ namespace GUI {
             textStatistics.fontSize = 18;
             panel.addControl(textStatistics);
 
-            let damage = this.createText('Damage:' + this.guiMain.game.player.statisticsAll.damage);
+            let damage = this.createText('Damage: ' + this.guiMain.game.player.statisticsAll.damageMin + ' - ' + this.guiMain.game.player.statisticsAll.damageMax );
             panel.addControl(damage);
 
-            let armor = this.createText('Armor:' + this.guiMain.game.player.statisticsAll.armor);
+            let armor = this.createText('Armor: ' + this.guiMain.game.player.statisticsAll.armor);
             panel.addControl(armor);
 
-            let attackSpeed = this.createText('Attack chance:' + this.guiMain.game.player.statistics.hitChance);
+            let attackSpeed = this.createText('Attack chance: ' + this.guiMain.game.player.statistics.hitChance);
             panel.addControl(attackSpeed);
 
-            let blockChance = this.createText('Block chance:' + this.guiMain.game.player.statistics.blockChance);
+            let blockChance = this.createText('Block chance: ' + this.guiMain.game.player.statistics.blockChance);
             panel.addControl(blockChance);
 
         }

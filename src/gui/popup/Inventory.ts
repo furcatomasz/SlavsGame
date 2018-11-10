@@ -124,8 +124,6 @@ namespace GUI {
             }
 
             let eqiupedItems = inventory.getEquipedItems();
-
-
             let grid = new BABYLON.GUI.Grid();
             grid.width = '568px';
             grid.height ='288px';
@@ -145,7 +143,6 @@ namespace GUI {
             grid.addRowDefinition(1);
 
             this.container.addControl(grid);
-
 
             let itemCount = 0;
             let row = -1;
@@ -182,34 +179,11 @@ namespace GUI {
 
                 grid.addControl(image, row, collumn);
 
-                let tooltipButton = null;
-                image.onPointerEnterObservable.add(function () {
-                    let text = item.name;
-                    if(item.statistics.damage > 0) {
-                        text += "\nDamage: "+item.statistics.damage+"";
-                    }
-                    if(item.statistics.armor > 0) {
-                        text += "\nArmor: "+item.statistics.armor+"";
-                    }
-
-                    tooltipButton = new GUI.TooltipButton(image, text);
-                });
-
-                image.onPointerOutObservable.add(function () {
-                    image.children.forEach(function(value, key) {
-                       if(value.name == 'tooltip') {
-                           image.removeControl(value);
-                       }
-                    });
-                });
-
-                image.onPointerUpObservable.add(function () {
+                TooltipHelper.createTooltipOnInventoryItemButton(self.guiTexture, item, image, function() {
                     self.guiMain.game.player.inventory.emitEquip(item);
                     self.onPointerUpItemImage(item);
                     self.showItems();
-                    if (self.guiMain.attributes.opened) {
-                        self.guiMain.attributes.refreshPopup();
-                    }
+                    self.guiMain.attributes.refreshPopup();
                 });
             }
 

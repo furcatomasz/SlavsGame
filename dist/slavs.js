@@ -375,30 +375,11 @@ var EquipBlock = /** @class */ (function () {
         var self = this;
         var item = this.item;
         var image = this.inventory.createItemImage(this.item);
-        image.onPointerUpObservable.add(function () {
+        TooltipHelper.createTooltipOnInventoryItemButton(self.inventory.guiTexture, item, image, function () {
             self.inventory.guiMain.game.player.inventory.emitEquip(self.item);
             self.inventory.guiTexture.removeControl(self.block);
             self.inventory.showItems();
-            if (self.inventory.guiMain.attributes.opened) {
-                self.inventory.guiMain.attributes.refreshPopup();
-            }
-        });
-        image.onPointerEnterObservable.add(function () {
-            var text = item.name;
-            if (item.statistics.damage > 0) {
-                text += "\nDamage: " + item.statistics.damage + "";
-            }
-            if (item.statistics.armor > 0) {
-                text += "\nArmor: " + item.statistics.armor + "";
-            }
-            new GUI.TooltipButton(self.block, text);
-        });
-        image.onPointerOutObservable.add(function () {
-            self.block.children.forEach(function (value, key) {
-                if (value.name == 'tooltip') {
-                    self.block.removeControl(value);
-                }
-            });
+            self.inventory.guiMain.attributes.refreshPopup();
         });
         this.block.addControl(image);
         return this;
@@ -654,7 +635,6 @@ var SocketIOClient = /** @class */ (function () {
         var game = this.game;
         this.socket.on('refreshMushrooms', function (mushrooms) {
             game.mushrooms.forEach(function (mushroom) {
-                mushroom.hightlightLayer.dispose();
                 mushroom.mesh.dispose();
             });
             game.mushrooms = [];
@@ -743,6 +723,8 @@ var SocketIOClient = /** @class */ (function () {
             game.player.freeAttributesPoints = data.activePlayer.freeAttributesPoints;
             game.player.setCharacterStatistics(data.activePlayer);
             game.gui.attributes.refreshPopup();
+            game.player.refreshEnergyInGui();
+            game.player.refreshHpInGui();
         });
         return this;
     };
@@ -1390,7 +1372,6 @@ var Player = /** @class */ (function (_super) {
         _this.setCharacterStatistics(serverData.activePlayer);
         _this.connectionId = serverData.connectionId;
         _this.isControllable = registerMoving;
-        //
         _this.sfxWalk = new BABYLON.Sound("CharacterWalk", "assets/sounds/character/walk/1.mp3", game.getScene(), null, {
             loop: true,
             autoplay: false
@@ -1474,6 +1455,7 @@ var Player = /** @class */ (function (_super) {
     Player.prototype.setCharacterStatistics = function (playerServerData) {
         this.statistics = playerServerData.statistics;
         this.statisticsAll = playerServerData.allStatistics;
+        this.attributes = playerServerData.attributes;
     };
     ;
     Player.prototype.setCharacterSkills = function (skills) {
@@ -2727,6 +2709,7 @@ var Initializers;
         function Chest(game, chestData, chestKey) {
             var self = this;
             var scene = game.getScene();
+            var tooltip;
             var opened = chestData.opened;
             var position = chestData.position;
             var rotation = chestData.rotation;
@@ -2747,6 +2730,12 @@ var Initializers;
             }
             this.mesh = chestMesh;
             this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+                tooltip = new TooltipMesh(chestMesh, chestData.name);
+            }));
+            this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+                tooltip.container.dispose();
+            }));
             this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
                 game.client.socket.emit('openChest', chestKey);
             }));
@@ -2764,22 +2753,25 @@ var Mushroom = /** @class */ (function () {
      */
     function Mushroom(game, mushroomData, mushroomKey) {
         var scene = game.getScene();
+        var tooltip;
         var position = mushroomData.position;
         var mushroomMesh = game.factories['nature_grain'].createClone('mushrooms');
         var gameCamera = scene.getCameraByName('gameCamera');
         mushroomMesh.position = new BABYLON.Vector3(position.x, position.y, position.z);
         mushroomMesh.isPickable = true;
-        var hl = new BABYLON.HighlightLayer("highlightLayer", scene, { camera: gameCamera });
-        hl.addMesh(mushroomMesh, BABYLON.Color3.Green());
-        this.hightlightLayer = hl;
-        hl.outerGlow = true;
-        hl.innerGlow = false;
-        hl.blurHorizontalSize = 0.4;
-        hl.blurVerticalSize = 0.2;
+        var particleSystem = new Particles.DroppedItem(game, mushroomMesh);
+        particleSystem.particleSystem.start();
         this.mesh = mushroomMesh;
         this.mesh.actionManager = new BABYLON.ActionManager(scene);
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+            tooltip = new TooltipMesh(mushroomMesh, mushroomData.specialItem.name);
+        }));
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+            tooltip.container.dispose();
+        }));
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
             game.client.socket.emit('pickRandomItem', mushroomKey);
+            tooltip.container.dispose();
         }));
     }
     return Mushroom;
@@ -2878,7 +2870,7 @@ var Particles;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         DroppedItem.prototype.initParticleSystem = function () {
-            var fireSystem = new BABYLON.GPUParticleSystem("DroppedItemParticles", { capacity: 50 }, this.game.getScene());
+            var fireSystem = new BABYLON.GPUParticleSystem("DroppedItemParticles", { capacity: 20 }, this.game.getScene());
             fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
@@ -2887,19 +2879,16 @@ var Particles;
             fireSystem.color2 = new BABYLON.Color4(0, 0.5, 0, 1.0);
             fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
             fireSystem.minSize = 0.2;
-            fireSystem.maxSize = 0.7;
+            fireSystem.maxSize = 0.5;
             fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 0.4;
-            fireSystem.emitRate = 300;
+            fireSystem.maxLifeTime = 2.4;
+            fireSystem.emitRate = 20;
             fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
             fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction1 = new BABYLON.Vector3(0, 2, 0);
-            fireSystem.direction2 = new BABYLON.Vector3(0, 2, 0);
-            fireSystem.minAngularSpeed = -10;
-            fireSystem.maxAngularSpeed = Math.PI;
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0.5, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 0.5, 0);
             fireSystem.minEmitPower = 1;
-            fireSystem.maxEmitPower = 2;
-            fireSystem.updateSpeed = 0.007;
+            fireSystem.maxEmitPower = 1;
             fireSystem.layerMask = 2;
             this.particleSystem = fireSystem;
         };
@@ -3586,23 +3575,23 @@ var Items;
             droppedItemBox.position.x = position.x;
             droppedItemBox.position.z = position.z;
             droppedItemBox.position.y = 0;
-            item.mesh.outlineColor = new BABYLON.Color3(0, 1, 0);
-            item.mesh.outlineWidth = 0.1;
             item.mesh.rotation = new BABYLON.Vector3(0, 0, 0);
             item.mesh.visibility = 1;
             item.mesh.isVisible = true;
             item.mesh.parent = droppedItemBox;
+            var tooltip = null;
             droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-                item.mesh.renderOutline = false;
-            }));
             droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-                item.mesh.renderOutline = true;
+                tooltip = new TooltipMesh(item.mesh, item.name);
+            }));
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+                tooltip.container.dispose();
             }));
             droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
                 game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
                 game.client.socket.emit('addDroppedItem', itemDropKey);
                 droppedItemBox.dispose();
+                tooltip.container.dispose();
             }));
             var particleSystem = new Particles.DroppedItem(game, droppedItemBox);
             particleSystem.particleSystem.start();
@@ -4493,56 +4482,85 @@ var SelectCharacter;
     }(AbstractCharacter));
     SelectCharacter.Warrior = Warrior;
 })(SelectCharacter || (SelectCharacter = {}));
-var GUI;
-(function (GUI) {
-    var TooltipButton = /** @class */ (function () {
-        function TooltipButton(baseControl, text) {
-            var rect1 = new BABYLON.GUI.Rectangle('tooltip');
-            rect1.top = '-25%';
-            rect1.width = 1;
-            rect1.height = "40px";
-            rect1.cornerRadius = 20;
-            rect1.thickness = 1;
-            rect1.background = "black";
-            rect1.color = "white";
-            baseControl.addControl(rect1);
-            var label = new BABYLON.GUI.TextBlock();
-            label.textWrapping = true;
-            label.text = text;
-            label.resizeToFit = true;
-            rect1.addControl(label);
-            this.container = rect1;
-            this.label = label;
-        }
-        return TooltipButton;
-    }());
-    GUI.TooltipButton = TooltipButton;
-})(GUI || (GUI = {}));
-var GUI;
-(function (GUI) {
-    var TooltipMesh = /** @class */ (function () {
-        function TooltipMesh(mesh, text) {
-            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("tooltip");
-            var rect1 = new BABYLON.GUI.Rectangle();
-            rect1.width = 0.4;
-            rect1.height = "40px";
-            rect1.cornerRadius = 20;
-            rect1.thickness = 2;
-            rect1.background = "black";
-            advancedTexture.addControl(rect1);
-            rect1.linkWithMesh(mesh);
-            rect1.linkOffsetY = -100;
-            var label = new BABYLON.GUI.TextBlock();
-            label.text = text;
-            rect1.addControl(label);
-            setTimeout(function () {
-                advancedTexture.dispose();
-            }, 2000);
-        }
-        return TooltipMesh;
-    }());
-    GUI.TooltipMesh = TooltipMesh;
-})(GUI || (GUI = {}));
+var TooltipButton = /** @class */ (function () {
+    function TooltipButton(baseControl, text, parentPosition) {
+        var panel = new BABYLON.GUI.Rectangle('tooltip');
+        panel.top = parentPosition.y;
+        panel.left = parentPosition.x;
+        panel.width = 0;
+        panel.height = 0;
+        panel.cornerRadius = 20;
+        panel.thickness = 1;
+        panel.background = "black";
+        panel.color = "white";
+        panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        panel.adaptHeightToChildren = true;
+        panel.adaptWidthToChildren = true;
+        panel.paddingRight = '-80px';
+        panel.paddingBottom = '-40px';
+        panel.alpha = 0.8;
+        panel.isHitTestVisible = false;
+        baseControl.addControl(panel);
+        this.container = panel;
+        var label = new BABYLON.GUI.TextBlock();
+        label.textWrapping = true;
+        label.resizeToFit = true;
+        label.text = text;
+        label.fontFamily = "RuslanDisplay";
+        panel.addControl(label);
+    }
+    return TooltipButton;
+}());
+var TooltipHelper = /** @class */ (function () {
+    function TooltipHelper() {
+    }
+    TooltipHelper.createTooltipOnInventoryItemButton = function (texture, item, button, pickCallback) {
+        var tooltipButton = null;
+        button.onPointerEnterObservable.add(function () {
+            var text = item.name;
+            if (item.statistics.damageMin > 0) {
+                text += "\nDamage: " + item.statistics.damageMin + " - " + item.statistics.damageMax + "";
+            }
+            if (item.statistics.armor > 0) {
+                text += "\nArmor: " + item.statistics.armor + "";
+            }
+            tooltipButton = new TooltipButton(texture, text, new BABYLON.Vector2(button.centerX, button.centerY));
+        });
+        button.onPointerOutObservable.add(function () {
+            tooltipButton.container.dispose();
+        });
+        button.onPointerUpObservable.add(pickCallback);
+    };
+    return TooltipHelper;
+}());
+var TooltipMesh = /** @class */ (function () {
+    function TooltipMesh(mesh, text) {
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        advancedTexture.layer.layerMask = 2;
+        this.container = advancedTexture;
+        var panel = new BABYLON.GUI.Rectangle('tooltip');
+        panel.cornerRadius = 20;
+        panel.thickness = 1;
+        panel.background = "black";
+        panel.color = "white";
+        panel.adaptHeightToChildren = true;
+        panel.adaptWidthToChildren = true;
+        panel.paddingRight = '-40px';
+        panel.paddingBottom = '-20px';
+        panel.alpha = 0.8;
+        advancedTexture.addControl(panel);
+        var label = new BABYLON.GUI.TextBlock();
+        label.textWrapping = true;
+        label.resizeToFit = true;
+        label.text = text;
+        label.fontFamily = "RuslanDisplay";
+        panel.addControl(label);
+        panel.linkWithMesh(mesh);
+        panel.linkOffsetY = -80;
+    }
+    return TooltipMesh;
+}());
 var GUI;
 (function (GUI) {
     var Attributes = /** @class */ (function (_super) {
@@ -4583,10 +4601,10 @@ var GUI;
             textPlayerLVL.color = 'green';
             textPlayerLVL.fontSize = 18;
             panel.addControl(textPlayerLVL);
-            this.createAttribute(1, 'Damage:' + this.guiMain.game.player.statistics.damage, panel);
-            this.createAttribute(2, 'Armor:' + this.guiMain.game.player.statistics.armor, panel);
-            this.createAttribute(3, 'HP:' + this.guiMain.game.player.statistics.hp, panel);
-            this.createAttribute(4, 'Energy:' + this.guiMain.game.player.statistics.energy, panel);
+            this.createAttribute(1, 'Strength:' + this.guiMain.game.player.attributes.strength, panel);
+            this.createAttribute(2, 'Durability:' + this.guiMain.game.player.attributes.durability, panel);
+            this.createAttribute(3, 'Vitality:' + this.guiMain.game.player.attributes.vitality, panel);
+            this.createAttribute(4, 'Stamina:' + this.guiMain.game.player.attributes.stamina, panel);
             if (this.guiMain.game.player.freeAttributesPoints) {
                 var textAttributes = this.createText('You have ' + this.guiMain.game.player.freeAttributesPoints + ' free attribute points.');
                 textAttributes.color = 'red';
@@ -4598,13 +4616,13 @@ var GUI;
             textStatistics.height = '8%';
             textStatistics.fontSize = 18;
             panel.addControl(textStatistics);
-            var damage = this.createText('Damage:' + this.guiMain.game.player.statisticsAll.damage);
+            var damage = this.createText('Damage: ' + this.guiMain.game.player.statisticsAll.damageMin + ' - ' + this.guiMain.game.player.statisticsAll.damageMax);
             panel.addControl(damage);
-            var armor = this.createText('Armor:' + this.guiMain.game.player.statisticsAll.armor);
+            var armor = this.createText('Armor: ' + this.guiMain.game.player.statisticsAll.armor);
             panel.addControl(armor);
-            var attackSpeed = this.createText('Attack chance:' + this.guiMain.game.player.statistics.hitChance);
+            var attackSpeed = this.createText('Attack chance: ' + this.guiMain.game.player.statistics.hitChance);
             panel.addControl(attackSpeed);
-            var blockChance = this.createText('Block chance:' + this.guiMain.game.player.statistics.blockChance);
+            var blockChance = this.createText('Block chance: ' + this.guiMain.game.player.statistics.blockChance);
             panel.addControl(blockChance);
         };
         Attributes.prototype.createText = function (text) {
@@ -4789,31 +4807,11 @@ var GUI;
                 image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
                 image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
                 grid.addControl(image, row, collumn);
-                var tooltipButton = null;
-                image.onPointerEnterObservable.add(function () {
-                    var text = item.name;
-                    if (item.statistics.damage > 0) {
-                        text += "\nDamage: " + item.statistics.damage + "";
-                    }
-                    if (item.statistics.armor > 0) {
-                        text += "\nArmor: " + item.statistics.armor + "";
-                    }
-                    tooltipButton = new GUI.TooltipButton(image, text);
-                });
-                image.onPointerOutObservable.add(function () {
-                    image.children.forEach(function (value, key) {
-                        if (value.name == 'tooltip') {
-                            image.removeControl(value);
-                        }
-                    });
-                });
-                image.onPointerUpObservable.add(function () {
+                TooltipHelper.createTooltipOnInventoryItemButton(self.guiTexture, item, image, function () {
                     self.guiMain.game.player.inventory.emitEquip(item);
                     self.onPointerUpItemImage(item);
                     self.showItems();
-                    if (self.guiMain.attributes.opened) {
-                        self.guiMain.attributes.refreshPopup();
-                    }
+                    self.guiMain.attributes.refreshPopup();
                 });
             };
             for (var i = 0; i < inventory.items.length; i++) {

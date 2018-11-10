@@ -151,7 +151,6 @@ class SocketIOClient {
         let game = this.game;
         this.socket.on('refreshMushrooms', function (mushrooms) {
             game.mushrooms.forEach(function(mushroom) {
-                mushroom.hightlightLayer.dispose();
                 mushroom.mesh.dispose();
             });
             game.mushrooms = [];
@@ -260,6 +259,8 @@ class SocketIOClient {
             game.player.setCharacterStatistics(data.activePlayer);
 
             game.gui.attributes.refreshPopup();
+            game.player.refreshEnergyInGui();
+            game.player.refreshHpInGui();
         });
 
         return this;

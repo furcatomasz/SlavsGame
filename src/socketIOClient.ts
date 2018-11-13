@@ -51,7 +51,7 @@ class SocketIOClient {
                 .refreshGateways()
                 .refreshQuests()
                 .refreshChests()
-                .refreshMushrooms()
+                .refreshRandomSpecialItems()
                 .openedChest()
                 .updateEnemies()
                 .changeScene()
@@ -147,17 +147,18 @@ class SocketIOClient {
         return this;
     }
 
-    protected refreshMushrooms() {
+    protected refreshRandomSpecialItems() {
         let game = this.game;
-        this.socket.on('refreshMushrooms', function (mushrooms) {
-            game.mushrooms.forEach(function(mushroom) {
-                mushroom.mesh.dispose();
-            });
-            game.mushrooms = [];
+        this.socket.on('refreshRandomSpecialItems', function (randomSpecialItems) {
 
-            mushrooms.forEach(function(mushroom, mushroomKey) {
-                if(!mushroom.picked) {
-                    game.mushrooms.push(new Mushroom(game, mushroom, mushroomKey));
+            game.randomSpecialItems.forEach(function(randomSpecialItem) {
+                randomSpecialItem.mesh.dispose();
+            });
+            game.randomSpecialItems = [];
+
+            randomSpecialItems.forEach(function(randomSpecialItem, randomSpecialItemKey) {
+                if(!randomSpecialItem.picked) {
+                    game.randomSpecialItems.push(new RandomSpecialItem(game, randomSpecialItem, randomSpecialItemKey));
                 }
             });
         });

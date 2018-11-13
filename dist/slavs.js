@@ -104,7 +104,7 @@ var Scene = /** @class */ (function () {
                 game.client.socket.emit('refreshGateways');
                 game.client.socket.emit('refreshQuests');
                 game.client.socket.emit('refreshChests');
-                game.client.socket.emit('refreshMushrooms');
+                game.client.socket.emit('refreshRandomSpecialItems');
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -187,7 +187,7 @@ var Game = /** @class */ (function () {
         self.quests = [];
         self.npcs = [];
         self.scenes = [];
-        self.mushrooms = [];
+        self.randomSpecialItems = [];
         self.chests = [];
         self.activeScene = null;
         self.events = new Events();
@@ -554,7 +554,7 @@ var SocketIOClient = /** @class */ (function () {
                 .refreshGateways()
                 .refreshQuests()
                 .refreshChests()
-                .refreshMushrooms()
+                .refreshRandomSpecialItems()
                 .openedChest()
                 .updateEnemies()
                 .changeScene()
@@ -631,16 +631,16 @@ var SocketIOClient = /** @class */ (function () {
         });
         return this;
     };
-    SocketIOClient.prototype.refreshMushrooms = function () {
+    SocketIOClient.prototype.refreshRandomSpecialItems = function () {
         var game = this.game;
-        this.socket.on('refreshMushrooms', function (mushrooms) {
-            game.mushrooms.forEach(function (mushroom) {
-                mushroom.mesh.dispose();
+        this.socket.on('refreshRandomSpecialItems', function (randomSpecialItems) {
+            game.randomSpecialItems.forEach(function (randomSpecialItem) {
+                randomSpecialItem.mesh.dispose();
             });
-            game.mushrooms = [];
-            mushrooms.forEach(function (mushroom, mushroomKey) {
-                if (!mushroom.picked) {
-                    game.mushrooms.push(new Mushroom(game, mushroom, mushroomKey));
+            game.randomSpecialItems = [];
+            randomSpecialItems.forEach(function (randomSpecialItem, randomSpecialItemKey) {
+                if (!randomSpecialItem.picked) {
+                    game.randomSpecialItems.push(new RandomSpecialItem(game, randomSpecialItem, randomSpecialItemKey));
                 }
             });
         });
@@ -2744,19 +2744,18 @@ var Initializers;
     }());
     Initializers.Chest = Chest;
 })(Initializers || (Initializers = {}));
-var Mushroom = /** @class */ (function () {
+var RandomSpecialItem = /** @class */ (function () {
     /**
      *
      * @param {Game} game
-     * @param mushroomData
-     * @param mushroomKey
+     * @param randomSpecialItemData
+     * @param randomSpecialItemKey
      */
-    function Mushroom(game, mushroomData, mushroomKey) {
+    function RandomSpecialItem(game, randomSpecialItemData, randomSpecialItemKey) {
         var scene = game.getScene();
         var tooltip;
-        var position = mushroomData.position;
-        var mushroomMesh = game.factories['nature_grain'].createClone('mushrooms');
-        var gameCamera = scene.getCameraByName('gameCamera');
+        var position = randomSpecialItemData.position;
+        var mushroomMesh = game.factories['nature_grain'].createClone(randomSpecialItemData.specialItem.meshName);
         mushroomMesh.position = new BABYLON.Vector3(position.x, position.y, position.z);
         mushroomMesh.isPickable = true;
         var particleSystem = new Particles.DroppedItem(game, mushroomMesh);
@@ -2764,17 +2763,17 @@ var Mushroom = /** @class */ (function () {
         this.mesh = mushroomMesh;
         this.mesh.actionManager = new BABYLON.ActionManager(scene);
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-            tooltip = new TooltipMesh(mushroomMesh, mushroomData.specialItem.name);
+            tooltip = new TooltipMesh(mushroomMesh, randomSpecialItemData.specialItem.name);
         }));
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
             tooltip.container.dispose();
         }));
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-            game.client.socket.emit('pickRandomItem', mushroomKey);
+            game.client.socket.emit('pickRandomItem', randomSpecialItemKey);
             tooltip.container.dispose();
         }));
     }
-    return Mushroom;
+    return RandomSpecialItem;
 }());
 var Particles;
 (function (Particles) {

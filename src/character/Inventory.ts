@@ -39,33 +39,45 @@ namespace Character {
          */
         public equipItem(item: Items.Item, setItem: boolean) {
             if (setItem) {
-                item.mesh.parent = this.player.mesh;
-                item.mesh.skeleton = this.player.mesh.skeleton;
-                item.mesh.visibility = 1;
-
+                const bonesNumbers = [];
                 switch (item.type) {
                     case 1:
                         this.weapon = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('weapon.bone'));
                         break;
                     case 2:
                         this.shield = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('shield.bone'));
                         break;
                     case 3:
                         this.helm = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('head'));
                         break;
                     case 4:
                         this.gloves = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('hand.L'));
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('hand.R'));
                         break;
                     case 5:
                         this.boots = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('foot.L'));
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('foot.R'));
                         break;
                     case 6:
                         this.armor = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('chest'));
                         break;
                 }
 
-            } else {
-                item.mesh.visibility = 0;
+                item.mesh = this.game.factories['character'].createClone(item.meshName);
+                item.mesh.parent = this.player.mesh;
+                item.mesh.skeleton = this.player.mesh.skeleton;
+
+                // bonesNumbers.forEach((boneNumber) => {
+                //     const mesh = BABYLON.Mesh.CreateBox('test', 1, this.game.getScene(), false);
+                //     mesh.attachToBone(this.player.mesh.skeleton.bones[boneNumber], this.player.mesh);
+                // });
+
             }
 
         }
@@ -143,6 +155,52 @@ namespace Character {
             }
 
             return this;
+        }
+
+        /**
+         * @returns {Player}
+         */
+        public removeItems() {
+            this.items.forEach(function(item) {
+                item.dispose();
+            });
+
+            this.items = [];
+
+            return this;
+        }
+
+        /**
+         *
+         * @param inventoryItems
+         */
+        public setItems(inventoryItems: Array<any>) {
+            if (inventoryItems) {
+                let self = this;
+                let game = this.game;
+                let itemManager = new Items.ItemManager(game);
+
+                new Promise(function (resolve) {
+                    self.deleteSashAndHair();
+                    self.items.forEach(function (item) {
+                        item.dispose();
+                    });
+                    setTimeout(function () {
+                        resolve();
+                    });
+                }).then(function () {
+                    self.clearItems();
+
+                    new Promise(function (resolve) {
+                        itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self);
+                        setTimeout(function () {
+                            resolve();
+                        });
+                    }).then(function () {
+                        game.gui.inventory.refreshPopup();
+                    });
+                });
+            }
         }
     }
 }

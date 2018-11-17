@@ -145,7 +145,7 @@ var Scene = /** @class */ (function () {
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
-        scene.spritesEnabled = false;
+        scene.spritesEnabled = true;
         scene.audioEnabled = false;
         scene.workerCollisions = false;
         return this;
@@ -368,20 +368,19 @@ var EquipBlock = /** @class */ (function () {
         }
         return this;
     };
-    /**
-     * @returns {GUI.Inventory.EquipBlock}
-     */
     EquipBlock.prototype.createImage = function () {
         var self = this;
         var item = this.item;
-        var image = this.inventory.createItemImage(this.item);
-        TooltipHelper.createTooltipOnInventoryItemButton(self.inventory.guiTexture, item, image, function () {
-            self.inventory.guiMain.game.player.inventory.emitEquip(self.item);
-            self.inventory.guiTexture.removeControl(self.block);
-            self.inventory.showItems();
-            self.inventory.guiMain.attributes.refreshPopup();
-        });
-        this.block.addControl(image);
+        if (item.statistics) {
+            var image = this.inventory.createItemImage(item);
+            TooltipHelper.createTooltipOnInventoryItemButton(self.inventory.guiTexture, item, image, function () {
+                self.inventory.guiMain.game.player.inventory.emitEquip(self.item);
+                self.inventory.guiTexture.removeControl(self.block);
+                self.inventory.showItems();
+                self.inventory.guiMain.attributes.refreshPopup();
+            });
+            this.block.addControl(image);
+        }
         return this;
     };
     return EquipBlock;
@@ -799,8 +798,8 @@ var SocketIOClient = /** @class */ (function () {
                     }
                 });
             }
-            player.removeItems();
-            player.setItems(updatedPlayer.activePlayer.items);
+            player.inventory.removeItems();
+            player.inventory.setItems(updatedPlayer.activePlayer.items);
         });
         return this;
     };
@@ -924,7 +923,7 @@ var SocketIOClient = /** @class */ (function () {
                 var activePlayer = teamPlayer.characters[teamPlayer.activeCharacter];
                 var player = new Player(game, teamPlayer.id, false, activePlayer);
                 player.mesh.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
-                player.setItems(activePlayer.items);
+                player.inventory.setItems(activePlayer.items);
                 game.remotePlayers.push(player);
             }
         });
@@ -1036,6 +1035,40 @@ var SocketIOClient = /** @class */ (function () {
     };
     return SocketIOClient;
 }());
+var AbstractAnimation = /** @class */ (function () {
+    function AbstractAnimation() {
+    }
+    return AbstractAnimation;
+}());
+var BounceAnimation = /** @class */ (function (_super) {
+    __extends(BounceAnimation, _super);
+    function BounceAnimation() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    BounceAnimation.getAnimation = function () {
+        var aniamtion = new BABYLON.Animation("bounceAnimation", "position.y", 5, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        var keys = [
+            {
+                frame: 0,
+                value: 1
+            },
+            {
+                frame: 15,
+                value: 1.5
+            },
+            {
+                frame: 30,
+                value: 1
+            }
+        ];
+        aniamtion.setKeys(keys);
+        var easingFunction = new BABYLON.BackEase();
+        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+        aniamtion.setEasingFunction(easingFunction);
+        return aniamtion;
+    };
+    return BounceAnimation;
+}(AbstractAnimation));
 var GodRay = /** @class */ (function () {
     function GodRay() {
     }
@@ -1116,32 +1149,42 @@ var Character;
          */
         Inventory.prototype.equipItem = function (item, setItem) {
             if (setItem) {
-                item.mesh.parent = this.player.mesh;
-                item.mesh.skeleton = this.player.mesh.skeleton;
-                item.mesh.visibility = 1;
+                var bonesNumbers = [];
                 switch (item.type) {
                     case 1:
                         this.weapon = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('weapon.bone'));
                         break;
                     case 2:
                         this.shield = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('shield.bone'));
                         break;
                     case 3:
                         this.helm = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('head'));
                         break;
                     case 4:
                         this.gloves = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('hand.L'));
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('hand.R'));
                         break;
                     case 5:
                         this.boots = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('foot.L'));
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('foot.R'));
                         break;
                     case 6:
                         this.armor = item;
+                        bonesNumbers.push(this.player.mesh.skeleton.getBoneIndexByName('chest'));
                         break;
                 }
-            }
-            else {
-                item.mesh.visibility = 0;
+                item.mesh = this.game.factories['character'].createClone(item.meshName);
+                item.mesh.parent = this.player.mesh;
+                item.mesh.skeleton = this.player.mesh.skeleton;
+                // bonesNumbers.forEach((boneNumber) => {
+                //     const mesh = BABYLON.Mesh.CreateBox('test', 1, this.game.getScene(), false);
+                //     mesh.attachToBone(this.player.mesh.skeleton.bones[boneNumber], this.player.mesh);
+                // });
             }
         };
         /**
@@ -1205,6 +1248,46 @@ var Character;
                 this.armor.mesh.dispose();
             }
             return this;
+        };
+        /**
+         * @returns {Player}
+         */
+        Inventory.prototype.removeItems = function () {
+            this.items.forEach(function (item) {
+                item.dispose();
+            });
+            this.items = [];
+            return this;
+        };
+        /**
+         *
+         * @param inventoryItems
+         */
+        Inventory.prototype.setItems = function (inventoryItems) {
+            if (inventoryItems) {
+                var self_1 = this;
+                var game_1 = this.game;
+                var itemManager_1 = new Items.ItemManager(game_1);
+                new Promise(function (resolve) {
+                    self_1.deleteSashAndHair();
+                    self_1.items.forEach(function (item) {
+                        item.dispose();
+                    });
+                    setTimeout(function () {
+                        resolve();
+                    });
+                }).then(function () {
+                    self_1.clearItems();
+                    new Promise(function (resolve) {
+                        itemManager_1.initItemsFromDatabaseOnCharacter(inventoryItems, self_1);
+                        setTimeout(function () {
+                            resolve();
+                        });
+                    }).then(function () {
+                        game_1.gui.inventory.refreshPopup();
+                    });
+                });
+            }
         };
         return Inventory;
     }());
@@ -1304,30 +1387,30 @@ var AbstractCharacter = /** @class */ (function () {
     };
     AbstractCharacter.prototype.runAnimationWalk = function () {
         if (!this.isWalk && !this.isAttack) {
-            var self_1 = this;
+            var self_2 = this;
             var skeleton = this.mesh.skeleton;
             this.isWalk = true;
-            self_1.sfxWalk.play();
-            self_1.onWalkStart();
-            self_1.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, true, 1.2, function () {
-                self_1.runAnimationDeathOrStand();
-                self_1.animation = null;
-                self_1.isWalk = false;
-                self_1.sfxWalk.stop();
-                self_1.onWalkEnd();
+            self_2.sfxWalk.play();
+            self_2.onWalkStart();
+            self_2.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_WALK, true, 1.2, function () {
+                self_2.runAnimationDeathOrStand();
+                self_2.animation = null;
+                self_2.isWalk = false;
+                self_2.sfxWalk.stop();
+                self_2.onWalkEnd();
             });
         }
     };
     AbstractCharacter.prototype.runAnimationStand = function () {
         if (!this.isStand) {
-            var self_2 = this;
+            var self_3 = this;
             var skeleton = this.mesh.skeleton;
             this.isStand = true;
-            self_2.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true, 1, function () {
-                self_2.animation = null;
-                self_2.isStand = false;
-                if (self_2.isDeath) {
-                    self_2.runAnimationDeath();
+            self_3.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true, 1, function () {
+                self_3.animation = null;
+                self_3.isStand = false;
+                if (self_3.isDeath) {
+                    self_3.runAnimationDeath();
                 }
             });
         }
@@ -1392,7 +1475,7 @@ var Player = /** @class */ (function (_super) {
         _this.walkSmoke = new Particles.WalkSmoke(game, _this.mesh).particleSystem;
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         _this.inventory = new Character.Inventory(game, _this);
-        _this.setItems(serverData.activePlayer.items);
+        _this.inventory.setItems(serverData.activePlayer.items);
         if (_this.isControllable) {
             _this.mesh.isPickable = false;
             new GUI.Main(game);
@@ -1483,48 +1566,6 @@ var Player = /** @class */ (function (_super) {
         camera.position.y = 30;
         camera.position.z -= 22;
         camera.position.x -= 22;
-    };
-    /**
-     *
-     * @param inventoryItems
-     */
-    Player.prototype.setItems = function (inventoryItems) {
-        if (inventoryItems) {
-            var self_3 = this;
-            var game_1 = this.game;
-            var itemManager_1 = new Items.ItemManager(game_1);
-            new Promise(function (resolve) {
-                self_3.inventory.deleteSashAndHair();
-                self_3.inventory.items.forEach(function (item) {
-                    item.mesh.dispose();
-                });
-                setTimeout(function () {
-                    resolve();
-                });
-            }).then(function () {
-                self_3.inventory.clearItems();
-                new Promise(function (resolve) {
-                    itemManager_1.initItemsFromDatabaseOnCharacter(inventoryItems, self_3.inventory);
-                    setTimeout(function () {
-                        resolve();
-                    });
-                }).then(function () {
-                    if (self_3.isControllable && game_1.gui.inventory.opened) {
-                        game_1.gui.inventory.refreshPopup();
-                    }
-                });
-            });
-        }
-    };
-    /**
-     * @returns {Player}
-     */
-    Player.prototype.removeItems = function () {
-        this.inventory.items.forEach(function (item) {
-            item.mesh.dispose();
-        });
-        this.inventory.items = [];
-        return this;
     };
     Player.prototype.refreshExperienceInGui = function () {
         this.game.gui.playerBottomPanel.expBar.width = this.experiencePercentages / 100;
@@ -2879,12 +2920,12 @@ var Particles;
             fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
             fireSystem.minSize = 0.2;
             fireSystem.maxSize = 0.5;
-            fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 2.4;
-            fireSystem.emitRate = 20;
+            fireSystem.minLifeTime = 0.5;
+            fireSystem.maxLifeTime = 2.5;
+            fireSystem.emitRate = 10;
             fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
             fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
-            fireSystem.direction1 = new BABYLON.Vector3(0, 0.5, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0.2, 0);
             fireSystem.direction2 = new BABYLON.Vector3(0, 0.5, 0);
             fireSystem.minEmitPower = 1;
             fireSystem.maxEmitPower = 1;
@@ -3574,14 +3615,21 @@ var Items;
             droppedItemBox.position.x = position.x;
             droppedItemBox.position.z = position.z;
             droppedItemBox.position.y = 0;
-            item.mesh.rotation = new BABYLON.Vector3(0, 0, 0);
-            item.mesh.visibility = 1;
-            item.mesh.isVisible = true;
-            item.mesh.parent = droppedItemBox;
+            var itemSpriteManager = new BABYLON.SpriteManager("playerManager", 'assets/Miniatures/' + item.image + '.png', 1, { width: 512, height: 512 }, scene);
+            var itemSprite = new BABYLON.Sprite("player", itemSpriteManager);
+            itemSprite.width = 1.8;
+            itemSprite.height = 1.8;
+            itemSprite.position.x = position.x;
+            itemSprite.position.z = position.z;
+            itemSprite.position.y = 1.5;
+            itemSpriteManager.layerMask = 2;
+            var animationBounce = BounceAnimation.getAnimation();
+            itemSprite.animations.push(animationBounce);
+            scene.beginAnimation(itemSprite, 0, 30, true);
             var tooltip = null;
             droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
             droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-                tooltip = new TooltipMesh(item.mesh, item.name);
+                tooltip = new TooltipMesh(droppedItemBox, item.name);
             }));
             droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
                 tooltip.container.dispose();
@@ -3591,12 +3639,11 @@ var Items;
                 game.client.socket.emit('addDroppedItem', itemDropKey);
                 droppedItemBox.dispose();
                 tooltip.container.dispose();
+                itemSprite.dispose();
             }));
             var particleSystem = new Particles.DroppedItem(game, droppedItemBox);
             particleSystem.particleSystem.start();
-            if (game.sceneManager.octree) {
-                game.sceneManager.octree.dynamicContent.push(droppedItemBox);
-            }
+            droppedItemBox.freezeWorldMatrix();
         };
         return DroppedItem;
     }());
@@ -3607,15 +3654,19 @@ var Items;
     var Item = /** @class */ (function () {
         function Item(game, itemData) {
             this.name = itemData.name;
+            this.meshName = itemData.meshName;
             this.image = itemData.image;
             this.type = itemData.type;
             this.statistics = itemData.statistics;
-            this.mesh = game.factories['character'].createClone(itemData.meshName);
-            this.mesh.visibility = 0;
             if (itemData.entity) {
                 this.databaseId = itemData.entity.id;
             }
         }
+        Item.prototype.dispose = function () {
+            if (this.mesh) {
+                this.mesh.dispose();
+            }
+        };
         return Item;
     }());
     Items.Item = Item;
@@ -3642,9 +3693,6 @@ var Items;
                         return;
                     }
                     var item = new Items.Item(self.game, itemDatabase);
-                    if (self.game.sceneManager.octree) {
-                        self.game.sceneManager.octree.dynamicContent.push(item.mesh);
-                    }
                     inventory.items.push(item);
                     var equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip;
                     inventory.equipItem(item, equip);

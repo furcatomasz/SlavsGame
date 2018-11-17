@@ -49,7 +49,7 @@ class Player extends AbstractCharacter {
 
         mesh.actionManager = new BABYLON.ActionManager(game.getScene());
         this.inventory = new Character.Inventory(game, this);
-        this.setItems(serverData.activePlayer.items);
+        this.inventory.setItems(serverData.activePlayer.items);
 
         if (this.isControllable) {
             this.mesh.isPickable = false;
@@ -159,54 +159,6 @@ class Player extends AbstractCharacter {
         camera.position.y = 30;
         camera.position.z -= 22;
         camera.position.x -= 22;
-    }
-
-    /**
-     *
-     * @param inventoryItems
-     */
-    public setItems(inventoryItems: Array<any>) {
-        if (inventoryItems) {
-            let self = this;
-            let game = this.game;
-            let itemManager = new Items.ItemManager(game);
-
-            new Promise(function (resolve) {
-                self.inventory.deleteSashAndHair();
-                self.inventory.items.forEach(function (item) {
-                    item.mesh.dispose();
-                });
-                setTimeout(function () {
-                    resolve();
-                });
-            }).then(function () {
-                self.inventory.clearItems();
-
-                new Promise(function (resolve) {
-                    itemManager.initItemsFromDatabaseOnCharacter(inventoryItems, self.inventory);
-                    setTimeout(function () {
-                        resolve();
-                    });
-                }).then(function () {
-                    if (self.isControllable && game.gui.inventory.opened) {
-                        game.gui.inventory.refreshPopup();
-                    }
-                });
-            });
-        }
-    }
-
-    /**
-     * @returns {Player}
-     */
-    public removeItems() {
-        this.inventory.items.forEach(function(item) {
-            item.mesh.dispose();
-        });
-
-        this.inventory.items = [];
-
-        return this;
     }
 
     public refreshExperienceInGui() {

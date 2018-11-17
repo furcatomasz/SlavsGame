@@ -13,7 +13,7 @@ namespace Items {
          * @param inventory
          * @param hideShieldAndWeapon
          */
-        public initItemsFromDatabaseOnCharacter(inventoryItems: Array<Object>, inventory:Character.Inventory, hideShieldAndWeapon:boolean = false) {
+        public initItemsFromDatabaseOnCharacter(inventoryItems: Array<any>, inventory:Character.Inventory, hideShieldAndWeapon:boolean = false) {
             let self = this;
             let showSash = true;
             let showHair = true;
@@ -25,12 +25,9 @@ namespace Items {
                     }
 
                     let item = new Items.Item(self.game, itemDatabase);
-                    if (self.game.sceneManager.octree) {
-                        self.game.sceneManager.octree.dynamicContent.push(item.mesh);
-                    }
-
                     inventory.items.push(item);
-                    const equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip
+
+                    const equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip;
                     inventory.equipItem(item, equip);
 
                     if (item.type == 3 && equip) {
@@ -47,7 +44,7 @@ namespace Items {
                 });
             }).then(function() {
                 inventory.showSashOrHair(showHair, showSash);
-            })
+            });
         }
 
 

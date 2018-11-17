@@ -16,16 +16,16 @@ namespace Particles {
             fireSystem.minSize = 0.2;
             fireSystem.maxSize = 0.5;
 
-            fireSystem.minLifeTime = 0.2;
-            fireSystem.maxLifeTime = 2.4;
+            fireSystem.minLifeTime = 0.5;
+            fireSystem.maxLifeTime = 2.5;
 
-            fireSystem.emitRate = 20;
+            fireSystem.emitRate = 10;
 
             fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
 
             fireSystem.gravity = new BABYLON.Vector3(0, 0, 0);
 
-            fireSystem.direction1 = new BABYLON.Vector3(0, 0.5, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 0.2, 0);
             fireSystem.direction2 = new BABYLON.Vector3(0, 0.5, 0);
 
             fireSystem.minEmitPower = 1;

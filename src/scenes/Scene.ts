@@ -161,7 +161,7 @@ abstract class Scene {
         scene.lensFlaresEnabled = false;
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
-        scene.spritesEnabled = false;
+        scene.spritesEnabled = true;
         scene.audioEnabled = false;
         scene.workerCollisions = false;
 

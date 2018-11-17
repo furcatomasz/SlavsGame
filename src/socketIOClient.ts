@@ -351,8 +351,8 @@ class SocketIOClient {
             }
 
 
-            player.removeItems();
-            player.setItems(updatedPlayer.activePlayer.items);
+            player.inventory.removeItems();
+            player.inventory.setItems(updatedPlayer.activePlayer.items);
         });
 
         return this;
@@ -364,7 +364,7 @@ class SocketIOClient {
     protected showDroppedItem() {
         let game = this.game;
         this.socket.on('showDroppedItem', function (data) {
-            let item = new Items.Item(game, data.item);
+            const item = new Items.Item(game, data.item);
             Items.DroppedItem.showItem(game, item, data.position, data.itemKey);
         });
 
@@ -499,7 +499,7 @@ class SocketIOClient {
 
                 let player = new Player(game, teamPlayer.id, false, activePlayer);
                 player.mesh.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
-                player.setItems(activePlayer.items);
+                player.inventory.setItems(activePlayer.items);
 
                 game.remotePlayers.push(player);
             }

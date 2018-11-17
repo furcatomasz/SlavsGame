@@ -175,7 +175,6 @@ abstract class Scene {
         this.game.factories['skeleton'] = new Factories.Skeletons(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeletonWarrior'] = new Factories.SkeletonWarrior(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeletonBoss'] = new Factories.SkeletonBoss(this.game, scene, assetsManager).initFactory();
-        this.game.factories['flag'] = new Factories.Flags(this.game, scene, assetsManager).initFactory();
         this.game.factories['chest'] = new Factories.Chest(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
 

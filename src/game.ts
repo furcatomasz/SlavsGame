@@ -4,7 +4,7 @@
 class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 0;
+    static SHOW_DEBUG = 1;
 
     public sceneManager: Scene;
     public controller: Mouse;
@@ -26,9 +26,9 @@ class Game {
     public remotePlayers: Array<Player>;
     public npcs: Array<NPC.AbstractNpc>;
     public enemies: Array<Monster>;
-    public quests: Array<0>;
-    public chests: Array<Initializers.Chest>;
-    public randomSpecialItems: Array<Initializers.Chest>;
+    public quests: Array<any>;
+    public chests: Array<Chest>;
+    public randomSpecialItems: Array<RandomSpecialItem>;
 
     /**
      * States
@@ -101,7 +101,6 @@ class Game {
             });
         }
         this.activeScene = null;
-        this.controller.forward = false;
 
         newScene.initScene(this);
     }

@@ -69,7 +69,6 @@ class Monster extends AbstractCharacter {
                 if(self.game.player.isAlive) {
                     game.controller.attackPoint = pointer.meshUnderPointer;
                     game.controller.targetPoint = null;
-                    game.controller.ball.visibility = 0;
                     self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
                     intervalAttackFunction();
                 }

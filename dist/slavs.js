@@ -156,7 +156,6 @@ var Scene = /** @class */ (function () {
         this.game.factories['skeleton'] = new Factories.Skeletons(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeletonWarrior'] = new Factories.SkeletonWarrior(this.game, scene, assetsManager).initFactory();
         this.game.factories['skeletonBoss'] = new Factories.SkeletonBoss(this.game, scene, assetsManager).initFactory();
-        this.game.factories['flag'] = new Factories.Flags(this.game, scene, assetsManager).initFactory();
         this.game.factories['chest'] = new Factories.Chest(this.game, scene, assetsManager).initFactory();
         this.game.factories['nature_grain'] = new Factories.Nature(this.game, scene, assetsManager).initFactory();
         return this;
@@ -218,7 +217,6 @@ var Game = /** @class */ (function () {
             });
         }
         this.activeScene = null;
-        this.controller.forward = false;
         newScene.initScene(this);
     };
     Game.randomNumber = function (minimum, maximum) {
@@ -231,7 +229,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 0;
+    Game.SHOW_DEBUG = 1;
     return Game;
 }());
 var GUI;
@@ -1142,10 +1140,6 @@ var Player = /** @class */ (function (_super) {
         this.dynamicFunction = function () {
             if (mesh.intersectsPoint(targetPointVector3)) {
                 self.game.getScene().unregisterBeforeRender(self.dynamicFunction);
-                if (self.isControllable) {
-                    //game.controller.targetPoint = null;
-                    self.game.controller.flag.visibility = 0;
-                }
                 if (self.animation) {
                     self.animation.stop();
                 }
@@ -1181,23 +1175,13 @@ var Mouse = /** @class */ (function () {
         var self = this;
         var clickTrigger = false;
         var lastUpdate = new Date().getTime() / 1000;
-        var ball = BABYLON.Mesh.CreateBox("mouseBox", 0.4, scene);
-        var meshFlag = this.game.factories['flag'].createClone('Flag', false);
-        meshFlag.visibility = 0;
-        meshFlag.isPickable = false;
-        meshFlag.parent = ball;
-        meshFlag.scaling = new BABYLON.Vector3(0.3, 0.3, 0.3);
-        this.flag = meshFlag;
-        ball.actionManager = new BABYLON.ActionManager(scene);
-        ball.isPickable = false;
-        ball.visibility = 0;
-        this.ball = ball;
+        var clickParticleSystem = ClickParticles.getParticles(scene);
         scene.onPointerUp = function (evt, pickResult) {
             if (clickTrigger) {
                 clickTrigger = false;
                 var pickedMesh = pickResult.pickedMesh;
                 if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
-                    meshFlag.visibility = 1;
+                    clickParticleSystem.start();
                 }
             }
         };
@@ -1212,8 +1196,7 @@ var Mouse = /** @class */ (function () {
                     self.attackPoint = null;
                     self.targetPoint = pickResult.pickedPoint;
                     self.targetPoint.y = 0;
-                    self.ball.position = self.targetPoint;
-                    meshFlag.visibility = 0;
+                    clickParticleSystem.emitter = new BABYLON.Vector3(self.targetPoint.x, 0, self.targetPoint.z); // the starting location
                     self.game.player.runPlayerToPosition(self.targetPoint);
                     self.game.client.socket.emit('setTargetPoint', {
                         position: self.targetPoint
@@ -1231,7 +1214,7 @@ var Mouse = /** @class */ (function () {
                     if (self.game.player) {
                         self.targetPoint = pickResult.pickedPoint;
                         self.targetPoint.y = 0;
-                        self.ball.position = self.targetPoint;
+                        clickParticleSystem.emitter = new BABYLON.Vector3(self.targetPoint.x, 0, self.targetPoint.z); // the starting location
                         self.game.player.runPlayerToPosition(self.targetPoint);
                         if (lastUpdate < (new Date().getTime() / 500) - 0.3) {
                             lastUpdate = (new Date().getTime() / 500);
@@ -2302,9 +2285,13 @@ var Chest = /** @class */ (function () {
         chestMesh.checkCollisions = true;
         chestMesh.material.backFaceCulling = false;
         if (!opened) {
-            var hl = new BABYLON.HighlightLayer("highlightLayer", scene, { camera: gameCamera });
-            hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
-            self.hightlightLayer = hl;
+            var hl_1 = new BABYLON.HighlightLayer("highlightLayer", scene, { camera: gameCamera });
+            scene.meshes.forEach(function (mesh) {
+                hl_1.addExcludedMesh(mesh);
+            });
+            hl_1.removeExcludedMesh(chestMesh);
+            hl_1.addMesh(chestMesh, BABYLON.Color3.Magenta());
+            self.hightlightLayer = hl_1;
         }
         this.mesh = chestMesh;
         this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
@@ -4130,7 +4117,6 @@ var Monster = /** @class */ (function (_super) {
             if (self.game.player.isAlive) {
                 game.controller.attackPoint = pointer.meshUnderPointer;
                 game.controller.targetPoint = null;
-                game.controller.ball.visibility = 0;
                 self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
                 intervalAttackFunction();
             }
@@ -5086,6 +5072,31 @@ var GUI;
     }(GUI.Popup));
     GUI.NewQuest = NewQuest;
 })(GUI || (GUI = {}));
+var ClickParticles = /** @class */ (function () {
+    function ClickParticles() {
+    }
+    ClickParticles.getParticles = function (scene) {
+        var particleSystem = new BABYLON.ParticleSystem("clickParticles", 50, scene);
+        particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", scene);
+        particleSystem.layerMask = 2;
+        particleSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
+        particleSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+        particleSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+        particleSystem.emitter = new BABYLON.Vector3(0, 2, 0); // the starting location
+        particleSystem.minSize = 0.5;
+        particleSystem.maxSize = 0.5;
+        particleSystem.minLifeTime = 0.5;
+        particleSystem.maxLifeTime = 1.5;
+        particleSystem.emitRate = 20;
+        particleSystem.targetStopDuration = 0.2;
+        particleSystem.createPointEmitter(new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 1, 0));
+        // Speed
+        particleSystem.minEmitPower = 1;
+        particleSystem.maxEmitPower = 3;
+        return particleSystem;
+    };
+    return ClickParticles;
+}());
 var Particles;
 (function (Particles) {
     var FastAttack = /** @class */ (function (_super) {

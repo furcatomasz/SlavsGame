@@ -208,10 +208,6 @@ class Player extends AbstractCharacter {
         this.dynamicFunction = function() {
             if (mesh.intersectsPoint(targetPointVector3)) {
                 self.game.getScene().unregisterBeforeRender(self.dynamicFunction);
-                if (self.isControllable) {
-                    //game.controller.targetPoint = null;
-                    self.game.controller.flag.visibility = 0;
-                }
 
                 if (self.animation) {
                     self.animation.stop();

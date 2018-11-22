@@ -13,7 +13,7 @@ class OnRefreshGateways extends SocketEvent {
 
             let gatewaysFromServer = sceneServerData.gateways;
             gatewaysFromServer.forEach(function(gateway) {
-                let gatewayInGame = new Factories.Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType, gateway.entranceName);
+                let gatewayInGame = new Gateway(game, gateway.objectName, gateway.isActive, gateway.openSceneType, gateway.entranceName);
                 gateways.push(gatewayInGame);
             })
 

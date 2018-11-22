@@ -1,44 +1,45 @@
 class Monster extends AbstractCharacter {
 
-    protected target:string;
+    protected target: string;
     public intervalAttackRegisteredFunction;
 
-    constructor(game:Game, serverKey:number, serverData:Array) {
-        let meshName = serverData.meshName;
-        let factoryName = serverData.type;
+    constructor(game: Game, serverKey: number, serverData: any) {
+        super(serverData.name, game);
+
+        this.statistics = serverData.statistics;
+        this.id = serverKey;
+
+        this.createBoxForMove(new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z));
+        this.createMesh(serverData.type, serverData.meshName, new BABYLON.Vector3(serverData.scale, serverData.scale, serverData.scale));
+        this.initSfx();
+        this.registerActions();
+
+        this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
+        this.walkSmoke = WalkSmoke.getParticles(game.getScene(), 2, this.mesh);
+
+        this.initPatricleSystemDamage();
+    }
+
+    private createMesh(factoryName, meshName, scale: BABYLON.Vector3) {
+        const game = this.game;
 
         let mesh = game.factories[factoryName].createClone(meshName, true);
         mesh.visibility = 1;
         mesh.isPickable = false;
-        // game.sceneManager.options.addMeshToDynamicShadowGenerator(mesh);
-
-        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
-            loop: false,
-            autoplay: false
-        });
-
-        this.sfxWalk = new BABYLON.Sound("CharacterHit", null, game.getScene(), null, {
-            loop: false,
-            autoplay: false
-        });
-
-        this.id = serverKey;
-        this.mesh = mesh;
-        this.statistics = serverData.statistics;
-        game.enemies[this.id] = this;
+        mesh.scaling = scale;
         mesh.skeleton.enableBlending(0.2);
-        this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
-        mesh.scaling = new BABYLON.Vector3(serverData.scale, serverData.scale, serverData.scale);
-        super(serverData.name, game);
-
-        ///Create box mesh for moving
-        this.createBoxForMove(game.getScene());
-        this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
+        mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
+        mesh.outlineWidth = 0.1;
         mesh.parent = this.meshForMove;
 
-        this.mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
-        this.mesh.outlineWidth = 0.1;
+        // game.sceneManager.options.addMeshToDynamicShadowGenerator(mesh);
 
+
+        this.mesh = mesh;
+    }
+
+    private registerActions() {
+        const game = this.game;
         let self = this;
 
         this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
@@ -54,8 +55,8 @@ class Monster extends AbstractCharacter {
                 self.game.gui.characterTopHp.showHpCharacter(self);
             }));
 
-        let intervalAttackFunction = function () {
-            if(!game.player.isAttack) {
+        let intervalAttackFunction = () => {
+            if (!game.player.isAttack) {
                 game.client.socket.emit('attack', {
                     attack: self.id,
                     targetPoint: self.game.controller.attackPoint.position,
@@ -65,40 +66,88 @@ class Monster extends AbstractCharacter {
         };
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
-            function (pointer) {
-                if(self.game.player.isAlive) {
+            pointer => {
+                if (self.game.player.isAlive) {
                     game.controller.attackPoint = pointer.meshUnderPointer;
                     game.controller.targetPoint = null;
-                    self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
+                    self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 50);
                     intervalAttackFunction();
                 }
             }));
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger,
-            function (pointer) {
+            () => {
                 clearInterval(self.intervalAttackRegisteredFunction);
                 self.game.controller.attackPoint = null;
             }));
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger,
-            function (pointer) {
+            () => {
                 clearInterval(self.intervalAttackRegisteredFunction);
                 self.game.controller.attackPoint = null;
             }));
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
-            function (pointer) {
+            () => {
                 clearInterval(self.intervalAttackRegisteredFunction);
                 self.game.controller.attackPoint = null;
             }));
+    }
 
+    private initSfx() {
+        const game = this.game;
+
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
+
+        this.sfxWalk = new BABYLON.Sound("CharacterHit", null, game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
     }
 
     public removeFromWorld() {
-        if(this.intervalAttackRegisteredFunction) {
+        if (this.intervalAttackRegisteredFunction) {
             clearInterval(this.intervalAttackRegisteredFunction);
         }
         this.meshForMove.dispose();
     }
 
+    retrieveHit(updatedEnemy) {
+        let self = this;
+
+        if (this.statistics.hp != updatedEnemy.statistics.hp) {
+            let damage = (this.statistics.hp - updatedEnemy.statistics.hp);
+            this.statistics.hp = updatedEnemy.statistics.hp;
+
+            setTimeout(() => {
+                self.bloodParticles.start();
+                self.showDamage(damage);
+                setTimeout(() => {
+                    self.bloodParticles.stop();
+                }, 100);
+
+                if (self.statistics.hp <= 0) {
+                    self.isDeath = true;
+                    self.animation.stop();
+                    setTimeout(() => {
+                        self.removeFromWorld();
+                    }, 6000);
+                }
+
+                self.game.gui.characterTopHp.refreshPanel();
+            }, 400);
+
+        }
+    }
+
+    protected onWalkStart() {
+        this.walkSmoke.start();
+    }
+
+    protected onWalkEnd() {
+        this.walkSmoke.stop();
+    }
 }

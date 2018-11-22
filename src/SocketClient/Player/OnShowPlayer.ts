@@ -9,18 +9,9 @@ class OnShowPlayer extends SocketEvent {
 
         this.socket.on('showPlayer', function (playerData) {
             game.player = new Player(game, true, playerData);
-            document.dispatchEvent(game.events.playerConnected);
+            game.remotePlayers.push(game.player);
 
-            let octree = game.sceneManager.octree;
-            if (octree) {
-                octree.dynamicContent.push(game.player.mesh);
-                octree.dynamicContent.push(game.controller.ball);
-                game.player.inventory.getEquipedItems().forEach(function (item) {
-                    if (item) {
-                        game.sceneManager.octree.dynamicContent.push(item.mesh);
-                    }
-                });
-            }
+            document.dispatchEvent(game.events.playerConnected);
         });
 
         return this;

@@ -1,11 +1,10 @@
 class Player extends AbstractCharacter {
 
-    public connectionId:string;
+    public connectionId: string;
 
-    public walkSmoke:BABYLON.ParticleSystem;
-    public inventory:Character.Inventory;
-    public playerLight:BABYLON.SpotLight;
-    public isAlive:boolean;
+    public inventory: Character.Inventory;
+    public playerLight: BABYLON.SpotLight;
+    public isAlive: boolean;
 
     public skills: Array<any>;
     public statisticsAll: Array<any>;
@@ -18,13 +17,115 @@ class Player extends AbstractCharacter {
     public freeAttributesPoints: number;
     public freeSkillPoints: number;
 
-    public constructor(game:Game, registerMoving:boolean, serverData) {
+    public constructor(game: Game, registerMoving: boolean, serverData: any) {
+        super(serverData.activePlayer.name, game);
+
         this.id = serverData.activePlayer.id;
-        this.game = game;
         this.isAlive = true;
+
         this.setCharacterStatistics(serverData.activePlayer);
         this.connectionId = serverData.connectionId;
         this.isControllable = registerMoving;
+
+        this.initSfx();
+        this.createBoxForMove(
+            new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z)
+        );
+        this.createMesh();
+
+        this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
+        this.walkSmoke = WalkSmoke.getParticles(game.getScene(), 25, this.mesh);
+
+        this.inventory = new Character.Inventory(game, this);
+        this.inventory.setItems(serverData.activePlayer.items);
+
+        if (this.isControllable) {
+            this.mesh.isPickable = false;
+            new GUI.Main(game);
+            this.initServerData(serverData);
+            this.refreshCameraPosition();
+            this.refreshHpInGui();
+            this.refreshExperienceInGui();
+            this.refreshEnergyInGui();
+            this.createPlayerLight();
+        }
+
+        this.initPatricleSystemDamage();
+        this.runAnimationStand();
+    }
+
+    private initServerData(serverData) {
+        this.experience = serverData.activePlayer.experience;
+        this.gold = serverData.activePlayer.gold;
+        this.keys = serverData.activePlayer.specialItems.length;
+        this.experiencePercentages = serverData.activePlayer.experiencePercentages;
+        this.lvl = serverData.activePlayer.lvl;
+        this.freeAttributesPoints = serverData.activePlayer.freeAttributesPoints;
+        this.freeSkillPoints = serverData.activePlayer.freeSkillPoints;
+        this.name = serverData.activePlayer.name;
+        // this.setCharacterSkills(serverData.skills);
+        this.setCharacterSkills([
+            {
+                type: 1,
+                damage: 1,
+                cooldown: 1,
+                stock: 1
+            },
+            {
+                type: 2,
+                damage: 1,
+                cooldown: 1,
+                stock: 1
+            },
+            {
+                type: 3,
+                damage: 1,
+                cooldown: 1,
+                stock: 1
+            },
+            {
+                type: 4,
+                damage: 1,
+                cooldown: 1,
+                stock: 1
+            }
+        ]);
+    }
+
+    private createPlayerLight() {
+        const game = this.game;
+        const playerLight = new BABYLON.SpotLight("playerLightSpot",
+            new BABYLON.Vector3(0, 45, 0),
+            new BABYLON.Vector3(0, -1, 0),
+            null,
+            null,
+            game.getScene());
+        playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
+        playerLight.angle = 0.7;
+        playerLight.exponent = 70;
+        playerLight.intensity = 0.8;
+        playerLight.parent = this.mesh;
+        playerLight.autoExtends = false;
+        this.playerLight = playerLight;
+    }
+
+    private createMesh() {
+        const game = this.game;
+
+        let mesh = game.factories['character'].createClone('Warrior', true);
+        mesh.skeleton.enableBlending(0.2);
+        mesh.alwaysSelectAsActiveMesh = true;
+        mesh.parent = this.meshForMove;
+        mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+
+        this.mesh = mesh;
+
+        return mesh;
+    }
+
+    private initSfx() {
+        const game = this.game;
+
         this.sfxWalk = new BABYLON.Sound("CharacterWalk", "assets/sounds/character/walk/1.mp3", game.getScene(), null, {
             loop: true,
             autoplay: false
@@ -33,88 +134,6 @@ class Player extends AbstractCharacter {
             loop: false,
             autoplay: false
         });
-
-        let mesh = game.factories['character'].createClone('Warrior', true);
-        mesh.skeleton.enableBlending(0.2);
-        mesh.alwaysSelectAsActiveMesh = true;
-
-        ///Create box mesh for moving
-        this.createBoxForMove(game.getScene());
-        this.meshForMove.position = new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z);
-        mesh.parent = this.meshForMove;
-
-        this.mesh = mesh;
-        this.bloodParticles = new Particles.Blood(game, this.mesh).particleSystem;
-        this.walkSmoke = new Particles.WalkSmoke(game, this.mesh).particleSystem;
-
-        mesh.actionManager = new BABYLON.ActionManager(game.getScene());
-        this.inventory = new Character.Inventory(game, this);
-        this.inventory.setItems(serverData.activePlayer.items);
-
-        if (this.isControllable) {
-            this.mesh.isPickable = false;
-
-            new GUI.Main(game);
-
-            this.experience = serverData.activePlayer.experience;
-            this.gold = serverData.activePlayer.gold;
-            this.keys = serverData.activePlayer.specialItems.length;
-            this.experiencePercentages = serverData.activePlayer.experiencePercentages;
-            this.lvl = serverData.activePlayer.lvl;
-            this.freeAttributesPoints = serverData.activePlayer.freeAttributesPoints;
-            this.freeSkillPoints = serverData.activePlayer.freeSkillPoints;
-            this.name = serverData.activePlayer.name;
-            // this.setCharacterSkills(serverData.skills);
-            this.setCharacterSkills([
-                {
-                    type: 1,
-                    damage: 1,
-                    cooldown: 1,
-                    stock: 1
-                },
-                {
-                    type: 2,
-                    damage: 1,
-                    cooldown: 1,
-                    stock: 1
-                },
-                {
-                    type: 3,
-                    damage: 1,
-                    cooldown: 1,
-                    stock: 1
-                },
-                {
-                    type: 4,
-                    damage: 1,
-                    cooldown: 1,
-                    stock: 1
-                }
-            ]);
-
-            this.refreshCameraPosition();
-            this.refreshHpInGui();
-            this.refreshExperienceInGui();
-            this.refreshEnergyInGui();
-
-            const playerLight = new BABYLON.SpotLight("playerLightSpot",
-                new BABYLON.Vector3(0, 45, 0),
-                new BABYLON.Vector3(0, -1, 0),
-                null,
-                null,
-                game.getScene());
-            playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-            playerLight.angle = 0.7;
-            playerLight.exponent = 70;
-            playerLight.intensity = 0.8;
-            playerLight.parent = this.mesh;
-            playerLight.autoExtends = false;
-            this.playerLight = playerLight;
-        }
-
-        super(serverData.activePlayer.name, game);
-
-        this.runAnimationStand();
     }
 
     public initGodRay() {
@@ -134,8 +153,8 @@ class Player extends AbstractCharacter {
         let self = this;
         this.skills = [];
 
-        if(skills) {
-            skills.forEach(function(skill, key) {
+        if (skills) {
+            skills.forEach(function (skill, key) {
                 let playerSkill = skillManager.getSkill(skill.type);
                 playerSkill.damage = (skill.damage) ? skill.damage : 0;
                 playerSkill.stock = (skill.stock) ? skill.stock : 0;
@@ -162,20 +181,20 @@ class Player extends AbstractCharacter {
     }
 
     public refreshExperienceInGui() {
-        this.game.gui.playerBottomPanel.expBar.width = this.experiencePercentages/100;
-        this.game.gui.playerBottomPanel.expBarText.text = this.experiencePercentages+'%';
+        this.game.gui.playerBottomPanel.expBar.width = this.experiencePercentages / 100;
+        this.game.gui.playerBottomPanel.expBarText.text = this.experiencePercentages + '%';
     }
 
     public refreshEnergyInGui() {
         let percentage = Math.round(this.statistics.energy * 100 / this.statistics.energyMax);
-        this.game.gui.playerBottomPanel.energyBar.width = percentage/100;
-        this.game.gui.playerBottomPanel.energyBarText.text = this.statistics.energy+' / '+ this.statistics.energyMax;
+        this.game.gui.playerBottomPanel.energyBar.width = percentage / 100;
+        this.game.gui.playerBottomPanel.energyBarText.text = this.statistics.energy + ' / ' + this.statistics.energyMax;
     }
 
     public refreshHpInGui() {
         let percentage = Math.round(this.statistics.hp * 100 / this.statistics.hpMax);
-        this.game.gui.playerBottomPanel.hpBar.width = percentage/100;
-        this.game.gui.playerBottomPanel.hpBarText.text = this.statistics.hp+' / '+ this.statistics.hpMax;
+        this.game.gui.playerBottomPanel.hpBar.width = percentage / 100;
+        this.game.gui.playerBottomPanel.hpBarText.text = this.statistics.hp + ' / ' + this.statistics.hpMax;
 
     }
 
@@ -187,9 +206,9 @@ class Player extends AbstractCharacter {
     }
 
     public setNewLvl() {
-        this.game.gui.playerLogsPanel.addText('New lvl '+this.lvl+'', 'red');
+        this.game.gui.playerLogsPanel.addText('New lvl ' + this.lvl + '', 'red');
         this.game.gui.playerLogsPanel.addText('You got 5 attribute points', 'red');
-        this.game.gui.playerLogsPanel.addText('You got 1 skill point '+this.lvl+'', 'red');
+        this.game.gui.playerLogsPanel.addText('You got 1 skill point ' + this.lvl + '', 'red');
 
         this.refreshExperienceInGui();
 
@@ -205,7 +224,7 @@ class Player extends AbstractCharacter {
             self.game.getScene().unregisterBeforeRender(this.dynamicFunction);
         }
 
-        this.dynamicFunction = function() {
+        this.dynamicFunction = function () {
             if (mesh.intersectsPoint(targetPointVector3)) {
                 self.game.getScene().unregisterBeforeRender(self.dynamicFunction);
 

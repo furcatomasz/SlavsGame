@@ -8,9 +8,9 @@ abstract class AbstractCharacter {
     public static ANIMATION_SKILL_01:string = 'Skill01';
     public static ANIMATION_SKILL_02:string = 'Skill02';
 
-    public mesh:BABYLON.Mesh;
+    public mesh:BABYLON.AbstractMesh;
     public meshForMove:BABYLON.Mesh;
-    public id:string;
+    public id:any;
     public name:string;
 
     /** Character atuts */
@@ -27,7 +27,9 @@ abstract class AbstractCharacter {
     public sfxWalk: BABYLON.Sound;
     protected sfxHit: BABYLON.Sound;
 
-    public bloodParticles: BABYLON.GPUParticleSystem;
+    public bloodParticles: BABYLON.ParticleSystem;
+    public walkSmoke: BABYLON.GPUParticleSystem;
+
     public dynamicFunction;
 
     public particleSystemEmitter;
@@ -35,11 +37,9 @@ abstract class AbstractCharacter {
     constructor(name:string, game:Game) {
         this.name = name;
         this.game = game;
-
-        this.initPatricleSystemDamage();
     }
 
-    private initPatricleSystemDamage() {
+    protected initPatricleSystemDamage() {
         let emitterDamage = BABYLON.Mesh.CreateBox("emitter0", 0.1, this.game.getScene());
         emitterDamage.parent = this.mesh;
         emitterDamage.position.y = 4;
@@ -50,7 +50,6 @@ abstract class AbstractCharacter {
     }
 
     public showDamage(damage) {
-        let self = this;
         let dynamicTexture = new BABYLON.DynamicTexture(null, 128, this.game.getScene(), true);
         let font = "44px RuslanDisplay";
         dynamicTexture.drawText(damage, 64, 80, font, "white", null, true, true);
@@ -78,11 +77,13 @@ abstract class AbstractCharacter {
         },1500);
     }
 
+    protected createBoxForMove(position: BABYLON.Vector3) {
+        const scene = this.game.getScene();
 
-    protected createBoxForMove(scene: BABYLON.Scene) {
         this.meshForMove = BABYLON.Mesh.CreateBox(this.name+'_moveBox', 4, scene, false);
         this.meshForMove.checkCollisions = true;
         this.meshForMove.visibility = 0;
+        this.meshForMove.position = position;
 
         return this;
     }

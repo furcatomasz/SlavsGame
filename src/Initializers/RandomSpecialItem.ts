@@ -12,19 +12,19 @@ class RandomSpecialItem {
         let scene = game.getScene();
         let tooltip;
         let position = randomSpecialItemData.position;
-        let mushroomMesh = game.factories['nature_grain'].createClone(randomSpecialItemData.specialItem.meshName);
+        let randomItemMesh = game.factories['nature_grain'].createClone(randomSpecialItemData.specialItem.meshName);
 
-        mushroomMesh.position = new BABYLON.Vector3(position.x, position.y, position.z);
-        mushroomMesh.isPickable = true;
+        randomItemMesh.position = new BABYLON.Vector3(position.x, position.y, position.z);
+        randomItemMesh.isPickable = true;
 
-        let particleSystem = new Particles.DroppedItem(game, mushroomMesh);
+        let particleSystem = new Particles.DroppedItem(game, randomItemMesh);
         particleSystem.particleSystem.start();
 
-        this.mesh = mushroomMesh;
+        this.mesh = randomItemMesh;
         this.mesh.actionManager = new BABYLON.ActionManager(scene);
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
             function () {
-                tooltip = new TooltipMesh(mushroomMesh, randomSpecialItemData.specialItem.name);
+                tooltip = new TooltipMesh(randomItemMesh, randomSpecialItemData.specialItem.name);
             }));
 
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
@@ -34,7 +34,9 @@ class RandomSpecialItem {
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPickTrigger,
             function () {
-                game.client.socket.emit('pickRandomItem', randomSpecialItemKey);
+                game.goToMeshFunction = GoToMeshAndRunAction.execute(game, randomItemMesh, () => {
+                    game.client.socket.emit('pickRandomItem', randomSpecialItemKey);
+                });
                 tooltip.container.dispose();
             })
         );

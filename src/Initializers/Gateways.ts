@@ -33,20 +33,15 @@ class Gateway {
         gateway.actionManager.registerAction(
             new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
                 function () {
-                    if (Game.distanceVector(game.player.meshForMove.position, gateway.position) > 8) {
-                        game.gui.playerLogsQuests.addText('You are too far away!', 'yellow');
-
-                        return;
-                    }
-
                     if (!isActive) {
                         game.gui.playerLogsQuests.addText('This gateway is locked!', 'yellow');
 
                         return;
                     }
 
-
-                    game.client.socket.emit('changeSceneTrigger', openSceneType);
+                    game.goToMeshFunction = GoToMeshAndRunAction.execute(game, gateway, () => {
+                        game.client.socket.emit('changeSceneTrigger', openSceneType);
+                    });
 
                 }));
 

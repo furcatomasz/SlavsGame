@@ -45,6 +45,11 @@ class Game {
      */
     public frumstrumEnemiesInterval;
 
+    /**
+     *  Interval with checking enemies in frumstrum
+     */
+    public goToMeshFunction;
+
     constructor(canvasElement: HTMLCanvasElement, serverUrl: string,  accessToken: string, isMobile: boolean = false, isDebug: boolean = false) {
         let self = this;
 

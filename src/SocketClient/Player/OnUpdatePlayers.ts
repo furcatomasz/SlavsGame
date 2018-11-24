@@ -9,17 +9,13 @@ class OnUpdatePlayers extends SocketEvent {
 
         this.socket.on('updatePlayer', function (updatedPlayer) {
             let player = null;
-            if (updatedPlayer.activePlayer.id == game.player.id) {
-                player = game.player;
-            } else {
-                game.remotePlayers.forEach(function (remotePlayer, key) {
-                    if (remotePlayer.id == updatedPlayer.activePlayer.id) {
-                        player = game.remotePlayers[key];
-                        return;
-                    }
-                });
-            }
 
+            game.remotePlayers.forEach(function (remotePlayer, key) {
+                if (remotePlayer.id == updatedPlayer.activePlayer.id) {
+                    player = game.remotePlayers[key];
+                    return;
+                }
+            });
 
             ///action when hp of character is changed
             if (player.statistics.hp != updatedPlayer.activePlayer.statistics.hp) {
@@ -53,7 +49,11 @@ class OnUpdatePlayers extends SocketEvent {
                 }
 
                 let attackAnimation = (Game.randomNumber(1, 2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
-                player.runAnimationHit(attackAnimation, null, null);
+                player.runAnimationHit(attackAnimation, () => {
+                    if (player.dynamicFunction !== undefined) {
+                        game.getScene().unregisterBeforeRender(player.dynamicFunction);
+                    }
+                });
 
                 player.statistics.energy = updatedPlayer.activePlayer.statistics.energy;
                 player.refreshEnergyInGui();

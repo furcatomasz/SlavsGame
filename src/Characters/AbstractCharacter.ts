@@ -29,9 +29,7 @@ abstract class AbstractCharacter {
 
     public bloodParticles: BABYLON.ParticleSystem;
     public walkSmoke: BABYLON.GPUParticleSystem;
-
     public dynamicFunction;
-
     public particleSystemEmitter;
 
     constructor(name:string, game:Game) {

@@ -34,7 +34,6 @@ class Monster extends AbstractCharacter {
 
         // game.sceneManager.options.addMeshToDynamicShadowGenerator(mesh);
 
-
         this.mesh = mesh;
     }
 
@@ -55,6 +54,7 @@ class Monster extends AbstractCharacter {
                 self.game.gui.characterTopHp.showHpCharacter(self);
             }));
 
+        let attackOnce = false;
         let intervalAttackFunction = () => {
             if (!game.player.isAttack) {
                 game.client.socket.emit('attack', {
@@ -67,18 +67,26 @@ class Monster extends AbstractCharacter {
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
             pointer => {
-                if (self.game.player.isAlive) {
-                    game.controller.attackPoint = pointer.meshUnderPointer;
-                    game.controller.targetPoint = null;
-                    self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 50);
-                    intervalAttackFunction();
-                }
+                game.controller.attackPoint = pointer.meshUnderPointer;
+                game.controller.targetPoint = null;
+                attackOnce = false;
+
+                game.goToMeshFunction = GoToMeshAndRunAction.execute(game, self.meshForMove, () => {
+                    game.player.runAnimationDeathOrStand();
+                    setTimeout(() => {
+                        intervalAttackFunction();
+
+                        if(self.game.controller.attackPoint && !attackOnce) {
+                            self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
+                        }
+                    }, 250);
+                });
             }));
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger,
             () => {
+                attackOnce = true;
                 clearInterval(self.intervalAttackRegisteredFunction);
-                self.game.controller.attackPoint = null;
             }));
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger,
@@ -87,11 +95,6 @@ class Monster extends AbstractCharacter {
                 self.game.controller.attackPoint = null;
             }));
 
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
-            () => {
-                clearInterval(self.intervalAttackRegisteredFunction);
-                self.game.controller.attackPoint = null;
-            }));
     }
 
     private initSfx() {

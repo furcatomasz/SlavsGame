@@ -12,15 +12,20 @@ class Mouse {
         let self = this;
         let clickTrigger = false;
         let lastUpdate = new Date().getTime() / 1000;
+        let game = this.game;
         const clickParticleSystem = ClickParticles.getParticles(scene);
 
         scene.onPointerUp = function (evt, pickResult) {
             if (clickTrigger) {
                 clickTrigger = false;
                 let pickedMesh = pickResult.pickedMesh;
-
                 if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
                     clickParticleSystem.start();
+
+                    if(game.goToMeshFunction) {
+                        scene.unregisterBeforeRender(game.goToMeshFunction);
+                        game.goToMeshFunction = null;
+                    }
                 }
             }
         }

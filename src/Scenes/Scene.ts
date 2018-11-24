@@ -38,6 +38,10 @@ abstract class Scene {
         game.frumstrumEnemiesInterval = setInterval(function() {
             let activeEnemies = 0;
             game.enemies.forEach(function(enemy) {
+                if(enemy.isDeath) {
+                    return;
+                }
+
                 let isActiveMesh = gameCamera.isInFrustum(enemy.mesh);
                 if(isActiveMesh) {
                     activeEnemies = 1;

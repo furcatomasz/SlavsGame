@@ -17,19 +17,20 @@ namespace Character.Skills {
 
         public showAnimation(skillTime: number, cooldownTime: number) {
             const game = this.game;
+            let self = this;
             this.showReloadInGUI(cooldownTime);
-            game.player.runAnimationSkill(this.animationName, function () {
-            }, function () {
-                game.player.mesh.skeleton.createAnimationRange('loopBlock', 70, 80);
+            game.player.runAnimationSkill(this.animationName, () => {
+                self.isInUse = true;
+            }, () => {
                 game.player.mesh.skeleton.beginAnimation('loopBlock', true);
             }, this.animationLoop, this.animationSpeed, false);
 
-            setTimeout(function () {
-                game.player.runAnimationSkill('blockB');
+            setTimeout(() => {
+                game.player.runAnimationSkill('blockB', null, () => {
+                    self.isInUse = false;
+                });
             }, skillTime);
         }
-
-
 
     }
 }

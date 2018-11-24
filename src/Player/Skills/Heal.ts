@@ -1,6 +1,6 @@
 namespace Character.Skills {
     export class Heal extends Character.Skills.AbstractSkill {
-        static TYPE = 1;
+        static TYPE = 5;
 
         public getType() {
             return Character.Skills.Heal.TYPE;
@@ -15,7 +15,6 @@ namespace Character.Skills {
             let self = this;
             let listener = function listener() {
                 let effectEmitter = new Particles.Heal(game, game.player.mesh);
-                effectEmitter.initParticleSystem();
                 self.effectEmitter = effectEmitter;
 
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
@@ -25,9 +24,10 @@ namespace Character.Skills {
 
         }
 
-        protected registerHotKey(game: Game) {
+        showAnimation(skillTime: number, cooldownTime: number) {
+            const game = this.game;
             let self = this;
-
+            this.showReloadInGUI(cooldownTime);
 
             let alpha = 0;
             let animateFunction = function () {
@@ -37,36 +37,21 @@ namespace Character.Skills {
 
                 alpha += 0.24 * game.getScene().getAnimationRatio();
             };
-            let listener = function listener() {
-                game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                    if (event.sourceEvent.key == self.getType()) {
-                        game.controller.attackPoint = null;
 
-                        game.player.runAnimationSkill(self.animationName, function () {
-                            self.effectEmitter.particleSystem.start();
-                            game.getScene().registerBeforeRender(animateFunction);
-                            game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function() {
-                                game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
-                            });
+            game.player.runAnimationSkill(self.animationName, function () {
+                self.effectEmitter.particleSystem.start();
+                game.getScene().registerBeforeRender(animateFunction);
+            }, function () {
+                self.effectEmitter.particleSystem.stop();
+                game.getScene().unregisterBeforeRender(animateFunction);
+            }, self.animationLoop, self.animationSpeed);
 
-                        }, function () {
-                            self.effectEmitter.particleSystem.stop();
-                            game.getScene().unregisterBeforeRender(animateFunction);
+            if(self.animationTime) {
+                setTimeout(function() {
+                    game.player.animation.stop();
+                }, self.animationTime);
+            }
 
-                        }, self.animationLoop, self.animationSpeed);
-
-                        if(self.animationTime) {
-                            setTimeout(function() {
-                                game.player.animation.stop();
-                            }, self.animationTime);
-                        }
-
-                    }
-                }));
-
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
         }
 
     }

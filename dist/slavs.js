@@ -149,8 +149,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = false;
-        scene.workerCollisions = false;
+        scene.audioEnabled = true;
         return this;
     };
     Scene.prototype.initFactories = function (scene) {
@@ -568,6 +567,37 @@ var SocketIOClient = /** @class */ (function () {
     };
     return SocketIOClient;
 }());
+var GoToMeshAndRunAction = /** @class */ (function () {
+    function GoToMeshAndRunAction() {
+    }
+    GoToMeshAndRunAction.execute = function (game, mesh, action) {
+        var player = game.player;
+        var targetPosition = mesh.position;
+        var scene = game.getScene();
+        if (game.goToMeshFunction) {
+            scene.unregisterBeforeRender(game.goToMeshFunction);
+            game.goToMeshFunction = null;
+        }
+        var checkIntersectionFunction = function () {
+            if (player.meshForMove.intersectsMesh(mesh)) {
+                game.getScene().unregisterBeforeRender(checkIntersectionFunction);
+                action();
+            }
+        };
+        if (!player.meshForMove.intersectsMesh(mesh)) {
+            player.runPlayerToPosition(targetPosition);
+            game.client.socket.emit('setTargetPoint', {
+                position: targetPosition
+            });
+            scene.registerBeforeRender(checkIntersectionFunction);
+        }
+        else {
+            action();
+        }
+        return checkIntersectionFunction;
+    };
+    return GoToMeshAndRunAction;
+}());
 var AbstractAnimation = /** @class */ (function () {
     function AbstractAnimation() {
     }
@@ -682,7 +712,7 @@ var AbstractCharacter = /** @class */ (function () {
         var self = this;
         var mesh = this.mesh;
         var skeleton = mesh.skeleton;
-        if (callbackEnd) {
+        if (callbackStart) {
             callbackStart();
         }
         self.animation = skeleton.beginAnimation(animation, loop, 1 * speed, function () {
@@ -754,204 +784,6 @@ var AbstractCharacter = /** @class */ (function () {
     AbstractCharacter.ANIMATION_SKILL_02 = 'Skill02';
     return AbstractCharacter;
 }());
-var Player = /** @class */ (function (_super) {
-    __extends(Player, _super);
-    function Player(game, registerMoving, serverData) {
-        var _this = _super.call(this, serverData.activePlayer.name, game) || this;
-        _this.id = serverData.activePlayer.id;
-        _this.isAlive = true;
-        _this.setCharacterStatistics(serverData.activePlayer);
-        _this.connectionId = serverData.connectionId;
-        _this.isControllable = registerMoving;
-        _this.initSfx();
-        _this.createBoxForMove(new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z));
-        _this.createMesh();
-        _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
-        _this.walkSmoke = WalkSmoke.getParticles(game.getScene(), 25, _this.mesh);
-        _this.inventory = new Character.Inventory(game, _this);
-        _this.inventory.setItems(serverData.activePlayer.items);
-        if (_this.isControllable) {
-            _this.mesh.isPickable = false;
-            new GUI.Main(game);
-            _this.initServerData(serverData);
-            _this.refreshCameraPosition();
-            _this.refreshHpInGui();
-            _this.refreshExperienceInGui();
-            _this.refreshEnergyInGui();
-            _this.createPlayerLight();
-        }
-        _this.initPatricleSystemDamage();
-        _this.runAnimationStand();
-        return _this;
-    }
-    Player.prototype.initServerData = function (serverData) {
-        this.experience = serverData.activePlayer.experience;
-        this.gold = serverData.activePlayer.gold;
-        this.keys = serverData.activePlayer.specialItems.length;
-        this.experiencePercentages = serverData.activePlayer.experiencePercentages;
-        this.lvl = serverData.activePlayer.lvl;
-        this.freeAttributesPoints = serverData.activePlayer.freeAttributesPoints;
-        this.freeSkillPoints = serverData.activePlayer.freeSkillPoints;
-        this.name = serverData.activePlayer.name;
-        // this.setCharacterSkills(serverData.skills);
-        this.setCharacterSkills([
-            {
-                type: 1,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
-            },
-            {
-                type: 2,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
-            },
-            {
-                type: 3,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
-            },
-            {
-                type: 4,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
-            }
-        ]);
-    };
-    Player.prototype.createPlayerLight = function () {
-        var game = this.game;
-        var playerLight = new BABYLON.SpotLight("playerLightSpot", new BABYLON.Vector3(0, 45, 0), new BABYLON.Vector3(0, -1, 0), null, null, game.getScene());
-        playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
-        playerLight.angle = 0.7;
-        playerLight.exponent = 70;
-        playerLight.intensity = 0.8;
-        playerLight.parent = this.mesh;
-        playerLight.autoExtends = false;
-        this.playerLight = playerLight;
-    };
-    Player.prototype.createMesh = function () {
-        var game = this.game;
-        var mesh = game.factories['character'].createClone('Warrior', true);
-        mesh.skeleton.enableBlending(0.2);
-        mesh.alwaysSelectAsActiveMesh = true;
-        mesh.parent = this.meshForMove;
-        mesh.actionManager = new BABYLON.ActionManager(game.getScene());
-        this.mesh = mesh;
-        return mesh;
-    };
-    Player.prototype.initSfx = function () {
-        var game = this.game;
-        this.sfxWalk = new BABYLON.Sound("CharacterWalk", "assets/sounds/character/walk/1.mp3", game.getScene(), null, {
-            loop: true,
-            autoplay: false
-        });
-        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
-            loop: false,
-            autoplay: false
-        });
-    };
-    Player.prototype.initGodRay = function () {
-        GodRay.createGodRay(this.game, this.meshForMove);
-        return this;
-    };
-    Player.prototype.setCharacterStatistics = function (playerServerData) {
-        this.statistics = playerServerData.statistics;
-        this.statisticsAll = playerServerData.allStatistics;
-        this.attributes = playerServerData.attributes;
-    };
-    ;
-    Player.prototype.setCharacterSkills = function (skills) {
-        var skillManager = new Character.Skills.SkillsManager(this.game);
-        var self = this;
-        this.skills = [];
-        if (skills) {
-            skills.forEach(function (skill, key) {
-                var playerSkill = skillManager.getSkill(skill.type);
-                playerSkill.damage = (skill.damage) ? skill.damage : 0;
-                playerSkill.stock = (skill.stock) ? skill.stock : 0;
-                playerSkill.cooldown = (skill.cooldown) ? skill.cooldown : 0;
-                self.skills[playerSkill.getType()] = playerSkill;
-            });
-        }
-        return this;
-    };
-    ;
-    Player.prototype.removeFromWorld = function () {
-        this.mesh.dispose();
-    };
-    Player.prototype.refreshCameraPosition = function () {
-        var camera = this.game.getScene().getCameraByName('gameCamera');
-        camera.position = this.meshForMove.position.clone();
-        camera.position.y = 30;
-        camera.position.z -= 22;
-        camera.position.x -= 22;
-    };
-    Player.prototype.refreshExperienceInGui = function () {
-        this.game.gui.playerBottomPanel.expBar.width = this.experiencePercentages / 100;
-        this.game.gui.playerBottomPanel.expBarText.text = this.experiencePercentages + '%';
-    };
-    Player.prototype.refreshEnergyInGui = function () {
-        var percentage = Math.round(this.statistics.energy * 100 / this.statistics.energyMax);
-        this.game.gui.playerBottomPanel.energyBar.width = percentage / 100;
-        this.game.gui.playerBottomPanel.energyBarText.text = this.statistics.energy + ' / ' + this.statistics.energyMax;
-    };
-    Player.prototype.refreshHpInGui = function () {
-        var percentage = Math.round(this.statistics.hp * 100 / this.statistics.hpMax);
-        this.game.gui.playerBottomPanel.hpBar.width = percentage / 100;
-        this.game.gui.playerBottomPanel.hpBarText.text = this.statistics.hp + ' / ' + this.statistics.hpMax;
-    };
-    Player.prototype.addExperience = function (experince, experiencePercentages) {
-        this.experience += experince;
-        this.experiencePercentages = experiencePercentages;
-        this.refreshExperienceInGui();
-    };
-    Player.prototype.setNewLvl = function () {
-        this.game.gui.playerLogsPanel.addText('New lvl ' + this.lvl + '', 'red');
-        this.game.gui.playerLogsPanel.addText('You got 5 attribute points', 'red');
-        this.game.gui.playerLogsPanel.addText('You got 1 skill point ' + this.lvl + '', 'red');
-        this.refreshExperienceInGui();
-        this.initGodRay();
-    };
-    Player.prototype.runPlayerToPosition = function (targetPointVector3) {
-        var self = this;
-        var mesh = this.meshForMove;
-        mesh.lookAt(targetPointVector3);
-        if (this.dynamicFunction !== undefined) {
-            self.game.getScene().unregisterBeforeRender(this.dynamicFunction);
-        }
-        this.dynamicFunction = function () {
-            if (mesh.intersectsPoint(targetPointVector3)) {
-                self.game.getScene().unregisterBeforeRender(self.dynamicFunction);
-                if (self.animation) {
-                    self.animation.stop();
-                }
-            }
-            else {
-                var rotation = mesh.rotation;
-                if (mesh.rotationQuaternion) {
-                    rotation = mesh.rotationQuaternion.toEulerAngles();
-                }
-                rotation.negate();
-                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / self.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / self.getWalkSpeed());
-                mesh.moveWithCollisions(forwards);
-                mesh.position.y = 0;
-                self.game.player.refreshCameraPosition();
-                self.runAnimationWalk();
-            }
-        };
-        this.game.getScene().registerBeforeRender(this.dynamicFunction);
-    };
-    Player.prototype.onWalkStart = function () {
-        this.walkSmoke.start();
-    };
-    Player.prototype.onWalkEnd = function () {
-        this.walkSmoke.stop();
-    };
-    return Player;
-}(AbstractCharacter));
 var Mouse = /** @class */ (function () {
     function Mouse(game) {
         this.game = game;
@@ -977,21 +809,19 @@ var Mouse = /** @class */ (function () {
         };
         scene.onPointerDown = function (evt, pickResult) {
             var pickedMesh = pickResult.pickedMesh;
-            if (self.game.player.isAttack || !self.game.player.isAlive) {
+            if (!self.game.player.isAlive || game.player.isAnySkillIsInUse()) {
                 return;
             }
             clickTrigger = true;
-            if (pickedMesh) {
-                if ((pickedMesh.name.search("Ground") >= 0)) {
-                    self.attackPoint = null;
-                    self.targetPoint = pickResult.pickedPoint;
-                    self.targetPoint.y = 0;
-                    clickParticleSystem.emitter = new BABYLON.Vector3(self.targetPoint.x, 0, self.targetPoint.z); // the starting location
-                    self.game.player.runPlayerToPosition(self.targetPoint);
-                    self.game.client.socket.emit('setTargetPoint', {
-                        position: self.targetPoint
-                    });
-                }
+            if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
+                self.attackPoint = null;
+                self.targetPoint = pickResult.pickedPoint;
+                self.targetPoint.y = 0;
+                clickParticleSystem.emitter = new BABYLON.Vector3(self.targetPoint.x, 0, self.targetPoint.z); // the starting location
+                self.game.player.runPlayerToPosition(self.targetPoint);
+                self.game.client.socket.emit('setTargetPoint', {
+                    position: self.targetPoint
+                });
             }
         };
         scene.onPointerMove = function (evt, pickResult) {
@@ -1375,37 +1205,6 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
         // new BABYLON.Sound("Forest night", "assets/sounds/music/theme.mp3", scene, null, { loop: true, autoplay: true, volume: 1 });
     }
     return EnvironmentSelectCharacter;
-}());
-var GoToMeshAndRunAction = /** @class */ (function () {
-    function GoToMeshAndRunAction() {
-    }
-    GoToMeshAndRunAction.execute = function (game, mesh, action) {
-        var player = game.player;
-        var targetPosition = mesh.position;
-        var scene = game.getScene();
-        if (game.goToMeshFunction) {
-            scene.unregisterBeforeRender(game.goToMeshFunction);
-            game.goToMeshFunction = null;
-        }
-        var checkIntersectionFunction = function () {
-            if (player.meshForMove.intersectsMesh(mesh)) {
-                game.getScene().unregisterBeforeRender(checkIntersectionFunction);
-                action();
-            }
-        };
-        if (!player.meshForMove.intersectsMesh(mesh)) {
-            player.runPlayerToPosition(targetPosition);
-            game.client.socket.emit('setTargetPoint', {
-                position: targetPosition
-            });
-            scene.registerBeforeRender(checkIntersectionFunction);
-        }
-        else {
-            action();
-        }
-        return checkIntersectionFunction;
-    };
-    return GoToMeshAndRunAction;
 }());
 var Factories;
 (function (Factories) {
@@ -2781,6 +2580,213 @@ var Character;
     }());
     Character.Inventory = Inventory;
 })(Character || (Character = {}));
+var Player = /** @class */ (function (_super) {
+    __extends(Player, _super);
+    function Player(game, registerMoving, serverData) {
+        var _this = _super.call(this, serverData.activePlayer.name, game) || this;
+        _this.id = serverData.activePlayer.id;
+        _this.isAlive = true;
+        _this.setCharacterStatistics(serverData.activePlayer);
+        _this.connectionId = serverData.connectionId;
+        _this.isControllable = registerMoving;
+        _this.initSfx();
+        _this.createBoxForMove(new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z));
+        _this.createMesh();
+        _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
+        _this.walkSmoke = WalkSmoke.getParticles(game.getScene(), 25, _this.mesh);
+        _this.inventory = new Character.Inventory(game, _this);
+        _this.inventory.setItems(serverData.activePlayer.items);
+        if (_this.isControllable) {
+            _this.mesh.isPickable = false;
+            new GUI.Main(game);
+            _this.initServerData(serverData);
+            _this.refreshCameraPosition();
+            _this.refreshHpInGui();
+            _this.refreshExperienceInGui();
+            _this.refreshEnergyInGui();
+            _this.createPlayerLight();
+        }
+        _this.initPatricleSystemDamage();
+        _this.runAnimationStand();
+        return _this;
+    }
+    Player.prototype.initServerData = function (serverData) {
+        this.experience = serverData.activePlayer.experience;
+        this.gold = serverData.activePlayer.gold;
+        this.keys = serverData.activePlayer.specialItems.length;
+        this.experiencePercentages = serverData.activePlayer.experiencePercentages;
+        this.lvl = serverData.activePlayer.lvl;
+        this.freeAttributesPoints = serverData.activePlayer.freeAttributesPoints;
+        this.freeSkillPoints = serverData.activePlayer.freeSkillPoints;
+        this.name = serverData.activePlayer.name;
+        // this.setCharacterSkills(serverData.skills);
+        this.setCharacterSkills([
+            {
+                type: 1
+            },
+            {
+                type: 2
+            },
+            {
+                type: 3
+            },
+            {
+                type: 4
+            },
+            {
+                type: 5
+            }
+        ]);
+    };
+    Player.prototype.createPlayerLight = function () {
+        var game = this.game;
+        var playerLight = new BABYLON.SpotLight("playerLightSpot", new BABYLON.Vector3(0, 45, 0), new BABYLON.Vector3(0, -1, 0), null, null, game.getScene());
+        playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
+        playerLight.angle = 0.7;
+        playerLight.exponent = 70;
+        playerLight.intensity = 0.8;
+        playerLight.parent = this.mesh;
+        playerLight.autoExtends = false;
+        this.playerLight = playerLight;
+    };
+    Player.prototype.createMesh = function () {
+        var game = this.game;
+        var mesh = game.factories['character'].createClone('Warrior', true);
+        mesh.skeleton.enableBlending(0.2);
+        mesh.alwaysSelectAsActiveMesh = true;
+        mesh.parent = this.meshForMove;
+        mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+        this.mesh = mesh;
+        mesh.skeleton.createAnimationRange('loopStrongAttack', 340, 350);
+        mesh.skeleton.createAnimationRange('loopBlock', 70, 80);
+        return mesh;
+    };
+    Player.prototype.initSfx = function () {
+        var game = this.game;
+        this.sfxWalk = new BABYLON.Sound("CharacterWalk", "assets/sounds/character/walk/1.mp3", game.getScene(), null, {
+            loop: true,
+            autoplay: false
+        });
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
+    };
+    Player.prototype.initGodRay = function () {
+        GodRay.createGodRay(this.game, this.meshForMove);
+        return this;
+    };
+    Player.prototype.setCharacterStatistics = function (playerServerData) {
+        this.statistics = playerServerData.statistics;
+        this.statisticsAll = playerServerData.allStatistics;
+        this.attributes = playerServerData.attributes;
+    };
+    Player.prototype.setCharacterSkills = function (skills) {
+        var skillManager = new Character.Skills.SkillsManager(this.game);
+        var self = this;
+        this.skills = [];
+        if (skills) {
+            skills.forEach(function (skill, key) {
+                var playerSkill = skillManager.getSkill(skill.type);
+                self.skills[playerSkill.getType()] = playerSkill;
+            });
+        }
+        return this;
+    };
+    Player.prototype.isAnySkillIsInUse = function () {
+        var isInUse = false;
+        this.skills.forEach(function (skill) {
+            if (skill.isInUse === true) {
+                isInUse = true;
+                return;
+            }
+        });
+        if (isInUse === false && this.isAttack) {
+            isInUse = true;
+        }
+        return isInUse;
+    };
+    Player.prototype.removeFromWorld = function () {
+        this.mesh.dispose();
+    };
+    Player.prototype.refreshCameraPosition = function () {
+        var camera = this.game.getScene().getCameraByName('gameCamera');
+        camera.position = this.meshForMove.position.clone();
+        camera.position.y = 30;
+        camera.position.z -= 22;
+        camera.position.x -= 22;
+    };
+    Player.prototype.refreshExperienceInGui = function () {
+        this.game.gui.playerBottomPanel.expBar.width = this.experiencePercentages / 100;
+        this.game.gui.playerBottomPanel.expBarText.text = this.experiencePercentages + '%';
+    };
+    Player.prototype.refreshEnergyInGui = function () {
+        var percentage = Math.round(this.statistics.energy * 100 / this.statistics.energyMax);
+        this.game.gui.playerBottomPanel.energyBar.width = percentage / 100;
+        this.game.gui.playerBottomPanel.energyBarText.text = this.statistics.energy + ' / ' + this.statistics.energyMax;
+    };
+    Player.prototype.refreshHpInGui = function () {
+        var percentage = Math.round(this.statistics.hp * 100 / this.statistics.hpMax);
+        this.game.gui.playerBottomPanel.hpBar.width = percentage / 100;
+        this.game.gui.playerBottomPanel.hpBarText.text = this.statistics.hp + ' / ' + this.statistics.hpMax;
+    };
+    Player.prototype.addExperience = function (experince, experiencePercentages) {
+        this.experience += experince;
+        this.experiencePercentages = experiencePercentages;
+        this.refreshExperienceInGui();
+    };
+    Player.prototype.setNewLvl = function () {
+        this.game.gui.playerLogsPanel.addText('New lvl ' + this.lvl + '', 'red');
+        this.game.gui.playerLogsPanel.addText('You got 5 attribute points', 'red');
+        this.game.gui.playerLogsPanel.addText('You got 1 skill point ' + this.lvl + '', 'red');
+        this.refreshExperienceInGui();
+        this.initGodRay();
+    };
+    Player.prototype.runPlayerToPosition = function (targetPointVector3) {
+        var self = this;
+        var mesh = this.meshForMove;
+        mesh.lookAt(targetPointVector3);
+        this.unregisterMoveWithCollision(false);
+        this.dynamicFunction = function () {
+            if (mesh.intersectsPoint(targetPointVector3)) {
+                self.game.getScene().unregisterBeforeRender(self.dynamicFunction);
+                if (self.animation) {
+                    self.animation.stop();
+                }
+            }
+            else {
+                var rotation = mesh.rotation;
+                if (mesh.rotationQuaternion) {
+                    rotation = mesh.rotationQuaternion.toEulerAngles();
+                }
+                rotation.negate();
+                var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / self.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / self.getWalkSpeed());
+                mesh.moveWithCollisions(forwards);
+                mesh.position.y = 0;
+                self.game.player.refreshCameraPosition();
+                self.runAnimationWalk();
+            }
+        };
+        this.game.getScene().registerBeforeRender(this.dynamicFunction);
+    };
+    Player.prototype.unregisterMoveWithCollision = function (emitPosition) {
+        if (this.dynamicFunction !== undefined) {
+            this.game.getScene().unregisterBeforeRender(this.dynamicFunction);
+        }
+        if (emitPosition) {
+            this.game.client.socket.emit('setTargetPoint', {
+                position: this.meshForMove.position
+            });
+        }
+    };
+    Player.prototype.onWalkStart = function () {
+        this.walkSmoke.start();
+    };
+    Player.prototype.onWalkEnd = function () {
+        this.walkSmoke.stop();
+    };
+    return Player;
+}(AbstractCharacter));
 var Battleground = /** @class */ (function (_super) {
     __extends(Battleground, _super);
     function Battleground() {
@@ -3204,18 +3210,21 @@ var Monster = /** @class */ (function (_super) {
             }
         };
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function (pointer) {
-            game.controller.attackPoint = pointer.meshUnderPointer;
-            game.controller.targetPoint = null;
-            attackOnce = false;
-            game.goToMeshFunction = GoToMeshAndRunAction.execute(game, self.meshForMove, function () {
-                game.player.runAnimationDeathOrStand();
-                setTimeout(function () {
-                    intervalAttackFunction();
-                    if (self.game.controller.attackPoint && !attackOnce) {
-                        self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
-                    }
-                }, 250);
-            });
+            if (!game.player.isAnySkillIsInUse()) {
+                game.controller.attackPoint = pointer.meshUnderPointer;
+                game.controller.targetPoint = null;
+                attackOnce = false;
+                game.goToMeshFunction = GoToMeshAndRunAction.execute(game, self.meshForMove, function () {
+                    game.player.runAnimationDeathOrStand();
+                    game.player.unregisterMoveWithCollision(true);
+                    setTimeout(function () {
+                        intervalAttackFunction();
+                        if (self.game.controller.attackPoint && !attackOnce) {
+                            self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
+                        }
+                    }, 250);
+                });
+            }
         }));
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function () {
             attackOnce = true;
@@ -4202,6 +4211,31 @@ var GUI;
     }(GUI.Popup));
     GUI.NewQuest = NewQuest;
 })(GUI || (GUI = {}));
+var ClickParticles = /** @class */ (function () {
+    function ClickParticles() {
+    }
+    ClickParticles.getParticles = function (scene) {
+        var particleSystem = new BABYLON.ParticleSystem("clickParticles", 50, scene);
+        particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", scene);
+        particleSystem.layerMask = 2;
+        particleSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
+        particleSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+        particleSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+        particleSystem.emitter = new BABYLON.Vector3(0, 2, 0); // the starting location
+        particleSystem.minSize = 0.5;
+        particleSystem.maxSize = 0.5;
+        particleSystem.minLifeTime = 0.5;
+        particleSystem.maxLifeTime = 1.5;
+        particleSystem.emitRate = 20;
+        particleSystem.targetStopDuration = 0.2;
+        particleSystem.createPointEmitter(new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 1, 0));
+        // Speed
+        particleSystem.minEmitPower = 1;
+        particleSystem.maxEmitPower = 3;
+        return particleSystem;
+    };
+    return ClickParticles;
+}());
 var Particles;
 (function (Particles) {
     var FastAttack = /** @class */ (function (_super) {
@@ -4355,31 +4389,6 @@ var Particles;
     }(Particles.AbstractParticle));
     Particles.Tornado = Tornado;
 })(Particles || (Particles = {}));
-var ClickParticles = /** @class */ (function () {
-    function ClickParticles() {
-    }
-    ClickParticles.getParticles = function (scene) {
-        var particleSystem = new BABYLON.ParticleSystem("clickParticles", 50, scene);
-        particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", scene);
-        particleSystem.layerMask = 2;
-        particleSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
-        particleSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
-        particleSystem.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
-        particleSystem.emitter = new BABYLON.Vector3(0, 2, 0); // the starting location
-        particleSystem.minSize = 0.5;
-        particleSystem.maxSize = 0.5;
-        particleSystem.minLifeTime = 0.5;
-        particleSystem.maxLifeTime = 1.5;
-        particleSystem.emitRate = 20;
-        particleSystem.targetStopDuration = 0.2;
-        particleSystem.createPointEmitter(new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 1, 0));
-        // Speed
-        particleSystem.minEmitPower = 1;
-        particleSystem.maxEmitPower = 3;
-        return particleSystem;
-    };
-    return ClickParticles;
-}());
 var Particles;
 (function (Particles) {
     var SolidParticleSystem;
@@ -4635,16 +4644,11 @@ var Character;
     var Skills;
     (function (Skills) {
         var AbstractSkill = /** @class */ (function () {
-            function AbstractSkill(game, cooldown, damage, stock) {
-                if (cooldown === void 0) { cooldown = 0; }
-                if (damage === void 0) { damage = 0; }
-                if (stock === void 0) { stock = 0; }
-                this.cooldown = cooldown;
-                this.damage = damage;
-                this.stock = stock;
+            function AbstractSkill(game) {
                 this.animationTime = 0;
                 this.animationLoop = false;
                 this.game = game;
+                this.isReady = true;
                 this.registerDefaults(game);
                 this.registerHotKey(game);
                 this.registerAnimations();
@@ -4655,10 +4659,25 @@ var Character;
             };
             AbstractSkill.prototype.registerHotKey = function (game) {
                 var self = this;
-                var listener = function listener() {
+                var listener = function () {
+                    var player = game.player;
                     game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                        if (event.sourceEvent.key == self.getType()) {
+                        if (event.sourceEvent.key == self.getType()
+                            && self.isReady
+                            && !player.isAnySkillIsInUse()) {
+                            var position = player.meshForMove.position;
+                            var rotation = player.meshForMove.rotation;
+                            if (player.meshForMove.rotationQuaternion) {
+                                rotation = player.meshForMove.rotationQuaternion.toEulerAngles();
+                            }
+                            rotation.negate();
+                            var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 1, 0, -parseFloat(Math.cos(rotation.y)) / 1);
+                            var newPosition = position.add(forwards);
                             game.client.socket.emit('useSkill', self.getType());
+                            game.client.socket.emit('setTargetPoint', {
+                                position: newPosition
+                            });
+                            player.runPlayerToPosition(newPosition);
                         }
                     }));
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
@@ -4668,41 +4687,13 @@ var Character;
             AbstractSkill.prototype.showReloadInGUI = function (cooldownTime) {
                 var game = this.game;
                 var self = this;
-                game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function () {
+                var speedRatio = 1 / cooldownTime;
+                this.isReady = false;
+                game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, speedRatio, function () {
                     game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
+                    self.isReady = true;
                 });
             };
-            // protected registerHotKey(game: Game) {
-            //     let self = this;
-            //     let listener = function listener() {
-            //         game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-            //             if (event.sourceEvent.key == self.getType()) {
-            //                 game.controller.attackPoint = null;
-            //
-            //                 game.player.runAnimationSkill(self.animationName, function () {
-            //                     self.effectEmitter.particleSystem.start();
-            //                     game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function() {
-            //                         game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
-            //                     });
-            //
-            //                 }, function () {
-            //                     self.effectEmitter.particleSystem.stop();
-            //
-            //                 }, self.animationLoop, self.animationSpeed);
-            //
-            //                 if(self.animationTime) {
-            //                     setTimeout(function() {
-            //                         game.player.animation.stop();
-            //                     }, self.animationTime);
-            //                 }
-            //
-            //             }
-            //         }));
-            //
-            //         document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            //     };
-            //     document.addEventListener(Events.PLAYER_CONNECTED, listener);
-            // }
             AbstractSkill.prototype.createSkillImageInGUI = function (game) {
                 var image = this.getImageUrl();
                 var number = this.getType();
@@ -4734,7 +4725,7 @@ var Character;
                 this.guiText = textBlock;
             };
             AbstractSkill.prototype.registerAnimations = function () {
-                var animationAlpha = new BABYLON.Animation("animationAlpha", "alpha", 60, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+                var animationAlpha = new BABYLON.Animation("animationAlpha", "alpha", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
                 animationAlpha.setKeys([
                     {
                         frame: 0,
@@ -4749,7 +4740,7 @@ var Character;
                         value: 1
                     }
                 ]);
-                var animationOverlay = new BABYLON.Animation("animationOverlay", "height", 15, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+                var animationOverlay = new BABYLON.Animation("animationOverlay", "height", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
                 animationOverlay.setKeys([
                     {
                         frame: 0,
@@ -4791,14 +4782,17 @@ var Character;
             };
             Block.prototype.showAnimation = function (skillTime, cooldownTime) {
                 var game = this.game;
+                var self = this;
                 this.showReloadInGUI(cooldownTime);
                 game.player.runAnimationSkill(this.animationName, function () {
+                    self.isInUse = true;
                 }, function () {
-                    game.player.mesh.skeleton.createAnimationRange('loopBlock', 70, 80);
                     game.player.mesh.skeleton.beginAnimation('loopBlock', true);
                 }, this.animationLoop, this.animationSpeed, false);
                 setTimeout(function () {
-                    game.player.runAnimationSkill('blockB');
+                    game.player.runAnimationSkill('blockB', null, function () {
+                        self.isInUse = false;
+                    });
                 }, skillTime);
             };
             Block.TYPE = 2;
@@ -4823,17 +4817,34 @@ var Character;
                 this.image = 'assets/skills/fastAttack.png';
                 this.name = 'Fast attack';
                 this.animationName = AbstractCharacter.ANIMATION_ATTACK_01;
-                this.animationSpeed = 1.5;
+                this.animationSpeed = 1.6;
                 this.animationLoop = true;
                 this.animationTime = 1000;
                 var self = this;
                 var listener = function listener() {
                     var effectEmitter = new Particles.FastAttack(game, game.player.mesh);
-                    effectEmitter.initParticleSystem();
                     self.effectEmitter = effectEmitter;
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            FastAttack.prototype.showAnimation = function (skillTime, cooldownTime) {
+                var game = this.game;
+                var self = this;
+                this.showReloadInGUI(cooldownTime);
+                game.player.runAnimationSkill(this.animationName, function () {
+                    self.isInUse = true;
+                    self.effectEmitter.particleSystem.start();
+                    game.client.socket.emit('attack', {
+                        targetPoint: null
+                    });
+                }, function () {
+                    self.isInUse = false;
+                    self.effectEmitter.particleSystem.stop();
+                }, this.animationLoop, this.animationSpeed);
+                setTimeout(function () {
+                    game.player.animation.stop();
+                }, skillTime);
             };
             FastAttack.TYPE = 3;
             return FastAttack;
@@ -4861,14 +4872,15 @@ var Character;
                 var self = this;
                 var listener = function listener() {
                     var effectEmitter = new Particles.Heal(game, game.player.mesh);
-                    effectEmitter.initParticleSystem();
                     self.effectEmitter = effectEmitter;
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
             };
-            Heal.prototype.registerHotKey = function (game) {
+            Heal.prototype.showAnimation = function (skillTime, cooldownTime) {
+                var game = this.game;
                 var self = this;
+                this.showReloadInGUI(cooldownTime);
                 var alpha = 0;
                 var animateFunction = function () {
                     self.effectEmitter.particleSystem.emitter.position.x = 2 * Math.cos(alpha);
@@ -4876,32 +4888,20 @@ var Character;
                     self.effectEmitter.particleSystem.emitter.position.z = 2 * Math.sin(alpha);
                     alpha += 0.24 * game.getScene().getAnimationRatio();
                 };
-                var listener = function listener() {
-                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                        if (event.sourceEvent.key == self.getType()) {
-                            game.controller.attackPoint = null;
-                            game.player.runAnimationSkill(self.animationName, function () {
-                                self.effectEmitter.particleSystem.start();
-                                game.getScene().registerBeforeRender(animateFunction);
-                                game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function () {
-                                    game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
-                                });
-                            }, function () {
-                                self.effectEmitter.particleSystem.stop();
-                                game.getScene().unregisterBeforeRender(animateFunction);
-                            }, self.animationLoop, self.animationSpeed);
-                            if (self.animationTime) {
-                                setTimeout(function () {
-                                    game.player.animation.stop();
-                                }, self.animationTime);
-                            }
-                        }
-                    }));
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-                };
-                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+                game.player.runAnimationSkill(self.animationName, function () {
+                    self.effectEmitter.particleSystem.start();
+                    game.getScene().registerBeforeRender(animateFunction);
+                }, function () {
+                    self.effectEmitter.particleSystem.stop();
+                    game.getScene().unregisterBeforeRender(animateFunction);
+                }, self.animationLoop, self.animationSpeed);
+                if (self.animationTime) {
+                    setTimeout(function () {
+                        game.player.animation.stop();
+                    }, self.animationTime);
+                }
             };
-            Heal.TYPE = 1;
+            Heal.TYPE = 5;
             return Heal;
         }(Character.Skills.AbstractSkill));
         Skills.Heal = Heal;
@@ -4927,11 +4927,28 @@ var Character;
                 var self = this;
                 var listener = function listener() {
                     var effectEmitter = new Particles.ShieldAttack(game, game.player.mesh);
-                    effectEmitter.initParticleSystem();
                     self.effectEmitter = effectEmitter;
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            };
+            ShieldAttack.prototype.showAnimation = function (skillTime, cooldownTime) {
+                var game = this.game;
+                var self = this;
+                this.showReloadInGUI(cooldownTime);
+                game.player.runAnimationSkill(this.animationName, function () {
+                    self.isInUse = true;
+                    self.effectEmitter.particleSystem.start();
+                    game.client.socket.emit('attack', {
+                        targetPoint: null
+                    });
+                }, function () {
+                    self.isInUse = false;
+                    self.effectEmitter.particleSystem.stop();
+                }, this.animationLoop, this.animationSpeed);
+                setTimeout(function () {
+                    game.player.animation.stop();
+                }, skillTime);
             };
             ShieldAttack.TYPE = 4;
             return ShieldAttack;
@@ -4953,12 +4970,9 @@ var Character;
             SkillsManager.prototype.getSkill = function (type) {
                 var skill = null;
                 switch (type) {
-                    // case Character.Skills.Tornado.TYPE:
-                    //     skill = new Character.Skills.Tornado(this.game);
-                    //     break;
-                    // case Character.Skills.Heal.TYPE:
-                    //     skill = new Character.Skills.Heal(this.game);
-                    //     break;
+                    case Character.Skills.Heal.TYPE:
+                        skill = new Character.Skills.Heal(this.game);
+                        break;
                     case Character.Skills.StrongAttack.TYPE:
                         skill = new Character.Skills.StrongAttack(this.game);
                         break;
@@ -5001,14 +5015,17 @@ var Character;
             };
             StrongAttack.prototype.showAnimation = function (skillTime, cooldownTime) {
                 var game = this.game;
+                var self = this;
                 this.showReloadInGUI(cooldownTime);
                 game.player.runAnimationSkill(this.animationName, function () {
+                    self.isInUse = true;
                 }, function () {
-                    game.player.mesh.skeleton.createAnimationRange('loopStrongAttack', 340, 350);
                     game.player.mesh.skeleton.beginAnimation('loopStrongAttack', true);
                 }, this.animationLoop, this.animationSpeed, false);
                 setTimeout(function () {
-                    game.player.runAnimationSkill('strongAttackB');
+                    game.player.runAnimationSkill('strongAttackB', null, function () {
+                        self.isInUse = false;
+                    });
                     game.client.socket.emit('attack', {
                         targetPoint: null
                     });
@@ -5018,40 +5035,6 @@ var Character;
             return StrongAttack;
         }(Character.Skills.AbstractSkill));
         Skills.StrongAttack = StrongAttack;
-    })(Skills = Character.Skills || (Character.Skills = {}));
-})(Character || (Character = {}));
-var Character;
-(function (Character) {
-    var Skills;
-    (function (Skills) {
-        var Tornado = /** @class */ (function (_super) {
-            __extends(Tornado, _super);
-            function Tornado() {
-                return _super !== null && _super.apply(this, arguments) || this;
-            }
-            Tornado.prototype.getType = function () {
-                return Character.Skills.Tornado.TYPE;
-            };
-            Tornado.prototype.registerDefaults = function (game) {
-                this.image = 'assets/skills/tornado.png';
-                this.name = 'Tornado';
-                this.animationName = AbstractCharacter.ANIMATION_SKILL_02;
-                this.animationSpeed = 1.5;
-                this.animationLoop = true;
-                this.animationTime = 1000;
-                var self = this;
-                var listener = function listener() {
-                    var effectEmitter = new Particles.Tornado(game, game.player.mesh);
-                    effectEmitter.initParticleSystem();
-                    self.effectEmitter = effectEmitter;
-                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-                };
-                document.addEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            Tornado.TYPE = 3;
-            return Tornado;
-        }(Character.Skills.AbstractSkill));
-        Skills.Tornado = Tornado;
     })(Skills = Character.Skills || (Character.Skills = {}));
 })(Character || (Character = {}));
 var MountainsEnvironment = /** @class */ (function (_super) {
@@ -5366,28 +5349,20 @@ var OnUpdatePlayersSkills = /** @class */ (function (_super) {
      * @returns {SocketIOClient}
      */
     OnUpdatePlayersSkills.prototype.listen = function () {
-        var self = this;
         var game = this.game;
-        var skillsManager = new Character.Skills.SkillsManager(game);
         this.socket.on('updatePlayerSkill', function (updatedPlayer) {
             var player = null;
-            if (updatedPlayer.activePlayer.id == game.player.id) {
-                player = game.player;
-            }
-            else {
-                game.remotePlayers.forEach(function (remotePlayer, key) {
-                    if (remotePlayer.id == updatedPlayer.activePlayer.id) {
-                        player = game.remotePlayers[key];
-                        return;
-                    }
-                });
-            }
-            ///action on use skill
+            game.remotePlayers.forEach(function (remotePlayer, key) {
+                if (remotePlayer.id == updatedPlayer.activePlayer.id) {
+                    player = game.remotePlayers[key];
+                    return;
+                }
+            });
             if (updatedPlayer.activeSkill) {
                 player.statistics.energy = updatedPlayer.activePlayer.statistics.energy;
                 player.refreshEnergyInGui();
-                var skill = skillsManager.getSkill(updatedPlayer.activeSkill.type);
-                skill.showAnimation(updatedPlayer.activeSkill.duration * 1000, updatedPlayer.activeSkill.cooldownTime * 1000);
+                var skill = player.skills[updatedPlayer.activeSkill.type];
+                skill.showAnimation(updatedPlayer.activeSkill.duration * 1000, updatedPlayer.activeSkill.cooldownTime);
             }
         });
         return this;

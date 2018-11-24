@@ -118,7 +118,7 @@ abstract class AbstractCharacter {
         let mesh = this.mesh;
         let skeleton = mesh.skeleton;
 
-        if (callbackEnd) {
+        if (callbackStart) {
             callbackStart();
         }
 

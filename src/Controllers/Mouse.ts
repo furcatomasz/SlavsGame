@@ -32,24 +32,20 @@ class Mouse {
 
         scene.onPointerDown = function (evt, pickResult) {
             let pickedMesh = pickResult.pickedMesh;
-            if (self.game.player.isAttack || !self.game.player.isAlive) {
+            if (!self.game.player.isAlive || game.player.isAnySkillIsInUse()) {
                 return;
             }
             clickTrigger = true;
+            if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
+                self.attackPoint = null;
+                self.targetPoint = pickResult.pickedPoint;
+                self.targetPoint.y = 0;
+                clickParticleSystem.emitter = new BABYLON.Vector3(self.targetPoint.x, 0, self.targetPoint.z); // the starting location
 
-            if (pickedMesh) {
-                if ((pickedMesh.name.search("Ground") >= 0)) {
-                    self.attackPoint = null;
-                    self.targetPoint = pickResult.pickedPoint;
-                    self.targetPoint.y = 0;
-                    clickParticleSystem.emitter = new BABYLON.Vector3(self.targetPoint.x, 0, self.targetPoint.z); // the starting location
-
-                    self.game.player.runPlayerToPosition(self.targetPoint);
-                    self.game.client.socket.emit('setTargetPoint', {
-                        position: self.targetPoint
-                    });
-                }
-
+                self.game.player.runPlayerToPosition(self.targetPoint);
+                self.game.client.socket.emit('setTargetPoint', {
+                    position: self.targetPoint
+                });
             }
         };
 

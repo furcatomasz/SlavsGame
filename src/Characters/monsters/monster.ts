@@ -67,20 +67,23 @@ class Monster extends AbstractCharacter {
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
             pointer => {
-                game.controller.attackPoint = pointer.meshUnderPointer;
-                game.controller.targetPoint = null;
-                attackOnce = false;
+                if(!game.player.isAnySkillIsInUse()) {
+                    game.controller.attackPoint = pointer.meshUnderPointer;
+                    game.controller.targetPoint = null;
+                    attackOnce = false;
 
-                game.goToMeshFunction = GoToMeshAndRunAction.execute(game, self.meshForMove, () => {
-                    game.player.runAnimationDeathOrStand();
-                    setTimeout(() => {
-                        intervalAttackFunction();
+                    game.goToMeshFunction = GoToMeshAndRunAction.execute(game, self.meshForMove, () => {
+                        game.player.runAnimationDeathOrStand();
+                        game.player.unregisterMoveWithCollision(true);
+                        setTimeout(() => {
+                            intervalAttackFunction();
 
-                        if(self.game.controller.attackPoint && !attackOnce) {
-                            self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
-                        }
-                    }, 250);
-                });
+                            if (self.game.controller.attackPoint && !attackOnce) {
+                                self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
+                            }
+                        }, 250);
+                    });
+                }
             }));
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger,

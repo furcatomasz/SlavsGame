@@ -1,12 +1,8 @@
 namespace Character.Skills {
-    export abstract class  AbstractSkill {
+    export abstract class AbstractSkill {
         static TYPE = 0;
 
         protected game: Game;
-
-        public cooldown: number;
-        public damage: number;
-        public stock: number;
         public name: string;
         public animationName: string;
         public animationSpeed: number;
@@ -15,22 +11,21 @@ namespace Character.Skills {
 
         protected effectEmitter;
         protected image: string;
+        public isReady: boolean;
+        public isInUse: boolean;
 
         /** GUI */
         protected animationOverlay: BABYLON.Animation;
         protected animationAlpha: BABYLON.Animation;
-
         protected guiImage: BABYLON.GUI.Image;
         protected guiOverlay: BABYLON.GUI.Rectangle;
         protected guiText: BABYLON.GUI.TextBlock;
 
-        constructor(game: Game, cooldown: number = 0, damage: number = 0, stock: number = 0) {
-            this.cooldown = cooldown;
-            this.damage = damage;
-            this.stock = stock;
+        constructor(game: Game) {
             this.animationTime = 0;
             this.animationLoop = false;
             this.game = game;
+            this.isReady = true;
             this.registerDefaults(game);
             this.registerHotKey(game);
             this.registerAnimations();
@@ -51,13 +46,28 @@ namespace Character.Skills {
         protected registerHotKey(game: Game) {
             let self = this;
 
-            let listener = function listener() {
+            let listener = () => {
+                const player = game.player;
                 game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                    if (event.sourceEvent.key == self.getType()) {
+                    if (event.sourceEvent.key == self.getType()
+                        && self.isReady
+                        && !player.isAnySkillIsInUse()) {
+                        const position = player.meshForMove.position;
+                        let rotation = player.meshForMove.rotation;
+                        if (player.meshForMove.rotationQuaternion) {
+                            rotation = player.meshForMove.rotationQuaternion.toEulerAngles();
+                        }
+                        rotation.negate();
+                        let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 1, 0, -parseFloat(Math.cos(rotation.y)) / 1);
+                        let newPosition = position.add(forwards);
+
                         game.client.socket.emit('useSkill', self.getType());
+                        game.client.socket.emit('setTargetPoint', {
+                            position: newPosition
+                        });
+                        player.runPlayerToPosition(newPosition);
                     }
                 }));
-
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -66,55 +76,26 @@ namespace Character.Skills {
         protected showReloadInGUI(cooldownTime: number) {
             const game = this.game;
             const self = this;
+            const speedRatio = 1 / cooldownTime;
+            this.isReady = false;
 
-            game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function() {
+            game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, speedRatio, function () {
                 game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
+                self.isReady = true;
             });
         }
-
-        // protected registerHotKey(game: Game) {
-        //     let self = this;
-        //     let listener = function listener() {
-        //         game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-        //             if (event.sourceEvent.key == self.getType()) {
-        //                 game.controller.attackPoint = null;
-        //
-        //                 game.player.runAnimationSkill(self.animationName, function () {
-        //                     self.effectEmitter.particleSystem.start();
-        //                     game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, 1, function() {
-        //                         game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
-        //                     });
-        //
-        //                 }, function () {
-        //                     self.effectEmitter.particleSystem.stop();
-        //
-        //                 }, self.animationLoop, self.animationSpeed);
-        //
-        //                 if(self.animationTime) {
-        //                     setTimeout(function() {
-        //                         game.player.animation.stop();
-        //                     }, self.animationTime);
-        //                 }
-        //
-        //             }
-        //         }));
-        //
-        //         document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-        //     };
-        //     document.addEventListener(Events.PLAYER_CONNECTED, listener);
-        // }
 
         protected createSkillImageInGUI(game) {
             let image = this.getImageUrl();
             let number = this.getType();
             let grid = game.gui.playerBottomPanel.guiGridSkills;
 
-            let imageSkill = new BABYLON.GUI.Image('image_'+number, image);
+            let imageSkill = new BABYLON.GUI.Image('image_' + number, image);
             imageSkill.width = 1;
             imageSkill.height = 1;
             imageSkill.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
 
-            let textBlock = new BABYLON.GUI.TextBlock('shortcut_'+number, ''+number+'');
+            let textBlock = new BABYLON.GUI.TextBlock('shortcut_' + number, '' + number + '');
             textBlock.color = 'white';
             textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
@@ -125,7 +106,7 @@ namespace Character.Skills {
             overlay.alpha = 0.7;
             overlay.color = "black";
             overlay.background = "black";
-            overlay.verticalAlignment = 	BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            overlay.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
             imageSkill.animations = [];
             imageSkill.animations.push(this.animationAlpha);
@@ -133,9 +114,9 @@ namespace Character.Skills {
             overlay.animations = [];
             overlay.animations.push(this.animationOverlay);
 
-            grid.addControl(imageSkill, 0, number-1);
-            grid.addControl(textBlock, 0, number-1);
-            grid.addControl(overlay, 0, number-1);
+            grid.addControl(imageSkill, 0, number - 1);
+            grid.addControl(textBlock, 0, number - 1);
+            grid.addControl(overlay, 0, number - 1);
 
             this.guiImage = imageSkill;
             this.guiOverlay = overlay;
@@ -143,7 +124,7 @@ namespace Character.Skills {
         }
 
         private registerAnimations() {
-            let animationAlpha = new BABYLON.Animation("animationAlpha", "alpha", 60, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+            let animationAlpha = new BABYLON.Animation("animationAlpha", "alpha", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
             animationAlpha.setKeys([
                 {
                     frame: 0,
@@ -159,7 +140,7 @@ namespace Character.Skills {
                 }
             ]);
 
-            let animationOverlay = new BABYLON.Animation("animationOverlay", "height", 15, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+            let animationOverlay = new BABYLON.Animation("animationOverlay", "height", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
             animationOverlay.setKeys([
                 {
                     frame: 0,

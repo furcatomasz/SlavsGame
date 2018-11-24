@@ -59,7 +59,7 @@ class SocketIOClient {
             game.remotePlayers = [];
             self.connectionId = data.connectionId;
 
-            events.forEach((event) => {
+            events.forEach((event: SocketEvent) => {
                 event.listen();
             });
 

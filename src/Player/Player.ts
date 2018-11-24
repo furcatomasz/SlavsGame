@@ -6,13 +6,14 @@ class Player extends AbstractCharacter {
     public playerLight: BABYLON.SpotLight;
     public isAlive: boolean;
 
-    public skills: Array<any>;
+    public skills: Array<Character.Skills.AbstractSkill>;
     public statisticsAll: Array<any>;
     public attributes: Array<any>;
     public experience: number;
     public experiencePercentages: number;
     public gold: number;
     public keys: number;
+    public potions: number;
     public lvl: number;
     public freeAttributesPoints: number;
     public freeSkillPoints: number;
@@ -67,27 +68,18 @@ class Player extends AbstractCharacter {
         this.setCharacterSkills([
             {
                 type: 1,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
             },
             {
                 type: 2,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
             },
             {
                 type: 3,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
             },
             {
                 type: 4,
-                damage: 1,
-                cooldown: 1,
-                stock: 1
+            },
+            {
+                type: 5,
             }
         ]);
     }
@@ -120,6 +112,9 @@ class Player extends AbstractCharacter {
 
         this.mesh = mesh;
 
+        mesh.skeleton.createAnimationRange('loopStrongAttack', 340, 350);
+        mesh.skeleton.createAnimationRange('loopBlock', 70, 80);
+
         return mesh;
     }
 
@@ -146,7 +141,7 @@ class Player extends AbstractCharacter {
         this.statistics = playerServerData.statistics;
         this.statisticsAll = playerServerData.allStatistics;
         this.attributes = playerServerData.attributes;
-    };
+    }
 
     public setCharacterSkills(skills) {
         let skillManager = new Character.Skills.SkillsManager(this.game);
@@ -156,16 +151,28 @@ class Player extends AbstractCharacter {
         if (skills) {
             skills.forEach(function (skill, key) {
                 let playerSkill = skillManager.getSkill(skill.type);
-                playerSkill.damage = (skill.damage) ? skill.damage : 0;
-                playerSkill.stock = (skill.stock) ? skill.stock : 0;
-                playerSkill.cooldown = (skill.cooldown) ? skill.cooldown : 0;
                 self.skills[playerSkill.getType()] = playerSkill;
-
             });
         }
 
         return this;
-    };
+    }
+
+    public isAnySkillIsInUse(): boolean {
+        let isInUse = false;
+        this.skills.forEach((skill) => {
+            if (skill.isInUse === true) {
+                isInUse = true;
+                return;
+            }
+        });
+
+        if(isInUse === false && this.isAttack) {
+            isInUse = true;
+        }
+
+        return isInUse;
+    }
 
     public removeFromWorld() {
         this.mesh.dispose();
@@ -219,10 +226,7 @@ class Player extends AbstractCharacter {
         let self = this;
         let mesh = this.meshForMove;
         mesh.lookAt(targetPointVector3);
-
-        if (this.dynamicFunction !== undefined) {
-            self.game.getScene().unregisterBeforeRender(this.dynamicFunction);
-        }
+        this.unregisterMoveWithCollision(false);
 
         this.dynamicFunction = function () {
             if (mesh.intersectsPoint(targetPointVector3)) {
@@ -247,7 +251,18 @@ class Player extends AbstractCharacter {
         };
 
         this.game.getScene().registerBeforeRender(this.dynamicFunction);
+    }
 
+    public unregisterMoveWithCollision(emitPosition: boolean) {
+        if (this.dynamicFunction !== undefined) {
+            this.game.getScene().unregisterBeforeRender(this.dynamicFunction);
+        }
+
+        if(emitPosition) {
+            this.game.client.socket.emit('setTargetPoint', {
+                position: this.meshForMove.position
+            });
+        }
     }
 
     protected onWalkStart() {

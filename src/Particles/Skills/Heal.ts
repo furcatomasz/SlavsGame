@@ -1,7 +1,7 @@
 namespace Particles {
     export class Heal extends AbstractParticle {
 
-        protected initParticleSystem() {
+        public initParticleSystem() {
             let scene = this.game.getScene();
             let emitter = BABYLON.Mesh.CreateBox("emitter0", 0.1, scene);
             emitter.isVisible = false;

@@ -2,11 +2,11 @@ namespace Particles {
     export class Fog extends AbstractParticle {
 
         protected initParticleSystem() {
-            var fog = new BABYLON.ParticleSystem("particles", 2000, this.game.getScene());
-            fog.particleTexture = new BABYLON.Texture("assets/Smoke3.png", this.game.getScene());
+            var fog = new BABYLON.GPUParticleSystem("particles", { capacity: 2000 }, this.game.getScene());
+            fog.particleTexture = new BABYLON.Texture("assets/cloud.png", this.game.getScene());
             fog.emitter = this.emitter; // the starting object, the emitter
-            fog.minEmitBox = new BABYLON.Vector3(-25, 1, -50); // Starting all from
-            fog.maxEmitBox = new BABYLON.Vector3(25, -2, 50); // To...
+            fog.minEmitBox = new BABYLON.Vector3(-50, 5, -50); // Starting all from
+            fog.maxEmitBox = new BABYLON.Vector3(50, 0, 50); // To...
 
             fog.color1 = new BABYLON.Color4(0.9, 0.9, 0.9, 0.1);
             fog.color2 = new BABYLON.Color4(1, 1, 1, 0.15);

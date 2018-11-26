@@ -8,6 +8,10 @@ namespace Items {
         public image: string;
         public statistics: Object;
 
+        ///Trail Effect
+        public trailBox: BABYLON.AbstractMesh;
+        public trailMesh: BABYLON.AbstractMesh;
+
         constructor(game: Game, itemData: any) {
             this.name = itemData.name;
             this.meshName = itemData.meshName;
@@ -24,6 +28,14 @@ namespace Items {
             if (this.mesh) {
                 this.mesh.dispose();
             }
+        }
+
+        public createTrailMesh(game: Game) {
+            this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getScene(), false);
+            this.trailBox.visibility = 0;
+
+            this.trailMesh = new TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40);
+            this.trailMesh.visibility = 0;
         }
     }
 }

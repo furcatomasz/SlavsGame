@@ -78,6 +78,15 @@ namespace Character {
                 //     mesh.attachToBone(this.player.mesh.skeleton.bones[boneNumber], this.player.mesh);
                 // });
 
+                if(item.type == 1) {
+                    const game = this.game;
+                    bonesNumbers.forEach((boneNumber) => {
+                        item.createTrailMesh(game);
+                        item.trailBox.attachToBone(game.player.mesh.skeleton.bones[boneNumber], this.player.mesh);
+                    });
+
+                }
+
             }
 
         }

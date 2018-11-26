@@ -27,8 +27,12 @@ namespace Character.Skills {
             }, this.animationLoop, this.animationSpeed, false);
 
             setTimeout(() => {
+                game.player.inventory.weapon.trailMesh.visibility = 1;
                 game.player.runAnimationSkill('strongAttackB', null, () => {
                     self.isInUse = false;
+                    setTimeout(() => {
+                        game.player.inventory.weapon.trailMesh.visibility = 0;
+                    }, 1000);
                 });
                 game.client.socket.emit('attack', {
                     targetPoint: null

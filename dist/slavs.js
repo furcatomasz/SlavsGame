@@ -149,7 +149,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         return this;
     };
     Scene.prototype.initFactories = function (scene) {
@@ -905,6 +905,103 @@ var GodRay = /** @class */ (function () {
     };
     return GodRay;
 }());
+var TrailMesh = /** @class */ (function (_super) {
+    __extends(TrailMesh, _super);
+    function TrailMesh(name, generator, scene, diameter, length) {
+        if (diameter === void 0) { diameter = 1; }
+        if (length === void 0) { length = 60; }
+        var _this = _super.call(this, name, scene) || this;
+        _this._sectionPolygonPointsCount = 4;
+        _this._update = function () {
+            var positions = _this.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+            var normals = _this.getVerticesData(BABYLON.VertexBuffer.NormalKind);
+            for (var i = 3 * _this._sectionPolygonPointsCount; i < positions.length; i++) {
+                positions[i - 3 * _this._sectionPolygonPointsCount] = positions[i] - normals[i] / _this._length * _this._diameter;
+            }
+            for (var i = 3 * _this._sectionPolygonPointsCount; i < normals.length; i++) {
+                normals[i - 3 * _this._sectionPolygonPointsCount] = normals[i];
+            }
+            var l = positions.length - 3 * _this._sectionPolygonPointsCount;
+            var alpha = 2 * Math.PI / _this._sectionPolygonPointsCount;
+            for (var i = 0; i < _this._sectionPolygonPointsCount; i++) {
+                _this._sectionVectors[i].copyFromFloats(Math.cos(i * alpha) * _this._diameter, Math.sin(i * alpha) * _this._diameter, 0);
+                _this._sectionNormalVectors[i].copyFromFloats(Math.cos(i * alpha), Math.sin(i * alpha), 0);
+                BABYLON.Vector3.TransformCoordinatesToRef(_this._sectionVectors[i], _this._generator.getWorldMatrix(), _this._sectionVectors[i]);
+                BABYLON.Vector3.TransformNormalToRef(_this._sectionNormalVectors[i], _this._generator.getWorldMatrix(), _this._sectionNormalVectors[i]);
+            }
+            for (var i = 0; i < _this._sectionPolygonPointsCount; i++) {
+                positions[l + 3 * i] = _this._sectionVectors[i].x;
+                positions[l + 3 * i + 1] = _this._sectionVectors[i].y;
+                positions[l + 3 * i + 2] = _this._sectionVectors[i].z;
+                normals[l + 3 * i] = _this._sectionNormalVectors[i].x;
+                normals[l + 3 * i + 1] = _this._sectionNormalVectors[i].y;
+                normals[l + 3 * i + 2] = _this._sectionNormalVectors[i].z;
+            }
+            _this.updateVerticesData(BABYLON.VertexBuffer.PositionKind, positions, true, false);
+            _this.updateVerticesData(BABYLON.VertexBuffer.NormalKind, normals, true, false);
+        };
+        // this.layerMask = 2;
+        _this._generator = generator;
+        _this._diameter = diameter;
+        _this._length = length;
+        _this._sectionVectors = [];
+        _this._sectionNormalVectors = [];
+        for (var i = 0; i < _this._sectionPolygonPointsCount; i++) {
+            _this._sectionVectors[i] = BABYLON.Vector3.Zero();
+            _this._sectionNormalVectors[i] = BABYLON.Vector3.Zero();
+        }
+        _this._createMesh();
+        scene.onBeforeRenderObservable.add(_this._update);
+        return _this;
+    }
+    TrailMesh.prototype.destroy = function () {
+        this.getScene().onBeforeRenderObservable.removeCallback(this._update);
+        this.dispose();
+    };
+    TrailMesh.prototype.foldToGenerator = function () {
+        var positions = this.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+        var generatorWorldPosition = this._generator.absolutePosition;
+        for (var i = 0; i < positions.length; i += 3) {
+            positions[i] = generatorWorldPosition.x;
+            positions[i + 1] = generatorWorldPosition.y;
+            positions[i + 2] = generatorWorldPosition.z;
+        }
+    };
+    TrailMesh.prototype._createMesh = function () {
+        var data = new BABYLON.VertexData();
+        var positions = [];
+        var normals = [];
+        var indices = [];
+        var alpha = 2 * Math.PI / this._sectionPolygonPointsCount;
+        for (var i = 0; i < this._sectionPolygonPointsCount; i++) {
+            positions.push(Math.cos(i * alpha) * this._diameter, Math.sin(i * alpha) * this._diameter, -this._length);
+            normals.push(Math.cos(i * alpha), Math.sin(i * alpha), 0);
+        }
+        for (var i = 1; i <= this._length; i++) {
+            for (var j = 0; j < this._sectionPolygonPointsCount; j++) {
+                positions.push(Math.cos(j * alpha) * this._diameter, Math.sin(j * alpha) * this._diameter, -this._length + i);
+                normals.push(Math.cos(j * alpha), Math.sin(j * alpha), 0);
+            }
+            var l = positions.length / 3 - 2 * this._sectionPolygonPointsCount;
+            for (var j = 0; j < this._sectionPolygonPointsCount - 1; j++) {
+                indices.push(l + j, l + j + this._sectionPolygonPointsCount, l + j + this._sectionPolygonPointsCount + 1);
+                indices.push(l + j, l + j + this._sectionPolygonPointsCount + 1, l + j + 1);
+            }
+            indices.push(l + this._sectionPolygonPointsCount - 1, l + this._sectionPolygonPointsCount - 1 + this._sectionPolygonPointsCount, l + this._sectionPolygonPointsCount);
+            indices.push(l + this._sectionPolygonPointsCount - 1, l + this._sectionPolygonPointsCount, l);
+        }
+        data.positions = positions;
+        data.normals = normals;
+        data.indices = indices;
+        data.applyToMesh(this, true);
+        var trailMaterial = new BABYLON.StandardMaterial("white", this.getScene());
+        trailMaterial.diffuseColor.copyFromFloats(1, 1, 1);
+        trailMaterial.emissiveColor.copyFromFloats(1, 1, 1);
+        trailMaterial.specularColor.copyFromFloats(0, 0, 0);
+        this.material = trailMaterial;
+    };
+    return TrailMesh;
+}(BABYLON.Mesh));
 var AbstractEnvironment = /** @class */ (function () {
     function AbstractEnvironment() {
         this.staticShadowObjects = [];
@@ -2435,6 +2532,7 @@ var Character;
          * @param setItem
          */
         Inventory.prototype.equipItem = function (item, setItem) {
+            var _this = this;
             if (setItem) {
                 var bonesNumbers = [];
                 switch (item.type) {
@@ -2472,6 +2570,13 @@ var Character;
                 //     const mesh = BABYLON.Mesh.CreateBox('test', 1, this.game.getScene(), false);
                 //     mesh.attachToBone(this.player.mesh.skeleton.bones[boneNumber], this.player.mesh);
                 // });
+                if (item.type == 1) {
+                    var game_1 = this.game;
+                    bonesNumbers.forEach(function (boneNumber) {
+                        item.createTrailMesh(game_1);
+                        item.trailBox.attachToBone(game_1.player.mesh.skeleton.bones[boneNumber], _this.player.mesh);
+                    });
+                }
             }
         };
         /**
@@ -2553,8 +2658,8 @@ var Character;
         Inventory.prototype.setItems = function (inventoryItems) {
             if (inventoryItems) {
                 var self_3 = this;
-                var game_1 = this.game;
-                var itemManager_1 = new Items.ItemManager(game_1);
+                var game_2 = this.game;
+                var itemManager_1 = new Items.ItemManager(game_2);
                 new Promise(function (resolve) {
                     self_3.deleteSashAndHair();
                     self_3.items.forEach(function (item) {
@@ -2571,7 +2676,7 @@ var Character;
                             resolve();
                         });
                     }).then(function () {
-                        game_1.gui.inventory.refreshPopup();
+                        game_2.gui.inventory.refreshPopup();
                     });
                 });
             }
@@ -4592,6 +4697,12 @@ var Items;
                 this.mesh.dispose();
             }
         };
+        Item.prototype.createTrailMesh = function (game) {
+            this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getScene(), false);
+            this.trailBox.visibility = 0;
+            this.trailMesh = new TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40);
+            this.trailMesh.visibility = 0;
+        };
         return Item;
     }());
     Items.Item = Item;
@@ -5023,8 +5134,12 @@ var Character;
                     game.player.mesh.skeleton.beginAnimation('loopStrongAttack', true);
                 }, this.animationLoop, this.animationSpeed, false);
                 setTimeout(function () {
+                    game.player.inventory.weapon.trailMesh.visibility = 1;
                     game.player.runAnimationSkill('strongAttackB', null, function () {
                         self.isInUse = false;
+                        setTimeout(function () {
+                            game.player.inventory.weapon.trailMesh.visibility = 0;
+                        }, 1000);
                     });
                     game.client.socket.emit('attack', {
                         targetPoint: null

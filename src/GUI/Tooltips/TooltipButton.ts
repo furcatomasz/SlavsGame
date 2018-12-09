@@ -24,7 +24,6 @@ class TooltipButton {
         this.container = panel;
 
         let label = new BABYLON.GUI.TextBlock();
-        label.textWrapping = true;
         label.resizeToFit = true;
         label.text = text;
         label.fontFamily = "RuslanDisplay";

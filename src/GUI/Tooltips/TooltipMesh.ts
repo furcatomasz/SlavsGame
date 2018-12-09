@@ -20,7 +20,6 @@ class TooltipMesh {
         advancedTexture.addControl(panel);
 
         let label = new BABYLON.GUI.TextBlock();
-        label.textWrapping = true;
         label.resizeToFit = true;
         label.text = text;
         label.fontFamily = "RuslanDisplay";

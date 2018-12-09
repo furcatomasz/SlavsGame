@@ -3701,7 +3701,6 @@ var TooltipButton = /** @class */ (function () {
         baseControl.addControl(panel);
         this.container = panel;
         var label = new BABYLON.GUI.TextBlock();
-        label.textWrapping = true;
         label.resizeToFit = true;
         label.text = text;
         label.fontFamily = "RuslanDisplay";
@@ -3748,7 +3747,6 @@ var TooltipMesh = /** @class */ (function () {
         panel.alpha = 0.8;
         advancedTexture.addControl(panel);
         var label = new BABYLON.GUI.TextBlock();
-        label.textWrapping = true;
         label.resizeToFit = true;
         label.text = text;
         label.fontFamily = "RuslanDisplay";

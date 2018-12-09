@@ -225,7 +225,7 @@ class Player extends AbstractCharacter {
     public runPlayerToPosition(targetPointVector3) {
         let self = this;
         let mesh = this.meshForMove;
-        mesh.lookAt(targetPointVector3);
+        mesh.lookAt(targetPointVector3, Math.PI);
         this.unregisterMoveWithCollision(false);
 
         this.dynamicFunction = function () {
@@ -237,13 +237,8 @@ class Player extends AbstractCharacter {
                 }
             } else {
                 let rotation = mesh.rotation;
-                if (mesh.rotationQuaternion) {
-                    rotation = mesh.rotationQuaternion.toEulerAngles();
-                }
-                rotation.negate();
                 let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / self.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / self.getWalkSpeed());
                 mesh.moveWithCollisions(forwards);
-                mesh.position.y = 0;
 
                 self.game.player.refreshCameraPosition();
                 self.runAnimationWalk();

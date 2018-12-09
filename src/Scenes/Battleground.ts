@@ -1,5 +1,3 @@
-import Fog = Particles.Fog;
-
 class Battleground extends Scene {
 
     static TYPE = 99;

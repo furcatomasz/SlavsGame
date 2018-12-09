@@ -24,6 +24,7 @@ class Monster extends AbstractCharacter {
         const game = this.game;
 
         let mesh = game.factories[factoryName].createClone(meshName, true);
+        mesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
         mesh.visibility = 1;
         mesh.isPickable = false;
         mesh.scaling = scale;

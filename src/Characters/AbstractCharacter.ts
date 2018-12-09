@@ -82,6 +82,7 @@ abstract class AbstractCharacter {
         this.meshForMove.checkCollisions = true;
         this.meshForMove.visibility = 0;
         this.meshForMove.position = position;
+        this.meshForMove.layerMask = 2;
 
         return this;
     }

@@ -54,10 +54,6 @@ namespace Character.Skills {
                         && !player.isAnySkillIsInUse()) {
                         const position = player.meshForMove.position;
                         let rotation = player.meshForMove.rotation;
-                        if (player.meshForMove.rotationQuaternion) {
-                            rotation = player.meshForMove.rotationQuaternion.toEulerAngles();
-                        }
-                        rotation.negate();
                         let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 1, 0, -parseFloat(Math.cos(rotation.y)) / 1);
                         let newPosition = position.add(forwards);
 

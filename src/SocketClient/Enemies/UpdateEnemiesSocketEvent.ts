@@ -39,13 +39,8 @@ class UpdateEnemiesSocketEvent extends SocketEvent {
             } else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
                 activeTargetPoints[enemyKey] = function () {
                     mesh.lookAt(targetMesh.position);
-
                     let rotation = mesh.rotation;
-                    if (mesh.rotationQuaternion) {
-                        rotation = mesh.rotationQuaternion.toEulerAngles();
-                    }
-                    rotation.negate();
-                    let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, -parseFloat(Math.cos(rotation.y)) / enemy.getWalkSpeed());
+                    let forwards = new BABYLON.Vector3(parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, parseFloat(Math.cos(rotation.y)) / enemy.getWalkSpeed());
                     mesh.moveWithCollisions(forwards);
                     enemy.runAnimationWalk();
                 };

@@ -10,7 +10,7 @@ namespace Items {
 
         ///Trail Effect
         public trailBox: BABYLON.AbstractMesh;
-        public trailMesh: BABYLON.AbstractMesh;
+        public trailMesh: TrailMesh;
 
         constructor(game: Game, itemData: any) {
             this.name = itemData.name;
@@ -27,6 +27,14 @@ namespace Items {
         public dispose() {
             if (this.mesh) {
                 this.mesh.dispose();
+            }
+
+            if (this.trailBox) {
+                this.trailBox.dispose();
+            }
+
+            if (this.trailMesh) {
+                this.trailMesh.dispose();
             }
         }
 

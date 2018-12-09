@@ -18,6 +18,7 @@ namespace Character.Skills {
         public showAnimation(skillTime: number, cooldownTime: number) {
             const game = this.game;
             let self = this;
+            let observer;
             this.showReloadInGUI(cooldownTime);
 
             game.player.runAnimationSkill(this.animationName, () => {
@@ -26,12 +27,15 @@ namespace Character.Skills {
                 game.player.mesh.skeleton.beginAnimation('loopStrongAttack', true);
             }, this.animationLoop, this.animationSpeed, false);
 
+            observer = game.getScene().onBeforeRenderObservable.add(game.player.inventory.weapon.trailMesh.update);
             setTimeout(() => {
                 game.player.inventory.weapon.trailMesh.visibility = 1;
                 game.player.runAnimationSkill('strongAttackB', null, () => {
                     self.isInUse = false;
                     setTimeout(() => {
                         game.player.inventory.weapon.trailMesh.visibility = 0;
+                        game.getScene().onBeforeRenderObservable.remove(observer);
+
                     }, 1000);
                 });
                 game.client.socket.emit('attack', {

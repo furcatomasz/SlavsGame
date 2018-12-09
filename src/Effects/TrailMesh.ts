@@ -8,7 +8,7 @@ class TrailMesh extends BABYLON.Mesh {
 
 	constructor(name: string, generator: BABYLON.AbstractMesh, scene: BABYLON.Scene, diameter: number = 1, length: number = 60) {
 		super(name, scene);
-		// this.layerMask = 2;
+		this.layerMask = 2;
 		this._generator = generator;
 		this._diameter = diameter;
 		this._length = length;
@@ -19,22 +19,6 @@ class TrailMesh extends BABYLON.Mesh {
 			this._sectionNormalVectors[i] = BABYLON.Vector3.Zero();
 		}
 		this._createMesh();
-		scene.onBeforeRenderObservable.add(this._update);
-	}
-
-	public destroy(): void {
-		this.getScene().onBeforeRenderObservable.removeCallback(this._update);
-		this.dispose();
-	}
-
-	public foldToGenerator(): void {
-		let positions: Array<number> | Float32Array = this.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-		let generatorWorldPosition = this._generator.absolutePosition;
-		for (let i = 0; i < positions.length; i += 3) {
-			positions[i] = generatorWorldPosition.x;
-			positions[i + 1] = generatorWorldPosition.y;
-			positions[i + 2] = generatorWorldPosition.z;
-		}
 	}
 
 	private _createMesh(): void {
@@ -105,7 +89,7 @@ class TrailMesh extends BABYLON.Mesh {
 		this.material = trailMaterial;
 	}
 
-	private _update = () => {
+	public update = () => {
 		let positions: Array<number> | Float32Array = this.getVerticesData(BABYLON.VertexBuffer.PositionKind);
 		let normals: Array<number> | Float32Array = this.getVerticesData(BABYLON.VertexBuffer.NormalKind);
 

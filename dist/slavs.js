@@ -231,7 +231,7 @@ var Game = /** @class */ (function () {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
     Game.SHOW_COLLIDERS = 0;
-    Game.SHOW_DEBUG = 1;
+    Game.SHOW_DEBUG = 0;
     return Game;
 }());
 var GUI;
@@ -850,6 +850,145 @@ var Mouse = /** @class */ (function () {
     };
     return Mouse;
 }());
+var GodRay = /** @class */ (function () {
+    function GodRay() {
+    }
+    GodRay.createGodRay = function (game, mesh) {
+        var engine = game.engine;
+        var scene = game.getScene();
+        var camera = game.getScene().getCameraByName('gameCamera');
+        var fireMaterial = new BABYLON.StandardMaterial("godrayMaterial", scene);
+        var fireTexture = new BABYLON.Texture("assets/Smoke3.png", scene);
+        fireTexture.hasAlpha = true;
+        fireMaterial.alpha = 0.1;
+        fireMaterial.emissiveTexture = fireTexture;
+        fireMaterial.diffuseTexture = fireTexture;
+        fireMaterial.opacityTexture = fireTexture;
+        fireMaterial.specularPower = 1;
+        fireMaterial.backFaceCulling = false;
+        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 16, scene, true);
+        box.visibility = 1;
+        box.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
+        box.material = fireMaterial;
+        var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 128, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
+        godrays.useCustomMeshPosition = true;
+        godrays.setCustomMeshPosition(new BABYLON.Vector3(0, 15.0, 0));
+        godrays.invert = false;
+        godrays.exposure = 0.8;
+        godrays.decay = 1;
+        godrays.weight = 0;
+        godrays.density = 0.5;
+        var startHiding = false;
+        var timeoutFunction;
+        var showGodRay = function () {
+            box.position = mesh.position.clone();
+            godrays.setCustomMeshPosition(mesh.position.clone());
+            godrays.customMeshPosition.y = 15;
+            box.rotate(new BABYLON.Vector3(0, 5, 0), 0.02, BABYLON.Space.WORLD);
+            if (godrays.weight >= 0.3 && !timeoutFunction) {
+                timeoutFunction = setTimeout(function () {
+                    startHiding = true;
+                }, 4000);
+            }
+            if (startHiding) {
+                godrays.weight -= 0.01;
+                if (godrays.weight <= 0) {
+                    godrays.dispose(camera);
+                    box.dispose();
+                    scene.unregisterBeforeRender(showGodRay);
+                }
+            }
+            else if (godrays.weight <= 0.3) {
+                godrays.weight += 0.02;
+            }
+        };
+        scene.registerBeforeRender(showGodRay);
+    };
+    return GodRay;
+}());
+var TrailMesh = /** @class */ (function (_super) {
+    __extends(TrailMesh, _super);
+    function TrailMesh(name, generator, scene, diameter, length) {
+        if (diameter === void 0) { diameter = 1; }
+        if (length === void 0) { length = 60; }
+        var _this = _super.call(this, name, scene) || this;
+        _this._sectionPolygonPointsCount = 4;
+        _this.update = function () {
+            var positions = _this.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+            var normals = _this.getVerticesData(BABYLON.VertexBuffer.NormalKind);
+            for (var i = 3 * _this._sectionPolygonPointsCount; i < positions.length; i++) {
+                positions[i - 3 * _this._sectionPolygonPointsCount] = positions[i] - normals[i] / _this._length * _this._diameter;
+            }
+            for (var i = 3 * _this._sectionPolygonPointsCount; i < normals.length; i++) {
+                normals[i - 3 * _this._sectionPolygonPointsCount] = normals[i];
+            }
+            var l = positions.length - 3 * _this._sectionPolygonPointsCount;
+            var alpha = 2 * Math.PI / _this._sectionPolygonPointsCount;
+            for (var i = 0; i < _this._sectionPolygonPointsCount; i++) {
+                _this._sectionVectors[i].copyFromFloats(Math.cos(i * alpha) * _this._diameter, Math.sin(i * alpha) * _this._diameter, 0);
+                _this._sectionNormalVectors[i].copyFromFloats(Math.cos(i * alpha), Math.sin(i * alpha), 0);
+                BABYLON.Vector3.TransformCoordinatesToRef(_this._sectionVectors[i], _this._generator.getWorldMatrix(), _this._sectionVectors[i]);
+                BABYLON.Vector3.TransformNormalToRef(_this._sectionNormalVectors[i], _this._generator.getWorldMatrix(), _this._sectionNormalVectors[i]);
+            }
+            for (var i = 0; i < _this._sectionPolygonPointsCount; i++) {
+                positions[l + 3 * i] = _this._sectionVectors[i].x;
+                positions[l + 3 * i + 1] = _this._sectionVectors[i].y;
+                positions[l + 3 * i + 2] = _this._sectionVectors[i].z;
+                normals[l + 3 * i] = _this._sectionNormalVectors[i].x;
+                normals[l + 3 * i + 1] = _this._sectionNormalVectors[i].y;
+                normals[l + 3 * i + 2] = _this._sectionNormalVectors[i].z;
+            }
+            _this.updateVerticesData(BABYLON.VertexBuffer.PositionKind, positions, true, false);
+            _this.updateVerticesData(BABYLON.VertexBuffer.NormalKind, normals, true, false);
+        };
+        _this.layerMask = 2;
+        _this._generator = generator;
+        _this._diameter = diameter;
+        _this._length = length;
+        _this._sectionVectors = [];
+        _this._sectionNormalVectors = [];
+        for (var i = 0; i < _this._sectionPolygonPointsCount; i++) {
+            _this._sectionVectors[i] = BABYLON.Vector3.Zero();
+            _this._sectionNormalVectors[i] = BABYLON.Vector3.Zero();
+        }
+        _this._createMesh();
+        return _this;
+    }
+    TrailMesh.prototype._createMesh = function () {
+        var data = new BABYLON.VertexData();
+        var positions = [];
+        var normals = [];
+        var indices = [];
+        var alpha = 2 * Math.PI / this._sectionPolygonPointsCount;
+        for (var i = 0; i < this._sectionPolygonPointsCount; i++) {
+            positions.push(Math.cos(i * alpha) * this._diameter, Math.sin(i * alpha) * this._diameter, -this._length);
+            normals.push(Math.cos(i * alpha), Math.sin(i * alpha), 0);
+        }
+        for (var i = 1; i <= this._length; i++) {
+            for (var j = 0; j < this._sectionPolygonPointsCount; j++) {
+                positions.push(Math.cos(j * alpha) * this._diameter, Math.sin(j * alpha) * this._diameter, -this._length + i);
+                normals.push(Math.cos(j * alpha), Math.sin(j * alpha), 0);
+            }
+            var l = positions.length / 3 - 2 * this._sectionPolygonPointsCount;
+            for (var j = 0; j < this._sectionPolygonPointsCount - 1; j++) {
+                indices.push(l + j, l + j + this._sectionPolygonPointsCount, l + j + this._sectionPolygonPointsCount + 1);
+                indices.push(l + j, l + j + this._sectionPolygonPointsCount + 1, l + j + 1);
+            }
+            indices.push(l + this._sectionPolygonPointsCount - 1, l + this._sectionPolygonPointsCount - 1 + this._sectionPolygonPointsCount, l + this._sectionPolygonPointsCount);
+            indices.push(l + this._sectionPolygonPointsCount - 1, l + this._sectionPolygonPointsCount, l);
+        }
+        data.positions = positions;
+        data.normals = normals;
+        data.indices = indices;
+        data.applyToMesh(this, true);
+        var trailMaterial = new BABYLON.StandardMaterial("white", this.getScene());
+        trailMaterial.diffuseColor.copyFromFloats(1, 1, 1);
+        trailMaterial.emissiveColor.copyFromFloats(1, 1, 1);
+        trailMaterial.specularColor.copyFromFloats(0, 0, 0);
+        this.material = trailMaterial;
+    };
+    return TrailMesh;
+}(BABYLON.Mesh));
 var AbstractEnvironment = /** @class */ (function () {
     function AbstractEnvironment() {
         this.staticShadowObjects = [];
@@ -1151,159 +1290,153 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
     }
     return EnvironmentSelectCharacter;
 }());
-var GodRay = /** @class */ (function () {
-    function GodRay() {
-    }
-    GodRay.createGodRay = function (game, mesh) {
-        var engine = game.engine;
-        var scene = game.getScene();
-        var camera = game.getScene().getCameraByName('gameCamera');
-        var fireMaterial = new BABYLON.StandardMaterial("godrayMaterial", scene);
-        var fireTexture = new BABYLON.Texture("assets/Smoke3.png", scene);
-        fireTexture.hasAlpha = true;
-        fireMaterial.alpha = 0.1;
-        fireMaterial.emissiveTexture = fireTexture;
-        fireMaterial.diffuseTexture = fireTexture;
-        fireMaterial.opacityTexture = fireTexture;
-        fireMaterial.specularPower = 1;
-        fireMaterial.backFaceCulling = false;
-        var box = BABYLON.Mesh.CreatePlane("godRayPlane", 16, scene, true);
-        box.visibility = 1;
-        box.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
-        box.material = fireMaterial;
-        var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 128, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
-        godrays.useCustomMeshPosition = true;
-        godrays.setCustomMeshPosition(new BABYLON.Vector3(0, 15.0, 0));
-        godrays.invert = false;
-        godrays.exposure = 0.8;
-        godrays.decay = 1;
-        godrays.weight = 0;
-        godrays.density = 0.5;
-        var startHiding = false;
-        var timeoutFunction;
-        var showGodRay = function () {
-            box.position = mesh.position.clone();
-            godrays.setCustomMeshPosition(mesh.position.clone());
-            godrays.customMeshPosition.y = 15;
-            box.rotate(new BABYLON.Vector3(0, 5, 0), 0.02, BABYLON.Space.WORLD);
-            if (godrays.weight >= 0.3 && !timeoutFunction) {
-                timeoutFunction = setTimeout(function () {
-                    startHiding = true;
-                }, 4000);
-            }
-            if (startHiding) {
-                godrays.weight -= 0.01;
-                if (godrays.weight <= 0) {
-                    godrays.dispose(camera);
-                    box.dispose();
-                    scene.unregisterBeforeRender(showGodRay);
+var Factories;
+(function (Factories) {
+    var AbstractFactory = /** @class */ (function () {
+        function AbstractFactory(game, scene, assetsManager) {
+            this.game = game;
+            this.scene = scene;
+            this.assetsManager = assetsManager;
+        }
+        AbstractFactory.prototype.initFactory = function () {
+            var self = this;
+            var meshTask = this.assetsManager.addMeshTask(this.taskName, null, this.dir, this.fileName);
+            meshTask.onSuccess = function (task) {
+                self.loadedMeshes = task.loadedMeshes;
+                for (var i = 0; i < self.loadedMeshes.length; i++) {
+                    var loadedMesh = self.loadedMeshes[i];
+                    loadedMesh.visibility = 0;
+                    loadedMesh.freezeWorldMatrix();
+                    loadedMesh.setEnabled(false);
+                }
+            };
+            return this;
+        };
+        AbstractFactory.prototype.createClone = function (name, cloneSkeleton) {
+            if (cloneSkeleton === void 0) { cloneSkeleton = false; }
+            for (var i = 0; i < this.loadedMeshes.length; i++) {
+                var mesh = this.loadedMeshes[i];
+                mesh.layerMask = 2;
+                if (mesh.name == name) {
+                    var clonedMesh = mesh.clone('clone_' + name);
+                    if (cloneSkeleton) {
+                        clonedMesh.skeleton = mesh.skeleton.clone('clone_skeleton_' + name);
+                    }
+                    clonedMesh.visibility = 1;
+                    clonedMesh.isVisible = true;
+                    clonedMesh.setEnabled(true);
+                    return clonedMesh;
                 }
             }
-            else if (godrays.weight <= 0.3) {
-                godrays.weight += 0.02;
+        };
+        AbstractFactory.prototype.createInstance = function (name) {
+            for (var i = 0; i < this.loadedMeshes.length; i++) {
+                var mesh = this.loadedMeshes[i];
+                mesh.layerMask = 2;
+                if (mesh.name == name) {
+                    var instancedMesh = mesh.createInstance('instance_' + name);
+                    instancedMesh.visibility = 1;
+                    instancedMesh.isVisible = true;
+                    instancedMesh.setEnabled(true);
+                    return instancedMesh;
+                }
             }
         };
-        scene.registerBeforeRender(showGodRay);
-    };
-    return GodRay;
-}());
-var TrailMesh = /** @class */ (function (_super) {
-    __extends(TrailMesh, _super);
-    function TrailMesh(name, generator, scene, diameter, length) {
-        if (diameter === void 0) { diameter = 1; }
-        if (length === void 0) { length = 60; }
-        var _this = _super.call(this, name, scene) || this;
-        _this._sectionPolygonPointsCount = 4;
-        _this._update = function () {
-            var positions = _this.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-            var normals = _this.getVerticesData(BABYLON.VertexBuffer.NormalKind);
-            for (var i = 3 * _this._sectionPolygonPointsCount; i < positions.length; i++) {
-                positions[i - 3 * _this._sectionPolygonPointsCount] = positions[i] - normals[i] / _this._length * _this._diameter;
-            }
-            for (var i = 3 * _this._sectionPolygonPointsCount; i < normals.length; i++) {
-                normals[i - 3 * _this._sectionPolygonPointsCount] = normals[i];
-            }
-            var l = positions.length - 3 * _this._sectionPolygonPointsCount;
-            var alpha = 2 * Math.PI / _this._sectionPolygonPointsCount;
-            for (var i = 0; i < _this._sectionPolygonPointsCount; i++) {
-                _this._sectionVectors[i].copyFromFloats(Math.cos(i * alpha) * _this._diameter, Math.sin(i * alpha) * _this._diameter, 0);
-                _this._sectionNormalVectors[i].copyFromFloats(Math.cos(i * alpha), Math.sin(i * alpha), 0);
-                BABYLON.Vector3.TransformCoordinatesToRef(_this._sectionVectors[i], _this._generator.getWorldMatrix(), _this._sectionVectors[i]);
-                BABYLON.Vector3.TransformNormalToRef(_this._sectionNormalVectors[i], _this._generator.getWorldMatrix(), _this._sectionNormalVectors[i]);
-            }
-            for (var i = 0; i < _this._sectionPolygonPointsCount; i++) {
-                positions[l + 3 * i] = _this._sectionVectors[i].x;
-                positions[l + 3 * i + 1] = _this._sectionVectors[i].y;
-                positions[l + 3 * i + 2] = _this._sectionVectors[i].z;
-                normals[l + 3 * i] = _this._sectionNormalVectors[i].x;
-                normals[l + 3 * i + 1] = _this._sectionNormalVectors[i].y;
-                normals[l + 3 * i + 2] = _this._sectionNormalVectors[i].z;
-            }
-            _this.updateVerticesData(BABYLON.VertexBuffer.PositionKind, positions, true, false);
-            _this.updateVerticesData(BABYLON.VertexBuffer.NormalKind, normals, true, false);
-        };
-        // this.layerMask = 2;
-        _this._generator = generator;
-        _this._diameter = diameter;
-        _this._length = length;
-        _this._sectionVectors = [];
-        _this._sectionNormalVectors = [];
-        for (var i = 0; i < _this._sectionPolygonPointsCount; i++) {
-            _this._sectionVectors[i] = BABYLON.Vector3.Zero();
-            _this._sectionNormalVectors[i] = BABYLON.Vector3.Zero();
+        return AbstractFactory;
+    }());
+    Factories.AbstractFactory = AbstractFactory;
+})(Factories || (Factories = {}));
+var Factories;
+(function (Factories) {
+    var Chest = /** @class */ (function (_super) {
+        __extends(Chest, _super);
+        function Chest(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'chest';
+            _this.dir = 'assets/Environment/chest/';
+            _this.fileName = 'chest.babylon';
+            return _this;
         }
-        _this._createMesh();
-        scene.onBeforeRenderObservable.add(_this._update);
-        return _this;
-    }
-    TrailMesh.prototype.destroy = function () {
-        this.getScene().onBeforeRenderObservable.removeCallback(this._update);
-        this.dispose();
-    };
-    TrailMesh.prototype.foldToGenerator = function () {
-        var positions = this.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-        var generatorWorldPosition = this._generator.absolutePosition;
-        for (var i = 0; i < positions.length; i += 3) {
-            positions[i] = generatorWorldPosition.x;
-            positions[i + 1] = generatorWorldPosition.y;
-            positions[i + 2] = generatorWorldPosition.z;
+        return Chest;
+    }(Factories.AbstractFactory));
+    Factories.Chest = Chest;
+})(Factories || (Factories = {}));
+var Factories;
+(function (Factories) {
+    var Nature = /** @class */ (function (_super) {
+        __extends(Nature, _super);
+        function Nature(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'factory.nature.grain';
+            _this.dir = 'assets/Environment/Plants/';
+            _this.fileName = 'Plants.babylon';
+            return _this;
         }
-    };
-    TrailMesh.prototype._createMesh = function () {
-        var data = new BABYLON.VertexData();
-        var positions = [];
-        var normals = [];
-        var indices = [];
-        var alpha = 2 * Math.PI / this._sectionPolygonPointsCount;
-        for (var i = 0; i < this._sectionPolygonPointsCount; i++) {
-            positions.push(Math.cos(i * alpha) * this._diameter, Math.sin(i * alpha) * this._diameter, -this._length);
-            normals.push(Math.cos(i * alpha), Math.sin(i * alpha), 0);
+        return Nature;
+    }(Factories.AbstractFactory));
+    Factories.Nature = Nature;
+})(Factories || (Factories = {}));
+var Factories;
+(function (Factories) {
+    var SkeletonBoss = /** @class */ (function (_super) {
+        __extends(SkeletonBoss, _super);
+        function SkeletonBoss(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'skeletonBoss';
+            _this.dir = 'assets/Characters/Skeleton/skeletonBoss/';
+            _this.fileName = 'skeletonBoss.babylon';
+            return _this;
         }
-        for (var i = 1; i <= this._length; i++) {
-            for (var j = 0; j < this._sectionPolygonPointsCount; j++) {
-                positions.push(Math.cos(j * alpha) * this._diameter, Math.sin(j * alpha) * this._diameter, -this._length + i);
-                normals.push(Math.cos(j * alpha), Math.sin(j * alpha), 0);
-            }
-            var l = positions.length / 3 - 2 * this._sectionPolygonPointsCount;
-            for (var j = 0; j < this._sectionPolygonPointsCount - 1; j++) {
-                indices.push(l + j, l + j + this._sectionPolygonPointsCount, l + j + this._sectionPolygonPointsCount + 1);
-                indices.push(l + j, l + j + this._sectionPolygonPointsCount + 1, l + j + 1);
-            }
-            indices.push(l + this._sectionPolygonPointsCount - 1, l + this._sectionPolygonPointsCount - 1 + this._sectionPolygonPointsCount, l + this._sectionPolygonPointsCount);
-            indices.push(l + this._sectionPolygonPointsCount - 1, l + this._sectionPolygonPointsCount, l);
+        return SkeletonBoss;
+    }(Factories.AbstractFactory));
+    Factories.SkeletonBoss = SkeletonBoss;
+    "";
+})(Factories || (Factories = {}));
+var Factories;
+(function (Factories) {
+    var SkeletonWarrior = /** @class */ (function (_super) {
+        __extends(SkeletonWarrior, _super);
+        function SkeletonWarrior(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'skeletonWarrior';
+            _this.dir = 'assets/Characters/Skeleton/skeletonWarrior/';
+            _this.fileName = 'skeletonWarrior.babylon';
+            return _this;
         }
-        data.positions = positions;
-        data.normals = normals;
-        data.indices = indices;
-        data.applyToMesh(this, true);
-        var trailMaterial = new BABYLON.StandardMaterial("white", this.getScene());
-        trailMaterial.diffuseColor.copyFromFloats(1, 1, 1);
-        trailMaterial.emissiveColor.copyFromFloats(1, 1, 1);
-        trailMaterial.specularColor.copyFromFloats(0, 0, 0);
-        this.material = trailMaterial;
-    };
-    return TrailMesh;
-}(BABYLON.Mesh));
+        return SkeletonWarrior;
+    }(Factories.AbstractFactory));
+    Factories.SkeletonWarrior = SkeletonWarrior;
+})(Factories || (Factories = {}));
+var Factories;
+(function (Factories) {
+    var Skeletons = /** @class */ (function (_super) {
+        __extends(Skeletons, _super);
+        function Skeletons(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'skeletons';
+            _this.dir = 'assets/Characters/Skeleton/skeleton/';
+            _this.fileName = 'skeleton.babylon';
+            return _this;
+        }
+        return Skeletons;
+    }(Factories.AbstractFactory));
+    Factories.Skeletons = Skeletons;
+})(Factories || (Factories = {}));
+var Factories;
+(function (Factories) {
+    var Characters = /** @class */ (function (_super) {
+        __extends(Characters, _super);
+        function Characters(game, scene, assetsManager) {
+            var _this = _super.call(this, game, scene, assetsManager) || this;
+            _this.taskName = 'factory.warrior';
+            _this.dir = 'assets/Characters/Warrior/';
+            _this.fileName = 'Warrior.babylon';
+            return _this;
+        }
+        return Characters;
+    }(Factories.AbstractFactory));
+    Factories.Characters = Characters;
+})(Factories || (Factories = {}));
 var GUI;
 (function (GUI) {
     var Main = /** @class */ (function () {
@@ -1948,153 +2081,6 @@ var RandomSpecialItem = /** @class */ (function () {
     }
     return RandomSpecialItem;
 }());
-var Factories;
-(function (Factories) {
-    var AbstractFactory = /** @class */ (function () {
-        function AbstractFactory(game, scene, assetsManager) {
-            this.game = game;
-            this.scene = scene;
-            this.assetsManager = assetsManager;
-        }
-        AbstractFactory.prototype.initFactory = function () {
-            var self = this;
-            var meshTask = this.assetsManager.addMeshTask(this.taskName, null, this.dir, this.fileName);
-            meshTask.onSuccess = function (task) {
-                self.loadedMeshes = task.loadedMeshes;
-                for (var i = 0; i < self.loadedMeshes.length; i++) {
-                    var loadedMesh = self.loadedMeshes[i];
-                    loadedMesh.visibility = 0;
-                    loadedMesh.freezeWorldMatrix();
-                    loadedMesh.setEnabled(false);
-                }
-            };
-            return this;
-        };
-        AbstractFactory.prototype.createClone = function (name, cloneSkeleton) {
-            if (cloneSkeleton === void 0) { cloneSkeleton = false; }
-            for (var i = 0; i < this.loadedMeshes.length; i++) {
-                var mesh = this.loadedMeshes[i];
-                mesh.layerMask = 2;
-                if (mesh.name == name) {
-                    var clonedMesh = mesh.clone('clone_' + name);
-                    if (cloneSkeleton) {
-                        clonedMesh.skeleton = mesh.skeleton.clone('clone_skeleton_' + name);
-                    }
-                    clonedMesh.visibility = 1;
-                    clonedMesh.isVisible = true;
-                    clonedMesh.setEnabled(true);
-                    return clonedMesh;
-                }
-            }
-        };
-        AbstractFactory.prototype.createInstance = function (name) {
-            for (var i = 0; i < this.loadedMeshes.length; i++) {
-                var mesh = this.loadedMeshes[i];
-                mesh.layerMask = 2;
-                if (mesh.name == name) {
-                    var instancedMesh = mesh.createInstance('instance_' + name);
-                    instancedMesh.visibility = 1;
-                    instancedMesh.isVisible = true;
-                    instancedMesh.setEnabled(true);
-                    return instancedMesh;
-                }
-            }
-        };
-        return AbstractFactory;
-    }());
-    Factories.AbstractFactory = AbstractFactory;
-})(Factories || (Factories = {}));
-var Factories;
-(function (Factories) {
-    var Chest = /** @class */ (function (_super) {
-        __extends(Chest, _super);
-        function Chest(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'chest';
-            _this.dir = 'assets/Environment/chest/';
-            _this.fileName = 'chest.babylon';
-            return _this;
-        }
-        return Chest;
-    }(Factories.AbstractFactory));
-    Factories.Chest = Chest;
-})(Factories || (Factories = {}));
-var Factories;
-(function (Factories) {
-    var Nature = /** @class */ (function (_super) {
-        __extends(Nature, _super);
-        function Nature(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'factory.nature.grain';
-            _this.dir = 'assets/Environment/Plants/';
-            _this.fileName = 'Plants.babylon';
-            return _this;
-        }
-        return Nature;
-    }(Factories.AbstractFactory));
-    Factories.Nature = Nature;
-})(Factories || (Factories = {}));
-var Factories;
-(function (Factories) {
-    var SkeletonBoss = /** @class */ (function (_super) {
-        __extends(SkeletonBoss, _super);
-        function SkeletonBoss(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'skeletonBoss';
-            _this.dir = 'assets/Characters/Skeleton/skeletonBoss/';
-            _this.fileName = 'skeletonBoss.babylon';
-            return _this;
-        }
-        return SkeletonBoss;
-    }(Factories.AbstractFactory));
-    Factories.SkeletonBoss = SkeletonBoss;
-    "";
-})(Factories || (Factories = {}));
-var Factories;
-(function (Factories) {
-    var SkeletonWarrior = /** @class */ (function (_super) {
-        __extends(SkeletonWarrior, _super);
-        function SkeletonWarrior(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'skeletonWarrior';
-            _this.dir = 'assets/Characters/Skeleton/skeletonWarrior/';
-            _this.fileName = 'skeletonWarrior.babylon';
-            return _this;
-        }
-        return SkeletonWarrior;
-    }(Factories.AbstractFactory));
-    Factories.SkeletonWarrior = SkeletonWarrior;
-})(Factories || (Factories = {}));
-var Factories;
-(function (Factories) {
-    var Skeletons = /** @class */ (function (_super) {
-        __extends(Skeletons, _super);
-        function Skeletons(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'skeletons';
-            _this.dir = 'assets/Characters/Skeleton/skeleton/';
-            _this.fileName = 'skeleton.babylon';
-            return _this;
-        }
-        return Skeletons;
-    }(Factories.AbstractFactory));
-    Factories.Skeletons = Skeletons;
-})(Factories || (Factories = {}));
-var Factories;
-(function (Factories) {
-    var Characters = /** @class */ (function (_super) {
-        __extends(Characters, _super);
-        function Characters(game, scene, assetsManager) {
-            var _this = _super.call(this, game, scene, assetsManager) || this;
-            _this.taskName = 'factory.warrior';
-            _this.dir = 'assets/Characters/Warrior/';
-            _this.fileName = 'Warrior.babylon';
-            return _this;
-        }
-        return Characters;
-    }(Factories.AbstractFactory));
-    Factories.Characters = Characters;
-})(Factories || (Factories = {}));
 var Particles;
 (function (Particles) {
     var AbstractParticle = /** @class */ (function () {
@@ -4693,6 +4679,12 @@ var Items;
             if (this.mesh) {
                 this.mesh.dispose();
             }
+            if (this.trailBox) {
+                this.trailBox.dispose();
+            }
+            if (this.trailMesh) {
+                this.trailMesh.dispose();
+            }
         };
         Item.prototype.createTrailMesh = function (game) {
             this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getScene(), false);
@@ -5120,18 +5112,21 @@ var Character;
             StrongAttack.prototype.showAnimation = function (skillTime, cooldownTime) {
                 var game = this.game;
                 var self = this;
+                var observer;
                 this.showReloadInGUI(cooldownTime);
                 game.player.runAnimationSkill(this.animationName, function () {
                     self.isInUse = true;
                 }, function () {
                     game.player.mesh.skeleton.beginAnimation('loopStrongAttack', true);
                 }, this.animationLoop, this.animationSpeed, false);
+                observer = game.getScene().onBeforeRenderObservable.add(game.player.inventory.weapon.trailMesh.update);
                 setTimeout(function () {
                     game.player.inventory.weapon.trailMesh.visibility = 1;
                     game.player.runAnimationSkill('strongAttackB', null, function () {
                         self.isInUse = false;
                         setTimeout(function () {
                             game.player.inventory.weapon.trailMesh.visibility = 0;
+                            game.getScene().onBeforeRenderObservable.remove(observer);
                         }, 1000);
                     });
                     game.client.socket.emit('attack', {

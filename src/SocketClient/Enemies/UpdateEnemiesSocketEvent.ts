@@ -30,6 +30,7 @@ class UpdateEnemiesSocketEvent extends SocketEvent {
             });
 
             if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack') {
+                game.player.monstersToAttack[enemyKey] = true;
                 if(updatedEnemy.attack == true && data.attackIsDone == true) {
                     mesh.lookAt(targetMesh.position.clone());
                     enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
@@ -37,13 +38,17 @@ class UpdateEnemiesSocketEvent extends SocketEvent {
                     enemy.runAnimationStand();
                 }
             } else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
+                if (game.player.monstersToAttack[enemyKey] !== undefined) {
+                    delete game.player.monstersToAttack[enemyKey];
+                }
+
                 activeTargetPoints[enemyKey] = function () {
-                    mesh.lookAt(targetMesh.position);
-                    let rotation = mesh.rotation;
-                    let forwards = new BABYLON.Vector3(parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, parseFloat(Math.cos(rotation.y)) / enemy.getWalkSpeed());
-                    mesh.moveWithCollisions(forwards);
-                    enemy.runAnimationWalk();
-                };
+                mesh.lookAt(targetMesh.position);
+                let rotation = mesh.rotation;
+                let forwards = new BABYLON.Vector3(parseFloat(Math.sin(rotation.y)) / enemy.getWalkSpeed(), 0, parseFloat(Math.cos(rotation.y)) / enemy.getWalkSpeed());
+                mesh.moveWithCollisions(forwards);
+                enemy.runAnimationWalk();
+            };
 
                 self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
             } else if (data.collisionEvent == 'OnIntersectionExitTriggerVisibility') {

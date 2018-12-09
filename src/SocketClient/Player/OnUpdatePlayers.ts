@@ -45,7 +45,7 @@ class OnUpdatePlayers extends SocketEvent {
                 let targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {
                     let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                    player.meshForMove.lookAt(targetPointVector3);
+                    player.meshForMove.lookAt(targetPointVector3, Math.PI);
                 }
 
                 let attackAnimation = (Game.randomNumber(1, 2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;

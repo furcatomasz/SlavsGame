@@ -2,6 +2,7 @@ class Monster extends AbstractCharacter {
 
     protected target: string;
     public intervalAttackRegisteredFunction;
+    public checkAttackObserver;
 
     constructor(game: Game, serverKey: number, serverData: any) {
         super(serverData.name, game);
@@ -43,60 +44,31 @@ class Monster extends AbstractCharacter {
         let self = this;
 
         this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
-            function () {
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+            BABYLON.ActionManager.OnPointerOutTrigger, () => {
                 self.mesh.renderOutline = false;
                 self.game.gui.characterTopHp.hideHpBar();
             }));
 
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
-            function () {
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+            BABYLON.ActionManager.OnPointerOverTrigger, () => {
                 self.mesh.renderOutline = true;
                 self.game.gui.characterTopHp.showHpCharacter(self);
             }));
 
-        let attackOnce = false;
-        let intervalAttackFunction = () => {
-            if (!game.player.isAttack) {
-                game.client.socket.emit('attack', {
-                    attack: self.id,
-                    targetPoint: self.game.controller.attackPoint.position,
-                    rotation: self.game.controller.attackPoint.rotation,
-                });
-            }
-        };
-
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
-            pointer => {
-                if(!game.player.isAnySkillIsInUse()) {
-                    game.controller.attackPoint = pointer.meshUnderPointer;
-                    game.controller.targetPoint = null;
-                    attackOnce = false;
-
-                    game.goToMeshFunction = GoToMeshAndRunAction.execute(game, self.meshForMove, () => {
-                        game.player.runAnimationDeathOrStand();
-                        game.player.unregisterMoveWithCollision(true);
-                        setTimeout(() => {
-                            intervalAttackFunction();
-
-                            if (self.game.controller.attackPoint && !attackOnce) {
-                                self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
-                            }
-                        }, 250);
-                    });
-                }
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+            BABYLON.ActionManager.OnPickDownTrigger, () => {
+                game.player.attackActions.attackMonster(self);
             }));
 
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger,
-            () => {
-                attackOnce = true;
-                clearInterval(self.intervalAttackRegisteredFunction);
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+            BABYLON.ActionManager.OnPickUpTrigger, () => {
+                game.player.attackActions.attackOnlyOnce();
             }));
 
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger,
-            () => {
-                clearInterval(self.intervalAttackRegisteredFunction);
-                self.game.controller.attackPoint = null;
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+            BABYLON.ActionManager.OnPickOutTrigger, () => {
+                game.player.attackActions.abbadonMonsterAttack();
             }));
 
     }
@@ -119,7 +91,10 @@ class Monster extends AbstractCharacter {
         if (this.intervalAttackRegisteredFunction) {
             clearInterval(this.intervalAttackRegisteredFunction);
         }
+
         this.meshForMove.dispose();
+        this.walkSmoke.dispose();
+        this.bloodParticles.dispose();
     }
 
     retrieveHit(updatedEnemy) {

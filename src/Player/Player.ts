@@ -4,7 +4,7 @@ class Player extends AbstractCharacter {
 
     public inventory: Character.Inventory;
     public playerLight: BABYLON.SpotLight;
-    public isAlive: boolean;
+    public isAlive: boolean = true;
 
     public skills: Array<Character.Skills.AbstractSkill>;
     public statisticsAll: Array<any>;
@@ -17,13 +17,13 @@ class Player extends AbstractCharacter {
     public lvl: number;
     public freeAttributesPoints: number;
     public freeSkillPoints: number;
+    public monstersToAttack: Array<Boolean> = [];
+    public attackActions: AttackActions;
 
     public constructor(game: Game, registerMoving: boolean, serverData: any) {
         super(serverData.activePlayer.name, game);
 
         this.id = serverData.activePlayer.id;
-        this.isAlive = true;
-
         this.setCharacterStatistics(serverData.activePlayer);
         this.connectionId = serverData.connectionId;
         this.isControllable = registerMoving;
@@ -49,6 +49,7 @@ class Player extends AbstractCharacter {
             this.refreshExperienceInGui();
             this.refreshEnergyInGui();
             this.createPlayerLight();
+            this.attackActions = new AttackActions(game);
         }
 
         this.initPatricleSystemDamage();

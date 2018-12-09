@@ -37,6 +37,7 @@ class Mouse {
             }
             clickTrigger = true;
             if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
+                game.player.attackActions.cancelCheckAttack();
                 self.attackPoint = null;
                 self.targetPoint = pickResult.pickedPoint;
                 self.targetPoint.y = 0;

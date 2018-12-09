@@ -567,6 +567,66 @@ var SocketIOClient = /** @class */ (function () {
     };
     return SocketIOClient;
 }());
+var AttackActions = /** @class */ (function () {
+    function AttackActions(game) {
+        this.game = game;
+    }
+    AttackActions.prototype.attackMonster = function (monster) {
+        var game = this.game;
+        var self = this;
+        if (!game.player.isAnySkillIsInUse()) {
+            this.cancelCheckAttack();
+            game.controller.attackPoint = monster.meshForMove;
+            game.controller.targetPoint = null;
+            this.attackOnce = false;
+            this.attackedMonster = monster;
+            game.goToMeshFunction = GoToMeshAndRunAction.execute(game, monster.meshForMove, function () {
+                game.player.runAnimationDeathOrStand();
+                game.player.unregisterMoveWithCollision(true);
+                self.checkAttackObserver = game.getScene().onBeforeRenderObservable.add(function () {
+                    self.checkAttack(function () {
+                        if (self.game.controller.attackPoint && !self.attackOnce) {
+                            self.intervalAttackRegisteredFunction = setInterval(function () {
+                                self.intervalAttackFunction();
+                            }, 100);
+                        }
+                    });
+                });
+            });
+        }
+    };
+    AttackActions.prototype.abbadonMonsterAttack = function () {
+        clearInterval(this.intervalAttackRegisteredFunction);
+        this.cancelCheckAttack();
+        this.game.controller.attackPoint = null;
+    };
+    AttackActions.prototype.attackOnlyOnce = function () {
+        this.attackOnce = true;
+        clearInterval(this.intervalAttackRegisteredFunction);
+    };
+    AttackActions.prototype.cancelCheckAttack = function () {
+        this.game.getScene().onBeforeRenderObservable.remove(this.checkAttackObserver);
+    };
+    AttackActions.prototype.intervalAttackFunction = function () {
+        var game = this.game;
+        if (!game.player.isAttack) {
+            game.client.socket.emit('attack', {
+                attack: this.attackedMonster.id,
+                targetPoint: game.controller.attackPoint.position,
+                rotation: game.controller.attackPoint.rotation
+            });
+        }
+    };
+    AttackActions.prototype.checkAttack = function (actionAfterCheck) {
+        var game = this.game;
+        if (game.player.monstersToAttack[this.attackedMonster.id] == !undefined) {
+            this.intervalAttackFunction();
+            game.getScene().onBeforeRenderObservable.remove(this.checkAttackObserver);
+            actionAfterCheck();
+        }
+    };
+    return AttackActions;
+}());
 var GoToMeshAndRunAction = /** @class */ (function () {
     function GoToMeshAndRunAction() {
     }
@@ -815,6 +875,7 @@ var Mouse = /** @class */ (function () {
             }
             clickTrigger = true;
             if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
+                game.player.attackActions.cancelCheckAttack();
                 self.attackPoint = null;
                 self.targetPoint = pickResult.pickedPoint;
                 self.targetPoint.y = 0;
@@ -2676,8 +2737,9 @@ var Player = /** @class */ (function (_super) {
     __extends(Player, _super);
     function Player(game, registerMoving, serverData) {
         var _this = _super.call(this, serverData.activePlayer.name, game) || this;
-        _this.id = serverData.activePlayer.id;
         _this.isAlive = true;
+        _this.monstersToAttack = [];
+        _this.id = serverData.activePlayer.id;
         _this.setCharacterStatistics(serverData.activePlayer);
         _this.connectionId = serverData.connectionId;
         _this.isControllable = registerMoving;
@@ -2697,6 +2759,7 @@ var Player = /** @class */ (function (_super) {
             _this.refreshExperienceInGui();
             _this.refreshEnergyInGui();
             _this.createPlayerLight();
+            _this.attackActions = new AttackActions(game);
         }
         _this.initPatricleSystemDamage();
         _this.runAnimationStand();
@@ -3287,40 +3350,14 @@ var Monster = /** @class */ (function (_super) {
             self.mesh.renderOutline = true;
             self.game.gui.characterTopHp.showHpCharacter(self);
         }));
-        var attackOnce = false;
-        var intervalAttackFunction = function () {
-            if (!game.player.isAttack) {
-                game.client.socket.emit('attack', {
-                    attack: self.id,
-                    targetPoint: self.game.controller.attackPoint.position,
-                    rotation: self.game.controller.attackPoint.rotation
-                });
-            }
-        };
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function (pointer) {
-            if (!game.player.isAnySkillIsInUse()) {
-                game.controller.attackPoint = pointer.meshUnderPointer;
-                game.controller.targetPoint = null;
-                attackOnce = false;
-                game.goToMeshFunction = GoToMeshAndRunAction.execute(game, self.meshForMove, function () {
-                    game.player.runAnimationDeathOrStand();
-                    game.player.unregisterMoveWithCollision(true);
-                    setTimeout(function () {
-                        intervalAttackFunction();
-                        if (self.game.controller.attackPoint && !attackOnce) {
-                            self.intervalAttackRegisteredFunction = setInterval(intervalAttackFunction, 100);
-                        }
-                    }, 250);
-                });
-            }
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function () {
+            game.player.attackActions.attackMonster(self);
         }));
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function () {
-            attackOnce = true;
-            clearInterval(self.intervalAttackRegisteredFunction);
+            game.player.attackActions.attackOnlyOnce();
         }));
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger, function () {
-            clearInterval(self.intervalAttackRegisteredFunction);
-            self.game.controller.attackPoint = null;
+            game.player.attackActions.abbadonMonsterAttack();
         }));
     };
     Monster.prototype.initSfx = function () {
@@ -3339,6 +3376,8 @@ var Monster = /** @class */ (function (_super) {
             clearInterval(this.intervalAttackRegisteredFunction);
         }
         this.meshForMove.dispose();
+        this.walkSmoke.dispose();
+        this.bloodParticles.dispose();
     };
     Monster.prototype.retrieveHit = function (updatedEnemy) {
         var self = this;
@@ -5212,6 +5251,7 @@ var UpdateEnemiesSocketEvent = /** @class */ (function (_super) {
                 }
             });
             if (data.collisionEvent == 'OnIntersectionEnterTriggerAttack') {
+                game.player.monstersToAttack[enemyKey] = true;
                 if (updatedEnemy.attack == true && data.attackIsDone == true) {
                     mesh.lookAt(targetMesh.position.clone());
                     enemy.runAnimationHit(AbstractCharacter.ANIMATION_ATTACK_01, null, null, false);
@@ -5221,6 +5261,9 @@ var UpdateEnemiesSocketEvent = /** @class */ (function (_super) {
                 }
             }
             else if (data.collisionEvent == 'OnIntersectionEnterTriggerVisibility' || data.collisionEvent == 'OnIntersectionExitTriggerAttack') {
+                if (game.player.monstersToAttack[enemyKey] !== undefined) {
+                    delete game.player.monstersToAttack[enemyKey];
+                }
                 activeTargetPoints[enemyKey] = function () {
                     mesh.lookAt(targetMesh.position);
                     var rotation = mesh.rotation;
@@ -5416,7 +5459,7 @@ var OnUpdatePlayers = /** @class */ (function (_super) {
                 var targetPoint = updatedPlayer.targetPoint;
                 if (targetPoint) {
                     var targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                    player.meshForMove.lookAt(targetPointVector3);
+                    player.meshForMove.lookAt(targetPointVector3, Math.PI);
                 }
                 var attackAnimation = (Game.randomNumber(1, 2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
                 player.runAnimationHit(attackAnimation, function () {

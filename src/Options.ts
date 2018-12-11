@@ -14,6 +14,7 @@ class GameOptions {
     public focusDistance: boolean;
     public focalLength: boolean;
     public lensSize: boolean;
+    public bloom: boolean;
 
     constructor(game: Game) {
         this.dynamicShadowsArray = [];
@@ -31,6 +32,7 @@ class GameOptions {
         this.focusDistance = this.getFromLocalStorage('focusDistance');
         this.focalLength = this.getFromLocalStorage('focalLength');
         this.lensSize = this.getFromLocalStorage('lensSize');
+        this.bloom = this.getFromLocalStorage('bloom');
     }
 
     protected getFromLocalStorage(key) {
@@ -46,7 +48,7 @@ class GameOptions {
     public addMeshToDynamicShadowGenerator(mesh: BABYLON.AbstractMesh) {
         this.dynamicShadowsArray.push(mesh);
 
-        if(this.dynamicShadowGenerator) {
+        if (this.dynamicShadowGenerator) {
             this.dynamicShadowGenerator.getShadowMap().renderList.push(mesh);
         }
     }
@@ -57,7 +59,7 @@ class GameOptions {
         const self = this;
         const camera = scene.getCameraByName('gameCamera');
 
-        if(this.staticShadows && !this.staticShadowGenerator && game.sceneManager.environment) {
+        if (this.staticShadows && !this.staticShadowGenerator && game.sceneManager.environment) {
             let shadowGenerator = new BABYLON.ShadowGenerator(2048, game.sceneManager.environment.light);
             shadowGenerator.usePercentageCloserFiltering = true;
             shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
@@ -94,6 +96,10 @@ class GameOptions {
         if (this.renderingPipeline) {
             this.renderingPipeline.fxaaEnabled = this.fxaa;
             this.renderingPipeline.depthOfFieldEnabled = this.dof;
+            this.renderingPipeline.bloomEnabled = this.bloom;
+            this.renderingPipeline.bloomThreshold = 0.1;
+            this.renderingPipeline.bloomWeight = 1;
+            this.renderingPipeline.bloomScale = 1;
             this.renderingPipeline.depthOfField.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
             // this.renderingPipeline.depthOfField.fStop = this.fStop;
             // this.renderingPipeline.depthOfField.focusDistance = this.focusDistance;

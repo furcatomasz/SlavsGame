@@ -27,17 +27,25 @@ namespace Character.Skills {
         showAnimation(skillTime: number, cooldownTime: number) {
             const game = this.game;
             let self = this;
+            let observer;
             this.showReloadInGUI(cooldownTime);
 
+            observer = game.getScene().onBeforeRenderObservable.add(game.player.inventory.weapon.trailMesh.update);
             game.player.runAnimationSkill(this.animationName, () => {
+                game.player.inventory.weapon.trailMesh.visibility = 1;
                 self.isInUse = true;
-                self.effectEmitter.particleSystem.start();
+                // self.effectEmitter.particleSystem.start();
                 game.client.socket.emit('attack', {
                     targetPoint: null
                 });
             }, () => {
                 self.isInUse = false;
-                self.effectEmitter.particleSystem.stop();
+                // self.effectEmitter.particleSystem.stop();
+                setTimeout(() => {
+                    game.player.inventory.weapon.trailMesh.visibility = 0;
+                    game.getScene().onBeforeRenderObservable.remove(observer);
+
+                }, 1000);
             }, this.animationLoop, this.animationSpeed);
 
             setTimeout(() => {

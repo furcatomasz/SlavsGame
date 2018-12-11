@@ -416,6 +416,7 @@ var GameOptions = /** @class */ (function () {
         this.focusDistance = this.getFromLocalStorage('focusDistance');
         this.focalLength = this.getFromLocalStorage('focalLength');
         this.lensSize = this.getFromLocalStorage('lensSize');
+        this.bloom = this.getFromLocalStorage('bloom');
     };
     GameOptions.prototype.getFromLocalStorage = function (key) {
         return JSON.parse(localStorage.getItem('options.' + key));
@@ -472,6 +473,10 @@ var GameOptions = /** @class */ (function () {
         if (this.renderingPipeline) {
             this.renderingPipeline.fxaaEnabled = this.fxaa;
             this.renderingPipeline.depthOfFieldEnabled = this.dof;
+            this.renderingPipeline.bloomEnabled = this.bloom;
+            this.renderingPipeline.bloomThreshold = 0.1;
+            this.renderingPipeline.bloomWeight = 1;
+            this.renderingPipeline.bloomScale = 1;
             this.renderingPipeline.depthOfField.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
             // this.renderingPipeline.depthOfField.fStop = this.fStop;
             // this.renderingPipeline.depthOfField.focusDistance = this.focusDistance;
@@ -4204,6 +4209,9 @@ var GUI;
             // }, "", 0.01, 500.00, game.sceneManager.options.lensSize, (value) => {
             //     return value;
             // });
+            postProccessGroup.addCheckbox("Bloom", function (isChecked) {
+                GameOptions.saveInLocalStorage('bloom', isChecked, game);
+            }, game.sceneManager.options.bloom);
             var selectBox = new BABYLON.GUI.SelectionPanel("sp", [shadowsGroup, postProccessGroup]);
             selectBox.width = 0.8;
             selectBox.height = 0.8;
@@ -4964,16 +4972,23 @@ var Character;
             FastAttack.prototype.showAnimation = function (skillTime, cooldownTime) {
                 var game = this.game;
                 var self = this;
+                var observer;
                 this.showReloadInGUI(cooldownTime);
+                observer = game.getScene().onBeforeRenderObservable.add(game.player.inventory.weapon.trailMesh.update);
                 game.player.runAnimationSkill(this.animationName, function () {
+                    game.player.inventory.weapon.trailMesh.visibility = 1;
                     self.isInUse = true;
-                    self.effectEmitter.particleSystem.start();
+                    // self.effectEmitter.particleSystem.start();
                     game.client.socket.emit('attack', {
                         targetPoint: null
                     });
                 }, function () {
                     self.isInUse = false;
-                    self.effectEmitter.particleSystem.stop();
+                    // self.effectEmitter.particleSystem.stop();
+                    setTimeout(function () {
+                        game.player.inventory.weapon.trailMesh.visibility = 0;
+                        game.getScene().onBeforeRenderObservable.remove(observer);
+                    }, 1000);
                 }, this.animationLoop, this.animationSpeed);
                 setTimeout(function () {
                     game.player.animation.stop();

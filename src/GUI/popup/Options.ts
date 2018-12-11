@@ -83,6 +83,9 @@ namespace GUI {
             //     return value;
             // });
 
+            postProccessGroup.addCheckbox("Bloom", (isChecked) => {
+                GameOptions.saveInLocalStorage('bloom', isChecked, game);
+            }, game.sceneManager.options.bloom);
 
             let selectBox = new BABYLON.GUI.SelectionPanel("sp", [shadowsGroup, postProccessGroup]);
             selectBox.width = 0.8;

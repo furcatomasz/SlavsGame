@@ -11,17 +11,9 @@ namespace Character.Skills {
             this.name = 'Heal';
             this.animationName = AbstractCharacter.ANIMATION_STAND_WEAPON;
             this.animationSpeed = 2;
-
-            let self = this;
-            let listener = function listener() {
-                let effectEmitter = new Particles.Heal(game, game.player.mesh);
-                self.effectEmitter = effectEmitter;
-
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
-
-
+            this.animationTime = 0;
+            this.animationLoop = true;
+            this.effectEmitter = new Particles.Heal(game, this.player.mesh);
         }
 
         showAnimation(skillTime: number, cooldownTime: number) {
@@ -30,7 +22,7 @@ namespace Character.Skills {
             this.showReloadInGUI(cooldownTime);
 
             let alpha = 0;
-            let animateFunction = function () {
+            let animateFunction = () => {
                 self.effectEmitter.particleSystem.emitter.position.x = 2 * Math.cos(alpha);
                 self.effectEmitter.particleSystem.emitter.position.y = 1;
                 self.effectEmitter.particleSystem.emitter.position.z = 2 * Math.sin(alpha);
@@ -38,19 +30,18 @@ namespace Character.Skills {
                 alpha += 0.24 * game.getScene().getAnimationRatio();
             };
 
-            game.player.runAnimationSkill(self.animationName, function () {
+            self.player.runAnimationSkill(self.animationName, () => {
                 self.effectEmitter.particleSystem.start();
                 game.getScene().registerBeforeRender(animateFunction);
-            }, function () {
+                self.isInUse = true;
+            }, null, self.animationLoop, self.animationSpeed);
+
+            setTimeout(() => {
+                self.player.animation.stop();
                 self.effectEmitter.particleSystem.stop();
                 game.getScene().unregisterBeforeRender(animateFunction);
-            }, self.animationLoop, self.animationSpeed);
-
-            if(self.animationTime) {
-                setTimeout(function() {
-                    game.player.animation.stop();
-                }, self.animationTime);
-            }
+                self.isInUse = false;
+            }, skillTime);
 
         }
 

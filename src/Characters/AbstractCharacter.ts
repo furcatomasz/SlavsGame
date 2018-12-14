@@ -16,7 +16,7 @@ abstract class AbstractCharacter {
     /** Character atuts */
     public statistics;
 
-    protected game:Game;
+    public game:Game;
     public animation:BABYLON.Animatable;
     public isControllable:boolean;
     public isAttack: boolean;

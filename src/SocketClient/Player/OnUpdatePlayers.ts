@@ -9,6 +9,9 @@ class OnUpdatePlayers extends SocketEvent {
 
         this.socket.on('updatePlayer', function (updatedPlayer) {
             let player = null;
+            if(!updatedPlayer.activePlayer.id) {
+                return;
+            }
 
             game.remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == updatedPlayer.activePlayer.id) {
@@ -16,6 +19,11 @@ class OnUpdatePlayers extends SocketEvent {
                     return;
                 }
             });
+
+            if(!player) {
+                player = new Player(game, false, updatedPlayer);
+                game.remotePlayers.push(player);
+            }
 
             ///action when hp of character is changed
             if (player.statistics.hp != updatedPlayer.activePlayer.statistics.hp) {

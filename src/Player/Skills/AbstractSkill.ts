@@ -2,6 +2,7 @@ namespace Character.Skills {
     export abstract class AbstractSkill {
         static TYPE = 0;
 
+        protected player: Player;
         protected game: Game;
         public name: string;
         public animationName: string;
@@ -21,15 +22,19 @@ namespace Character.Skills {
         protected guiOverlay: BABYLON.GUI.Rectangle;
         protected guiText: BABYLON.GUI.TextBlock;
 
-        constructor(game: Game) {
+        constructor(player: Player) {
             this.animationTime = 0;
             this.animationLoop = false;
-            this.game = game;
+            this.player = player;
+            this.game = player.game;
             this.isReady = true;
-            this.registerDefaults(game);
-            this.registerHotKey(game);
-            this.registerAnimations();
-            this.createSkillImageInGUI(game);
+            this.registerDefaults(this.game);
+
+            if(player.isControllable) {
+                this.registerHotKey();
+                this.registerAnimations();
+                this.createSkillImageInGUI();
+            }
         }
 
 
@@ -43,8 +48,9 @@ namespace Character.Skills {
 
         protected abstract registerDefaults(game: Game);
 
-        protected registerHotKey(game: Game) {
+        protected registerHotKey() {
             let self = this;
+            let game = this.game;
 
             let listener = () => {
                 const player = game.player;
@@ -70,18 +76,21 @@ namespace Character.Skills {
         }
 
         protected showReloadInGUI(cooldownTime: number) {
-            const game = this.game;
-            const self = this;
-            const speedRatio = 1 / cooldownTime;
-            this.isReady = false;
+            if(this.player.isControllable) {
+                const game = this.game;
+                const self = this;
+                const speedRatio = 1 / cooldownTime;
+                this.isReady = false;
 
-            game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, speedRatio, function () {
-                game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
-                self.isReady = true;
-            });
+                game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, speedRatio, function () {
+                    game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
+                    self.isReady = true;
+                });
+            }
         }
 
-        protected createSkillImageInGUI(game) {
+        protected createSkillImageInGUI() {
+            let game = this.game;
             let image = this.getImageUrl();
             let number = this.getType();
             let grid = game.gui.playerBottomPanel.guiGridSkills;

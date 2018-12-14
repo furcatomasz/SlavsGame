@@ -21,26 +21,34 @@ namespace Character.Skills {
             let observer;
             this.showReloadInGUI(cooldownTime);
 
-            game.player.runAnimationSkill(this.animationName, () => {
+            self.player.runAnimationSkill(this.animationName, () => {
                 self.isInUse = true;
             }, () => {
-                game.player.mesh.skeleton.beginAnimation('loopStrongAttack', true);
+                self.player.mesh.skeleton.beginAnimation('loopStrongAttack', true);
             }, this.animationLoop, this.animationSpeed, false);
 
-            observer = game.getScene().onBeforeRenderObservable.add(game.player.inventory.weapon.trailMesh.update);
+            if(self.player.inventory.weapon) {
+                observer = game.getScene().onBeforeRenderObservable.add(self.player.inventory.weapon.trailMesh.update);
+            }
             setTimeout(() => {
-                game.player.inventory.weapon.trailMesh.visibility = 1;
-                game.player.runAnimationSkill('strongAttackB', null, () => {
+                if(self.player.inventory.weapon) {
+                    self.player.inventory.weapon.trailMesh.visibility = 1;
+                }
+                self.player.runAnimationSkill('strongAttackB', null, () => {
                     self.isInUse = false;
                     setTimeout(() => {
-                        game.player.inventory.weapon.trailMesh.visibility = 0;
+                        if(self.player.inventory.weapon) {
+                            self.player.inventory.weapon.trailMesh.visibility = 0;
+                        }
                         game.getScene().onBeforeRenderObservable.remove(observer);
 
                     }, 1000);
                 });
-                game.client.socket.emit('attack', {
-                    targetPoint: null
-                });
+                if(self.player.isControllable) {
+                    game.client.socket.emit('attack', {
+                        targetPoint: null
+                    });
+                }
             }, skillTime);
         }
 

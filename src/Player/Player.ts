@@ -52,6 +52,7 @@ class Player extends AbstractCharacter {
             this.attackActions = new AttackActions(game);
         }
 
+        this.setCharacterSkills(serverData.skills);
         this.initPatricleSystemDamage();
         this.runAnimationStand();
     }
@@ -65,24 +66,6 @@ class Player extends AbstractCharacter {
         this.freeAttributesPoints = serverData.activePlayer.freeAttributesPoints;
         this.freeSkillPoints = serverData.activePlayer.freeSkillPoints;
         this.name = serverData.activePlayer.name;
-        // this.setCharacterSkills(serverData.skills);
-        this.setCharacterSkills([
-            {
-                type: 1,
-            },
-            {
-                type: 2,
-            },
-            {
-                type: 3,
-            },
-            {
-                type: 4,
-            },
-            {
-                type: 5,
-            }
-        ]);
     }
 
     private createPlayerLight() {
@@ -145,13 +128,28 @@ class Player extends AbstractCharacter {
     }
 
     public setCharacterSkills(skills) {
-        let skillManager = new Character.Skills.SkillsManager(this.game);
+        skills = [
+            {
+                type: 1,
+            },
+            {
+                type: 2,
+            },
+            {
+                type: 3,
+            },
+            {
+                type: 4,
+            },
+            {
+                type: 5,
+            }];
         let self = this;
         this.skills = [];
 
         if (skills) {
-            skills.forEach(function (skill, key) {
-                let playerSkill = skillManager.getSkill(skill.type);
+            skills.forEach(skill => {
+                let playerSkill = Character.Skills.SkillsManager.getSkill(skill.type, self);
                 self.skills[playerSkill.getType()] = playerSkill;
             });
         }
@@ -168,7 +166,7 @@ class Player extends AbstractCharacter {
             }
         });
 
-        if(isInUse === false && this.isAttack) {
+        if (isInUse === false && this.isAttack) {
             isInUse = true;
         }
 
@@ -194,16 +192,17 @@ class Player extends AbstractCharacter {
     }
 
     public refreshEnergyInGui() {
-        let percentage = Math.round(this.statistics.energy * 100 / this.statistics.energyMax);
-        this.game.gui.playerBottomPanel.energyBar.width = percentage / 100;
-        this.game.gui.playerBottomPanel.energyBarText.text = this.statistics.energy + ' / ' + this.statistics.energyMax;
+        if (this.isControllable) {
+            let percentage = Math.round(this.statistics.energy * 100 / this.statistics.energyMax);
+            this.game.gui.playerBottomPanel.energyBar.width = percentage / 100;
+            this.game.gui.playerBottomPanel.energyBarText.text = this.statistics.energy + ' / ' + this.statistics.energyMax;
+        }
     }
 
     public refreshHpInGui() {
         let percentage = Math.round(this.statistics.hp * 100 / this.statistics.hpMax);
         this.game.gui.playerBottomPanel.hpBar.width = percentage / 100;
         this.game.gui.playerBottomPanel.hpBarText.text = this.statistics.hp + ' / ' + this.statistics.hpMax;
-
     }
 
     public addExperience(experince: number, experiencePercentages: number) {
@@ -224,6 +223,10 @@ class Player extends AbstractCharacter {
     }
 
     public runPlayerToPosition(targetPointVector3) {
+        if(this.isAnySkillIsInUse()) {
+            return;
+        }
+
         let self = this;
         let mesh = this.meshForMove;
         mesh.lookAt(targetPointVector3, Math.PI);
@@ -254,7 +257,7 @@ class Player extends AbstractCharacter {
             this.game.getScene().unregisterBeforeRender(this.dynamicFunction);
         }
 
-        if(emitPosition) {
+        if (emitPosition) {
             this.game.client.socket.emit('setTargetPoint', {
                 position: this.meshForMove.position
             });

@@ -3,7 +3,7 @@ namespace GUI {
 
         constructor(guiMain:GUI.Main) {
             super(guiMain);
-            this.name = 'Inventory';
+            this.name = 'Attributes';
             this.imageUrl = "assets/gui/attrs.png";
             this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         }
@@ -35,13 +35,16 @@ namespace GUI {
             this.container.addControl(panel);
 
             let textPlayerName = this.createText(this.guiMain.game.player.name);
-            textPlayerName.color = 'green';
-            textPlayerName.fontSize = 18;
+            textPlayerName.color = 'gold';
+            textPlayerName.fontSize = 36;
+            textPlayerName.top = 10;
             panel.addControl(textPlayerName);
 
             let textPlayerLVL = this.createText(this.guiMain.game.player.lvl+' LVL');
-            textPlayerLVL.color = 'green';
-            textPlayerLVL.fontSize = 18;
+            textPlayerLVL.color = 'gold';
+            textPlayerLVL.fontSize = 36;
+            textPlayerLVL.top = 100;
+            textPlayerLVL.paddingBottom = 80;
             panel.addControl(textPlayerLVL);
 
             this.createAttribute(1, 'Strength:' + this.guiMain.game.player.attributes.strength, panel);
@@ -58,9 +61,10 @@ namespace GUI {
             }
 
             let textStatistics = this.createText('Statistics');
-            textStatistics.color = 'green';
+            textStatistics.color = 'gold';
             textStatistics.height = '8%';
-            textStatistics.fontSize = 18;
+            textStatistics.fontSize = 30;
+            textStatistics.paddingTop = 80;
             panel.addControl(textStatistics);
 
             let damage = this.createText('Damage: ' + this.guiMain.game.player.statisticsAll.damageMin + ' - ' + this.guiMain.game.player.statisticsAll.damageMax );
@@ -84,6 +88,9 @@ namespace GUI {
             textBlock.width = "100%";
             textBlock.height = "5%";
             textBlock.fontFamily = "RuslanDisplay";
+            textBlock.fontSize = 20;
+            textBlock.resizeToFit = true;
+            textBlock.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
 
             return textBlock;
         }
@@ -92,10 +99,11 @@ namespace GUI {
             let self = this;
             if (this.guiMain.game.player.freeAttributesPoints) {
                 let button = BABYLON.GUI.Button.CreateImageButton("plus", text, "assets/gui/plus.png");
-                button.height = "5%";
+                button.height = "40px";
                 button.thickness = 0;
                 button.width = 0.8;
                 button.color = 'white';
+                button.fontFamily = "RuslanDisplay";
                 button.fontSize = 16;
                 control.addControl(button);
 

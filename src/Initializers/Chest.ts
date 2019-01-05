@@ -30,10 +30,10 @@ class Chest {
 
         if (!opened) {
             let hl = new BABYLON.HighlightLayer("highlightLayer", scene, {camera: gameCamera});
-            scene.meshes.forEach((mesh) => {
-               hl.addExcludedMesh(mesh);
-            });
-            hl.removeExcludedMesh(chestMesh);
+            // scene.meshes.forEach((mesh) => {
+            //    hl.addExcludedMesh(mesh);
+            // });
+            // hl.removeExcludedMesh(chestMesh);
             hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
 
             self.hightlightLayer = hl;

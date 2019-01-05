@@ -1077,6 +1077,7 @@ var AbstractEnvironment = /** @class */ (function () {
     AbstractEnvironment.prototype.freezeAllMeshes = function (scene) {
         for (var i = 0; i < scene.meshes.length; i++) {
             scene.meshes[i].freezeWorldMatrix();
+            scene.meshes[i].cullingStrategy = BABYLON.AbstractMesh.CULLINGSTRATEGY_BOUNDINGSPHERE_ONLY;
         }
     };
     return AbstractEnvironment;
@@ -1962,13 +1963,13 @@ var Chest = /** @class */ (function () {
         chestMesh.checkCollisions = true;
         chestMesh.material.backFaceCulling = false;
         if (!opened) {
-            var hl_1 = new BABYLON.HighlightLayer("highlightLayer", scene, { camera: gameCamera });
-            scene.meshes.forEach(function (mesh) {
-                hl_1.addExcludedMesh(mesh);
-            });
-            hl_1.removeExcludedMesh(chestMesh);
-            hl_1.addMesh(chestMesh, BABYLON.Color3.Magenta());
-            self.hightlightLayer = hl_1;
+            var hl = new BABYLON.HighlightLayer("highlightLayer", scene, { camera: gameCamera });
+            // scene.meshes.forEach((mesh) => {
+            //    hl.addExcludedMesh(mesh);
+            // });
+            // hl.removeExcludedMesh(chestMesh);
+            hl.addMesh(chestMesh, BABYLON.Color3.Magenta());
+            self.hightlightLayer = hl;
         }
         this.mesh = chestMesh;
         this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
@@ -2662,17 +2663,19 @@ var Character;
          * @param {boolean} showSash
          */
         Inventory.prototype.showSashOrHair = function (showHair, showSash) {
-            if (showHair) {
-                var helm = new Items.Item(this.game, {
-                    name: "Hair",
-                    image: 'hair',
-                    meshName: 'hair',
-                    type: 3,
-                    entity: { id: 0 },
-                    statistics: null
-                });
-                this.equipItem(helm, true);
-            }
+            //TODO: Bugged hair in character
+            // if (showHair) {
+            //     let helm = new Items.Item(this.game, {
+            //         name: "Hair",
+            //         image: 'hair',
+            //         meshName: 'hair',
+            //         type: 3,
+            //         entity: {id: 0},
+            //         statistics: null
+            //     });
+            //
+            //     this.equipItem(helm, true);
+            // }
             if (showSash) {
                 var armor = new Items.Item(this.game, {
                     name: "Sash",
@@ -3813,7 +3816,7 @@ var GUI;
         __extends(Attributes, _super);
         function Attributes(guiMain) {
             var _this = _super.call(this, guiMain) || this;
-            _this.name = 'Inventory';
+            _this.name = 'Attributes';
             _this.imageUrl = "assets/gui/attrs.png";
             _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             return _this;
@@ -3840,12 +3843,15 @@ var GUI;
             panel.top = '10%';
             this.container.addControl(panel);
             var textPlayerName = this.createText(this.guiMain.game.player.name);
-            textPlayerName.color = 'green';
-            textPlayerName.fontSize = 18;
+            textPlayerName.color = 'gold';
+            textPlayerName.fontSize = 36;
+            textPlayerName.top = 10;
             panel.addControl(textPlayerName);
             var textPlayerLVL = this.createText(this.guiMain.game.player.lvl + ' LVL');
-            textPlayerLVL.color = 'green';
-            textPlayerLVL.fontSize = 18;
+            textPlayerLVL.color = 'gold';
+            textPlayerLVL.fontSize = 36;
+            textPlayerLVL.top = 100;
+            textPlayerLVL.paddingBottom = 80;
             panel.addControl(textPlayerLVL);
             this.createAttribute(1, 'Strength:' + this.guiMain.game.player.attributes.strength, panel);
             this.createAttribute(2, 'Durability:' + this.guiMain.game.player.attributes.durability, panel);
@@ -3858,9 +3864,10 @@ var GUI;
                 panel.addControl(textAttributes);
             }
             var textStatistics = this.createText('Statistics');
-            textStatistics.color = 'green';
+            textStatistics.color = 'gold';
             textStatistics.height = '8%';
-            textStatistics.fontSize = 18;
+            textStatistics.fontSize = 30;
+            textStatistics.paddingTop = 80;
             panel.addControl(textStatistics);
             var damage = this.createText('Damage: ' + this.guiMain.game.player.statisticsAll.damageMin + ' - ' + this.guiMain.game.player.statisticsAll.damageMax);
             panel.addControl(damage);
@@ -3878,16 +3885,20 @@ var GUI;
             textBlock.width = "100%";
             textBlock.height = "5%";
             textBlock.fontFamily = "RuslanDisplay";
+            textBlock.fontSize = 20;
+            textBlock.resizeToFit = true;
+            textBlock.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             return textBlock;
         };
         Attributes.prototype.createAttribute = function (type, text, control) {
             var self = this;
             if (this.guiMain.game.player.freeAttributesPoints) {
                 var button = BABYLON.GUI.Button.CreateImageButton("plus", text, "assets/gui/plus.png");
-                button.height = "5%";
+                button.height = "40px";
                 button.thickness = 0;
                 button.width = 0.8;
                 button.color = 'white';
+                button.fontFamily = "RuslanDisplay";
                 button.fontSize = 16;
                 control.addControl(button);
                 button.onPointerUpObservable.add(function () {

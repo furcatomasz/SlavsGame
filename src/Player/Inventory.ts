@@ -126,18 +126,20 @@ namespace Character {
          * @param {boolean} showSash
          */
         public showSashOrHair(showHair: boolean, showSash: boolean) {
-            if (showHair) {
-                let helm = new Items.Item(this.game, {
-                    name: "Hair",
-                    image: 'hair',
-                    meshName: 'hair',
-                    type: 3,
-                    entity: {id: 0},
-                    statistics: null
-                });
 
-                this.equipItem(helm, true);
-            }
+            //TODO: Bugged hair in character
+            // if (showHair) {
+            //     let helm = new Items.Item(this.game, {
+            //         name: "Hair",
+            //         image: 'hair',
+            //         meshName: 'hair',
+            //         type: 3,
+            //         entity: {id: 0},
+            //         statistics: null
+            //     });
+            //
+            //     this.equipItem(helm, true);
+            // }
 
             if (showSash) {
                 let armor = new Items.Item(this.game, {

@@ -30,6 +30,8 @@ abstract class AbstractEnvironment {
     protected freezeAllMeshes(scene: BABYLON.Scene) {
         for (let i = 0; i < scene.meshes.length; i++) {
             scene.meshes[i].freezeWorldMatrix();
+            scene.meshes[i].cullingStrategy = BABYLON.AbstractMesh.CULLINGSTRATEGY_BOUNDINGSPHERE_ONLY;
+
         }
     }
 

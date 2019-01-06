@@ -119,6 +119,12 @@ class EnvironmentForestHouse extends AbstractEnvironment {
             autoplay: true,
             volume: 0.3
         });
+
+        scene.getMeshByName('exit').dispose();
+
+        var exitPlane = scene.getMeshByName('Entrace_Tomb').clone("exit", null);
+        exitPlane.position = new BABYLON.Vector3(-196.78,0,-95.6);
+        exitPlane.rotation = new BABYLON.Vector3(0,-1.5,0);
     }
 
 }

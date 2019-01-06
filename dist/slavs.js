@@ -436,7 +436,7 @@ var GameOptions = /** @class */ (function () {
         var scene = game.getScene();
         var self = this;
         var camera = scene.getCameraByName('gameCamera');
-        if (this.staticShadows && !this.staticShadowGenerator && game.sceneManager.environment) {
+        if (this.staticShadows && !this.staticShadowGenerator && game.sceneManager.environment && game.sceneManager.environment.light) {
             var shadowGenerator = new BABYLON.ShadowGenerator(2048, game.sceneManager.environment.light);
             shadowGenerator.usePercentageCloserFiltering = true;
             shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
@@ -936,6 +936,7 @@ var GodRay = /** @class */ (function () {
         box.visibility = 1;
         box.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
         box.material = fireMaterial;
+        box.layerMask = 2;
         var godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 128, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
         godrays.useCustomMeshPosition = true;
         godrays.setCustomMeshPosition(new BABYLON.Vector3(0, 15.0, 0));
@@ -948,6 +949,7 @@ var GodRay = /** @class */ (function () {
         var timeoutFunction;
         var showGodRay = function () {
             box.position = mesh.position.clone();
+            box.position.y += 0.1;
             godrays.setCustomMeshPosition(mesh.position.clone());
             godrays.customMeshPosition.y = 15;
             box.rotate(new BABYLON.Vector3(0, 5, 0), 0.02, BABYLON.Space.WORLD);
@@ -1191,6 +1193,10 @@ var EnvironmentForestHouse = /** @class */ (function (_super) {
             autoplay: true,
             volume: 0.3
         });
+        scene.getMeshByName('exit').dispose();
+        var exitPlane = scene.getMeshByName('Entrace_Tomb').clone("exit", null);
+        exitPlane.position = new BABYLON.Vector3(-196.78, 0, -95.6);
+        exitPlane.rotation = new BABYLON.Vector3(0, -1.5, 0);
         return _this;
     }
     return EnvironmentForestHouse;
@@ -2840,9 +2846,6 @@ var Player = /** @class */ (function (_super) {
             },
             {
                 type: 4
-            },
-            {
-                type: 5
             }
         ];
         var self = this;
@@ -4678,130 +4681,6 @@ var Particles;
         SolidParticleSystem.NatureSmall = NatureSmall;
     })(SolidParticleSystem = Particles.SolidParticleSystem || (Particles.SolidParticleSystem = {}));
 })(Particles || (Particles = {}));
-var Items;
-(function (Items) {
-    var DroppedItem = /** @class */ (function () {
-        function DroppedItem() {
-        }
-        DroppedItem.showItem = function (game, item, position, itemDropKey) {
-            var scene = game.getScene();
-            var droppedItemBox = BABYLON.Mesh.CreateBox(item.name + '_Box', 3, scene, false);
-            droppedItemBox.checkCollisions = false;
-            droppedItemBox.visibility = 0;
-            droppedItemBox.position.x = position.x;
-            droppedItemBox.position.z = position.z;
-            droppedItemBox.position.y = 0;
-            var itemSpriteManager = new BABYLON.SpriteManager("playerManager", 'assets/Miniatures/' + item.image + '.png', 1, { width: 512, height: 512 }, scene);
-            var itemSprite = new BABYLON.Sprite("player", itemSpriteManager);
-            itemSprite.width = 1.8;
-            itemSprite.height = 1.8;
-            itemSprite.position.x = position.x;
-            itemSprite.position.z = position.z;
-            itemSprite.position.y = 1.5;
-            itemSpriteManager.layerMask = 2;
-            var animationBounce = BounceAnimation.getAnimation();
-            itemSprite.animations.push(animationBounce);
-            scene.beginAnimation(itemSprite, 0, 30, true);
-            var tooltip = null;
-            droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-                tooltip = new TooltipMesh(droppedItemBox, item.name);
-            }));
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-                tooltip.container.dispose();
-            }));
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
-                game.client.socket.emit('addDroppedItem', itemDropKey);
-                droppedItemBox.dispose();
-                tooltip.container.dispose();
-                itemSprite.dispose();
-            }));
-            var particleSystem = new Particles.DroppedItem(game, droppedItemBox);
-            particleSystem.particleSystem.start();
-            droppedItemBox.freezeWorldMatrix();
-        };
-        return DroppedItem;
-    }());
-    Items.DroppedItem = DroppedItem;
-})(Items || (Items = {}));
-var Items;
-(function (Items) {
-    var Item = /** @class */ (function () {
-        function Item(game, itemData) {
-            this.name = itemData.name;
-            this.meshName = itemData.meshName;
-            this.image = itemData.image;
-            this.type = itemData.type;
-            this.statistics = itemData.statistics;
-            if (itemData.entity) {
-                this.databaseId = itemData.entity.id;
-            }
-        }
-        Item.prototype.dispose = function () {
-            if (this.mesh) {
-                this.mesh.dispose();
-            }
-            if (this.trailBox) {
-                this.trailBox.dispose();
-            }
-            if (this.trailMesh) {
-                this.trailMesh.dispose();
-            }
-        };
-        Item.prototype.createTrailMesh = function (game) {
-            this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getScene(), false);
-            this.trailBox.visibility = 0;
-            this.trailMesh = new TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40);
-            this.trailMesh.visibility = 0;
-        };
-        return Item;
-    }());
-    Items.Item = Item;
-})(Items || (Items = {}));
-var Items;
-(function (Items) {
-    var ItemManager = /** @class */ (function () {
-        function ItemManager(game) {
-            this.game = game;
-        }
-        /**
-         * @param inventoryItems
-         * @param inventory
-         * @param hideShieldAndWeapon
-         */
-        ItemManager.prototype.initItemsFromDatabaseOnCharacter = function (inventoryItems, inventory, hideShieldAndWeapon) {
-            if (hideShieldAndWeapon === void 0) { hideShieldAndWeapon = false; }
-            var self = this;
-            var showSash = true;
-            var showHair = true;
-            new Promise(function (resolve) {
-                inventoryItems.forEach(function (itemDatabase) {
-                    if (hideShieldAndWeapon && (itemDatabase.type == 2 || itemDatabase.type == 1)) {
-                        return;
-                    }
-                    var item = new Items.Item(self.game, itemDatabase);
-                    inventory.items.push(item);
-                    var equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip;
-                    inventory.equipItem(item, equip);
-                    if (item.type == 3 && equip) {
-                        showHair = false;
-                    }
-                    if (item.type == 6 && equip) {
-                        showSash = false;
-                    }
-                });
-                setTimeout(function () {
-                    resolve();
-                });
-            }).then(function () {
-                inventory.showSashOrHair(showHair, showSash);
-            });
-        };
-        return ItemManager;
-    }());
-    Items.ItemManager = ItemManager;
-})(Items || (Items = {}));
 var Character;
 (function (Character) {
     var Skills;
@@ -5214,6 +5093,130 @@ var Character;
         Skills.StrongAttack = StrongAttack;
     })(Skills = Character.Skills || (Character.Skills = {}));
 })(Character || (Character = {}));
+var Items;
+(function (Items) {
+    var DroppedItem = /** @class */ (function () {
+        function DroppedItem() {
+        }
+        DroppedItem.showItem = function (game, item, position, itemDropKey) {
+            var scene = game.getScene();
+            var droppedItemBox = BABYLON.Mesh.CreateBox(item.name + '_Box', 3, scene, false);
+            droppedItemBox.checkCollisions = false;
+            droppedItemBox.visibility = 0;
+            droppedItemBox.position.x = position.x;
+            droppedItemBox.position.z = position.z;
+            droppedItemBox.position.y = 0;
+            var itemSpriteManager = new BABYLON.SpriteManager("playerManager", 'assets/Miniatures/' + item.image + '.png', 1, { width: 512, height: 512 }, scene);
+            var itemSprite = new BABYLON.Sprite("player", itemSpriteManager);
+            itemSprite.width = 1.8;
+            itemSprite.height = 1.8;
+            itemSprite.position.x = position.x;
+            itemSprite.position.z = position.z;
+            itemSprite.position.y = 1.5;
+            itemSpriteManager.layerMask = 2;
+            var animationBounce = BounceAnimation.getAnimation();
+            itemSprite.animations.push(animationBounce);
+            scene.beginAnimation(itemSprite, 0, 30, true);
+            var tooltip = null;
+            droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+                tooltip = new TooltipMesh(droppedItemBox, item.name);
+            }));
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+                tooltip.container.dispose();
+            }));
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
+                game.client.socket.emit('addDroppedItem', itemDropKey);
+                droppedItemBox.dispose();
+                tooltip.container.dispose();
+                itemSprite.dispose();
+            }));
+            var particleSystem = new Particles.DroppedItem(game, droppedItemBox);
+            particleSystem.particleSystem.start();
+            droppedItemBox.freezeWorldMatrix();
+        };
+        return DroppedItem;
+    }());
+    Items.DroppedItem = DroppedItem;
+})(Items || (Items = {}));
+var Items;
+(function (Items) {
+    var Item = /** @class */ (function () {
+        function Item(game, itemData) {
+            this.name = itemData.name;
+            this.meshName = itemData.meshName;
+            this.image = itemData.image;
+            this.type = itemData.type;
+            this.statistics = itemData.statistics;
+            if (itemData.entity) {
+                this.databaseId = itemData.entity.id;
+            }
+        }
+        Item.prototype.dispose = function () {
+            if (this.mesh) {
+                this.mesh.dispose();
+            }
+            if (this.trailBox) {
+                this.trailBox.dispose();
+            }
+            if (this.trailMesh) {
+                this.trailMesh.dispose();
+            }
+        };
+        Item.prototype.createTrailMesh = function (game) {
+            this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getScene(), false);
+            this.trailBox.visibility = 0;
+            this.trailMesh = new TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40);
+            this.trailMesh.visibility = 0;
+        };
+        return Item;
+    }());
+    Items.Item = Item;
+})(Items || (Items = {}));
+var Items;
+(function (Items) {
+    var ItemManager = /** @class */ (function () {
+        function ItemManager(game) {
+            this.game = game;
+        }
+        /**
+         * @param inventoryItems
+         * @param inventory
+         * @param hideShieldAndWeapon
+         */
+        ItemManager.prototype.initItemsFromDatabaseOnCharacter = function (inventoryItems, inventory, hideShieldAndWeapon) {
+            if (hideShieldAndWeapon === void 0) { hideShieldAndWeapon = false; }
+            var self = this;
+            var showSash = true;
+            var showHair = true;
+            new Promise(function (resolve) {
+                inventoryItems.forEach(function (itemDatabase) {
+                    if (hideShieldAndWeapon && (itemDatabase.type == 2 || itemDatabase.type == 1)) {
+                        return;
+                    }
+                    var item = new Items.Item(self.game, itemDatabase);
+                    inventory.items.push(item);
+                    var equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip;
+                    inventory.equipItem(item, equip);
+                    if (item.type == 3 && equip) {
+                        showHair = false;
+                    }
+                    if (item.type == 6 && equip) {
+                        showSash = false;
+                    }
+                });
+                setTimeout(function () {
+                    resolve();
+                });
+            }).then(function () {
+                inventory.showSashOrHair(showHair, showSash);
+            });
+        };
+        return ItemManager;
+    }());
+    Items.ItemManager = ItemManager;
+})(Items || (Items = {}));
 var MountainsEnvironment = /** @class */ (function (_super) {
     __extends(MountainsEnvironment, _super);
     function MountainsEnvironment() {

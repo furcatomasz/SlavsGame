@@ -19,6 +19,7 @@ class GodRay {
         box.visibility = 1;
         box.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
         box.material = fireMaterial;
+        box.layerMask = 2;
 
         let godrays = new BABYLON.VolumetricLightScatteringPostProcess('godrays', 1, camera, box, 128, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
         godrays.useCustomMeshPosition = true;
@@ -34,6 +35,7 @@ class GodRay {
         let timeoutFunction;
         const showGodRay = () => {
             box.position = mesh.position.clone();
+            box.position.y += 0.1;
             godrays.setCustomMeshPosition(mesh.position.clone());
             godrays.customMeshPosition.y = 15;
             box.rotate(new BABYLON.Vector3(0, 5, 0), 0.02, BABYLON.Space.WORLD);

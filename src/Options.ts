@@ -59,7 +59,7 @@ class GameOptions {
         const self = this;
         const camera = scene.getCameraByName('gameCamera');
 
-        if (this.staticShadows && !this.staticShadowGenerator && game.sceneManager.environment) {
+        if (this.staticShadows && !this.staticShadowGenerator && game.sceneManager.environment && game.sceneManager.environment.light) {
             let shadowGenerator = new BABYLON.ShadowGenerator(2048, game.sceneManager.environment.light);
             shadowGenerator.usePercentageCloserFiltering = true;
             shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;

@@ -1,10 +1,7 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -566,8 +563,8 @@ var SocketIOClient = /** @class */ (function () {
                 event.listen();
             });
         });
-        // this.socket.emit('changeScene', SelectCharacter.TYPE);
-        this.socket.emit('selectCharacter', 2);
+        this.socket.emit('changeScene', SelectCharacter.TYPE);
+        // this.socket.emit('selectCharacter', 2);
         return this;
     };
     return SocketIOClient;
@@ -1340,13 +1337,62 @@ var EnvironmentMountainsPass = /** @class */ (function (_super) {
 }(AbstractEnvironment));
 var EnvironmentSelectCharacter = /** @class */ (function () {
     function EnvironmentSelectCharacter(game, scene) {
-        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
-        light.intensity = 0.2;
-        light.position = new BABYLON.Vector3(0, 50, 0);
-        light.direction = new BABYLON.Vector3(0.45, -2.5, 0);
-        light.shadowMaxZ = 500;
-        var cone = scene.getMeshByName("fireplace");
+        ////LIGHT
+        var light = game.getScene().lights[0];
+        light.dispose();
+        var fireplaceLight = new BABYLON.PointLight("fireplaceLight", new BABYLON.Vector3(0, 2.5, 0), scene);
+        fireplaceLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
+        fireplaceLight.range = 50;
+        var intensityAnimation = new BABYLON.Animation("mainLightIntensity", "intensity", 50, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        intensityAnimation.setKeys([
+            {
+                frame: 0,
+                value: 0.85
+            },
+            {
+                frame: 5,
+                value: 0.9
+            },
+            {
+                frame: 10,
+                value: 0.82
+            }
+        ]);
+        var colorAnimation = new BABYLON.Animation("mainLightColor", "specular", 50, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        colorAnimation.setKeys([
+            {
+                frame: 20,
+                value: new BABYLON.Color3(1, 1, 1)
+            },
+            {
+                frame: 25,
+                value: new BABYLON.Color3(1, 0, 1)
+            },
+            {
+                frame: 30,
+                value: new BABYLON.Color3(1, 1, 1)
+            }
+        ]);
+        fireplaceLight.animations = [];
+        fireplaceLight.animations.push(intensityAnimation);
+        game.getScene().beginAnimation(fireplaceLight, 0, 10, true);
+        var shadowGenerator = new BABYLON.ShadowGenerator(1024, fireplaceLight);
+        shadowGenerator.getShadowMap().refreshRate = 0;
+        this.shadowGenerator = shadowGenerator;
+        for (var i = 0; i < scene.meshes.length; i++) {
+            var sceneMesh = scene.meshes[i];
+            var meshName = scene.meshes[i]['name'];
+            if (meshName.search("Forest_ground") >= 0) {
+                sceneMesh.actionManager = new BABYLON.ActionManager(scene);
+                sceneMesh.receiveShadows = true;
+                sceneMesh.material.emissiveColor = new BABYLON.Vector3(0.05, 0.05, 0.05);
+                continue;
+            }
+            shadowGenerator.getShadowMap().renderList.push(sceneMesh);
+        }
+        var cone = scene.getMeshByName("Fireplace");
         if (cone) {
+            fireplaceLight.parent = cone;
             var smokeSystem = new Particles.FireplaceSmoke(game, cone).particleSystem;
             smokeSystem.start();
             var fireSystem = new Particles.FireplaceFire(game, cone).particleSystem;
@@ -1359,7 +1405,7 @@ var EnvironmentSelectCharacter = /** @class */ (function () {
             sceneMesh.freezeWorldMatrix();
             sceneMesh.isPickable = false;
         }
-        // new BABYLON.Sound("Forest night", "assets/sounds/music/theme.mp3", scene, null, { loop: true, autoplay: true, volume: 1 });
+        new BABYLON.Sound("Forest night", "assets/sounds/music/theme.mp3", scene, null, { loop: true, autoplay: true, volume: 1 });
     }
     return EnvironmentSelectCharacter;
 }());
@@ -3306,14 +3352,13 @@ var SelectCharacter = /** @class */ (function (_super) {
     };
     SelectCharacter.prototype.setCamera = function (scene) {
         var gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
-        gameCamera.position = new BABYLON.Vector3(-8.5, 17.36, -51);
-        gameCamera.rotation = new BABYLON.Vector3(0.31, 0.4, 0);
+        gameCamera.position = new BABYLON.Vector3(0, 14, -20);
+        gameCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
         gameCamera.maxZ = 200;
         gameCamera.minZ = -200;
-        gameCamera.fov = 0.25;
+        // camera.fov = 13.25;
         gameCamera.fovMode = 0;
         gameCamera.layerMask = 2;
-        gameCamera.attachControl(this.game.canvas, true);
         scene.activeCameras = [gameCamera];
         return this;
     };
@@ -3645,22 +3690,22 @@ var SelectCharacter;
             _this.name = 'Warrior';
             _this.playerId = playerDatabase.id;
             var mesh = game.factories['character'].createClone('Warrior', true);
+            mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
             mesh.skeleton.enableBlending(0.3);
             switch (place) {
                 case 0:
-                    mesh.position = new BABYLON.Vector3(12, -1, -8);
+                    mesh.position = new BABYLON.Vector3(-0.3, 0, 10.5);
                     mesh.rotation = new BABYLON.Vector3(0, 0, 0);
                     break;
                 case 1:
-                    mesh.position = new BABYLON.Vector3(11, -1, -10);
+                    mesh.position = new BABYLON.Vector3(2.7, 0, 10);
                     mesh.rotation = new BABYLON.Vector3(0, 0.1, 0);
                     break;
             }
-            mesh.lookAt(game.getScene().getMeshByName('fireplace').position.clone());
             _this.mesh = mesh;
             _this = _super.call(this, name, game) || this;
             _this.setItems(playerDatabase.items);
-            _this.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+            _this.mesh.skeleton.beginAnimation('Sit');
             _this.registerActions();
             return _this;
         }
@@ -3691,33 +3736,30 @@ var SelectCharacter;
             this.meshForMove.parent = this.mesh;
             this.meshForMove.position.y = 2;
             var sitDown = function () {
-                // if(!self.skeletonAnimation) {
-                //     let animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
-                //     self.skeletonAnimation = self.game.getScene().beginAnimation(self.mesh, animationSelectRange.to, animationSelectRange.from+1, false, -1, function() {
-                //         self.mesh.skeleton.beginAnimation('Sit');
-                //         self.skeletonAnimation = null;
-                //     });
-                // }
+                if (!self.skeletonAnimation) {
+                    var animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
+                    self.skeletonAnimation = self.game.getScene().beginAnimation(self.mesh, animationSelectRange.to, animationSelectRange.from + 1, false, -1, function () {
+                        self.mesh.skeleton.beginAnimation('Sit');
+                        self.skeletonAnimation = null;
+                    });
+                }
             };
             this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
             this.meshForMove.isPickable = true;
-            // this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-            //     BABYLON.ActionManager.OnPointerOverTrigger,
-            //     function() {
-            //         pointerOut = false;
-            //         if(!self.skeletonAnimation) {
-            //             self.skeletonAnimation = self.mesh.skeleton.beginAnimation('Select', false, 1, function () {
-            //                 self.skeletonAnimation = null;
-            //
-            //                 if(pointerOut) {
-            //                     sitDown();
-            //                 } else {
-            //                     self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
-            //                 }
-            //             });
-            //         }
-            //     })
-            // );
+            this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+                pointerOut = false;
+                if (!self.skeletonAnimation) {
+                    self.skeletonAnimation = self.mesh.skeleton.beginAnimation('Select', false, 1, function () {
+                        self.skeletonAnimation = null;
+                        if (pointerOut) {
+                            sitDown();
+                        }
+                        else {
+                            self.mesh.skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true);
+                        }
+                    });
+                }
+            }));
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
                 sitDown();
                 pointerOut = true;
@@ -4681,6 +4723,130 @@ var Particles;
         SolidParticleSystem.NatureSmall = NatureSmall;
     })(SolidParticleSystem = Particles.SolidParticleSystem || (Particles.SolidParticleSystem = {}));
 })(Particles || (Particles = {}));
+var Items;
+(function (Items) {
+    var DroppedItem = /** @class */ (function () {
+        function DroppedItem() {
+        }
+        DroppedItem.showItem = function (game, item, position, itemDropKey) {
+            var scene = game.getScene();
+            var droppedItemBox = BABYLON.Mesh.CreateBox(item.name + '_Box', 3, scene, false);
+            droppedItemBox.checkCollisions = false;
+            droppedItemBox.visibility = 0;
+            droppedItemBox.position.x = position.x;
+            droppedItemBox.position.z = position.z;
+            droppedItemBox.position.y = 0;
+            var itemSpriteManager = new BABYLON.SpriteManager("playerManager", 'assets/Miniatures/' + item.image + '.png', 1, { width: 512, height: 512 }, scene);
+            var itemSprite = new BABYLON.Sprite("player", itemSpriteManager);
+            itemSprite.width = 1.8;
+            itemSprite.height = 1.8;
+            itemSprite.position.x = position.x;
+            itemSprite.position.z = position.z;
+            itemSprite.position.y = 1.5;
+            itemSpriteManager.layerMask = 2;
+            var animationBounce = BounceAnimation.getAnimation();
+            itemSprite.animations.push(animationBounce);
+            scene.beginAnimation(itemSprite, 0, 30, true);
+            var tooltip = null;
+            droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+                tooltip = new TooltipMesh(droppedItemBox, item.name);
+            }));
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+                tooltip.container.dispose();
+            }));
+            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
+                game.client.socket.emit('addDroppedItem', itemDropKey);
+                droppedItemBox.dispose();
+                tooltip.container.dispose();
+                itemSprite.dispose();
+            }));
+            var particleSystem = new Particles.DroppedItem(game, droppedItemBox);
+            particleSystem.particleSystem.start();
+            droppedItemBox.freezeWorldMatrix();
+        };
+        return DroppedItem;
+    }());
+    Items.DroppedItem = DroppedItem;
+})(Items || (Items = {}));
+var Items;
+(function (Items) {
+    var Item = /** @class */ (function () {
+        function Item(game, itemData) {
+            this.name = itemData.name;
+            this.meshName = itemData.meshName;
+            this.image = itemData.image;
+            this.type = itemData.type;
+            this.statistics = itemData.statistics;
+            if (itemData.entity) {
+                this.databaseId = itemData.entity.id;
+            }
+        }
+        Item.prototype.dispose = function () {
+            if (this.mesh) {
+                this.mesh.dispose();
+            }
+            if (this.trailBox) {
+                this.trailBox.dispose();
+            }
+            if (this.trailMesh) {
+                this.trailMesh.dispose();
+            }
+        };
+        Item.prototype.createTrailMesh = function (game) {
+            this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getScene(), false);
+            this.trailBox.visibility = 0;
+            this.trailMesh = new TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40);
+            this.trailMesh.visibility = 0;
+        };
+        return Item;
+    }());
+    Items.Item = Item;
+})(Items || (Items = {}));
+var Items;
+(function (Items) {
+    var ItemManager = /** @class */ (function () {
+        function ItemManager(game) {
+            this.game = game;
+        }
+        /**
+         * @param inventoryItems
+         * @param inventory
+         * @param hideShieldAndWeapon
+         */
+        ItemManager.prototype.initItemsFromDatabaseOnCharacter = function (inventoryItems, inventory, hideShieldAndWeapon) {
+            if (hideShieldAndWeapon === void 0) { hideShieldAndWeapon = false; }
+            var self = this;
+            var showSash = true;
+            var showHair = true;
+            new Promise(function (resolve) {
+                inventoryItems.forEach(function (itemDatabase) {
+                    if (hideShieldAndWeapon && (itemDatabase.type == 2 || itemDatabase.type == 1)) {
+                        return;
+                    }
+                    var item = new Items.Item(self.game, itemDatabase);
+                    inventory.items.push(item);
+                    var equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip;
+                    inventory.equipItem(item, equip);
+                    if (item.type == 3 && equip) {
+                        showHair = false;
+                    }
+                    if (item.type == 6 && equip) {
+                        showSash = false;
+                    }
+                });
+                setTimeout(function () {
+                    resolve();
+                });
+            }).then(function () {
+                inventory.showSashOrHair(showHair, showSash);
+            });
+        };
+        return ItemManager;
+    }());
+    Items.ItemManager = ItemManager;
+})(Items || (Items = {}));
 var Character;
 (function (Character) {
     var Skills;
@@ -5093,130 +5259,6 @@ var Character;
         Skills.StrongAttack = StrongAttack;
     })(Skills = Character.Skills || (Character.Skills = {}));
 })(Character || (Character = {}));
-var Items;
-(function (Items) {
-    var DroppedItem = /** @class */ (function () {
-        function DroppedItem() {
-        }
-        DroppedItem.showItem = function (game, item, position, itemDropKey) {
-            var scene = game.getScene();
-            var droppedItemBox = BABYLON.Mesh.CreateBox(item.name + '_Box', 3, scene, false);
-            droppedItemBox.checkCollisions = false;
-            droppedItemBox.visibility = 0;
-            droppedItemBox.position.x = position.x;
-            droppedItemBox.position.z = position.z;
-            droppedItemBox.position.y = 0;
-            var itemSpriteManager = new BABYLON.SpriteManager("playerManager", 'assets/Miniatures/' + item.image + '.png', 1, { width: 512, height: 512 }, scene);
-            var itemSprite = new BABYLON.Sprite("player", itemSpriteManager);
-            itemSprite.width = 1.8;
-            itemSprite.height = 1.8;
-            itemSprite.position.x = position.x;
-            itemSprite.position.z = position.z;
-            itemSprite.position.y = 1.5;
-            itemSpriteManager.layerMask = 2;
-            var animationBounce = BounceAnimation.getAnimation();
-            itemSprite.animations.push(animationBounce);
-            scene.beginAnimation(itemSprite, 0, 30, true);
-            var tooltip = null;
-            droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-                tooltip = new TooltipMesh(droppedItemBox, item.name);
-            }));
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-                tooltip.container.dispose();
-            }));
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
-                game.client.socket.emit('addDroppedItem', itemDropKey);
-                droppedItemBox.dispose();
-                tooltip.container.dispose();
-                itemSprite.dispose();
-            }));
-            var particleSystem = new Particles.DroppedItem(game, droppedItemBox);
-            particleSystem.particleSystem.start();
-            droppedItemBox.freezeWorldMatrix();
-        };
-        return DroppedItem;
-    }());
-    Items.DroppedItem = DroppedItem;
-})(Items || (Items = {}));
-var Items;
-(function (Items) {
-    var Item = /** @class */ (function () {
-        function Item(game, itemData) {
-            this.name = itemData.name;
-            this.meshName = itemData.meshName;
-            this.image = itemData.image;
-            this.type = itemData.type;
-            this.statistics = itemData.statistics;
-            if (itemData.entity) {
-                this.databaseId = itemData.entity.id;
-            }
-        }
-        Item.prototype.dispose = function () {
-            if (this.mesh) {
-                this.mesh.dispose();
-            }
-            if (this.trailBox) {
-                this.trailBox.dispose();
-            }
-            if (this.trailMesh) {
-                this.trailMesh.dispose();
-            }
-        };
-        Item.prototype.createTrailMesh = function (game) {
-            this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getScene(), false);
-            this.trailBox.visibility = 0;
-            this.trailMesh = new TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40);
-            this.trailMesh.visibility = 0;
-        };
-        return Item;
-    }());
-    Items.Item = Item;
-})(Items || (Items = {}));
-var Items;
-(function (Items) {
-    var ItemManager = /** @class */ (function () {
-        function ItemManager(game) {
-            this.game = game;
-        }
-        /**
-         * @param inventoryItems
-         * @param inventory
-         * @param hideShieldAndWeapon
-         */
-        ItemManager.prototype.initItemsFromDatabaseOnCharacter = function (inventoryItems, inventory, hideShieldAndWeapon) {
-            if (hideShieldAndWeapon === void 0) { hideShieldAndWeapon = false; }
-            var self = this;
-            var showSash = true;
-            var showHair = true;
-            new Promise(function (resolve) {
-                inventoryItems.forEach(function (itemDatabase) {
-                    if (hideShieldAndWeapon && (itemDatabase.type == 2 || itemDatabase.type == 1)) {
-                        return;
-                    }
-                    var item = new Items.Item(self.game, itemDatabase);
-                    inventory.items.push(item);
-                    var equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip;
-                    inventory.equipItem(item, equip);
-                    if (item.type == 3 && equip) {
-                        showHair = false;
-                    }
-                    if (item.type == 6 && equip) {
-                        showSash = false;
-                    }
-                });
-                setTimeout(function () {
-                    resolve();
-                });
-            }).then(function () {
-                inventory.showSashOrHair(showHair, showSash);
-            });
-        };
-        return ItemManager;
-    }());
-    Items.ItemManager = ItemManager;
-})(Items || (Items = {}));
 var MountainsEnvironment = /** @class */ (function (_super) {
     __extends(MountainsEnvironment, _super);
     function MountainsEnvironment() {

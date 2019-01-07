@@ -167,6 +167,10 @@ class Player extends AbstractCharacter {
             isInUse = true;
         }
 
+        if (this.isDeath) {
+            isInUse = true;
+        }
+
         return isInUse;
     }
 

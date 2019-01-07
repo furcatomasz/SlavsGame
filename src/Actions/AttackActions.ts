@@ -54,8 +54,7 @@ class AttackActions {
 
     private intervalAttackFunction(): void {
         let game = this.game;
-
-        if (!game.player.isAttack) {
+        if (!game.player.isAnySkillIsInUse()) {
             game.client.socket.emit('attack', {
                 attack: this.attackedMonster.id,
                 targetPoint: game.controller.attackPoint.position,

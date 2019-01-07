@@ -42,6 +42,7 @@ class OnUpdatePlayers extends SocketEvent {
 
                     if (player.isAlive && player.statistics.hp <= 0) {
                         player.isAlive = false;
+                        player.isDeath = true;
                         player.mesh.skeleton.beginAnimation('death', false);
                     }
 

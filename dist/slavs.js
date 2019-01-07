@@ -1,7 +1,10 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -146,7 +149,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         return this;
     };
     Scene.prototype.initFactories = function (scene) {
@@ -611,7 +614,7 @@ var AttackActions = /** @class */ (function () {
     };
     AttackActions.prototype.intervalAttackFunction = function () {
         var game = this.game;
-        if (!game.player.isAttack) {
+        if (!game.player.isAnySkillIsInUse()) {
             game.client.socket.emit('attack', {
                 attack: this.attackedMonster.id,
                 targetPoint: game.controller.attackPoint.position,
@@ -2913,6 +2916,9 @@ var Player = /** @class */ (function (_super) {
             }
         });
         if (isInUse === false && this.isAttack) {
+            isInUse = true;
+        }
+        if (this.isDeath) {
             isInUse = true;
         }
         return isInUse;
@@ -5540,6 +5546,7 @@ var OnUpdatePlayers = /** @class */ (function (_super) {
                     }
                     if (player.isAlive && player.statistics.hp <= 0) {
                         player.isAlive = false;
+                        player.isDeath = true;
                         player.mesh.skeleton.beginAnimation('death', false);
                     }
                 }, 400);

@@ -99,12 +99,11 @@ namespace Server {
 
                 if (!self.enemies[roomId]) {
                     console.log('BABYLON: create enemies - ' + roomId);
-                    self.enemies[roomId] = [];
                 } else {
                     console.log('BABYLON: enemies exists - ' + roomId);
-
-                    return this;
+                    self.clearEnemiesState(roomId);
                 }
+                self.enemies[roomId] = [];
 
                 data.enemies.forEach(function (enemyData, key) {
                     let enemy = self.enemies[roomId][key];
@@ -160,7 +159,7 @@ namespace Server {
             let self = this;
 
             this.socket.on('showPlayer', function (playerData) {
-                console.log('BABYLON: connected new player - '+ playerData.id);
+                console.log('BABYLON: connected new player - '+ playerData.connectionId);
                 let activeCharacter = playerData.activePlayer;
                 let roomId = playerData.activeRoom.id;
                 let scene = self.scenes[roomId];
@@ -206,22 +205,13 @@ namespace Server {
                         let scene = self.scenes[roomId];
                         console.log('BABYLON: disconnect player - '+ player.id);
 
-                        //clear enemies target if it is this player
-                        self.enemies[roomId].forEach(function (enemy, key) {
-                            if (enemy.target == remotePlayer.id) {
-                                clearInterval(enemy.attackInterval);
-                                enemy.target = false;
-                            }
-                            scene.unregisterBeforeRender(enemy.activeTargetPoints[id]);
-                        });
-
                         if (player.registeredFunction) {
                             scene.unregisterBeforeRender(player.registeredFunction);
                         }
 
                         player.mesh.dispose();
-                        self.players.splice(key, 1);
-                        delete self.enemies[roomId];
+                        delete self.players[key];
+                        self.clearEnemiesState(roomId);
                     }
                 });
             });
@@ -239,14 +229,9 @@ namespace Server {
             this.enemies[roomId].forEach(function (enemy, key) {
                 enemy.activeTargetPoints[playerMesh.id] = function () {
                     let mesh = enemy.mesh;
-                    mesh.lookAt(playerMesh.position.clone());
+                    mesh.lookAt(playerMesh.position.clone(), Math.PI);
 
                     let rotation = mesh.rotation;
-                    if (mesh.rotationQuaternion) {
-                        rotation = mesh.rotationQuaternion.toEulerAngles();
-                    }
-                    rotation.negate();
-
                     let animationRatio = scene.getAnimationRatio();
                     let walkSpeed = enemy.walkSpeed / animationRatio;
 
@@ -365,21 +350,17 @@ namespace Server {
                         let mesh = player.mesh;
                         let targetPoint = updatedPlayer.targetPoint;
                         let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
-                        mesh.lookAt(targetPointVector3);
+                        mesh.lookAt(targetPointVector3, Math.PI);
 
                         player.registeredFunction = function () {
                             if (mesh.intersectsPoint(targetPointVector3)) {
                                 let player = self.players[updatedPlayer.activePlayer.id];
 
-                                console.log('BABYLON: player intersect target point - '+ updatedPlayer.id +', roomID:'+ player.roomId);
+                                console.log('BABYLON: player intersect target point - '+ updatedPlayer.id +', roomID:'+ updatedPlayer.activeRoom.id);
                                 scene.unregisterBeforeRender(player.registeredFunction);
 
                             } else {
                                 let rotation = mesh.rotation;
-                                if (mesh.rotationQuaternion) {
-                                    rotation = mesh.rotationQuaternion.toEulerAngles();
-                                }
-                                rotation.negate();
                                 let animationRatio = scene.getAnimationRatio();
                                 let walkSpeed = player.walkSpeed / animationRatio;
 
@@ -398,6 +379,23 @@ namespace Server {
 
             return this;
 
+        }
+
+
+        protected clearEnemiesState(roomId) {
+            let scene = this.scenes[roomId];
+
+            this.enemies[roomId].forEach(enemy => {
+                clearInterval(enemy.attackInterval);
+                enemy.target = false;
+                enemy.activeTargetPoints.forEach(target => {
+                    scene.unregisterBeforeRender(enemy.activeTargetPoints[target]);
+                });
+
+                enemy.mesh.dispose();
+            });
+
+            delete this.enemies[roomId];
         }
 
     }

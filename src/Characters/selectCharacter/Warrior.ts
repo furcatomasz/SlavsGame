@@ -51,6 +51,7 @@ namespace SelectCharacter {
         protected registerActions() {
             let self = this;
             let pointerOut = false;
+            let clicked = false;
 
             this.meshForMove = BABYLON.MeshBuilder.CreateBox(this.name+'_selectBox', {
                 width: 2,
@@ -104,22 +105,31 @@ namespace SelectCharacter {
 
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickDownTrigger,
-                function() {
-                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                () => {
+                    if(!clicked) {
+                        clicked = true;
+                        self.game.client.socket.emit('selectCharacter', self.playerId);
+                    }
                 })
             );
 
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickOutTrigger,
-                function() {
-                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                () => {
+                    if(!clicked) {
+                        clicked = true;
+                        self.game.client.socket.emit('selectCharacter', self.playerId);
+                    }
                 })
             );
 
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger,
-                function() {
-                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                () => {
+                    if(!clicked) {
+                        clicked = true;
+                        self.game.client.socket.emit('selectCharacter', self.playerId);
+                    }
                 })
             );
         }

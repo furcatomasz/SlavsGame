@@ -74,7 +74,7 @@ abstract class Scene {
         return this;
     }
 
-    protected executeWhenReady(onReady: Function, onPlayerConnected: Function) {
+    protected executeWhenReady(onReady: Function, onPlayerConnected: Function, registerListener: Boolean = true) {
         let scene = this.babylonScene;
         let assetsManager = this.assetManager;
         let self = this;
@@ -103,22 +103,25 @@ abstract class Scene {
             };
             assetsManager.load();
 
-            let listener = function listener() {
-                if(onPlayerConnected) {
-                    onPlayerConnected();
-                }
-                self.options = new GameOptions(game);
-                game.sceneManager.options.addMeshToDynamicShadowGenerator(game.player.mesh);
-                game.controller.registerControls(scene);
-                game.client.socket.emit('changeScenePost');
-                game.client.socket.emit('refreshGateways');
-                game.client.socket.emit('refreshQuests');
-                game.client.socket.emit('refreshChests');
-                game.client.socket.emit('refreshRandomSpecialItems');
+            if(registerListener) {
+                let listener = function listener() {
+                    if (onPlayerConnected) {
+                        onPlayerConnected();
+                    }
 
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
+                    self.options = new GameOptions(game);
+                    self.options.addMeshToDynamicShadowGenerator(game.player.mesh);
+                    game.controller.registerControls(scene);
+                    game.client.socket.emit('changeScenePost');
+                    game.client.socket.emit('refreshGateways');
+                    game.client.socket.emit('refreshQuests');
+                    game.client.socket.emit('refreshChests');
+                    game.client.socket.emit('refreshRandomSpecialItems');
+
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            }
         });
 
         return this;
@@ -166,7 +169,7 @@ abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
 
         return this;
     }

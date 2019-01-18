@@ -36,7 +36,7 @@ class SelectCharacter extends Scene {
                         }
                     });
 
-                }, null);
+                }, null, false);
         });
 
     }

@@ -73,7 +73,8 @@ var Scene = /** @class */ (function () {
         }, 1000);
         return this;
     };
-    Scene.prototype.executeWhenReady = function (onReady, onPlayerConnected) {
+    Scene.prototype.executeWhenReady = function (onReady, onPlayerConnected, registerListener) {
+        if (registerListener === void 0) { registerListener = true; }
         var scene = this.babylonScene;
         var assetsManager = this.assetManager;
         var self = this;
@@ -96,21 +97,23 @@ var Scene = /** @class */ (function () {
                 SlavsLoader.showLoaderWithText('Loading assets... ' + remainingCount + ' of ' + totalCount + '.');
             };
             assetsManager.load();
-            var listener = function listener() {
-                if (onPlayerConnected) {
-                    onPlayerConnected();
-                }
-                self.options = new GameOptions(game);
-                game.sceneManager.options.addMeshToDynamicShadowGenerator(game.player.mesh);
-                game.controller.registerControls(scene);
-                game.client.socket.emit('changeScenePost');
-                game.client.socket.emit('refreshGateways');
-                game.client.socket.emit('refreshQuests');
-                game.client.socket.emit('refreshChests');
-                game.client.socket.emit('refreshRandomSpecialItems');
-                document.removeEventListener(Events.PLAYER_CONNECTED, listener);
-            };
-            document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            if (registerListener) {
+                var listener = function listener() {
+                    if (onPlayerConnected) {
+                        onPlayerConnected();
+                    }
+                    self.options = new GameOptions(game);
+                    self.options.addMeshToDynamicShadowGenerator(game.player.mesh);
+                    game.controller.registerControls(scene);
+                    game.client.socket.emit('changeScenePost');
+                    game.client.socket.emit('refreshGateways');
+                    game.client.socket.emit('refreshQuests');
+                    game.client.socket.emit('refreshChests');
+                    game.client.socket.emit('refreshRandomSpecialItems');
+                    document.removeEventListener(Events.PLAYER_CONNECTED, listener);
+                };
+                document.addEventListener(Events.PLAYER_CONNECTED, listener);
+            }
         });
         return this;
     };
@@ -149,7 +152,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
         return this;
     };
     Scene.prototype.initFactories = function (scene) {
@@ -567,7 +570,7 @@ var SocketIOClient = /** @class */ (function () {
             });
         });
         this.socket.emit('changeScene', SelectCharacter.TYPE);
-        // this.socket.emit('selectCharacter', 2);
+        // this.socket.emit('selectCharacter', 1);
         return this;
     };
     return SocketIOClient;
@@ -3353,7 +3356,7 @@ var SelectCharacter = /** @class */ (function (_super) {
                         gui = new GUI.SelectCharacter(game);
                     }
                 });
-            }, null);
+            }, null, false);
         });
     };
     SelectCharacter.prototype.setCamera = function (scene) {
@@ -3731,6 +3734,7 @@ var SelectCharacter;
         Warrior.prototype.registerActions = function () {
             var self = this;
             var pointerOut = false;
+            var clicked = false;
             this.meshForMove = BABYLON.MeshBuilder.CreateBox(this.name + '_selectBox', {
                 width: 2,
                 height: 5,
@@ -3771,13 +3775,22 @@ var SelectCharacter;
                 pointerOut = true;
             }));
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function () {
-                self.game.client.socket.emit('selectCharacter', self.playerId);
+                if (!clicked) {
+                    clicked = true;
+                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                }
             }));
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger, function () {
-                self.game.client.socket.emit('selectCharacter', self.playerId);
+                if (!clicked) {
+                    clicked = true;
+                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                }
             }));
             this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                self.game.client.socket.emit('selectCharacter', self.playerId);
+                if (!clicked) {
+                    clicked = true;
+                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                }
             }));
         };
         return Warrior;

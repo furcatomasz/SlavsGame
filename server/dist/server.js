@@ -320,14 +320,16 @@ var BabylonManager = /** @class */ (function () {
     };
     BabylonManager.prototype.clearEnemiesState = function (roomId) {
         var scene = this.scenes[roomId];
-        this.enemies[roomId].forEach(function (enemy) {
-            clearInterval(enemy.attackInterval);
-            enemy.target = false;
-            enemy.activeTargetPoints.forEach(function (target) {
-                scene.unregisterBeforeRender(enemy.activeTargetPoints[target]);
+        if (this.enemies[roomId] != undefined) {
+            this.enemies[roomId].forEach(function (enemy) {
+                clearInterval(enemy.attackInterval);
+                enemy.target = false;
+                enemy.activeTargetPoints.forEach(function (target) {
+                    scene.unregisterBeforeRender(enemy.activeTargetPoints[target]);
+                });
+                enemy.mesh.dispose();
             });
-            enemy.mesh.dispose();
-        });
+        }
         delete this.enemies[roomId];
     };
     return BabylonManager;

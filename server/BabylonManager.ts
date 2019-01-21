@@ -382,15 +382,17 @@ class BabylonManager {
     protected clearEnemiesState(roomId) {
         let scene = this.scenes[roomId];
 
-        this.enemies[roomId].forEach(enemy => {
-            clearInterval(enemy.attackInterval);
-            enemy.target = false;
-            enemy.activeTargetPoints.forEach(target => {
-                scene.unregisterBeforeRender(enemy.activeTargetPoints[target]);
-            });
+        if(this.enemies[roomId] != undefined) {
+            this.enemies[roomId].forEach(enemy => {
+                clearInterval(enemy.attackInterval);
+                enemy.target = false;
+                enemy.activeTargetPoints.forEach(target => {
+                    scene.unregisterBeforeRender(enemy.activeTargetPoints[target]);
+                });
 
-            enemy.mesh.dispose();
-        });
+                enemy.mesh.dispose();
+            });
+        }
 
         delete this.enemies[roomId];
     }

@@ -35,30 +35,12 @@ namespace GUI {
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             image.width = 1;
             image.height = 1;
+            image.isPointerBlocker = true;
+
             container.addControl(image);
 
             this.container.addControl(image);
             this.containerBackground = image;
-
-            let widthContainer = '607px';
-            let heightContainer = '960px';
-            let checklSizeListener = function (width) {
-                if (width > 1819) {
-                    container.width = parseInt(widthContainer)+'px';
-                    container.height = parseInt(heightContainer)+'px';
-                // } else if(width >= 1416 && width <= 1819) {
-                //     container.width = parseInt(widthContainer)/1.5+'px';
-                //     container.height = parseInt(heightContainer)/1.5+'px';
-                } else {
-                    container.width = parseInt(widthContainer)/2+'px';
-                    container.height = parseInt(heightContainer)/2+'px';
-                }
-            };
-            checklSizeListener(window.innerWidth);
-            window.addEventListener("resize", function () {
-                let width = window.innerWidth;
-                checklSizeListener(width);
-            });
 
             return this;
         }
@@ -74,19 +56,6 @@ namespace GUI {
 
             buttonClose.onPointerUpObservable.add(function () {
                 self.close();
-            });
-
-            let checklSizeListener = function (width) {
-                if (width > 1819) {
-                    buttonClose.left = "-20px";
-                } else {
-                    buttonClose.left = "-10px";
-                }
-            };
-            checklSizeListener(window.innerWidth);
-            window.addEventListener("resize", function () {
-                let width = window.innerWidth;
-                checklSizeListener(width);
             });
 
             this.container.addControl(buttonClose);

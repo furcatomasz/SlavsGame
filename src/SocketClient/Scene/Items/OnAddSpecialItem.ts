@@ -6,7 +6,7 @@ class OnAddSpecialItem extends SocketEvent {
     public listen() {
         let game = this.game;
         this.socket.on('addSpecialItem', function (data) {
-            game.gui.playerLogsPanel.addText('You earned '+data.value+' ' + data.name + '', 'gold');
+            game.gui.playerLogsQuests.addText('You earned '+data.value+' ' + data.name + '', 'gold');
 
         });
 

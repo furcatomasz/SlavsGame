@@ -182,9 +182,9 @@ class Player extends AbstractCharacter {
     public refreshCameraPosition() {
         const camera = this.game.getScene().getCameraByName('gameCamera');
         camera.position = this.meshForMove.position.clone();
-        camera.position.y = 30;
-        camera.position.z -= 22;
-        camera.position.x -= 22;
+        camera.position.y = 18;
+        camera.position.z -= 12;
+        camera.position.x -= 12;
     }
 
     public refreshExperienceInGui() {
@@ -214,9 +214,9 @@ class Player extends AbstractCharacter {
     }
 
     public setNewLvl() {
-        this.game.gui.playerLogsPanel.addText('New lvl ' + this.lvl + '', 'red');
-        this.game.gui.playerLogsPanel.addText('You got 5 attribute points', 'red');
-        this.game.gui.playerLogsPanel.addText('You got 1 skill point ' + this.lvl + '', 'red');
+        this.game.gui.playerLogsQuests.addText('New lvl ' + this.lvl + '', 'red');
+        this.game.gui.playerLogsQuests.addText('You got 5 attribute points', 'red');
+        this.game.gui.playerLogsQuests.addText('You got 1 skill point ' + this.lvl + '', 'red');
 
         this.refreshExperienceInGui();
 

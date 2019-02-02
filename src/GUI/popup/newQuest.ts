@@ -27,13 +27,14 @@ namespace GUI {
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             image.width = 1;
             image.height = 1;
+            image.isPointerBlocker = true;
             container.addControl(image);
 
             this.container.addControl(image);
             this.containerBackground = image;
 
             container.width = '685px';
-            container.height = '80%';
+            container.height = '100%';
 
             return this;
         }
@@ -47,15 +48,14 @@ namespace GUI {
             this.showText();
             this.createButtonClose();
 
-            let buttonAccept = BABYLON.GUI.Button.CreateImageWithCenterTextButton("questsButtonAccept", "Accept", "assets/gui/button.png");
-            buttonAccept.color = "white";
+            let buttonAccept = BABYLON.GUI.Button.CreateSimpleButton("questsButtonAccept", "Accept quest");
+            buttonAccept.color = "red";
             buttonAccept.background = "black";
             buttonAccept.width = "180px;";
             buttonAccept.height = "48px";
-            buttonAccept.left = 120;
             buttonAccept.thickness = 0;
             buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonAccept.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
 
             buttonAccept.onPointerUpObservable.add(function() {
                 self.guiMain.game.client.socket.emit('acceptQuest', self.questData.questId);
@@ -81,7 +81,7 @@ namespace GUI {
             title.color = "brown";
             title.width = "70%";
             title.height = "10%";
-            title.fontSize = 36;
+            title.fontSize = 38;
             title.fontFamily = "RuslanDisplay";
             title.textWrapping = true;
             this.container.addControl(title);
@@ -94,7 +94,7 @@ namespace GUI {
             description.top = "10%";
             description.width = "70%";
             description.height = "10%";
-            description.fontSize = 14;
+            description.fontSize = 16;
             description.fontFamily = "RuslanDisplay";
             description.textWrapping = true;
             this.container.addControl(description);
@@ -110,7 +110,7 @@ namespace GUI {
                 chapterHeader.width = "70%";
                 chapterHeader.height = "25%";
                 chapterHeader.color = "green";
-                chapterHeader.fontSize = 28;
+                chapterHeader.fontSize = 30;
                 chapterHeader.fontFamily = "RuslanDisplay";
                 chapterHeader.textWrapping = true;
                 self.container.addControl(chapterHeader);
@@ -123,7 +123,7 @@ namespace GUI {
                 chapterDescription.width = "70%";
                 chapterDescription.height = "25%";
                 chapterDescription.color = "black";
-                chapterDescription.fontSize = 14;
+                chapterDescription.fontSize = 16;
                 chapterDescription.fontFamily = "RuslanDisplay";
                 chapterDescription.textWrapping = true;
 

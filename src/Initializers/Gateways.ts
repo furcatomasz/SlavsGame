@@ -1,6 +1,7 @@
 class Gateway {
 
     public mesh: BABYLON.AbstractMesh;
+    public tooltip: TooltipMesh;
     public particleSystem: BABYLON.ParticleSystem;
 
     constructor(game: Game, meshName: string, isActive: boolean, openSceneType: number, entranceName: string): void {
@@ -12,6 +13,7 @@ class Gateway {
         this.mesh = gateway;
         gateway.visibility = 0;
         gateway.isPickable = true;
+        this.tooltip = new TooltipMesh(gateway, entranceName);
 
         let gatewayParticleSystem = new Particles.Gateway(game, gateway, isActive).particleSystem;
         gatewayParticleSystem.start();
@@ -30,20 +32,28 @@ class Gateway {
                     game.gui.characterTopHp.hideHpBar();
                 }));
 
+        let enterTheGateway = function () {
+            if (!isActive) {
+                game.gui.playerLogsQuests.addText('This gateway is locked!', 'yellow');
+
+                return;
+            }
+
+            game.goToMeshFunction = GoToMeshAndRunAction.execute(game, gateway, () => {
+                game.client.socket.emit('changeSceneTrigger', openSceneType);
+            });
+
+        };
         gateway.actionManager.registerAction(
             new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger,
-                function () {
-                    if (!isActive) {
-                        game.gui.playerLogsQuests.addText('This gateway is locked!', 'yellow');
+                enterTheGateway));
 
-                        return;
-                    }
-
-                    game.goToMeshFunction = GoToMeshAndRunAction.execute(game, gateway, () => {
-                        game.client.socket.emit('changeSceneTrigger', openSceneType);
-                    });
-
-                }));
+        gateway.actionManager.registerAction(
+            new BABYLON.ExecuteCodeAction({
+                    trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: game.player.mesh
+                },
+                enterTheGateway));
 
     }
 }

@@ -124,11 +124,12 @@ var Scene = /** @class */ (function () {
         }
         var gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
         gameCamera.rotation = new BABYLON.Vector3(0.75, 0.75, 0);
-        gameCamera.maxZ = 110;
-        gameCamera.minZ = 20;
-        // camera.fov = 13.25;
+        gameCamera.maxZ = 50;
+        gameCamera.minZ = 15;
         gameCamera.fovMode = 0;
         gameCamera.layerMask = 2;
+        ///MOBILE
+        gameCamera.fov = 0.8;
         var guiCamera = new BABYLON.FreeCamera("GUICamera", new BABYLON.Vector3(0, 0, 0), scene);
         guiCamera.layerMask = 1;
         scene.activeCameras = [gameCamera, guiCamera];
@@ -141,8 +142,8 @@ var Scene = /** @class */ (function () {
         scene.fogColor = new BABYLON.Color3(0.02, 0.05, 0.2);
         scene.fogColor = new BABYLON.Color3(0, 0, 0);
         scene.fogDensity = 1;
-        scene.fogStart = 50;
-        scene.fogEnd = 70;
+        scene.fogStart = 30;
+        scene.fogEnd = 50;
         return this;
     };
     Scene.prototype.optimizeScene = function (scene) {
@@ -152,7 +153,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
         return this;
     };
     Scene.prototype.initFactories = function (scene) {
@@ -261,29 +262,10 @@ var GUI;
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             image.width = 1;
             image.height = 1;
+            image.isPointerBlocker = true;
             container.addControl(image);
             this.container.addControl(image);
             this.containerBackground = image;
-            var widthContainer = '607px';
-            var heightContainer = '960px';
-            var checklSizeListener = function (width) {
-                if (width > 1819) {
-                    container.width = parseInt(widthContainer) + 'px';
-                    container.height = parseInt(heightContainer) + 'px';
-                    // } else if(width >= 1416 && width <= 1819) {
-                    //     container.width = parseInt(widthContainer)/1.5+'px';
-                    //     container.height = parseInt(heightContainer)/1.5+'px';
-                }
-                else {
-                    container.width = parseInt(widthContainer) / 2 + 'px';
-                    container.height = parseInt(heightContainer) / 2 + 'px';
-                }
-            };
-            checklSizeListener(window.innerWidth);
-            window.addEventListener("resize", function () {
-                var width = window.innerWidth;
-                checklSizeListener(width);
-            });
             return this;
         };
         Popup.prototype.createButtonClose = function () {
@@ -296,19 +278,6 @@ var GUI;
             buttonClose.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             buttonClose.onPointerUpObservable.add(function () {
                 self.close();
-            });
-            var checklSizeListener = function (width) {
-                if (width > 1819) {
-                    buttonClose.left = "-20px";
-                }
-                else {
-                    buttonClose.left = "-10px";
-                }
-            };
-            checklSizeListener(window.innerWidth);
-            window.addEventListener("resize", function () {
-                var width = window.innerWidth;
-                checklSizeListener(width);
             });
             this.container.addControl(buttonClose);
             this.buttonClose = buttonClose;
@@ -333,41 +302,26 @@ var EquipBlock = /** @class */ (function () {
      */
     EquipBlock.prototype.createBlockWithImage = function () {
         if (this.item) {
-            var panelItem_1 = new BABYLON.GUI.Rectangle();
-            panelItem_1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            panelItem_1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            panelItem_1.thickness = 0;
-            panelItem_1.width = this.blockWidth;
-            panelItem_1.height = this.blockHeight;
-            panelItem_1.top = this.blockTop;
-            panelItem_1.left = this.blockLeft;
-            panelItem_1.isPointerBlocker = true;
-            this.inventory.container.addControl(panelItem_1);
-            this.block = panelItem_1;
+            var panelItem = new BABYLON.GUI.Rectangle();
+            panelItem.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            panelItem.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            panelItem.thickness = 0;
+            panelItem.width = this.blockWidth;
+            panelItem.height = this.blockHeight;
+            panelItem.top = this.blockTop;
+            panelItem.left = this.blockLeft;
+            panelItem.isPointerBlocker = true;
+            this.inventory.container.addControl(panelItem);
+            this.block = panelItem;
             this.createImage();
-            var blockWidth_1 = this.blockWidth;
-            var blockHeight_1 = this.blockHeight;
-            var blockTop_1 = this.blockTop;
-            var blockLeft_1 = this.blockLeft;
-            var checkSizeListener_1 = function (width) {
-                if (width > 1819) {
-                    panelItem_1.width = blockWidth_1;
-                    panelItem_1.height = blockHeight_1;
-                    panelItem_1.top = blockTop_1;
-                    panelItem_1.left = blockLeft_1;
-                }
-                else {
-                    panelItem_1.width = parseInt(blockWidth_1) / 2 + 'px';
-                    panelItem_1.height = parseInt(blockHeight_1) / 2 + 'px';
-                    panelItem_1.top = parseInt(blockTop_1) / 2 + 'px';
-                    panelItem_1.left = parseInt(blockLeft_1) / 2 + 'px';
-                }
-            };
-            checkSizeListener_1(window.innerWidth);
-            window.addEventListener("resize", function () {
-                var width = window.innerWidth;
-                checkSizeListener_1(width);
-            });
+            var blockWidth = this.blockWidth;
+            var blockHeight = this.blockHeight;
+            var blockTop = this.blockTop;
+            var blockLeft = this.blockLeft;
+            panelItem.width = blockWidth;
+            panelItem.height = blockHeight;
+            panelItem.top = blockTop;
+            panelItem.left = blockLeft;
         }
         return this;
     };
@@ -569,8 +523,8 @@ var SocketIOClient = /** @class */ (function () {
                 event.listen();
             });
         });
-        this.socket.emit('changeScene', SelectCharacter.TYPE);
-        // this.socket.emit('selectCharacter', 1);
+        // this.socket.emit('changeScene', SelectCharacter.TYPE);
+        this.socket.emit('selectCharacter', 1);
         return this;
     };
     return SocketIOClient;
@@ -1571,7 +1525,6 @@ var GUI;
             this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
             this.texture.layer.layerMask = 1;
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
-            this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
             this.playerLogsQuests = new GUI.PlayerQuestsPanel(game);
             this.playerQuestInformation = new GUI.PlayerQuestInformation(game);
             this.characterTopHp = new GUI.ShowHp(game);
@@ -1596,6 +1549,7 @@ var GUI;
             container.height = '115px';
             container.isPointerBlocker = true;
             container.thickness = 0;
+            this.container = container;
             texture.addControl(container);
             var toolbar = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar.png');
             toolbar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
@@ -1669,10 +1623,10 @@ var GUI;
             var gridSpecials = new BABYLON.GUI.Grid();
             gridSpecials.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             gridSpecials.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            gridSpecials.width = '215px';
-            gridSpecials.height = '44px';
+            gridSpecials.width = '211px';
+            gridSpecials.height = '46px';
             gridSpecials.top = '-11px';
-            gridSpecials.left = '4px';
+            gridSpecials.left = '1px';
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);
@@ -2081,6 +2035,7 @@ var Gateway = /** @class */ (function () {
         this.mesh = gateway;
         gateway.visibility = 0;
         gateway.isPickable = true;
+        this.tooltip = new TooltipMesh(gateway, entranceName);
         var gatewayParticleSystem = new Particles.Gateway(game, gateway, isActive).particleSystem;
         gatewayParticleSystem.start();
         this.particleSystem = gatewayParticleSystem;
@@ -2091,7 +2046,7 @@ var Gateway = /** @class */ (function () {
         gateway.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
             game.gui.characterTopHp.hideHpBar();
         }));
-        gateway.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function () {
+        var enterTheGateway = function () {
             if (!isActive) {
                 game.gui.playerLogsQuests.addText('This gateway is locked!', 'yellow');
                 return;
@@ -2099,7 +2054,12 @@ var Gateway = /** @class */ (function () {
             game.goToMeshFunction = GoToMeshAndRunAction.execute(game, gateway, function () {
                 game.client.socket.emit('changeSceneTrigger', openSceneType);
             });
-        }));
+        };
+        gateway.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, enterTheGateway));
+        gateway.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: game.player.mesh
+        }, enterTheGateway));
     }
     return Gateway;
 }());
@@ -2122,34 +2082,32 @@ var Factories;
             this.game = game;
             this.mesh = questPicker;
             this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
-            self.createTooltip(serverData, activeQuest);
-            self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOverTrigger, self.box, 'scaling', new BABYLON.Vector3(2, 2, 2), 300));
-            self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOutTrigger, self.box, 'scaling', new BABYLON.Vector3(1, 1, 1), 300));
+            self.createTooltip(serverData, activeQuest, questPicker);
             self.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
                 var quest = new GUI.NewQuest(game.gui, serverData);
                 quest.open();
             }));
         }
-        Quests.prototype.refreshTooltipColor = function (serverData, activeQuest) {
+        Quests.prototype.refreshTooltipColor = function (serverData, activeQuest, questPicker) {
             if (activeQuest && activeQuest.questId != serverData.questId) {
-                this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
+                this.tooltipMesh.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
             }
             else if (activeQuest && activeQuest.questId == serverData.questId) {
-                this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
+                this.tooltipMesh.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
             }
             else {
-                this.tooltip.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+                this.tooltipMesh.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+                this.tooltipGui = new TooltipMesh(questPicker, 'New quest', -45);
             }
             return this;
         };
-        Quests.prototype.createTooltip = function (serverData, activeQuest) {
-            var box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
-            box1.parent = this.mesh;
-            box1.position.y += 3;
-            var materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
-            box1.material = materialBox;
+        Quests.prototype.createTooltip = function (serverData, activeQuest, questPicker) {
+            var box = BABYLON.Mesh.CreateBox("quest_box", 0.4, this.game.getScene());
+            box.material = new BABYLON.StandardMaterial("quest_box_material", this.game.getScene());
+            box.parent = this.mesh;
+            box.position.y += 3;
             if (this.game.sceneManager.octree) {
-                this.game.sceneManager.octree.dynamicContent.push(box1);
+                this.game.sceneManager.octree.dynamicContent.push(box);
             }
             var keys = [];
             keys.push({
@@ -2162,12 +2120,17 @@ var Factories;
             });
             var animationBox = new BABYLON.Animation("rotation", "rotation.y", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
             animationBox.setKeys(keys);
-            box1.animations = [];
-            box1.animations.push(animationBox);
-            this.box = box1;
-            this.game.getScene().beginAnimation(box1, 0, 30, true);
-            this.tooltip = box1;
-            this.refreshTooltipColor(serverData, activeQuest);
+            box.animations = [];
+            box.animations.push(animationBox);
+            this.tooltipMesh = box;
+            this.game.getScene().beginAnimation(box, 0, 30, true);
+            this.refreshTooltipColor(serverData, activeQuest, questPicker);
+        };
+        Quests.prototype.dispose = function () {
+            if (this.tooltipGui) {
+                this.tooltipGui.container.dispose();
+            }
+            this.tooltipMesh.dispose();
         };
         return Quests;
     }());
@@ -2191,12 +2154,7 @@ var RandomSpecialItem = /** @class */ (function () {
         particleSystem.particleSystem.start();
         this.mesh = randomItemMesh;
         this.mesh.actionManager = new BABYLON.ActionManager(scene);
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-            tooltip = new TooltipMesh(randomItemMesh, randomSpecialItemData.specialItem.name);
-        }));
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-            tooltip.container.dispose();
-        }));
+        tooltip = new TooltipMesh(randomItemMesh, randomSpecialItemData.specialItem.name);
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
             game.goToMeshFunction = GoToMeshAndRunAction.execute(game, randomItemMesh, function () {
                 game.client.socket.emit('pickRandomItem', randomSpecialItemKey);
@@ -2932,9 +2890,9 @@ var Player = /** @class */ (function (_super) {
     Player.prototype.refreshCameraPosition = function () {
         var camera = this.game.getScene().getCameraByName('gameCamera');
         camera.position = this.meshForMove.position.clone();
-        camera.position.y = 30;
-        camera.position.z -= 22;
-        camera.position.x -= 22;
+        camera.position.y = 18;
+        camera.position.z -= 12;
+        camera.position.x -= 12;
     };
     Player.prototype.refreshExperienceInGui = function () {
         this.game.gui.playerBottomPanel.expBar.width = this.experiencePercentages / 100;
@@ -2958,9 +2916,9 @@ var Player = /** @class */ (function (_super) {
         this.refreshExperienceInGui();
     };
     Player.prototype.setNewLvl = function () {
-        this.game.gui.playerLogsPanel.addText('New lvl ' + this.lvl + '', 'red');
-        this.game.gui.playerLogsPanel.addText('You got 5 attribute points', 'red');
-        this.game.gui.playerLogsPanel.addText('You got 1 skill point ' + this.lvl + '', 'red');
+        this.game.gui.playerLogsQuests.addText('New lvl ' + this.lvl + '', 'red');
+        this.game.gui.playerLogsQuests.addText('You got 5 attribute points', 'red');
+        this.game.gui.playerLogsQuests.addText('You got 1 skill point ' + this.lvl + '', 'red');
         this.refreshExperienceInGui();
         this.initGodRay();
     };
@@ -3849,7 +3807,8 @@ var TooltipHelper = /** @class */ (function () {
     return TooltipHelper;
 }());
 var TooltipMesh = /** @class */ (function () {
-    function TooltipMesh(mesh, text) {
+    function TooltipMesh(mesh, text, linkOffsetY) {
+        if (linkOffsetY === void 0) { linkOffsetY = -80; }
         var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         advancedTexture.layer.layerMask = 2;
         this.container = advancedTexture;
@@ -3870,7 +3829,7 @@ var TooltipMesh = /** @class */ (function () {
         label.fontFamily = "RuslanDisplay";
         panel.addControl(label);
         panel.linkWithMesh(mesh);
-        panel.linkOffsetY = -80;
+        panel.linkOffsetY = linkOffsetY;
     }
     return TooltipMesh;
 }());
@@ -3881,10 +3840,32 @@ var GUI;
         function Attributes(guiMain) {
             var _this = _super.call(this, guiMain) || this;
             _this.name = 'Attributes';
-            _this.imageUrl = "assets/gui/attrs.png";
-            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            _this.imageUrl = "assets/gui/content.png";
+            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             return _this;
         }
+        Attributes.prototype.initTexture = function () {
+            this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
+            this.guiTexture.layer.layerMask = 1;
+            var container = new BABYLON.GUI.Rectangle('gui.panel.' + this.name);
+            container.horizontalAlignment = this.position;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            container.thickness = 0;
+            container.isPointerBlocker = true;
+            this.container = container;
+            this.guiTexture.addControl(container);
+            var image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image.width = 1;
+            image.height = 1;
+            container.addControl(image);
+            this.container.addControl(image);
+            this.containerBackground = image;
+            container.width = '685px';
+            container.height = '100%';
+            return this;
+        };
         Attributes.prototype.open = function () {
             this.opened = true;
             this.initTexture();
@@ -3907,15 +3888,15 @@ var GUI;
             panel.top = '10%';
             this.container.addControl(panel);
             var textPlayerName = this.createText(this.guiMain.game.player.name);
-            textPlayerName.color = 'gold';
-            textPlayerName.fontSize = 36;
+            textPlayerName.color = 'brown';
+            textPlayerName.fontSize = 40;
             textPlayerName.top = 10;
             panel.addControl(textPlayerName);
             var textPlayerLVL = this.createText(this.guiMain.game.player.lvl + ' LVL');
-            textPlayerLVL.color = 'gold';
-            textPlayerLVL.fontSize = 36;
+            textPlayerLVL.color = 'brown';
+            textPlayerLVL.fontSize = 32;
             textPlayerLVL.top = 100;
-            textPlayerLVL.paddingBottom = 80;
+            textPlayerLVL.paddingBottom = 40;
             panel.addControl(textPlayerLVL);
             this.createAttribute(1, 'Strength:' + this.guiMain.game.player.attributes.strength, panel);
             this.createAttribute(2, 'Durability:' + this.guiMain.game.player.attributes.durability, panel);
@@ -3928,10 +3909,10 @@ var GUI;
                 panel.addControl(textAttributes);
             }
             var textStatistics = this.createText('Statistics');
-            textStatistics.color = 'gold';
+            textStatistics.color = 'brown';
             textStatistics.height = '8%';
-            textStatistics.fontSize = 30;
-            textStatistics.paddingTop = 80;
+            textStatistics.fontSize = 32;
+            textStatistics.paddingTop = 40;
             panel.addControl(textStatistics);
             var damage = this.createText('Damage: ' + this.guiMain.game.player.statisticsAll.damageMin + ' - ' + this.guiMain.game.player.statisticsAll.damageMax);
             panel.addControl(damage);
@@ -3945,7 +3926,7 @@ var GUI;
         Attributes.prototype.createText = function (text) {
             var textBlock = new BABYLON.GUI.TextBlock();
             textBlock.text = text;
-            textBlock.color = "white";
+            textBlock.color = "black";
             textBlock.width = "100%";
             textBlock.height = "5%";
             textBlock.fontFamily = "RuslanDisplay";
@@ -3960,8 +3941,8 @@ var GUI;
                 var button = BABYLON.GUI.Button.CreateImageButton("plus", text, "assets/gui/plus.png");
                 button.height = "40px";
                 button.thickness = 0;
-                button.width = 0.8;
-                button.color = 'white';
+                button.width = 0.4;
+                button.color = 'black';
                 button.fontFamily = "RuslanDisplay";
                 button.fontSize = 16;
                 control.addControl(button);
@@ -3986,86 +3967,132 @@ var GUI;
         __extends(Inventory, _super);
         function Inventory(guiMain) {
             var _this = _super.call(this, guiMain) || this;
+            _this.meshes = [];
             _this.name = 'Inventory';
-            _this.imageUrl = "assets/gui/inventory.png";
+            _this.imageUrl = "assets/gui/content.png";
             _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             return _this;
         }
+        Inventory.prototype.initTexture = function () {
+            this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
+            this.guiTexture.layer.layerMask = 1;
+            var container = new BABYLON.GUI.Rectangle('gui.panel.' + this.name);
+            container.horizontalAlignment = this.position;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            container.thickness = 0;
+            container.isPointerBlocker = true;
+            this.container = container;
+            this.guiTexture.addControl(container);
+            var image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image.width = 1;
+            image.height = 1;
+            container.addControl(image);
+            this.container.addControl(image);
+            this.containerBackground = image;
+            container.width = '685px';
+            container.height = '100%';
+            return this;
+        };
         Inventory.prototype.open = function () {
+            var self = this;
+            var inventoryPlayer = this.guiMain.game.player.mesh.createInstance('inventory_player');
+            inventoryPlayer.layerMask = 1;
+            inventoryPlayer.position = new BABYLON.Vector3(-5, -2, 9);
+            inventoryPlayer.rotation = new BABYLON.Vector3(0, -0.2, 0);
+            self.meshes.push(inventoryPlayer);
+            this.guiMain.game.getScene().getCameraByName('gameCamera').position.y = 500;
+            this.guiMain.playerBottomPanel.container.alpha = 0;
+            this.guiMain.game.player.inventory.getEquipedItems().forEach(function (item) {
+                if (item) {
+                    var itemInstance = item.mesh.createInstance("itemInstance");
+                    itemInstance.layerMask = 1;
+                    itemInstance.position = new BABYLON.Vector3(-5, -2, 9);
+                    itemInstance.rotation = new BABYLON.Vector3(0, -0.2, 0);
+                    self.meshes.push(itemInstance);
+                }
+            });
             this.initTexture();
+            this.showTexts();
             this.opened = true;
-            this.guiTexture.addControl(this.container);
             this.showItems();
             this.showEquipedItems();
             this.showSpecialItemsAndGold();
             this.createButtonClose();
             return this;
         };
+        Inventory.prototype.showTexts = function () {
+            var itemsEquiped = new BABYLON.GUI.TextBlock('title');
+            itemsEquiped.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            itemsEquiped.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            itemsEquiped.text = 'Equiped items';
+            itemsEquiped.top = "2%";
+            itemsEquiped.color = "brown";
+            itemsEquiped.width = "70%";
+            itemsEquiped.height = "10%";
+            itemsEquiped.fontSize = 38;
+            itemsEquiped.fontFamily = "RuslanDisplay";
+            itemsEquiped.textWrapping = true;
+            this.container.addControl(itemsEquiped);
+            var itemToEquip = new BABYLON.GUI.TextBlock('title');
+            itemToEquip.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            itemToEquip.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            itemToEquip.text = 'Inventory items';
+            itemToEquip.top = "200px";
+            itemToEquip.color = "brown";
+            itemToEquip.width = "70%";
+            itemToEquip.height = "10%";
+            itemToEquip.fontSize = 38;
+            itemToEquip.fontFamily = "RuslanDisplay";
+            itemToEquip.textWrapping = true;
+            this.container.addControl(itemToEquip);
+        };
         Inventory.prototype.showSpecialItemsAndGold = function () {
             var image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", '' + this.guiMain.game.player.gold + '', "assets/gui/gold.png");
             image.thickness = 0;
             image.color = 'white';
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             this.container.addControl(image);
             var image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", '' + this.guiMain.game.player.keys + '', "assets/gui/key.png");
             image2.thickness = 0;
             image2.color = 'white';
             image2.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             this.container.addControl(image2);
             var image3 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.wine", '' + this.guiMain.game.player.keys + '', "assets/skills/heal.png");
             image3.thickness = 0;
             image3.color = 'white';
             image3.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image3.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            image3.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             this.container.addControl(image3);
-            var checkSizeListener = function (width) {
-                if (width > 1819) {
-                    image.height = '24px';
-                    image.width = '150px';
-                    image.left = "60px";
-                    image.top = '-48px';
-                    image.fontSize = 18;
-                    image2.height = '24px';
-                    image2.width = '150px';
-                    image2.left = "235px";
-                    image2.top = '-48px';
-                    image2.fontSize = 18;
-                    image3.height = '24px';
-                    image3.width = '150px';
-                    image3.left = "435px";
-                    image3.top = '-48px';
-                    image3.fontSize = 18;
-                }
-                else {
-                    image.width = '75px';
-                    image.height = '12px';
-                    image.top = '-24px';
-                    image.left = '30px';
-                    image.fontSize = 9;
-                    image2.height = '12px';
-                    image2.width = '75px';
-                    image2.left = "120px";
-                    image2.top = '-24px';
-                    image2.fontSize = 9;
-                    image3.height = '12px';
-                    image3.width = '75px';
-                    image3.left = "210px";
-                    image3.top = '-24px';
-                    image3.fontSize = 9;
-                }
-            };
-            checkSizeListener(window.innerWidth);
-            window.addEventListener("resize", function () {
-                var width = window.innerWidth;
-                checkSizeListener(width);
-            });
+            image.height = '24px';
+            image.width = '150px';
+            image.left = "-150px";
+            image.top = '-20px';
+            image.fontSize = 18;
+            image2.height = '24px';
+            image2.width = '150px';
+            image2.left = "20px";
+            image2.top = '-20px';
+            image2.fontSize = 18;
+            image3.height = '24px';
+            image3.width = '150px';
+            image3.left = "180px";
+            image3.top = '-20px';
+            image3.fontSize = 18;
         };
         Inventory.prototype.close = function () {
             this.opened = false;
             this.guiTexture.dispose();
             this.buttonClose = null;
+            this.meshes.forEach(function (mesh) {
+                mesh.dispose();
+            });
+            this.guiMain.game.player.refreshCameraPosition();
+            this.guiMain.playerBottomPanel.container.alpha = 1;
         };
         Inventory.prototype.showEquipedItems = function () {
             this.weaponImage = new Weapon(this);
@@ -4083,9 +4110,12 @@ var GUI;
             }
             var eqiupedItems = inventory.getEquipedItems();
             var grid = new BABYLON.GUI.Grid();
+            grid.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            grid.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             grid.width = '568px';
-            grid.height = '288px';
-            grid.top = '247px';
+            grid.height = '280px';
+            grid.top = '250px';
+            grid.left = '110px';
             grid.addColumnDefinition(1);
             grid.addColumnDefinition(1);
             grid.addColumnDefinition(1);
@@ -4115,7 +4145,7 @@ var GUI;
                 if (breakDisplayItem) {
                     return "continue";
                 }
-                if (itemCount % 8 == 0) {
+                if (itemCount % 6 == 0) {
                     row++;
                     collumn = -1;
                 }
@@ -4138,23 +4168,6 @@ var GUI;
             for (var i = 0; i < inventory.items.length; i++) {
                 _loop_1(i);
             }
-            var checkSizeListener = function (width) {
-                if (width > 1819) {
-                    grid.width = '568px';
-                    grid.height = '288px';
-                    grid.top = '247px';
-                }
-                else {
-                    grid.width = '284px';
-                    grid.height = '144px';
-                    grid.top = '123px';
-                }
-            };
-            checkSizeListener(window.innerWidth);
-            window.addEventListener("resize", function () {
-                var width = window.innerWidth;
-                checkSizeListener(width);
-            });
             return this;
         };
         /**
@@ -4209,6 +4222,7 @@ var GUI;
         Inventory.prototype.createItemImage = function (item) {
             var image = new BABYLON.GUI.Image('gui.popup.image.' + item.name, 'assets/Miniatures/' + item.image + '.png');
             image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
+            image.isPointerBlocker = true;
             return image;
         };
         return Inventory;
@@ -4221,11 +4235,33 @@ var GUI;
         __extends(Options, _super);
         function Options(guiMain) {
             var _this = _super.call(this, guiMain) || this;
-            _this.name = 'Inventory';
-            _this.imageUrl = "assets/gui/attrs.png";
-            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            _this.name = 'Options';
+            _this.imageUrl = "assets/gui/content.png";
+            _this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             return _this;
         }
+        Options.prototype.initTexture = function () {
+            this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
+            this.guiTexture.layer.layerMask = 1;
+            var container = new BABYLON.GUI.Rectangle('gui.panel.' + this.name);
+            container.horizontalAlignment = this.position;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            container.thickness = 0;
+            container.isPointerBlocker = true;
+            this.container = container;
+            this.guiTexture.addControl(container);
+            var image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image.width = 1;
+            image.height = 1;
+            container.addControl(image);
+            this.container.addControl(image);
+            this.containerBackground = image;
+            container.width = '685px';
+            container.height = '100%';
+            return this;
+        };
         Options.prototype.open = function () {
             this.opened = true;
             this.initTexture();
@@ -4243,13 +4279,13 @@ var GUI;
             panel.isPointerBlocker = true;
             panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            panel.width = 1;
-            panel.height = 0.9;
+            panel.width = 0.8;
+            panel.height = 1;
             panel.top = '10%';
             this.container.addControl(panel);
             var game = this.guiMain.game;
             var shadowsGroup = new BABYLON.GUI.CheckboxGroup("Shadows");
-            shadowsGroup.color = "white";
+            shadowsGroup.color = "black";
             shadowsGroup.addCheckbox("Static shadows", function (isChecked) {
                 GameOptions.saveInLocalStorage('staticShadows', isChecked, game);
             }, game.sceneManager.options.staticShadows);
@@ -4264,9 +4300,9 @@ var GUI;
             postProccessGroup.addCheckbox("FXAA", function (isChecked) {
                 GameOptions.saveInLocalStorage('fxaa', isChecked, game);
             }, game.sceneManager.options.fxaa);
-            postProccessGroup.addCheckbox("Depth Of Field", function (isChecked) {
-                GameOptions.saveInLocalStorage('dof', isChecked, game);
-            }, game.sceneManager.options.dof);
+            // postProccessGroup.addCheckbox("Depth Of Field", (isChecked) => {
+            //     GameOptions.saveInLocalStorage('dof', isChecked, game);
+            // }, game.sceneManager.options.dof);
             // let dofGroup = new BABYLON.GUI.SliderGroup("DOF", "S");
             // dofGroup.addSlider("fStop", (value) => {
             //     GameOptions.saveInLocalStorage('fStop', value, game);
@@ -4298,8 +4334,8 @@ var GUI;
             selectBox.width = 0.8;
             selectBox.height = 0.8;
             selectBox.thickness = 0;
-            selectBox.color = "white";
-            selectBox.headerColor = "white";
+            selectBox.color = "black";
+            selectBox.headerColor = "brown";
             selectBox.fontFamily = "RuslanDisplay";
             panel.addControl(selectBox);
         };
@@ -4334,11 +4370,12 @@ var GUI;
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             image.width = 1;
             image.height = 1;
+            image.isPointerBlocker = true;
             container.addControl(image);
             this.container.addControl(image);
             this.containerBackground = image;
             container.width = '685px';
-            container.height = '80%';
+            container.height = '100%';
             return this;
         };
         NewQuest.prototype.open = function () {
@@ -4348,15 +4385,14 @@ var GUI;
             this.guiTexture.addControl(this.container);
             this.showText();
             this.createButtonClose();
-            var buttonAccept = BABYLON.GUI.Button.CreateImageWithCenterTextButton("questsButtonAccept", "Accept", "assets/gui/button.png");
-            buttonAccept.color = "white";
+            var buttonAccept = BABYLON.GUI.Button.CreateSimpleButton("questsButtonAccept", "Accept quest");
+            buttonAccept.color = "red";
             buttonAccept.background = "black";
             buttonAccept.width = "180px;";
             buttonAccept.height = "48px";
-            buttonAccept.left = 120;
             buttonAccept.thickness = 0;
             buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            buttonAccept.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            buttonAccept.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             buttonAccept.onPointerUpObservable.add(function () {
                 self.guiMain.game.client.socket.emit('acceptQuest', self.questData.questId);
                 self.close();
@@ -4378,7 +4414,7 @@ var GUI;
             title.color = "brown";
             title.width = "70%";
             title.height = "10%";
-            title.fontSize = 36;
+            title.fontSize = 38;
             title.fontFamily = "RuslanDisplay";
             title.textWrapping = true;
             this.container.addControl(title);
@@ -4390,7 +4426,7 @@ var GUI;
             description.top = "10%";
             description.width = "70%";
             description.height = "10%";
-            description.fontSize = 14;
+            description.fontSize = 16;
             description.fontFamily = "RuslanDisplay";
             description.textWrapping = true;
             this.container.addControl(description);
@@ -4404,7 +4440,7 @@ var GUI;
                 chapterHeader.width = "70%";
                 chapterHeader.height = "25%";
                 chapterHeader.color = "green";
-                chapterHeader.fontSize = 28;
+                chapterHeader.fontSize = 30;
                 chapterHeader.fontFamily = "RuslanDisplay";
                 chapterHeader.textWrapping = true;
                 self.container.addControl(chapterHeader);
@@ -4416,7 +4452,7 @@ var GUI;
                 chapterDescription.width = "70%";
                 chapterDescription.height = "25%";
                 chapterDescription.color = "black";
-                chapterDescription.fontSize = 14;
+                chapterDescription.fontSize = 16;
                 chapterDescription.fontFamily = "RuslanDisplay";
                 chapterDescription.textWrapping = true;
                 self.container.addControl(chapterDescription);
@@ -4768,14 +4804,9 @@ var Items;
             scene.beginAnimation(itemSprite, 0, 30, true);
             var tooltip = null;
             droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-                tooltip = new TooltipMesh(droppedItemBox, item.name);
-            }));
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-                tooltip.container.dispose();
-            }));
+            tooltip = new TooltipMesh(droppedItemBox, item.name);
             droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
+                game.gui.playerLogsQuests.addText(item.name + '  has been picked up.', 'green');
                 game.client.socket.emit('addDroppedItem', itemDropKey);
                 droppedItemBox.dispose();
                 tooltip.container.dispose();
@@ -4879,9 +4910,9 @@ var Character;
                 this.isReady = true;
                 this.registerDefaults(this.game);
                 if (player.isControllable) {
+                    this.createSkillImageInGUI();
                     this.registerHotKey();
                     this.registerAnimations();
-                    this.createSkillImageInGUI();
                 }
             }
             AbstractSkill.prototype.getImageUrl = function () {
@@ -4892,10 +4923,8 @@ var Character;
                 var game = this.game;
                 var listener = function () {
                     var player = game.player;
-                    game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                        if (event.sourceEvent.key == self.getType()
-                            && self.isReady
-                            && !player.isAnySkillIsInUse()) {
+                    self.guiImage.onPointerUpObservable.add(function () {
+                        if (self.isReady && !player.isAnySkillIsInUse()) {
                             var position = player.meshForMove.position;
                             var rotation = player.meshForMove.rotation;
                             var forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 1, 0, -parseFloat(Math.cos(rotation.y)) / 1);
@@ -4906,7 +4935,7 @@ var Character;
                             });
                             player.runPlayerToPosition(newPosition);
                         }
-                    }));
+                    });
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -4928,14 +4957,11 @@ var Character;
                 var image = this.getImageUrl();
                 var number = this.getType();
                 var grid = game.gui.playerBottomPanel.guiGridSkills;
-                var imageSkill = new BABYLON.GUI.Image('image_' + number, image);
+                var imageSkill = new BABYLON.GUI.Button.CreateImageOnlyButton('image_' + number, image);
                 imageSkill.width = 1;
                 imageSkill.height = 1;
+                imageSkill.thickness = 0;
                 imageSkill.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-                var textBlock = new BABYLON.GUI.TextBlock('shortcut_' + number, '' + number + '');
-                textBlock.color = 'white';
-                textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
                 var overlay = new BABYLON.GUI.Rectangle();
                 overlay.width = 1;
                 overlay.height = 0;
@@ -4948,11 +4974,9 @@ var Character;
                 overlay.animations = [];
                 overlay.animations.push(this.animationOverlay);
                 grid.addControl(imageSkill, 0, number - 1);
-                grid.addControl(textBlock, 0, number - 1);
                 grid.addControl(overlay, 0, number - 1);
                 this.guiImage = imageSkill;
                 this.guiOverlay = overlay;
-                this.guiText = textBlock;
             };
             AbstractSkill.prototype.registerAnimations = function () {
                 var animationAlpha = new BABYLON.Animation("animationAlpha", "alpha", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
@@ -5415,7 +5439,7 @@ var OnAddExperience = /** @class */ (function (_super) {
         var game = this.game;
         this.socket.on('addExperience', function (data) {
             game.player.addExperience(data.experience, data.experiencePercentages);
-            game.gui.playerLogsPanel.addText('You earned ' + data.experience + ' experience.', 'gold');
+            game.gui.playerLogsQuests.addText('You earned ' + data.experience + ' experience.', 'gold');
         });
         return this;
     };
@@ -5665,10 +5689,10 @@ var Armor = /** @class */ (function (_super) {
     __extends(Armor, _super);
     function Armor(inventory) {
         var _this = _super.call(this, inventory) || this;
-        _this.blockWidth = "153px";
-        _this.blockHeight = "250px";
-        _this.blockTop = "270px";
-        _this.blockLeft = "228px";
+        _this.blockWidth = "80px";
+        _this.blockHeight = "80px";
+        _this.blockTop = "50px";
+        _this.blockLeft = "270px";
         _this.item = inventory.guiMain.game.player.inventory.armor;
         // this.block
         _this.createBlockWithImage();
@@ -5680,10 +5704,10 @@ var Boots = /** @class */ (function (_super) {
     __extends(Boots, _super);
     function Boots(inventory) {
         var _this = _super.call(this, inventory) || this;
-        _this.blockWidth = "96px";
-        _this.blockHeight = "92px";
-        _this.blockTop = "442px";
-        _this.blockLeft = "82px";
+        _this.blockWidth = "80px";
+        _this.blockHeight = "80px";
+        _this.blockTop = "50px";
+        _this.blockLeft = "350px";
         _this.item = inventory.guiMain.game.player.inventory.boots;
         _this.createBlockWithImage();
         return _this;
@@ -5694,10 +5718,10 @@ var Gloves = /** @class */ (function (_super) {
     __extends(Gloves, _super);
     function Gloves(inventory) {
         var _this = _super.call(this, inventory) || this;
-        _this.blockWidth = "96px";
-        _this.blockHeight = "92px";
-        _this.blockTop = "442px";
-        _this.blockLeft = "428px";
+        _this.blockWidth = "80px";
+        _this.blockHeight = "80px";
+        _this.blockTop = "50px";
+        _this.blockLeft = "430px";
         _this.item = inventory.guiMain.game.player.inventory.gloves;
         _this.createBlockWithImage();
         return _this;
@@ -5708,10 +5732,10 @@ var Helm = /** @class */ (function (_super) {
     __extends(Helm, _super);
     function Helm(inventory) {
         var _this = _super.call(this, inventory) || this;
-        _this.blockWidth = "96px";
-        _this.blockHeight = "92px";
-        _this.blockTop = "121px";
-        _this.blockLeft = "257px";
+        _this.blockWidth = "80px";
+        _this.blockHeight = "80px";
+        _this.blockTop = "50px";
+        _this.blockLeft = "510px";
         _this.item = inventory.guiMain.game.player.inventory.helm;
         _this.createBlockWithImage();
         return _this;
@@ -5722,10 +5746,10 @@ var Shield = /** @class */ (function (_super) {
     __extends(Shield, _super);
     function Shield(inventory) {
         var _this = _super.call(this, inventory) || this;
-        _this.blockWidth = "90px";
-        _this.blockHeight = "146px";
-        _this.blockTop = "248px";
-        _this.blockLeft = "435px";
+        _this.blockWidth = "80px";
+        _this.blockHeight = "80px";
+        _this.blockTop = "50px";
+        _this.blockLeft = "190px";
         _this.item = inventory.guiMain.game.player.inventory.shield;
         _this.createBlockWithImage();
         return _this;
@@ -5736,10 +5760,10 @@ var Weapon = /** @class */ (function (_super) {
     __extends(Weapon, _super);
     function Weapon(inventory) {
         var _this = _super.call(this, inventory) || this;
-        _this.blockWidth = "90px";
-        _this.blockHeight = "146px";
-        _this.blockTop = "248px";
-        _this.blockLeft = "85px";
+        _this.blockWidth = "80px";
+        _this.blockHeight = "80px";
+        _this.blockTop = "50px";
+        _this.blockLeft = "110px";
         _this.item = inventory.guiMain.game.player.inventory.weapon;
         _this.createBlockWithImage();
         return _this;
@@ -5907,7 +5931,7 @@ var OnAddSpecialItem = /** @class */ (function (_super) {
     OnAddSpecialItem.prototype.listen = function () {
         var game = this.game;
         this.socket.on('addSpecialItem', function (data) {
-            game.gui.playerLogsPanel.addText('You earned ' + data.value + ' ' + data.name + '', 'gold');
+            game.gui.playerLogsQuests.addText('You earned ' + data.value + ' ' + data.name + '', 'gold');
         });
         return this;
     };
@@ -6005,7 +6029,7 @@ var OnRefreshQuests = /** @class */ (function (_super) {
         var self = this;
         this.socket.on('refreshQuests', function (data) {
             game.quests.forEach(function (quest) {
-                quest.box.dispose();
+                quest.dispose();
             });
             game.quests = [];
             var activeQuest = data.sessionData.activeRoom.activeQuest;

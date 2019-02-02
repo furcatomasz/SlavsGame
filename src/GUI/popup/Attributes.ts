@@ -4,8 +4,35 @@ namespace GUI {
         constructor(guiMain:GUI.Main) {
             super(guiMain);
             this.name = 'Attributes';
-            this.imageUrl = "assets/gui/attrs.png";
-            this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            this.imageUrl = "assets/gui/content.png";
+            this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        }
+
+        protected initTexture() {
+            this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
+            this.guiTexture.layer.layerMask = 1;
+            let container = new BABYLON.GUI.Rectangle('gui.panel.'+ this.name);
+            container.horizontalAlignment = this.position;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            container.thickness = 0;
+            container.isPointerBlocker = true;
+            this.container = container;
+            this.guiTexture.addControl(container);
+
+            let image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image.width = 1;
+            image.height = 1;
+            container.addControl(image);
+
+            this.container.addControl(image);
+            this.containerBackground = image;
+
+            container.width = '685px';
+            container.height = '100%';
+
+            return this;
         }
 
         public open() {
@@ -35,16 +62,16 @@ namespace GUI {
             this.container.addControl(panel);
 
             let textPlayerName = this.createText(this.guiMain.game.player.name);
-            textPlayerName.color = 'gold';
-            textPlayerName.fontSize = 36;
+            textPlayerName.color = 'brown';
+            textPlayerName.fontSize = 40;
             textPlayerName.top = 10;
             panel.addControl(textPlayerName);
 
             let textPlayerLVL = this.createText(this.guiMain.game.player.lvl+' LVL');
-            textPlayerLVL.color = 'gold';
-            textPlayerLVL.fontSize = 36;
+            textPlayerLVL.color = 'brown';
+            textPlayerLVL.fontSize = 32;
             textPlayerLVL.top = 100;
-            textPlayerLVL.paddingBottom = 80;
+            textPlayerLVL.paddingBottom = 40;
             panel.addControl(textPlayerLVL);
 
             this.createAttribute(1, 'Strength:' + this.guiMain.game.player.attributes.strength, panel);
@@ -61,10 +88,10 @@ namespace GUI {
             }
 
             let textStatistics = this.createText('Statistics');
-            textStatistics.color = 'gold';
+            textStatistics.color = 'brown';
             textStatistics.height = '8%';
-            textStatistics.fontSize = 30;
-            textStatistics.paddingTop = 80;
+            textStatistics.fontSize = 32;
+            textStatistics.paddingTop = 40;
             panel.addControl(textStatistics);
 
             let damage = this.createText('Damage: ' + this.guiMain.game.player.statisticsAll.damageMin + ' - ' + this.guiMain.game.player.statisticsAll.damageMax );
@@ -84,7 +111,7 @@ namespace GUI {
         protected createText(text:string) {
             let textBlock = new BABYLON.GUI.TextBlock();
             textBlock.text = text;
-            textBlock.color = "white";
+            textBlock.color = "black";
             textBlock.width = "100%";
             textBlock.height = "5%";
             textBlock.fontFamily = "RuslanDisplay";
@@ -101,8 +128,8 @@ namespace GUI {
                 let button = BABYLON.GUI.Button.CreateImageButton("plus", text, "assets/gui/plus.png");
                 button.height = "40px";
                 button.thickness = 0;
-                button.width = 0.8;
-                button.color = 'white';
+                button.width = 0.4;
+                button.color = 'black';
                 button.fontFamily = "RuslanDisplay";
                 button.fontSize = 16;
                 control.addControl(button);

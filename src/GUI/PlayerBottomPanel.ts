@@ -8,7 +8,8 @@ namespace GUI {
         public energyBar: BABYLON.GUI.Image;
         public energyBarText: BABYLON.GUI.TextBlock;
         public guiGridSkills: BABYLON.GUI.Grid;
-        protected texture: BABYLON.GUI.AdvancedDynamicTexture;
+        public texture: BABYLON.GUI.AdvancedDynamicTexture;
+        public container: BABYLON.GUI.AdvancedDynamicTexture;
 
         constructor(game: Game) {
             let self = this;
@@ -21,6 +22,7 @@ namespace GUI {
             container.height = '115px';
             container.isPointerBlocker = true;
             container.thickness = 0;
+            this.container = container;
             texture.addControl(container);
 
             let toolbar = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar.png');
@@ -106,10 +108,10 @@ namespace GUI {
             let gridSpecials = new BABYLON.GUI.Grid();
             gridSpecials.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             gridSpecials.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            gridSpecials.width = '215px';
-            gridSpecials.height ='44px';
+            gridSpecials.width = '211px';
+            gridSpecials.height ='46px';
             gridSpecials.top = '-11px';
-            gridSpecials.left = '4px';
+            gridSpecials.left = '1px';
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);

@@ -22,15 +22,7 @@ class RandomSpecialItem {
 
         this.mesh = randomItemMesh;
         this.mesh.actionManager = new BABYLON.ActionManager(scene);
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
-            function () {
-                tooltip = new TooltipMesh(randomItemMesh, randomSpecialItemData.specialItem.name);
-            }));
-
-        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
-            function () {
-                tooltip.container.dispose();
-            }));
+        tooltip = new TooltipMesh(randomItemMesh, randomSpecialItemData.specialItem.name);
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPickTrigger,
             function () {

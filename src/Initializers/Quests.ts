@@ -1,10 +1,10 @@
 namespace Factories {
     export class Quests {
 
-        public mesh: BABYLON.AbstractMesh;
-        public box: BABYLON.AbstractMesh;
-        public tooltip: BABYLON.AbstractMesh;
-        protected game: Game;
+        private mesh: BABYLON.AbstractMesh;
+        private tooltipMesh: BABYLON.AbstractMesh;
+        private tooltipGui: TooltipMesh;
+        private game: Game;
 
         /**
          *
@@ -24,23 +24,7 @@ namespace Factories {
             this.mesh = questPicker;
             this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
 
-            self.createTooltip(serverData, activeQuest);
-            self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(
-                BABYLON.ActionManager.OnPointerOverTrigger,
-                self.box,
-                'scaling',
-                new BABYLON.Vector3(2, 2, 2),
-                300
-            ));
-
-            self.mesh.actionManager.registerAction(new BABYLON.InterpolateValueAction(
-                BABYLON.ActionManager.OnPointerOutTrigger,
-                self.box,
-                'scaling',
-                new BABYLON.Vector3(1, 1, 1),
-                300
-            ));
-
+            self.createTooltip(serverData, activeQuest, questPicker);
             self.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger,
                 function () {
@@ -51,28 +35,29 @@ namespace Factories {
 
         }
 
-        protected refreshTooltipColor(serverData, activeQuest) {
+        protected refreshTooltipColor(serverData, activeQuest, questPicker: BABYLON.AbstractMesh) {
             if(activeQuest && activeQuest.questId != serverData.questId) {
-                this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
+                this.tooltipMesh.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
             } else if(activeQuest && activeQuest.questId == serverData.questId) {
-                this.tooltip.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
+                this.tooltipMesh.material.diffuseColor = new BABYLON.Color3(1, 1, 0);
             } else {
-                this.tooltip.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+                this.tooltipMesh.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+                this.tooltipGui = new TooltipMesh(questPicker, 'New quest', -45);
             }
 
             return this;
         }
 
-        protected createTooltip(serverData, activeQuest) {
-            let box1 = BABYLON.Mesh.CreateBox("Box1", 0.4, this.game.getScene());
-            box1.parent = this.mesh;
-            box1.position.y += 3;
-            let materialBox = new BABYLON.StandardMaterial("texture1", this.game.getScene());
+        protected createTooltip(serverData, activeQuest, questPicker: BABYLON.AbstractMesh) {
+            let box = BABYLON.Mesh.CreateBox("quest_box", 0.4, this.game.getScene());
+            box.material = new BABYLON.StandardMaterial("quest_box_material", this.game.getScene());
+            box.parent = this.mesh;
+            box.position.y += 3;
 
-            box1.material = materialBox;
             if(this.game.sceneManager.octree) {
-                this.game.sceneManager.octree.dynamicContent.push(box1);
+                this.game.sceneManager.octree.dynamicContent.push(box);
             }
+
             let keys = [];
             keys.push({
                 frame: 0,
@@ -88,15 +73,19 @@ namespace Factories {
                 BABYLON.Animation.ANIMATIONTYPE_FLOAT,
                 BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
             animationBox.setKeys(keys);
+            box.animations = [];
+            box.animations.push(animationBox);
 
-            box1.animations = [];
-            box1.animations.push(animationBox);
-            this.box = box1;
-            this.game.getScene().beginAnimation(box1, 0, 30, true);
+            this.tooltipMesh = box;
+            this.game.getScene().beginAnimation(box, 0, 30, true);
+            this.refreshTooltipColor(serverData, activeQuest, questPicker);
+        }
 
-            this.tooltip = box1;
-
-            this.refreshTooltipColor(serverData, activeQuest);
+        public dispose() {
+            if(this.tooltipGui) {
+                this.tooltipGui.container.dispose();
+            }
+            this.tooltipMesh.dispose();
         }
     }
 }

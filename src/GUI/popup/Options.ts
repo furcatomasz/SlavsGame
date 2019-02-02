@@ -3,9 +3,36 @@ namespace GUI {
 
         constructor(guiMain: GUI.Main) {
             super(guiMain);
-            this.name = 'Inventory';
-            this.imageUrl = "assets/gui/attrs.png";
-            this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            this.name = 'Options';
+            this.imageUrl = "assets/gui/content.png";
+            this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        }
+
+        protected initTexture() {
+            this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
+            this.guiTexture.layer.layerMask = 1;
+            let container = new BABYLON.GUI.Rectangle('gui.panel.'+ this.name);
+            container.horizontalAlignment = this.position;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            container.thickness = 0;
+            container.isPointerBlocker = true;
+            this.container = container;
+            this.guiTexture.addControl(container);
+
+            let image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image.width = 1;
+            image.height = 1;
+            container.addControl(image);
+
+            this.container.addControl(image);
+            this.containerBackground = image;
+
+            container.width = '685px';
+            container.height = '100%';
+
+            return this;
         }
 
         public open() {
@@ -28,14 +55,14 @@ namespace GUI {
             panel.isPointerBlocker = true;
             panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            panel.width = 1;
-            panel.height = 0.9;
+            panel.width = 0.8;
+            panel.height = 1;
             panel.top = '10%';
             this.container.addControl(panel);
             const game = this.guiMain.game;
 
             const shadowsGroup = new BABYLON.GUI.CheckboxGroup("Shadows");
-            shadowsGroup.color = "white";
+            shadowsGroup.color = "black";
             shadowsGroup.addCheckbox("Static shadows", (isChecked) => {
                 GameOptions.saveInLocalStorage('staticShadows', isChecked, game);
             }, game.sceneManager.options.staticShadows);
@@ -54,9 +81,9 @@ namespace GUI {
                 GameOptions.saveInLocalStorage('fxaa', isChecked, game);
             }, game.sceneManager.options.fxaa);
 
-            postProccessGroup.addCheckbox("Depth Of Field", (isChecked) => {
-                GameOptions.saveInLocalStorage('dof', isChecked, game);
-            }, game.sceneManager.options.dof);
+            // postProccessGroup.addCheckbox("Depth Of Field", (isChecked) => {
+            //     GameOptions.saveInLocalStorage('dof', isChecked, game);
+            // }, game.sceneManager.options.dof);
 
             // let dofGroup = new BABYLON.GUI.SliderGroup("DOF", "S");
             // dofGroup.addSlider("fStop", (value) => {
@@ -91,8 +118,8 @@ namespace GUI {
             selectBox.width = 0.8;
             selectBox.height = 0.8;
             selectBox.thickness = 0;
-            selectBox.color = "white";
-            selectBox.headerColor = "white";
+            selectBox.color = "black";
+            selectBox.headerColor = "brown";
             selectBox.fontFamily = "RuslanDisplay";
             panel.addControl(selectBox);
         }

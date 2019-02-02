@@ -8,7 +8,7 @@ class OnRefreshQuests extends SocketEvent {
         let self = this;
         this.socket.on('refreshQuests', function (data) {
             game.quests.forEach(function(quest) {
-                quest.box.dispose();
+                quest.dispose();
             });
             game.quests = [];
 

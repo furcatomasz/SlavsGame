@@ -2,7 +2,7 @@ class TooltipMesh {
 
     protected container: BABYLON.GUI.AdvancedDynamicTexture;
 
-    constructor(mesh: BABYLON.AbstractMesh, text: string) {
+    constructor(mesh: BABYLON.AbstractMesh, text: string, linkOffsetY: number = -80) {
         let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         advancedTexture.layer.layerMask = 2;
         this.container = advancedTexture;
@@ -26,7 +26,7 @@ class TooltipMesh {
         panel.addControl(label);
 
         panel.linkWithMesh(mesh);
-        panel.linkOffsetY = -80;
+        panel.linkOffsetY = linkOffsetY;
     }
 
 }

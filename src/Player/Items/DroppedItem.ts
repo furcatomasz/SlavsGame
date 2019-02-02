@@ -27,19 +27,10 @@ namespace Items {
 
             let tooltip = null;
             droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
-                function () {
-                    tooltip = new TooltipMesh(droppedItemBox, item.name);
-                }));
-
-            droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger,
-                function () {
-                    tooltip.container.dispose();
-                }));
-
+            tooltip = new TooltipMesh(droppedItemBox, item.name);
             droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
                 function () {
-                    game.gui.playerLogsPanel.addText(item.name + '  has been picked up.', 'green');
+                    game.gui.playerLogsQuests.addText(item.name + '  has been picked up.', 'green');
                     game.client.socket.emit('addDroppedItem', itemDropKey);
                     droppedItemBox.dispose();
                     tooltip.container.dispose();

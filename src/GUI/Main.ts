@@ -20,7 +20,6 @@ namespace GUI {
             this.texture.layer.layerMask = 1;
 
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
-            this.playerLogsPanel = new GUI.PlayerLogsPanel(game);
             this.playerLogsQuests = new GUI.PlayerQuestsPanel(game);
             this.playerQuestInformation = new GUI.PlayerQuestInformation(game);
             this.characterTopHp = new GUI.ShowHp(game);

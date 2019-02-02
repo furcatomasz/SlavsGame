@@ -26,7 +26,7 @@ class Game {
     public remotePlayers: Array<Player>;
     public npcs: Array<NPC.AbstractNpc>;
     public enemies: Array<Monster>;
-    public quests: Array<any>;
+    public quests: Array<Factories.Quests>;
     public chests: Array<Chest>;
     public randomSpecialItems: Array<RandomSpecialItem>;
 

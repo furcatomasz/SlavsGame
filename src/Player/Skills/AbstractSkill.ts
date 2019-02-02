@@ -18,7 +18,7 @@ namespace Character.Skills {
         /** GUI */
         protected animationOverlay: BABYLON.Animation;
         protected animationAlpha: BABYLON.Animation;
-        protected guiImage: BABYLON.GUI.Image;
+        protected guiImage: BABYLON.GUI.Button;
         protected guiOverlay: BABYLON.GUI.Rectangle;
         protected guiText: BABYLON.GUI.TextBlock;
 
@@ -31,9 +31,9 @@ namespace Character.Skills {
             this.registerDefaults(this.game);
 
             if(player.isControllable) {
+                this.createSkillImageInGUI();
                 this.registerHotKey();
                 this.registerAnimations();
-                this.createSkillImageInGUI();
             }
         }
 
@@ -54,10 +54,8 @@ namespace Character.Skills {
 
             let listener = () => {
                 const player = game.player;
-                game.getScene().actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (event) {
-                    if (event.sourceEvent.key == self.getType()
-                        && self.isReady
-                        && !player.isAnySkillIsInUse()) {
+                self.guiImage.onPointerUpObservable.add(function () {
+                    if (self.isReady && !player.isAnySkillIsInUse()) {
                         const position = player.meshForMove.position;
                         let rotation = player.meshForMove.rotation;
                         let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / 1, 0, -parseFloat(Math.cos(rotation.y)) / 1);
@@ -69,7 +67,7 @@ namespace Character.Skills {
                         });
                         player.runPlayerToPosition(newPosition);
                     }
-                }));
+                });
                 document.removeEventListener(Events.PLAYER_CONNECTED, listener);
             };
             document.addEventListener(Events.PLAYER_CONNECTED, listener);
@@ -95,15 +93,11 @@ namespace Character.Skills {
             let number = this.getType();
             let grid = game.gui.playerBottomPanel.guiGridSkills;
 
-            let imageSkill = new BABYLON.GUI.Image('image_' + number, image);
+            let imageSkill = new BABYLON.GUI.Button.CreateImageOnlyButton('image_' + number, image);
             imageSkill.width = 1;
             imageSkill.height = 1;
+            imageSkill.thickness = 0;
             imageSkill.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-
-            let textBlock = new BABYLON.GUI.TextBlock('shortcut_' + number, '' + number + '');
-            textBlock.color = 'white';
-            textBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
             let overlay = new BABYLON.GUI.Rectangle();
             overlay.width = 1;
@@ -120,12 +114,10 @@ namespace Character.Skills {
             overlay.animations.push(this.animationOverlay);
 
             grid.addControl(imageSkill, 0, number - 1);
-            grid.addControl(textBlock, 0, number - 1);
             grid.addControl(overlay, 0, number - 1);
 
             this.guiImage = imageSkill;
             this.guiOverlay = overlay;
-            this.guiText = textBlock;
         }
 
         private registerAnimations() {

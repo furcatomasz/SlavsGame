@@ -7,7 +7,7 @@ class OnAddExperience extends SocketEvent {
         let game = this.game;
         this.socket.on('addExperience', function (data) {
             game.player.addExperience(data.experience, data.experiencePercentages);
-            game.gui.playerLogsPanel.addText('You earned ' + data.experience + ' experience.', 'gold');
+            game.gui.playerLogsQuests.addText('You earned ' + data.experience + ' experience.', 'gold');
 
         });
 

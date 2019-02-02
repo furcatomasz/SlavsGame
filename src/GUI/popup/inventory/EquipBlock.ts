@@ -37,25 +37,10 @@ abstract class EquipBlock {
             let blockHeight = this.blockHeight;
             let blockTop = this.blockTop;
             let blockLeft = this.blockLeft;
-            let checkSizeListener = function (width) {
-                if (width > 1819) {
-                    panelItem.width = blockWidth;
-                    panelItem.height = blockHeight;
-                    panelItem.top = blockTop;
-                    panelItem.left = blockLeft;
-                } else {
-                    panelItem.width = parseInt(blockWidth) / 2 + 'px';
-                    panelItem.height = parseInt(blockHeight) / 2 + 'px';
-                    panelItem.top = parseInt(blockTop) / 2 + 'px';
-                    panelItem.left = parseInt(blockLeft) / 2 + 'px';
-                }
-            };
-            checkSizeListener(window.innerWidth);
-            window.addEventListener("resize", function () {
-                let width = window.innerWidth;
-                checkSizeListener(width);
-            });
-
+            panelItem.width = blockWidth;
+            panelItem.height = blockHeight;
+            panelItem.top = blockTop;
+            panelItem.left = blockLeft;
         }
         return this;
     }

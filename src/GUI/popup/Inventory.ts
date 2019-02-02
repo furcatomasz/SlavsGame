@@ -51,7 +51,7 @@ namespace GUI {
             let self = this;
             let inventoryPlayer = this.guiMain.game.player.mesh.createInstance('inventory_player');
             inventoryPlayer.layerMask = 1;
-            inventoryPlayer.position = new BABYLON.Vector3(-5, -2, 9);
+            inventoryPlayer.position = new BABYLON.Vector3(-5, -2, 10);
             inventoryPlayer.rotation = new BABYLON.Vector3(0, -0.2, 0);
             self.meshes.push(inventoryPlayer);
 
@@ -61,7 +61,7 @@ namespace GUI {
                 if(item) {
                     let itemInstance = item.mesh.createInstance("itemInstance");
                     itemInstance.layerMask = 1;
-                    itemInstance.position = new BABYLON.Vector3(-5, -2, 9);
+                    itemInstance.position = new BABYLON.Vector3(-5, -2, 10);
                     itemInstance.rotation = new BABYLON.Vector3(0, -0.2, 0);
                     self.meshes.push(itemInstance);
                 }

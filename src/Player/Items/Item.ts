@@ -10,7 +10,7 @@ namespace Items {
 
         ///Trail Effect
         public trailBox: BABYLON.AbstractMesh;
-        public trailMesh: TrailMesh;
+        public trailMesh: BABYLON.TrailMesh;
 
         constructor(game: Game, itemData: any) {
             this.name = itemData.name;
@@ -42,8 +42,10 @@ namespace Items {
             this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getScene(), false);
             this.trailBox.visibility = 0;
 
-            this.trailMesh = new TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40);
+            this.trailMesh = new BABYLON.TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40, false);
             this.trailMesh.visibility = 0;
+            this.trailMesh.material = new BABYLON.StandardMaterial('trail_material', game.getScene());
+            this.trailMesh.material.emissiveColor = BABYLON.Color3.White();
         }
     }
 }

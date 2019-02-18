@@ -29,8 +29,13 @@ abstract class AbstractEnvironment {
 
     protected freezeAllMeshes(scene: BABYLON.Scene) {
         for (let i = 0; i < scene.meshes.length; i++) {
-            scene.meshes[i].freezeWorldMatrix();
-            scene.meshes[i].cullingStrategy = BABYLON.AbstractMesh.CULLINGSTRATEGY_BOUNDINGSPHERE_ONLY;
+            let sceneMesh = scene.meshes[i];
+            sceneMesh.freezeWorldMatrix();
+            sceneMesh.cullingStrategy = BABYLON.AbstractMesh.CULLINGSTRATEGY_OPTIMISTIC_INCLUSION_THEN_BSPHERE_ONLY;
+
+            if(sceneMesh.material) {
+                sceneMesh.material.freeze();
+            }
 
         }
     }

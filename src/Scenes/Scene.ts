@@ -164,6 +164,10 @@ abstract class Scene {
         return this;
     }
 
+    public disableFog(scene:BABYLON.Scene) {
+        scene.fogMode = BABYLON.Scene.FOGMODE_NONE;
+    }
+
     public optimizeScene(scene:BABYLON.Scene) {
         scene.collisionsEnabled = true;
         scene.fogEnabled = true;
@@ -171,7 +175,7 @@ abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
 
         return this;
     }

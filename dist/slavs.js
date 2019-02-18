@@ -146,6 +146,9 @@ var Scene = /** @class */ (function () {
         scene.fogEnd = 50;
         return this;
     };
+    Scene.prototype.disableFog = function (scene) {
+        scene.fogMode = BABYLON.Scene.FOGMODE_NONE;
+    };
     Scene.prototype.optimizeScene = function (scene) {
         scene.collisionsEnabled = true;
         scene.fogEnabled = true;
@@ -153,7 +156,7 @@ var Scene = /** @class */ (function () {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
         return this;
     };
     Scene.prototype.initFactories = function (scene) {
@@ -368,6 +371,7 @@ var GameOptions = /** @class */ (function () {
         this.dynamicShadows = this.getFromLocalStorage('dynamicShadows');
         this.postProccessing = this.getFromLocalStorage('postProccessing');
         this.fxaa = this.getFromLocalStorage('fxaa');
+        this.fog = this.getFromLocalStorage('fog');
         this.dof = this.getFromLocalStorage('dof');
         this.fStop = this.getFromLocalStorage('fStop');
         this.focusDistance = this.getFromLocalStorage('focusDistance');
@@ -443,6 +447,12 @@ var GameOptions = /** @class */ (function () {
             this.renderingPipeline.depthOfField.focusDistance = 43050;
             this.renderingPipeline.depthOfField.focalLength = 292;
             this.renderingPipeline.depthOfField.lensSize = 136;
+        }
+        if (this.fog) {
+            game.sceneManager.setFog(game.getScene());
+        }
+        else {
+            game.sceneManager.disableFog(game.getScene());
         }
     };
     return GameOptions;
@@ -523,8 +533,8 @@ var SocketIOClient = /** @class */ (function () {
                 event.listen();
             });
         });
-        // this.socket.emit('changeScene', SelectCharacter.TYPE);
-        this.socket.emit('selectCharacter', 1);
+        this.socket.emit('changeScene', SelectCharacter.TYPE);
+        // this.socket.emit('selectCharacter', 1);
         return this;
     };
     return SocketIOClient;
@@ -1035,8 +1045,12 @@ var AbstractEnvironment = /** @class */ (function () {
     };
     AbstractEnvironment.prototype.freezeAllMeshes = function (scene) {
         for (var i = 0; i < scene.meshes.length; i++) {
-            scene.meshes[i].freezeWorldMatrix();
-            scene.meshes[i].cullingStrategy = BABYLON.AbstractMesh.CULLINGSTRATEGY_BOUNDINGSPHERE_ONLY;
+            var sceneMesh = scene.meshes[i];
+            sceneMesh.freezeWorldMatrix();
+            sceneMesh.cullingStrategy = BABYLON.AbstractMesh.CULLINGSTRATEGY_OPTIMISTIC_INCLUSION_THEN_BSPHERE_ONLY;
+            if (sceneMesh.material) {
+                sceneMesh.material.freeze();
+            }
         }
     };
     return AbstractEnvironment;
@@ -3984,14 +3998,14 @@ var GUI;
             container.isPointerBlocker = true;
             this.container = container;
             this.guiTexture.addControl(container);
-            var image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);
+            var image = new BABYLON.GUI.Rectangle('gui.popup.image');
             image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             image.width = 1;
+            image.thickness = 0;
             image.height = 1;
             container.addControl(image);
             this.container.addControl(image);
-            this.containerBackground = image;
             container.width = '685px';
             container.height = '100%';
             return this;
@@ -4000,7 +4014,7 @@ var GUI;
             var self = this;
             var inventoryPlayer = this.guiMain.game.player.mesh.createInstance('inventory_player');
             inventoryPlayer.layerMask = 1;
-            inventoryPlayer.position = new BABYLON.Vector3(-5, -2, 10);
+            inventoryPlayer.position = new BABYLON.Vector3(-5, -2, 12);
             inventoryPlayer.rotation = new BABYLON.Vector3(0, -0.2, 0);
             self.meshes.push(inventoryPlayer);
             this.guiMain.game.getScene().getCameraByName('gameCamera').position.y = 500;
@@ -4009,7 +4023,7 @@ var GUI;
                 if (item) {
                     var itemInstance = item.mesh.createInstance("itemInstance");
                     itemInstance.layerMask = 1;
-                    itemInstance.position = new BABYLON.Vector3(-5, -2, 10);
+                    itemInstance.position = new BABYLON.Vector3(-5, -2, 12);
                     itemInstance.rotation = new BABYLON.Vector3(0, -0.2, 0);
                     self.meshes.push(itemInstance);
                 }
@@ -4330,6 +4344,9 @@ var GUI;
             postProccessGroup.addCheckbox("Bloom", function (isChecked) {
                 GameOptions.saveInLocalStorage('bloom', isChecked, game);
             }, game.sceneManager.options.bloom);
+            postProccessGroup.addCheckbox("Fog", function (isChecked) {
+                GameOptions.saveInLocalStorage('fog', isChecked, game);
+            }, game.sceneManager.options.fog);
             var selectBox = new BABYLON.GUI.SelectionPanel("sp", [shadowsGroup, postProccessGroup]);
             selectBox.width = 0.8;
             selectBox.height = 0.8;
@@ -4847,8 +4864,10 @@ var Items;
         Item.prototype.createTrailMesh = function (game) {
             this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getScene(), false);
             this.trailBox.visibility = 0;
-            this.trailMesh = new TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40);
+            this.trailMesh = new BABYLON.TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40, false);
             this.trailMesh.visibility = 0;
+            this.trailMesh.material = new BABYLON.StandardMaterial('trail_material', game.getScene());
+            this.trailMesh.material.emissiveColor = BABYLON.Color3.White();
         };
         return Item;
     }());
@@ -5082,7 +5101,7 @@ var Character;
                 var observer;
                 this.showReloadInGUI(cooldownTime);
                 if (self.player.inventory.weapon) {
-                    observer = game.getScene().onBeforeRenderObservable.add(self.player.inventory.weapon.trailMesh.update);
+                    self.player.inventory.weapon.trailMesh.start();
                 }
                 self.player.runAnimationSkill(this.animationName, function () {
                     if (self.player.inventory.weapon) {
@@ -5102,7 +5121,7 @@ var Character;
                         if (self.player.inventory.weapon) {
                             self.player.inventory.weapon.trailMesh.visibility = 0;
                         }
-                        game.getScene().onBeforeRenderObservable.remove(observer);
+                        self.player.inventory.weapon.trailMesh.stop();
                     }, 1000);
                 }, this.animationLoop, this.animationSpeed);
                 setTimeout(function () {
@@ -5274,7 +5293,7 @@ var Character;
                     self.player.mesh.skeleton.beginAnimation('loopStrongAttack', true);
                 }, this.animationLoop, this.animationSpeed, false);
                 if (self.player.inventory.weapon) {
-                    observer = game.getScene().onBeforeRenderObservable.add(self.player.inventory.weapon.trailMesh.update);
+                    self.player.inventory.weapon.trailMesh.start();
                 }
                 setTimeout(function () {
                     if (self.player.inventory.weapon) {
@@ -5286,7 +5305,7 @@ var Character;
                             if (self.player.inventory.weapon) {
                                 self.player.inventory.weapon.trailMesh.visibility = 0;
                             }
-                            game.getScene().onBeforeRenderObservable.remove(observer);
+                            self.player.inventory.weapon.trailMesh.stop();
                         }, 1000);
                     });
                     if (self.player.isControllable) {

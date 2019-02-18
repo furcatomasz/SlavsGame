@@ -9,6 +9,7 @@ class GameOptions {
     public dynamicShadows: boolean;
     public postProccessing: boolean;
     public fxaa: boolean;
+    public fog: boolean;
     public dof: boolean;
     public fStop: boolean;
     public focusDistance: boolean;
@@ -27,6 +28,7 @@ class GameOptions {
         this.dynamicShadows = this.getFromLocalStorage('dynamicShadows');
         this.postProccessing = this.getFromLocalStorage('postProccessing');
         this.fxaa = this.getFromLocalStorage('fxaa');
+        this.fog = this.getFromLocalStorage('fog');
         this.dof = this.getFromLocalStorage('dof');
         this.fStop = this.getFromLocalStorage('fStop');
         this.focusDistance = this.getFromLocalStorage('focusDistance');
@@ -109,6 +111,12 @@ class GameOptions {
             this.renderingPipeline.depthOfField.focusDistance = 43050;
             this.renderingPipeline.depthOfField.focalLength = 292;
             this.renderingPipeline.depthOfField.lensSize = 136;
+        }
+
+        if (this.fog) {
+            game.sceneManager.setFog(game.getScene());
+        } else {
+            game.sceneManager.disableFog(game.getScene());
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Character.Skills {
             this.showReloadInGUI(cooldownTime);
 
             if(self.player.inventory.weapon) {
-                observer = game.getScene().onBeforeRenderObservable.add(self.player.inventory.weapon.trailMesh.update);
+                self.player.inventory.weapon.trailMesh.start();
             }
             self.player.runAnimationSkill(this.animationName, () => {
                 if(self.player.inventory.weapon) {
@@ -43,7 +43,7 @@ namespace Character.Skills {
                     if(self.player.inventory.weapon) {
                         self.player.inventory.weapon.trailMesh.visibility = 0;
                     }
-                    game.getScene().onBeforeRenderObservable.remove(observer);
+                    self.player.inventory.weapon.trailMesh.stop();
 
                 }, 1000);
             }, this.animationLoop, this.animationSpeed);

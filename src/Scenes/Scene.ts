@@ -118,6 +118,8 @@ abstract class Scene {
                     game.client.socket.emit('refreshChests');
                     game.client.socket.emit('refreshRandomSpecialItems');
 
+
+
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };
                 document.addEventListener(Events.PLAYER_CONNECTED, listener);

@@ -10,6 +10,7 @@ namespace GUI {
         public playerBottomPanel: GUI.PlayerBottomPanel;
         public playerLogsPanel: GUI.PlayerLogsPanel;
         public playerQuestInformation: GUI.PlayerQuestInformation;
+        public roomInformaton: GUI.RoomInformation;
         public playerLogsQuests: GUI.PlayerQuestsPanel;
         public characterTopHp: GUI.ShowHp;
 
@@ -22,6 +23,7 @@ namespace GUI {
             this.playerBottomPanel = new GUI.PlayerBottomPanel(game);
             this.playerLogsQuests = new GUI.PlayerQuestsPanel(game);
             this.playerQuestInformation = new GUI.PlayerQuestInformation(game);
+            this.roomInformaton = new GUI.RoomInformation(game);
             this.characterTopHp = new GUI.ShowHp(game);
 
             this.attributes = new GUI.Attributes(this);

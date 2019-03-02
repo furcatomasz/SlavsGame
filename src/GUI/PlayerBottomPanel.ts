@@ -1,12 +1,8 @@
 namespace GUI {
     export class PlayerBottomPanel {
 
-        public hpBar: BABYLON.GUI.Image;
-        public hpBarText: BABYLON.GUI.TextBlock;
         public expBar: BABYLON.GUI.Image;
         public expBarText: BABYLON.GUI.TextBlock;
-        public energyBar: BABYLON.GUI.Image;
-        public energyBarText: BABYLON.GUI.TextBlock;
         public guiGridSkills: BABYLON.GUI.Grid;
         public texture: BABYLON.GUI.AdvancedDynamicTexture;
         public container: BABYLON.GUI.AdvancedDynamicTexture;
@@ -19,7 +15,7 @@ namespace GUI {
             container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
             container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             container.width = '685px';
-            container.height = '115px';
+            container.height = '80px';
             container.isPointerBlocker = true;
             container.thickness = 0;
             this.container = container;
@@ -61,50 +57,6 @@ namespace GUI {
             this.expBarText = textBlockExp;
             containerSliders.addControl(textBlockExp);
 
-            let toolbarHp = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar_hp.png');
-            toolbarHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            toolbarHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            toolbarHp.width = 0;
-            toolbarHp.height = '14px';
-            toolbarHp.top = '16px';
-            this.hpBar = toolbarHp;
-            containerSliders.addControl(toolbarHp);
-
-            let textBlockHp = new BABYLON.GUI.TextBlock();
-            textBlockHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textBlockHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textBlockHp.top = '14px';
-            textBlockHp.width = 1;
-            textBlockHp.height = '14px';
-            textBlockHp.color = "white";
-            textBlockHp.fontSize = 16;
-            textBlockHp.fontFamily = "RuslanDisplay";
-
-            this.hpBarText = textBlockHp;
-            containerSliders.addControl(textBlockHp);
-
-            let toolbarEnergy = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar_energy.png');
-            toolbarEnergy.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            toolbarEnergy.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            toolbarEnergy.width = 1;
-            toolbarEnergy.height = '14px';
-            toolbarEnergy.top = '32px';
-            this.energyBar = toolbarEnergy;
-            containerSliders.addControl(toolbarEnergy);
-
-            let textToolbarEnergy = new BABYLON.GUI.TextBlock();
-            textToolbarEnergy.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            textToolbarEnergy.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            textToolbarEnergy.top = '31px';
-            textToolbarEnergy.width = 1;
-            textToolbarEnergy.height = '14px';
-            textToolbarEnergy.color = "white";
-            textToolbarEnergy.fontSize = 12;
-            textToolbarEnergy.fontFamily = "RuslanDisplay";
-
-            this.energyBarText = textToolbarEnergy;
-            containerSliders.addControl(textToolbarEnergy);
-
             let gridSpecials = new BABYLON.GUI.Grid();
             gridSpecials.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             gridSpecials.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
@@ -124,7 +76,7 @@ namespace GUI {
             buttonAttributes.width = '112px';
             buttonAttributes.height = '21px';
             buttonAttributes.thickness = 0;
-            buttonAttributes.top = '10px';
+            buttonAttributes.top = '-7px';
             buttonAttributes.left = '93px';
             container.addControl(buttonAttributes);
             buttonAttributes.onPointerUpObservable.add(function () {
@@ -138,7 +90,7 @@ namespace GUI {
             buttonSkills.width = '112px';
             buttonSkills.height = '21px';
             buttonSkills.thickness = 0;
-            buttonSkills.top = '37px';
+            buttonSkills.top = '20px';
             buttonSkills.left = '93px';
             container.addControl(buttonSkills);
             buttonSkills.onPointerUpObservable.add(function () {
@@ -150,7 +102,7 @@ namespace GUI {
             buttonInventory.width = '112px';
             buttonInventory.height = '21px';
             buttonInventory.thickness = 0;
-            buttonInventory.top = '10px';
+            buttonInventory.top = '-7px';
             buttonInventory.left = '479px';
             container.addControl(buttonInventory);
             buttonInventory.onPointerUpObservable.add(function () {
@@ -164,7 +116,7 @@ namespace GUI {
             buttonOptions.width = '112px';
             buttonOptions.height = '21px';
             buttonOptions.thickness = 0;
-            buttonOptions.top = '37px';
+            buttonOptions.top = '20px';
             buttonOptions.left = '479px';
             buttonOptions.onPointerUpObservable.add(function () {
                 if (!game.gui.options.opened) {

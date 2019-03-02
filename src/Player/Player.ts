@@ -20,6 +20,8 @@ class Player extends AbstractCharacter {
     public monstersToAttack: Array<Boolean> = [];
     public attackActions: AttackActions;
 
+    public guiPlayerInformation: GUI.PlayerInformation;
+
     public constructor(game: Game, registerMoving: boolean, serverData: any) {
         super(serverData.activePlayer.name, game);
 
@@ -43,6 +45,7 @@ class Player extends AbstractCharacter {
         if (this.isControllable) {
             this.mesh.isPickable = false;
             new GUI.Main(game);
+            this.guiPlayerInformation = new GUI.PlayerInformation(this, game);
             this.initServerData(serverData);
             this.refreshCameraPosition();
             this.refreshHpInGui();
@@ -195,15 +198,15 @@ class Player extends AbstractCharacter {
     public refreshEnergyInGui() {
         if (this.isControllable) {
             let percentage = Math.round(this.statistics.energy * 100 / this.statistics.energyMax);
-            this.game.gui.playerBottomPanel.energyBar.width = percentage / 100;
-            this.game.gui.playerBottomPanel.energyBarText.text = this.statistics.energy + ' / ' + this.statistics.energyMax;
+            this.guiPlayerInformation.energyBar.width = percentage / 100;
+            this.guiPlayerInformation.energyBarText.text = this.statistics.energy + ' / ' + this.statistics.energyMax;
         }
     }
 
     public refreshHpInGui() {
         let percentage = Math.round(this.statistics.hp * 100 / this.statistics.hpMax);
-        this.game.gui.playerBottomPanel.hpBar.width = percentage / 100;
-        this.game.gui.playerBottomPanel.hpBarText.text = this.statistics.hp + ' / ' + this.statistics.hpMax;
+        this.guiPlayerInformation.hpBar.width = percentage / 100;
+        this.guiPlayerInformation.hpBarText.text = this.statistics.hp + ' / ' + this.statistics.hpMax;
     }
 
     public addExperience(experince: number, experiencePercentages: number) {

@@ -38,6 +38,8 @@ namespace GUI {
             input.height = "30px";
             input.color = "white";
             input.background = "black";
+            input.placeholderText = "Set name of your new character";
+            input.placeholderColor = "white";
             container.addControl(input);
 
             this.texture = texture;

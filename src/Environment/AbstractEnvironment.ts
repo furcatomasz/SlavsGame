@@ -33,9 +33,6 @@ abstract class AbstractEnvironment {
             sceneMesh.freezeWorldMatrix();
             sceneMesh.cullingStrategy = BABYLON.AbstractMesh.CULLINGSTRATEGY_OPTIMISTIC_INCLUSION_THEN_BSPHERE_ONLY;
 
-            if(sceneMesh.material) {
-                sceneMesh.material.freeze();
-            }
 
         }
     }

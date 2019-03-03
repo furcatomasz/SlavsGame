@@ -16,33 +16,19 @@ namespace GUI {
             this.meshes = [];
             this.name = 'Inventory';
             this.imageUrl = "assets/gui/content.png";
-            this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
         }
 
         protected initTexture() {
             this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
             this.guiTexture.layer.layerMask = 1;
             let container = new BABYLON.GUI.Rectangle('gui.panel.'+ this.name);
-            container.horizontalAlignment = this.position;
             container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             container.thickness = 0;
             container.isPointerBlocker = true;
+
             this.container = container;
             this.guiTexture.addControl(container);
-
-            let image = new BABYLON.GUI.Rectangle('gui.popup.image');
-            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image.width = 1;
-            image.thickness = 0;
-            image.height = 1;
-            container.addControl(image);
-
-            this.container.addControl(image);
-
-            container.width = '685px';
-            container.height = '100%';
 
             return this;
         }
@@ -68,7 +54,6 @@ namespace GUI {
             });
 
             this.initTexture();
-
             this.showTexts();
             this.opened = true;
             this.showItems();
@@ -95,7 +80,7 @@ namespace GUI {
 
             let itemToEquip = new BABYLON.GUI.TextBlock('title');
             itemToEquip.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            itemToEquip.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            itemToEquip.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             itemToEquip.text = 'Inventory items';
             itemToEquip.top = "200px";
             itemToEquip.color = "brown";
@@ -177,33 +162,19 @@ namespace GUI {
             }
 
             let eqiupedItems = inventory.getEquipedItems();
-            let grid = new BABYLON.GUI.Grid();
+            let grid = new BABYLON.GUI.Grid("inventory.items");
             grid.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             grid.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             grid.width = '568px';
             grid.height ='280px';
             grid.top = '250px';
             grid.left = '110px'
+            grid.addColumnDefinition(64, true);
             grid.addColumnDefinition(1);
-            grid.addColumnDefinition(1);
-            grid.addColumnDefinition(1);
-            grid.addColumnDefinition(1);
-            grid.addColumnDefinition(1);
-            grid.addColumnDefinition(1);
-            grid.addColumnDefinition(1);
-            grid.addColumnDefinition(1);
-
-            grid.addRowDefinition(1);
-            grid.addRowDefinition(1);
-            grid.addRowDefinition(1);
-            grid.addRowDefinition(1);
 
             this.container.addControl(grid);
 
             let itemCount = 0;
-            let row = -1;
-            let collumn = -1;
-
             for (let i = 0; i < inventory.items.length; i++) {
                 let breakDisplayItem;
                 let item = inventory.items[i];
@@ -213,27 +184,33 @@ namespace GUI {
                         break;
                     }
                 }
-
                 if (breakDisplayItem) {
                     continue;
                 }
 
-                if (itemCount % 6 == 0) {
-                    row++;
-                    collumn = -1;
-                }
-
-                itemCount++;
-                collumn++;
+                grid.addRowDefinition(64, true);
 
                 let image = BABYLON.GUI.Button.CreateImageOnlyButton('gui.popup.image.' + item.name, 'assets/Miniatures/' + item.image + '.png');
                 image.height = 1;
                 image.width = 1;
                 image.thickness = 0;
-                image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
 
-                grid.addControl(image, row, collumn);
+                let text = item.name;
+                if (item.statistics.damageMin > 0) {
+                    text += "\nDamage: " + item.statistics.damageMin + " - " + item.statistics.damageMax + "";
+                }
+                if (item.statistics.armor > 0) {
+                    text += "\nArmor: " + item.statistics.armor + "";
+                }
+                let label = new BABYLON.GUI.TextBlock();
+                label.text = text;
+                label.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+                label.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                label.color = "white";
+                label.fontSize = 18;
+
+                grid.addControl(image, itemCount, 0);
+                grid.addControl(label, itemCount, 1);
 
                 TooltipHelper.createTooltipOnInventoryItemButton(self.guiTexture, item, image, function() {
                     self.guiMain.game.player.inventory.emitEquip(item);
@@ -241,6 +218,8 @@ namespace GUI {
                     self.showItems();
                     self.guiMain.attributes.refreshPopup();
                 });
+
+                itemCount++;
             }
 
             return this;

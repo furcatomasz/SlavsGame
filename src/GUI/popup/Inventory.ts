@@ -65,27 +65,14 @@ namespace GUI {
         }
 
         private showTexts() {
-            let itemsEquiped = new BABYLON.GUI.TextBlock('title');
-            itemsEquiped.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            itemsEquiped.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            itemsEquiped.text = 'Equiped items';
-            itemsEquiped.top = "2%";
-            itemsEquiped.color = "brown";
-            itemsEquiped.width = "70%";
-            itemsEquiped.height = "10%";
-            itemsEquiped.fontSize = 38;
-            itemsEquiped.fontFamily = "RuslanDisplay";
-            itemsEquiped.textWrapping = true;
-            this.container.addControl(itemsEquiped);
-
             let itemToEquip = new BABYLON.GUI.TextBlock('title');
             itemToEquip.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             itemToEquip.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             itemToEquip.text = 'Inventory items';
-            itemToEquip.top = "200px";
+            itemToEquip.top = "10px";
             itemToEquip.color = "brown";
-            itemToEquip.width = "70%";
-            itemToEquip.height = "10%";
+            itemToEquip.width = "50%";
+            itemToEquip.height = "8%";
             itemToEquip.fontSize = 38;
             itemToEquip.fontFamily = "RuslanDisplay";
             itemToEquip.textWrapping = true;
@@ -97,39 +84,36 @@ namespace GUI {
             image.thickness = 0;
             image.color = 'white';
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             this.container.addControl(image);
 
             let image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", ''+this.guiMain.game.player.keys+'', "assets/gui/key.png");
             image2.thickness = 0;
             image2.color = 'white';
             image2.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             this.container.addControl(image2);
 
-            let image3 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.wine", ''+this.guiMain.game.player.keys+'', "assets/skills/heal.png");
+            let image3 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.wine", '0', "assets/skills/heal.png");
             image3.thickness = 0;
             image3.color = 'white';
             image3.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image3.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            image3.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             this.container.addControl(image3);
 
-            image.height = '24px';
+            image.height = '36px';
             image.width = '150px';
             image.left = "-150px";
-            image.top = '-20px';
             image.fontSize = 18;
 
-            image2.height = '24px';
+            image2.height = '36px';
             image2.width = '150px';
             image2.left = "20px";
-            image2.top = '-20px';
             image2.fontSize = 18;
 
-            image3.height = '24px';
+            image3.height = '36px';
             image3.width = '150px';
-            image3.left = "180px";
-            image3.top = '-20px';
+            image3.left = "-300px";
             image3.fontSize = 18;
         }
 
@@ -164,11 +148,10 @@ namespace GUI {
             let eqiupedItems = inventory.getEquipedItems();
             let grid = new BABYLON.GUI.Grid("inventory.items");
             grid.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            grid.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            grid.width = '568px';
-            grid.height ='280px';
-            grid.top = '250px';
-            grid.left = '110px'
+            grid.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            grid.width = '50%';
+            grid.height ='80%';
+            grid.top = '50px';
             grid.addColumnDefinition(64, true);
             grid.addColumnDefinition(1);
 

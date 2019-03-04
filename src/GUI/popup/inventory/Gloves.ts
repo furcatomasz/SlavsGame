@@ -5,8 +5,9 @@ class Gloves extends EquipBlock {
 
         this.blockWidth = "80px";
         this.blockHeight = "80px";
-        this.blockTop = "50px";
-        this.blockLeft = "430px";
+        this.blockTop = "10px";
+        this.blockLeft = "291px";
+        this.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
 
         this.item = inventory.guiMain.game.player.inventory.gloves;
 

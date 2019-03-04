@@ -48,8 +48,8 @@ namespace GUI {
         protected createButtonClose() {
             let self = this;
             let buttonClose = BABYLON.GUI.Button.CreateImageOnlyButton("buttonClose", "assets/gui/buttons/close.png");
-            buttonClose.width = "20px;";
-            buttonClose.height = "21px";
+            buttonClose.width = "30px;";
+            buttonClose.height = "30px";
             buttonClose.thickness = 0;
             buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             buttonClose.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;

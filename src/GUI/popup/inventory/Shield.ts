@@ -5,8 +5,9 @@ class Shield extends EquipBlock {
 
         this.blockWidth = "80px";
         this.blockHeight = "80px";
-        this.blockTop = "50px";
-        this.blockLeft = "190px";
+        this.blockTop = "-10px";
+        this.blockLeft = "291px";
+        this.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
         this.item = inventory.guiMain.game.player.inventory.shield;
 

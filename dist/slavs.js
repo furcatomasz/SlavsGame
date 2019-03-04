@@ -271,8 +271,8 @@ var GUI;
         Popup.prototype.createButtonClose = function () {
             var self = this;
             var buttonClose = BABYLON.GUI.Button.CreateImageOnlyButton("buttonClose", "assets/gui/buttons/close.png");
-            buttonClose.width = "20px;";
-            buttonClose.height = "21px";
+            buttonClose.width = "30px;";
+            buttonClose.height = "30px";
             buttonClose.thickness = 0;
             buttonClose.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             buttonClose.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
@@ -304,8 +304,8 @@ var EquipBlock = /** @class */ (function () {
         if (this.item) {
             var panelItem = new BABYLON.GUI.Rectangle();
             panelItem.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            panelItem.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            panelItem.thickness = 0;
+            panelItem.verticalAlignment = this.verticalAlignment;
+            panelItem.thickness = 1;
             panelItem.width = this.blockWidth;
             panelItem.height = this.blockHeight;
             panelItem.top = this.blockTop;
@@ -3405,6 +3405,106 @@ var SocketEvent = /** @class */ (function () {
     }
     return SocketEvent;
 }());
+var Monster = /** @class */ (function (_super) {
+    __extends(Monster, _super);
+    function Monster(game, serverKey, serverData) {
+        var _this = _super.call(this, serverData.name, game) || this;
+        _this.statistics = serverData.statistics;
+        _this.id = serverKey;
+        _this.createBoxForMove(new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z));
+        _this.createMesh(serverData.type, serverData.meshName, new BABYLON.Vector3(serverData.scale, serverData.scale, serverData.scale));
+        _this.initSfx();
+        _this.registerActions();
+        _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
+        _this.walkSmoke = WalkSmoke.getParticles(game.getScene(), 2, _this.mesh);
+        _this.initPatricleSystemDamage();
+        return _this;
+    }
+    Monster.prototype.createMesh = function (factoryName, meshName, scale) {
+        var game = this.game;
+        var mesh = game.factories[factoryName].createClone(meshName, true);
+        mesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
+        mesh.visibility = 1;
+        mesh.isPickable = false;
+        mesh.scaling = scale;
+        mesh.skeleton.enableBlending(0.2);
+        mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
+        mesh.outlineWidth = 0.1;
+        mesh.parent = this.meshForMove;
+        // game.sceneManager.options.addMeshToDynamicShadowGenerator(mesh);
+        this.mesh = mesh;
+    };
+    Monster.prototype.registerActions = function () {
+        var game = this.game;
+        var self = this;
+        this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
+            self.mesh.renderOutline = false;
+            self.game.gui.characterTopHp.hideHpBar();
+        }));
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
+            self.mesh.renderOutline = true;
+            self.game.gui.characterTopHp.showHpCharacter(self);
+        }));
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function () {
+            game.player.attackActions.attackMonster(self);
+        }));
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function () {
+            game.player.attackActions.attackOnlyOnce();
+        }));
+        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger, function () {
+            game.player.attackActions.abbadonMonsterAttack();
+        }));
+    };
+    Monster.prototype.initSfx = function () {
+        var game = this.game;
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
+        this.sfxWalk = new BABYLON.Sound("CharacterHit", null, game.getScene(), null, {
+            loop: false,
+            autoplay: false
+        });
+    };
+    Monster.prototype.removeFromWorld = function () {
+        if (this.intervalAttackRegisteredFunction) {
+            clearInterval(this.intervalAttackRegisteredFunction);
+        }
+        this.meshForMove.dispose();
+        this.walkSmoke.dispose();
+        this.bloodParticles.dispose();
+    };
+    Monster.prototype.retrieveHit = function (updatedEnemy) {
+        var self = this;
+        if (this.statistics.hp != updatedEnemy.statistics.hp) {
+            var damage_1 = (this.statistics.hp - updatedEnemy.statistics.hp);
+            this.statistics.hp = updatedEnemy.statistics.hp;
+            setTimeout(function () {
+                self.bloodParticles.start();
+                self.showDamage(damage_1);
+                setTimeout(function () {
+                    self.bloodParticles.stop();
+                }, 100);
+                if (self.statistics.hp <= 0) {
+                    self.isDeath = true;
+                    self.animation.stop();
+                    setTimeout(function () {
+                        self.removeFromWorld();
+                    }, 6000);
+                }
+                self.game.gui.characterTopHp.refreshPanel();
+            }, 400);
+        }
+    };
+    Monster.prototype.onWalkStart = function () {
+        this.walkSmoke.start();
+    };
+    Monster.prototype.onWalkEnd = function () {
+        this.walkSmoke.stop();
+    };
+    return Monster;
+}(AbstractCharacter));
 var NPC;
 (function (NPC) {
     var AbstractNpc = /** @class */ (function (_super) {
@@ -3721,106 +3821,6 @@ var SelectCharacter;
     }(AbstractCharacter));
     SelectCharacter.Warrior = Warrior;
 })(SelectCharacter || (SelectCharacter = {}));
-var Monster = /** @class */ (function (_super) {
-    __extends(Monster, _super);
-    function Monster(game, serverKey, serverData) {
-        var _this = _super.call(this, serverData.name, game) || this;
-        _this.statistics = serverData.statistics;
-        _this.id = serverKey;
-        _this.createBoxForMove(new BABYLON.Vector3(serverData.position.x, serverData.position.y, serverData.position.z));
-        _this.createMesh(serverData.type, serverData.meshName, new BABYLON.Vector3(serverData.scale, serverData.scale, serverData.scale));
-        _this.initSfx();
-        _this.registerActions();
-        _this.bloodParticles = new Particles.Blood(game, _this.mesh).particleSystem;
-        _this.walkSmoke = WalkSmoke.getParticles(game.getScene(), 2, _this.mesh);
-        _this.initPatricleSystemDamage();
-        return _this;
-    }
-    Monster.prototype.createMesh = function (factoryName, meshName, scale) {
-        var game = this.game;
-        var mesh = game.factories[factoryName].createClone(meshName, true);
-        mesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
-        mesh.visibility = 1;
-        mesh.isPickable = false;
-        mesh.scaling = scale;
-        mesh.skeleton.enableBlending(0.2);
-        mesh.outlineColor = new BABYLON.Color3(0.3, 0, 0);
-        mesh.outlineWidth = 0.1;
-        mesh.parent = this.meshForMove;
-        // game.sceneManager.options.addMeshToDynamicShadowGenerator(mesh);
-        this.mesh = mesh;
-    };
-    Monster.prototype.registerActions = function () {
-        var game = this.game;
-        var self = this;
-        this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-            self.mesh.renderOutline = false;
-            self.game.gui.characterTopHp.hideHpBar();
-        }));
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-            self.mesh.renderOutline = true;
-            self.game.gui.characterTopHp.showHpCharacter(self);
-        }));
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function () {
-            game.player.attackActions.attackMonster(self);
-        }));
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function () {
-            game.player.attackActions.attackOnlyOnce();
-        }));
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickOutTrigger, function () {
-            game.player.attackActions.abbadonMonsterAttack();
-        }));
-    };
-    Monster.prototype.initSfx = function () {
-        var game = this.game;
-        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
-            loop: false,
-            autoplay: false
-        });
-        this.sfxWalk = new BABYLON.Sound("CharacterHit", null, game.getScene(), null, {
-            loop: false,
-            autoplay: false
-        });
-    };
-    Monster.prototype.removeFromWorld = function () {
-        if (this.intervalAttackRegisteredFunction) {
-            clearInterval(this.intervalAttackRegisteredFunction);
-        }
-        this.meshForMove.dispose();
-        this.walkSmoke.dispose();
-        this.bloodParticles.dispose();
-    };
-    Monster.prototype.retrieveHit = function (updatedEnemy) {
-        var self = this;
-        if (this.statistics.hp != updatedEnemy.statistics.hp) {
-            var damage_1 = (this.statistics.hp - updatedEnemy.statistics.hp);
-            this.statistics.hp = updatedEnemy.statistics.hp;
-            setTimeout(function () {
-                self.bloodParticles.start();
-                self.showDamage(damage_1);
-                setTimeout(function () {
-                    self.bloodParticles.stop();
-                }, 100);
-                if (self.statistics.hp <= 0) {
-                    self.isDeath = true;
-                    self.animation.stop();
-                    setTimeout(function () {
-                        self.removeFromWorld();
-                    }, 6000);
-                }
-                self.game.gui.characterTopHp.refreshPanel();
-            }, 400);
-        }
-    };
-    Monster.prototype.onWalkStart = function () {
-        this.walkSmoke.start();
-    };
-    Monster.prototype.onWalkEnd = function () {
-        this.walkSmoke.stop();
-    };
-    return Monster;
-}(AbstractCharacter));
 var GUI;
 (function (GUI) {
     var Attributes = /** @class */ (function (_super) {
@@ -4000,26 +4000,14 @@ var GUI;
             return this;
         };
         Inventory.prototype.showTexts = function () {
-            var itemsEquiped = new BABYLON.GUI.TextBlock('title');
-            itemsEquiped.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            itemsEquiped.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            itemsEquiped.text = 'Equiped items';
-            itemsEquiped.top = "2%";
-            itemsEquiped.color = "brown";
-            itemsEquiped.width = "70%";
-            itemsEquiped.height = "10%";
-            itemsEquiped.fontSize = 38;
-            itemsEquiped.fontFamily = "RuslanDisplay";
-            itemsEquiped.textWrapping = true;
-            this.container.addControl(itemsEquiped);
             var itemToEquip = new BABYLON.GUI.TextBlock('title');
             itemToEquip.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             itemToEquip.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             itemToEquip.text = 'Inventory items';
-            itemToEquip.top = "200px";
+            itemToEquip.top = "10px";
             itemToEquip.color = "brown";
-            itemToEquip.width = "70%";
-            itemToEquip.height = "10%";
+            itemToEquip.width = "50%";
+            itemToEquip.height = "8%";
             itemToEquip.fontSize = 38;
             itemToEquip.fontFamily = "RuslanDisplay";
             itemToEquip.textWrapping = true;
@@ -4030,34 +4018,31 @@ var GUI;
             image.thickness = 0;
             image.color = 'white';
             image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             this.container.addControl(image);
             var image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", '' + this.guiMain.game.player.keys + '', "assets/gui/key.png");
             image2.thickness = 0;
             image2.color = 'white';
             image2.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             this.container.addControl(image2);
-            var image3 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.wine", '' + this.guiMain.game.player.keys + '', "assets/skills/heal.png");
+            var image3 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.wine", '0', "assets/skills/heal.png");
             image3.thickness = 0;
             image3.color = 'white';
             image3.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image3.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            image3.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             this.container.addControl(image3);
-            image.height = '24px';
+            image.height = '36px';
             image.width = '150px';
             image.left = "-150px";
-            image.top = '-20px';
             image.fontSize = 18;
-            image2.height = '24px';
+            image2.height = '36px';
             image2.width = '150px';
             image2.left = "20px";
-            image2.top = '-20px';
             image2.fontSize = 18;
-            image3.height = '24px';
+            image3.height = '36px';
             image3.width = '150px';
-            image3.left = "180px";
-            image3.top = '-20px';
+            image3.left = "-300px";
             image3.fontSize = 18;
         };
         Inventory.prototype.close = function () {
@@ -4087,11 +4072,10 @@ var GUI;
             var eqiupedItems = inventory.getEquipedItems();
             var grid = new BABYLON.GUI.Grid("inventory.items");
             grid.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            grid.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            grid.width = '568px';
-            grid.height = '280px';
-            grid.top = '250px';
-            grid.left = '110px';
+            grid.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            grid.width = '50%';
+            grid.height = '80%';
+            grid.top = '50px';
             grid.addColumnDefinition(64, true);
             grid.addColumnDefinition(1);
             this.container.addControl(grid);
@@ -5745,8 +5729,9 @@ var Armor = /** @class */ (function (_super) {
         var _this = _super.call(this, inventory) || this;
         _this.blockWidth = "80px";
         _this.blockHeight = "80px";
-        _this.blockTop = "50px";
-        _this.blockLeft = "270px";
+        _this.blockTop = "10px";
+        _this.blockLeft = "210px";
+        _this.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         _this.item = inventory.guiMain.game.player.inventory.armor;
         // this.block
         _this.createBlockWithImage();
@@ -5760,8 +5745,9 @@ var Boots = /** @class */ (function (_super) {
         var _this = _super.call(this, inventory) || this;
         _this.blockWidth = "80px";
         _this.blockHeight = "80px";
-        _this.blockTop = "50px";
-        _this.blockLeft = "350px";
+        _this.blockTop = "-10px";
+        _this.blockLeft = "210px";
+        _this.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         _this.item = inventory.guiMain.game.player.inventory.boots;
         _this.createBlockWithImage();
         return _this;
@@ -5774,8 +5760,9 @@ var Gloves = /** @class */ (function (_super) {
         var _this = _super.call(this, inventory) || this;
         _this.blockWidth = "80px";
         _this.blockHeight = "80px";
-        _this.blockTop = "50px";
-        _this.blockLeft = "430px";
+        _this.blockTop = "10px";
+        _this.blockLeft = "291px";
+        _this.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         _this.item = inventory.guiMain.game.player.inventory.gloves;
         _this.createBlockWithImage();
         return _this;
@@ -5788,8 +5775,9 @@ var Helm = /** @class */ (function (_super) {
         var _this = _super.call(this, inventory) || this;
         _this.blockWidth = "80px";
         _this.blockHeight = "80px";
-        _this.blockTop = "50px";
-        _this.blockLeft = "510px";
+        _this.blockTop = "10px";
+        _this.blockLeft = "129px";
+        _this.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         _this.item = inventory.guiMain.game.player.inventory.helm;
         _this.createBlockWithImage();
         return _this;
@@ -5802,8 +5790,9 @@ var Shield = /** @class */ (function (_super) {
         var _this = _super.call(this, inventory) || this;
         _this.blockWidth = "80px";
         _this.blockHeight = "80px";
-        _this.blockTop = "50px";
-        _this.blockLeft = "190px";
+        _this.blockTop = "-10px";
+        _this.blockLeft = "291px";
+        _this.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         _this.item = inventory.guiMain.game.player.inventory.shield;
         _this.createBlockWithImage();
         return _this;
@@ -5816,48 +5805,15 @@ var Weapon = /** @class */ (function (_super) {
         var _this = _super.call(this, inventory) || this;
         _this.blockWidth = "80px";
         _this.blockHeight = "80px";
-        _this.blockTop = "50px";
-        _this.blockLeft = "110px";
+        _this.blockTop = "-10px";
+        _this.blockLeft = "129px";
+        _this.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         _this.item = inventory.guiMain.game.player.inventory.weapon;
         _this.createBlockWithImage();
         return _this;
     }
     return Weapon;
 }(EquipBlock));
-var Arena = /** @class */ (function (_super) {
-    __extends(Arena, _super);
-    function Arena() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Arena.prototype.initScene = function (game) {
-        var self = this;
-        var scene = new BABYLON.Scene(game.engine);
-        game.sceneManager = this;
-        self
-            .setDefaults(game, scene)
-            .optimizeScene(scene)
-            .setCamera(scene)
-            .setFog(scene)
-            .executeWhenReady(function () {
-            var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
-            light.intensity = 1;
-            light.position = new BABYLON.Vector3(0, 50, 0);
-            light.direction = new BABYLON.Vector3(0.45, -2.5, 0);
-            var ground = BABYLON.MeshBuilder.CreateGround("Ground", { width: 48, height: 48 }, scene);
-            ground.actionManager = new BABYLON.ActionManager(scene);
-            var terrainMaterial = new BABYLON.StandardMaterial("GroundMaterial", scene);
-            terrainMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-            terrainMaterial.specularPower = 10;
-            terrainMaterial.diffuseTexture = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
-            terrainMaterial.diffuseTexture.uScale = terrainMaterial.diffuseTexture.vScale = 20;
-            ground.material = terrainMaterial;
-        }, function () {
-            // game.player.playerLight.dispose();
-        });
-    };
-    Arena.TYPE = 98;
-    return Arena;
-}(Scene));
 var CaveExit = /** @class */ (function (_super) {
     __extends(CaveExit, _super);
     function CaveExit() {
@@ -5918,6 +5874,96 @@ var EnvironmentCaveExit = /** @class */ (function (_super) {
     }
     return EnvironmentCaveExit;
 }(MountainsEnvironment));
+var Arena = /** @class */ (function (_super) {
+    __extends(Arena, _super);
+    function Arena() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Arena.prototype.initScene = function (game) {
+        var self = this;
+        var scene = new BABYLON.Scene(game.engine);
+        game.sceneManager = this;
+        self
+            .setDefaults(game, scene)
+            .optimizeScene(scene)
+            .setCamera(scene)
+            .setFog(scene)
+            .executeWhenReady(function () {
+            var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+            light.intensity = 1;
+            light.position = new BABYLON.Vector3(0, 50, 0);
+            light.direction = new BABYLON.Vector3(0.45, -2.5, 0);
+            var ground = BABYLON.MeshBuilder.CreateGround("Ground", { width: 48, height: 48 }, scene);
+            ground.actionManager = new BABYLON.ActionManager(scene);
+            var terrainMaterial = new BABYLON.StandardMaterial("GroundMaterial", scene);
+            terrainMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            terrainMaterial.specularPower = 10;
+            terrainMaterial.diffuseTexture = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
+            terrainMaterial.diffuseTexture.uScale = terrainMaterial.diffuseTexture.vScale = 20;
+            ground.material = terrainMaterial;
+        }, function () {
+            // game.player.playerLight.dispose();
+        });
+    };
+    Arena.TYPE = 98;
+    return Arena;
+}(Scene));
+var OnOpenChest = /** @class */ (function (_super) {
+    __extends(OnOpenChest, _super);
+    function OnOpenChest() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /**
+     * @returns {SocketIOClient}
+     */
+    OnOpenChest.prototype.listen = function () {
+        var game = this.game;
+        this.socket.on('openChest', function (data) {
+            var opened = data.chest.opened;
+            if (!opened) {
+                game.gui.playerLogsQuests.addText('You do not have key to open chest', 'red');
+            }
+            else {
+                game.gui.playerLogsQuests.addText('Chest has been opened', 'orange');
+                game.player.keys -= 1;
+                if (game.gui.inventory.opened) {
+                    game.gui.inventory.refreshPopup();
+                }
+                var chest_1 = game.chests[data.chestKey];
+                chest_1.hightlightLayer.dispose();
+                chest_1.mesh.skeleton.beginAnimation('action', false);
+                chest_1.mesh.actionManager.actions.forEach(function (action) {
+                    chest_1.mesh.actionManager.unregisterAction(action);
+                });
+            }
+        });
+        return this;
+    };
+    return OnOpenChest;
+}(SocketEvent));
+var OnRefreshChest = /** @class */ (function (_super) {
+    __extends(OnRefreshChest, _super);
+    function OnRefreshChest() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /**
+     * @returns {SocketIOClient}
+     */
+    OnRefreshChest.prototype.listen = function () {
+        var game = this.game;
+        this.socket.on('refreshChests', function (chests) {
+            game.chests.forEach(function (chest) {
+                chest.hightlightLayer.dispose();
+            });
+            game.chests = [];
+            chests.forEach(function (chest, chestKey) {
+                game.chests.push(new Chest(game, chest, chestKey));
+            });
+        });
+        return this;
+    };
+    return OnRefreshChest;
+}(SocketEvent));
 var OnAddSpecialItem = /** @class */ (function (_super) {
     __extends(OnAddSpecialItem, _super);
     function OnAddSpecialItem() {
@@ -5977,62 +6023,6 @@ var OnShowDroppedItem = /** @class */ (function (_super) {
         return this;
     };
     return OnShowDroppedItem;
-}(SocketEvent));
-var OnOpenChest = /** @class */ (function (_super) {
-    __extends(OnOpenChest, _super);
-    function OnOpenChest() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    /**
-     * @returns {SocketIOClient}
-     */
-    OnOpenChest.prototype.listen = function () {
-        var game = this.game;
-        this.socket.on('openChest', function (data) {
-            var opened = data.chest.opened;
-            if (!opened) {
-                game.gui.playerLogsQuests.addText('You do not have key to open chest', 'red');
-            }
-            else {
-                game.gui.playerLogsQuests.addText('Chest has been opened', 'orange');
-                game.player.keys -= 1;
-                if (game.gui.inventory.opened) {
-                    game.gui.inventory.refreshPopup();
-                }
-                var chest_1 = game.chests[data.chestKey];
-                chest_1.hightlightLayer.dispose();
-                chest_1.mesh.skeleton.beginAnimation('action', false);
-                chest_1.mesh.actionManager.actions.forEach(function (action) {
-                    chest_1.mesh.actionManager.unregisterAction(action);
-                });
-            }
-        });
-        return this;
-    };
-    return OnOpenChest;
-}(SocketEvent));
-var OnRefreshChest = /** @class */ (function (_super) {
-    __extends(OnRefreshChest, _super);
-    function OnRefreshChest() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    /**
-     * @returns {SocketIOClient}
-     */
-    OnRefreshChest.prototype.listen = function () {
-        var game = this.game;
-        this.socket.on('refreshChests', function (chests) {
-            game.chests.forEach(function (chest) {
-                chest.hightlightLayer.dispose();
-            });
-            game.chests = [];
-            chests.forEach(function (chest, chestKey) {
-                game.chests.push(new Chest(game, chest, chestKey));
-            });
-        });
-        return this;
-    };
-    return OnRefreshChest;
 }(SocketEvent));
 var OnQuestRequirementDoneInformation = /** @class */ (function (_super) {
     __extends(OnQuestRequirementDoneInformation, _super);

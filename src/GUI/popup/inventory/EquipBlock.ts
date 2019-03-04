@@ -6,6 +6,7 @@ abstract class EquipBlock {
     protected blockHeight: string;
     protected blockTop: string;
     protected blockLeft: string;
+    protected verticalAlignment: number;
 
     public block: BABYLON.GUI.Rectangle;
     public image: BABYLON.GUI.Image;
@@ -21,8 +22,8 @@ abstract class EquipBlock {
         if (this.item) {
             let panelItem = new BABYLON.GUI.Rectangle();
             panelItem.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            panelItem.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            panelItem.thickness = 0;
+            panelItem.verticalAlignment = this.verticalAlignment;
+            panelItem.thickness = 1;
             panelItem.width = this.blockWidth;
             panelItem.height = this.blockHeight;
             panelItem.top = this.blockTop;

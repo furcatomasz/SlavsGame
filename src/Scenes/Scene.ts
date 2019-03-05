@@ -16,10 +16,6 @@ abstract class Scene {
         this.assetManager = new BABYLON.AssetsManager(scene);
         this.initFactories(scene);
 
-        if(Game.SHOW_DEBUG) {
-            scene.debugLayer.show();
-        }
-
         BABYLON.SceneLoader.CleanBoneMatrixWeights = true;
         return this;
     }
@@ -118,7 +114,11 @@ abstract class Scene {
                     game.client.socket.emit('refreshChests');
                     game.client.socket.emit('refreshRandomSpecialItems');
 
-
+                    if(Game.SHOW_DEBUG) {
+                        scene.debugLayer.show({
+                            embedMode: true
+                        });
+                    }
 
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };

@@ -21,11 +21,19 @@ namespace GUI {
         protected initTexture() {
             this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
             this.guiTexture.layer.layerMask = 1;
+
             let container = new BABYLON.GUI.Rectangle('gui.panel.'+ this.name);
             container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            container.thickness = 0;
+            container.thickness = 1;
             container.isPointerBlocker = true;
+
+            let image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);
+            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image.width = 0.6;
+            image.height = 1;
+            container.addControl(image);
 
             this.container = container;
             this.guiTexture.addControl(container);
@@ -35,20 +43,22 @@ namespace GUI {
 
         public open() {
             let self = this;
+            this.manageMainGUI(false);
             let inventoryPlayer = this.guiMain.game.player.mesh.createInstance('inventory_player');
             inventoryPlayer.layerMask = 1;
             inventoryPlayer.position = new BABYLON.Vector3(-5, -2, 12);
             inventoryPlayer.rotation = new BABYLON.Vector3(0, -0.2, 0);
+            inventoryPlayer.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
             self.meshes.push(inventoryPlayer);
 
             this.guiMain.game.getScene().getCameraByName('gameCamera').position.y = 500;
-            this.guiMain.playerBottomPanel.container.alpha = 0;
             this.guiMain.game.player.inventory.getEquipedItems().forEach((item) => {
                 if(item) {
                     let itemInstance = item.mesh.createInstance("itemInstance");
                     itemInstance.layerMask = 1;
                     itemInstance.position = new BABYLON.Vector3(-5, -2, 12);
                     itemInstance.rotation = new BABYLON.Vector3(0, -0.2, 0);
+                    itemInstance.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
                     self.meshes.push(itemInstance);
                 }
             });
@@ -69,9 +79,9 @@ namespace GUI {
             itemToEquip.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             itemToEquip.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             itemToEquip.text = 'Inventory items';
-            itemToEquip.top = "10px";
+            itemToEquip.top = "14px";
             itemToEquip.color = "brown";
-            itemToEquip.width = "50%";
+            itemToEquip.width = "60%";
             itemToEquip.height = "8%";
             itemToEquip.fontSize = 38;
             itemToEquip.fontFamily = "RuslanDisplay";
@@ -80,44 +90,45 @@ namespace GUI {
         }
 
         public showSpecialItemsAndGold() {
-            let image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", ''+this.guiMain.game.player.gold+'', "assets/gui/gold.png");
-            image.thickness = 0;
-            image.color = 'white';
-            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            this.container.addControl(image);
-
-            let image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", ''+this.guiMain.game.player.keys+'', "assets/gui/key.png");
-            image2.thickness = 0;
-            image2.color = 'white';
-            image2.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            this.container.addControl(image2);
-
-            let image3 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.wine", '0', "assets/skills/heal.png");
-            image3.thickness = 0;
-            image3.color = 'white';
-            image3.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image3.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            this.container.addControl(image3);
-
-            image.height = '36px';
-            image.width = '150px';
-            image.left = "-150px";
-            image.fontSize = 18;
-
-            image2.height = '36px';
-            image2.width = '150px';
-            image2.left = "20px";
-            image2.fontSize = 18;
-
-            image3.height = '36px';
-            image3.width = '150px';
-            image3.left = "-300px";
-            image3.fontSize = 18;
+            // let image = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.gold", ''+this.guiMain.game.player.gold+'', "assets/gui/gold.png");
+            // image.thickness = 0;
+            // image.color = 'white';
+            // image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            // image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            // this.container.addControl(image);
+            //
+            // let image2 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.key", ''+this.guiMain.game.player.keys+'', "assets/gui/key.png");
+            // image2.thickness = 0;
+            // image2.color = 'white';
+            // image2.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            // image2.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            // this.container.addControl(image2);
+            //
+            // let image3 = BABYLON.GUI.Button.CreateImageButton("gui.popup.image.wine", '0', "assets/skills/heal.png");
+            // image3.thickness = 0;
+            // image3.color = 'white';
+            // image3.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            // image3.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            // this.container.addControl(image3);
+            //
+            // image.height = '36px';
+            // image.width = '150px';
+            // image.left = "-150px";
+            // image.fontSize = 18;
+            //
+            // image2.height = '36px';
+            // image2.width = '150px';
+            // image2.left = "20px";
+            // image2.fontSize = 18;
+            //
+            // image3.height = '36px';
+            // image3.width = '150px';
+            // image3.left = "-300px";
+            // image3.fontSize = 18;
         }
 
         public close() {
+            this.manageMainGUI(true);
             this.opened = false;
             this.guiTexture.dispose();
             this.buttonClose = null;
@@ -125,7 +136,6 @@ namespace GUI {
                 mesh.dispose();
             });
             this.guiMain.game.player.refreshCameraPosition();
-            this.guiMain.playerBottomPanel.container.alpha = 1;
         }
 
         protected showEquipedItems() {
@@ -189,7 +199,7 @@ namespace GUI {
                 label.text = text;
                 label.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
                 label.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                label.color = "white";
+                label.color = "black";
                 label.fontSize = 18;
 
                 grid.addControl(image, itemCount, 0);

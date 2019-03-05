@@ -11,34 +11,6 @@ namespace GUI {
             this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
         }
 
-        protected initTexture() {
-            this.guiTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.' + this.name);
-            this.guiTexture.layer.layerMask = 1;
-            let container = new BABYLON.GUI.Rectangle('gui.panel.'+ this.name);
-            container.horizontalAlignment = this.position;
-            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            container.thickness = 0;
-            container.isPointerBlocker = true;
-            this.container = container;
-            this.guiTexture.addControl(container);
-
-            let image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);
-            image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            image.width = 1;
-            image.height = 1;
-            image.isPointerBlocker = true;
-            container.addControl(image);
-
-            this.container.addControl(image);
-            this.containerBackground = image;
-
-            container.width = '685px';
-            container.height = '100%';
-
-            return this;
-        }
-
         public open() {
             let self = this;
             this.opened = true;

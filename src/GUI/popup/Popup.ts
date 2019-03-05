@@ -24,7 +24,7 @@ namespace GUI {
             this.guiTexture.layer.layerMask = 1;
             let container = new BABYLON.GUI.Rectangle('gui.panel.'+ this.name);
             container.horizontalAlignment = this.position;
-            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             container.thickness = 0;
             container.isPointerBlocker = true;
             this.container = container;
@@ -36,11 +36,13 @@ namespace GUI {
             image.width = 1;
             image.height = 1;
             image.isPointerBlocker = true;
-
             container.addControl(image);
 
             this.container.addControl(image);
             this.containerBackground = image;
+
+            container.width = '685px';
+            container.height = '88%';
 
             return this;
         }
@@ -63,6 +65,20 @@ namespace GUI {
 
             return this;
         }
+
+        protected manageMainGUI(show: boolean = true) {
+            this.guiMain.roomInformaton.guiPanel.isVisible = show;
+            this.guiMain.playerBottomPanel.container.isVisible = show;
+            this.guiMain.playerLogsQuests.guiPanel.isVisible = show;
+            if(this.guiMain.playerQuestInformation.guiPanel) {
+                this.guiMain.playerQuestInformation.guiPanel.isVisible = show;
+            }
+            if(this.guiMain.characterTopHp.guiPanel) {
+                this.guiMain.characterTopHp.guiPanel.isVisible = show;
+            }
+        }
+
+
 
         public refreshPopup() {
             if(this.opened) {

@@ -6,9 +6,7 @@ namespace GUI {
         public inventory: GUI.Inventory;
         public attributes: GUI.Attributes;
         public options: GUI.Options;
-        public skills: GUI.Skills;
         public playerBottomPanel: GUI.PlayerBottomPanel;
-        public playerLogsPanel: GUI.PlayerLogsPanel;
         public playerQuestInformation: GUI.PlayerQuestInformation;
         public roomInformaton: GUI.RoomInformation;
         public playerLogsQuests: GUI.PlayerQuestsPanel;

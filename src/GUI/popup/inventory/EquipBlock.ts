@@ -23,7 +23,7 @@ abstract class EquipBlock {
             let panelItem = new BABYLON.GUI.Rectangle();
             panelItem.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             panelItem.verticalAlignment = this.verticalAlignment;
-            panelItem.thickness = 1;
+            panelItem.thickness = 0;
             panelItem.width = this.blockWidth;
             panelItem.height = this.blockHeight;
             panelItem.top = this.blockTop;

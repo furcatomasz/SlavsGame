@@ -4,8 +4,7 @@ namespace GUI {
         public expBar: BABYLON.GUI.Image;
         public expBarText: BABYLON.GUI.TextBlock;
         public guiGridSkills: BABYLON.GUI.Grid;
-        public texture: BABYLON.GUI.AdvancedDynamicTexture;
-        public container: BABYLON.GUI.AdvancedDynamicTexture;
+        public container: BABYLON.GUI.Rectangle;
 
         constructor(game: Game) {
             let self = this;
@@ -60,10 +59,10 @@ namespace GUI {
             let gridSpecials = new BABYLON.GUI.Grid();
             gridSpecials.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             gridSpecials.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            gridSpecials.width = '211px';
-            gridSpecials.height ='46px';
-            gridSpecials.top = '-11px';
-            gridSpecials.left = '1px';
+            gridSpecials.width = '225px';
+            gridSpecials.height ='52px';
+            gridSpecials.top = '-6px';
+            gridSpecials.left = '0px';
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);
             gridSpecials.addColumnDefinition(1);

@@ -7,14 +7,12 @@ namespace GUI {
         constructor(game: Game) {
             this.texture = game.gui.texture;
 
-            if(this.guiPanel) {
-                this.guiPanel.dispose();
-            }
-
             let roomInformationPanel = new BABYLON.GUI.StackPanel("Room Information");
             roomInformationPanel.width = "20%";
             roomInformationPanel.top = 40;
             roomInformationPanel.left = 10;
+            roomInformationPanel.zIndex = 1;
+            roomInformationPanel.isPointerBlocker = true;
             roomInformationPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             roomInformationPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             this.texture.addControl(roomInformationPanel);

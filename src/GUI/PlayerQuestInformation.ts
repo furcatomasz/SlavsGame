@@ -16,7 +16,7 @@ namespace GUI {
             }
 
             let playerQuestsInformationPanel = new BABYLON.GUI.StackPanel();
-            playerQuestsInformationPanel.width = "25%";
+            playerQuestsInformationPanel.width = "50%";
             playerQuestsInformationPanel.top = 40;
             playerQuestsInformationPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             playerQuestsInformationPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;

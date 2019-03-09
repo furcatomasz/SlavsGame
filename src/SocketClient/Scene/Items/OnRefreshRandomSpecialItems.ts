@@ -8,6 +8,7 @@ class OnRefreshRandomSpecialItems extends SocketEvent {
 
             game.randomSpecialItems.forEach(function (randomSpecialItem) {
                 randomSpecialItem.mesh.dispose();
+                randomSpecialItem.tooltip.container.dispose();
             });
             game.randomSpecialItems = [];
 

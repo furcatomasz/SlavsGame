@@ -31,6 +31,7 @@ class OnUpdatePlayers extends SocketEvent {
                 player.statistics.hp = updatedPlayer.activePlayer.statistics.hp;
                 setTimeout(function () {
                     player.bloodParticles.start();
+                    player.refreshHpInGui();
                     setTimeout(function () {
                         player.bloodParticles.stop();
                     }, 100);

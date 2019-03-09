@@ -45,12 +45,9 @@ class Player extends AbstractCharacter {
         if (this.isControllable) {
             this.mesh.isPickable = false;
             new GUI.Main(game);
-            this.guiPlayerInformation = new GUI.PlayerInformation(this, game);
             this.initServerData(serverData);
             this.refreshCameraPosition();
-            this.refreshHpInGui();
             this.refreshExperienceInGui();
-            this.refreshEnergyInGui();
             this.createPlayerLight();
             this.attackActions = new AttackActions(game);
         }
@@ -58,6 +55,9 @@ class Player extends AbstractCharacter {
         this.setCharacterSkills(serverData.skills);
         this.initPatricleSystemDamage();
         this.runAnimationStand();
+        this.guiPlayerInformation = new GUI.PlayerInformation(this, game);
+        this.refreshHpInGui();
+        this.refreshEnergyInGui();
     }
 
     private initServerData(serverData) {
@@ -178,6 +178,7 @@ class Player extends AbstractCharacter {
     }
 
     public removeFromWorld() {
+        this.guiPlayerInformation.container.dispose();
         this.mesh.dispose();
     }
 
@@ -196,11 +197,9 @@ class Player extends AbstractCharacter {
     }
 
     public refreshEnergyInGui() {
-        if (this.isControllable) {
-            let percentage = Math.round(this.statistics.energy * 100 / this.statistics.energyMax);
-            this.guiPlayerInformation.energyBar.width = percentage / 100;
-            this.guiPlayerInformation.energyBarText.text = this.statistics.energy + ' / ' + this.statistics.energyMax;
-        }
+        let percentage = Math.round(this.statistics.energy * 100 / this.statistics.energyMax);
+        this.guiPlayerInformation.energyBar.width = percentage / 100;
+        this.guiPlayerInformation.energyBarText.text = this.statistics.energy + ' / ' + this.statistics.energyMax;
     }
 
     public refreshHpInGui() {

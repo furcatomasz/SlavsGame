@@ -12,7 +12,7 @@ namespace GUI {
             let self = this;
 
             let playerQuestsLogsPanel = new BABYLON.GUI.StackPanel();
-            playerQuestsLogsPanel.width = "25%";
+            playerQuestsLogsPanel.width = "50%";
             playerQuestsLogsPanel.top = 40;
             playerQuestsLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             self.texture.addControl(playerQuestsLogsPanel);

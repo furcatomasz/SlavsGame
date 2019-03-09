@@ -1,6 +1,7 @@
 class RandomSpecialItem {
 
     public mesh: BABYLON.AbstractMesh;
+    public tooltip: TooltipMesh;
 
     /**
      *
@@ -22,14 +23,13 @@ class RandomSpecialItem {
 
         this.mesh = randomItemMesh;
         this.mesh.actionManager = new BABYLON.ActionManager(scene);
-        tooltip = new TooltipMesh(randomItemMesh, randomSpecialItemData.specialItem.name);
+        this.tooltip = new TooltipMesh(randomItemMesh, randomSpecialItemData.specialItem.name);
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPickTrigger,
             function () {
                 game.goToMeshFunction = GoToMeshAndRunAction.execute(game, randomItemMesh, () => {
                     game.client.socket.emit('pickRandomItem', randomSpecialItemKey);
                 });
-                tooltip.container.dispose();
             })
         );
 

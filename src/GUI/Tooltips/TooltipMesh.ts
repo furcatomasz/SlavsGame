@@ -1,6 +1,6 @@
 class TooltipMesh {
 
-    protected container: BABYLON.GUI.AdvancedDynamicTexture;
+    public container: BABYLON.GUI.AdvancedDynamicTexture;
 
     constructor(mesh: BABYLON.AbstractMesh, text: string, linkOffsetY: number = -80) {
         let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");

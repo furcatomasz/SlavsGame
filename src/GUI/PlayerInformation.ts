@@ -15,6 +15,7 @@ namespace GUI {
             grid.addColumnDefinition(1);
             grid.width = 1;
             grid.height ='64px';
+            grid.paddingTop = '10px';
             guiPanel.addControl(grid);
             this.container = grid;
 
@@ -32,7 +33,7 @@ namespace GUI {
             title.top = "0";
             title.color = "orange";
             title.fontFamily = "RuslanDisplay";
-            title.fontSize = 22;
+            title.fontSize = 16;
             title.resizeToFit = true;
             grid.addControl(title, 0, 1);
 
@@ -41,14 +42,14 @@ namespace GUI {
             toolbarHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             toolbarHp.width = 0;
             toolbarHp.height = '14px';
-            toolbarHp.top = '32px';
+            toolbarHp.top = '24px';
             this.hpBar = toolbarHp;
             grid.addControl(toolbarHp, 0, 1);
 
             let textBlockHp = new BABYLON.GUI.TextBlock();
             textBlockHp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             textBlockHp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            textBlockHp.top = '30px';
+            textBlockHp.top = '24px';
             textBlockHp.width = 1;
             textBlockHp.height = '14px';
             textBlockHp.color = "white";
@@ -63,14 +64,14 @@ namespace GUI {
             toolbarEnergy.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             toolbarEnergy.width = 1;
             toolbarEnergy.height = '14px';
-            toolbarEnergy.top = '48px';
+            toolbarEnergy.top = '40px';
             this.energyBar = toolbarEnergy;
             grid.addControl(toolbarEnergy, 0, 1);
 
             let textToolbarEnergy = new BABYLON.GUI.TextBlock();
             textToolbarEnergy.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             textToolbarEnergy.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            textToolbarEnergy.top = '47px';
+            textToolbarEnergy.top = '40px';
             textToolbarEnergy.width = 1;
             textToolbarEnergy.height = '14px';
             textToolbarEnergy.color = "white";

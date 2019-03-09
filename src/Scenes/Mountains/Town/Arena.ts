@@ -24,7 +24,7 @@ class Arena extends Scene {
                 terrainMaterial.specularPower = 10;
                 terrainMaterial.diffuseTexture = new BABYLON.Texture("assets/scenes/Forest_house/dirt.jpg", scene);
                 terrainMaterial.diffuseTexture.uScale = terrainMaterial.diffuseTexture.vScale = 20;
-
+                ground.receiveShadows = true;
                 ground.material = terrainMaterial;
 
             }, function() {

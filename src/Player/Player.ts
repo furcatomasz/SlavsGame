@@ -252,12 +252,16 @@ class Player extends AbstractCharacter {
             }
         };
 
-        this.game.getScene().registerBeforeRender(this.dynamicFunction);
+        let scene = this.game.getScene();
+        if(scene) {
+            scene.registerBeforeRender(this.dynamicFunction);
+        }
     }
 
     public unregisterMoveWithCollision(emitPosition: boolean) {
-        if (this.dynamicFunction !== undefined) {
-            this.game.getScene().unregisterBeforeRender(this.dynamicFunction);
+        let scene = this.game.getScene();
+        if (this.dynamicFunction !== undefined && scene) {
+            scene.unregisterBeforeRender(this.dynamicFunction);
         }
 
         if (emitPosition) {

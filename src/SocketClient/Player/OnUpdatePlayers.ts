@@ -12,7 +12,7 @@ class OnUpdatePlayers extends SocketEvent {
             if(!updatedPlayer.activePlayer.id) {
                 return;
             }
-
+console.log(updatedPlayer, game.remotePlayers);
             game.remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == updatedPlayer.activePlayer.id) {
                     player = game.remotePlayers[key];

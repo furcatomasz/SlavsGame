@@ -136,9 +136,10 @@ abstract class AbstractCharacter {
 
 
     public runAnimationWalk():void {
-        if(!this.isWalk && !this.isAttack) {
+        let skeleton = this.mesh.skeleton;
+
+        if(!this.isWalk && !this.isAttack && skeleton) {
             let self = this;
-            let skeleton = this.mesh.skeleton;
             this.isWalk = true;
 
             self.sfxWalk.play();
@@ -154,9 +155,10 @@ abstract class AbstractCharacter {
     }
 
     public runAnimationStand():void {
-        if(!this.isStand) {
+        let skeleton = this.mesh.skeleton;
+
+        if(!this.isStand && skeleton) {
             let self = this;
-            let skeleton = this.mesh.skeleton;
             this.isStand = true;
 
             self.animation = skeleton.beginAnimation(AbstractCharacter.ANIMATION_STAND_WEAPON, true, 1, function () {

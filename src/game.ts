@@ -62,18 +62,25 @@ class Game {
         self.engine.loadingScreen = new SlavsLoader('');
         self.controller = new Mouse(self);
         self.client = new SocketIOClient(self);
-        self.factories = [];
-        self.enemies = [];
-        self.quests = [];
-        self.npcs = [];
-        self.scenes = [];
-        self.randomSpecialItems = [];
-        self.chests = [];
         self.activeScene = null;
         self.events = new Events();
+        this.clearObjectCollections();
 
         self.client.connect(serverUrl, accessToken);
         self.animate();
+    }
+
+    private clearObjectCollections(): Game {
+        this.factories = [];
+        this.enemies = [];
+        this.remotePlayers = [];
+        this.quests = [];
+        this.npcs = [];
+        this.scenes = [];
+        this.randomSpecialItems = [];
+        this.chests = [];
+
+        return this;
     }
 
     getScene(): BABYLON.Scene {
@@ -98,6 +105,7 @@ class Game {
     public changeScene(newScene: Scene) {
         let sceneToDispose = this.getScene();
         if(sceneToDispose) {
+            this.clearObjectCollections();
             setTimeout(function () {
                 sceneToDispose.dispose();
             });

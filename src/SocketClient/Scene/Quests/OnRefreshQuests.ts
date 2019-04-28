@@ -12,7 +12,7 @@ class OnRefreshQuests extends SocketEvent {
             });
             game.quests = [];
 
-            let activeQuest = data.sessionData.activeRoom.activeQuest;
+            let activeQuest = data.activeQuest;
             data.quests.forEach(function(quest) {
                 game.quests.push(new Factories.Quests(game, quest, activeQuest));
             });

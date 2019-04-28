@@ -5,6 +5,7 @@ namespace Factories {
         protected scene:BABYLON.Scene;
         protected assetsManager:BABYLON.AssetsManager;
         protected loadedMeshes:Array<BABYLON.AbstractMesh>;
+        protected isAssetLoaded: Boolean;
 
         protected taskName: string;
         protected dir: string;
@@ -18,16 +19,10 @@ namespace Factories {
 
         public initFactory() {
             let self = this;
-            let meshTask = this.assetsManager.addMeshTask(this.taskName, null, this.dir, this.fileName);
-            meshTask.onSuccess = function (task) {
-                self.loadedMeshes = task.loadedMeshes;
-                for (let i = 0; i < self.loadedMeshes.length; i++) {
-                    let loadedMesh = self.loadedMeshes[i];
-                    loadedMesh.visibility = 0;
-                    loadedMesh.freezeWorldMatrix();
-                    loadedMesh.setEnabled(false);
-                }
-            }
+
+            BABYLON.SceneLoader.LoadAssetContainer(this.dir,  this.fileName, this.scene, function (container) {
+                self.loadedMeshes = container.meshes;
+            });
 
             return this;
         }

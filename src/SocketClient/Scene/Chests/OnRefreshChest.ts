@@ -6,13 +6,13 @@ class OnRefreshChest extends SocketEvent {
     public listen() {
         let game = this.game;
         this.socket.on('refreshChests', function (chests) {
-            game.chests.forEach(function(chest) {
+            game.getSceneManger().chests.forEach(function(chest) {
                 chest.hightlightLayer.dispose();
             });
-            game.chests = [];
+            game.getSceneManger().chests = [];
 
             chests.forEach(function(chest, chestKey) {
-                game.chests.push(new Chest(game, chest, chestKey));
+                game.getSceneManger().chests.push(new Chest(game, chest, chestKey));
             });
         });
 

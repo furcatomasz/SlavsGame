@@ -6,15 +6,15 @@ class OnRefreshRandomSpecialItems extends SocketEvent {
         let game = this.game;
         this.socket.on('refreshRandomSpecialItems', function (randomSpecialItems) {
 
-            game.randomSpecialItems.forEach(function (randomSpecialItem) {
+            game.getSceneManger().randomSpecialItems.forEach(function (randomSpecialItem) {
                 randomSpecialItem.mesh.dispose();
                 randomSpecialItem.tooltip.container.dispose();
             });
-            game.randomSpecialItems = [];
+            game.getSceneManger().randomSpecialItems = [];
 
             randomSpecialItems.forEach(function (randomSpecialItem, randomSpecialItemKey) {
                 if (!randomSpecialItem.picked) {
-                    game.randomSpecialItems.push(new RandomSpecialItem(game, randomSpecialItem, randomSpecialItemKey));
+                    game.getSceneManger().randomSpecialItems.push(new RandomSpecialItem(game, randomSpecialItem, randomSpecialItemKey));
                 }
             });
         });

@@ -7,14 +7,14 @@ class OnRefreshQuests extends SocketEvent {
         let game = this.game;
         let self = this;
         this.socket.on('refreshQuests', function (data) {
-            game.quests.forEach(function(quest) {
+            game.getSceneManger().quests.forEach(function(quest) {
                 quest.dispose();
             });
-            game.quests = [];
+            game.getSceneManger().quests = [];
 
             let activeQuest = data.activeQuest;
             data.quests.forEach(function(quest) {
-                game.quests.push(new Factories.Quests(game, quest, activeQuest));
+                game.getSceneManger().quests.push(new Factories.Quests(game, quest, activeQuest));
             });
 
             self.socket.emit('refreshGateways');

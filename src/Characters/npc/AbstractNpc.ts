@@ -9,7 +9,7 @@ namespace NPC {
 
         public constructor(game:Game, name, position: BABYLON.Vector3, rotation: BABYLON.Vector3) {
             super(name, game);
-            game.npcs.push(this);
+            game.getSceneManger().npcs.push(this);
 
             let self = this;
             this.mesh.position = position;

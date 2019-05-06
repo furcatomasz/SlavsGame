@@ -10,7 +10,7 @@ class OnOpenChest extends SocketEvent {
             if(!opened) {
                 game.gui.playerLogsQuests.addText('You do not have key to open chest', 'red');
             } else {
-                let chest = game.chests[data.chestKey];
+                let chest = game.getSceneManger().chests[data.chestKey];
                 chest.hightlightLayer.dispose();
                 chest.mesh.skeleton.beginAnimation('action', false);
                 chest.mesh.actionManager.actions.forEach(function(action) {

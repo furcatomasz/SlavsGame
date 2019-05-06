@@ -8,19 +8,38 @@ abstract class Scene {
     public options: GameOptions;
     public environment: AbstractEnvironment;
 
+    /**
+     * Dynamic Collections
+     */
+    public remotePlayers: Array<Player>;
+    public npcs: Array<NPC.AbstractNpc>;
+    public enemies: Array<Monster>;
+    public quests: Array<Factories.Quests>;
+    public chests: Array<Chest>;
+    public randomSpecialItems: Array<RandomSpecialItem>;
+
+
     protected setDefaults(game:Game, scene: BABYLON.Scene) {
-        this.game = game;
-        this.babylonScene = scene;
-        SlavsLoader.showLoaderWithText('Initializing scene...');
+        BABYLON.SceneLoader.CleanBoneMatrixWeights = true;
+        SlavsLoader.showLoaderWithText('Loading game...');
         scene.actionManager = new BABYLON.ActionManager(scene);
         this.assetManager = new BABYLON.AssetsManager(scene);
+        this.babylonScene = scene;
+        this.game = game;
+        this.enemies = [];
+        this.quests = [];
+        this.npcs = [];
+        this.randomSpecialItems = [];
+        this.chests = [];
+
+        game.setScene(this);
         this.initFactories(scene);
 
-        BABYLON.SceneLoader.CleanBoneMatrixWeights = true;
         return this;
     }
 
     protected playEnemiesAnimationsInFrumStrum() {
+        let self = this;
         let game = this.game;
         let scene = this.babylonScene;
         const gameCamera = scene.getCameraByName('gameCamera');
@@ -33,7 +52,7 @@ abstract class Scene {
 
         game.frumstrumEnemiesInterval = setInterval(function() {
             let activeEnemies = 0;
-            game.enemies.forEach(function(enemy) {
+            self.enemies.forEach(function(enemy) {
                 if(enemy.isDeath) {
                     return;
                 }
@@ -80,9 +99,6 @@ abstract class Scene {
             assetsManager.onFinish = function (tasks) {
                 game.client.socket.emit('changeScenePre');
 
-                let sceneIndex = game.scenes.push(scene);
-                game.activeScene = sceneIndex - 1;
-
                 if(onReady) {
                     onReady();
                 }
@@ -91,6 +107,10 @@ abstract class Scene {
                     let sceneMesh = scene.meshes[i];
                     sceneMesh.layerMask = 2;
                 }
+
+                game.engine.runRenderLoop(() => {
+                        scene.render();
+                });
 
                 self.playEnemiesAnimationsInFrumStrum();
             };
@@ -137,13 +157,18 @@ abstract class Scene {
 
         let gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
         gameCamera.rotation = new BABYLON.Vector3(0.75,0.75,0);
-        gameCamera.maxZ = 50;
         gameCamera.minZ = 15;
         gameCamera.fovMode = 0;
         gameCamera.layerMask = 2;
 
         ///MOBILE
-        gameCamera.fov = 0.8;
+        if(Game.MOBILE_CLIENT) {
+            gameCamera.maxZ = 50;
+            gameCamera.fov = 0.8;
+        } else {
+            gameCamera.maxZ = 100;
+            gameCamera.fov = 1.2;
+        }
 
         let guiCamera = new BABYLON.FreeCamera("GUICamera", new BABYLON.Vector3(0, 0, 0), scene);
         guiCamera.layerMask = 1;

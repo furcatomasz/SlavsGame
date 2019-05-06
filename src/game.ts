@@ -4,7 +4,8 @@
 class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 0;
+    static SHOW_DEBUG = 1;
+    static MOBILE_CLIENT = false;
 
     public sceneManager: Scene;
     public controller: Mouse;
@@ -15,25 +16,19 @@ class Game {
     public gui: GUI.Main;
 
     /**
-     * Invisible meshes
+     * Assets
      */
     public factories: Array<Factories.AbstractFactory>;
 
     /**
      * Dynamic Collections
      */
-    public scenes: Array<BABYLON.Scene>;
     public remotePlayers: Array<Player>;
-    public npcs: Array<NPC.AbstractNpc>;
-    public enemies: Array<Monster>;
-    public quests: Array<Factories.Quests>;
-    public chests: Array<Chest>;
-    public randomSpecialItems: Array<RandomSpecialItem>;
 
     /**
-     * States
+     * Active scene
      */
-    public activeScene: number;
+    public activeScene: Scene;
 
     /**
      * Events
@@ -59,41 +54,40 @@ class Game {
         if(isDebug) {
             Game.SHOW_DEBUG = 1;
         }
+        Game.MOBILE_CLIENT = isMobile;
         self.engine.loadingScreen = new SlavsLoader('');
         self.controller = new Mouse(self);
         self.client = new SocketIOClient(self);
-        self.activeScene = null;
         self.events = new Events();
         this.clearObjectCollections();
 
         self.client.connect(serverUrl, accessToken);
-        self.animate();
+        self.reiszeListener();
     }
 
     private clearObjectCollections(): Game {
         this.factories = [];
-        this.enemies = [];
         this.remotePlayers = [];
-        this.quests = [];
-        this.npcs = [];
-        this.scenes = [];
-        this.randomSpecialItems = [];
-        this.chests = [];
 
         return this;
     }
 
     getScene(): BABYLON.Scene {
-        return this.scenes[this.activeScene];
+        return (this.activeScene) ? this.activeScene.babylonScene : null;
     }
 
-    animate(): Game {
+    getSceneManger(): Scene {
+        return (this.activeScene) ? this.activeScene : null;
+    }
+
+    setScene(scene: Scene): Game {
+        this.activeScene = scene;
+
+        return this;
+    }
+
+    reiszeListener(): Game {
         let self = this;
-        this.engine.runRenderLoop(() => {
-            if (this.activeScene != null && self.getScene().activeCamera) {
-                self.getScene().render();
-            }
-        });
 
         window.addEventListener('resize', () => {
             self.engine.resize();
@@ -103,6 +97,7 @@ class Game {
     }
 
     public changeScene(newScene: Scene) {
+        this.engine.stopRenderLoop();
         let sceneToDispose = this.getScene();
         if(sceneToDispose) {
             this.clearObjectCollections();

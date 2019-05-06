@@ -7,11 +7,11 @@ class ShowEnemiesSocketEvent extends SocketEvent {
         let game = this.game;
 
         this.socket.on('showEnemies', function (data) {
-            game.enemies = [];
+            game.getSceneManger().enemies = [];
             data.forEach(function (enemyData, key) {
                 if (enemyData.statistics.hp > 0) {
                     const newMonster = new Monster(game, key, enemyData);
-                    game.enemies[newMonster.id] = newMonster;
+                    game.getSceneManger().enemies[newMonster.id] = newMonster;
                 }
             });
         });

@@ -7,7 +7,7 @@ class UpdateEnemiesSocketEvent extends SocketEvent {
         this.socket.on('updateEnemy', function (data) {
             let updatedEnemy = data.enemy;
             let enemyKey = data.enemyKey;
-            let enemy = game.enemies[enemyKey];
+            let enemy = game.getSceneManger().enemies[enemyKey];
             let mesh = enemy.meshForMove;
 
             enemy.retrieveHit(updatedEnemy);

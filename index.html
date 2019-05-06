@@ -111,7 +111,7 @@
                 if (BABYLON.Engine.isSupported()) {
                     var htmlElement = document.getElementById('renderCanvas');
                     document.getElementsByTagName("body")[0].setAttribute("oncontextmenu", "return false");
-                    new Game(htmlElement, window.location.hostname + ':5000', 'accessToken');
+                    new Game(htmlElement, window.location.hostname + ':5000', 'accessToken', false);
                 }
             }
         }

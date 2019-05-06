@@ -60,7 +60,7 @@ class Mouse {
                     if (self.game.player) {
                         self.targetPoint = pickResult.pickedPoint;
                         self.targetPoint.y = 0;
-                        clickParticleSystem.emitter = new BABYLON.Vector3(self.targetPoint.x, 0, self.targetPoint.z); // the starting location
+                        clickParticleSystem.emitter = new BABYLON.Vector3(self.targetPoint.x, 0, self.targetPoint.z);
 
                         self.game.player.runPlayerToPosition(self.targetPoint);
 

@@ -221,7 +221,6 @@ class Player extends AbstractCharacter {
         this.game.gui.playerLogsQuests.addText('You got 1 skill point ' + this.lvl + '', 'red');
 
         this.refreshExperienceInGui();
-
         this.initGodRay();
     }
 

@@ -25,7 +25,7 @@ namespace GUI {
             let container = new BABYLON.GUI.Rectangle('gui.panel.'+ this.name);
             container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            container.thickness = 1;
+            container.thickness = 0;
             container.isPointerBlocker = true;
 
             let image = new BABYLON.GUI.Image('gui.popup.image.', this.imageUrl);

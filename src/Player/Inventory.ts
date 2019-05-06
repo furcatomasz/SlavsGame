@@ -82,7 +82,7 @@ namespace Character {
                     const game = this.game;
                     bonesNumbers.forEach((boneNumber) => {
                         item.createTrailMesh(game);
-                        item.trailBox.attachToBone(game.player.mesh.skeleton.bones[boneNumber], this.player.mesh);
+                        item.trailBox.attachToBone(this.player.mesh.skeleton.bones[boneNumber], this.player.mesh);
                     });
 
                 }

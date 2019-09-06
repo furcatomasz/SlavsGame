@@ -4,7 +4,7 @@
 class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 1;
+    static SHOW_DEBUG = 0;
     static MOBILE_CLIENT = false;
 
     public sceneManager: Scene;

@@ -1,9 +1,37 @@
 namespace Server {
 
-    export class BabylonManager {
+    export class Enemy {
+        mesh: BABYLON.AbstractMesh;
+        key: Number;
+        target: Boolean;
+        attack: Boolean;
+        activeTargetPoints: Array<String>;
+        walkSpeed: Number;
+        visibilityAreaMesh: BABYLON.AbstractMesh;
+        availableCharactersToAttack: Array<String>;
+        attackInterval;
+    }
 
-        protected engine:BABYLON.NullEngine;
-        protected scene:BABYLON.Scene;
+    export class RemotePlayer {
+        id: String;
+        socketId: String;
+        walkSpeed: Number;
+        roomId: String;
+        mesh: BABYLON.AbstractMesh;
+        registeredFunction;
+
+        constructor(id: String, socketId: String, walkSpeed: Number, roomId: String, mesh: BABYLON.AbstractMesh) {
+            this.id = id;
+            this.socketId = socketId;
+            this.walkSpeed = walkSpeed;
+            this.roomId = roomId;
+            this.mesh = mesh;
+        }
+    }
+
+    export class BabylonManager {
+        protected engine: BABYLON.NullEngine;
+        protected scene: BABYLON.Scene;
         protected socket;
 
         /* Game Data */
@@ -64,23 +92,6 @@ namespace Server {
                         clearInterval(localEnemy.attackInterval);
                         localEnemy.mesh.dispose();
 
-                        // self.players.forEach(function(player) {
-                        //     let playerActionManager = player.mesh.actionManager;
-                        //     playerActionManager.actions.forEach(function(action, key) {
-                        //         if(action._triggerParameter == localEnemy.visibilityAreaMesh ||
-                        //             action._triggerParameter == localEnemy.mesh)
-                        //         {
-                        //             ///TODO: There should be unregister enemy triggers
-                        //             console.log('BABYLON: deleted from action manager enemy - ' + remoteEnemyId);
-                        //
-                        //             //setTimeout(function() {
-                        //             //    delete playerActionManager.actions[key];
-                        //             //});
-                        //         }
-                        //     });
-                        //
-                        // });
-
                     }
                 }
             });
@@ -99,38 +110,42 @@ namespace Server {
 
                 if (!self.enemies[roomId]) {
                     console.log('BABYLON: create enemies - ' + roomId);
+
+                    self.enemies[roomId] = [];
+
+                    data.enemies.forEach(function (enemyData, key) {
+                        let enemy = self.enemies[roomId][key];
+                        if (enemyData.statistics.hp > 0 && !enemy) {
+                            let box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
+                            box.checkCollisions = false;
+                            box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
+
+                            let visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
+                                width: 30,
+                                height: 1,
+                                size: 30
+                            }, scene);
+                            visibilityArea.visibility = 0.5;
+                            visibilityArea.parent = box;
+
+                            enemy = new Enemy();
+                            enemy.key = key;
+                            enemy.mesh = box;
+                            enemy.attack = false;
+                            enemy.target = false;
+                            enemy.activeTargetPoints = [];
+                            enemy.availableCharactersToAttack = [];
+                            enemy.walkSpeed = enemyData.statistics.walkSpeed;
+                            enemy.visibilityAreaMesh = visibilityArea;
+                            enemy.attackInterval = null;
+
+                            self.enemies[roomId][key] = enemy;
+                        }
+                    });
                 } else {
                     console.log('BABYLON: enemies exists - ' + roomId);
-                    self.clearEnemiesState(roomId);
                 }
-                self.enemies[roomId] = [];
 
-                data.enemies.forEach(function (enemyData, key) {
-                    let enemy = self.enemies[roomId][key];
-                    if (enemyData.statistics.hp > 0 && !enemy) {
-                        let box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
-                        box.checkCollisions = false;
-                        box.position = new BABYLON.Vector3(enemyData.position.x, enemyData.position.y, enemyData.position.z);
-
-                        let visibilityArea = BABYLON.MeshBuilder.CreateBox('enemy_visivilityArea', {
-                            width: 30,
-                            height: 1,
-                            size: 30
-                        }, scene);
-                        visibilityArea.visibility = 0.5;
-                        visibilityArea.parent = box;
-
-                        enemy = {
-                            mesh: box,
-                            target: false,
-                            activeTargetPoints: [],
-                            walkSpeed: enemyData.statistics.walkSpeed,
-                            visibilityAreaMesh: visibilityArea,
-                            attackInterval: null
-                        };
-                        self.enemies[roomId][key] = enemy;
-                    }
-                });
             });
 
             return this;
@@ -140,15 +155,15 @@ namespace Server {
             let self = this;
             this.socket.on('createRoom', function (roomId) {
                 if (self.scenes[roomId] === undefined) {
-                    console.log('BABYLON: crate new room with scene - '+ roomId);
+                    console.log('BABYLON: crate new room with scene - ' + roomId);
 
                     let sceneForRoom = new BABYLON.Scene(self.engine);
                     sceneForRoom.collisionsEnabled = false;
                     let camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 200, 0, sceneForRoom);
-                    camera.rotation = new BABYLON.Vector3(1.5,1,1);
+                    camera.rotation = new BABYLON.Vector3(1.5, 1, 1);
                     self.scenes[roomId] = sceneForRoom;
                 } else {
-                    console.log('BABYLON: room exists - '+ roomId);
+                    console.log('BABYLON: room exists - ' + roomId);
                 }
             });
 
@@ -159,12 +174,12 @@ namespace Server {
             let self = this;
 
             this.socket.on('showPlayer', function (playerData) {
-                console.log('BABYLON: connected new player - '+ playerData.connectionId);
+                console.log('BABYLON: connected new player - ' + playerData.connectionId);
                 let activeCharacter = playerData.activePlayer;
                 let roomId = playerData.activeRoom.id;
                 let scene = self.scenes[roomId];
 
-                if(!scene) {
+                if (!scene) {
                     return;
                 }
                 if (playerData.connectionId !== self.socket.id) {
@@ -174,14 +189,8 @@ namespace Server {
                     box.position = new BABYLON.Vector3(playerData.position.x, playerData.position.y, playerData.position.z);
                     box.actionManager = new BABYLON.ActionManager(scene);
 
-                    let remotePlayer = {
-                        id: activeCharacter.id,
-                        socketId: playerData.connectionId,
-                        walkSpeed: activeCharacter.statistics.walkSpeed,
-                        roomId: roomId,
-                        mesh: box,
-                        registeredFunction: null,
-                    };
+                    let remotePlayer = new RemotePlayer(activeCharacter.id, playerData.connectionId, activeCharacter.statistics.walkSpeed, roomId, box)
+
                     self.players[activeCharacter.id] = remotePlayer;
                     self.registerPlayerInEnemyActionManager(remotePlayer);
                 }
@@ -203,7 +212,7 @@ namespace Server {
                         let player = self.players[key];
                         let roomId = player.roomId;
                         let scene = self.scenes[roomId];
-                        console.log('BABYLON: disconnect player - '+ player.id);
+                        console.log('BABYLON: disconnect player - ' + player.id);
 
                         if (player.registeredFunction) {
                             scene.unregisterBeforeRender(player.registeredFunction);
@@ -211,7 +220,6 @@ namespace Server {
 
                         player.mesh.dispose();
                         delete self.players[key];
-                        self.clearEnemiesState(roomId);
                     }
                 });
             });
@@ -219,13 +227,13 @@ namespace Server {
             return this;
         }
 
-        protected registerPlayerInEnemyActionManager(remotePlayerData) {
+        protected registerPlayerInEnemyActionManager(remotePlayerData: RemotePlayer) {
             let self = this;
             let playerMesh = remotePlayerData.mesh;
             let roomId = remotePlayerData.roomId;
             let socketId = remotePlayerData.socketId;
             let scene = this.scenes[roomId];
-
+            console.log('register player / socket' + socketId);
             this.enemies[roomId].forEach(function (enemy, key) {
                 enemy.activeTargetPoints[playerMesh.id] = function () {
                     let mesh = enemy.mesh;
@@ -240,13 +248,23 @@ namespace Server {
                     mesh.position.y = 0;
                 };
 
-                let setEnemyTargetFunction = function(position, attack: boolean, event: string) {
+                let setEnemyTargetFunction = function (enemy: Enemy, event: string) {
+                    console.log({
+                                            enemyKey: enemy.key,
+                                            position: enemy.mesh.position,
+                                            roomId: roomId,
+                                            target: enemy.target,
+                                            attack: enemy.attack,
+                                            availableCharactersToAttack: enemy.availableCharactersToAttack,
+                                            collisionEvent: event
+                                        });
                     self.socket.emit('setEnemyTarget', {
-                        enemyKey: key,
-                        position: position,
+                        enemyKey: enemy.key,
+                        position: enemy.mesh.position,
                         roomId: roomId,
-                        target: playerMesh.id,
-                        attack: attack,
+                        target: enemy.target,
+                        attack: enemy.attack,
+                        availableCharactersToAttack: enemy.availableCharactersToAttack,
                         collisionEvent: event
                     });
                 };
@@ -256,14 +274,17 @@ namespace Server {
                     trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: enemy.mesh
                 }, function () {
+                    console.log('Add attack character: '+ enemy.target);
+                    enemy.availableCharactersToAttack[enemy.target] = true;
                     if (!enemy.mesh._isDisposed && enemy.target) {
-                        setEnemyTargetFunction(enemy.mesh.position, true, 'OnIntersectionEnterTriggerAttack');
-                        enemy.attackInterval = setInterval(function() {
-                            setEnemyTargetFunction(enemy.mesh.position, true, 'OnIntersectionEnterTriggerAttack');
+                        enemy.attack = true;
+                        setEnemyTargetFunction(enemy, 'OnIntersectionEnterTriggerAttack');
+                        enemy.attackInterval = setInterval(function () {
+                            setEnemyTargetFunction(enemy, 'OnIntersectionEnterTriggerAttack');
                         }, 1500);
 
                         scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('BABYLON: Enemy '+ key +' start attack player '+ socketId +', roomID:'+ roomId);
+                        console.log('BABYLON: Enemy ' + key + ' start attack player ' + socketId + ', roomID:' + roomId);
                     }
                 });
 
@@ -272,12 +293,16 @@ namespace Server {
                     trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
                     parameter: enemy.mesh
                 }, function () {
+                    console.log('Delete attack character: '+ enemy.target);
+                    delete enemy.availableCharactersToAttack[enemy.target];
+
                     if (!enemy.mesh._isDisposed && enemy.target) {
-                        setEnemyTargetFunction(enemy.mesh.position, false, 'OnIntersectionExitTriggerAttack');
+                        enemy.attack = false;
+                        setEnemyTargetFunction(enemy, 'OnIntersectionExitTriggerAttack');
                         clearInterval(enemy.attackInterval);
 
                         scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('BABYLON: Enemy '+ key +' stop attack player '+ socketId +', roomID:'+ roomId);
+                        console.log('BABYLON: Enemy ' + key + ' stop attack player ' + socketId + ', roomID:' + roomId);
                     }
                 });
 
@@ -287,18 +312,11 @@ namespace Server {
                     parameter: enemy.visibilityAreaMesh
                 }, function () {
                     if (!enemy.mesh._isDisposed && !enemy.target) {
-                        self.socket.emit('setEnemyTarget', {
-                            enemyKey: key,
-                            position: enemy.mesh.position,
-                            roomId: roomId,
-                            target: playerMesh.id,
-                            attack: false,
-                            collisionEvent: 'OnIntersectionEnterTriggerVisibility'
-                        });
                         enemy.target = playerMesh.id;
+                        setEnemyTargetFunction(enemy, 'OnIntersectionEnterTriggerVisibility');
                         scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
                         scene.registerBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
-                        console.log('BABYLON: Enemy '+ key +' set target as player '+ socketId +', roomID:'+ roomId);
+                        console.log('BABYLON: Enemy ' + key + ' set target as player ' + socketId + ', roomID:' + roomId);
                     }
                 }));
 
@@ -308,16 +326,9 @@ namespace Server {
                     parameter: enemy.visibilityAreaMesh
                 }, function () {
                     if (!enemy.mesh._isDisposed && enemy.target) {
-                        self.socket.emit('setEnemyTarget', {
-                            enemyKey: key,
-                            position: enemy.mesh.position,
-                            roomId: roomId,
-                            target: null,
-                            attack: false,
-                            collisionEvent: 'OnIntersectionExitTriggerVisibility'
-                        });
                         enemy.target = false;
-                        console.log('BABYLON: Enemy '+ key +' lost target '+ socketId +', roomID:'+ roomId);
+                        setEnemyTargetFunction(enemy, 'OnIntersectionExitTriggerVisibility');
+                        console.log('BABYLON: Enemy ' + key + ' lost target ' + socketId + ', roomID:' + roomId);
                     }
 
                     scene.unregisterBeforeRender(enemy.activeTargetPoints[playerMesh.id]);
@@ -330,14 +341,14 @@ namespace Server {
             let self = this;
             let activeTargetPoints = [];
             this.socket.on('updatePlayer', function (updatedPlayer) {
-                console.log('BABYLON: update player - '+ updatedPlayer.id);
+                console.log('BABYLON: update player - ' + updatedPlayer.activePlayer.id);
 
                 let player = self.players[updatedPlayer.activePlayer.id];
                 let scene = self.scenes[updatedPlayer.activeRoom.id];
 
                 if (player) {
                     if (updatedPlayer.attack == true) {
-                        console.log('BABYLON: attack player - '+ updatedPlayer.activePlayer.id);
+                        console.log('BABYLON: attack player - ' + updatedPlayer.activePlayer.id);
 
                         return;
                     }
@@ -356,7 +367,7 @@ namespace Server {
                             if (mesh.intersectsPoint(targetPointVector3)) {
                                 let player = self.players[updatedPlayer.activePlayer.id];
 
-                                console.log('BABYLON: player intersect target point - '+ updatedPlayer.id +', roomID:'+ updatedPlayer.activeRoom.id);
+                                console.log('BABYLON: player intersect target point - ' + updatedPlayer.id + ', roomID:' + updatedPlayer.activeRoom.id);
                                 scene.unregisterBeforeRender(player.registeredFunction);
 
                             } else {
@@ -381,22 +392,4 @@ namespace Server {
 
         }
 
-
-        protected clearEnemiesState(roomId) {
-            let scene = this.scenes[roomId];
-
-            this.enemies[roomId].forEach(enemy => {
-                clearInterval(enemy.attackInterval);
-                enemy.target = false;
-                enemy.activeTargetPoints.forEach(target => {
-                    scene.unregisterBeforeRender(enemy.activeTargetPoints[target]);
-                });
-
-                enemy.mesh.dispose();
-            });
-
-            delete this.enemies[roomId];
-        }
-
-    }
 }

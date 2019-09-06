@@ -1,9 +1,0 @@
-version: '2.3'
-services:
-  bower:
-        build: .
-        command: bower update --allow-root
-        volumes:
-          - .:/usr/app/
-          - ./bower_components:/usr/app/bower_components
-

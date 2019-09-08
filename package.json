@@ -22,7 +22,8 @@
     "typescript": "^3.5.2",
     "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5",
-    "webpack-dev-server": "^3.7.2"
+    "webpack-dev-server": "^3.7.2",
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
     "babylonjs": "^4.0.3",
@@ -32,6 +33,8 @@
     "earcut": "^2.1.5",
     "lodash": "^4.17.11",
     "rxjs": "^6.5.2",
-    "socket.io-client": "^2.2.0"
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0",
+    "uws": "^100.0.1"
   }
 }

@@ -1,20 +1,19 @@
 import * as BABYLON from 'babylonjs';
-import io from 'socket.io-client';
 import {RemotePlayer} from "./RemotePlayer";
 import {Enemy} from "./Enemy";
 import {RoomEnemies} from "./RoomEnemies";
 
 export class AIServer {
-    protected engine: BABYLON.NullEngine;
+    protected engine: BABYLON.Engine;
     protected scene: BABYLON.Scene;
-    protected socket: io;
-    protected enemies: RoomEnemies[];
+    protected socket;
+    protected roomsEnemies: RoomEnemies[];
     protected players: RemotePlayer[];
     protected scenes: BABYLON.Scene[];
 
-    constructor(canvas) {
-        this.socket = io.connect('http://127.0.0.1:' + 5000, {query: 'monsterServer=1'});
-        this.enemies = [];
+    constructor(canvas, socket) {
+        this.socket = socket.connect('http://127.0.0.1:' + 5000, {query: 'monsterServer=1'});
+        this.roomsEnemies = [];
         this.players = [];
         this.scenes = [];
         this.initEngine(canvas);
@@ -22,7 +21,8 @@ export class AIServer {
 
     public initEngine(canvas) {
         let self = this;
-        this.engine = new BABYLON.NullEngine(canvas);
+        console.log('Init engine');
+        this.engine = (canvas) ? new BABYLON.Engine(canvas) : new BABYLON.NullEngine();
         this
             .socketShowEnemies()
             .socketUpdateEnemy()
@@ -31,7 +31,7 @@ export class AIServer {
             .removePlayer()
             .socketCreateRoom();
 
-        this.engine.runRenderLoop(function () {
+        this.engine.runRenderLoop(() => {
             for (let key in self.scenes) {
                 let scene = self.scenes[key];
                 scene.render();
@@ -43,17 +43,17 @@ export class AIServer {
 
     public socketUpdateEnemy() {
         let self = this;
-        this.socket.on('updateEnemy', function (data) {
+        this.socket.on('updateEnemy', data => {
             let roomId = data.roomId;
             let remoteEnemy = data.enemy;
             let remoteEnemyId = data.enemyKey;
-            let localEnemy = self.enemies[roomId][remoteEnemyId];
+            let localEnemy = self.roomsEnemies[roomId][remoteEnemyId];
             let scene = self.scenes[roomId];
             console.log('BABYLON: update enemy - ' + remoteEnemyId);
 
             if (remoteEnemy.statistics.hp <= 0 && localEnemy) {
                 if (localEnemy.activeTargetPoints.length > 0) {
-                    localEnemy.activeTargetPoints.forEach(function (activeTargetFunction) {
+                    localEnemy.activeTargetPoints.forEach(activeTargetFunction => {
                         console.log('BABYLON: unregister function enemy - ' + remoteEnemyId);
 
                         scene.unregisterBeforeRender(activeTargetFunction);
@@ -70,17 +70,17 @@ export class AIServer {
 
     public socketShowEnemies() {
         let self = this;
-        this.socket.on('createEnemies', function (data) {
+        this.socket.on('createEnemies', data => {
             let roomId = data.roomId;
             let scene = self.scenes[roomId];
 
-            if (!self.enemies[roomId]) {
+            if (!self.roomsEnemies[roomId]) {
                 console.log('BABYLON: create enemies - ' + roomId);
 
-                self.enemies[roomId] = [];
+                self.roomsEnemies[roomId].enemies = [];
 
-                data.enemies.forEach(function (enemyData, key) {
-                    let enemy = self.enemies[roomId][key];
+                data.enemies.forEach((enemyData, key) => {
+                    let enemy = self.roomsEnemies[roomId][key];
                     if (enemyData.statistics.hp > 0 && !enemy) {
                         let box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
                         box.checkCollisions = false;
@@ -105,7 +105,7 @@ export class AIServer {
                         enemy.visibilityAreaMesh = visibilityArea;
                         enemy.attackInterval = null;
 
-                        self.enemies[roomId][key] = enemy;
+                        self.roomsEnemies[roomId][key] = enemy;
                     }
                 });
             } else {
@@ -119,7 +119,7 @@ export class AIServer {
 
     public socketCreateRoom() {
         let self = this;
-        this.socket.on('createRoom', function (roomId) {
+        this.socket.on('createRoom', roomId => {
             if (self.scenes[roomId] === undefined) {
                 console.log('BABYLON: crate new room with scene - ' + roomId);
 
@@ -139,7 +139,7 @@ export class AIServer {
     public socketPlayerConnected() {
         let self = this;
 
-        this.socket.on('showPlayer', function (playerData) {
+        this.socket.on('showPlayer', playerData => {
             console.log('BABYLON: connected new player - ' + playerData.connectionId);
             let activeCharacter = playerData.activePlayer;
             let roomId = playerData.activeRoom.id;
@@ -167,8 +167,8 @@ export class AIServer {
 
     protected removePlayer() {
         let self = this;
-        this.socket.on('removePlayer', function (id) {
-            self.players.forEach(function (remotePlayer, key) {
+        this.socket.on('removePlayer', id => {
+            self.players.forEach((remotePlayer, key) => {
 
                 if (remotePlayer.socketId == id) {
                     let player = self.players[key];
@@ -196,8 +196,8 @@ export class AIServer {
         let socketId = remotePlayerData.socketId;
         let scene = this.scenes[roomId];
         console.log('register player / socket' + socketId);
-        this.enemies[roomId].forEach(function (enemy, key) {
-            enemy.activeTargetPoints[playerMesh.id] = function () {
+        this.roomsEnemies[roomId].forEach((enemy, key) => {
+            enemy.activeTargetPoints[playerMesh.id] = () => {
                 let mesh = enemy.mesh;
                 mesh.lookAt(playerMesh.position.clone(), Math.PI);
 
@@ -205,12 +205,12 @@ export class AIServer {
                 let animationRatio = scene.getAnimationRatio();
                 let walkSpeed = enemy.walkSpeed / animationRatio;
 
-                let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                let forwards = new BABYLON.Vector3(-(Math.sin(rotation.y) / walkSpeed), 0, -(Math.cos(rotation.y) / walkSpeed));
                 mesh.moveWithCollisions(forwards);
                 mesh.position.y = 0;
             };
 
-            let setEnemyTargetFunction = function (enemy: Enemy, event: string) {
+            let setEnemyTargetFunction = (enemy: Enemy, event: string) => {
                 console.log({
                     enemyKey: enemy.key,
                     position: enemy.mesh.position,
@@ -241,7 +241,7 @@ export class AIServer {
                 if (!enemy.mesh._isDisposed && enemy.target) {
                     enemy.attack = true;
                     setEnemyTargetFunction(enemy, 'OnIntersectionEnterTriggerAttack');
-                    enemy.attackInterval = setInterval(function () {
+                    enemy.attackInterval = setInterval(() => {
                         setEnemyTargetFunction(enemy, 'OnIntersectionEnterTriggerAttack');
                     }, 1500);
 
@@ -272,7 +272,7 @@ export class AIServer {
             playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                 trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                 parameter: enemy.visibilityAreaMesh
-            }, function () {
+            }, () => {
                 if (!enemy.mesh._isDisposed && !enemy.target) {
                     enemy.target = playerMesh.id;
                     setEnemyTargetFunction(enemy, 'OnIntersectionEnterTriggerVisibility');
@@ -286,7 +286,7 @@ export class AIServer {
             playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                 trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
                 parameter: enemy.visibilityAreaMesh
-            }, function () {
+            }, () => {
                 if (!enemy.mesh._isDisposed && enemy.target) {
                     enemy.target = false;
                     setEnemyTargetFunction(enemy, 'OnIntersectionExitTriggerVisibility');
@@ -301,8 +301,7 @@ export class AIServer {
 
     public socketUpdatePlayer() {
         let self = this;
-        let activeTargetPoints = [];
-        this.socket.on('updatePlayer', function (updatedPlayer) {
+        this.socket.on('updatePlayer', updatedPlayer => {
             console.log('BABYLON: update player - ' + updatedPlayer.activePlayer.id);
 
             let player = self.players[updatedPlayer.activePlayer.id];
@@ -325,7 +324,7 @@ export class AIServer {
                     let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
                     mesh.lookAt(targetPointVector3, Math.PI);
 
-                    player.registeredFunction = function () {
+                    player.registeredFunction = () => {
                         if (mesh.intersectsPoint(targetPointVector3)) {
                             let player = self.players[updatedPlayer.activePlayer.id];
 
@@ -337,13 +336,13 @@ export class AIServer {
                             let animationRatio = scene.getAnimationRatio();
                             let walkSpeed = player.walkSpeed / animationRatio;
 
-                            let forwards = new BABYLON.Vector3(-parseFloat(Math.sin(rotation.y)) / walkSpeed, 0, -parseFloat(Math.cos(rotation.y)) / walkSpeed);
+                            let forwards = new BABYLON.Vector3(-((Math.sin(rotation.y)) / walkSpeed), 0, -Math.cos((rotation.y) / walkSpeed));
                             mesh.moveWithCollisions(forwards);
                             mesh.position.y = 0;
 
                         }
 
-                    }
+                    };
 
                     scene.registerBeforeRender(player.registeredFunction);
                 }

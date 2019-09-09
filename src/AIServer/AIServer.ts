@@ -165,7 +165,8 @@ export class AIServer {
     protected removePlayer() {
         let self = this;
         this.socket.on('removePlayer', id => {
-            self.rooms.forEach((room) => {
+            Object.keys(self.rooms).forEach((roomId) => {
+                let room = self.rooms[roomId];
                 room.players.forEach((player, playerId) => {
                     if (player.socketId == id) {
                         let roomId = player.roomId;
@@ -177,6 +178,10 @@ export class AIServer {
 
                         player.mesh.dispose();
                         delete room.players[playerId];
+                        if(!Object.keys(room.players).length) {
+                            room.scene.dispose();
+                            delete self.rooms[player.roomId];
+                        }
                     }
                 });
             });

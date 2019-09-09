@@ -3,15 +3,16 @@ const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 // output folder location
-const distFolder = "./dist";
+const distFolder = "./dist/aiServer";
 
-const frontConfig = {
+const aiFrontConfig = {
+    context: __dirname + "/src/AIServer",
     mode: 'development',
     target: 'web',
     node: {
         fs: 'empty'
     },
-    entry: './src/indexFrontend.ts',
+    entry: './indexFrontend.ts',
     devtool: 'inline-source-map',
     devServer: {
         contentBase: distFolder
@@ -49,17 +50,15 @@ const frontConfig = {
     output: {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, distFolder)
-    },
-    externals: {
-        uws: "uws"
     }
 };
 
-const backConfig = {
+const aiBackend = {
+    context: __dirname + "/src/AIServer",
     mode: 'development',
     target: "node",
     entry: {
-        app: ["./src/indexBackend.ts"]
+        app: ["./indexBackend.ts"]
     },
     resolve: {
         extensions: [ ".tsx", ".ts", ".js" ]
@@ -98,4 +97,4 @@ const backConfig = {
     externals: [nodeExternals()],
 };
 
-module.exports = [ frontConfig, backConfig ];
+module.exports = [ aiFrontConfig, aiBackend ];

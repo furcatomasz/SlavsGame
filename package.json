@@ -4,8 +4,10 @@
   "description": "Game server",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "start": "webpack-dev-server --open"
+    "build-ai": "webpack --config webpack-ai-server.config.js",
+    "build-game": "webpack --config webpack-game.config.js",
+    "start-ai": "webpack-dev-server --config webpack-ai-server.config.js --open",
+    "start-game": "webpack-dev-server --open --config webpack-game.config.js"
   },
   "keywords": [],
   "author": "",

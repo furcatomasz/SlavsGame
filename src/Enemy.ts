@@ -3,11 +3,11 @@ import * as BABYLON from "babylonjs";
 export class Enemy {
     mesh: BABYLON.AbstractMesh;
     key: number;
-    target: boolean;
+    target: string;
     attack: boolean;
-    activeTargetPoints: string[];
+    activeTargetPoints: [];
     walkSpeed: number;
     visibilityAreaMesh: BABYLON.AbstractMesh;
-    availableCharactersToAttack: string[];
+    availableCharactersToAttack: boolean[];
     attackInterval;
 }

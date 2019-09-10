@@ -3,7 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 // output folder location
-const distFolder = "./dist/aiServer";
+const distFolder = "./dist/gameClient";
 
 const gameConfig = {
     mode: 'development',
@@ -11,7 +11,7 @@ const gameConfig = {
     node: {
         fs: 'empty'
     },
-    entry: './src/AIServer/indexFrontend.ts',
+    entry: './src/Game/indexFrontend.ts',
     devtool: 'inline-source-map',
     devServer: {
         contentBase: distFolder
@@ -47,11 +47,8 @@ const gameConfig = {
         extensions: [ ".tsx", ".ts", ".js" ]
     },
     output: {
-        filename: '[name].bundle.js',
+        filename: 'slavs.js',
         path: path.resolve(__dirname, distFolder)
-    },
-    externals: {
-        uws: "uws"
     }
 };
 

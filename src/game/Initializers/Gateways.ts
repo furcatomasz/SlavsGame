@@ -2,6 +2,8 @@ import {TooltipMesh} from "../GUI/Tooltips/TooltipMesh";
 import {Game} from "../game";
 import {GoToMeshAndRunAction} from "../Actions/GoToMeshAndRunAction";
 import {Gateway as GatewayParticles} from "../Particles/Gateway";
+import * as BABYLON from 'babylonjs';
+
 export class Gateway {
 
     public mesh: BABYLON.AbstractMesh;

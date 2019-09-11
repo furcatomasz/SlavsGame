@@ -1,39 +1,40 @@
 import {Game} from "../game";
+import {AdvancedDynamicTexture, StackPanel, Image, TextBlock, Control,Rectangle} from 'babylonjs-gui';
 
 export class PlayerLogsPanel {
 
     static TEXT_COUNT = 12;
 
-    public guiPanel: BABYLON.GUI.Rectangle;
-    protected textContainer: BABYLON.GUI.StackPanel;
-    protected texts: Array<BABYLON.GUI.TextBlock>;
-    protected texture: BABYLON.GUI.AdvancedDynamicTexture;
+    public guiPanel: Rectangle;
+    protected textContainer: StackPanel;
+    protected texts: Array<TextBlock>;
+    protected texture: AdvancedDynamicTexture;
 
     constructor(game: Game) {
         this.texts = [];
         this.texture = game.gui.texture;
 
         let self = this;
-        let container = new BABYLON.GUI.Rectangle('gui.chat');
-        container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        let container = new Rectangle('gui.chat');
+        container.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
+        container.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
         container.width = '302px';
         container.height = '302px';
         container.isPointerBlocker = true;
         container.thickness = 0;
 
-        let background = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/chat.png');
-        background.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        let background = new Image('gui.panel.bottom.toolbar', 'assets/gui/chat.png');
+        background.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
         background.height = 1;
         background.width = 1;
         container.addControl(background);
 
-        let textsContainer = new BABYLON.GUI.StackPanel();
+        let textsContainer = new StackPanel();
         textsContainer.width = 1;
         textsContainer.left = "3%";
         textsContainer.top = "-7%";
-        textsContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        textsContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        textsContainer.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
+        textsContainer.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
         container.addControl(textsContainer);
 
         self.texture.addControl(container);
@@ -49,13 +50,13 @@ export class PlayerLogsPanel {
      * @param color
      */
     public addText(message: string, color: string = 'white') {
-        let text = new BABYLON.GUI.TextBlock();
+        let text = new TextBlock();
         text.text = message;
         text.color = color;
         text.textWrapping = true;
         text.height = "25px";
         text.width = "100%";
-        text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        text.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
         text.fontSize = 12;
 
         this.textContainer.addControl(text);

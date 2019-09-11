@@ -1,4 +1,5 @@
 import {Game} from "../game";
+import * as BABYLON from 'babylonjs';
 
 export abstract class AbstractCharacter {
 
@@ -11,7 +12,7 @@ export abstract class AbstractCharacter {
     public static ANIMATION_SKILL_02:string = 'Skill02';
 
     public mesh:BABYLON.Mesh;
-    public meshForMove:BABYLON.Mesh;
+    public meshForMove:BABYLON.AbstractMesh;
     public id:any;
     public name:string;
 

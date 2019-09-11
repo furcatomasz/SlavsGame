@@ -1,6 +1,7 @@
 import {Game} from "../game";
 import {AbstractEnvironment} from "./AbstractEnvironment";
 import {Collisions} from "../Initializers/Collisions";
+import * as BABYLON from 'babylonjs';
 
 export class EnvironmentForestHouseTomb extends AbstractEnvironment{
 
@@ -31,10 +32,7 @@ export class EnvironmentForestHouseTomb extends AbstractEnvironment{
 
             } else {
                 sceneMesh.isPickable = false;
-
-                ///others
             }
-
         }
 
 

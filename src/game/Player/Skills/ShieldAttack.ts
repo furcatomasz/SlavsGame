@@ -3,7 +3,6 @@ import {Game} from "../../game";
 import {AbstractCharacter} from "../../Characters/AbstractCharacter";
 import {ShieldAttack as ShieldAttackParticle} from "../../Particles/Skills/ShieldAttack";
 
-
 export class ShieldAttack extends AbstractSkill {
     static TYPE = 4;
 

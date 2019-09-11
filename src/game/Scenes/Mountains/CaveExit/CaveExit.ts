@@ -1,6 +1,7 @@
 import {Scene} from "../../Scene";
 import {Game} from "../../../game";
 import {EnvironmentCaveExit} from "./EnvironmentCaveExit";
+import * as BABYLON from 'babylonjs';
 
 export class CaveExit extends Scene {
 

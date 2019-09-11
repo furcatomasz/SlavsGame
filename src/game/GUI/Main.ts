@@ -7,11 +7,13 @@ import {ShowHp} from "./ShowHp";
 import {Options} from "./popup/Options";
 import {Inventory} from "./popup/Inventory";
 import {Attributes} from "./popup/Attributes";
+import {AdvancedDynamicTexture} from 'babylonjs-gui';
+
 
 export class Main {
 
         public game: Game;
-        public texture: BABYLON.GUI.AdvancedDynamicTexture;
+        public texture: AdvancedDynamicTexture;
         public inventory: Inventory;
         public attributes: Attributes;
         public options: Options;
@@ -24,7 +26,7 @@ export class Main {
         constructor(game: Game) {
             this.game = game;
             game.gui = this;
-            this.texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
+            this.texture = AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
             this.texture.layer.layerMask = 1;
 
             this.playerBottomPanel = new PlayerBottomPanel(game);

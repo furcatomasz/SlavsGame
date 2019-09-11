@@ -1,5 +1,6 @@
 import {Popup} from "./Popup";
 import {Main} from "../Main";
+import {StackPanel, Control, TextBlock, Button} from 'babylonjs-gui';
 
 export class Attributes extends Popup {
 
@@ -7,7 +8,7 @@ export class Attributes extends Popup {
         super(guiMain);
         this.name = 'Attributes';
         this.imageUrl = "assets/gui/content.png";
-        this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        this.position = Control.HORIZONTAL_ALIGNMENT_CENTER;
     }
 
     public open() {
@@ -26,10 +27,10 @@ export class Attributes extends Popup {
     }
 
     protected showText() {
-        let panel = new BABYLON.GUI.StackPanel('attributes.panel');
+        let panel = new StackPanel('attributes.panel');
         panel.isPointerBlocker = true;
-        panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        panel.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+        panel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
         panel.width = 1;
         panel.height = 0.9;
         panel.top = '10%';
@@ -84,7 +85,7 @@ export class Attributes extends Popup {
     }
 
     protected createText(text: string) {
-        let textBlock = new BABYLON.GUI.TextBlock();
+        let textBlock = new TextBlock();
         textBlock.text = text;
         textBlock.color = "black";
         textBlock.width = "100%";
@@ -92,15 +93,15 @@ export class Attributes extends Popup {
         textBlock.fontFamily = "RuslanDisplay";
         textBlock.fontSize = 20;
         textBlock.resizeToFit = true;
-        textBlock.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        textBlock.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
 
         return textBlock;
     }
 
-    protected createAttribute(type: number, text: string, control: BABYLON.GUI.StackPanel) {
+    protected createAttribute(type: number, text: string, control: StackPanel) {
         let self = this;
         if (this.guiMain.game.player.freeAttributesPoints) {
-            let button = BABYLON.GUI.Button.CreateImageButton("plus", text, "assets/gui/plus.png");
+            let button = Button.CreateImageButton("plus", text, "assets/gui/plus.png");
             button.height = "40px";
             button.thickness = 0;
             button.width = 0.4;

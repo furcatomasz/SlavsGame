@@ -1,9 +1,10 @@
 import {AbstractAnimation} from "./AbstractAnimation";
+import * as BABYLON from 'babylonjs';
 
 export class BounceAnimation extends AbstractAnimation {
 
-    static getAnimation() {
-        let aniamtion = new BABYLON.Animation("bounceAnimation", "position.y", 5,
+    static getAnimation(): BABYLON.Animation {
+        let animation = new BABYLON.Animation("bounceAnimation", "position.y", 5,
             BABYLON.Animation.ANIMATIONTYPE_FLOAT,
             BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
 
@@ -21,12 +22,12 @@ export class BounceAnimation extends AbstractAnimation {
                 value: 1
             }
         ];
-        aniamtion.setKeys(keys);
+        animation.setKeys(keys);
 
         const easingFunction = new BABYLON.BackEase();
         easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
-        aniamtion.setEasingFunction(easingFunction);
+        animation.setEasingFunction(easingFunction);
 
-        return aniamtion;
+        return animation;
     }
 }

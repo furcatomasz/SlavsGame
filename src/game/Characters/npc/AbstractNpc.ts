@@ -2,6 +2,7 @@ import {AbstractCharacter} from "../AbstractCharacter";
 import {Game} from "../../game";
 import {Inventory} from "../../Player/Inventory";
 import {ItemManager} from "../../Player/Items/ItemManager";
+import * as BABYLON from 'babylonjs';
 
 export abstract class AbstractNpc extends AbstractCharacter {
 

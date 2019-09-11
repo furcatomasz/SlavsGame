@@ -1,9 +1,11 @@
 import {AbstractEnvironment} from "../../Environment/AbstractEnvironment";
+import * as BABYLON from 'babylonjs';
+import {TerrainMaterial}  from 'babylonjs-materials';
 
 export abstract class MountainsEnvironment extends AbstractEnvironment {
 
-    protected createStencilMaterial(stencilUrl: string, scene: BABYLON.Scene): BABYLON.TerrainMaterial {
-        let terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
+    protected createStencilMaterial(stencilUrl: string, scene: BABYLON.Scene): TerrainMaterial {
+        let terrainMaterial = new TerrainMaterial("terrainMaterial", scene);
         terrainMaterial.mixTexture = new BABYLON.Texture(stencilUrl, scene);
         terrainMaterial.diffuseTexture1 = new BABYLON.Texture("assets/Environment/Stencil/Mountains/dirt.jpg", scene);
         terrainMaterial.diffuseTexture2 = new BABYLON.Texture("assets/Environment/Stencil/Mountains/grass.jpg", scene);

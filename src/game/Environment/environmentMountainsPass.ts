@@ -1,5 +1,7 @@
 import {AbstractEnvironment} from "./AbstractEnvironment";
 import {Game} from "../game";
+import * as BABYLON from 'babylonjs';
+import {TerrainMaterial} from 'babylonjs-materials';
 
 export class EnvironmentMountainsPass extends AbstractEnvironment {
 
@@ -18,7 +20,7 @@ export class EnvironmentMountainsPass extends AbstractEnvironment {
                 sceneMesh.actionManager = new BABYLON.ActionManager(scene);
                 sceneMesh.receiveShadows = true;
                 sceneMesh.alwaysSelectAsActiveMesh = true;
-                let terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
+                let terrainMaterial = new TerrainMaterial("terrainMaterial", scene);
                 terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
                 terrainMaterial.specularPower = 64;
                 terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/MountainsPass/stencil.jpg", scene);

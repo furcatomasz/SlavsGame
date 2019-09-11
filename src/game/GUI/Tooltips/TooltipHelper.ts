@@ -1,9 +1,10 @@
 import {TooltipButton} from "./TooltipButton";
 import {Item} from "../../Player/Items/Item";
+import {AdvancedDynamicTexture, Control} from 'babylonjs-gui';
 
 export class TooltipHelper {
 
-    static createTooltipOnInventoryItemButton(texture: BABYLON.GUI.AdvancedDynamicTexture, item: Item, button: BABYLON.GUI.Control, pickCallback) {
+    static createTooltipOnInventoryItemButton(texture: AdvancedDynamicTexture, item: Item, button: Control, pickCallback) {
         let tooltipButton = null;
         button.onPointerEnterObservable.add(function () {
             let text = item.name;

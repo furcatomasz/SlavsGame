@@ -2,6 +2,8 @@ import {AbstractEnvironment} from "./AbstractEnvironment";
 import {Game} from "../game";
 import {Nature} from "../Particles/SolidParticleSystem/Nature";
 import {NatureBlock} from "../Particles/SolidParticleSystem/NatureBlock";
+import {TerrainMaterial} from 'babylonjs-materials';
+import * as BABYLON from 'babylonjs';
 
 export class EnvironmentForestHouse extends AbstractEnvironment {
 
@@ -24,7 +26,7 @@ export class EnvironmentForestHouse extends AbstractEnvironment {
 
                 this.ground = sceneMesh;
 
-                let terrainMaterial = new BABYLON.TerrainMaterial("terrainMaterial", scene);
+                let terrainMaterial = new TerrainMaterial("terrainMaterial", scene);
                 terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
                 terrainMaterial.specularPower = 64;
                 terrainMaterial.mixTexture = new BABYLON.Texture("assets/scenes/Forest_house/stencil.png", scene);

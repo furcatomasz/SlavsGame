@@ -1,9 +1,11 @@
+import {AdvancedDynamicTexture, TextBlock, Rectangle, Control} from 'babylonjs-gui';
+
 export class TooltipButton {
 
-    public container: BABYLON.GUI.Rectangle;
+    public container: Rectangle;
 
-    constructor(baseControl: BABYLON.GUI.AdvancedDynamicTexture, text: string, parentPosition: BABYLON.Vector2) {
-        let panel = new BABYLON.GUI.Rectangle('tooltip');
+    constructor(baseControl: AdvancedDynamicTexture, text: string, parentPosition: BABYLON.Vector2) {
+        let panel = new Rectangle('tooltip');
         panel.top = parentPosition.y;
         panel.left = parentPosition.x;
         panel.width = 0;
@@ -12,8 +14,8 @@ export class TooltipButton {
         panel.thickness = 1;
         panel.background = "black";
         panel.color = "white";
-        panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        panel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
+        panel.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
         panel.adaptHeightToChildren = true;
         panel.adaptWidthToChildren = true;
         panel.paddingRight = '-80px';
@@ -23,7 +25,7 @@ export class TooltipButton {
         baseControl.addControl(panel);
         this.container = panel;
 
-        let label = new BABYLON.GUI.TextBlock();
+        let label = new TextBlock();
         label.resizeToFit = true;
         label.text = text;
         label.fontFamily = "RuslanDisplay";

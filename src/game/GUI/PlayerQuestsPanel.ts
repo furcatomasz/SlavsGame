@@ -1,10 +1,11 @@
 import {Game} from "../game";
+import {TextBlock, StackPanel, AdvancedDynamicTexture, Control} from 'babylonjs-gui';
 
 export class PlayerQuestsPanel {
 
-    public guiPanel: BABYLON.GUI.StackPanel;
-    protected texts: BABYLON.GUI.TextBlock[];
-    protected texture: BABYLON.GUI.AdvancedDynamicTexture;
+    public guiPanel: StackPanel;
+    protected texts: TextBlock[];
+    protected texture: AdvancedDynamicTexture;
 
     constructor(game: Game) {
         this.texts = [];
@@ -12,10 +13,10 @@ export class PlayerQuestsPanel {
 
         let self = this;
 
-        let playerQuestsLogsPanel = new BABYLON.GUI.StackPanel();
+        let playerQuestsLogsPanel = new StackPanel();
         playerQuestsLogsPanel.width = "50%";
         playerQuestsLogsPanel.top = 40;
-        playerQuestsLogsPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        playerQuestsLogsPanel.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
         self.texture.addControl(playerQuestsLogsPanel);
         self.guiPanel = playerQuestsLogsPanel;
 
@@ -26,14 +27,14 @@ export class PlayerQuestsPanel {
      * @param color
      */
     public addText(message: string, color: string = 'white') {
-        let text = new BABYLON.GUI.TextBlock();
+        let text = new TextBlock();
         text.text = message;
         text.color = color;
         text.textWrapping = true;
         text.height = "25px";
         text.width = "100%";
         text.fontFamily = "RuslanDisplay";
-        text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        text.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
         text.fontSize = 16;
 
         this.guiPanel.addControl(text);

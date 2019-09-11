@@ -1,6 +1,7 @@
 import {Game} from "../game";
 import {TooltipMesh} from "../GUI/Tooltips/TooltipMesh";
 import {NewQuest} from "../GUI/popup/newQuest";
+import * as BABYLON from 'babylonjs';
 
 export class Quests {
 

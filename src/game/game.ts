@@ -1,3 +1,4 @@
+import * as BABYLON from 'babylonjs';
 import {Scene} from "./Scenes/Scene";
 import {Mouse} from "./Controllers/Mouse";
 import {Player} from "./Characters/Player";
@@ -51,13 +52,13 @@ export class Game {
      */
     public goToMeshFunction;
 
-    constructor(canvasElement: HTMLCanvasElement, serverUrl: string,  accessToken: string, isMobile: boolean = false, isDebug: boolean = false) {
+    constructor(canvasElement: HTMLCanvasElement, serverUrl: string, accessToken: string, isMobile: boolean = false, isDebug: boolean = false) {
         let self = this;
 
         self.canvas = canvasElement;
         self.engine = new BABYLON.Engine(self.canvas, false, null, false);
 
-        if(isDebug) {
+        if (isDebug) {
             Game.SHOW_DEBUG = 1;
         }
         Game.MOBILE_CLIENT = isMobile;
@@ -105,7 +106,7 @@ export class Game {
     public changeScene(newScene: Scene) {
         this.engine.stopRenderLoop();
         let sceneToDispose = this.getScene();
-        if(sceneToDispose) {
+        if (sceneToDispose) {
             this.clearObjectCollections();
             setTimeout(function () {
                 sceneToDispose.dispose();
@@ -120,7 +121,7 @@ export class Game {
         return Math.round(Math.random() * (maximum - minimum) + minimum);
     }
 
-    public static distanceVector(vectorFrom:BABYLON.Vector3, vectorTo:BABYLON.Vector3) {
+    public static distanceVector(vectorFrom: BABYLON.Vector3, vectorTo: BABYLON.Vector3) {
         let dx = vectorFrom.x - vectorTo.x;
         let dy = vectorFrom.y - vectorTo.y;
         let dz = vectorFrom.z - vectorTo.z;

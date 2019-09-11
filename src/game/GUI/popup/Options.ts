@@ -1,6 +1,7 @@
 import {GameOptions} from "../../Options";
 import {Popup} from "./Popup";
 import {Main} from "../Main";
+import {SelectionPanel, Control, StackPanel, CheckboxGroup} from 'babylonjs-gui';
 
 export class Options extends Popup {
 
@@ -8,7 +9,7 @@ export class Options extends Popup {
             super(guiMain);
             this.name = 'Options';
             this.imageUrl = "assets/gui/content.png";
-            this.position = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            this.position = Control.HORIZONTAL_ALIGNMENT_CENTER;
         }
 
         public open() {
@@ -27,19 +28,17 @@ export class Options extends Popup {
         }
 
         protected showText() {
-            let panel = new BABYLON.GUI.StackPanel('options.panel');
+            let panel = new StackPanel('options.panel');
             panel.isPointerBlocker = true;
-            panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            panel.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+            panel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
             panel.width = 0.8;
             panel.height = 1;
             panel.top = '10%';
             this.container.addControl(panel);
             const game = this.guiMain.game;
 
-            const shadowsGroup = new BABYLON.GUI.CheckboxGroup("Shadows");
-            //TODO: COLORS
-//            shadowsGroup.color = "black";
+            const shadowsGroup = new CheckboxGroup("Shadows");
             shadowsGroup.addCheckbox("Static shadows", (isChecked) => {
                 GameOptions.saveInLocalStorage('staticShadows', isChecked, game);
             }, game.sceneManager.options.staticShadows);
@@ -48,9 +47,7 @@ export class Options extends Popup {
             }, game.sceneManager.options.dynamicShadows);
 
 
-            const postProccessGroup = new BABYLON.GUI.CheckboxGroup("Post proccessing");
-            //TODO: COLORS
-            //postProccessGroup.color = "white";
+            const postProccessGroup = new CheckboxGroup("Post proccessing");
             postProccessGroup.addCheckbox("Enabled", (isChecked) => {
                 GameOptions.saveInLocalStorage('postProccessing', isChecked, game);
             }, game.sceneManager.options.postProccessing);
@@ -63,7 +60,7 @@ export class Options extends Popup {
             //     GameOptions.saveInLocalStorage('dof', isChecked, game);
             // }, game.sceneManager.options.dof);
 
-            // let dofGroup = new BABYLON.GUI.SliderGroup("DOF", "S");
+            // let dofGroup = new SliderGroup("DOF", "S");
             // dofGroup.addSlider("fStop", (value) => {
             //     GameOptions.saveInLocalStorage('fStop', value, game);
             // }, "", 0.01, 10, game.sceneManager.options.fStop, (value) => {
@@ -96,7 +93,7 @@ export class Options extends Popup {
                 GameOptions.saveInLocalStorage('fog', isChecked, game);
             }, game.sceneManager.options.fog);
 
-            let selectBox = new BABYLON.GUI.SelectionPanel("sp", [shadowsGroup, postProccessGroup]);
+            let selectBox = new SelectionPanel("sp", [shadowsGroup, postProccessGroup]);
             selectBox.width = 0.8;
             selectBox.height = 0.8;
             selectBox.thickness = 0;

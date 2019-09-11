@@ -1,6 +1,7 @@
 import {Scene} from "./Scene";
 import {Game} from "../game";
 import {EnvironmentForestHouseStart} from "../Environment/environmentForestHouseStart";
+import * as BABYLON from 'babylonjs';
 
 export class ForestHouseStart extends Scene {
 

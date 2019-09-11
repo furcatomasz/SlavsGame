@@ -1,6 +1,8 @@
 import {Player} from "../../Characters/Player";
 import {Game} from "../../game";
 import {Events} from "../../Events";
+import * as BABYLON from 'babylonjs';
+import {Button, Rectangle, TextBlock, Control } from 'babylonjs-gui';
 
 export abstract class AbstractSkill {
     static TYPE = 0;
@@ -21,9 +23,9 @@ export abstract class AbstractSkill {
     /** GUI */
     protected animationOverlay: BABYLON.Animation;
     protected animationAlpha: BABYLON.Animation;
-    protected guiImage: BABYLON.GUI.Button;
-    protected guiOverlay: BABYLON.GUI.Rectangle;
-    protected guiText: BABYLON.GUI.TextBlock;
+    protected guiImage: Button;
+    protected guiOverlay: Rectangle;
+    protected guiText: TextBlock;
 
     constructor(player: Player) {
         this.animationTime = 0;
@@ -96,7 +98,7 @@ export abstract class AbstractSkill {
         let number = this.getType();
         let grid = game.gui.playerBottomPanel.guiGridSkills;
 
-        let imageSkill = BABYLON.GUI.Button.CreateImageOnlyButton('image_' + number, image);
+        let imageSkill = Button.CreateImageOnlyButton('image_' + number, image);
         imageSkill.width = 1;
         imageSkill.height = 1;
         imageSkill.thickness = 0;
@@ -104,13 +106,13 @@ export abstract class AbstractSkill {
 
         // imageSkill.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
 
-        let overlay = new BABYLON.GUI.Rectangle();
+        let overlay = new Rectangle();
         overlay.width = 1;
         overlay.height = 0;
         overlay.alpha = 0.7;
         overlay.color = "black";
         overlay.background = "black";
-        overlay.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        overlay.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
 
 
         //TODO: Animations

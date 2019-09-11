@@ -1,9 +1,10 @@
 import {Game} from "../game";
+import {AdvancedDynamicTexture, StackPanel, TextBlock, Control} from 'babylonjs-gui';
 
 export class PlayerQuestInformation {
 
-    public guiPanel: BABYLON.GUI.StackPanel;
-    protected texture: BABYLON.GUI.AdvancedDynamicTexture;
+    public guiPanel: StackPanel;
+    protected texture: AdvancedDynamicTexture;
 
     constructor(game: Game) {
         this.texture = game.gui.texture;
@@ -16,16 +17,16 @@ export class PlayerQuestInformation {
             self.guiPanel.dispose();
         }
 
-        let playerQuestsInformationPanel = new BABYLON.GUI.StackPanel();
+        let playerQuestsInformationPanel = new StackPanel();
         playerQuestsInformationPanel.width = "50%";
         playerQuestsInformationPanel.top = 40;
-        playerQuestsInformationPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        playerQuestsInformationPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        playerQuestsInformationPanel.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+        playerQuestsInformationPanel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
         self.texture.addControl(playerQuestsInformationPanel);
         self.guiPanel = playerQuestsInformationPanel;
 
-        let title = new BABYLON.GUI.TextBlock();
-        title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        let title = new TextBlock();
+        title.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
         title.text = questData.title;
         title.top = "0%";
         title.color = "orange";
@@ -35,8 +36,8 @@ export class PlayerQuestInformation {
         this.guiPanel.addControl(title);
 
         questData.chapters[questData.actualChapter].requirements.forEach(function (requirement) {
-            let requirementDescription = new BABYLON.GUI.TextBlock();
-            requirementDescription.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            let requirementDescription = new TextBlock();
+            requirementDescription.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
             requirementDescription.text = requirement.name;
             requirementDescription.resizeToFit = true;
             requirementDescription.color = "white";

@@ -2,6 +2,7 @@ import {Scene} from "./Scene";
 import {Game} from "../game";
 import {EnvironmentMountainsPass} from "../Environment/environmentMountainsPass";
 import {Guard} from "../Characters/npc/Guard";
+import * as BABYLON from 'babylonjs';
 
 export class MountainsPass extends Scene {
 

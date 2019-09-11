@@ -1,4 +1,5 @@
 import {AbstractParticle} from "../AbstractParticle";
+import * as BABYLON from 'babylonjs';
 
 export class FastAttack extends AbstractParticle {
 

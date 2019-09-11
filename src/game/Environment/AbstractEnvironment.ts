@@ -1,4 +1,5 @@
 import {Collisions} from "../Initializers/Collisions";
+import * as BABYLON from 'babylonjs';
 
 export abstract class AbstractEnvironment {
 

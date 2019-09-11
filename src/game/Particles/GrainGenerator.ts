@@ -1,3 +1,5 @@
+import * as BABYLON from 'babylonjs';
+
 export class GrainGenerator {
 
     public generate(

@@ -1,5 +1,6 @@
 import {AbstractEnvironment} from "./AbstractEnvironment";
 import {Game} from "../game";
+import * as BABYLON from 'babylonjs';
 
 export class EnvironmentForestHouseStart extends AbstractEnvironment {
 

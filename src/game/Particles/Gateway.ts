@@ -1,5 +1,6 @@
 import {AbstractParticle} from "./AbstractParticle";
 import {Game} from "../game";
+import * as BABYLON from 'babylonjs';
 
 export class Gateway extends AbstractParticle {
         protected isActive: boolean;

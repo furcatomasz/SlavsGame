@@ -1,5 +1,6 @@
 import {MountainsEnvironment} from "../MountainsEnvironment";
 import {Game} from "../../../game";
+import * as BABYLON from 'babylonjs';
 
 export class EnvironmentCaveExit extends MountainsEnvironment {
 

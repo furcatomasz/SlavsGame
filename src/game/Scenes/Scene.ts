@@ -1,3 +1,4 @@
+import * as BABYLON from 'babylonjs';
 import {Game} from "../game";
 import {Chest as ChestsObjects} from "../Initializers/Chest";
 import {RandomSpecialItem} from "../Initializers/RandomSpecialItem";

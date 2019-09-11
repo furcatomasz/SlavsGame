@@ -1,3 +1,5 @@
+import * as BABYLON from 'babylonjs';
+
 export class ClickParticles {
 
     static getParticles(scene: BABYLON.Scene) {

@@ -1,4 +1,5 @@
 import {AbstractSolidParticle} from "./AbstractSolidParticleSystem";
+import * as BABYLON from 'babylonjs';
 
 export class NatureBlock extends AbstractSolidParticle {
 

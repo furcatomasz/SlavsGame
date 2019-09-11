@@ -1,6 +1,7 @@
 import {Game} from "../game";
 import {TooltipMesh} from "../GUI/Tooltips/TooltipMesh";
 import {GoToMeshAndRunAction} from "../Actions/GoToMeshAndRunAction";
+import * as BABYLON from 'babylonjs';
 
 export class Chest {
 

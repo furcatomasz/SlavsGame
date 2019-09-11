@@ -1,5 +1,6 @@
 import {AbstractSolidParticle} from "./AbstractSolidParticleSystem";
 import {Collisions} from "../../Initializers/Collisions";
+import * as BABYLON from 'babylonjs';
 
 export class Nature extends AbstractSolidParticle {
 

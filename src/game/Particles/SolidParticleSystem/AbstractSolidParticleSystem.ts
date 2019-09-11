@@ -1,4 +1,5 @@
 import {Game} from "../../game";
+import * as BABYLON from 'babylonjs';
 
 export abstract class AbstractSolidParticle {
 

@@ -9,6 +9,7 @@ import {PlayerInformation} from "../GUI/PlayerInformation";
 import {Blood} from "../Particles/Blood";
 import {Main} from "../GUI/Main";
 import {SkillsManager} from "../Player/Skills/SkillsManager";
+import * as BABYLON from 'babylonjs';
 
 export class Player extends AbstractCharacter {
 

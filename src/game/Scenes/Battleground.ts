@@ -1,5 +1,6 @@
 import {Scene} from "./Scene";
 import {Game} from "../game";
+import * as BABYLON from 'babylonjs';
 
 export class Battleground extends Scene {
 

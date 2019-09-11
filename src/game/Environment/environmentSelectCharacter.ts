@@ -1,6 +1,7 @@
 import {Game} from "../game";
 import {FireplaceSmoke} from "../Particles/FireplaceSmoke";
 import {FireplaceFire} from "../Particles/FireplaceFire";
+import * as BABYLON from 'babylonjs';
 
 export class EnvironmentSelectCharacter {
 

@@ -1,4 +1,5 @@
 import {Game} from "../../game";
+import * as BABYLON from 'babylonjs';
 
 export class Item {
         public type: Number;
@@ -45,9 +46,10 @@ export class Item {
 
             this.trailMesh = new BABYLON.TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40, false);
             this.trailMesh.visibility = 0;
-            this.trailMesh.material = new BABYLON.StandardMaterial('trail_material', game.getScene());
 
-            //TODO: emissibeColor for trail mesh
-            // this.trailMesh.material.emissiveColor = BABYLON.Color3.White();
+            let material =  new BABYLON.StandardMaterial('trail_material', game.getScene());
+            material.emissiveColor = BABYLON.Color3.White();
+
+            this.trailMesh.material = material;
         }
     }

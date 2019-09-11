@@ -95,11 +95,6 @@ export class Inventory {
 
         }
 
-        /**
-         * @param item
-
-         * @returns {AbstractCharacter.Inventory}
-         */
         public emitEquip(item: Item) {
             this.game.client.socket.emit('itemEquip', {
                 id: item.databaseId
@@ -124,11 +119,6 @@ export class Inventory {
             return equipedItems;
         }
 
-        /**
-         *
-         * @param {boolean} showHair
-         * @param {boolean} showSash
-         */
         public showSashOrHair(showHair: boolean, showSash: boolean) {
 
             //TODO: Bugged hair in character

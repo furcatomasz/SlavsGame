@@ -1,5 +1,6 @@
 import {Game} from "../game";
 import {AbstractFactory} from "./AbstractFactory";
+import * as BABYLON from 'babylonjs';
 
 export class Chest extends AbstractFactory {
 

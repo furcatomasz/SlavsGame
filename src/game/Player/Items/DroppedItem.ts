@@ -3,6 +3,7 @@ import {Item} from "./Item";
 import {BounceAnimation} from "../../Animations/BounceAnimation";
 import {TooltipMesh} from "../../GUI/Tooltips/TooltipMesh";
 import {DroppedItem as DroppedItemParticles} from "../../Particles/DroppedItem";
+import * as BABYLON from 'babylonjs';
 
 export class DroppedItem {
 
@@ -27,6 +28,7 @@ export class DroppedItem {
             itemSpriteManager.layerMask = 2;
 
             const animationBounce = BounceAnimation.getAnimation();
+            //@ts-ignore
             itemSprite.animations.push(animationBounce);
             scene.beginAnimation(itemSprite, 0, 30, true);
 

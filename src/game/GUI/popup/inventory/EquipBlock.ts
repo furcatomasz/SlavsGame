@@ -1,6 +1,7 @@
 import {Inventory} from "../Inventory";
 import {Item} from "../../../Player/Items/Item";
 import {TooltipHelper} from "../../Tooltips/TooltipHelper";
+import {Control, Rectangle, Image} from 'babylonjs-gui';
 
 export abstract class EquipBlock {
     protected inventory: Inventory;
@@ -12,8 +13,8 @@ export abstract class EquipBlock {
     protected blockLeft: string;
     protected verticalAlignment: number;
 
-    public block: BABYLON.GUI.Rectangle;
-    public image: BABYLON.GUI.Image;
+    public block: Rectangle;
+    public image: Image;
 
     constructor(inventory: Inventory) {
         this.inventory = inventory;
@@ -21,8 +22,8 @@ export abstract class EquipBlock {
 
     protected createBlockWithImage() {
         if (this.item) {
-            let panelItem = new BABYLON.GUI.Rectangle();
-            panelItem.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            let panelItem = new Rectangle();
+            panelItem.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
             panelItem.verticalAlignment = this.verticalAlignment;
             panelItem.thickness = 0;
             panelItem.width = this.blockWidth;

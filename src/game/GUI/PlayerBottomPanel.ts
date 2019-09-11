@@ -1,19 +1,20 @@
 import {Game} from "../game";
+import {TextBlock, Image, Grid, Rectangle, Control, Button} from 'babylonjs-gui';
 
 export class PlayerBottomPanel {
 
-    public expBar: BABYLON.GUI.Image;
-    public expBarText: BABYLON.GUI.TextBlock;
-    public guiGridSkills: BABYLON.GUI.Grid;
-    public container: BABYLON.GUI.Rectangle;
+    public expBar: Image;
+    public expBarText: TextBlock;
+    public guiGridSkills: Grid;
+    public container: Rectangle;
 
     constructor(game: Game) {
         let self = this;
         let texture = game.gui.texture;
 
-        let container = new BABYLON.GUI.Rectangle('gui.panel.bottom');
-        container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        let container = new Rectangle('gui.panel.bottom');
+        container.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
+        container.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
         container.width = '685px';
         container.height = '80px';
         container.isPointerBlocker = true;
@@ -21,32 +22,32 @@ export class PlayerBottomPanel {
         this.container = container;
         texture.addControl(container);
 
-        let toolbar = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar.png');
-        toolbar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        let toolbar = new Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar.png');
+        toolbar.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
         toolbar.height = '65px';
         container.addControl(toolbar);
 
-        let containerSliders = new BABYLON.GUI.Rectangle('gui.panel.bottom');
-        containerSliders.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        containerSliders.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        let containerSliders = new Rectangle('gui.panel.bottom');
+        containerSliders.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
+        containerSliders.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
         containerSliders.width = '605px';
         containerSliders.height = '48px';
         containerSliders.isPointerBlocker = true;
         containerSliders.thickness = 0;
         container.addControl(containerSliders);
 
-        let toolbarExp = new BABYLON.GUI.Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar_exp.png');
-        toolbarExp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        toolbarExp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        let toolbarExp = new Image('gui.panel.bottom.toolbar', 'assets/gui/toolbar_exp.png');
+        toolbarExp.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+        toolbarExp.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
         toolbarExp.width = 1;
         toolbarExp.height = '14px';
         toolbarExp.top = '0px';
         this.expBar = toolbarExp;
         containerSliders.addControl(toolbarExp);
 
-        let textBlockExp = new BABYLON.GUI.TextBlock();
-        textBlockExp.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        textBlockExp.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        let textBlockExp = new TextBlock();
+        textBlockExp.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+        textBlockExp.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
         textBlockExp.top = '-1px';
         textBlockExp.width = 1;
         textBlockExp.height = '14px';
@@ -57,9 +58,9 @@ export class PlayerBottomPanel {
         this.expBarText = textBlockExp;
         containerSliders.addControl(textBlockExp);
 
-        let gridSpecials = new BABYLON.GUI.Grid();
-        gridSpecials.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-        gridSpecials.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        let gridSpecials = new Grid();
+        gridSpecials.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+        gridSpecials.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
         gridSpecials.width = '225px';
         gridSpecials.height = '52px';
         gridSpecials.top = '-6px';
@@ -71,8 +72,8 @@ export class PlayerBottomPanel {
         container.addControl(gridSpecials);
         self.guiGridSkills = gridSpecials;
 
-        let buttonAttributes = BABYLON.GUI.Button.CreateImageOnlyButton("button.attributes", "assets/gui/buttons/attributes.png");
-        buttonAttributes.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        let buttonAttributes = Button.CreateImageOnlyButton("button.attributes", "assets/gui/buttons/attributes.png");
+        buttonAttributes.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
         buttonAttributes.width = '112px';
         buttonAttributes.height = '21px';
         buttonAttributes.thickness = 0;
@@ -85,8 +86,8 @@ export class PlayerBottomPanel {
             }
         });
 
-        let buttonSkills = BABYLON.GUI.Button.CreateImageOnlyButton("button.skills", "assets/gui/buttons/skills.png");
-        buttonSkills.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        let buttonSkills = Button.CreateImageOnlyButton("button.skills", "assets/gui/buttons/skills.png");
+        buttonSkills.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
         buttonSkills.width = '112px';
         buttonSkills.height = '21px';
         buttonSkills.thickness = 0;
@@ -97,8 +98,8 @@ export class PlayerBottomPanel {
             game.player.initGodRay();
         });
 
-        let buttonInventory = BABYLON.GUI.Button.CreateImageOnlyButton("button.skills", "assets/gui/buttons/inventory.png");
-        buttonInventory.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        let buttonInventory = Button.CreateImageOnlyButton("button.skills", "assets/gui/buttons/inventory.png");
+        buttonInventory.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
         buttonInventory.width = '112px';
         buttonInventory.height = '21px';
         buttonInventory.thickness = 0;
@@ -111,8 +112,8 @@ export class PlayerBottomPanel {
             }
         });
 
-        let buttonOptions = BABYLON.GUI.Button.CreateImageOnlyButton("button.skills", "assets/gui/buttons/options.png");
-        buttonOptions.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        let buttonOptions = Button.CreateImageOnlyButton("button.skills", "assets/gui/buttons/options.png");
+        buttonOptions.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
         buttonOptions.width = '112px';
         buttonOptions.height = '21px';
         buttonOptions.thickness = 0;

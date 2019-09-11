@@ -32,11 +32,6 @@
     "babylonjs-gui": "^4.0.3",
     "babylonjs-loaders": "^4.0.3",
     "babylonjs-materials": "^4.0.3",
-    "earcut": "^2.1.5",
-    "lodash": "^4.17.11",
-    "rxjs": "^6.5.2",
-    "socket.io": "^2.2.0",
-    "socket.io-client": "^2.2.0",
-    "uws": "^100.0.1"
+    "socket.io-client": "^2.2.0"
   }
 }

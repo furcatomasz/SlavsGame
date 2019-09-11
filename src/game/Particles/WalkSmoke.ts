@@ -1,3 +1,5 @@
+import * as BABYLON from 'babylonjs';
+
 export class WalkSmoke {
     static getParticles(scene: BABYLON.Scene, emitRate: number, emitter: BABYLON.AbstractMesh): BABYLON.GPUParticleSystem {
         let smokeSystem = new BABYLON.GPUParticleSystem("particles", {capacity: 10}, scene);

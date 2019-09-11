@@ -1,11 +1,12 @@
 import {AbstractCharacter} from "../Characters/AbstractCharacter";
 import {Game} from "../game";
+import {AdvancedDynamicTexture, StackPanel, Control, Slider, TextBlock} from 'babylonjs-gui';
 
 export class ShowHp {
 
     public hpBar;
     public guiPanel;
-    protected texture: BABYLON.GUI.AdvancedDynamicTexture;
+    protected texture: AdvancedDynamicTexture;
     protected character: AbstractCharacter
 
     constructor(game: Game) {
@@ -18,21 +19,21 @@ export class ShowHp {
         }
 
         this.character = character;
-        let characterPanel = new BABYLON.GUI.StackPanel();
+        let characterPanel = new StackPanel();
         characterPanel.width = "25%";
         characterPanel.top = 10;
-        characterPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        characterPanel.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
         this.guiPanel = characterPanel;
         this.texture.addControl(characterPanel);
 
-        let textBlock = new BABYLON.GUI.TextBlock("gui.panelhp.name", character.name);
+        let textBlock = new TextBlock("gui.panelhp.name", character.name);
         textBlock.color = 'white';
         textBlock.height = "20px";
         textBlock.fontFamily = "RuslanDisplay";
 
-        textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        textBlock.textVerticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
 
-        let hpSlider = new BABYLON.GUI.Slider();
+        let hpSlider = new Slider();
         hpSlider.minimum = 0;
         hpSlider.maximum = character.statistics.hpMax;
         hpSlider.value = character.statistics.hp;
@@ -56,18 +57,18 @@ export class ShowHp {
         if (this.character) {
             this.character = null;
         }
-        let characterPanel = new BABYLON.GUI.StackPanel();
+        let characterPanel = new StackPanel();
         characterPanel.width = "25%";
         characterPanel.top = 10;
-        characterPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        characterPanel.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
         this.guiPanel = characterPanel;
         this.texture.addControl(characterPanel);
 
-        let textBlock = new BABYLON.GUI.TextBlock("gui.panelhp.name", entranceName);
+        let textBlock = new TextBlock("gui.panelhp.name", entranceName);
         textBlock.color = 'white';
         textBlock.height = "20px";
         textBlock.fontFamily = "RuslanDisplay";
-        textBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        textBlock.textVerticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
 
         characterPanel.addControl(textBlock);
     }

@@ -3,6 +3,7 @@ import {EnvironmentSelectCharacter} from "../Environment/environmentSelectCharac
 import {Scene} from "./Scene";
 import {Warrior} from "../Characters/selectCharacter/Warrior";
 import {SelectCharacter as SelectCharacterPanel} from "../GUI/SelectCharacter";
+import * as BABYLON from 'babylonjs';
 
 export class SelectCharacter extends Scene {
 

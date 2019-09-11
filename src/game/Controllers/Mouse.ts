@@ -1,5 +1,6 @@
 import {Game} from "../game";
 import {ClickParticles} from "../Particles/Pointer/ClickParticles";
+import * as BABYLON from 'babylonjs';
 
 export class Mouse {
 

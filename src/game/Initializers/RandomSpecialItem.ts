@@ -2,6 +2,7 @@ import {Game} from "../game";
 import {TooltipMesh} from "../GUI/Tooltips/TooltipMesh";
 import {GoToMeshAndRunAction} from "../Actions/GoToMeshAndRunAction";
 import {DroppedItem} from "../Particles/DroppedItem";
+import * as BABYLON from 'babylonjs';
 
 export class RandomSpecialItem {
 

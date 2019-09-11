@@ -1,4 +1,5 @@
 import {AbstractParticle} from "./AbstractParticle";
+import * as BABYLON from 'babylonjs';
 
 export class DroppedItem extends AbstractParticle {
 

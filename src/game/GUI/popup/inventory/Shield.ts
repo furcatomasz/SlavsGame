@@ -1,5 +1,6 @@
 import {Inventory} from "../Inventory";
 import {EquipBlock} from "./EquipBlock";
+import {Control} from 'babylonjs-gui';
 
 export class Shield extends EquipBlock {
 
@@ -10,7 +11,7 @@ export class Shield extends EquipBlock {
         this.blockHeight = "60px";
         this.blockTop = "-40px";
         this.blockLeft = "70px";
-        this.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        this.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
 
         this.item = inventory.guiMain.game.player.inventory.shield;
 

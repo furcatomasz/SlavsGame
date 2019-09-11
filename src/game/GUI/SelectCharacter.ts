@@ -1,25 +1,25 @@
 import {Game} from "../game";
-import {Main} from "./Main";
+import {AdvancedDynamicTexture, Rectangle, Button, Control, InputText} from 'babylonjs-gui';
 
 export class SelectCharacter {
-    public texture: BABYLON.GUI.AdvancedDynamicTexture;
+    public texture: AdvancedDynamicTexture;
 
     constructor(game: Game) {
         //TODO: Fix GUI
         // game.gui = this;
-        let texture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
-        let container = new BABYLON.GUI.Rectangle('gui.panel.bottom');
-        container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        container.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        let texture = AdvancedDynamicTexture.CreateFullscreenUI('gui.main');
+        let container = new Rectangle('gui.panel.bottom');
+        container.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
+        container.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
         container.width = '685px';
         container.height = '80px';
         container.isPointerBlocker = true;
         container.thickness = 0;
         texture.addControl(container);
 
-        let buttonCreateCharacter = BABYLON.GUI.Button.CreateImageWithCenterTextButton("button.create_character", 'Create character', "assets/gui/buttons/blank.png");
-        buttonCreateCharacter.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        buttonCreateCharacter.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        let buttonCreateCharacter = Button.CreateImageWithCenterTextButton("button.create_character", 'Create character', "assets/gui/buttons/blank.png");
+        buttonCreateCharacter.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
+        buttonCreateCharacter.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
         buttonCreateCharacter.width = 0.5;
         buttonCreateCharacter.height = '40px';
         buttonCreateCharacter.thickness = 0;
@@ -33,8 +33,8 @@ export class SelectCharacter {
             }
         });
 
-        let input = new BABYLON.GUI.InputText();
-        input.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        let input = new InputText();
+        input.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
         input.width = 0.5;
         input.maxWidth = 0.5;
         input.height = "30px";

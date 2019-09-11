@@ -19,9 +19,7 @@ export class NatureSmall extends AbstractSolidParticle {
                     newCollider.position.x = position.x;
                     newCollider.position.y = position.y;
                     newCollider.position.z = position.z;
-
-                    //TODO: VISIBILITY
-                    // newCollider.visibility = 1;
+                    newCollider.isVisible = true;
                     Collisions.setCollider(game.getScene(), newCollider);
                 }
 

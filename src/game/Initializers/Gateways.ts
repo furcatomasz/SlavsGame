@@ -1,7 +1,7 @@
 import {TooltipMesh} from "../GUI/Tooltips/TooltipMesh";
 import {Game} from "../game";
 import {GoToMeshAndRunAction} from "../Actions/GoToMeshAndRunAction";
-import {Gateway as GatewayParticles} from "../Particles/Gateway";
+import {GatewayParticles as GatewayParticles} from "../Particles/GatewayParticles";
 import * as BABYLON from 'babylonjs';
 
 export class Gateway {
@@ -21,7 +21,7 @@ export class Gateway {
         gateway.isPickable = true;
         this.tooltip = new TooltipMesh(gateway, entranceName);
 
-        let gatewayParticleSystem = new GatewayParticles(game, gateway, isActive).particleSystem;
+        let gatewayParticleSystem = GatewayParticles.initParticleSystem(game, gateway, isActive);
         gatewayParticleSystem.start();
         this.particleSystem = gatewayParticleSystem;
 

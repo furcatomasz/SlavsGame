@@ -12,13 +12,12 @@ export class OnRefreshQuests extends SocketEvent {
             });
             game.getSceneManger().quests = [];
 
-            let activeQuest = data.activeQuest;
+            let activeQuest = data.sessionData.activeRoom.activeQuest;
             data.quests.forEach(quest => {
                 game.getSceneManger().quests.push(new Quests(game, quest, activeQuest));
             });
 
             self.socket.emit('refreshGateways');
-
             if (activeQuest) {
                 self.game.gui.playerQuestInformation.addQuest(activeQuest);
             }

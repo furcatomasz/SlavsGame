@@ -40,7 +40,6 @@ export class Quests {
     }
 
     protected refreshTooltipColor(serverData, activeQuest, questPicker: BABYLON.AbstractMesh) {
-        //TODO: veirfy color
         let material = <BABYLON.StandardMaterial> this.tooltipMesh.material;
         if (activeQuest && activeQuest.questId != serverData.questId) {
             material.diffuseColor = new BABYLON.Color3(1, 0, 0);

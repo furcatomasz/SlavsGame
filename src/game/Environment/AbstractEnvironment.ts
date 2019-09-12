@@ -3,7 +3,7 @@ import * as BABYLON from 'babylonjs';
 
 export abstract class AbstractEnvironment {
 
-    public light: BABYLON.IShadowLight;
+    public light: BABYLON.DirectionalLight;
     public staticShadowObjects;
     public ground;
     protected colliders;

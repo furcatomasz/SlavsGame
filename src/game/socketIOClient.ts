@@ -21,6 +21,7 @@ import {OnUpdatePlayers} from "./SocketClient/Player/OnUpdatePlayers";
 import {OnUpdatePlayersSkills} from "./SocketClient/Player/OnUpdatePlayersSkills";
 import {SocketEvent} from "./SocketClient/SocketEvent";
 import {OnRemovePlayer} from "./SocketClient/Player/OnRemovePlayer";
+import {SelectCharacter} from "./Scenes/SelectCharacter";
 
 let io = require('socket.io-client');
 
@@ -87,8 +88,8 @@ export class SocketIOClient {
             });
 
         });
-        // this.socket.emit('changeScene', SelectCharacter.TYPE);
-        this.socket.emit('selectCharacter', 1);
+        this.socket.emit('changeScene', SelectCharacter.TYPE);
+        // this.socket.emit('selectCharacter', 1);
 
         return this;
     }

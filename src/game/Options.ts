@@ -69,8 +69,7 @@ export class GameOptions {
             shadowGenerator.usePercentageCloserFiltering = true;
             shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
             shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
-            //TODO: Light check
-            // game.sceneManager.environment.light.autoUpdateExtends = false;
+            game.sceneManager.environment.light.autoUpdateExtends = false;
             this.staticShadowGenerator = shadowGenerator;
             const staticShadowMeshes = game.sceneManager.environment.staticShadowObjects;
             for (let i = 0; i < staticShadowMeshes.length; i++) {

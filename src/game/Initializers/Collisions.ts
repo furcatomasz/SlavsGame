@@ -12,9 +12,9 @@ export class Collisions {
         if (Game.SHOW_COLLIDERS) {
             // collider.material = new BABYLON.StandardMaterial("collidermat", scene);
             // collider.material.alpha = 0.3;
-            parent.visibility = 1;
+            parent.isVisible = true;
         } else {
-            parent.visibility = 0;
+            parent.isVisible = false;
         }
         parent.checkCollisions = true;
 

@@ -4,7 +4,7 @@ import * as BABYLON from 'babylonjs';
 export class FastAttack extends AbstractParticle {
 
     initParticleSystem() {
-        let box = BABYLON.MeshBuilder.CreateBox("bx0", {size: 1}, this.game.getScene());
+        let box = BABYLON.MeshBuilder.CreateBox("bx0", {size: 1}, this.game.getBabylonScene());
         box.visibility = 0;
         box.scaling = new BABYLON.Vector3(1, 1, 0.1);
         box.position = new BABYLON.Vector3(0, 0, 0.1);
@@ -12,8 +12,8 @@ export class FastAttack extends AbstractParticle {
 
         box.attachToBone(this.emitter.skeleton.bones[25], this.emitter);
 
-        let fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getScene());
-        fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
+        let fireSystem = new BABYLON.ParticleSystem("particles", 1000, this.game.getBabylonScene());
+        fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getBabylonScene());
         fireSystem.emitter = box;
         fireSystem.minSize = 1;
         fireSystem.maxSize = 1.5;

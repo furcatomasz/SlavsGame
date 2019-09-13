@@ -73,7 +73,7 @@ export class Inventory {
                         break;
                 }
 
-                item.mesh = this.game.factories['character'].createClone(item.meshName);
+                item.mesh = this.game.getSceneManger().assets.character.createClone(item.meshName);
                 item.mesh.parent = this.player.mesh;
                 item.mesh.skeleton = this.player.mesh.skeleton;
 
@@ -96,7 +96,7 @@ export class Inventory {
         }
 
         public emitEquip(item: Item) {
-            this.game.client.socket.emit('itemEquip', {
+            this.game.socketClient.socket.emit('itemEquip', {
                 id: item.databaseId
             });
 

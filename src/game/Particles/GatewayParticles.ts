@@ -4,8 +4,8 @@ import {Game} from "../game";
 export class GatewayParticles {
 
     static initParticleSystem(game: Game, emitter: BABYLON.Mesh, isActive: boolean): BABYLON.GPUParticleSystem {
-        let particleSystem = new BABYLON.GPUParticleSystem("particles", {capacity: 150}, game.getScene());
-        particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", game.getScene());
+        let particleSystem = new BABYLON.GPUParticleSystem("particles", {capacity: 150}, game.getBabylonScene());
+        particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", game.getBabylonScene());
         particleSystem.emitter = emitter;
         particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
         particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1);

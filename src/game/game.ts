@@ -3,7 +3,6 @@ import {Scene} from "./Scenes/Scene";
 import {Mouse} from "./Controllers/Mouse";
 import {Player} from "./Characters/Player";
 import {SocketIOClient} from "./socketIOClient";
-import {AbstractFactory} from "./Factories/AbstractFactory";
 import {Events} from "./Events";
 import {Main} from "./GUI/Main";
 import {SlavsLoader} from "./SlavsLoader";
@@ -11,75 +10,37 @@ import {SlavsLoader} from "./SlavsLoader";
 export class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 0;
+    static SHOW_DEBUG = 1;
     static MOBILE_CLIENT = false;
 
-    public sceneManager: Scene;
     public controller: Mouse;
-    public canvas: HTMLCanvasElement;
     public engine: BABYLON.Engine;
+    public socketClient: SocketIOClient;
     public player: Player;
-    public client: SocketIOClient;
     public gui: Main;
 
-    /**
-     * Assets
-     */
-    public factories: Array<AbstractFactory>;
-
-    /**
-     * Dynamic Collections
-     */
-    public remotePlayers: Array<Player>;
-
-    /**
-     * Active scene
-     */
     public activeScene: Scene;
-
-    /**
-     * Events
-     */
     public events: Events;
-
-    /**
-     *  Interval with checking enemies in frumstrum
-     */
-    public frumstrumEnemiesInterval;
-
-    /**
-     *  Interval with checking enemies in frumstrum
-     */
-    public goToMeshFunction;
 
     constructor(canvasElement: HTMLCanvasElement, serverUrl: string, accessToken: string, isMobile: boolean = false, isDebug: boolean = false) {
         let self = this;
 
-        self.canvas = canvasElement;
-        self.engine = new BABYLON.Engine(self.canvas, false, null, false);
+        self.engine = new BABYLON.Engine(canvasElement, false, null, false);
 
         if (isDebug) {
             Game.SHOW_DEBUG = 1;
         }
         Game.MOBILE_CLIENT = isMobile;
-        self.engine.loadingScreen = new SlavsLoader('');
+        self.engine.loadingScreen = new SlavsLoader('Initialize engine');
         self.controller = new Mouse(self);
-        self.client = new SocketIOClient(self);
+        self.socketClient = new SocketIOClient(self);
         self.events = new Events();
-        this.clearObjectCollections();
 
-        self.client.connect(serverUrl, accessToken);
+        self.socketClient.connect(serverUrl, accessToken);
         self.reiszeListener();
     }
 
-    private clearObjectCollections(): Game {
-        this.factories = [];
-        this.remotePlayers = [];
-
-        return this;
-    }
-
-    getScene(): BABYLON.Scene {
+    getBabylonScene(): BABYLON.Scene {
         return (this.activeScene) ? this.activeScene.babylonScene : null;
     }
 
@@ -95,7 +56,6 @@ export class Game {
 
     reiszeListener(): Game {
         let self = this;
-
         window.addEventListener('resize', () => {
             self.engine.resize();
         });
@@ -104,10 +64,10 @@ export class Game {
     }
 
     public changeScene(newScene: Scene) {
+        let self = this;
         this.engine.stopRenderLoop();
-        let sceneToDispose = this.getScene();
+        let sceneToDispose = this.getBabylonScene();
         if (sceneToDispose) {
-            this.clearObjectCollections();
             setTimeout(function () {
                 sceneToDispose.dispose();
             });

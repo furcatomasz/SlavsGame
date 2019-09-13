@@ -29,7 +29,7 @@ export class SelectCharacter {
         buttonCreateCharacter.onPointerUpObservable.add(function () {
             const characterName = input.text;
             if (characterName.length > 2) {
-                game.client.socket.emit('createCharacter', characterName);
+                game.socketClient.socket.emit('createCharacter', characterName);
             }
         });
 

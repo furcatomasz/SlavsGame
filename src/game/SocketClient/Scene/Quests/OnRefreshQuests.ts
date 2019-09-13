@@ -12,7 +12,7 @@ export class OnRefreshQuests extends SocketEvent {
             });
             game.getSceneManger().quests = [];
 
-            let activeQuest = data.sessionData.activeRoom.activeQuest;
+            let activeQuest = data.activeQuest;
             data.quests.forEach(quest => {
                 game.getSceneManger().quests.push(new Quests(game, quest, activeQuest));
             });

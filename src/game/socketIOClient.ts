@@ -135,7 +135,7 @@ export class SocketIOClient {
     //             player.mesh.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
     //             player.inventory.setItems(activePlayer.items);
     //
-    //             game.remotePlayers.push(player);
+    //             game.getSceneManger().remotePlayers.push(player);
     //         }
     //
     //     });

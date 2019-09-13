@@ -24,11 +24,11 @@ export class UpdateEnemiesSocketEvent extends SocketEvent {
             }
 
             if (activeTargetPoints[enemyKey] !== undefined) {
-                self.game.getScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
+                self.game.getBabylonScene().unregisterBeforeRender(activeTargetPoints[enemyKey]);
             }
 
             let targetMesh = null;
-            game.remotePlayers.forEach(function (socketRemotePlayer) {
+            game.getSceneManger().remotePlayers.forEach(function (socketRemotePlayer) {
                 if (updatedEnemy.target == socketRemotePlayer.id) {
                     targetMesh = socketRemotePlayer.meshForMove;
                 }
@@ -55,7 +55,7 @@ export class UpdateEnemiesSocketEvent extends SocketEvent {
                 enemy.runAnimationWalk();
             };
 
-                self.game.getScene().registerBeforeRender(activeTargetPoints[enemyKey]);
+                self.game.getBabylonScene().registerBeforeRender(activeTargetPoints[enemyKey]);
             } else if (data.collisionEvent == 'OnIntersectionExitTriggerVisibility') {
                 enemy.runAnimationStand();
             }

@@ -36,7 +36,7 @@ export class FastAttack extends AbstractSkill {
                 self.isInUse = true;
                 // self.effectEmitter.particleSystem.start();
                 if(self.player.isControllable) {
-                    game.client.socket.emit('attack', {
+                    game.socketClient.socket.emit('attack', {
                         targetPoint: null
                     });
                 }

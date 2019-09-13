@@ -17,17 +17,17 @@ export class OnUpdatePlayers extends SocketEvent {
             if(!updatedPlayer.activePlayer.id) {
                 return;
             }
-console.log(updatedPlayer, game.remotePlayers);
-            game.remotePlayers.forEach(function (remotePlayer, key) {
+console.log(updatedPlayer, game.getSceneManger().remotePlayers);
+            game.getSceneManger().remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == updatedPlayer.activePlayer.id) {
-                    player = game.remotePlayers[key];
+                    player = game.getSceneManger().remotePlayers[key];
                     return;
                 }
             });
 
             if(!player) {
                 player = new Player(game, false, updatedPlayer);
-                game.remotePlayers.push(player);
+                game.getSceneManger().remotePlayers.push(player);
             }
 
             ///action when hp of character is changed
@@ -66,7 +66,7 @@ console.log(updatedPlayer, game.remotePlayers);
                 let attackAnimation = (Game.randomNumber(1, 2) == 1) ? AbstractCharacter.ANIMATION_ATTACK_02 : AbstractCharacter.ANIMATION_ATTACK_01;
                 player.runAnimationHit(attackAnimation, () => {
                     if (player.dynamicFunction !== undefined) {
-                        game.getScene().unregisterBeforeRender(player.dynamicFunction);
+                        game.getBabylonScene().unregisterBeforeRender(player.dynamicFunction);
                     }
                 });
 

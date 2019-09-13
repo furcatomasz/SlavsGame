@@ -47,7 +47,7 @@ export class GameOptions {
     public static saveInLocalStorage(key, value, game: Game) {
         localStorage.setItem('options.' + key, JSON.stringify(value));
 
-        game.sceneManager.options.initInScene(game);
+        game.getSceneManger().options.initInScene(game);
     }
 
     public addMeshToDynamicShadowGenerator(mesh: BABYLON.AbstractMesh) {
@@ -60,18 +60,18 @@ export class GameOptions {
 
     public initInScene(game: Game) {
         this.refreshAllData();
-        const scene = game.getScene();
+        const scene = game.getBabylonScene();
         const self = this;
         const camera = scene.getCameraByName('gameCamera');
 
-        if (this.staticShadows && !this.staticShadowGenerator && game.sceneManager.environment && game.sceneManager.environment.light) {
-            let shadowGenerator = new BABYLON.ShadowGenerator(2048, game.sceneManager.environment.light);
+        if (this.staticShadows && !this.staticShadowGenerator && game.getSceneManger().environment && game.getSceneManger().environment.light) {
+            let shadowGenerator = new BABYLON.ShadowGenerator(2048, game.getSceneManger().environment.light);
             shadowGenerator.usePercentageCloserFiltering = true;
             shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
             shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
-            game.sceneManager.environment.light.autoUpdateExtends = false;
+            game.getSceneManger().environment.light.autoUpdateExtends = false;
             this.staticShadowGenerator = shadowGenerator;
-            const staticShadowMeshes = game.sceneManager.environment.staticShadowObjects;
+            const staticShadowMeshes = game.getSceneManger().environment.staticShadowObjects;
             for (let i = 0; i < staticShadowMeshes.length; i++) {
                 const shadowedMesh = staticShadowMeshes[i];
                 shadowGenerator.getShadowMap().renderList.push(shadowedMesh);
@@ -118,9 +118,9 @@ export class GameOptions {
         }
 
         if (this.fog) {
-            game.sceneManager.setFog(game.getScene());
+            game.getSceneManger().setFog(game.getBabylonScene());
         } else {
-            game.sceneManager.disableFog(game.getScene());
+            game.getSceneManger().disableFog(game.getBabylonScene());
         }
     }
 }

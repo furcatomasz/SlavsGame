@@ -18,7 +18,7 @@ export class Quests {
      */
     constructor(game: Game, serverData, activeQuest) {
         let self = this;
-        let questPicker = game.getScene().getMeshByName(serverData.objectName);
+        let questPicker = game.getBabylonScene().getMeshByName(serverData.objectName);
         if (!questPicker) {
             throw new TypeError('Wrong quest mesh name.');
         }
@@ -26,7 +26,7 @@ export class Quests {
 
         this.game = game;
         this.mesh = questPicker;
-        this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+        this.mesh.actionManager = new BABYLON.ActionManager(game.getBabylonScene());
 
         self.createTooltip(serverData, activeQuest, questPicker);
         self.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
@@ -54,8 +54,8 @@ export class Quests {
     }
 
     protected createTooltip(serverData, activeQuest, questPicker: BABYLON.AbstractMesh) {
-        let box = BABYLON.Mesh.CreateBox("quest_box", 0.4, this.game.getScene());
-        box.material = new BABYLON.StandardMaterial("quest_box_material", this.game.getScene());
+        let box = BABYLON.Mesh.CreateBox("quest_box", 0.4, this.game.getBabylonScene());
+        box.material = new BABYLON.StandardMaterial("quest_box_material", this.game.getBabylonScene());
         box.parent = this.mesh;
         box.position.y += 3;
 
@@ -78,7 +78,7 @@ export class Quests {
         box.animations.push(animationBox);
 
         this.tooltipMesh = box;
-        this.game.getScene().beginAnimation(box, 0, 30, true);
+        this.game.getBabylonScene().beginAnimation(box, 0, 30, true);
         this.refreshTooltipColor(serverData, activeQuest, questPicker);
     }
 

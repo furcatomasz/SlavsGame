@@ -4,8 +4,8 @@ import * as BABYLON from 'babylonjs';
 export class FireplaceSmoke extends AbstractParticle {
 
     initParticleSystem() {
-        var smokeSystem = new BABYLON.GPUParticleSystem("particles", {capacity: 100}, this.game.getScene());
-        smokeSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
+        var smokeSystem = new BABYLON.GPUParticleSystem("particles", {capacity: 100}, this.game.getBabylonScene());
+        smokeSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getBabylonScene());
         smokeSystem.emitter = this.emitter;
         smokeSystem.minEmitBox = new BABYLON.Vector3(0.5, 1.5, 0.5);
         smokeSystem.maxEmitBox = new BABYLON.Vector3(-0.5, 1.5, -0.5);

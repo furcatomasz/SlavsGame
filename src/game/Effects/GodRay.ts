@@ -4,8 +4,8 @@ import * as BABYLON from 'babylonjs';
 export class GodRay {
     public static createGodRay(game: Game, mesh: BABYLON.AbstractMesh) {
         let engine = game.engine;
-        let scene = game.getScene();
-        let camera = game.getScene().getCameraByName('gameCamera');
+        let scene = game.getBabylonScene();
+        let camera = game.getBabylonScene().getCameraByName('gameCamera');
 
         let fireMaterial = new BABYLON.StandardMaterial("godrayMaterial", scene);
         let fireTexture = new BABYLON.Texture("assets/Smoke3.png", scene);

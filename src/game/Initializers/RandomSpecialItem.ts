@@ -16,10 +16,10 @@ export class RandomSpecialItem {
      * @param randomSpecialItemKey
      */
     constructor(game: Game, randomSpecialItemData, randomSpecialItemKey) {
-        let scene = game.getScene();
+        let scene = game.getBabylonScene();
         let tooltip;
         let position = randomSpecialItemData.position;
-        let randomItemMesh = game.factories['nature_grain'].createClone(randomSpecialItemData.specialItem.meshName);
+        let randomItemMesh = game.getSceneManger().assets.natureGrain.createClone(randomSpecialItemData.specialItem.meshName);
 
         randomItemMesh.position = new BABYLON.Vector3(position.x, position.y, position.z);
         randomItemMesh.isPickable = true;
@@ -33,8 +33,8 @@ export class RandomSpecialItem {
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPickTrigger,
             function () {
-                game.goToMeshFunction = GoToMeshAndRunAction.execute(game, randomItemMesh, () => {
-                    game.client.socket.emit('pickRandomItem', randomSpecialItemKey);
+                game.getSceneManger().goToAction = GoToMeshAndRunAction.execute(game, randomItemMesh, () => {
+                    game.socketClient.socket.emit('pickRandomItem', randomSpecialItemKey);
                 });
             })
         );

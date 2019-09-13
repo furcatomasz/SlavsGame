@@ -15,7 +15,7 @@ export abstract class AbstractSolidParticle {
         this.parent = parent;
         this.shape = shape;
         if (isCollider) {
-            this.collider = BABYLON.MeshBuilder.CreateBox("box", {height: 10}, game.getScene());
+            this.collider = BABYLON.MeshBuilder.CreateBox("box", {height: 10}, game.getBabylonScene());
             this.collider.visibility = 0;
         }
 

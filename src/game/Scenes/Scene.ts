@@ -9,13 +9,8 @@ import {AbstractEnvironment} from "../Environment/AbstractEnvironment";
 import {Player} from "../Characters/Player";
 import {Monster} from "../Characters/Monster";
 import {Quests} from "../Initializers/Quests";
-import {Skeletons} from "../Factories/Skeletons";
-import {SkeletonWarrior} from "../Factories/SkeletonWarrior";
-import {SkeletonBoss} from "../Factories/SkeletonBoss";
-import {Nature} from "../Factories/Nature";
-import {Chest} from "../Factories/Chest";
-import {Characters} from "../Factories/characters";
 import {AbstractNpc} from "../Characters/npc/AbstractNpc";
+import {Assets} from "../AssetsFactories/Assets";
 
 export abstract class Scene {
     static TYPE = 0;
@@ -29,12 +24,27 @@ export abstract class Scene {
     /**
      * Dynamic Collections
      */
-    public remotePlayers: Array<Player>;
-    public npcs: Array<AbstractNpc>;
-    public enemies: Array<Monster>;
-    public quests: Array<Quests>;
-    public chests: Array<ChestsObjects>;
-    public randomSpecialItems: Array<RandomSpecialItem>;
+    public remotePlayers: Array<Player> = [];
+    public npcs: Array<AbstractNpc> = [];
+    public enemies: Array<Monster> = [];
+    public quests: Array<Quests> = [];
+    public chests: Array<ChestsObjects> = [];
+    public randomSpecialItems: Array<RandomSpecialItem> = [];
+
+    /**
+     * Assets
+     */
+    public assets: Assets;
+
+    /**
+     *  Interval with checking enemies in frumstrum
+     */
+    public frumstrumEnemiesInterval;
+
+    /**
+     *  Player go to action
+     */
+    public goToAction;
 
 
     protected setDefaults(game:Game, scene: BABYLON.Scene) {
@@ -42,32 +52,27 @@ export abstract class Scene {
         SlavsLoader.showLoaderWithText('Loading game...');
         scene.actionManager = new BABYLON.ActionManager(scene);
         this.assetManager = new BABYLON.AssetsManager(scene);
+        this.assets = new Assets(scene);
         this.babylonScene = scene;
         this.game = game;
-        this.enemies = [];
-        this.quests = [];
-        this.randomSpecialItems = [];
-        this.chests = [];
 
         game.setScene(this);
-        this.initFactories(scene);
 
         return this;
     }
 
     protected playEnemiesAnimationsInFrumStrum() {
         let self = this;
-        let game = this.game;
         let scene = this.babylonScene;
         const gameCamera = scene.getCameraByName('gameCamera');
-        if(game.frumstrumEnemiesInterval) {
-            clearInterval(game.frumstrumEnemiesInterval);
+        if(this.frumstrumEnemiesInterval) {
+            clearInterval(this.frumstrumEnemiesInterval);
         }
 
         let battleMusic = new BABYLON.Sound("Forest night", "assets/sounds/music/battle.mp3", scene, null, { loop: true, autoplay: false, volume: 1 });
         let timeoutNumber;
 
-        game.frumstrumEnemiesInterval = setInterval(function() {
+        this.frumstrumEnemiesInterval = setInterval(function() {
             let activeEnemies = 0;
             self.enemies.forEach(function(enemy) {
                 if(enemy.isDeath) {
@@ -114,7 +119,7 @@ export abstract class Scene {
 
         scene.executeWhenReady(function () {
             assetsManager.onFinish = function (tasks) {
-                game.client.socket.emit('changeScenePre');
+                game.socketClient.socket.emit('changeScenePre');
 
                 if(onReady) {
                     onReady();
@@ -145,11 +150,11 @@ export abstract class Scene {
                     self.options = new GameOptions(game);
                     self.options.addMeshToDynamicShadowGenerator(game.player.mesh);
                     game.controller.registerControls(scene);
-                    game.client.socket.emit('changeScenePost');
-                    game.client.socket.emit('refreshGateways');
-                    game.client.socket.emit('refreshQuests');
-                    game.client.socket.emit('refreshChests');
-                    game.client.socket.emit('refreshRandomSpecialItems');
+                    game.socketClient.socket.emit('changeScenePost');
+                    game.socketClient.socket.emit('refreshGateways');
+                    game.socketClient.socket.emit('refreshQuests');
+                    game.socketClient.socket.emit('refreshChests');
+                    game.socketClient.socket.emit('refreshRandomSpecialItems');
 
                     if(Game.SHOW_DEBUG) {
                         scene.debugLayer.show({
@@ -220,19 +225,6 @@ export abstract class Scene {
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
         scene.audioEnabled = false;
-
-        return this;
-    }
-
-    protected initFactories(scene: BABYLON.Scene) {
-        let assetsManager = this.assetManager;
-
-        this.game.factories['character'] = new Characters(this.game, scene, assetsManager).initFactory();
-        this.game.factories['skeleton'] = new Skeletons(this.game, scene, assetsManager).initFactory();
-        this.game.factories['skeletonWarrior'] = new SkeletonWarrior(this.game, scene, assetsManager).initFactory();
-        this.game.factories['skeletonBoss'] = new SkeletonBoss(this.game, scene, assetsManager).initFactory();
-        this.game.factories['chest'] = new Chest(this.game, scene, assetsManager).initFactory();
-        this.game.factories['nature_grain'] = new Nature(this.game, scene, assetsManager).initFactory();
 
         return this;
     }

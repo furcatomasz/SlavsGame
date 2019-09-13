@@ -21,7 +21,7 @@ export class Nature extends AbstractSolidParticle {
                     newCollider.position.y = position.y;
                     newCollider.position.z = position.z;
                     newCollider.isVisible = true;
-                    Collisions.setCollider(game.getScene(), newCollider);
+                    Collisions.setCollider(game.getBabylonScene(), newCollider);
                 }
 
                 particle.position = position;
@@ -31,7 +31,7 @@ export class Nature extends AbstractSolidParticle {
                 particle.scaling.z = random;
             };
 
-            let sps = new BABYLON.SolidParticleSystem('spsNature', this.game.getScene(), {updatable: false});
+            let sps = new BABYLON.SolidParticleSystem('spsNature', this.game.getBabylonScene(), {updatable: false});
             sps.addShape(this.shape, count, {positionFunction: myBuilder});
             let spsMesh = sps.buildMesh();
             spsMesh.material = this.shape.material;

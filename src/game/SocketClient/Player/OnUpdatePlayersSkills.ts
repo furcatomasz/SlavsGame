@@ -9,9 +9,9 @@ export class OnUpdatePlayersSkills extends SocketEvent {
         let game = this.game;
         this.socket.on('updatePlayerSkill', function (updatedPlayer) {
             let player = null;
-            game.remotePlayers.forEach(function (remotePlayer, key) {
+            game.getSceneManger().remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == updatedPlayer.activePlayer.id) {
-                    player = game.remotePlayers[key];
+                    player = game.getSceneManger().remotePlayers[key];
                     return;
                 }
             });

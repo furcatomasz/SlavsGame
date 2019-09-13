@@ -64,7 +64,7 @@ export class Inventory extends Popup {
         inventoryPlayer.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
         self.meshes.push(inventoryPlayer);
 
-        this.guiMain.game.getScene().getCameraByName('gameCamera').position.y = 500;
+        this.guiMain.game.getBabylonScene().getCameraByName('gameCamera').position.y = 500;
         this.guiMain.game.player.inventory.getEquipedItems().forEach((item) => {
             if (item) {
                 let itemInstance = item.mesh.createInstance("itemInstance");

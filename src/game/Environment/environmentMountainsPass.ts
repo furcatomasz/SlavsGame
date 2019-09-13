@@ -10,7 +10,7 @@ export class EnvironmentMountainsPass extends AbstractEnvironment {
 
     constructor(game: Game) {
         super();
-        const scene = game.getScene();
+        const scene = game.getBabylonScene();
         this.colliders = [];
         scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
         for (let i = 0; i < scene.meshes.length; i++) {

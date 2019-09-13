@@ -4,8 +4,8 @@ import * as BABYLON from 'babylonjs';
 export class Fog extends AbstractParticle {
 
         initParticleSystem() {
-            var fog = new BABYLON.GPUParticleSystem("particles", { capacity: 2000 }, this.game.getScene());
-            fog.particleTexture = new BABYLON.Texture("assets/cloud.png", this.game.getScene());
+            var fog = new BABYLON.GPUParticleSystem("particles", { capacity: 2000 }, this.game.getBabylonScene());
+            fog.particleTexture = new BABYLON.Texture("assets/cloud.png", this.game.getBabylonScene());
             fog.emitter = this.emitter; // the starting object, the emitter
             fog.minEmitBox = new BABYLON.Vector3(-50, 5, -50); // Starting all from
             fog.maxEmitBox = new BABYLON.Vector3(50, 0, 50); // To...

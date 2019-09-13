@@ -8,10 +8,7 @@ export class Battleground extends Scene {
 
     initScene(game: Game) {
         let self = this;
-        game.sceneManager = this;
-
-
-        var scene = new BABYLON.Scene(game.engine);
+        let scene = new BABYLON.Scene(game.engine);
         self
             .setDefaults(game, scene)
             .optimizeScene(scene)

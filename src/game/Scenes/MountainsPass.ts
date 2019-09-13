@@ -23,8 +23,6 @@ export class MountainsPass extends Scene {
 
     initScene(game: Game) {
         let self = this;
-        game.sceneManager = this;
-
         BABYLON.SceneLoader.Load("assets/scenes/MountainsPass/", "MountainsPass.babylon", game.engine, function (scene) {
             self
                 .setDefaults(game, scene)

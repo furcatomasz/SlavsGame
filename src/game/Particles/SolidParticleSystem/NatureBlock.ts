@@ -15,7 +15,7 @@ export class NatureBlock extends AbstractSolidParticle {
             particle.scaling.z = random;
         };
 
-        let sps = new BABYLON.SolidParticleSystem('spsNatureBlock', this.game.getScene(), {updatable: false});
+        let sps = new BABYLON.SolidParticleSystem('spsNatureBlock', this.game.getBabylonScene(), {updatable: false});
         sps.addShape(this.shape, count, {positionFunction: myBuilder});
         let spsMesh = sps.buildMesh();
         spsMesh.material = this.shape.material;

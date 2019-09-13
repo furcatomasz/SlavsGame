@@ -41,13 +41,13 @@ export class Item {
         }
 
         public createTrailMesh(game: Game) {
-            this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getScene(), false);
+            this.trailBox = BABYLON.Mesh.CreateBox('test', 1, game.getBabylonScene(), false);
             this.trailBox.visibility = 0;
 
-            this.trailMesh = new BABYLON.TrailMesh("Test", this.trailBox, game.getScene(), 0.2, 40, false);
+            this.trailMesh = new BABYLON.TrailMesh("Test", this.trailBox, game.getBabylonScene(), 0.2, 40, false);
             this.trailMesh.visibility = 0;
 
-            let material =  new BABYLON.StandardMaterial('trail_material', game.getScene());
+            let material =  new BABYLON.StandardMaterial('trail_material', game.getBabylonScene());
             material.emissiveColor = BABYLON.Color3.White();
 
             this.trailMesh.material = material;

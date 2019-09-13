@@ -11,7 +11,7 @@ export class Gateway {
     public particleSystem: BABYLON.IParticleSystem;
 
     constructor(game: Game, meshName: string, isActive: boolean, openSceneType: number, entranceName: string) {
-        let gateway = <BABYLON.Mesh> game.getScene().getMeshByName(meshName);
+        let gateway = <BABYLON.Mesh> game.getBabylonScene().getMeshByName(meshName);
         if (!gateway) {
             throw new TypeError('Wrong gateway mesh name.');
         }
@@ -25,7 +25,7 @@ export class Gateway {
         gatewayParticleSystem.start();
         this.particleSystem = gatewayParticleSystem;
 
-        gateway.actionManager = new BABYLON.ActionManager(game.getScene());
+        gateway.actionManager = new BABYLON.ActionManager(game.getBabylonScene());
         gateway.actionManager.registerAction(
             new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
                 function () {
@@ -45,8 +45,8 @@ export class Gateway {
                 return;
             }
 
-            game.goToMeshFunction = GoToMeshAndRunAction.execute(game, gateway, () => {
-                game.client.socket.emit('changeSceneTrigger', openSceneType);
+            game.getSceneManger().goToAction = GoToMeshAndRunAction.execute(game, gateway, () => {
+                game.socketClient.socket.emit('changeSceneTrigger', openSceneType);
             });
 
         };

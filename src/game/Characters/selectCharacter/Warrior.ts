@@ -14,7 +14,7 @@ export class Warrior extends AbstractCharacter {
         super('Warrior', game);
         this.playerId = playerDatabase.id;
 
-        let mesh = game.factories['character'].createClone('Warrior', true);
+        let mesh = game.getSceneManger().assets.character.createClone('Warrior', true);
         mesh.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4);
         mesh.skeleton.enableBlending(0.3);
 
@@ -35,10 +35,6 @@ export class Warrior extends AbstractCharacter {
         this.registerActions();
     }
 
-    /**
-     *
-     * @param inventoryItems
-     */
     public setItems(inventoryItems: []) {
         this.inventory = new Inventory(this.game, this);
 
@@ -61,7 +57,7 @@ export class Warrior extends AbstractCharacter {
             width: 2,
             height: 5,
             size: 2
-        }, this.game.getScene());
+        }, this.game.getBabylonScene());
         this.meshForMove.checkCollisions = false;
         this.meshForMove.visibility = 0;
         this.meshForMove.isPickable = true;
@@ -71,14 +67,14 @@ export class Warrior extends AbstractCharacter {
         let sitDown = function () {
             if (!self.skeletonAnimation) {
                 let animationSelectRange = self.mesh.skeleton.getAnimationRange('Select');
-                self.skeletonAnimation = self.game.getScene().beginAnimation(self.mesh, animationSelectRange.to, animationSelectRange.from + 1, false, -1, function () {
+                self.skeletonAnimation = self.game.getBabylonScene().beginAnimation(self.mesh, animationSelectRange.to, animationSelectRange.from + 1, false, -1, function () {
                     self.mesh.skeleton.beginAnimation('Sit');
                     self.skeletonAnimation = null;
                 });
             }
         };
 
-        this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
+        this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getBabylonScene());
         this.meshForMove.isPickable = true;
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
@@ -112,7 +108,7 @@ export class Warrior extends AbstractCharacter {
             () => {
                 if (!clicked) {
                     clicked = true;
-                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                    self.game.socketClient.socket.emit('selectCharacter', self.playerId);
                 }
             })
         );
@@ -122,7 +118,7 @@ export class Warrior extends AbstractCharacter {
             () => {
                 if (!clicked) {
                     clicked = true;
-                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                    self.game.socketClient.socket.emit('selectCharacter', self.playerId);
                 }
             })
         );
@@ -132,7 +128,7 @@ export class Warrior extends AbstractCharacter {
             () => {
                 if (!clicked) {
                     clicked = true;
-                    self.game.client.socket.emit('selectCharacter', self.playerId);
+                    self.game.socketClient.socket.emit('selectCharacter', self.playerId);
                 }
             })
         );

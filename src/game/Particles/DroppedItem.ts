@@ -4,8 +4,8 @@ import * as BABYLON from 'babylonjs';
 export class DroppedItem extends AbstractParticle {
 
         initParticleSystem() {
-            let fireSystem = new BABYLON.GPUParticleSystem("DroppedItemParticles", { capacity: 20 }, this.game.getScene());
-            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
+            let fireSystem = new BABYLON.GPUParticleSystem("DroppedItemParticles", { capacity: 20 }, this.game.getBabylonScene());
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getBabylonScene());
 
             fireSystem.emitter = this.emitter;
             fireSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);

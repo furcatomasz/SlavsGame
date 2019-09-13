@@ -9,11 +9,11 @@ export class OnRemovePlayer extends SocketEvent {
         let game = this.game;
 
         this.socket.on('removePlayer', function (id) {
-            game.remotePlayers.forEach(function (remotePlayer, key) {
+            game.getSceneManger().remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == id) {
-                    let player = game.remotePlayers[key];
+                    let player = game.getSceneManger().remotePlayers[key];
                     player.removeFromWorld();
-                    game.remotePlayers.splice(key, 1);
+                    game.getSceneManger().remotePlayers.splice(key, 1);
                 }
             });
         });

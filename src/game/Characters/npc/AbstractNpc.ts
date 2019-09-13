@@ -19,7 +19,7 @@ export abstract class AbstractNpc extends AbstractCharacter {
             this.mesh.position = position;
             this.mesh.rotation = rotation;
 
-            this.mesh.actionManager = new BABYLON.ActionManager(this.game.getScene());
+            this.mesh.actionManager = new BABYLON.ActionManager(this.game.getBabylonScene());
             this.mesh.isPickable = true;
 
             this.statistics = {

@@ -9,8 +9,6 @@ export class ForestHouseStart extends Scene {
 
     initScene(game: Game) {
         let self = this;
-        game.sceneManager = this;
-
         BABYLON.SceneLoader.Load("assets/scenes/forestStartHouse/", "forestHouseStart.babylon", game.engine, function (scene) {
             self
                 .setDefaults(game, scene)

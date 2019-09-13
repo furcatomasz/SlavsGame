@@ -4,8 +4,8 @@ import * as BABYLON from 'babylonjs';
 export class Blood extends AbstractParticle {
 
         initParticleSystem() {
-            let particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 50 } , this.game.getScene());
-            particleSystem.particleTexture = new BABYLON.Texture("assets/Smoke3.png", this.game.getScene());
+            let particleSystem = new BABYLON.GPUParticleSystem("particle1s", { capacity: 50 } , this.game.getBabylonScene());
+            particleSystem.particleTexture = new BABYLON.Texture("assets/Smoke3.png", this.game.getBabylonScene());
             particleSystem.emitter = this.emitter;
 
             particleSystem.minEmitBox = new BABYLON.Vector3(0, this.emitter.geometry.extend.maximum.y*0.7, 0); // Starting all from

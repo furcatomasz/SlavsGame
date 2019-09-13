@@ -22,15 +22,15 @@ export class Monster extends AbstractCharacter {
         this.registerActions();
 
         this.bloodParticles = new Blood(game, this.mesh).particleSystem;
-        this.walkSmoke = WalkSmoke.getParticles(game.getScene(), 2, this.mesh);
+        this.walkSmoke = WalkSmoke.getParticles(game.getBabylonScene(), 2, this.mesh);
 
         this.initPatricleSystemDamage();
     }
 
-    private createMesh(factoryName, meshName, scale: BABYLON.Vector3) {
+    private createMesh(factoryName:string, meshName:string, scale: BABYLON.Vector3) {
         const game = this.game;
 
-        let mesh = game.factories[factoryName].createClone(meshName, true);
+        let mesh = game.getSceneManger().assets.getAssetFactoryByName(factoryName).createClone(meshName, true);
         mesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
         mesh.visibility = 1;
         mesh.isPickable = false;
@@ -40,7 +40,7 @@ export class Monster extends AbstractCharacter {
         mesh.outlineWidth = 0.1;
         mesh.parent = this.meshForMove;
 
-        // game.sceneManager.options.addMeshToDynamicShadowGenerator(mesh);
+        // game.getSceneManger().options.addMeshToDynamicShadowGenerator(mesh);
 
         this.mesh = mesh;
     }
@@ -49,7 +49,7 @@ export class Monster extends AbstractCharacter {
         const game = this.game;
         let self = this;
 
-        this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getScene());
+        this.meshForMove.actionManager = new BABYLON.ActionManager(this.game.getBabylonScene());
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPointerOutTrigger, () => {
                 self.mesh.renderOutline = false;
@@ -82,12 +82,12 @@ export class Monster extends AbstractCharacter {
     private initSfx() {
         const game = this.game;
 
-        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getBabylonScene(), null, {
             loop: false,
             autoplay: false
         });
 
-        this.sfxWalk = new BABYLON.Sound("CharacterHit", null, game.getScene(), null, {
+        this.sfxWalk = new BABYLON.Sound("CharacterHit", null, game.getBabylonScene(), null, {
             loop: false,
             autoplay: false
         });

@@ -7,7 +7,7 @@ export class Guard extends AbstractNpc {
     public constructor(game: Game, position: BABYLON.Vector3, rotation: BABYLON.Vector3) {
 
         super(game, 'Guard', position, rotation);
-        this.mesh = game.factories['character'].createClone('Warrior', true);
+        this.mesh = game.getSceneManger().assets.character.createClone('Warrior', true);
 
         let items = [
             {

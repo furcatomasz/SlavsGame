@@ -4,7 +4,7 @@ import * as BABYLON from 'babylonjs';
 export class Heal extends AbstractParticle {
 
         initParticleSystem() {
-            let scene = this.game.getScene();
+            let scene = this.game.getBabylonScene();
             let emitter = BABYLON.Mesh.CreateBox("emitter0", 0.1, scene);
             emitter.isVisible = false;
             emitter.parent = this.emitter;

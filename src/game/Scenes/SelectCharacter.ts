@@ -12,7 +12,6 @@ export class SelectCharacter extends Scene {
     initScene(game:Game) {
 
         let self = this;
-        game.sceneManager = this;
         let playersToSelect = [];
         let gui = null;
         BABYLON.SceneLoader.Load("assets/scenes/Select_Map/", "Select_Map.babylon", game.engine, function (scene) {
@@ -24,7 +23,7 @@ export class SelectCharacter extends Scene {
                 .executeWhenReady(function () {
                     new EnvironmentSelectCharacter(game, scene);
 
-                    game.client.socket.on('showPlayersToSelect', function(players) {
+                    game.socketClient.socket.on('showPlayersToSelect', function(players) {
                         playersToSelect.forEach((playerSelect) => {
                             playerSelect.mesh.dispose();
                         });

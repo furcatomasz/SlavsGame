@@ -16,12 +16,12 @@ export class Chest {
      */
     constructor(game: Game, chestData, chestKey) {
         let self = this;
-        let scene = game.getScene();
+        let scene = game.getBabylonScene();
         let tooltip;
         let opened = chestData.opened;
         let position = chestData.position;
         let rotation = chestData.rotation;
-        let chestMesh = game.factories['chest'].createClone('chest', true);
+        let chestMesh = game.getSceneManger().assets.chest.createClone('chest', true);
         const gameCamera = scene.getCameraByName('gameCamera');
 
         if (!chestMesh) {
@@ -45,7 +45,7 @@ export class Chest {
         }
 
         this.mesh = chestMesh;
-        this.mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+        this.mesh.actionManager = new BABYLON.ActionManager(game.getBabylonScene());
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger,
             function () {
                 tooltip = new TooltipMesh(chestMesh, chestData.name);
@@ -59,8 +59,8 @@ export class Chest {
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPickTrigger,
             function () {
-                game.goToMeshFunction = GoToMeshAndRunAction.execute(game, chestMesh, () => {
-                    game.client.socket.emit('openChest', chestKey);
+                game.getSceneManger().goToAction = GoToMeshAndRunAction.execute(game, chestMesh, () => {
+                    game.socketClient.socket.emit('openChest', chestKey);
                 });
             })
         );

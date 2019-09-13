@@ -6,7 +6,7 @@ export class EnvironmentForestHouseStart extends AbstractEnvironment {
 
     constructor(game: Game) {
         super();
-        const scene = game.getScene();
+        const scene = game.getBabylonScene();
 
         for (let i = 0; i < scene.meshes.length; i++) {
             let sceneMesh = scene.meshes[i];

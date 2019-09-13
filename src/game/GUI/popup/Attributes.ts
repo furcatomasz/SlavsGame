@@ -111,7 +111,7 @@ export class Attributes extends Popup {
             control.addControl(button);
 
             button.onPointerUpObservable.add(function () {
-                self.guiMain.game.client.socket.emit('addAttribute', {
+                self.guiMain.game.socketClient.socket.emit('addAttribute', {
                     type: type
                 });
             });

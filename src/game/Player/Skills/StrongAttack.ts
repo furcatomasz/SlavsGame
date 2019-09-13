@@ -47,7 +47,7 @@ export class StrongAttack extends AbstractSkill {
                 }, 1000);
             });
             if (self.player.isControllable) {
-                game.client.socket.emit('attack', {
+                game.socketClient.socket.emit('attack', {
                     targetPoint: null
                 });
             }

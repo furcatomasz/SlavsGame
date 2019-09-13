@@ -16,9 +16,9 @@ export class OnRefreshPlayerEquip extends SocketEvent {
                 game.player.setCharacterStatistics(updatedPlayer.activePlayer);
                 game.gui.attributes.refreshPopup();
             } else {
-                game.remotePlayers.forEach(function (remotePlayer, key) {
+                game.getSceneManger().remotePlayers.forEach(function (remotePlayer, key) {
                     if (remotePlayer.id == updatedPlayer.activePlayer.id) {
-                        player = game.remotePlayers[key];
+                        player = game.getSceneManger().remotePlayers[key];
                         return;
                     }
                 });

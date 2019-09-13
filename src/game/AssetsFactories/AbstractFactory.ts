@@ -1,22 +1,15 @@
-import {Game} from "../game";
 import * as BABYLON from 'babylonjs';
 
 export abstract class AbstractFactory {
 
-    protected game: Game;
     protected scene: BABYLON.Scene;
-    protected assetsManager: BABYLON.AssetsManager;
     protected loadedMeshes: Array<BABYLON.Mesh>;
-    protected isAssetLoaded: Boolean;
 
-    protected taskName: string;
     protected dir: string;
     protected fileName: string;
 
-    constructor(game: Game, scene: BABYLON.Scene, assetsManager: BABYLON.AssetsManager) {
-        this.game = game;
+    protected constructor(scene: BABYLON.Scene) {
         this.scene = scene;
-        this.assetsManager = assetsManager;
     }
 
     public initFactory() {
@@ -39,7 +32,6 @@ export abstract class AbstractFactory {
                 if (cloneSkeleton) {
                     clonedMesh.skeleton = mesh.skeleton.clone('clone_skeleton_' + name, 'clone_skeleton_' + name);
                 }
-                clonedMesh.visibility = 1;
                 clonedMesh.isVisible = true;
                 clonedMesh.setEnabled(true);
 

@@ -50,7 +50,7 @@ export class Player extends AbstractCharacter {
         this.createMesh();
 
         this.bloodParticles = new Blood(game, this.mesh).particleSystem;
-        this.walkSmoke = WalkSmoke.getParticles(game.getScene(), 25, this.mesh);
+        this.walkSmoke = WalkSmoke.getParticles(game.getBabylonScene(), 25, this.mesh);
 
         this.inventory = new Inventory(game, this);
         this.inventory.setItems(serverData.activePlayer.items);
@@ -91,7 +91,7 @@ export class Player extends AbstractCharacter {
             new BABYLON.Vector3(0, -1, 0),
             null,
             null,
-            game.getScene());
+            game.getBabylonScene());
         playerLight.diffuse = new BABYLON.Color3(1, 0.7, 0.3);
         playerLight.angle = 0.7;
         playerLight.exponent = 70;
@@ -106,11 +106,11 @@ export class Player extends AbstractCharacter {
     private createMesh() {
         const game = this.game;
 
-        let mesh = game.factories['character'].createClone('Warrior', true);
+        let mesh = game.getSceneManger().assets.character.createClone('Warrior', true);
         mesh.skeleton.enableBlending(0.2);
         mesh.alwaysSelectAsActiveMesh = true;
         mesh.parent = this.meshForMove;
-        mesh.actionManager = new BABYLON.ActionManager(game.getScene());
+        mesh.actionManager = new BABYLON.ActionManager(game.getBabylonScene());
 
         this.mesh = mesh;
 
@@ -123,11 +123,11 @@ export class Player extends AbstractCharacter {
     private initSfx() {
         const game = this.game;
 
-        this.sfxWalk = new BABYLON.Sound("CharacterWalk", "assets/sounds/character/walk/1.mp3", game.getScene(), null, {
+        this.sfxWalk = new BABYLON.Sound("CharacterWalk", "assets/sounds/character/walk/1.mp3", game.getBabylonScene(), null, {
             loop: true,
             autoplay: false
         });
-        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getScene(), null, {
+        this.sfxHit = new BABYLON.Sound("CharacterHit", "assets/sounds/character/hit.mp3", game.getBabylonScene(), null, {
             loop: false,
             autoplay: false
         });
@@ -199,7 +199,7 @@ export class Player extends AbstractCharacter {
 
 
     public refreshCameraPosition() {
-        const camera = this.game.getScene().getCameraByName('gameCamera');
+        const camera = this.game.getBabylonScene().getCameraByName('gameCamera');
         camera.position = this.meshForMove.position.clone();
         camera.position.y = 18;
         camera.position.z -= 12;
@@ -251,7 +251,7 @@ export class Player extends AbstractCharacter {
 
         this.dynamicFunction = function () {
             if (mesh.intersectsPoint(targetPointVector3)) {
-                self.game.getScene().unregisterBeforeRender(self.dynamicFunction);
+                self.game.getBabylonScene().unregisterBeforeRender(self.dynamicFunction);
 
                 if (self.animation) {
                     self.animation.stop();
@@ -266,20 +266,20 @@ export class Player extends AbstractCharacter {
             }
         };
 
-        let scene = this.game.getScene();
+        let scene = this.game.getBabylonScene();
         if(scene) {
             scene.registerBeforeRender(this.dynamicFunction);
         }
     }
 
     public unregisterMoveWithCollision(emitPosition: boolean) {
-        let scene = this.game.getScene();
+        let scene = this.game.getBabylonScene();
         if (this.dynamicFunction !== undefined && scene) {
             scene.unregisterBeforeRender(this.dynamicFunction);
         }
 
         if (emitPosition) {
-            this.game.client.socket.emit('setTargetPoint', {
+            this.game.socketClient.socket.emit('setTargetPoint', {
                 position: this.meshForMove.position
             });
         }

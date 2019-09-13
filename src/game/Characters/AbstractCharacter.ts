@@ -41,7 +41,7 @@ export abstract class AbstractCharacter {
     }
 
     protected initPatricleSystemDamage() {
-        let emitterDamage = BABYLON.Mesh.CreateBox("emitter0", 0.1, this.game.getScene());
+        let emitterDamage = BABYLON.Mesh.CreateBox("emitter0", 0.1, this.game.getBabylonScene());
         emitterDamage.parent = this.mesh;
         emitterDamage.position.y = 4;
         emitterDamage.visibility = 0;
@@ -51,11 +51,11 @@ export abstract class AbstractCharacter {
     }
 
     public showDamage(damage) {
-        let dynamicTexture = new BABYLON.DynamicTexture(null, 128, this.game.getScene(), true);
+        let dynamicTexture = new BABYLON.DynamicTexture(null, 128, this.game.getBabylonScene(), true);
         let font = "44px RuslanDisplay";
         dynamicTexture.drawText(damage, 64, 80, font, "white", null, true, true);
 
-        let particleSystemDamage = new BABYLON.ParticleSystem(null, 1 /*Capacity, i.e. max of 1 at a time*/, this.game.getScene());
+        let particleSystemDamage = new BABYLON.ParticleSystem(null, 1 /*Capacity, i.e. max of 1 at a time*/, this.game.getBabylonScene());
         particleSystemDamage.emitter = this.particleSystemEmitter;
         particleSystemDamage.emitRate = 100;
         particleSystemDamage.minSize = 2.0;
@@ -79,7 +79,7 @@ export abstract class AbstractCharacter {
     }
 
     protected createBoxForMove(position: BABYLON.Vector3) {
-        const scene = this.game.getScene();
+        const scene = this.game.getBabylonScene();
 
         this.meshForMove = BABYLON.Mesh.CreateBox(this.name+'_moveBox', 4, scene, false);
         this.meshForMove.checkCollisions = true;
@@ -187,7 +187,7 @@ export abstract class AbstractCharacter {
     }
 
     public getWalkSpeed() {
-        let animationRatio = this.game.getScene().getAnimationRatio();
+        let animationRatio = this.game.getBabylonScene().getAnimationRatio();
 
         return this.statistics.walkSpeed / animationRatio;
     };

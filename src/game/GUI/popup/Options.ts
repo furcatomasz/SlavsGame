@@ -41,57 +41,57 @@ export class Options extends Popup {
             const shadowsGroup = new CheckboxGroup("Shadows");
             shadowsGroup.addCheckbox("Static shadows", (isChecked) => {
                 GameOptions.saveInLocalStorage('staticShadows', isChecked, game);
-            }, game.sceneManager.options.staticShadows);
+            }, game.getSceneManger().options.staticShadows);
             shadowsGroup.addCheckbox("Dynamic Shadows", (isChecked) => {
                 GameOptions.saveInLocalStorage('dynamicShadows', isChecked, game);
-            }, game.sceneManager.options.dynamicShadows);
+            }, game.getSceneManger().options.dynamicShadows);
 
 
             const postProccessGroup = new CheckboxGroup("Post proccessing");
             postProccessGroup.addCheckbox("Enabled", (isChecked) => {
                 GameOptions.saveInLocalStorage('postProccessing', isChecked, game);
-            }, game.sceneManager.options.postProccessing);
+            }, game.getSceneManger().options.postProccessing);
 
             postProccessGroup.addCheckbox("FXAA", (isChecked) => {
                 GameOptions.saveInLocalStorage('fxaa', isChecked, game);
-            }, game.sceneManager.options.fxaa);
+            }, game.getSceneManger().options.fxaa);
 
             // postProccessGroup.addCheckbox("Depth Of Field", (isChecked) => {
             //     GameOptions.saveInLocalStorage('dof', isChecked, game);
-            // }, game.sceneManager.options.dof);
+            // }, game.getSceneManger().options.dof);
 
             // let dofGroup = new SliderGroup("DOF", "S");
             // dofGroup.addSlider("fStop", (value) => {
             //     GameOptions.saveInLocalStorage('fStop', value, game);
-            // }, "", 0.01, 10, game.sceneManager.options.fStop, (value) => {
+            // }, "", 0.01, 10, game.getSceneManger().options.fStop, (value) => {
             //     return value;
             // });
             //
             // dofGroup.addSlider("focusDistance", (value) => {
             //     GameOptions.saveInLocalStorage('focusDistance', value, game);
-            // }, "", 0, 45000, game.sceneManager.options.focusDistance, (value) => {
+            // }, "", 0, 45000, game.getSceneManger().options.focusDistance, (value) => {
             //     return value;
             // });
             //
             // dofGroup.addSlider("focalLength", (value) => {
             //     GameOptions.saveInLocalStorage('focalLength', value, game);
-            // }, "", 0.01, 500.00, game.sceneManager.options.focalLength, (value) => {
+            // }, "", 0.01, 500.00, game.getSceneManger().options.focalLength, (value) => {
             //     return value;
             // });
             //
             // dofGroup.addSlider("lensSize", (value) => {
             //     GameOptions.saveInLocalStorage('lensSize', value, game);
-            // }, "", 0.01, 500.00, game.sceneManager.options.lensSize, (value) => {
+            // }, "", 0.01, 500.00, game.getSceneManger().options.lensSize, (value) => {
             //     return value;
             // });
 
             postProccessGroup.addCheckbox("Bloom", (isChecked) => {
                 GameOptions.saveInLocalStorage('bloom', isChecked, game);
-            }, game.sceneManager.options.bloom);
+            }, game.getSceneManger().options.bloom);
 
             postProccessGroup.addCheckbox("Fog", (isChecked) => {
                 GameOptions.saveInLocalStorage('fog', isChecked, game);
-            }, game.sceneManager.options.fog);
+            }, game.getSceneManger().options.fog);
 
             let selectBox = new SelectionPanel("sp", [shadowsGroup, postProccessGroup]);
             selectBox.width = 0.8;

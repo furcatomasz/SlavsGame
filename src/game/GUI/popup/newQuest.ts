@@ -33,7 +33,7 @@ export class NewQuest extends Popup {
         buttonAccept.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
 
         buttonAccept.onPointerUpObservable.add(function () {
-            self.guiMain.game.client.socket.emit('acceptQuest', self.questData.questId);
+            self.guiMain.game.socketClient.socket.emit('acceptQuest', self.questData.questId);
             self.close();
         });
 

@@ -8,7 +8,7 @@ import * as BABYLON from 'babylonjs';
 export class DroppedItem {
 
         public static showItem(game: Game, item: Item, position: BABYLON.Vector3, itemDropKey: number) {
-            let scene = game.getScene();
+            let scene = game.getBabylonScene();
 
             let droppedItemBox = BABYLON.Mesh.CreateBox(item.name + '_Box', 3, scene, false);
             droppedItemBox.checkCollisions = false;
@@ -38,7 +38,7 @@ export class DroppedItem {
             droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
                 function () {
                     game.gui.playerLogsQuests.addText(item.name + '  has been picked up.', 'green');
-                    game.client.socket.emit('addDroppedItem', itemDropKey);
+                    game.socketClient.socket.emit('addDroppedItem', itemDropKey);
                     droppedItemBox.dispose();
                     tooltip.container.dispose();
                     itemSprite.dispose();

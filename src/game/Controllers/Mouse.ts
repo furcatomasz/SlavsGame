@@ -26,9 +26,9 @@ export class Mouse {
                 if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
                     clickParticleSystem.start();
 
-                    if(game.goToMeshFunction) {
-                        scene.unregisterBeforeRender(game.goToMeshFunction);
-                        game.goToMeshFunction = null;
+                    if(game.getSceneManger().goToAction) {
+                        scene.unregisterBeforeRender(game.getSceneManger().goToAction);
+                        game.getSceneManger().goToAction = null;
                     }
                 }
             }
@@ -48,7 +48,7 @@ export class Mouse {
                 clickParticleSystem.emitter = new BABYLON.Vector3(self.targetPoint.x, 0, self.targetPoint.z); // the starting location
 
                 self.game.player.runPlayerToPosition(self.targetPoint);
-                self.game.client.socket.emit('setTargetPoint', {
+                self.game.socketClient.socket.emit('setTargetPoint', {
                     position: self.targetPoint
                 });
             }
@@ -70,7 +70,7 @@ export class Mouse {
 
                         if (lastUpdate < (new Date().getTime() / 500) - 0.3) {
                             lastUpdate = (new Date().getTime() / 500);
-                            self.game.client.socket.emit('setTargetPoint', {
+                            self.game.socketClient.socket.emit('setTargetPoint', {
                                 position: self.targetPoint
                             });
                         }

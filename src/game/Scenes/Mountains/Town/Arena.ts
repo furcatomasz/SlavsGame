@@ -9,7 +9,6 @@ export class Arena extends Scene {
     initScene(game: Game) {
         let self = this;
         let scene = new BABYLON.Scene(game.engine);
-        game.sceneManager = this;
         self
             .setDefaults(game, scene)
             .optimizeScene(scene)

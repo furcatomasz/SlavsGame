@@ -4,8 +4,8 @@ import * as BABYLON from 'babylonjs';
 export class HouseExit extends AbstractParticle {
 
         initParticleSystem() {
-            var particleSystem = new BABYLON.GPUParticleSystem("castleExit", { capacity:500 }, this.game.getScene());
-            particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getScene());
+            var particleSystem = new BABYLON.GPUParticleSystem("castleExit", { capacity:500 }, this.game.getBabylonScene());
+            particleSystem.particleTexture = new BABYLON.Texture("assets/flare.png", this.game.getBabylonScene());
             particleSystem.emitter = this.emitter; // the starting object, the emitter
             particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1); // Starting all from
             particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1); // To...

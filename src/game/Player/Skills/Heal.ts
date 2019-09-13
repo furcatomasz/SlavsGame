@@ -31,19 +31,19 @@ export class Heal extends AbstractSkill {
             self.effectEmitter.particleSystem.emitter.position.y = 1;
             self.effectEmitter.particleSystem.emitter.position.z = 2 * Math.sin(alpha);
 
-            alpha += 0.24 * game.getScene().getAnimationRatio();
+            alpha += 0.24 * game.getBabylonScene().getAnimationRatio();
         };
 
         self.player.runAnimationSkill(self.animationName, () => {
             self.effectEmitter.particleSystem.start();
-            game.getScene().registerBeforeRender(animateFunction);
+            game.getBabylonScene().registerBeforeRender(animateFunction);
             self.isInUse = true;
         }, null, self.animationLoop, self.animationSpeed);
 
         setTimeout(() => {
             self.player.animation.stop();
             self.effectEmitter.particleSystem.stop();
-            game.getScene().unregisterBeforeRender(animateFunction);
+            game.getBabylonScene().unregisterBeforeRender(animateFunction);
             self.isInUse = false;
         }, skillTime);
 

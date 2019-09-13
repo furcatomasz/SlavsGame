@@ -25,10 +25,10 @@ export class AttackActions {
             this.attackOnce = false;
             this.attackedMonster = monster;
 
-            game.goToMeshFunction = GoToMeshAndRunAction.execute(game, monster.meshForMove, () => {
+            game.getSceneManger().goToAction = GoToMeshAndRunAction.execute(game, monster.meshForMove, () => {
                 game.player.runAnimationDeathOrStand();
                 game.player.unregisterMoveWithCollision(true);
-                self.checkAttackObserver = game.getScene().onBeforeRenderObservable.add(() => {
+                self.checkAttackObserver = game.getBabylonScene().onBeforeRenderObservable.add(() => {
                     self.checkAttack(() => {
                         if (self.game.controller.attackPoint && !self.attackOnce) {
                             self.intervalAttackRegisteredFunction = setInterval(() => {
@@ -53,13 +53,13 @@ export class AttackActions {
     }
 
     public cancelCheckAttack(): void {
-        this.game.getScene().onBeforeRenderObservable.remove(this.checkAttackObserver);
+        this.game.getBabylonScene().onBeforeRenderObservable.remove(this.checkAttackObserver);
     }
 
     private intervalAttackFunction(): void {
         let game = this.game;
         if (!game.player.isAnySkillIsInUse()) {
-            game.client.socket.emit('attack', {
+            game.socketClient.socket.emit('attack', {
                 attack: this.attackedMonster.id,
                 targetPoint: game.controller.attackPoint.position,
                 rotation: game.controller.attackPoint.rotation,
@@ -72,7 +72,7 @@ export class AttackActions {
 
         if (game.player.monstersToAttack[this.attackedMonster.id] == !undefined) {
             this.intervalAttackFunction();
-            game.getScene().onBeforeRenderObservable.remove(this.checkAttackObserver);
+            game.getBabylonScene().onBeforeRenderObservable.remove(this.checkAttackObserver);
             actionAfterCheck();
         }
 

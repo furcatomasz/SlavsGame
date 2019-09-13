@@ -2,7 +2,7 @@ import {Player} from "../../Characters/Player";
 import {Game} from "../../game";
 import {Events} from "../../Events";
 import * as BABYLON from 'babylonjs';
-import {Button, Rectangle, TextBlock, Control } from 'babylonjs-gui';
+import {Button, Rectangle, TextBlock, Control, Image } from 'babylonjs-gui';
 
 export abstract class AbstractSkill {
     static TYPE = 0;
@@ -63,11 +63,11 @@ export abstract class AbstractSkill {
                 if (self.isReady && !player.isAnySkillIsInUse()) {
                     const position = player.meshForMove.position;
                     let rotation = player.meshForMove.rotation;
-                    let forwards = new BABYLON.Vector3(-(Math.sin(rotation.y)) / 1, 0, -(Math.cos(rotation.y)) / 1);
+                    let forwards = new BABYLON.Vector3(-(Math.sin(rotation.y)), 0, -(Math.cos(rotation.y)));
                     let newPosition = position.add(forwards);
 
-                    game.client.socket.emit('useSkill', self.getType());
-                    game.client.socket.emit('setTargetPoint', {
+                    game.socketClient.socket.emit('useSkill', self.getType());
+                    game.socketClient.socket.emit('setTargetPoint', {
                         position: newPosition
                     });
                     player.runPlayerToPosition(newPosition);
@@ -85,8 +85,8 @@ export abstract class AbstractSkill {
             const speedRatio = 1 / cooldownTime;
             this.isReady = false;
 
-            game.getScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, speedRatio, function () {
-                game.getScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
+            game.getBabylonScene().beginDirectAnimation(self.guiOverlay, [self.animationOverlay], 0, 30, false, speedRatio, function () {
+                game.getBabylonScene().beginDirectAnimation(self.guiImage, [self.animationAlpha], 0, 30, false);
                 self.isReady = true;
             });
         }
@@ -102,9 +102,7 @@ export abstract class AbstractSkill {
         imageSkill.width = 1;
         imageSkill.height = 1;
         imageSkill.thickness = 0;
-        //TODO: SRETCHH
-
-        // imageSkill.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
+        imageSkill.image.stretch = Image.STRETCH_UNIFORM;
 
         let overlay = new Rectangle();
         overlay.width = 1;
@@ -113,14 +111,6 @@ export abstract class AbstractSkill {
         overlay.color = "black";
         overlay.background = "black";
         overlay.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
-
-
-        //TODO: Animations
-        // imageSkill.animations = [];
-        // imageSkill.animations.push(this.animationAlpha);
-        //
-        // overlay.animations = [];
-        // overlay.animations.push(this.animationOverlay);
 
         grid.addControl(imageSkill, 0, number - 1);
         grid.addControl(overlay, 0, number - 1);

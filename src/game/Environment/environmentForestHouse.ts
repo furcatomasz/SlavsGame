@@ -9,7 +9,7 @@ export class EnvironmentForestHouse extends AbstractEnvironment {
 
     constructor(game: Game) {
         super();
-        const scene = game.getScene();
+        const scene = game.getBabylonScene();
         let self = this;
         let spsTrees = [];
         let spsPlants = [];
@@ -54,19 +54,19 @@ export class EnvironmentForestHouse extends AbstractEnvironment {
         }
 
         //SPS Nature
-        let spruce = game.factories['nature_grain'].createClone('spruce', false);
+        let spruce = game.getSceneManger().assets.natureGrain.createClone('spruce', false);
         spruce.visibility = 0;
         spruce.material.freeze();
 
-        let groundPlants = game.factories['nature_grain'].createClone('ground_plants', false);
+        let groundPlants = game.getSceneManger().assets.natureGrain.createClone('ground_plants', false);
         groundPlants.visibility = 0;
         groundPlants.material.freeze();
 
-        let fern = game.factories['nature_grain'].createClone('fern', false);
+        let fern = game.getSceneManger().assets.natureGrain.createClone('fern', false);
         fern.visibility = 0;
         fern.material.freeze();
 
-        let stone = game.factories['nature_grain'].createClone('stone', false);
+        let stone = game.getSceneManger().assets.natureGrain.createClone('stone', false);
         stone.visibility = 0;
         stone.material.freeze();
 

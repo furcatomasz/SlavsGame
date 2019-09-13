@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {EnvironmentSelectCharacter} from "../Environment/environmentSelectCharacter";
 import {Scene} from "./Scene";
 import {Warrior} from "../Characters/selectCharacter/Warrior";

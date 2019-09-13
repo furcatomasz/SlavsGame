@@ -1,5 +1,5 @@
 import * as BABYLON from 'babylonjs';
-import {Game} from "../game";
+import {Game} from "../Game";
 
 export class GatewayParticles {
 

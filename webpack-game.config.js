@@ -11,7 +11,7 @@ const gameConfig = {
     node: {
         fs: 'empty'
     },
-    entry: './src/game/initializer.ts',
+    entry: './src/game/Initializer.ts',
     devtool: 'inline-source-map',
     devServer: {
         contentBase: distFolder

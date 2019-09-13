@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {TooltipMesh} from "../GUI/Tooltips/TooltipMesh";
 import {NewQuest} from "../GUI/popup/newQuest";
 import * as BABYLON from 'babylonjs';

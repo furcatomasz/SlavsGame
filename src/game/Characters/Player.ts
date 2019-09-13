@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {AbstractCharacter} from "./AbstractCharacter";
 import {AttackActions} from "../Actions/AttackActions";
 import {Inventory} from "../Player/Inventory";

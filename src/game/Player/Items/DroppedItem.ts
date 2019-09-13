@@ -1,4 +1,4 @@
-import {Game} from "../../game";
+import {Game} from "../../Game";
 import {Item} from "./Item";
 import {BounceAnimation} from "../../Animations/BounceAnimation";
 import {TooltipMesh} from "../../GUI/Tooltips/TooltipMesh";

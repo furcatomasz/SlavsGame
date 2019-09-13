@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {PlayerBottomPanel} from "./PlayerBottomPanel";
 import {PlayerQuestsPanel} from "./PlayerQuestsPanel";
 import {PlayerQuestInformation} from "./PlayerQuestInformation";

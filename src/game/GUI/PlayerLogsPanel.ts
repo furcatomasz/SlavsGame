@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {AdvancedDynamicTexture, StackPanel, Image, TextBlock, Control,Rectangle} from 'babylonjs-gui';
 
 export class PlayerLogsPanel {

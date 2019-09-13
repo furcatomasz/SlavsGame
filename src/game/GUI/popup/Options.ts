@@ -1,4 +1,4 @@
-import {GameOptions} from "../../Options";
+import {GameOptions} from "../../Options/Options";
 import {Popup} from "./Popup";
 import {Main} from "../Main";
 import {SelectionPanel, Control, StackPanel, CheckboxGroup} from 'babylonjs-gui';

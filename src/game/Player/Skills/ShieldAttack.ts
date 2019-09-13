@@ -1,5 +1,5 @@
 import {AbstractSkill} from "./AbstractSkill";
-import {Game} from "../../game";
+import {Game} from "../../Game";
 import {AbstractCharacter} from "../../Characters/AbstractCharacter";
 import {ShieldAttack as ShieldAttackParticle} from "../../Particles/Skills/ShieldAttack";
 

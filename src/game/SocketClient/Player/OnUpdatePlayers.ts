@@ -1,7 +1,7 @@
 import {SocketEvent} from "../SocketEvent";
 import {Player} from "../../Characters/Player";
 import {AbstractCharacter} from "../../Characters/AbstractCharacter";
-import {Game} from "../../game";
+import {Game} from "../../Game";
 
 export class OnUpdatePlayers extends SocketEvent {
 

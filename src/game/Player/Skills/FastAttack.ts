@@ -1,4 +1,4 @@
-import {Game} from "../../game";
+import {Game} from "../../Game";
 import {AbstractSkill} from "./AbstractSkill";
 import {AbstractCharacter} from "../../Characters/AbstractCharacter";
 import {FastAttack as FastAttackParticle} from "../../Particles/Skills/FastAttack";

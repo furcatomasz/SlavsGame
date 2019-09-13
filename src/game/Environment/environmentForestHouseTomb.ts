@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {AbstractEnvironment} from "./AbstractEnvironment";
 import {Collisions} from "../Initializers/Collisions";
 import * as BABYLON from 'babylonjs';

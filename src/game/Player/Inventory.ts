@@ -1,5 +1,5 @@
 import {AbstractCharacter} from "../Characters/AbstractCharacter";
-import {Game} from "../game";
+import {Game} from "../Game";
 import {Item} from "./Items/Item";
 import {ItemManager} from "./Items/ItemManager";
 

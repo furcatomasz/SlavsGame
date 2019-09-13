@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {Monster} from "../Characters/Monster";
 import {GoToMeshAndRunAction} from "./GoToMeshAndRunAction";
 

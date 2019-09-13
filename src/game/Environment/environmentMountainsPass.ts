@@ -1,5 +1,5 @@
 import {AbstractEnvironment} from "./AbstractEnvironment";
-import {Game} from "../game";
+import {Game} from "../Game";
 import * as BABYLON from 'babylonjs';
 import {TerrainMaterial} from 'babylonjs-materials';
 

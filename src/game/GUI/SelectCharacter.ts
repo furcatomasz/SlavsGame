@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {AdvancedDynamicTexture, Rectangle, Button, Control, InputText} from 'babylonjs-gui';
 
 export class SelectCharacter {

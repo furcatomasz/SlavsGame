@@ -1,5 +1,5 @@
 import {TooltipMesh} from "../GUI/Tooltips/TooltipMesh";
-import {Game} from "../game";
+import {Game} from "../Game";
 import {GoToMeshAndRunAction} from "../Actions/GoToMeshAndRunAction";
 import {GatewayParticles as GatewayParticles} from "../Particles/GatewayParticles";
 import * as BABYLON from 'babylonjs';

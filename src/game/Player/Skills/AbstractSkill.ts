@@ -1,6 +1,6 @@
 import {Player} from "../../Characters/Player";
-import {Game} from "../../game";
-import {Events} from "../../Events";
+import {Game} from "../../Game";
+import {Events} from "../../Events/Events";
 import * as BABYLON from 'babylonjs';
 import {Button, Rectangle, TextBlock, Control, Image } from 'babylonjs-gui';
 

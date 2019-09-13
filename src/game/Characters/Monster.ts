@@ -1,5 +1,5 @@
 import {AbstractCharacter} from "./AbstractCharacter";
-import {Game} from "../game";
+import {Game} from "../Game";
 import {Blood} from "../Particles/Blood";
 import {WalkSmoke} from "../Particles/WalkSmoke";
 import * as BABYLON from 'babylonjs';

@@ -1,31 +1,31 @@
-import {Game} from "./game";
-import {SlavsLoader} from "./SlavsLoader";
-import {ShowEnemiesSocketEvent} from "./SocketClient/Enemies/ShowEnemiesSocketEvent";
-import {UpdateEnemiesSocketEvent} from "./SocketClient/Enemies/UpdateEnemiesSocketEvent";
-import {OnOpenChest} from "./SocketClient/Scene/Chests/OnOpenChest";
-import {OnRefreshChest} from "./SocketClient/Scene/Chests/OnRefreshChest";
-import {OnAddSpecialItem} from "./SocketClient/Scene/Items/OnAddSpecialItem";
-import {OnRefreshRandomSpecialItems} from "./SocketClient/Scene/Items/OnRefreshRandomSpecialItems";
-import {OnShowDroppedItem} from "./SocketClient/Scene/Items/OnShowDroppedItem";
-import {OnQuestRequirementDoneInformation} from "./SocketClient/Scene/Quests/OnQuestRequirementDoneInformation";
-import {OnQuestRequirementInformation} from "./SocketClient/Scene/Quests/OnQuestRequirementInformation";
-import {OnRefreshQuests} from "./SocketClient/Scene/Quests/OnRefreshQuests";
-import {OnChangeScene} from "./SocketClient/Scene/OnChangeScene";
-import {OnRefreshGateways} from "./SocketClient/Scene/OnRefreshGateways";
-import {OnAddAttribute} from "./SocketClient/Player/OnAddAttribute";
-import {OnAddExperience} from "./SocketClient/Player/OnAddExperience";
-import {OnNewLvl} from "./SocketClient/Player/OnNewLvl";
-import {OnRefreshPlayerEquip} from "./SocketClient/Player/OnRefreshPlayerEquip";
-import {OnShowPlayer} from "./SocketClient/Player/OnShowPlayer";
-import {OnUpdatePlayers} from "./SocketClient/Player/OnUpdatePlayers";
-import {OnUpdatePlayersSkills} from "./SocketClient/Player/OnUpdatePlayersSkills";
-import {SocketEvent} from "./SocketClient/SocketEvent";
-import {OnRemovePlayer} from "./SocketClient/Player/OnRemovePlayer";
-import {SelectCharacter} from "./Scenes/SelectCharacter";
+import {Game} from "../Game";
+import {SlavsLoader} from "../Loader/SlavsLoader";
+import {ShowEnemiesSocketEvent} from "./Enemies/ShowEnemiesSocketEvent";
+import {UpdateEnemiesSocketEvent} from "./Enemies/UpdateEnemiesSocketEvent";
+import {OnOpenChest} from "./Scene/Chests/OnOpenChest";
+import {OnRefreshChest} from "./Scene/Chests/OnRefreshChest";
+import {OnAddSpecialItem} from "./Scene/Items/OnAddSpecialItem";
+import {OnRefreshRandomSpecialItems} from "./Scene/Items/OnRefreshRandomSpecialItems";
+import {OnShowDroppedItem} from "./Scene/Items/OnShowDroppedItem";
+import {OnQuestRequirementDoneInformation} from "./Scene/Quests/OnQuestRequirementDoneInformation";
+import {OnQuestRequirementInformation} from "./Scene/Quests/OnQuestRequirementInformation";
+import {OnRefreshQuests} from "./Scene/Quests/OnRefreshQuests";
+import {OnChangeScene} from "./Scene/OnChangeScene";
+import {OnRefreshGateways} from "./Scene/OnRefreshGateways";
+import {OnAddAttribute} from "./Player/OnAddAttribute";
+import {OnAddExperience} from "./Player/OnAddExperience";
+import {OnNewLvl} from "./Player/OnNewLvl";
+import {OnRefreshPlayerEquip} from "./Player/OnRefreshPlayerEquip";
+import {OnShowPlayer} from "./Player/OnShowPlayer";
+import {OnUpdatePlayers} from "./Player/OnUpdatePlayers";
+import {OnUpdatePlayersSkills} from "./Player/OnUpdatePlayersSkills";
+import {SocketEvent} from "./SocketEvent";
+import {OnRemovePlayer} from "./Player/OnRemovePlayer";
+import {SelectCharacter} from "../Scenes/SelectCharacter";
 
 let io = require('socket.io-client');
 
-export class SocketIOClient {
+export class SocketClient {
     protected game: Game;
     public socket;
     public connectionId;
@@ -45,9 +45,6 @@ export class SocketIOClient {
         this.playerConnected();
     }
 
-    /**
-     * @returns {SocketIOClient}
-     */
     public playerConnected() {
         let self = this;
         let game = this.game;
@@ -88,8 +85,8 @@ export class SocketIOClient {
             });
 
         });
-        this.socket.emit('changeScene', SelectCharacter.TYPE);
-        // this.socket.emit('selectCharacter', 1);
+        // this.socket.emit('changeScene', SelectCharacter.TYPE);
+        this.socket.emit('selectCharacter', 1);
 
         return this;
     }

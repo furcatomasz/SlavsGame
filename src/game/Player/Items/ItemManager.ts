@@ -1,4 +1,4 @@
-import {Game} from "../../game";
+import {Game} from "../../Game";
 import {Item} from "./Item";
 import {Inventory} from "../Inventory";
 

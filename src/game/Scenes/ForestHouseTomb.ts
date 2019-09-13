@@ -1,5 +1,5 @@
 import {EnvironmentForestHouseTomb} from "../Environment/environmentForestHouseTomb";
-import {Game} from "../game";
+import {Game} from "../Game";
 import {Scene} from "./Scene";
 import * as BABYLON from 'babylonjs';
 

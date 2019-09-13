@@ -1,4 +1,4 @@
-import {Game} from "../../game";
+import {Game} from "../../Game";
 import {AbstractSkill} from "./AbstractSkill";
 
 export class Block extends AbstractSkill {

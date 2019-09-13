@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {TextBlock, Image, Grid, Rectangle, Control, Button} from 'babylonjs-gui';
 
 export class PlayerBottomPanel {

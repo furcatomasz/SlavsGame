@@ -1,5 +1,5 @@
 import {AbstractNpc} from "./AbstractNpc";
-import {Game} from "../../game";
+import {Game} from "../../Game";
 import * as BABYLON from 'babylonjs';
 
 export class Guard extends AbstractNpc {

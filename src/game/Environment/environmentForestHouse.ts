@@ -1,5 +1,5 @@
 import {AbstractEnvironment} from "./AbstractEnvironment";
-import {Game} from "../game";
+import {Game} from "../Game";
 import {Nature} from "../Particles/SolidParticleSystem/Nature";
 import {NatureBlock} from "../Particles/SolidParticleSystem/NatureBlock";
 import {TerrainMaterial} from 'babylonjs-materials';

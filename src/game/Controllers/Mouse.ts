@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {ClickParticles} from "../Particles/Pointer/ClickParticles";
 import * as BABYLON from 'babylonjs';
 

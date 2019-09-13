@@ -1,5 +1,5 @@
 import {Scene} from "./Scene";
-import {Game} from "../game";
+import {Game} from "../Game";
 import {EnvironmentMountainsPass} from "../Environment/environmentMountainsPass";
 import {Guard} from "../Characters/npc/Guard";
 import * as BABYLON from 'babylonjs';

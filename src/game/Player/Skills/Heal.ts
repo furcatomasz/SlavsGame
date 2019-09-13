@@ -1,7 +1,7 @@
 import {Heal as HealParticle} from "../../Particles/Skills/Heal";
 import {AbstractCharacter} from "../../Characters/AbstractCharacter";
 import {AbstractSkill} from "./AbstractSkill";
-import {Game} from "../../game";
+import {Game} from "../../Game";
 
 export class Heal extends AbstractSkill {
     static TYPE = 5;

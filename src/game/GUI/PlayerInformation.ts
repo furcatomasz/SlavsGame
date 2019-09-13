@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {Player} from "../Characters/Player";
 import {Container, Image, TextBlock, Control,Grid} from 'babylonjs-gui';
 

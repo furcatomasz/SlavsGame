@@ -1,5 +1,5 @@
 import {AbstractCharacter} from "../Characters/AbstractCharacter";
-import {Game} from "../game";
+import {Game} from "../Game";
 import {AdvancedDynamicTexture, StackPanel, Control, Slider, TextBlock} from 'babylonjs-gui';
 
 export class ShowHp {

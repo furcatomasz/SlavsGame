@@ -1,6 +1,6 @@
 import {SocketEvent} from "../SocketEvent";
 import {AbstractCharacter} from "../../Characters/AbstractCharacter";
-import {Game} from "../../game";
+import {Game} from "../../Game";
 import * as BABYLON from 'babylonjs';
 
 export class UpdateEnemiesSocketEvent extends SocketEvent {

@@ -2,10 +2,10 @@ import * as BABYLON from 'babylonjs';
 import {Scene} from "./Scenes/Scene";
 import {Mouse} from "./Controllers/Mouse";
 import {Player} from "./Characters/Player";
-import {SocketIOClient} from "./socketIOClient";
-import {Events} from "./Events";
+import {SocketClient} from "./SocketClient/socketClient";
+import {Events} from "./Events/Events";
 import {Main} from "./GUI/Main";
-import {SlavsLoader} from "./SlavsLoader";
+import {SlavsLoader} from "./Loader/SlavsLoader";
 
 export class Game {
 
@@ -15,7 +15,7 @@ export class Game {
 
     public controller: Mouse;
     public engine: BABYLON.Engine;
-    public socketClient: SocketIOClient;
+    public socketClient: SocketClient;
     public player: Player;
     public gui: Main;
 
@@ -33,7 +33,7 @@ export class Game {
         Game.MOBILE_CLIENT = isMobile;
         self.engine.loadingScreen = new SlavsLoader('Initialize engine');
         self.controller = new Mouse(self);
-        self.socketClient = new SocketIOClient(self);
+        self.socketClient = new SocketClient(self);
         self.events = new Events();
 
         self.socketClient.connect(serverUrl, accessToken);

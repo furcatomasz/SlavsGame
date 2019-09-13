@@ -1,4 +1,4 @@
-import {Game} from "../game";
+import {Game} from "../Game";
 import {StackPanel, AdvancedDynamicTexture, Control} from 'babylonjs-gui';
 
 export class RoomInformation {

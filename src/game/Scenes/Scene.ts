@@ -1,10 +1,10 @@
 import * as BABYLON from 'babylonjs';
-import {Game} from "../game";
+import {Game} from "../Game";
 import {Chest as ChestsObjects} from "../Initializers/Chest";
 import {RandomSpecialItem} from "../Initializers/RandomSpecialItem";
-import {SlavsLoader} from "../SlavsLoader";
-import {Events} from "../Events";
-import {GameOptions} from "../Options";
+import {SlavsLoader} from "../Loader/SlavsLoader";
+import {Events} from "../Events/Events";
+import {GameOptions} from "../Options/Options";
 import {AbstractEnvironment} from "../Environment/AbstractEnvironment";
 import {Player} from "../Characters/Player";
 import {Monster} from "../Characters/Monster";

@@ -25,8 +25,11 @@ export class Battleground extends Scene {
                 let terrainMaterial = new BABYLON.StandardMaterial("GroundMaterial", scene);
                 terrainMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
                 terrainMaterial.specularPower = 10;
-                terrainMaterial.diffuseTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
-                terrainMaterial.diffuseTexture.scale(20);
+
+                let diffuseTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+                diffuseTexture.uScale = 20;
+                diffuseTexture.vScale = 20;
+                terrainMaterial.diffuseTexture = diffuseTexture;
                 ground.material = terrainMaterial;
 
             }, function() {

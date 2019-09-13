@@ -99,7 +99,7 @@ export class Player extends AbstractCharacter {
         playerLight.parent = this.mesh;
 
         //TODO: verify
-        //playerLight.autoExtends = false;
+        // playerLight.autoExtends = false;
         this.playerLight = playerLight;
     }
 

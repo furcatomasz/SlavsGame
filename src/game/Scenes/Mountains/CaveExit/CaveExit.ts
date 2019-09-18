@@ -12,9 +12,6 @@ export class CaveExit extends Scene {
         BABYLON.SceneLoader.Load("assets/scenes/caveExit/", "caveExit.babylon", game.engine, function (scene) {
             self
                 .setDefaults(game, scene)
-                .optimizeScene(scene)
-                .setCamera(scene)
-                .setFog(scene)
                 .executeWhenReady(function () {
                     self.environment = new EnvironmentCaveExit(game);
                 }, function() {

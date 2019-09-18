@@ -10,7 +10,7 @@ import {SlavsLoader} from "./Loader/SlavsLoader";
 export class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 1;
+    static SHOW_DEBUG = 0;
     static MOBILE_CLIENT = false;
 
     public controller: Mouse;
@@ -18,26 +18,23 @@ export class Game {
     public socketClient: SocketClient;
     public player: Player;
     public gui: Main;
-
     public activeScene: Scene;
     public events: Events;
 
     constructor(canvasElement: HTMLCanvasElement, serverUrl: string, accessToken: string, isMobile: boolean = false, isDebug: boolean = false) {
-        let self = this;
-
-        self.engine = new BABYLON.Engine(canvasElement, false, null, false);
-
         if (isDebug) {
             Game.SHOW_DEBUG = 1;
         }
         Game.MOBILE_CLIENT = isMobile;
-        self.engine.loadingScreen = new SlavsLoader('Initialize engine');
-        self.controller = new Mouse(self);
-        self.socketClient = new SocketClient(self);
-        self.events = new Events();
 
-        self.socketClient.connect(serverUrl, accessToken);
-        self.reiszeListener();
+        this.engine = new BABYLON.Engine(canvasElement, false, null, false);
+        this.engine.loadingScreen = new SlavsLoader('Initialize engine');
+        this.controller = new Mouse(this);
+        this.socketClient = new SocketClient(this);
+        this.events = new Events();
+
+        this.socketClient.connect(serverUrl, accessToken);
+        this.reiszeListener();
     }
 
     getBabylonScene(): BABYLON.Scene {
@@ -64,7 +61,6 @@ export class Game {
     }
 
     public changeScene(newScene: Scene) {
-        let self = this;
         this.engine.stopRenderLoop();
         let sceneToDispose = this.getBabylonScene();
         if (sceneToDispose) {

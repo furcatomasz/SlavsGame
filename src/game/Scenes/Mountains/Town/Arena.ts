@@ -11,9 +11,6 @@ export class Arena extends Scene {
         let scene = new BABYLON.Scene(game.engine);
         self
             .setDefaults(game, scene)
-            .optimizeScene(scene)
-            .setCamera(scene)
-            .setFog(scene)
             .executeWhenReady(function () {
                 let light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
                 light.intensity = 1;

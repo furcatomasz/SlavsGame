@@ -1,5 +1,6 @@
 import {Game} from "../Game";
 import * as BABYLON from 'babylonjs';
+import {Fog} from "../Environment/Fog/Fog";
 
 export class GameOptions {
 
@@ -118,9 +119,9 @@ export class GameOptions {
         }
 
         if (this.fog) {
-            game.getSceneManger().setFog(game.getBabylonScene());
+            Fog.addFog(scene);
         } else {
-            game.getSceneManger().disableFog(game.getBabylonScene());
+            Fog.disableFog(scene);
         }
     }
 }

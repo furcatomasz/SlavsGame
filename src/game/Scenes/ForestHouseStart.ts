@@ -12,9 +12,6 @@ export class ForestHouseStart extends Scene {
         BABYLON.SceneLoader.Load("assets/scenes/forestStartHouse/", "forestHouseStart.babylon", game.engine, function (scene) {
             self
                 .setDefaults(game, scene)
-                .optimizeScene(scene)
-                .setCamera(scene)
-                .setFog(scene)
                 .executeWhenReady(function () {
                     self.environment = new EnvironmentForestHouseStart(game);
                 }, null);

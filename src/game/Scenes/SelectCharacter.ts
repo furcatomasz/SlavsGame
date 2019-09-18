@@ -16,10 +16,7 @@ export class SelectCharacter extends Scene {
         let gui = null;
         BABYLON.SceneLoader.Load("assets/scenes/Select_Map/", "Select_Map.babylon", game.engine, function (scene) {
             self
-                .setDefaults(game, scene)
-                .optimizeScene(scene)
-                .setCamera(scene)
-                // .setFog(scene)
+                .setDefaults(game, scene, true)
                 .executeWhenReady(function () {
                     new EnvironmentSelectCharacter(game, scene);
 
@@ -45,21 +42,6 @@ export class SelectCharacter extends Scene {
                 }, null, false);
         });
 
-    }
-
-    public setCamera(scene:BABYLON.Scene) {
-        let gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
-        gameCamera.position = new BABYLON.Vector3(0, 14, -20);
-        gameCamera.rotation = new BABYLON.Vector3(0.5, 0, 0);
-        gameCamera.maxZ = 200;
-        gameCamera.minZ = -200;
-        // camera.fov = 13.25;
-        gameCamera.fovMode = 0;
-        gameCamera.layerMask = 2;
-
-        scene.activeCameras = [gameCamera];
-
-        return this;
     }
 
 }

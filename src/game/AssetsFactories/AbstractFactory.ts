@@ -28,7 +28,7 @@ export abstract class AbstractFactory {
             mesh.layerMask = 2;
 
             if (mesh.name == name) {
-                let clonedMesh = mesh.clone('clone_' + name);
+                let clonedMesh = <BABYLON.Mesh> mesh.clone('clone_' + name);
                 if (cloneSkeleton) {
                     clonedMesh.skeleton = mesh.skeleton.clone('clone_skeleton_' + name, 'clone_skeleton_' + name);
                 }

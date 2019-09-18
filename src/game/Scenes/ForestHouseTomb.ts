@@ -13,9 +13,6 @@ export class ForestHouseTomb extends Scene {
         BABYLON.SceneLoader.Load("assets/scenes/Forest_House_Tomb/", "Forest_House_Tomb.babylon", game.engine, function (scene) {
             self
                 .setDefaults(game, scene)
-                .optimizeScene(scene)
-                .setCamera(scene)
-                .setFog(scene)
                 .executeWhenReady(function () {
                     self.environment = new EnvironmentForestHouseTomb(game, scene);
 

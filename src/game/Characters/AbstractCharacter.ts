@@ -34,6 +34,7 @@ export abstract class AbstractCharacter {
     public walkSmoke: BABYLON.IParticleSystem;
     public dynamicFunction;
     public particleSystemEmitter;
+    public navAgentIndex: number;
 
     constructor(name:string, game:Game) {
         this.name = name;
@@ -126,7 +127,7 @@ export abstract class AbstractCharacter {
             callbackStart();
         }
 
-        self.animation = skeleton.beginAnimation(animation, loop, 1*speed, function () {
+        self.animation = skeleton.beginAnimation(animation, loop, speed, function () {
             if (callbackEnd) {
                 callbackEnd();
             }

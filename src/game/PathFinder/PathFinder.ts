@@ -10,13 +10,14 @@ export class PathFinder {
 
     constructor(game: Game) {
         this.game = game;
+        this.navigationPlugin = new BABYLON.RecastJSPlugin();
     }
 
     public goTo(agentIndex: number, target: BABYLON.Vector3) {
         this.crowd.agentGoto(agentIndex, this.navigationPlugin.getClosestPoint(target))
     }
 
-    public initPathFinder(game: Game, navMesh: BABYLON.Mesh) {
+    public createNavMeshAndCrowd(game: Game, navMesh: BABYLON.Mesh) {
         let scene = game.getBabylonScene();
         // var ground = BABYLON.Mesh.CreateGround("Ground", 60, 60, 2, scene);
         let parameters = {

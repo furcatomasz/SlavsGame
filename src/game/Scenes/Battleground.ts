@@ -1,6 +1,7 @@
 import {Scene} from "./Scene";
 import {Game} from "../Game";
 import * as BABYLON from 'babylonjs';
+import {EnvironmentCaveExit} from "./Mountains/CaveExit/EnvironmentCaveExit";
 
 export class Battleground extends Scene {
 
@@ -23,12 +24,12 @@ export class Battleground extends Scene {
                 terrainMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
                 terrainMaterial.specularPower = 10;
 
-                let diffuseTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
-                diffuseTexture.uScale = 20;
-                diffuseTexture.vScale = 20;
-                terrainMaterial.diffuseTexture = diffuseTexture;
-                ground.material = terrainMaterial;
-
+                // let diffuseTexture = new BABYLON.Texture("assets/scenes/Forest_house/Grass_seamless_saturation.jpg", scene);
+                // diffuseTexture.uScale = 20;
+                // diffuseTexture.vScale = 20;
+                // terrainMaterial.diffuseTexture = diffuseTexture;
+                // ground.material = terrainMaterial;
+                self.environment = new EnvironmentCaveExit(game);
             }, function() {
                 // game.player.playerLight.dispose();
             });

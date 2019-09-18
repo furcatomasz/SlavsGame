@@ -6,7 +6,6 @@ import {TerrainMaterial} from 'babylonjs-materials';
 export class EnvironmentMountainsPass extends AbstractEnvironment {
 
     colliders: Array<BABYLON.AbstractMesh>;
-    ground: BABYLON.AbstractMesh;
 
     constructor(game: Game) {
         super();

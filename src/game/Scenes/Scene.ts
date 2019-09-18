@@ -21,7 +21,8 @@ export abstract class Scene {
     public babylonScene: BABYLON.Scene;
     protected assetManager: BABYLON.AssetsManager;
     public options: GameOptions;
-    public environment: AbstractEnvironment;
+    // public environment: AbstractEnvironment;
+    public environment: any;
 
     /**
      * Dynamic Collections
@@ -179,6 +180,9 @@ export abstract class Scene {
                             embedMode: true
                         });
                     }
+                    console.log(self.environment.ground);
+                    // self.pathFinder.createNavMeshAndCrowd(game, self.environment.ground);
+                    // self.pathFinder.addAgent(game.player.meshForMove);
 
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };

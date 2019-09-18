@@ -6,7 +6,6 @@ import * as BABYLON from 'babylonjs';
 export class EnvironmentForestHouseTomb extends AbstractEnvironment{
 
     colliders: Array<BABYLON.AbstractMesh>;
-    ground: BABYLON.AbstractMesh;
 
     constructor(game: Game, scene: BABYLON.Scene) {
         super();
@@ -14,7 +13,7 @@ export class EnvironmentForestHouseTomb extends AbstractEnvironment{
         this.colliders = [];
 
         for (let i = 0; i < scene.meshes.length; i++) {
-            let sceneMesh = scene.meshes[i];
+            let sceneMesh = <BABYLON.Mesh> scene.meshes[i];
             let meshName = scene.meshes[i]['name'];
 
             if (meshName.search("Ground") >= 0) {

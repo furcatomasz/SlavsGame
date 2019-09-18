@@ -12,7 +12,7 @@ export abstract class AbstractCharacter {
     public static ANIMATION_SKILL_02:string = 'Skill02';
 
     public mesh:BABYLON.Mesh;
-    public meshForMove:BABYLON.AbstractMesh;
+    public meshForMove:BABYLON.Mesh;
     public id:any;
     public name:string;
 

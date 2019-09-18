@@ -5,7 +5,7 @@ export abstract class AbstractEnvironment {
 
     public light: BABYLON.DirectionalLight;
     public staticShadowObjects;
-    public ground;
+    public ground: BABYLON.Mesh;
     protected colliders;
 
     constructor() {

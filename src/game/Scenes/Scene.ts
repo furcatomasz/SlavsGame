@@ -23,7 +23,8 @@ export abstract class Scene {
     public options: GameOptions;
     // public environment: AbstractEnvironment;
     public environment: any;
-
+    public enemiesActiveTargets: Array<any> = [];
+    public battleMusic: BABYLON.Sound;
     /**
      * Dynamic Collections
      */
@@ -65,41 +66,45 @@ export abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
 
         game.setScene(this);
         GameCamera.initCameraInScene(scene);
 
+        this.battleMusic = new BABYLON.Sound("BattleMusic", "assets/sounds/music/battle.mp3", scene, null, {
+            loop: true,
+            autoplay: false,
+            volume: 1
+        });
+
         return this;
+    }
+
+    public playBattleMusic() {
+        this.battleMusic.play();
+    }
+
+    public stopBattleMusic() {
+        let self = this;
+        self.battleMusic.setVolume(0, 2);
+        setTimeout(() => {
+            self.battleMusic.stop();
+        }, 2000)
     }
 
     protected playEnemiesAnimationsInFrumStrum() {
         let self = this;
         let scene = this.babylonScene;
         const gameCamera = scene.getCameraByName('gameCamera');
-        if (this.frumstrumEnemiesInterval) {
-            clearInterval(this.frumstrumEnemiesInterval);
-        }
 
-        let battleMusic = new BABYLON.Sound("Forest night", "assets/sounds/music/battle.mp3", scene, null, {
-            loop: true,
-            autoplay: false,
-            volume: 1
-        });
-        let timeoutNumber;
-
-        this.frumstrumEnemiesInterval = setInterval(function () {
-            let activeEnemies = 0;
-            self.enemies.forEach(function (enemy) {
+        clearInterval(this.frumstrumEnemiesInterval);
+        this.frumstrumEnemiesInterval = setInterval(() => {
+            self.enemies.forEach(enemy => {
                 if (enemy.isDeath) {
                     return;
                 }
 
                 let isActiveMesh = gameCamera.isInFrustum(enemy.mesh);
-                if (isActiveMesh) {
-                    activeEnemies = 1;
-                }
-
                 if (!enemy.animation && isActiveMesh) {
                     enemy.runAnimationStand();
                 } else if (enemy.animation && !isActiveMesh) {
@@ -107,21 +112,6 @@ export abstract class Scene {
                     enemy.animation = null;
                 }
             });
-
-            if (activeEnemies && !battleMusic.isPlaying) {
-                if (timeoutNumber) {
-                    timeoutNumber = clearTimeout(timeoutNumber);
-                    battleMusic.setVolume(1, 1);
-                } else {
-                    battleMusic.setVolume(1, 1);
-                    battleMusic.play();
-                }
-            } else if (!activeEnemies && battleMusic.isPlaying && !timeoutNumber) {
-                battleMusic.setVolume(0, 2);
-                timeoutNumber = setTimeout(() => {
-                    battleMusic.stop();
-                }, 2000)
-            }
         }, 1000);
 
         return this;
@@ -177,7 +167,7 @@ export abstract class Scene {
                             embedMode: true
                         });
                     }
-                    console.log(self.environment.ground);
+
                     // self.pathFinder.createNavMeshAndCrowd(game, self.environment.ground);
                     // self.pathFinder.addAgent(game.player.meshForMove);
 

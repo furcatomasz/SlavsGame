@@ -17,7 +17,7 @@ export class OnUpdatePlayers extends SocketEvent {
             if(!updatedPlayer.activePlayer.id) {
                 return;
             }
-console.log(updatedPlayer, game.getSceneManger().remotePlayers);
+
             game.getSceneManger().remotePlayers.forEach(function (remotePlayer, key) {
                 if (remotePlayer.id == updatedPlayer.activePlayer.id) {
                     player = game.getSceneManger().remotePlayers[key];

@@ -4,10 +4,9 @@ import {Enemy} from "./Enemy";
 import {RemotePlayer} from "./RemotePlayer";
 
 export class AIServer {
-    protected engine: BABYLON.Engine;
+    public engine: BABYLON.Engine;
     protected scene: BABYLON.Scene;
     protected socket;
-
     protected rooms: Room[] = [];
 
     constructor(canvas, socket) {
@@ -15,8 +14,16 @@ export class AIServer {
         this.initEngine(canvas);
     }
 
-    getRoomById(roomId: string): Room {
-        return ((this.rooms[roomId] != undefined)) ? this.rooms[roomId] : null;
+    getRoomById(roomId: string, createNewIfNotExists: boolean = true): Room {
+        if((this.rooms[roomId] == undefined)) {
+            if(!createNewIfNotExists) {
+                return null;
+            }
+
+            this.rooms[roomId] = new Room(this);
+        }
+
+        return this.rooms[roomId];
     }
 
     public initEngine(canvas) {
@@ -46,17 +53,8 @@ export class AIServer {
             let room = self.getRoomById(roomId);
             let localEnemy = room.enemies[remoteEnemyId];
             console.log('BABYLON: update enemy - ' + remoteEnemyId);
-
-            if (remoteEnemy.statistics.hp <= 0 && localEnemy) {
-                if (localEnemy.activeTargetPoints.length > 0) {
-                    localEnemy.activeTargetPoints.forEach(activeTargetFunction => {
-                        console.log('BABYLON: unregister function enemy - ' + remoteEnemyId);
-
-                        room.scene.unregisterBeforeRender(activeTargetFunction);
-                    });
-                    clearInterval(localEnemy.attackInterval);
-                    localEnemy.mesh.dispose();
-                }
+            if (remoteEnemy.statistics.hp <= 0) {
+                localEnemy.clearActiveTarget(room);
             }
         });
 
@@ -68,6 +66,7 @@ export class AIServer {
         this.socket.on('createEnemies', data => {
             let roomId = data.roomId;
             let room = self.getRoomById(roomId);
+            console.log(room);
             let scene = room.scene;
 
             if (!room.enemies.length) {
@@ -75,7 +74,6 @@ export class AIServer {
 
                 data.enemies.forEach((enemyData, key) => {
                     let enemy = room.enemies[key];
-                    console.log(enemy);
                     if (enemyData.statistics.hp > 0 && !enemy) {
                         let box = BABYLON.Mesh.CreateBox(data.id, 3, scene, false);
                         box.checkCollisions = false;
@@ -115,15 +113,10 @@ export class AIServer {
     public socketCreateRoom() {
         let self = this;
         this.socket.on('createRoom', roomId => {
-            let room = self.getRoomById(roomId);
+            let room = self.getRoomById(roomId, false);
             if (!room) {
                 console.log('BABYLON: crate new room with scene - ' + roomId);
-                this.rooms[roomId] = new Room();
-                let sceneForRoom = new BABYLON.Scene(self.engine);
-                sceneForRoom.collisionsEnabled = false;
-                let camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 200, 0), sceneForRoom);
-                camera.rotation = new BABYLON.Vector3(1.5, 1, 1);
-                this.rooms[roomId].scene = sceneForRoom;
+                self.rooms[roomId] = new Room(self);
             } else {
                 console.log('BABYLON: room exists - ' + roomId);
             }
@@ -146,7 +139,6 @@ export class AIServer {
                 return;
             }
             if (playerData.connectionId !== self.socket.id) {
-                //if user not exists create scene and box with action manager
                 let box = BABYLON.Mesh.CreateBox(activeCharacter.id, 3, scene, false);
                 box.checkCollisions = false;
                 box.position = new BABYLON.Vector3(playerData.position.x, playerData.position.y, playerData.position.z);
@@ -179,8 +171,10 @@ export class AIServer {
                         player.mesh.dispose();
                         delete room.players[playerId];
                         if(!Object.keys(room.players).length) {
-                            room.scene.dispose();
+                            room.removeRoom();
                             delete self.rooms[player.roomId];
+
+
                         }
                     }
                 });

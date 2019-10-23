@@ -10,7 +10,7 @@ import {SlavsLoader} from "./Loader/SlavsLoader";
 export class Game {
 
     static SHOW_COLLIDERS = 0;
-    static SHOW_DEBUG = 0;
+    static SHOW_DEBUG = 1;
     static MOBILE_CLIENT = false;
 
     public controller: Mouse;
@@ -53,9 +53,9 @@ export class Game {
 
     reiszeListener(): Game {
         let self = this;
-        window.addEventListener('resize', () => {
-            self.engine.resize();
-        });
+        // window.addEventListener('resize', () => {
+        //     self.engine.resize();
+        // });
 
         return this;
     }

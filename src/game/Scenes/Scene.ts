@@ -49,8 +49,6 @@ export abstract class Scene {
      */
     public goToAction;
 
-    public pathFinder: PathFinder;
-
     protected setDefaults(game: Game, scene: BABYLON.Scene, selectCharacterCamera: boolean = false) {
         BABYLON.SceneLoader.CleanBoneMatrixWeights = true;
         SlavsLoader.showLoaderWithText('Loading game...');
@@ -58,7 +56,6 @@ export abstract class Scene {
         this.assetManager = new BABYLON.AssetsManager(scene);
         this.assets = new Assets(scene);
         this.babylonScene = scene;
-        this.pathFinder = new PathFinder(game);
         this.game = game;
 
         scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);

@@ -13,7 +13,7 @@ export class Nature extends AbstractSolidParticle {
             let myBuilder = function (particle, i, s) {
                 let randomPosition = 2;
 
-                let position = new BABYLON.Vector3(parentPositions[(i * randomPosition + i)], parentPositions[i * randomPosition + i + 1], parentPositions[i * randomPosition + i + 2]);
+                let position = new BABYLON.Vector3(parentPositions[(s * randomPosition + s)], parentPositions[s * randomPosition + s + 1], parentPositions[s * randomPosition + s + 2]);
 
                 if(self.collider) {
                     let newCollider = self.collider.createInstance('sps_nature_collision');
@@ -31,7 +31,7 @@ export class Nature extends AbstractSolidParticle {
                 particle.scaling.z = random;
             };
 
-            let sps = new BABYLON.SolidParticleSystem('spsNature', this.game.getBabylonScene(), {updatable: false});
+            let sps = new BABYLON.SolidParticleSystem('spsNature', this.game.getBabylonScene(), {updatable: true});
             sps.addShape(this.shape, count, {positionFunction: myBuilder});
             let spsMesh = sps.buildMesh();
             spsMesh.material = this.shape.material;

@@ -2,7 +2,7 @@ const path = require('path');
 // Optimizes duplicates in splitted bundles
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
-// output folder location
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const distFolder = "./dist/game";
 
 const gameConfig = {
@@ -49,7 +49,16 @@ const gameConfig = {
     output: {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, distFolder)
-    }
+    },
+    plugins: [
+        new CopyWebpackPlugin([
+            {
+                from: __dirname + '/assets',
+                to: __dirname + '/' + distFolder +'/assets',
+                toType: 'dir'
+            }
+        ])
+    ]
 };
 
 

@@ -34,7 +34,7 @@ export class Game {
         this.events = new Events();
 
         this.socketClient.connect(serverUrl, accessToken);
-        this.reiszeListener();
+        this.resizeListener();
     }
 
     getBabylonScene(): BABYLON.Scene {
@@ -51,11 +51,11 @@ export class Game {
         return this;
     }
 
-    reiszeListener(): Game {
+    resizeListener(): Game {
         let self = this;
-        // window.addEventListener('resize', () => {
-        //     self.engine.resize();
-        // });
+        window.addEventListener('resize', () => {
+            self.engine.resize();
+        });
 
         return this;
     }

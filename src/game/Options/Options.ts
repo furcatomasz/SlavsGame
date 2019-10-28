@@ -15,10 +15,10 @@ export class GameOptions {
     public fxaa: boolean;
     public fog: boolean;
     public dof: boolean;
-    public fStop: boolean;
-    public focusDistance: boolean;
-    public focalLength: boolean;
-    public lensSize: boolean;
+    public fStop: number;
+    public focusDistance: number;
+    public focalLength: number;
+    public lensSize: number;
     public bloom: boolean;
 
     constructor(game: Game) {
@@ -104,18 +104,18 @@ export class GameOptions {
             this.renderingPipeline.depthOfFieldEnabled = this.dof;
             this.renderingPipeline.bloomEnabled = this.bloom;
             this.renderingPipeline.bloomThreshold = 0.1;
-            this.renderingPipeline.bloomWeight = 1;
+            this.renderingPipeline.bloomWeight = 0.5;
             this.renderingPipeline.bloomScale = 1;
             //TODO: DOFF
             // this.renderingPipeline.depthOfField.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
-            // this.renderingPipeline.depthOfField.fStop = this.fStop;
-            // this.renderingPipeline.depthOfField.focusDistance = this.focusDistance;
-            // this.renderingPipeline.depthOfField.focalLength = this.focalLength;
-            // this.renderingPipeline.depthOfField.lensSize = this.lensSize;
-            this.renderingPipeline.depthOfField.fStop = 0.27;
-            this.renderingPipeline.depthOfField.focusDistance = 43050;
-            this.renderingPipeline.depthOfField.focalLength = 292;
-            this.renderingPipeline.depthOfField.lensSize = 136;
+            this.renderingPipeline.depthOfField.fStop = this.fStop;
+            this.renderingPipeline.depthOfField.focusDistance = this.focusDistance;
+            this.renderingPipeline.depthOfField.focalLength = this.focalLength;
+            this.renderingPipeline.depthOfField.lensSize = this.lensSize;
+            // this.renderingPipeline.depthOfField.fStop = 0.27;
+            // this.renderingPipeline.depthOfField.focusDistance = 43050;
+            // this.renderingPipeline.depthOfField.focalLength = 292;
+            // this.renderingPipeline.depthOfField.lensSize = 136;
         }
 
         if (this.fog) {

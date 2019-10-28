@@ -98,6 +98,22 @@ export class Monster extends AbstractCharacter {
             clearInterval(this.intervalAttackRegisteredFunction);
         }
 
+        let scene = this.game.getBabylonScene();
+        let pcs= new BABYLON.PointsCloudSystem("pcs", 1, scene);
+        pcs.addSurfacePoints(this.mesh, 3000, BABYLON.PointColor.UV, new BABYLON.Color4(1, 0, 0, 1), 0.5);
+        //@ts-ignore
+        pcs.updateParticle = particle => {
+            particle.position.y += 0.3 *  Math.random();
+        };
+        pcs.buildMeshAsync();
+
+        let observer = scene.onBeforeRenderObservable.add(() => {
+            pcs.setParticles();
+        });
+        setTimeout(() => {
+            scene.onBeforeRenderObservable.remove(observer);
+        }, 3000);
+
         this.meshForMove.dispose();
         this.walkSmoke.dispose();
         this.bloodParticles.dispose();
@@ -120,9 +136,7 @@ export class Monster extends AbstractCharacter {
                 if (self.statistics.hp <= 0) {
                     self.isDeath = true;
                     self.animation.stop();
-                    setTimeout(() => {
-                        self.removeFromWorld();
-                    }, 6000);
+                    self.removeFromWorld();
                 }
 
                 self.game.gui.characterTopHp.refreshPanel();

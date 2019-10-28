@@ -11,7 +11,7 @@ export class GameCamera {
 
         let gameCamera = new BABYLON.FreeCamera("gameCamera", new BABYLON.Vector3(0, 0, 0), scene);
         gameCamera.rotation = new BABYLON.Vector3(0.75,0.75,0);
-        gameCamera.minZ = 15;
+        gameCamera.minZ = 10;
         gameCamera.fovMode = 0;
         gameCamera.layerMask = 2;
 

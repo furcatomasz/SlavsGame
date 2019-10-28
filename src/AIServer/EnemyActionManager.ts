@@ -27,15 +27,6 @@ export class EnemyActionManager {
             };
 
             let setEnemyTargetFunction = (enemy: Enemy, event: string) => {
-                console.log({
-                    enemyKey: enemy.key,
-                    position: enemy.mesh.position,
-                    roomId: roomId,
-                    target: enemy.target,
-                    attack: enemy.attack,
-                    availableCharactersToAttack: enemy.availableCharactersToAttack,
-                    collisionEvent: event
-                });
                 aiServer.socket.emit('setEnemyTarget', {
                     enemyKey: enemy.key,
                     position: enemy.mesh.position,
@@ -48,7 +39,7 @@ export class EnemyActionManager {
             };
 
             ////start attack
-            playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            const actionStartAttack = playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                 trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                 parameter: enemy.mesh
             }, () => {
@@ -60,13 +51,13 @@ export class EnemyActionManager {
                         setEnemyTargetFunction(enemy, 'OnIntersectionEnterTriggerAttack');
                     }, 1500);
 
-                    scene.onBeforeRenderObservable.remove(enemy.activeObserver);
+                    scene.onBeforeRenderObservable.remove(enemy.activeObservers[characterId]);
                     console.log('BABYLON: Enemy ' + key + ' start attack player ' + player.id + ', roomID:' + roomId);
                 }
             }));
 
             ////stop attack
-            playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            const actionStopAttack = playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                 trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
                 parameter: enemy.mesh
             }, function () {
@@ -77,27 +68,27 @@ export class EnemyActionManager {
                     setEnemyTargetFunction(enemy, 'OnIntersectionExitTriggerAttack');
                     clearInterval(enemy.attackInterval);
 
-                    enemy.activeObserver = scene.onBeforeRenderObservable.add(followObserver);
+                    enemy.activeObservers[characterId] = scene.onBeforeRenderObservable.add(followObserver);
                     console.log('BABYLON: Enemy ' + key + ' stop attack player ' + characterId + ', roomID:' + roomId);
                 }
             }));
 
             ///start following
-            playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            const actionStartFollowing = playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                 trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
                 parameter: enemy.visibilityAreaMesh
             }, () => {
                 if (!enemy.target) {
                     enemy.target = characterId;
                     setEnemyTargetFunction(enemy, 'OnIntersectionEnterTriggerVisibility');
-                    scene.onBeforeRenderObservable.remove(enemy.activeObserver);
-                    enemy.activeObserver = scene.onBeforeRenderObservable.add(followObserver);
+                    scene.onBeforeRenderObservable.remove(enemy.activeObservers[characterId]);
+                    enemy.activeObservers[characterId] = scene.onBeforeRenderObservable.add(followObserver);
                     console.log('BABYLON: Enemy ' + key + ' start following player ' + characterId + ', roomID:' + roomId);
                 }
             }));
 
             ///stop following
-            playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+            const actionStopFollowing = playerMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
                 trigger: BABYLON.ActionManager.OnIntersectionExitTrigger,
                 parameter: enemy.visibilityAreaMesh
             }, () => {
@@ -107,8 +98,13 @@ export class EnemyActionManager {
                     console.log('BABYLON: Enemy ' + key + ' lost player ' + characterId + ', roomID:' + roomId);
                 }
 
-                scene.onBeforeRenderObservable.remove(enemy.activeObserver);
+                scene.onBeforeRenderObservable.remove(enemy.activeObservers[characterId]);
             }));
+
+            enemy.actions.push(actionStartAttack);
+            enemy.actions.push(actionStopAttack);
+            enemy.actions.push(actionStartFollowing);
+            enemy.actions.push(actionStopFollowing);
         });
 
     }

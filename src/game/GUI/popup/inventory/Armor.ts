@@ -7,11 +7,10 @@ export class Armor extends EquipBlock {
     constructor(inventory: Inventory) {
         super(inventory);
 
-        this.blockWidth = "60px";
-        this.blockHeight = "60px";
-        this.blockTop = "-40px";
-        this.blockLeft = "130px";
-        this.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+        this.blockWidth = "153px";
+        this.blockHeight = "250px";
+        this.blockTop = "270px";
+        this.blockLeft = "228px";
 
         this.item = inventory.guiMain.game.player.inventory.armor;
 

@@ -40,7 +40,7 @@ export class Monster extends AbstractCharacter {
         mesh.outlineWidth = 0.1;
         mesh.parent = this.meshForMove;
 
-        // game.getSceneManger().options.addMeshToDynamicShadowGenerator(mesh);
+        game.getSceneManger().options.addMeshToDynamicShadowGenerator(mesh);
 
         this.mesh = mesh;
     }
@@ -97,26 +97,84 @@ export class Monster extends AbstractCharacter {
         if (this.intervalAttackRegisteredFunction) {
             clearInterval(this.intervalAttackRegisteredFunction);
         }
-
+        const self = this;
         let scene = this.game.getBabylonScene();
-        let pcs= new BABYLON.PointsCloudSystem("pcs", 1, scene);
-        pcs.addSurfacePoints(this.mesh, 3000, BABYLON.PointColor.UV, new BABYLON.Color4(1, 0, 0, 1), 0.5);
-        //@ts-ignore
-        pcs.updateParticle = particle => {
-            particle.position.y += 0.3 *  Math.random();
-        };
-        pcs.buildMeshAsync();
+        let pcs= new BABYLON.PointsCloudSystem("pcs", 1, scene, { updatable: false});
+        pcs.addSurfacePoints(this.mesh, 3000, BABYLON.PointColor.UV, new BABYLON.Color4(1, 0, 0, 1), 1);
+        pcs.buildMeshAsync().then(() => {
+            pcs.mesh.layerMask = 2;
+            self.meshForMove.dispose();
+            self.walkSmoke.dispose();
+            self.bloodParticles.dispose();
 
-        let observer = scene.onBeforeRenderObservable.add(() => {
-            pcs.setParticles();
+            let fireSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 1000 }, scene);
+            fireSystem.particleTexture = new BABYLON.Texture("assets/flare.png", scene);
+            fireSystem.emitter = self.meshForMove.position.clone(); // the starting object, the emitter
+            fireSystem.minEmitBox = new BABYLON.Vector3(-1, 2, -1); // Starting all from
+            fireSystem.maxEmitBox = new BABYLON.Vector3(1, 1, 1); // To...
+            fireSystem.color1 = new BABYLON.Color4(1, 0.5, 0, 1.0);
+            fireSystem.color2 = new BABYLON.Color4(1, 0.5, 0, 1.0);
+            fireSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0);
+            fireSystem.minSize = 0.3;
+            fireSystem.maxSize = 0.6;
+            fireSystem.minLifeTime = 0.2;
+            fireSystem.maxLifeTime = 0.6;
+            fireSystem.emitRate = 1000;
+            fireSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            fireSystem.gravity = new BABYLON.Vector3(0, 20, 0);
+            fireSystem.direction1 = new BABYLON.Vector3(0, 4, 0);
+            fireSystem.direction2 = new BABYLON.Vector3(0, 8, 0);
+            fireSystem.minAngularSpeed = 0;
+            fireSystem.maxAngularSpeed = Math.PI;
+            fireSystem.minEmitPower = 1;
+            fireSystem.maxEmitPower = 2;
+            fireSystem.layerMask = 2;
+
+            fireSystem.start();
+
+            let smokeSystem = new BABYLON.GPUParticleSystem("particles", { capacity: 500 }, scene);
+            smokeSystem.particleTexture = new BABYLON.Texture("assets/flare.png", scene);
+            smokeSystem.emitter = self.meshForMove.position.clone();
+            smokeSystem.minEmitBox = new BABYLON.Vector3(-0.8, 3, -0.8);
+            smokeSystem.maxEmitBox = new BABYLON.Vector3(0.8, 1, 0.8);
+            smokeSystem.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
+            smokeSystem.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0);
+            smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0);
+            smokeSystem.minSize = 0.3;
+            smokeSystem.maxSize = 1;
+            smokeSystem.minLifeTime = 0.5;
+            smokeSystem.maxLifeTime = 0.7;
+            smokeSystem.emitRate = 5000;
+            smokeSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+            smokeSystem.gravity = new BABYLON.Vector3(0, 20, 0);
+            smokeSystem.direction1 = new BABYLON.Vector3(-1, 6, -1);
+            smokeSystem.direction2 = new BABYLON.Vector3(0.5, 6, 0.5);
+            smokeSystem.minAngularSpeed = 0;
+            smokeSystem.maxAngularSpeed = Math.PI;
+            smokeSystem.minEmitPower = 1;
+            smokeSystem.maxEmitPower = 2;
+            smokeSystem.layerMask = 2;
+
+            smokeSystem.start();
+
+            setTimeout(() => {
+                smokeSystem.stop();
+                fireSystem.stop();
+            }, 500);
+
+
+            let observer = scene.onBeforeRenderObservable.add(() => {
+                // pcs.mesh.position.y += 0.1;
+                // pcs.mesh.material.alpha -= 0.04;
+            });
+            setTimeout(() => {
+                scene.onBeforeRenderObservable.remove(observer);
+                smokeSystem.dispose();
+                fireSystem.dispose();
+                // pcs.dispose();
+            }, 3000);
         });
-        setTimeout(() => {
-            scene.onBeforeRenderObservable.remove(observer);
-        }, 3000);
 
-        this.meshForMove.dispose();
-        this.walkSmoke.dispose();
-        this.bloodParticles.dispose();
     }
 
     retrieveHit(updatedEnemy) {

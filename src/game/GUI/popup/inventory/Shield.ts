@@ -7,11 +7,10 @@ export class Shield extends EquipBlock {
     constructor(inventory: Inventory) {
         super(inventory);
 
-        this.blockWidth = "60px";
-        this.blockHeight = "60px";
-        this.blockTop = "-40px";
-        this.blockLeft = "70px";
-        this.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+        this.blockWidth = "90px";
+        this.blockHeight = "146px";
+        this.blockTop = "248px";
+        this.blockLeft = "435px";
 
         this.item = inventory.guiMain.game.player.inventory.shield;
 

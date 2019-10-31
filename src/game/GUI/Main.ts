@@ -38,7 +38,6 @@ export class Main {
             this.attributes = new Attributes(this);
             this.inventory = new Inventory(this);
             this.options = new Options(this);
-
         }
 
     }

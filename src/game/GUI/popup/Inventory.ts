@@ -9,7 +9,7 @@ import {Boots} from "./inventory/Boots";
 import {Armor} from "./inventory/Armor";
 import {Helm} from "./inventory/Helm";
 import {TooltipHelper} from "../Tooltips/TooltipHelper";
-import {Rectangle, AdvancedDynamicTexture, Control, Image, TextBlock, Button, Grid} from 'babylonjs-gui';
+import {Rectangle, AdvancedDynamicTexture, Control, Image, TextBlock, Button, Grid, DisplayGrid} from 'babylonjs-gui';
 import * as BABYLON from 'babylonjs';
 
 export class Inventory extends Popup {
@@ -28,7 +28,7 @@ export class Inventory extends Popup {
         super(guiMain);
         this.meshes = [];
         this.name = 'Inventory';
-        this.imageUrl = "assets/gui/content.png";
+        this.imageUrl = "assets/gui/inventory.png";
     }
 
     protected initTexture() {
@@ -36,7 +36,7 @@ export class Inventory extends Popup {
         this.guiTexture.layer.layerMask = 1;
 
         let container = new Rectangle('gui.panel.' + this.name);
-        container.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+        container.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
         container.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
         container.thickness = 0;
         container.isPointerBlocker = true;
@@ -44,9 +44,24 @@ export class Inventory extends Popup {
         let image = new Image('gui.popup.image.', this.imageUrl);
         image.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
         image.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
-        image.width = 0.6;
-        image.height = 1;
         container.addControl(image);
+
+        let widthContainer = '607px';
+        let heightContainer = '960px';
+        let checklSizeListener = function (width) {
+            if (width > 1819) {
+                container.width = parseInt(widthContainer)+'px';
+                container.height = parseInt(heightContainer)+'px';
+            } else {
+                container.width = parseInt(widthContainer)/2+'px';
+                container.height = parseInt(heightContainer)/2+'px';
+            }
+        };
+        checklSizeListener(window.innerWidth);
+        window.addEventListener("resize", function () {
+            let width = window.innerWidth;
+            checklSizeListener(width);
+        });
 
         this.container = container;
         this.guiTexture.addControl(container);
@@ -55,11 +70,13 @@ export class Inventory extends Popup {
     }
 
     public open() {
+        const windowSize = this.guiMain.game.engine.getScreenAspectRatio();
+        const meshesPosition = new BABYLON.Vector3(-windowSize-2, -2, 12);
         let self = this;
         this.manageMainGUI(false);
         let inventoryPlayer = this.guiMain.game.player.mesh.createInstance('inventory_player');
         inventoryPlayer.layerMask = 1;
-        inventoryPlayer.position = new BABYLON.Vector3(-5, -2, 12);
+        inventoryPlayer.position = meshesPosition;
         inventoryPlayer.rotation = new BABYLON.Vector3(0, -0.2, 0);
         inventoryPlayer.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
         self.meshes.push(inventoryPlayer);
@@ -69,7 +86,7 @@ export class Inventory extends Popup {
             if (item) {
                 let itemInstance = item.mesh.createInstance("itemInstance");
                 itemInstance.layerMask = 1;
-                itemInstance.position = new BABYLON.Vector3(-5, -2, 12);
+                itemInstance.position = meshesPosition;
                 itemInstance.rotation = new BABYLON.Vector3(0, -0.2, 0);
                 itemInstance.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
                 self.meshes.push(itemInstance);
@@ -77,7 +94,6 @@ export class Inventory extends Popup {
         });
 
         this.initTexture();
-        this.showTexts();
         this.opened = true;
         this.showItems();
         this.showEquipedItems();
@@ -85,21 +101,6 @@ export class Inventory extends Popup {
         this.createButtonClose();
 
         return this;
-    }
-
-    private showTexts() {
-        let itemToEquip = new TextBlock('title');
-        itemToEquip.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-        itemToEquip.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        itemToEquip.text = 'Inventory items';
-        itemToEquip.top = "14px";
-        itemToEquip.color = "brown";
-        itemToEquip.width = "60%";
-        itemToEquip.height = "8%";
-        itemToEquip.fontSize = 38;
-        itemToEquip.fontFamily = "RuslanDisplay";
-        itemToEquip.textWrapping = true;
-        this.container.addControl(itemToEquip);
     }
 
     public showSpecialItemsAndGold() {
@@ -169,18 +170,30 @@ export class Inventory extends Popup {
         }
 
         let eqiupedItems = inventory.getEquipedItems();
-        let grid = new Grid("inventory.items");
-        grid.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-        grid.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        grid.width = '50%';
-        grid.height = '80%';
-        grid.top = '50px';
-        grid.addColumnDefinition(64, true);
+        let grid = new Grid();
+        grid.width = '568px';
+        grid.height ='288px';
+        grid.top = '247px';
         grid.addColumnDefinition(1);
+        grid.addColumnDefinition(1);
+        grid.addColumnDefinition(1);
+        grid.addColumnDefinition(1);
+        grid.addColumnDefinition(1);
+        grid.addColumnDefinition(1);
+        grid.addColumnDefinition(1);
+        grid.addColumnDefinition(1);
+
+        grid.addRowDefinition(1);
+        grid.addRowDefinition(1);
+        grid.addRowDefinition(1);
+        grid.addRowDefinition(1);
 
         this.container.addControl(grid);
 
         let itemCount = 0;
+        let row = -1;
+        let collumn = -1;
+
         for (let i = 0; i < inventory.items.length; i++) {
             let breakDisplayItem;
             let item = inventory.items[i];
@@ -190,43 +203,52 @@ export class Inventory extends Popup {
                     break;
                 }
             }
+
             if (breakDisplayItem) {
                 continue;
             }
 
-            grid.addRowDefinition(64, true);
+            if (itemCount % 8 == 0) {
+                row++;
+                collumn = -1;
+            }
+
+            itemCount++;
+            collumn++;
 
             let image = Button.CreateImageOnlyButton('gui.popup.image.' + item.name, 'assets/Miniatures/' + item.image + '.png');
             image.height = 1;
             image.width = 1;
             image.thickness = 0;
+            image.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+            image.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
 
-            let text = item.name;
-            if (item.statistics.damageMin > 0) {
-                text += "\nDamage: " + item.statistics.damageMin + " - " + item.statistics.damageMax + "";
-            }
-            if (item.statistics.armor > 0) {
-                text += "\nArmor: " + item.statistics.armor + "";
-            }
-            let label = new TextBlock();
-            label.text = text;
-            label.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER;
-            label.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
-            label.color = "black";
-            label.fontSize = 18;
+            grid.addControl(image, row, collumn);
 
-            grid.addControl(image, itemCount, 0);
-            grid.addControl(label, itemCount, 1);
-
-            TooltipHelper.createTooltipOnInventoryItemButton(self.guiTexture, item, image, function () {
+            TooltipHelper.createTooltipOnInventoryItemButton(self.guiTexture, item, image, function() {
                 self.guiMain.game.player.inventory.emitEquip(item);
                 self.onPointerUpItemImage(item);
                 self.showItems();
                 self.guiMain.attributes.refreshPopup();
             });
-
-            itemCount++;
         }
+
+        let checkSizeListener = function (width) {
+            if (width > 1819) {
+                grid.width = '568px';
+                grid.height = '288px';
+                grid.top = '247px';
+            } else {
+                grid.width = '284px';
+                grid.height = '144px';
+                grid.top = '123px';
+            }
+        }
+        checkSizeListener(window.innerWidth);
+        window.addEventListener("resize", function () {
+            let width = window.innerWidth;
+            checkSizeListener(width);
+        });
 
         return this;
     }

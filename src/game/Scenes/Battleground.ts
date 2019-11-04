@@ -41,13 +41,12 @@ export class Battleground extends Scene {
                 waterMesh.material = waterMaterial;
                 waterMesh.layerMask = 2;
                 waterMesh.isPickable = false;
-
                 // Configure water material
                 waterMaterial.addToRenderList(ground);
                 waterMaterial.addToRenderList(self.game.player.mesh);
                 // // waterMaterial.addToRenderList(skybox);
 
-                self.game.gui.inventory.open();
+                // self.game.gui.inventory.open();
             });
 
     }

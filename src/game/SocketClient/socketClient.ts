@@ -22,6 +22,7 @@ import {OnUpdatePlayersSkills} from "./Player/OnUpdatePlayersSkills";
 import {SocketEvent} from "./SocketEvent";
 import {OnRemovePlayer} from "./Player/OnRemovePlayer";
 import {SelectCharacter} from "../Scenes/SelectCharacter";
+import {OnAddDroppedItem} from "./Scene/Items/OnAddDroppedItem";
 
 let io = require('socket.io-client');
 
@@ -59,6 +60,7 @@ export class SocketClient {
             new OnAddSpecialItem(game, this.socket),
             new OnRefreshRandomSpecialItems(game, this.socket),
             new OnShowDroppedItem(game, this.socket),
+            new OnAddDroppedItem(game, this.socket),
 
             new OnQuestRequirementDoneInformation(game, this.socket),
             new OnQuestRequirementInformation(game, this.socket),

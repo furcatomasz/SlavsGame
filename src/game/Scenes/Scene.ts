@@ -13,6 +13,7 @@ import {AbstractNpc} from "../Characters/npc/AbstractNpc";
 import {Assets} from "../AssetsFactories/Assets";
 import {GameCamera} from "../Cameras/GameCamera";
 import {PathFinder} from "../PathFinder/PathFinder";
+import {DroppedItem} from "../Initializers/DroppedItem";
 
 export abstract class Scene {
     static TYPE = 0;
@@ -34,6 +35,7 @@ export abstract class Scene {
     public quests: Array<Quests> = [];
     public chests: Array<ChestsObjects> = [];
     public randomSpecialItems: Array<RandomSpecialItem> = [];
+    public droppedItems: Array<DroppedItem> = [];
 
     /**
      * Assets

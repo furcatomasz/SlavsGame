@@ -99,6 +99,11 @@ export class Monster extends AbstractCharacter {
         }
         const self = this;
         let scene = this.game.getBabylonScene();
+        delete this.game.player.monstersToAttack[this.id];
+        if(this.game.controller.attackPoint == this.meshForMove) {
+            this.game.controller.attackPoint = null;
+        }
+
         let pcs= new BABYLON.PointsCloudSystem("pcs", 1, scene, { updatable: false});
         pcs.addSurfacePoints(this.mesh, 3000, BABYLON.PointColor.UV, new BABYLON.Color4(1, 0, 0, 1), 1);
         pcs.buildMeshAsync().then(() => {
@@ -164,14 +169,14 @@ export class Monster extends AbstractCharacter {
 
 
             let observer = scene.onBeforeRenderObservable.add(() => {
-                // pcs.mesh.position.y += 0.1;
-                // pcs.mesh.material.alpha -= 0.04;
+                pcs.mesh.position.y += 0.1;
+                pcs.mesh.material.alpha -= 0.04;
             });
             setTimeout(() => {
                 scene.onBeforeRenderObservable.remove(observer);
                 smokeSystem.dispose();
                 fireSystem.dispose();
-                // pcs.dispose();
+                pcs.dispose();
             }, 3000);
         });
 

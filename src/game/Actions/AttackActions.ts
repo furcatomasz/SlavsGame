@@ -25,16 +25,14 @@ export class AttackActions {
             this.attackOnce = false;
             this.attackedMonster = monster;
 
-            game.getSceneManger().goToAction = GoToMeshAndRunAction.execute(game, monster.meshForMove, () => {
+            GoToMeshAndRunAction.execute(game, monster.meshForMove, () => {
                 game.player.runAnimationDeathOrStand();
                 game.player.unregisterMoveWithCollision(true);
                 self.checkAttackObserver = game.getBabylonScene().onBeforeRenderObservable.add(() => {
                     self.checkAttack(() => {
-                        if (self.game.controller.attackPoint && !self.attackOnce) {
-                            self.intervalAttackRegisteredFunction = setInterval(() => {
-                                self.intervalAttackFunction();
-                            }, 100);
-                        }
+                        self.intervalAttackRegisteredFunction = setInterval(() => {
+                            self.intervalAttackFunction();
+                        }, 100);
                     });
                 });
             });
@@ -73,7 +71,10 @@ export class AttackActions {
         if (game.player.monstersToAttack[this.attackedMonster.id] == !undefined) {
             this.intervalAttackFunction();
             game.getBabylonScene().onBeforeRenderObservable.remove(this.checkAttackObserver);
-            actionAfterCheck();
+
+            if(!this.attackOnce) {
+                actionAfterCheck();
+            }
         }
 
     }

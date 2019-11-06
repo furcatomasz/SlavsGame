@@ -48,7 +48,7 @@ export abstract class Scene {
     /**
      *  Player go to action
      */
-    public goToAction;
+    public goToAction: BABYLON.Observer<any>;
 
     protected setDefaults(game: Game, scene: BABYLON.Scene, selectCharacterCamera: boolean = false) {
         BABYLON.SceneLoader.CleanBoneMatrixWeights = true;
@@ -66,7 +66,7 @@ export abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = true;
+        scene.audioEnabled = false;
 
         game.setScene(this);
         GameCamera.initCameraInScene(scene);

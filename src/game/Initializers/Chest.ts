@@ -55,7 +55,7 @@ export class Chest {
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPickTrigger,
             function () {
-                game.getSceneManger().goToAction = GoToMeshAndRunAction.execute(game, chestMesh, () => {
+                GoToMeshAndRunAction.execute(game, chestMesh, () => {
                     game.socketClient.socket.emit('openChest', chestKey);
                 });
             })

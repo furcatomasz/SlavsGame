@@ -33,7 +33,7 @@ export class RandomSpecialItem {
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPickTrigger,
             function () {
-                game.getSceneManger().goToAction = GoToMeshAndRunAction.execute(game, randomItemMesh, () => {
+                GoToMeshAndRunAction.execute(game, randomItemMesh, () => {
                     game.socketClient.socket.emit('pickRandomItem', randomSpecialItemKey);
                 });
             })

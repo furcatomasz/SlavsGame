@@ -45,7 +45,7 @@ export class Gateway {
                 return;
             }
 
-            game.getSceneManger().goToAction = GoToMeshAndRunAction.execute(game, gateway, () => {
+            GoToMeshAndRunAction.execute(game, gateway, () => {
                 game.socketClient.socket.emit('changeSceneTrigger', openSceneType);
             });
 

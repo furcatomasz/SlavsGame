@@ -25,11 +25,6 @@ export class Mouse {
                 let pickedMesh = pickResult.pickedMesh;
                 if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
                     clickParticleSystem.start();
-
-                    if(game.getSceneManger().goToAction) {
-                        scene.unregisterBeforeRender(game.getSceneManger().goToAction);
-                        game.getSceneManger().goToAction = null;
-                    }
                 }
             }
         }
@@ -41,6 +36,8 @@ export class Mouse {
             }
             clickTrigger = true;
             if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
+                scene.onBeforeRenderObservable.remove(game.getSceneManger().goToAction);
+
                 game.player.attackActions.cancelCheckAttack();
                 self.attackPoint = null;
                 self.targetPoint = pickResult.pickedPoint;

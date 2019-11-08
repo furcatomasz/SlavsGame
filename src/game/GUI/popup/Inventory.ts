@@ -11,6 +11,7 @@ import {Helm} from "./inventory/Helm";
 import {TooltipHelper} from "../Tooltips/TooltipHelper";
 import {Rectangle, AdvancedDynamicTexture, Control, Image, TextBlock, Button, Grid, DisplayGrid} from 'babylonjs-gui';
 import * as BABYLON from 'babylonjs';
+import {InventoryEnvironment} from "../../Environment/Inventory/InventoryEnvironment";
 
 export class Inventory extends Popup {
 
@@ -22,13 +23,15 @@ export class Inventory extends Popup {
     protected helmImage: EquipBlock;
 
     protected panelItems: Rectangle;
-    private meshes: Array<BABYLON.AbstractMesh>;
+    private items: Array<BABYLON.AbstractMesh> = [];
+    private inventoryPlayer: BABYLON.AbstractMesh;
+    private inventoryEnvironment: InventoryEnvironment;
 
     constructor(guiMain: Main) {
         super(guiMain);
-        this.meshes = [];
         this.name = 'Inventory';
         this.imageUrl = "assets/gui/inventory.png";
+        this.inventoryEnvironment = new InventoryEnvironment(guiMain.game);
     }
 
     protected initTexture() {
@@ -70,31 +73,39 @@ export class Inventory extends Popup {
     }
 
     public open() {
-        const windowSize = this.guiMain.game.engine.getScreenAspectRatio();
+        let game = this.guiMain.game;
+        const windowSize = game.engine.getScreenAspectRatio();
         const meshesPosition = new BABYLON.Vector3(-windowSize-2, -2, 12);
+
         let self = this;
         this.manageMainGUI(false);
-        let inventoryPlayer = this.guiMain.game.player.mesh.createInstance('inventory_player');
-        inventoryPlayer.layerMask = 1;
-        inventoryPlayer.position = meshesPosition;
-        inventoryPlayer.rotation = new BABYLON.Vector3(0, -0.2, 0);
-        inventoryPlayer.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
-        self.meshes.push(inventoryPlayer);
+console.log(this.isRefresh);
+        if(!this.isRefresh) {
+            let inventoryPlayer = game.player.mesh.createInstance('inventory_player');
+            inventoryPlayer.layerMask = 1;
+            inventoryPlayer.position = meshesPosition;
+            inventoryPlayer.rotation = new BABYLON.Vector3(0, -0.2, 0);
+            inventoryPlayer.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
+            this.inventoryPlayer = inventoryPlayer;
+            this.inventoryEnvironment.create(inventoryPlayer);
+            this.inventoryEnvironment.waterMaterial.addToRenderList(inventoryPlayer);
+        }
 
-        this.guiMain.game.getBabylonScene().getCameraByName('gameCamera').position.y = 500;
-        this.guiMain.game.player.inventory.getEquipedItems().forEach((item) => {
+        game.getBabylonScene().getCameraByName('gameCamera').position.y = 500;
+        game.player.inventory.getEquipedItems().forEach((item) => {
             if (item) {
                 let itemInstance = item.mesh.createInstance("itemInstance");
                 itemInstance.layerMask = 1;
                 itemInstance.position = meshesPosition;
                 itemInstance.rotation = new BABYLON.Vector3(0, -0.2, 0);
                 itemInstance.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
-                self.meshes.push(itemInstance);
+                self.items.push(itemInstance);
             }
         });
 
         this.initTexture();
         this.opened = true;
+        this.isRefresh = false;
         this.showItems();
         this.showEquipedItems();
         this.showSpecialItemsAndGold();
@@ -104,41 +115,41 @@ export class Inventory extends Popup {
     }
 
     public showSpecialItemsAndGold() {
-        // let image = Button.CreateImageButton("gui.popup.image.gold", ''+this.guiMain.game.player.gold+'', "assets/gui/gold.png");
-        // image.thickness = 0;
-        // image.color = 'white';
-        // image.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
-        // image.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        // this.container.addControl(image);
-        //
-        // let image2 = Button.CreateImageButton("gui.popup.image.key", ''+this.guiMain.game.player.keys+'', "assets/gui/key.png");
-        // image2.thickness = 0;
-        // image2.color = 'white';
-        // image2.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
-        // image2.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        // this.container.addControl(image2);
-        //
-        // let image3 = Button.CreateImageButton("gui.popup.image.wine", '0', "assets/skills/heal.png");
-        // image3.thickness = 0;
-        // image3.color = 'white';
-        // image3.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
-        // image3.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        // this.container.addControl(image3);
-        //
-        // image.height = '36px';
-        // image.width = '150px';
-        // image.left = "-150px";
-        // image.fontSize = 18;
-        //
-        // image2.height = '36px';
-        // image2.width = '150px';
-        // image2.left = "20px";
-        // image2.fontSize = 18;
-        //
-        // image3.height = '36px';
-        // image3.width = '150px';
-        // image3.left = "-300px";
-        // image3.fontSize = 18;
+        let image = Button.CreateImageButton("gui.popup.image.gold", ''+this.guiMain.game.player.gold+'', "assets/gui/gold.png");
+        image.thickness = 0;
+        image.color = 'white';
+        image.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+        image.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        this.container.addControl(image);
+
+        let image2 = Button.CreateImageButton("gui.popup.image.key", ''+this.guiMain.game.player.keys+'', "assets/gui/key.png");
+        image2.thickness = 0;
+        image2.color = 'white';
+        image2.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+        image2.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        this.container.addControl(image2);
+
+        let image3 = Button.CreateImageButton("gui.popup.image.wine", '0', "assets/skills/heal.png");
+        image3.thickness = 0;
+        image3.color = 'white';
+        image3.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+        image3.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        this.container.addControl(image3);
+
+        image.height = '36px';
+        image.width = '150px';
+        image.left = "-150px";
+        image.fontSize = 18;
+
+        image2.height = '36px';
+        image2.width = '150px';
+        image2.left = "20px";
+        image2.fontSize = 18;
+
+        image3.height = '36px';
+        image3.width = '150px';
+        image3.left = "-300px";
+        image3.fontSize = 18;
     }
 
     public close() {
@@ -146,9 +157,14 @@ export class Inventory extends Popup {
         this.opened = false;
         this.guiTexture.dispose();
         this.buttonClose = null;
-        this.meshes.forEach((mesh) => {
+        this.items.forEach((mesh) => {
             mesh.dispose();
         });
+
+        if(!this.isRefresh) {
+            this.inventoryEnvironment.dispose();
+            this.inventoryPlayer.dispose();
+        }
         this.guiMain.game.player.refreshCameraPosition();
     }
 

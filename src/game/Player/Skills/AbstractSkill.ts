@@ -61,6 +61,12 @@ export abstract class AbstractSkill {
             const player = game.player;
             self.guiImage.onPointerUpObservable.add(function () {
                 if (self.isReady && !player.isAnySkillIsInUse()) {
+                    if(Object.keys(player.monstersToAttack).length) {
+                        const monsterToAttack = Object.keys(player.monstersToAttack)[0];
+                        let targetPoint = game.getSceneManger().enemies[monsterToAttack].meshForMove.position.clone();
+                        player.meshForMove.lookAt(targetPoint, Math.PI);
+                    }
+
                     const position = player.meshForMove.position;
                     let rotation = player.meshForMove.rotation;
                     let forwards = new BABYLON.Vector3(-(Math.sin(rotation.y)), 0, -(Math.cos(rotation.y)));

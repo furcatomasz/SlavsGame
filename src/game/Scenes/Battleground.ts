@@ -45,8 +45,6 @@ export class Battleground extends Scene {
                 waterMaterial.addToRenderList(ground);
                 waterMaterial.addToRenderList(self.game.player.mesh);
                 // // waterMaterial.addToRenderList(skybox);
-
-                // self.game.gui.inventory.open();
             });
 
     }

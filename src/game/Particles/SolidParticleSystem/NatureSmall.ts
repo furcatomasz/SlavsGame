@@ -34,6 +34,7 @@ export class NatureSmall extends AbstractSolidParticle {
             sps.addShape(this.shape, count, {positionFunction: myBuilder});
             let spsMesh = sps.buildMesh();
             spsMesh.material = this.shape.material;
+            this.spsMesh = spsMesh;
 
             return this;
         }

@@ -13,6 +13,7 @@ export abstract class Popup {
     protected position: number;
     protected containerBackground: Image;
     protected buttonClose: Control;
+    protected isRefresh: Boolean;
 
     constructor(guiMain: Main) {
         this.guiMain = guiMain;
@@ -79,6 +80,7 @@ export abstract class Popup {
 
 
     public refreshPopup() {
+        this.isRefresh = true;
         if (this.opened) {
             this.close();
             this.open();

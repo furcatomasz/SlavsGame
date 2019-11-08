@@ -158,6 +158,9 @@ export class Player extends AbstractCharacter {
             },
             {
                 type: 4,
+            },
+            {
+                type: 5,
             }];
         let self = this;
         this.skills = [];

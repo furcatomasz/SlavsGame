@@ -202,7 +202,9 @@ export class Inventory {
                             resolve();
                         });
                     }).then(function () {
-                        game.gui.inventory.refreshPopup();
+                        if(game.gui.inventory.opened) {
+                            game.gui.inventory.refreshPopup();
+                        }
                     });
                 });
             }

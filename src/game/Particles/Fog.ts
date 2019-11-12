@@ -14,8 +14,8 @@ export class Fog extends AbstractParticle {
             fog.color2 = new BABYLON.Color4(1, 1, 1, 0.15);
             fog.colorDead = new BABYLON.Color4(0.9, 0.9, 0.9, 0.1);
 
-            fog.minSize = 20.0;
-            fog.maxSize = 40.0;
+            fog.minSize = 10.0;
+            fog.maxSize = 20.0;
 
             fog.minLifeTime = 1;
             fog.maxLifeTime = 8;

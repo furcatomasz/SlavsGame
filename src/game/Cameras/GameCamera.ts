@@ -27,7 +27,7 @@ export class GameCamera {
         let guiCamera = new BABYLON.FreeCamera("GUICamera", new BABYLON.Vector3(0, 0, 0), scene);
         guiCamera.layerMask = 1;
         guiCamera.rotation = new BABYLON.Vector3(0.75,0.75,0);
-        guiCamera.position = new BABYLON.Vector3(-10,14,-2);
+        guiCamera.position = new BABYLON.Vector3(-9,10,3);
 
         scene.activeCameras = [gameCamera, guiCamera];
         scene.cameraToUseForPointers = gameCamera;

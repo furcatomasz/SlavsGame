@@ -75,11 +75,12 @@ export class Inventory extends Popup {
     public open() {
         let game = this.guiMain.game;
         const windowSize = game.engine.getScreenAspectRatio();
-        const meshesPosition = new BABYLON.Vector3(-windowSize-2, -2, 12);
+        console.log(windowSize);
+        const meshesPosition = new BABYLON.Vector3(-4, -2, 12);
 
         let self = this;
         this.manageMainGUI(false);
-console.log(this.isRefresh);
+
         if(!this.isRefresh) {
             let inventoryPlayer = game.player.mesh.createInstance('inventory_player');
             inventoryPlayer.layerMask = 1;

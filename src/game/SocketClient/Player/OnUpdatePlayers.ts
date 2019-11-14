@@ -13,6 +13,8 @@ export class OnUpdatePlayers extends SocketEvent {
         let game = this.game;
 
         this.socket.on('updatePlayer', function (updatedPlayer) {
+            console.log(updatedPlayer, game.getSceneManger().remotePlayers.length);
+
             let player = null;
             if(!updatedPlayer.activePlayer.id) {
                 return;
@@ -28,6 +30,8 @@ export class OnUpdatePlayers extends SocketEvent {
             if(!player) {
                 player = new Player(game, false, updatedPlayer);
                 game.getSceneManger().remotePlayers.push(player);
+
+                return;
             }
 
             ///action when hp of character is changed

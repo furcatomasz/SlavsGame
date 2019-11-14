@@ -62,6 +62,8 @@ export class Game {
 
     public changeScene(newScene: Scene) {
         this.engine.stopRenderLoop();
+        this.socketClient.clearEvents();
+
         let sceneToDispose = this.getBabylonScene();
         if (sceneToDispose) {
             setTimeout(function () {

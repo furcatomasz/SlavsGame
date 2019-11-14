@@ -45,6 +45,10 @@ export class Battleground extends Scene {
                 waterMaterial.addToRenderList(ground);
                 waterMaterial.addToRenderList(self.game.player.mesh);
                 // // waterMaterial.addToRenderList(skybox);
+
+                var plane = BABYLON.Mesh.CreatePlane("entrace", 16, scene);
+                plane.position = new BABYLON.Vector3(-20, 2, 16);
+                plane.layerMask = 2;
             });
 
     }

@@ -94,6 +94,7 @@ export class EnemyActionManager {
             }, () => {
                 if (enemy.target) {
                     enemy.target = null;
+                    enemy.attack = false;
                     setEnemyTargetFunction(enemy, 'OnIntersectionExitTriggerVisibility');
                     console.log('BABYLON: Enemy ' + key + ' lost player ' + characterId + ', roomID:' + roomId);
                 }

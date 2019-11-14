@@ -56,11 +56,11 @@ export class AttackActions {
 
     private intervalAttackFunction(): void {
         let game = this.game;
-        if (!game.player.isAnySkillIsInUse() && game.controller.attackPoint) {
+        if (!game.player.isAnySkillIsInUse()) {
             game.socketClient.socket.emit('attack', {
                 attack: this.attackedMonster.id,
-                targetPoint: game.controller.attackPoint.position,
-                rotation: game.controller.attackPoint.rotation,
+                targetPoint: this.attackedMonster.meshForMove.position,
+                rotation: this.attackedMonster.meshForMove.rotation,
             });
         }
     }

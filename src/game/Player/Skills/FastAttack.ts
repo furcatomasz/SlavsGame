@@ -17,7 +17,6 @@ export class FastAttack extends AbstractSkill {
             this.animationSpeed = 1.6;
             this.animationLoop = true;
             this.animationTime = 1000;
-            this.effectEmitter = new FastAttackParticle(game, this.player.mesh);
         }
 
         showAnimation(skillTime: number, cooldownTime: number) {
@@ -34,7 +33,6 @@ export class FastAttack extends AbstractSkill {
                     self.player.inventory.weapon.trailMesh.visibility = 1;
                 }
                 self.isInUse = true;
-                // self.effectEmitter.particleSystem.start();
                 if(self.player.isControllable) {
                     game.socketClient.socket.emit('attack', {
                         targetPoint: null
@@ -42,13 +40,11 @@ export class FastAttack extends AbstractSkill {
                 }
             }, () => {
                 self.isInUse = false;
-                // self.effectEmitter.particleSystem.stop();
                 setTimeout(() => {
                     if(self.player.inventory.weapon) {
                         self.player.inventory.weapon.trailMesh.visibility = 0;
+                        self.player.inventory.weapon.trailMesh.stop();
                     }
-                    self.player.inventory.weapon.trailMesh.stop();
-
                 }, 1000);
             }, this.animationLoop, this.animationSpeed);
 

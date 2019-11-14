@@ -172,7 +172,9 @@ export class AIServer {
             const room = self.getRoomById(roomId);
             const player = room.players[characterId];
             const scene = room.scene;
-            PlayerActionManager.goToTarget(scene, player, updatedPlayer.targetPoint, roomId);
+            if(player) {
+                PlayerActionManager.goToTarget(scene, player, updatedPlayer.targetPoint, roomId, self);
+            }
         });
 
         return this;

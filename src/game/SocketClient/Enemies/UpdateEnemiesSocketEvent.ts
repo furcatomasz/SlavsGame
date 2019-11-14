@@ -13,6 +13,9 @@ export class UpdateEnemiesSocketEvent extends SocketEvent {
             let enemyKey = data.enemyKey;
             let sceneManager = game.getSceneManger();
             let enemy = sceneManager.enemies[enemyKey];
+            if(!enemy) {
+                return;
+            }
             let mesh = enemy.meshForMove;
 
             enemy.retrieveHit(updatedEnemy);

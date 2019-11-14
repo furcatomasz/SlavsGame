@@ -14,6 +14,7 @@ import {Assets} from "../AssetsFactories/Assets";
 import {GameCamera} from "../Cameras/GameCamera";
 import {PathFinder} from "../PathFinder/PathFinder";
 import {DroppedItem} from "../Initializers/DroppedItem";
+import {SelectCharacterCamera} from "../Cameras/SelectCharacterCamera";
 
 export abstract class Scene {
     static TYPE = 0;
@@ -71,7 +72,12 @@ export abstract class Scene {
         scene.audioEnabled = false;
 
         game.setScene(this);
-        GameCamera.initCameraInScene(scene);
+
+        if(selectCharacterCamera) {
+            SelectCharacterCamera.initCameraInScene(scene);
+        } else {
+            GameCamera.initCameraInScene(scene);
+        }
 
         this.battleMusic = new BABYLON.Sound("BattleMusic", "assets/sounds/music/battle.mp3", scene, null, {
             loop: true,
@@ -169,9 +175,6 @@ export abstract class Scene {
                             embedMode: true
                         });
                     }
-
-                    // self.pathFinder.createNavMeshAndCrowd(game, self.environment.ground);
-                    // self.pathFinder.addAgent(game.player.meshForMove);
 
                     document.removeEventListener(Events.PLAYER_CONNECTED, listener);
                 };

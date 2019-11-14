@@ -1,9 +1,10 @@
 import * as BABYLON from "babylonjs";
 import {RemotePlayer} from "./RemotePlayer";
+import {AIServer} from "./AIServer";
 
 export class PlayerActionManager {
 
-    public static goToTarget(scene: BABYLON.Scene, player: RemotePlayer, targetPoint: any, roomId: string) {
+    public static goToTarget(scene: BABYLON.Scene, player: RemotePlayer, targetPoint: any, roomId: string, aiServer: AIServer) {
         scene.onBeforeRenderObservable.remove(player.renderObserver);
         let mesh = player.mesh;
         let targetPointVector3 = new BABYLON.Vector3(targetPoint.x, 0, targetPoint.z);
@@ -13,7 +14,11 @@ export class PlayerActionManager {
             if (mesh.intersectsPoint(targetPointVector3)) {
                 console.log('BABYLON: player intersect target point - ' + player.id + ', roomID:' + roomId);
                 scene.onBeforeRenderObservable.remove(player.renderObserver);
-
+                aiServer.socket.emit('updatePlayerPosition', {
+                    playerKey: player.id,
+                    position: player.mesh.position,
+                    roomId: roomId,
+                });
             } else {
                 let rotation = mesh.rotation;
                 let animationRatio = scene.getAnimationRatio();

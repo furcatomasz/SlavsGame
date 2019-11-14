@@ -10,6 +10,8 @@ export class OnShowPlayer extends SocketEvent {
         let game = this.game;
 
         this.socket.on('showPlayer', function (playerData) {
+            game.socketClient.registerEvents();
+
             game.player = new Player(game, true, playerData);
             game.getSceneManger().remotePlayers.push(game.player);
 

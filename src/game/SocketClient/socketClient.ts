@@ -46,8 +46,7 @@ export class SocketClient {
         this.playerConnected();
     }
 
-    public playerConnected() {
-        let self = this;
+    registerEvents() {
         let game = this.game;
 
         const events = [
@@ -65,8 +64,6 @@ export class SocketClient {
             new OnQuestRequirementDoneInformation(game, this.socket),
             new OnQuestRequirementInformation(game, this.socket),
             new OnRefreshQuests(game, this.socket),
-
-            new OnChangeScene(game, this.socket),
             new OnRefreshGateways(game, this.socket),
 
             new OnAddAttribute(game, this.socket),
@@ -74,73 +71,43 @@ export class SocketClient {
             new OnNewLvl(game, this.socket),
             new OnRefreshPlayerEquip(game, this.socket),
             new OnRemovePlayer(game, this.socket),
-            new OnShowPlayer(game, this.socket),
             new OnUpdatePlayers(game, this.socket),
             new OnUpdatePlayersSkills(game, this.socket),
         ];
 
-        this.socket.on('clientConnected', function (data) {
-            self.connectionId = data.connectionId;
-
-            events.forEach((event: SocketEvent) => {
-                event.listen();
-            });
-
+        events.forEach((event: SocketEvent) => {
+            event.listen();
         });
-        // this.socket.emit('changeScene', SelectCharacter.TYPE);
-        this.socket.emit('selectCharacter', 1);
 
         return this;
     }
 
+    clearEvents() {
+        let game = this.game;
 
-    // protected updateRooms() {
-    //     let game = this.game;
-    //     this.socket.on('updateRooms', function (data) {
-    //         if(game.gui) {
-    //             game.gui.teams.rooms = data;
-    //             game.gui.teams.refreshPopup();
-    //         }
-    //     });
-    //
-    //     return this;
-    // }
+        this.socket.removeAllListeners();
+        new OnShowPlayer(game, this.socket).listen();
+        new OnChangeScene(game, this.socket).listen();
 
-    // /**
-    //  * @returns {SocketIOClient}
-    //  */
-    // protected skillsLearned() {
-    //     let game = this.game;
-    //     let self = this;
-    //     this.socket.on('skillLearned', function (data) {
-    //         self.characters = data.characters;
-    //         game.player.freeSkillPoints = self.characters[self.activeCharacter].freeSkillPoints;
-    //         game.player.setCharacterSkills(self.characters[self.activeCharacter].skills);
-    //
-    //         game.gui.skills.refreshPopup();
-    //     });
-    //
-    //     return this;
-    // }
-    //
-    //
-    // protected connectPlayer() {
-    //     let game = this.game;
-    //     this.socket.on('newPlayerConnected', function (teamPlayer) {
-    //         if (game.player) {
-    //             let activePlayer = teamPlayer.characters[teamPlayer.activeCharacter];
-    //
-    //             let player = new Player(game, teamPlayer.id, false, activePlayer);
-    //             player.mesh.position = new BABYLON.Vector3(activePlayer.position.x, activePlayer.position.y, activePlayer.position.z);
-    //             player.inventory.setItems(activePlayer.items);
-    //
-    //             game.getSceneManger().remotePlayers.push(player);
-    //         }
-    //
-    //     });
-    //
-    //     return this;
-    // }
+        return this;
+    }
 
+    public playerConnected() {
+        let self = this;
+        let game = this.game;
+
+        this.socket.on('clientConnected', function (data) {
+            self.connectionId = data.connectionId;
+
+            // this.socket.emit('changeScene', SelectCharacter.TYPE);
+            new OnShowPlayer(game, self.socket).listen();
+            new OnChangeScene(game, self.socket).listen();
+
+            self.socket.emit('selectCharacter', 1);
+
+        });
+
+        return this;
+    }
 
 }

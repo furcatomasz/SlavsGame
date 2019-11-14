@@ -41,8 +41,8 @@ export class StrongAttack extends AbstractSkill {
                 setTimeout(() => {
                     if (self.player.inventory.weapon) {
                         self.player.inventory.weapon.trailMesh.visibility = 0;
+                        self.player.inventory.weapon.trailMesh.stop();
                     }
-                    self.player.inventory.weapon.trailMesh.stop();
 
                 }, 1000);
             });

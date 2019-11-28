@@ -24,14 +24,11 @@ export class Inventory extends Popup {
 
     protected panelItems: Rectangle;
     private items: Array<BABYLON.AbstractMesh> = [];
-    private inventoryPlayer: BABYLON.AbstractMesh;
-    private inventoryEnvironment: InventoryEnvironment;
 
     constructor(guiMain: Main) {
         super(guiMain);
         this.name = 'Inventory';
         this.imageUrl = "assets/gui/inventory.png";
-        this.inventoryEnvironment = new InventoryEnvironment(guiMain.game);
     }
 
     protected initTexture() {
@@ -74,35 +71,6 @@ export class Inventory extends Popup {
 
     public open() {
         let game = this.guiMain.game;
-        const windowSize = game.engine.getScreenAspectRatio();
-        console.log(windowSize);
-        const meshesPosition = new BABYLON.Vector3(-4, -2, 12);
-
-        let self = this;
-        this.manageMainGUI(false);
-
-        if(!this.isRefresh) {
-            let inventoryPlayer = game.player.mesh.createInstance('inventory_player');
-            inventoryPlayer.layerMask = 1;
-            inventoryPlayer.position = meshesPosition;
-            inventoryPlayer.rotation = new BABYLON.Vector3(0, -0.2, 0);
-            inventoryPlayer.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
-            this.inventoryPlayer = inventoryPlayer;
-            this.inventoryEnvironment.create(inventoryPlayer);
-            this.inventoryEnvironment.waterMaterial.addToRenderList(inventoryPlayer);
-        }
-
-        game.getBabylonScene().getCameraByName('gameCamera').position.y = 500;
-        game.player.inventory.getEquipedItems().forEach((item) => {
-            if (item) {
-                let itemInstance = item.mesh.createInstance("itemInstance");
-                itemInstance.layerMask = 1;
-                itemInstance.position = meshesPosition;
-                itemInstance.rotation = new BABYLON.Vector3(0, -0.2, 0);
-                itemInstance.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
-                self.items.push(itemInstance);
-            }
-        });
 
         this.initTexture();
         this.opened = true;
@@ -154,18 +122,12 @@ export class Inventory extends Popup {
     }
 
     public close() {
-        this.manageMainGUI(true);
         this.opened = false;
         this.guiTexture.dispose();
         this.buttonClose = null;
         this.items.forEach((mesh) => {
             mesh.dispose();
         });
-
-        if(!this.isRefresh) {
-            this.inventoryEnvironment.dispose();
-            this.inventoryPlayer.dispose();
-        }
         this.guiMain.game.player.refreshCameraPosition();
     }
 

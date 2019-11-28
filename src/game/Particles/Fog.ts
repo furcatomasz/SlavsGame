@@ -36,7 +36,7 @@ export class Fog extends AbstractParticle {
             fog.maxEmitPower = 1;
 
             fog.updateSpeed = 0.0025;
-            fog.layerMask = 1;
+            fog.layerMask = 2;
 
             this.particleSystem = fog;
         }

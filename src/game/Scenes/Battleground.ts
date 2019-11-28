@@ -3,6 +3,7 @@ import {Game} from "../Game";
 import * as BABYLON from 'babylonjs';
 import { WaterMaterial } from 'babylonjs-materials';
 import {EnvironmentCaveExit} from "./Mountains/CaveExit/EnvironmentCaveExit";
+import {Fog} from "../Particles/Fog";
 
 export class Battleground extends Scene {
 
@@ -29,13 +30,12 @@ export class Battleground extends Scene {
                 var waterMaterial = new WaterMaterial("waterMaterial", scene, new BABYLON.Vector2(512, 512));
                 waterMaterial.bumpTexture = new BABYLON.Texture("//www.babylonjs.com/assets/waterbump.png", scene);
                 waterMaterial.windForce = -5;
-                waterMaterial.waveHeight = 0.1;
-                waterMaterial.bumpHeight = 0.1;
-                waterMaterial.waveLength = 0.15;
-                waterMaterial.waveSpeed = 10.0;
-                waterMaterial.windDirection = new BABYLON.Vector2(1, 1);
+                waterMaterial.waveHeight = 0.05;
+                waterMaterial.bumpHeight = 0.05;
+                waterMaterial.waveLength = 0.1;
+                waterMaterial.waveSpeed = 1.0;
                 waterMaterial.colorBlendFactor = 0.1;
-                waterMaterial.waterColor = new BABYLON.Color3(0.1, 1, 0.6);
+                waterMaterial.waterColor = new BABYLON.Color3(0.1, 1, 1);
                 var waterMesh = BABYLON.Mesh.CreateGround("waterMesh", 256, 256, 32, scene, false);
                 waterMesh.position.y = 0.5;
                 waterMesh.material = waterMaterial;

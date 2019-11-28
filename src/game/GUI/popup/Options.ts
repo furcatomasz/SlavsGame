@@ -60,30 +60,30 @@ export class Options extends Popup {
                 GameOptions.saveInLocalStorage('dof', isChecked, game);
             }, game.getSceneManger().options.dof);
 
-            let dofGroup = new SliderGroup("DOF");
-            dofGroup.addSlider("fStop", (value) => {
-                GameOptions.saveInLocalStorage('fStop', value, game);
-            }, "", 0.01, 10, game.getSceneManger().options.fStop, (value) => {
-                return value;
-            });
-
-            dofGroup.addSlider("focusDistance", (value) => {
-                GameOptions.saveInLocalStorage('focusDistance', value, game);
-            }, "", 0, 45000, game.getSceneManger().options.focusDistance, (value) => {
-                return value;
-            });
-
-            dofGroup.addSlider("focalLength", (value) => {
-                GameOptions.saveInLocalStorage('focalLength', value, game);
-            }, "", 0.01, 500.00, game.getSceneManger().options.focalLength, (value) => {
-                return value;
-            });
-
-            dofGroup.addSlider("lensSize", (value) => {
-                GameOptions.saveInLocalStorage('lensSize', value, game);
-            }, "", 0.01, 500.00, game.getSceneManger().options.lensSize, (value) => {
-                return value;
-            });
+            // let dofGroup = new SliderGroup("DOF");
+            // dofGroup.addSlider("fStop", (value) => {
+            //     GameOptions.saveInLocalStorage('fStop', value, game);
+            // }, "", 0.01, 10, game.getSceneManger().options.fStop, (value) => {
+            //     return value;
+            // });
+            //
+            // dofGroup.addSlider("focusDistance", (value) => {
+            //     GameOptions.saveInLocalStorage('focusDistance', value, game);
+            // }, "", 0, 45000, game.getSceneManger().options.focusDistance, (value) => {
+            //     return value;
+            // });
+            //
+            // dofGroup.addSlider("focalLength", (value) => {
+            //     GameOptions.saveInLocalStorage('focalLength', value, game);
+            // }, "", 0.01, 500.00, game.getSceneManger().options.focalLength, (value) => {
+            //     return value;
+            // });
+            //
+            // dofGroup.addSlider("lensSize", (value) => {
+            //     GameOptions.saveInLocalStorage('lensSize', value, game);
+            // }, "", 0.01, 500.00, game.getSceneManger().options.lensSize, (value) => {
+            //     return value;
+            // });
 
             postProccessGroup.addCheckbox("Bloom", (isChecked) => {
                 GameOptions.saveInLocalStorage('bloom', isChecked, game);
@@ -93,7 +93,7 @@ export class Options extends Popup {
                 GameOptions.saveInLocalStorage('fog', isChecked, game);
             }, game.getSceneManger().options.fog);
 
-            let selectBox = new SelectionPanel("sp", [shadowsGroup, postProccessGroup, dofGroup]);
+            let selectBox = new SelectionPanel("sp", [shadowsGroup, postProccessGroup]);
             selectBox.width = 0.8;
             selectBox.height = 0.8;
             selectBox.thickness = 0;

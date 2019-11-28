@@ -108,14 +108,14 @@ export class GameOptions {
             this.renderingPipeline.bloomScale = 1;
             //TODO: DOFF
             // this.renderingPipeline.depthOfField.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
-            this.renderingPipeline.depthOfField.fStop = this.fStop;
-            this.renderingPipeline.depthOfField.focusDistance = this.focusDistance;
-            this.renderingPipeline.depthOfField.focalLength = this.focalLength;
-            this.renderingPipeline.depthOfField.lensSize = this.lensSize;
-            // this.renderingPipeline.depthOfField.fStop = 0.27;
-            // this.renderingPipeline.depthOfField.focusDistance = 43050;
-            // this.renderingPipeline.depthOfField.focalLength = 292;
-            // this.renderingPipeline.depthOfField.lensSize = 136;
+            // this.renderingPipeline.depthOfField.fStop = this.fStop;
+            // this.renderingPipeline.depthOfField.focusDistance = this.focusDistance;
+            // this.renderingPipeline.depthOfField.focalLength = this.focalLength;
+            // this.renderingPipeline.depthOfField.lensSize = this.lensSize;
+            this.renderingPipeline.depthOfField.fStop = 0.1;
+            this.renderingPipeline.depthOfField.focusDistance = 22000;
+            this.renderingPipeline.depthOfField.focalLength = 400;
+            this.renderingPipeline.depthOfField.lensSize = 10;
         }
 
         if (this.fog) {

@@ -2,9 +2,6 @@ import {SocketEvent} from "../SocketEvent";
 
 export class OnRefreshPlayerEquip extends SocketEvent {
 
-    /**
-     * @returns {SocketIOClient}
-     */
     public listen() {
         let game = this.game;
 
@@ -23,7 +20,6 @@ export class OnRefreshPlayerEquip extends SocketEvent {
                     }
                 });
             }
-
 
             player.inventory.removeItems();
             player.inventory.setItems(updatedPlayer.activePlayer.items);

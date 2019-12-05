@@ -158,17 +158,16 @@ export class AIServer {
     public socketUpdatePlayer() {
         let self = this;
         this.socket.on('updatePlayer', updatedPlayer => {
-            const activeCharacter = updatedPlayer.activePlayer;
-            const characterId = activeCharacter.id;
+            const characterId = updatedPlayer.activePlayerId;
 
             console.log('BABYLON: update player - ' + characterId);
-            if (updatedPlayer.attack == true) {
+            if (updatedPlayer.activePlayerAttack == true) {
                 console.log('BABYLON: player attack - ' + characterId);
 
                 return;
             }
 
-            const roomId = updatedPlayer.activeRoom.id;
+            const roomId = updatedPlayer.activeRoomId;
             const room = self.getRoomById(roomId);
             const player = room.players[characterId];
             const scene = room.scene;

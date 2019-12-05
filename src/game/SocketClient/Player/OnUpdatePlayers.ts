@@ -1,20 +1,14 @@
 import {SocketEvent} from "../SocketEvent";
-import {Player} from "../../Characters/Player";
 import {AbstractCharacter} from "../../Characters/AbstractCharacter";
 import {Game} from "../../Game";
 
 export class OnUpdatePlayers extends SocketEvent {
 
-    /**
-     * @returns {SocketIOClient}
-     */
+
     public listen() {
-        let self = this;
         let game = this.game;
 
         this.socket.on('updatePlayer', function (updatedPlayer) {
-            console.log(updatedPlayer, game.getSceneManger().remotePlayers.length);
-
             let player = null;
             if(!updatedPlayer.activePlayer.id) {
                 return;
@@ -26,13 +20,6 @@ export class OnUpdatePlayers extends SocketEvent {
                     return;
                 }
             });
-
-            if(!player) {
-                player = new Player(game, false, updatedPlayer);
-                game.getSceneManger().remotePlayers.push(player);
-
-                return;
-            }
 
             ///action when hp of character is changed
             if (player.statistics.hp != updatedPlayer.activePlayer.statistics.hp) {

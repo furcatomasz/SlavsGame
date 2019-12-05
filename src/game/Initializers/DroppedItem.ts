@@ -4,6 +4,7 @@ import {BounceAnimation} from "../Animations/BounceAnimation";
 import {TooltipMesh} from "../GUI/Tooltips/TooltipMesh";
 import {DroppedItem as DroppedItemParticles} from "../Particles/DroppedItem";
 import * as BABYLON from 'babylonjs';
+import {GoToMeshAndRunAction} from "../Actions/GoToMeshAndRunAction";
 
 export class DroppedItem {
 
@@ -41,7 +42,9 @@ export class DroppedItem {
             droppedItemBox.actionManager = new BABYLON.ActionManager(scene);
             droppedItemBox.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger,
                 () => {
-                    game.socketClient.socket.emit('addDroppedItem', itemDropKey);
+                    GoToMeshAndRunAction.execute(game, droppedItemBox, () => {
+                        game.socketClient.socket.emit('addDroppedItem', itemDropKey);
+                    });
                 }));
 
             let particleSystem = new DroppedItemParticles(game, droppedItemBox);

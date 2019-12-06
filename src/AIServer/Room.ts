@@ -8,6 +8,7 @@ export class Room {
     enemies: Enemy[] = [];
     players: RemotePlayer[] = [];
     scene: Scene;
+    sceneType: Number;
 
     constructor(aiServer: AIServer) {
         let sceneForRoom = new BABYLON.Scene(aiServer.engine);

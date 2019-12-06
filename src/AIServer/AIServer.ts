@@ -57,6 +57,7 @@ export class AIServer {
             console.log('BABYLON: update enemy - ' + remoteEnemyId);
             if (remoteEnemy.statistics.hp <= 0) {
                 localEnemy.clearActiveTarget(room);
+                delete room.enemies[remoteEnemyId];
             }
         });
 
@@ -69,10 +70,18 @@ export class AIServer {
             let roomId = data.roomId;
             let room = self.getRoomById(roomId);
             let scene = room.scene;
+            if(room.sceneType != data.sceneType) {
+                console.log('BABYLON: clear enemies - ' + roomId);
 
+                room.enemies.forEach((enemy) => {
+                    enemy.clearActiveTarget(room);
+                });
+                room.enemies = [];
+            }
+
+            room.sceneType = data.sceneType;
             if (!room.enemies.length) {
                 console.log('BABYLON: create enemies - ' + roomId);
-
                 data.enemies.forEach((enemyData, key) => {
                     let enemy = room.enemies[key];
                     if (enemyData.statistics.hp > 0 && !enemy) {

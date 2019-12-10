@@ -29,8 +29,7 @@ export class ItemManager {
 
                 let item = new Item(self.game, itemDatabase);
                 inventory.items.push(item);
-
-                const equip = (itemDatabase.entity) ? itemDatabase.entity.equip : itemDatabase.equip;
+                const equip = itemDatabase.entity.equip;
                 inventory.equipItem(item, equip);
 
                 if (item.type == 3 && equip) {

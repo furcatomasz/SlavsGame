@@ -69,7 +69,7 @@ export abstract class Scene {
         scene.probesEnabled = false;
         scene.postProcessesEnabled = true;
         scene.spritesEnabled = true;
-        scene.audioEnabled = false;
+        scene.audioEnabled = true;
 
         game.setScene(this);
 

@@ -31,6 +31,8 @@ export class Mouse {
 
         scene.onPointerDown = function (evt, pickResult) {
             let pickedMesh = pickResult.pickedMesh;
+            game.player.attackActions.abbadonMonsterAttack();
+
             if (!self.game.player.isAlive || game.player.isAnySkillIsInUse()) {
                 return;
             }
@@ -38,7 +40,6 @@ export class Mouse {
             if (pickedMesh && (pickedMesh.name.search("Ground") >= 0)) {
                 scene.onBeforeRenderObservable.remove(game.getSceneManger().goToAction);
 
-                game.player.attackActions.cancelCheckAttack();
                 self.attackPoint = null;
                 self.targetPoint = pickResult.pickedPoint;
                 self.targetPoint.y = 0;

@@ -35,6 +35,8 @@ export abstract class AbstractNpc extends AbstractCharacter {
                 function () {
                     self.game.gui.characterTopHp.showHpCharacter(self);
                 }));
+
+            this.runAnimationStand();
         }
 
         public removeFromWorld() {

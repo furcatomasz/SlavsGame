@@ -72,11 +72,12 @@ export abstract class AbstractSkill {
                     let forwards = new BABYLON.Vector3(-(Math.sin(rotation.y)), 0, -(Math.cos(rotation.y)));
                     let newPosition = position.add(forwards);
 
-                    game.socketClient.socket.emit('useSkill', self.getType());
+                    player.runPlayerToPosition(newPosition);
                     game.socketClient.socket.emit('setTargetPoint', {
                         position: newPosition
                     });
-                    player.runPlayerToPosition(newPosition);
+
+                    game.socketClient.socket.emit('useSkill', self.getType());
                 }
             });
             document.removeEventListener(Events.PLAYER_CONNECTED, listener);

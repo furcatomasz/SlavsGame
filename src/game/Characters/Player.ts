@@ -177,7 +177,7 @@ export class Player extends AbstractCharacter {
         this.skills.forEach((skill) => {
             if (skill.isInUse === true) {
                 isInUse = true;
-                return;
+                return true;
             }
         });
 
@@ -253,7 +253,7 @@ export class Player extends AbstractCharacter {
             if (mesh.intersectsPoint(targetPointVector3)) {
                 self.game.getBabylonScene().unregisterBeforeRender(self.dynamicFunction);
 
-                if (self.animation) {
+                if (self.animation && self.animation.fromFrame == 130) {
                     self.animation.stop();
                 }
             } else {

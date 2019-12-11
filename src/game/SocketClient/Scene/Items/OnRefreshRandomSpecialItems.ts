@@ -14,7 +14,7 @@ export class OnRefreshRandomSpecialItems extends SocketEvent {
             game.getSceneManger().randomSpecialItems = [];
 
             randomSpecialItems.forEach((randomSpecialItem, randomSpecialItemKey) => {
-                if (!randomSpecialItem.picked) {
+                if (!randomSpecialItem.isPicked) {
                     game.getSceneManger().randomSpecialItems.push(new RandomSpecialItem(game, randomSpecialItem, randomSpecialItemKey));
                 }
             });

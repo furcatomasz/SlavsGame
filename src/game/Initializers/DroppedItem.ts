@@ -23,7 +23,7 @@ export class DroppedItem {
             droppedItemBox.visibility = 0;
             droppedItemBox.position.x = position.x;
             droppedItemBox.position.z = position.z;
-            droppedItemBox.position.y = 0;
+            droppedItemBox.position.y = 1;
 
             let itemSpriteManager = new BABYLON.SpriteManager("playerManager",'assets/Miniatures/' + item.image + '.png', 1, {width: 512, height: 512}, scene);
             let itemSprite = new BABYLON.Sprite("player", itemSpriteManager);
@@ -31,7 +31,7 @@ export class DroppedItem {
             itemSprite.height = 1.8;
             itemSprite.position.x = position.x;
             itemSprite.position.z = position.z;
-            itemSprite.position.y = 1.5;
+            itemSprite.position.y = 4;
             itemSpriteManager.layerMask = 2;
 
             const animationBounce = BounceAnimation.getAnimation();

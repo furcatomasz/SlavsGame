@@ -101,11 +101,11 @@ export class SocketClient {
         this.socket.on('clientConnected', function (data) {
             self.connectionId = data.connectionId;
 
-            self.socket.emit('changeScene', SelectCharacter.TYPE);
+            // self.socket.emit('changeScene', SelectCharacter.TYPE);
             new OnShowPlayer(game, self.socket).listen();
             new OnChangeScene(game, self.socket).listen();
 
-            // self.socket.emit('selectCharacter', 1);
+            self.socket.emit('selectCharacter', 1);
 
         });
 

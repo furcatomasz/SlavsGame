@@ -62,14 +62,14 @@ export class Monster extends AbstractCharacter {
                 self.game.gui.characterTopHp.showHpCharacter(self);
             }));
 
-        this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
-            BABYLON.ActionManager.OnPickDownTrigger, () => {
-                game.player.attackActions.attackMonster(self);
-            }));
+        // this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+        //     BABYLON.ActionManager.OnPickDownTrigger, () => {
+        //         game.player.attackActions.attackMonster(self);
+        //     }));
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPickUpTrigger, () => {
-                game.player.attackActions.attackOnlyOnce();
+                game.player.attackActions.attackMonster(self);
             }));
 
         this.meshForMove.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
@@ -98,6 +98,10 @@ export class Monster extends AbstractCharacter {
             clearInterval(this.intervalAttackRegisteredFunction);
         }
         const self = this;
+        if(this.animation) {
+            this.animation.stop();
+        }
+
         let scene = this.game.getBabylonScene();
         delete this.game.player.monstersToAttack[this.id];
         if(this.game.controller.attackPoint == this.meshForMove) {
@@ -184,7 +188,6 @@ export class Monster extends AbstractCharacter {
 
                 if (self.statistics.hp <= 0) {
                     self.isDeath = true;
-                    self.animation.stop();
                     self.removeFromWorld();
                 }
 

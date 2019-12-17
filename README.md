@@ -1,18 +1,18 @@
-#SlavsGame
+# SlavsGame
 
 This is client (Babylons JS) and AI server (Babylons JS with nodeJs) of slavsgame.com.
 
-##Install dependencies
+## Install dependencies
 ``npm install``
 
-##Client
+## Client
 If you want run client: 
 ``npm run start-game``
 
 if build:
 ``npm run build-game``
 
-##AI Server
+## AI Server
 If you want run AI server in browser to validation boxes movement and actions: 
 ``npm run start-ai``
  and open browser and serverPreview.html file.

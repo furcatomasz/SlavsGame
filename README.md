@@ -2,12 +2,9 @@
 
 This is client (Babylons JS) and AI server (Babylons JS with nodeJs) of slavsgame.com.
 
-![alt text](https://aws1.discourse-cdn.com/standard10/uploads/babylonjs/original/1X/5dc660b1916de288f34b5cd7397700457ab39260.jpeg)
+![alt text](https://aws1.discourse-cdn.com/business7/uploads/babylonjs/original/1X/cb5ee0780d238bf07cc33da1a36c078d81bc582d.gif)
 
-![alt text](https://aws1.discourse-cdn.com/standard10/uploads/babylonjs/original/1X/b426fec36a00035ebf91637d7a7d60ec4d752853.jpeg)
-
-![alt text](https://aws1.discourse-cdn.com/standard10/uploads/babylonjs/original/1X/a4bc784b77a93c92caa737b76f9361110cb05ace.jpeg)
-
+![alt text](https://aws1.discourse-cdn.com/business7/uploads/babylonjs/original/1X/b426fec36a00035ebf91637d7a7d60ec4d752853.jpeg)
 
 ## Install dependencies
 ``npm install``
